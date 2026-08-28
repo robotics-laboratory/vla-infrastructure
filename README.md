@@ -80,24 +80,23 @@ Quest 3 is already available, so XR bring-up can run in parallel once the enviro
 
 ## Session 0 core environment
 
-The repository currently contains contract and validation tooling only; no prior
-package-manager convention or robotics dependency is present to reuse. The one
-default environment is therefore the checked-in `uv` environment in
-`pyproject.toml` / `uv.lock`:
+The one default environment is the checked-in `uv` environment in
+`pyproject.toml` / `uv.lock`. It uses official LeRobot v0.6.1 and the pinned
+PIPER SDK; the Evo-RL project is donor evidence only, never a runtime
+dependency.
 
 ```text
 environment id: core
 manager: uv
-Python: CPython 3.10.12
-purpose: contract tooling, offline checks, and the future main runtime once
-         Tracks A/B/C supply compatible pinned dependencies
+Python: CPython 3.12.13 (pinned by .python-version and pyproject.toml)
+purpose: official LeRobot core runtime, contract tooling, and normal development
 canonical prefix: uv run
 ```
 
 Recreate it, including the development tools, with:
 
 ```bash
-uv sync --frozen --all-groups
+uv sync --frozen
 ```
 
 Run the Session 0 checks from `core` with:
@@ -109,7 +108,7 @@ uv run ruff check .
 uv run mypy
 ```
 
-This initial spec intentionally has no torch, CUDA, simulator, vendor-runtime,
-LeRobot, driver, or XR package. Their pinned requirements and same-process
-compatibility are prerequisites for Tracks A, B, and C; they must be added to
-this same lock first unless concrete evidence proves a blocker.
+The lock includes LeRobot's required PyTorch runtime. The resolved Isaac Teleop
+group is intentionally not synced by default: Track B must first perform its
+CloudXR/Quest runtime validation, but it will use this same `core` spec with
+`uv sync --frozen --group isaac-teleop` rather than a second environment.

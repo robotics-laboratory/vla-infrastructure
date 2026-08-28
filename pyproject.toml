@@ -1,11 +1,13 @@
 [project]
 name = "piper-x-quest3-integration-contract"
 version = "0.0.0"
-description = "Reproducible Session 0 environment for the PIPER-X + Quest 3 integration contract."
-requires-python = "==3.10.*"
+description = "Reproducible core environment for the PIPER-X + Quest 3 integration contract."
+requires-python = "==3.12.13"
 dependencies = [
     "PyYAML==6.0.3",
     "jsonschema==4.26.0",
+    "lerobot==0.6.1",
+    "piper-sdk==0.6.1",
 ]
 
 [dependency-groups]
@@ -14,14 +16,18 @@ dev = [
     "ruff==0.15.4",
     "types-PyYAML==6.0.12.20250915",
 ]
+isaac-teleop = [
+    "isaacteleop[cloudxr,retargeters-lite]==1.3.131",
+    "scipy>=1.14,<2.0.0",
+]
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py312"
 line-length = 100
 extend-exclude = [".venv"]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.12"
 files = ["tools"]
 exclude = ["^\\.venv/"]
 warn_unused_configs = true

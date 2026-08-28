@@ -35,10 +35,25 @@
     "status": {
       "type": "object",
       "required": [
+        "track_a_gate_complete",
         "static_resolution_complete",
         "hardware_validation_complete",
         "bimanual_real_gate_complete"
-      ]
+      ],
+      "properties": {
+        "track_a_gate_complete": {
+          "type": "boolean"
+        },
+        "static_resolution_complete": {
+          "type": "boolean"
+        },
+        "hardware_validation_complete": {
+          "type": "boolean"
+        },
+        "bimanual_real_gate_complete": {
+          "type": "boolean"
+        }
+      }
     },
     "requirements": {
       "type": "object",

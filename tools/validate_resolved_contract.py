@@ -2,10 +2,12 @@
 """
 Small gate validator for configs/resolved_contract.yaml.
 
-v4.3 adds environment invariants:
+v4.5 adds environment and staged Gate A invariants:
 - core must exist;
 - accepted stages must map to declared environments;
 - special environments require a reason and reproducible spec;
+- Track A requires pinned donor/upstream inputs and a concrete external-plugin boundary,
+  while the project-local Track 1B artifact pin may remain intentionally deferred;
 - completion flags cannot hide DECIDE/PIN values.
 
 This is validation, not an environment-management framework.
@@ -66,6 +68,58 @@ STATIC_REQUIRED = [
     "environments.core.python_version",
     "environments.core.spec_artifact.path",
     "environments.core.canonical_launch_prefix",
+]
+
+TRACK_A_REQUIRED = [
+    "implementation.lerobot.repository",
+    "implementation.lerobot.version_or_commit",
+    "implementation.robot_plugin.artifact_status",
+    "implementation.robot_plugin.integration_form",
+    "implementation.robot_plugin.planned_distribution_name",
+    "implementation.robot_plugin.planned_import_package",
+    "implementation.robot_plugin.discovery_prefix",
+    "implementation.robot_plugin.configuration_registration",
+    "implementation.robot_plugin.construction_boundary",
+    "implementation.robot_plugin.single_arm_type",
+    "implementation.robot_plugin.bimanual_type",
+    "implementation.driver.backend",
+    "implementation.driver.repository",
+    "implementation.driver.version_or_commit",
+    "implementation.driver.robot_model",
+    "implementation.driver.expected_firmware_profile",
+    "evidence.candidate_matrix",
+    "evidence.piper_x_support",
+    "evidence.bimanual_support",
+    "evidence.driver_firmware_behavior",
+    "evidence.fork_vs_drop_in",
+    "evidence.selected_plugin_seam",
+    "evidence.track_1b_package_boundary",
+    "evidence.core_environment_compatibility",
+    "robot_contract.action_features",
+    "robot_contract.observation_features",
+    "robot_contract.joint_order",
+    "robot_contract.units",
+    "robot_contract.gripper.meaning",
+    "robot_contract.gripper.command_units",
+    "robot_contract.gripper.observation_transform",
+    "robot_contract.gripper.command_transform",
+    "robot_contract.declared_joint_limits_artifact",
+    "robot_contract.declared_send_action.clips_joint_limits",
+    "robot_contract.declared_send_action.slew_limits",
+    "robot_contract.declared_send_action.returns_changed_or_sent_action",
+    "robot_contract.declared_send_action.transforms",
+    "robot_contract.declared_send_action.residual_driver_behavior",
+    "model.urdf",
+    "model.frames",
+    "processors.deterministic_label_pipeline.sequence",
+    "processors.deterministic_label_pipeline.implementation_status",
+    "environments.core.manager_or_launcher",
+    "environments.core.python_version",
+    "environments.core.spec_artifact",
+    "environments.core.torch_version",
+    "environments.core.cuda_runtime",
+    "environments.core.canonical_launch_prefix",
+    "execution_profiles.offline_tests",
 ]
 
 HARDWARE_REQUIRED = [
@@ -148,6 +202,16 @@ def validate_environments(data):
 def validate_completion(data):
     errors = []
 
+    if data.get("status", {}).get("track_a_gate_complete"):
+        for path in TRACK_A_REQUIRED:
+            value = get_path(data, path)
+            if value is None or unresolved(value):
+                errors.append(f"track_a_gate_complete=true but unresolved: {path}")
+        if get_path(data, "execution_profiles.offline_tests") != "core":
+            errors.append("track_a_gate_complete requires execution_profiles.offline_tests=core")
+        if data.get("environments", {}).get("special"):
+            errors.append("track_a_gate_complete must not create a special environment without evidence")
+
     if data.get("status", {}).get("static_resolution_complete"):
         for path in STATIC_REQUIRED:
             value = get_path(data, path)
@@ -199,6 +263,8 @@ def main():
 
     print("RESOLVED CONTRACT OK")
     print("- core environment policy is structurally valid")
+    if data["status"].get("track_a_gate_complete"):
+        print("- Track A static resolution is complete")
     if not data["status"]["static_resolution_complete"]:
         print("- static resolution is intentionally incomplete")
     if not data["status"]["hardware_validation_complete"]:
