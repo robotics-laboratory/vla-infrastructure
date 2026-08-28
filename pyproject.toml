@@ -7,8 +7,15 @@ dependencies = [
     "PyYAML==6.0.3",
     "jsonschema==4.26.0",
     "lerobot==0.6.1",
+    "lerobot_robot_piperx",
     "piper-sdk==0.6.1",
 ]
+
+[tool.uv.sources]
+lerobot_robot_piperx = { workspace = true }
+
+[tool.uv.workspace]
+members = ["packages/*"]
 
 [dependency-groups]
 dev = [
@@ -28,7 +35,7 @@ extend-exclude = [".venv"]
 
 [tool.mypy]
 python_version = "3.12"
-files = ["tools"]
+files = ["packages", "tools"]
 exclude = ["^\\.venv/"]
 warn_unused_configs = true
 check_untyped_defs = true

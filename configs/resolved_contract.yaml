@@ -1,5 +1,5 @@
 schema_version: 3
-contract_revision: 6
+contract_revision: 7
 status:
   track_a_gate_complete: true
   static_resolution_complete: false
@@ -16,13 +16,19 @@ implementation:
     version_or_commit: 7e241bd630a3719a56157a497ce5d08f244784f1
     package_version: 0.6.1
   robot_plugin:
-    repository: DECIDE/PIN
-    commit: DECIDE/PIN
-    package_version: DECIDE/PIN
-    artifact_status: intentionally_deferred_to_Track_1B
-    integration_form: planned_external_lerobot_robot_plugin_from_pinned_Evo-RL_donor
+    repository: project_local_uv_workspace
+    commit: PENDING_PROJECT_GIT_COMMIT
+    package_version: 0.1.0
+    artifact_status: implemented_and_offline_verified; final_project_commit_intentionally_pending
+    integration_form: external_lerobot_robot_plugin_adapted_from_pinned_Evo-RL_donor
     planned_distribution_name: lerobot_robot_piperx
     planned_import_package: lerobot_robot_piperx
+    distribution_path: packages/lerobot_robot_piperx
+    implementation_paths:
+    - packages/lerobot_robot_piperx/pyproject.toml
+    - packages/lerobot_robot_piperx/src/lerobot_robot_piperx/__init__.py
+    - packages/lerobot_robot_piperx/src/lerobot_robot_piperx/sdk.py
+    - packages/lerobot_robot_piperx/src/lerobot_robot_piperx/piperx.py
     discovery_prefix: lerobot_robot_
     configuration_registration: RobotConfig.register_subclass
     construction_boundary: make_robot_from_config_dynamic_plugin_fallback
@@ -230,8 +236,14 @@ evidence:
     required_registered_types:
     - piperx_follower
     - bi_piperx_follower
-    artifact_pin_status: intentionally_deferred_until_Track_1B_creates_and_verifies_the_project_local_artifact
-    notes: The boundary is selected and bounded; no Evo-RL runtime dependency, LeRobot fork, special environment, RPC layer, new action ontology, clipping policy, or hardware behavior is part of this gate.
+    artifact_pin_status: implemented_as_project_local_uv_workspace_package_version_0.1.0; final_project_Git_commit_intentionally_pending
+    implementation_paths:
+    - packages/lerobot_robot_piperx/pyproject.toml
+    - packages/lerobot_robot_piperx/src/lerobot_robot_piperx/sdk.py
+    - packages/lerobot_robot_piperx/src/lerobot_robot_piperx/piperx.py
+    - tests/test_lerobot_robot_piperx.py
+    adapted_donor_symbols: PiperXFollowerConfig; PiperXFollower._motors_ft; PiperXFollower.get_observation; PiperXFollower.send_action; BiPiperXFollower._motors_ft; BiPiperXFollower._cameras_ft; BiPiperXFollower.send_action; PIPER_JOINT_NAMES; PIPER_ACTION_KEYS; milli_to_unit; unit_to_milli
+    notes: The project-local distribution is installed from the one core uv workspace and discovered by official LeRobot 0.6.1. No Evo-RL runtime dependency, LeRobot fork, special environment, RPC layer, new action ontology, clipping policy, or hardware behavior is part of this gate.
   lerobot_version_comparison:
     repository: https://github.com/huggingface/lerobot
     donor_repository: https://github.com/MINT-SJTU/Evo-RL
@@ -327,10 +339,10 @@ evidence:
     selected_stack: official_LeRobot_v0.6.1_at_7e241bd630a3719a56157a497ce5d08f244784f1_plus_piper_sdk_0.6.1
     python_requirements: LeRobot_v0.4.4_requires_Python_greater_equal_3.10; LeRobot_v0.5.1_and_v0.6.1_require_Python_greater_equal_3.12; piper_sdk_0.6.1_requires_Python_greater_equal_3.6
     resolved_python: CPython_3.12.13
-    static_result: official_LeRobot_v0.6.1_and_piper_sdk_0.6.1_imported_from_recreated_CPython_3.12.13_core; official_lerobot_robot_plugin_registration_seam_imported
+    static_result: official_LeRobot_v0.6.1_piper_sdk_0.6.1_and_lerobot_robot_piperx_0.1.0_imported_from_the_CPython_3.12.13_core; official_plugin_discovery_and_factory_smokes_passed_with_fake_SDK_only
     provisional_trial: Evo-RL_fork_runtime_removed; donor_commit_remains_evidence_only
-    exact_selected_path_lock: uv.lock@dce04a4d890d998a990f1280b4f64b2e84f898b2331a6869ee2eee095ed821fa
-    same_process_result: official_LeRobot_piper_sdk_and_the_resolved_isaacteleop_1.3.131_group_share_the_CPython_3.12.13_core_spec; actual_Quest_CloudXR_lifecycle_remains_Track_B; external_plugin_artifact_remains_unresolved; no_special_environment_created
+    exact_selected_path_lock: uv.lock@49f8222339a375cc67e5121c837af43267294a8bbd21f0e563fbab519ced72d2
+    same_process_result: left_and_right_PiperXFollower_instances_are_directly_composed_by_BiPiperXFollower_in_the_single_CPython_3.12.13_core; official_LeRobot_piper_sdk_and_the_resolved_isaacteleop_1.3.131_group_share_the_core_spec; actual_Quest_CloudXR_lifecycle_remains_Track_B; no_special_environment_created
 robot_contract:
   action_features:
     left_joint_1.pos: float
@@ -549,17 +561,17 @@ environments:
     python_version: CPython_3.12.13
     spec_artifact:
       path: uv.lock
-      sha256: dce04a4d890d998a990f1280b4f64b2e84f898b2331a6869ee2eee095ed821fa
+      sha256: 49f8222339a375cc67e5121c837af43267294a8bbd21f0e563fbab519ced72d2
     torch_version: 2.7.1+cu126
     cuda_runtime: PyTorch_bundled_CUDA_12.6; torch.cuda.is_available_true_on_validation_host
     system_or_vendor_runtime: native_Linux; isaacteleop_group_is_Linux_only; CloudXR_runtime_and_EULA_are_Track_B_prerequisites
     canonical_launch_prefix: uv run
-    selected_stack_smoke_test: CPython_3.12.13_official_LeRobot_0.6.1_piper_sdk_0.6.1_and_lerobot_robot_plugin_registration_imported_without_hardware
-    current_lock_status: official_LeRobot_v0.6.1_core_lock_recreated_with_uv_sync_frozen; Isaacteleop_1.3.131_group_locked_but_not_synced
+    selected_stack_smoke_test: CPython_3.12.13_official_LeRobot_0.6.1_piper_sdk_0.6.1_and_lerobot_robot_piperx_0.1.0_plugin_discovery_and_factory_imported_without_hardware
+    current_lock_status: core_uv_lock_regenerated_for_lerobot_robot_piperx_0.1.0_workspace_package_and_uv_sync_frozen_completed; Isaacteleop_1.3.131_group_remains_locked_but_not_synced
     components:
     - project
     - lerobot
-    - piper_robot_plugin
+    - lerobot_robot_piperx_0.1.0
     - agilex_driver
     - dataset
     - replay
