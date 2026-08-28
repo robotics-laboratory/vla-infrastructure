@@ -1,5 +1,5 @@
 schema_version: 3
-contract_revision: 0
+contract_revision: 1
 status:
   static_resolution_complete: false
   hardware_validation_complete: false
@@ -173,15 +173,15 @@ environments:
   core:
     required: true
     purpose: main_runtime_and_default_development
-    manager_or_launcher: DECIDE/PIN
-    python_version: DECIDE/PIN
+    manager_or_launcher: uv
+    python_version: CPython_3.10.12
     spec_artifact:
-      path: DECIDE/PIN
-      sha256: DECIDE/PIN_OR_NOT_APPLICABLE
-    torch_version: DECIDE/PIN_OR_NOT_APPLICABLE
-    cuda_runtime: DECIDE/PIN_OR_NOT_APPLICABLE
-    system_or_vendor_runtime: DECIDE/PIN_OR_NOT_APPLICABLE
-    canonical_launch_prefix: DECIDE/PIN
+      path: uv.lock
+      sha256: 14d8b0181693bd0772a8ebe09d673b44144656d9cbc0b80dce01eac3c8ac4302
+    torch_version: not_required_for_session_0
+    cuda_runtime: not_required_for_session_0
+    system_or_vendor_runtime: native_linux_no_vendor_runtime_for_session_0
+    canonical_launch_prefix: uv run
     components:
     - project
     - lerobot

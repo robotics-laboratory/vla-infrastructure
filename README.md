@@ -77,3 +77,39 @@ A second environment is not free architecture. If two components must share one 
 - `ACCEPTANCE_CHECKLIST.md` — review gate.
 
 Quest 3 is already available, so XR bring-up can run in parallel once the environment that owns it is resolved.
+
+## Session 0 core environment
+
+The repository currently contains contract and validation tooling only; no prior
+package-manager convention or robotics dependency is present to reuse. The one
+default environment is therefore the checked-in `uv` environment in
+`pyproject.toml` / `uv.lock`:
+
+```text
+environment id: core
+manager: uv
+Python: CPython 3.10.12
+purpose: contract tooling, offline checks, and the future main runtime once
+         Tracks A/B/C supply compatible pinned dependencies
+canonical prefix: uv run
+```
+
+Recreate it, including the development tools, with:
+
+```bash
+uv sync --frozen --all-groups
+```
+
+Run the Session 0 checks from `core` with:
+
+```bash
+uv run python tools/validate_resolved_contract.py configs/resolved_contract.yaml
+uv run python -m unittest discover -s tests
+uv run ruff check .
+uv run mypy
+```
+
+This initial spec intentionally has no torch, CUDA, simulator, vendor-runtime,
+LeRobot, driver, or XR package. Their pinned requirements and same-process
+compatibility are prerequisites for Tracks A, B, and C; they must be added to
+this same lock first unless concrete evidence proves a blocker.
