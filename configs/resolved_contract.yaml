@@ -1,0 +1,213 @@
+schema_version: 3
+contract_revision: 0
+status:
+  static_resolution_complete: false
+  hardware_validation_complete: false
+  bimanual_real_gate_complete: false
+requirements:
+  robot_model_required: piper_x
+  bimanual_required: true
+  quest_3_available: true
+  per_arm_hil_required: true
+implementation:
+  lerobot:
+    version_or_commit: DECIDE/PIN
+  robot_plugin:
+    repository: DECIDE/PIN
+    commit: DECIDE/PIN
+    package_version: DECIDE/PIN
+    single_arm_type: DECIDE/PIN
+    bimanual_type: DECIDE/PIN
+  driver:
+    backend: DECIDE/PIN
+    repository: DECIDE/PIN
+    version_or_commit: DECIDE/PIN
+    robot_model: piper_x
+    expected_firmware_profile: DECIDE/PIN
+  isaac_teleop:
+    version_or_commit: DECIDE/PIN
+evidence:
+  piper_x_support:
+    repository: DECIDE/PIN
+    commit: DECIDE/PIN
+    path: DECIDE/PIN
+    symbol_or_section: DECIDE/PIN
+    notes: DECIDE/PIN
+  bimanual_support:
+    repository: DECIDE/PIN
+    commit: DECIDE/PIN
+    path: DECIDE/PIN
+    symbol_or_section: DECIDE/PIN
+    notes: DECIDE/PIN
+  driver_firmware_behavior:
+    repository: DECIDE/PIN
+    commit: DECIDE/PIN
+    path: DECIDE/PIN
+    symbol_or_section: DECIDE/PIN
+    notes: DECIDE/PIN
+robot_contract:
+  action_features: DECIDE/PIN
+  observation_features: DECIDE/PIN
+  joint_order:
+    left: DECIDE/PIN
+    right: DECIDE/PIN
+  units:
+    joints: DECIDE/PIN
+    gripper: DECIDE/PIN
+  gripper:
+    meaning: DECIDE/PIN
+    min: DECIDE/PIN
+    max: DECIDE/PIN
+    polarity: DECIDE/PIN
+  declared_joint_limits_artifact:
+    path: DECIDE/PIN
+    sha256: DECIDE/PIN
+  declared_send_action:
+    clips_joint_limits: DECIDE/PIN
+    slew_limits: DECIDE/PIN
+    returns_changed_or_sent_action: DECIDE/PIN
+model:
+  urdf:
+    repository: DECIDE/PIN
+    commit: DECIDE/PIN
+    path: DECIDE/PIN
+    sha256: DECIDE/PIN
+  frames:
+    left_base: DECIDE/PIN
+    left_ee: DECIDE/PIN
+    right_base: DECIDE/PIN
+    right_ee: DECIDE/PIN
+hardware:
+  left:
+    robot_id: DECIDE/PIN
+    can_adapter_serial: DECIDE/PIN
+    can_interface: DECIDE/PIN
+    firmware_actual: DECIDE/PIN
+    firmware_profile_resolved: DECIDE/PIN
+  right:
+    robot_id: DECIDE/PIN
+    can_adapter_serial: DECIDE/PIN
+    can_interface: DECIDE/PIN
+    firmware_actual: DECIDE/PIN
+    firmware_profile_resolved: DECIDE/PIN
+hardware_validation:
+  left_right_identity_verified: false
+  joint_direction_verified: false
+  joint_units_verified: false
+  gripper_polarity_verified: false
+  gripper_range_verified: false
+  clipping_verified: false
+  slew_behavior_verified: false
+  returned_or_accepted_command_verified: false
+  low_level_fail_safe_verified: false
+quest_mapping:
+  session_policy: one_isaac_teleop_cloudxr_session_per_process
+  left_controller_source: DECIDE/PIN
+  right_controller_source: DECIDE/PIN
+  calibration_artifact:
+    path: DECIDE/PIN
+    sha256: DECIDE/PIN
+  clutch_rebase_implementation: DECIDE/PIN
+processors:
+  data_action_space: resolved_piper_robot_action_space
+  deterministic_label_pipeline:
+    sequence: DECIDE/PIN
+    config_artifact:
+      path: DECIDE/PIN
+      sha256: DECIDE/PIN
+  residual_device_safety_expected: true
+dataset:
+  format: LeRobotDataset_v3
+  action_rule: dataset_action_after_deterministic_label_processors
+  contract_hash_recording:
+    algorithm: sha256
+    source_file: configs/resolved_contract.yaml
+  cameras:
+    front: DECIDE/PIN
+    left_wrist: DECIDE/PIN_OR_DISABLED
+    right_wrist: DECIDE/PIN_OR_DISABLED
+hil:
+  per_arm_required: true
+  per_arm_verified: false
+  intervention_left_feature: DECIDE/PIN
+  intervention_right_feature: DECIDE/PIN
+  intervention_any:
+    storage: derived_compatibility_field_if_upstream_requires
+    formula: intervention_left OR intervention_right
+  policy_generation_id_required_for_async_or_inflight_results: true
+  generation_owner: DECIDE/PIN
+  stale_chunk_invalidation_required: true
+timing:
+  safety_clock_domain: host_monotonic_receipt_unless_explicitly_synchronized
+  control_fps: DECIDE/PIN
+  max_xr_pose_age_ms: DECIDE/PIN
+  max_joint_state_age_ms: DECIDE/PIN
+  max_policy_action_age_ms: DECIDE/PIN
+  stale_behavior:
+    xr: DECIDE/PIN
+    joint_state: DECIDE/PIN
+    policy: DECIDE/PIN
+safety:
+  max_joint_step_or_slew: DECIDE/PIN
+  takeover_jump_tolerance: DECIDE/PIN
+  fk_position_error_tolerance: DECIDE/PIN
+  fk_orientation_error_tolerance: DECIDE/PIN
+  low_level_fail_safe:
+    owner: DECIDE/PIN
+    trigger_or_deadline: DECIDE/PIN
+    effect: DECIDE/PIN
+    evidence: DECIDE/PIN
+  bimanual_inter_arm:
+    mode: DECIDE/PIN
+    workspace_artifact:
+      path: DECIDE/PIN
+      sha256: DECIDE/PIN
+benchmark:
+  robotwin:
+    lerobot_pin: DECIDE/PIN
+    dataset_or_benchmark_revision: DECIDE/PIN
+    action_space_smoke_test: not_run
+    observation_space_smoke_test: not_run
+    known_issue_notes: DECIDE/PIN
+environments:
+  core:
+    required: true
+    purpose: main_runtime_and_default_development
+    manager_or_launcher: DECIDE/PIN
+    python_version: DECIDE/PIN
+    spec_artifact:
+      path: DECIDE/PIN
+      sha256: DECIDE/PIN_OR_NOT_APPLICABLE
+    torch_version: DECIDE/PIN_OR_NOT_APPLICABLE
+    cuda_runtime: DECIDE/PIN_OR_NOT_APPLICABLE
+    system_or_vendor_runtime: DECIDE/PIN_OR_NOT_APPLICABLE
+    canonical_launch_prefix: DECIDE/PIN
+    components:
+    - project
+    - lerobot
+    - piper_robot_plugin
+    - agilex_driver
+    - dataset
+    - replay
+    - rollout
+    - hil
+  special: {}
+execution_profiles:
+  offline_tests: core
+  core_runtime: core
+  piper_readonly: core
+  piper_motion: core
+  quest_xr: DECIDE/PIN
+  dataset_record: DECIDE/PIN
+  replay: core
+  rollout: core
+  hil: core
+  mujoco: DECIDE/PIN_OR_NOT_REQUIRED
+  isaac_sim: DECIDE/PIN_OR_NOT_REQUIRED
+  embodichain: DECIDE/PIN_OR_NOT_REQUIRED
+  robotwin: DECIDE/PIN_OR_NOT_REQUIRED
+environment_policy:
+  default_environment: core
+  special_environment_requires_evidence: true
+  same_process_components_must_share_compatible_environment: true
+  untracked_manual_package_mutations_allowed_for_acceptance: false
