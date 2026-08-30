@@ -484,12 +484,13 @@ hardware_validation:
   low_level_fail_safe_verified: false
 quest_mapping:
   session_policy: one_isaac_teleop_cloudxr_session_per_process
-  left_controller_source: DECIDE/PIN
-  right_controller_source: DECIDE/PIN
+  left_controller_source: isaacteleop_1.3.131_ControllersSource.controller_left_from_shared_TeleopSession
+  right_controller_source: isaacteleop_1.3.131_ControllersSource.controller_right_from_shared_TeleopSession
   calibration_artifact:
     path: DECIDE/PIN
     sha256: DECIDE/PIN
-  clutch_rebase_implementation: DECIDE/PIN
+  clutch_rebase_implementation: lerobot_0.6.1_examples.isaac_teleop_to_so101.isaac_teleop.Clutch_in_common.setup_xr;_PIPER-X_frame_application_deferred_to_Track_C
+  host_diagnostics: tools/quest_xr_diagnostics.py;_one_shared_ControllersSource_and_one_TeleopSession_construction_path;_physical_Quest_validation_not_run
 processors:
   data_action_space: resolved_piper_robot_action_space
   deterministic_label_pipeline:
@@ -561,13 +562,13 @@ environments:
     python_version: CPython_3.12.13
     spec_artifact:
       path: uv.lock
-      sha256: 49f8222339a375cc67e5121c837af43267294a8bbd21f0e563fbab519ced72d2
+      sha256: a928d4df514c10bc77717e95a4b56ccffa4686041e9ed655c86f96d5fe586c33
     torch_version: 2.7.1+cu126
     cuda_runtime: PyTorch_bundled_CUDA_12.6; torch.cuda.is_available_true_on_validation_host
     system_or_vendor_runtime: native_Linux; isaacteleop_group_is_Linux_only; CloudXR_runtime_and_EULA_are_Track_B_prerequisites
     canonical_launch_prefix: uv run
     selected_stack_smoke_test: CPython_3.12.13_official_LeRobot_0.6.1_piper_sdk_0.6.1_and_lerobot_robot_piperx_0.1.0_plugin_discovery_and_factory_imported_without_hardware
-    current_lock_status: core_uv_lock_regenerated_for_lerobot_robot_piperx_0.1.0_workspace_package_and_uv_sync_frozen_completed; Isaacteleop_1.3.131_group_remains_locked_but_not_synced
+    current_lock_status: core_uv_lock_regenerated_with_pytest_9.1.1_in_the_dev_group_and_uv_sync_--frozen_completed;_isaac-teleop_group_materialized_with_uv_sync_--frozen_--group_isaac-teleop_for_quest_xr_host_diagnostics
     components:
     - project
     - lerobot
@@ -577,14 +578,14 @@ environments:
     - replay
     - rollout
     - hil
-    - isaac_teleop_resolved_future_runtime_group
+    - isaac_teleop_1.3.131_materialized_quest_xr_group
   special: {}
 execution_profiles:
   offline_tests: core
   core_runtime: core
   piper_readonly: core
   piper_motion: core
-  quest_xr: DECIDE/PIN
+  quest_xr: core
   dataset_record: DECIDE/PIN
   replay: core
   rollout: core
