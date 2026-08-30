@@ -129,7 +129,7 @@ environments:
     spec_artifact_id: core_uv_lock
     torch_version: 2.7.1+cu126
     cuda_runtime: PyTorch bundled CUDA 12.6
-    vendor_runtime: null
+    vendor_runtime: NVIDIA CloudXR 6.2.0 with auto-webrtc device profile for physical Quest work
     system_requirements:
     - native Linux
     - CloudXR runtime and EULA required only for physical Quest work
@@ -176,8 +176,11 @@ execution_profiles:
     - isaac-teleop
     - python
     - tools/quest_xr_diagnostics.py
+    - --no-auto-launch-cloudxr
     prerequisites:
-    - physical Quest human acceptance is not yet complete
+    - NVIDIA CloudXR 6.2.0 is already running as one externally owned lifecycle
+    - NV_DEVICE_PROFILE=auto-webrtc
+    - Quest and host are connected over the NVIDIA CloudXR WebXR path
   real_dataset_record:
     environment: core
     working_directory: .
@@ -544,14 +547,14 @@ model:
 timing:
   clock_domain: host monotonic receipt timestamp
   dataset_fps: null
-  teleop_sample_fps: null
+  teleop_sample_fps: 30
   camera_fps: {}
   policy_inference_fps: null
   robot_command_fps: null
   max_xr_pose_age_ms: null
   max_joint_state_age_ms: null
   max_policy_action_age_ms: null
-  stale_behavior: null
+  stale_behavior: An unavailable, inactive, invalid, or malformed XR controller sample is not a valid/fresh pose and must not be used; resume pose use only after a newly valid tracked sample is available.
   inference:
     mode: null
     chunk_horizon: null
@@ -607,13 +610,14 @@ teleop:
   semantic_session_invariant: one_xr_session_lifecycle_owns_coherent_left_right_streams
   real:
     execution_profile: quest_xr_real
-    resolved_implementation: tools.quest_xr_diagnostics.SharedQuestSession
+    resolved_implementation: isaacteleop.teleop_session_manager.TeleopSession with one shared isaacteleop.ControllersSource
     left_source: isaacteleop.ControllersSource.LEFT from one shared ControllersSource
     right_source: isaacteleop.ControllersSource.RIGHT from one shared ControllersSource
     processor_revision: null
     evidence_ids:
     - v43_quest_host_implementation
     - v43_quest_host_tests
+    - gate_b_q1_physical_check
   isaac:
     execution_profile: isaac_vr_record
     resolved_implementation: null
@@ -876,6 +880,12 @@ artifacts:
     path: docs/migration/V4_3_TO_V5_2_MIGRATION_REPORT.md
     uri: null
     description: Completed v4.3 to v5.2 Hardened M0 migration report
+  gate_b_q1_evidence_log:
+    kind: log
+    sha256: 1ec522641ae879b2e4ea516e758e94e453c7b1c7bb01085ba3d9300679d4e7c8
+    path: docs/project/GATE_B_Q1_EVIDENCE.txt
+    uri: null
+    description: Audited physical Quest Q1 observations, CloudXR runtime facts, and pinned timing behavior
 evidence:
   v52_pack_manifest_check:
     kind: command_test
@@ -1157,6 +1167,34 @@ evidence:
     path: null
     symbol: null
     notes: Fake NVIDIA objects only; not physical Quest evidence.
+  gate_b_q1_physical_check:
+    kind: human_gate
+    status: pass
+    summary: Physical Quest Q1 passed connection, handedness, independent streams, controller inputs, tracking loss/recovery, disconnect/reconnect, single-lifecycle continuity, and clean shutdown.
+    timestamp: '2026-08-30T17:38:44+03:00'
+    command: "uv run --group isaac-teleop python tools/quest_xr_diagnostics.py --no-auto-launch-cloudxr"
+    artifact_ids:
+    - gate_b_q1_evidence_log
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: Human-verified on Meta Quest 3 through pinned Isaac Teleop 1.3.131 and CloudXR 6.2.0 auto-webrtc with one externally owned CloudXR lifecycle. No PIPER-X/CAN motion occurred.
+  gate_b_pinned_timing_audit:
+    kind: upstream_source
+    status: pass
+    summary: Pinned sources establish a 30 Hz default/paced loop and invalid-controller handling, and establish that no numeric maximum XR pose age is supplied by the selected public path.
+    timestamp: '2026-08-30T17:38:44+03:00'
+    command: "Pinned-source inspection and SHA-256 verification recorded in docs/project/GATE_B_Q1_EVIDENCE.txt"
+    artifact_ids:
+    - gate_b_q1_evidence_log
+    repository: https://github.com/huggingface/lerobot
+    revision_type: commit
+    revision: 7e241bd630a3719a56157a497ce5d08f244784f1
+    path: examples/isaac_teleop_to_so101/common.py; examples/isaac_teleop_to_so101/teleoperate.py; examples/isaac_teleop_to_so101/record.py; examples/isaac_teleop_to_so101/isaac_teleop/teleop_xr_controller.py
+    symbol: FPS; teleoperate; DatasetRecordConfig; XRController.get_action; ControllersSource; ControllerSnapshotTrackedT
+    notes: The 30 Hz value is an upstream default, while max_xr_pose_age_ms remains an unselected project safety limit. Installed Isaac Teleop 1.3.131 source identities are recorded in the artifact.
 gates:
   M0:
     state: accepted
@@ -1191,13 +1229,16 @@ gates:
     - pre_contract_offline_runtime_tests
     notes: Existing static PIPER-X plugin/driver contract migrated and offline-revalidated.
   B:
-    state: smoke_validated
+    state: accepted
     evidence_ids:
     - v43_quest_host_implementation
     - v43_quest_host_tests
+    - gate_b_q1_physical_check
+    - gate_b_pinned_timing_audit
     artifact_ids:
     - pre_contract_offline_runtime_tests
-    notes: Host path exists, but physical Quest human evidence, timing, reconnect, tracking-loss, and shutdown acceptance are absent.
+    - gate_b_q1_evidence_log
+    notes: Physical Q1 is PASS and all Gate B XR identity/session/behavior requirements are satisfied. The unresolved max_xr_pose_age_ms safety limit is owned by the later real teleop-to-robot-control boundary gates R2 and HIL.
   C:
     state: resolved
     evidence_ids:

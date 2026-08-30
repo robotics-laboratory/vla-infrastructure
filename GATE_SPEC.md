@@ -80,7 +80,7 @@ Prove collision handling or disjoint workspaces and preserve left/right identity
 
 ## [[gate:R2]] Real human-VR dataset
 
-After real XR and real safety gates, record/finalize a representative real human-VR LeRobotDataset v3 source dataset.
+After real XR and real safety gates, enforce the resolved maximum XR pose age at the timestamped teleop-to-robot-control boundary, then record/finalize a representative real human-VR LeRobotDataset v3 source dataset.
 
 ## [[gate:D2b]] Real <-> Isaac training parity
 
@@ -100,7 +100,7 @@ Conditionally mandatory only when `training_ready_claim=true`. Tiny optimization
 
 ## [[gate:HIL]] Per-arm HIL
 
-Resolve mixed-mode semantics, generation invalidation, takeover/release and physical intervention evidence.
+Resolve mixed-mode semantics, generation invalidation, takeover/release and physical intervention evidence. Enforce the resolved maximum XR pose age at the timestamped human-teleop-to-robot-control boundary.
 
 ## [[gate:R3]] Real policy rollout
 

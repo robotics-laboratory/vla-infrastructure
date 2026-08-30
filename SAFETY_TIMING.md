@@ -36,6 +36,14 @@ age reference semantics
 
 Chunk-only fields are required only for chunked modes.
 
+### XR pose-age ownership
+
+Physical XR identity/session acceptance does not select or prove a numeric source-pose
+age threshold. Resolve and enforce `timing.max_xr_pose_age_ms` at each earliest real
+teleop-to-robot-control boundary: real human-VR recording [[gate:R2]] and per-arm HIL
+[[gate:HIL]]. Both gates fail closed while the value or its timestamped enforcement
+boundary is unresolved.
+
 ## Low-level fail-safe [[gate:R1]]
 
 Resolve and physically verify:

@@ -62,7 +62,6 @@ B:
   - execution_profiles.quest_xr_real.command
   - timing.clock_domain
   - timing.teleop_sample_fps
-  - timing.max_xr_pose_age_ms
   - timing.stale_behavior
   required_nonempty_paths:
   - teleop.real.evidence_ids
@@ -417,6 +416,7 @@ R2:
   - dataset.temporal_semantics.converters.real_human.outcome_field
   - dataset.temporal_semantics.converters.real_human.termination_field
   - execution_profiles.real_dataset_record.command
+  - timing.max_xr_pose_age_ms
   required_nonempty_paths: []
   required_evidence_kinds:
   - human_gate
@@ -503,6 +503,7 @@ HIL:
   - safety.takeover_jump_tolerance.value
   - safety.takeover_jump_tolerance.units
   - execution_profiles.hil.command
+  - timing.max_xr_pose_age_ms
   required_nonempty_paths:
   - hil.evidence_ids
   required_evidence_kinds:

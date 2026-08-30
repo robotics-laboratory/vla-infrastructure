@@ -43,7 +43,24 @@ class ResolvedContractTests(unittest.TestCase):
         errors, ready, blockers = validate_contract(CONTRACT)
         self.assertEqual(errors, [])
         self.assertFalse(ready)
-        self.assertIn("B", blockers)
+
+    def test_gate_b_accepts_physical_q1_without_owning_robot_control_freshness(self) -> None:
+        data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        rules = yaml.safe_load(
+            (REPOSITORY_ROOT / "configs" / "gate_rules.yaml").read_text(encoding="utf-8")
+        )
+
+        self.assertEqual(data["gates"]["B"]["state"], "accepted")
+        self.assertNotIn("timing.max_xr_pose_age_ms", rules["B"]["required_paths"])
+        self.assertIn("timing.max_xr_pose_age_ms", rules["R2"]["required_paths"])
+        self.assertIn("timing.max_xr_pose_age_ms", rules["HIL"]["required_paths"])
+        for gate_id in ("R2", "HIL"):
+            probe = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+            probe["gates"][gate_id]["state"] = "accepted"
+            self.assertIn(
+                f"gate {gate_id}: unresolved required path timing.max_xr_pose_age_ms",
+                validate_gates(probe, rules),
+            )
 
     def test_gate_a_rejects_an_unresolved_plugin_boundary(self) -> None:
         data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))

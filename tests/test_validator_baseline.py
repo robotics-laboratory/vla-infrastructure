@@ -13,7 +13,8 @@ def test_live_contract_is_valid_but_not_ready():
     errors, ready, blockers = mod.validate_contract(ROOT / "configs/resolved_contract.yaml")
     assert errors == []
     assert not ready
-    assert "B" in blockers and "R3" in blockers
+    assert "B" not in blockers
+    assert {"R2", "HIL", "R3"}.issubset(blockers)
 
 
 def test_all_gates_accepted_without_evidence_is_not_false_green(tmp_path):

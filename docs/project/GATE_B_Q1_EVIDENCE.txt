@@ -1,0 +1,149 @@
+GATE B / Q1 PHYSICAL QUEST EVIDENCE
+
+Q1 verdict: INCONCLUSIVE
+Physical Q1: PASS
+Timing contract: BLOCKED
+Evidence date: 2026-08-30
+Runtime log interval: 2026-08-30T13:47:30Z through 2026-08-30T13:51:21Z
+Execution profile / environment: quest_xr_real / core
+Headset: Meta Quest 3
+Invocation:
+uv run --group isaac-teleop python tools/quest_xr_diagnostics.py --no-auto-launch-cloudxr
+
+RUNTIME FACTS
+
+- Isaac Teleop: pinned and locally reported as 1.3.131.
+- CloudXR: runtime log reports version/tag 6.2.0.
+- CloudXR device profile: auto-webrtc; backend mode nvst-webrtc.
+- The Quest and host used the NVIDIA CloudXR WebXR path.
+- CloudXR was externally owned for this check. The diagnostic invocation disabled
+  auto-launch, so the diagnostic did not create or own a second CloudXR lifecycle.
+- The diagnostic source composes one process-local NVIDIA TeleopSession with one
+  ControllersSource whose LEFT and RIGHT outputs feed one combined pipeline.
+- No PIPER-X Robot object, CAN interface, action sender, or robot motion participated.
+
+HUMAN-VERIFIED OBSERVATIONS
+
+PASS - Quest 3 connected through the pinned NVIDIA CloudXR / Isaac Teleop path.
+PASS - Physical LEFT mapped to logical LEFT.
+PASS - Physical RIGHT mapped to logical RIGHT.
+PASS - LEFT and RIGHT motion streams were independent.
+PASS - Controller controls were received correctly in the diagnostic stream.
+PASS - Trigger, squeeze, and relevant controller inputs were observable.
+PASS - Both controller streams were available from the shared XR lifecycle.
+PASS - On intentional controller tracking loss, that controller was no longer
+       treated as a valid/fresh tracked pose.
+PASS - On tracking restoration, that controller stream recovered and resumed.
+PASS - After an intentional Quest disconnect/reconnect, controller streaming resumed.
+PASS - Reconnect did not create a second TeleopSession; the same single process-local
+       XR/TeleopSession lifecycle continued to own both LEFT and RIGHT streams.
+PASS - Intentional shutdown stopped streaming cleanly, with no observed duplicate or
+       lingering XR session lifecycle.
+PASS - No PIPER-X/CAN robot motion was involved.
+
+CORROBORATING RUNTIME / REPOSITORY EVIDENCE
+
+- The CloudXR server log reports runtime 6.2.0, deviceProfile auto-webrtc,
+  backendMode nvst-webrtc, and a connected PiperXQuest3BimanualDiagnostics client.
+- The same log registers Quest Touch Plus Left with chirality Left and equips it in
+  hand/left; it registers Quest Touch Plus Right with chirality Right and equips it
+  in hand/right.
+- tools/quest_xr_diagnostics.py constructs one ControllersSource and one
+  TeleopSession, exposes both source outputs, refuses a second live process-local
+  SharedQuestSession, and contains no robot/CAN/action-send path.
+- tests/test_quest_xr_diagnostics.py checks the one-session/two-output construction
+  and refusal of a second live session with fake NVIDIA objects. This is host-code
+  evidence only, not a substitute for physical behavior.
+
+PINNED TIMING AUDIT
+
+timing.teleop_sample_fps: RESOLVED AS 30 Hz
+
+- Upstream/default behavior, not a project safety threshold: pinned LeRobot 0.6.1
+  commit 7e241bd630a3719a56157a497ce5d08f244784f1 defines FPS = 30 in
+  examples/isaac_teleop_to_so101/common.py and paces teleoperate.py at 1/FPS.
+- The same pinned version's DatasetRecordConfig defaults fps to 30, and record.py
+  passes the selected dataset fps into a 1/fps paced recording loop.
+- tools/quest_xr_diagnostics.py defaults to a 0.25 s evidence-report sample period.
+  That 4 Hz diagnostic display/polling default is not the teleoperation runtime
+  cadence and is not used as timing.teleop_sample_fps.
+
+timing.stale_behavior: RESOLVED
+
+- Project safety behavior supported by physical Q1 and pinned upstream behavior:
+  an unavailable, inactive, invalid, or malformed controller sample is not a
+  valid/fresh pose and must not be used; pose use resumes only after a newly valid
+  tracked sample is available.
+- Isaac Teleop 1.3.131 ControllerTracker reports data=None when a controller is
+  inactive. ControllersSource emits an absent optional group in that case and
+  carries the upstream grip/aim validity flags for active data.
+- The pinned LeRobot XR controller treats an absent or malformed controller group
+  as not tracked and returns neutral pose/controls so its owning loop freezes/holds.
+- The physical Q1 tracking-loss and recovery observations confirm this behavior on
+  Quest 3. No robot/CAN command behavior was exercised or inferred.
+
+timing.max_xr_pose_age_ms: BLOCKED / NULL
+
+- This field is a project safety limit, not an observed/default upstream value.
+- Isaac Teleop 1.3.131 defines monotonic sample timestamps on
+  ControllerSnapshotRecord, but ControllerTracker returns ControllerSnapshotTrackedT,
+  whose public interface contains data only. The selected ControllersSource consumes
+  that timestamp-free tracked value and does not define or enforce a maximum age.
+- Pinned LeRobot 0.6.1 defines no numeric XR pose-age limit in this integration.
+- A 30 Hz loop has a nominal 33.333 ms period, but a sampling period is not evidence
+  for a permissible safety age and is not converted into a threshold here.
+- Required decision: the project safety owner must select max_xr_pose_age_ms from a
+  control/safety analysis and identify the timestamped measurement/enforcement
+  boundary. No value is guessed in this audit.
+
+SOURCE IDENTITIES AT AUDIT TIME
+
+- Repository revision: 9e94c9b867f9b11bdd70b49e7db8f897c9bf84ce
+- CloudXR server log source:
+  /home/ebulochkin/.cloudxr/logs/cxr_server.2026-08-30T134730Z.log
+  SHA-256: 28f5406a44aa30e1efcd2a5b4c2752f549519fc81001257540badf07194bb415
+- CloudXR WSS log source:
+  /home/ebulochkin/.cloudxr/logs/wss.2026-08-30T134735Z.log
+  SHA-256: 7d216d137a3cf52ec61aa2803d7b117dd5c2abc847d86d70720ba7763daa2f53
+- CloudXR environment source: /home/ebulochkin/.cloudxr/run/cloudxr.env
+  SHA-256: a41c9e5d504f4cca827eda98af5a5ef90756de6457021131b32f4db407fdb08b
+- Diagnostic source SHA-256:
+  03198e741e62cb7e0bda2b649d65dc1073ddc9259e5c5446339c6ae50834e1ae
+- Diagnostic test SHA-256:
+  d4bad5987465db1ffdd81fa7f1c042472588142b1ffe5104f064ea4d3f4c8d25
+- Core lock SHA-256:
+  a928d4df514c10bc77717e95a4b56ccffa4686041e9ed655c86f96d5fe586c33
+- Pinned LeRobot common.py SHA-256:
+  1c14dcb63cf65f023ae19f64e7fbb7958397ab4184bdc6fec514ee352eedac55
+- Pinned LeRobot teleoperate.py SHA-256:
+  f2ec88613136be6a3329f6329efada33c2c7e3310b2ee4a9a2736fe6634d1266
+- Pinned LeRobot record.py SHA-256:
+  b6bf6afa1c76b6abd844070ed32a0891986edc495730786b01f259b07f282640
+- Pinned LeRobot teleop_xr_controller.py SHA-256:
+  90055e9772923165e565393c0051e639f77c8d06618dcf6d983cabc6811f5fc0
+- Installed Isaac Teleop 1.3.131 controllers_source.py SHA-256:
+  087a294b4268d6b60a8d0ec444bbd5352a46872c823d2de25b8cdaf4a2c6489e
+- Installed Isaac Teleop 1.3.131 schema/_schema.pyi SHA-256:
+  50b2282d9ae33028b0e5c8e8be94b5dde00ff5636e431f911b26247247b228c3
+- Installed Isaac Teleop 1.3.131 deviceio tracker stub SHA-256:
+  5478019fcda641f78dbac07d1624c46ace62d05ab11875cb9ac7d4caea209f70
+
+INCONCLUSIVE / PENDING HUMAN EVIDENCE
+
+- None for the stated physical Q1 acceptance observations.
+
+INCONCLUSIVE / PENDING RESOLUTION
+
+- timing.max_xr_pose_age_ms.
+
+LIMITATIONS
+
+- No retained diagnostic stdout log was found in the repository. Controller motion,
+  independence, and control-input claims above rely only on the supplied human
+  observations.
+- Intentional disconnect/reconnect, lifecycle continuity, tracking loss/recovery,
+  and shutdown PASS claims rely on the supplied human observations, not inference
+  from ordinary streaming or absence of failures in logs.
+- Static source inspection and fake-object tests do not prove physical Quest behavior.
+- Source inspection establishes upstream defaults and interfaces; it does not select
+  the missing project-specific maximum XR pose age.
