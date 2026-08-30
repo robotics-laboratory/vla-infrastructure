@@ -1,0 +1,25 @@
+revision: piper_x_calibration_interface_v1
+status: interface_only_no_physical_values
+transform_convention: T_A_B transforms coordinates from frame B into frame A; p_A = T_A_B * p_B
+model_frames:
+  base: base_link
+  tool_mount: flange_link
+  model_tool: gripper_base
+  model_tcp: gripper_base
+per_arm_instance:
+  required_fields:
+  - arm_id
+  - model_revision
+  - source_date
+  - source_evidence_ids
+  - T_world_base_link
+  - T_gripper_base_operational_tcp
+  - sha256
+  initial_defaults:
+    T_gripper_base_operational_tcp: identity
+    note: Identity selects the authoritative model TCP; a measured operational TCP must replace it explicitly.
+device_zero_boundary:
+  owner: PIPER-X device/firmware
+  plugin_behavior: Joint and gripper values are passed through in Gate A units; calibrate() performs no model/task-frame calibration.
+  physical_validation_gate: R1
+invalidation_rule: A changed per-arm calibration revision/hash invalidates dependent embodiment and hardware evidence.

@@ -1426,6 +1426,7 @@
       "required": [
         "authoritative_source",
         "frames",
+        "calibration_interface",
         "calibration",
         "parity_tolerances"
       ],
@@ -1520,6 +1521,42 @@
                 "string",
                 "null"
               ]
+            }
+          }
+        },
+        "calibration_interface": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "revision",
+            "artifact_id",
+            "frame_convention",
+            "evidence_ids"
+          ],
+          "properties": {
+            "revision": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "artifact_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "frame_convention": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "evidence_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         },

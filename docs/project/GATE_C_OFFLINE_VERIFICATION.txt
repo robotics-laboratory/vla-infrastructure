@@ -1,0 +1,11 @@
+GATE C OFFLINE MODEL VERIFICATION: PASS
+MODEL: AgileX PIPER-X f6642ce0d7872c686f29c99e9e10cd23d1d49313
+FRAMES: base_link -> link1..link6 -> flange_link -> gripper_base (model TCP)
+JOINT MAP: plugin joint_1..joint_6 -> URDF joint1..joint6, sign +1, degrees
+GRIPPER: Gate A signed-mm action/absolute-mm observation preserved; URDF aperture remains model-native
+KINEMATICS: LeRobot 0.6.1 RobotKinematics / Placo 0.9.15
+FK REFERENCES: 2 PASS
+POSITIVE-DIRECTION REFERENCES: 6 PASS
+IK TARGET->SOLVE->FK: PASS within registered position/orientation tolerances and joint limits
+CALIBRATION: piper_x_calibration_interface_v1 (interface only; physical values deferred to R1)
+ROBOT/CAN ACTIVITY: NONE

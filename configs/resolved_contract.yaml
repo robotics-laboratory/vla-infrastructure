@@ -534,6 +534,12 @@ model:
     left_ee: gripper_base
     right_base: base_link
     right_ee: gripper_base
+  calibration_interface:
+    revision: piper_x_calibration_interface_v1
+    artifact_id: piper_x_calibration_interface
+    frame_convention: T_A_B transforms coordinates from frame B into frame A; p_A = T_A_B * p_B
+    evidence_ids:
+    - gate_c_offline_model_verification
   calibration:
     revision: null
     artifact_id: null
@@ -858,16 +864,46 @@ artifacts:
     description: Existing PIPER-X and host-XR offline test output plus uv lock check
   core_uv_lock:
     kind: environment_spec
-    sha256: a928d4df514c10bc77717e95a4b56ccffa4686041e9ed655c86f96d5fe586c33
+    sha256: d0bcb1242aac1a3893bf2f1ba59bd58897c9fb4ff4ada54a30aabcd085437a3e
     path: uv.lock
     uri: null
-    description: Core uv lock; pyproject.toml is the paired project specification
+    description: Core uv lock including LeRobot 0.6.1's official kinematics extra for Gate C; pyproject.toml is the paired project specification
   piper_x_authoritative_xacro:
     kind: model_asset
     sha256: 0ee3f52f9acf3060a7f3e439c6e5e46b6a53d4fa509dd495045548be6b7f90cd
     path: null
     uri: https://raw.githubusercontent.com/agilexrobotics/agx_arm_urdf/f6642ce0d7872c686f29c99e9e10cd23d1d49313/piper_x/urdf/piper_x_with_gripper_description.xacro
     description: Pinned PIPER-X-with-gripper Xacro identity preserved from the old contract
+  piper_x_base_urdf_lf:
+    kind: model_asset
+    sha256: e47b92d15c89ea7f8a9cb825f058e10cb61d56ca6aebf9d2aab11868c9265974
+    path: artifacts/piper_x/f6642ce0d7872c686f29c99e9e10cd23d1d49313/piper_x_description.urdf
+    uri: https://raw.githubusercontent.com/agilexrobotics/agx_arm_urdf/f6642ce0d7872c686f29c99e9e10cd23d1d49313/piper_x/urdf/piper_x_description.urdf
+    description: Pinned official PIPER-X base URDF with source CRLF normalized to repository LF; verifier checks upstream SHA-256 34126caa...
+  piper_x_gripper_xacro_lf:
+    kind: model_asset
+    sha256: 497de5cb4e8bbefbe32bf5e18177877e2cdb74af2e6b2fb47bb9156fb0e8e1b3
+    path: artifacts/piper_x/f6642ce0d7872c686f29c99e9e10cd23d1d49313/piper_x_with_gripper_description.xacro
+    uri: https://raw.githubusercontent.com/agilexrobotics/agx_arm_urdf/f6642ce0d7872c686f29c99e9e10cd23d1d49313/piper_x/urdf/piper_x_with_gripper_description.xacro
+    description: Pinned official PIPER-X gripper Xacro with source CRLF normalized to repository LF; verifier reconstructs and checks the authoritative SHA-256
+  piper_x_model_contract:
+    kind: processor_config
+    sha256: 5993bbb998ccb91579e6c9e4aca4f5391b50203f4ebd8e9c5896993dc4e6bd2d
+    path: configs/piper_x_model_contract.yaml
+    uri: null
+    description: PIPER-X-specific frame, joint rename/sign, gripper, FK, IK, and positive-direction reference configuration
+  piper_x_calibration_interface:
+    kind: calibration
+    sha256: 71a1eafe1ce08acc31ce24f8d0762a0d3f891a4a19ee7c535600da66a5ba7b3a
+    path: configs/piper_x_calibration_interface.yaml
+    uri: null
+    description: Calibration interface only; physical per-arm transform values and evidence remain deferred to R1
+  gate_c_offline_verification:
+    kind: test_output
+    sha256: 59190d592f306061fe7b003f2aecd0c844bc608e3328715036d036ddd8b6335c
+    path: docs/project/GATE_C_OFFLINE_VERIFICATION.txt
+    uri: null
+    description: Deterministic no-hardware Gate C model, frame, joint, gripper, FK, positive-direction, IK, and calibration-interface verification output
   final_m0_checks:
     kind: test_output
     sha256: a3c8d85ab0554a117644ba470a2cce7ff1d66ab55305f6623b0ef26f6f79a89b
@@ -1195,6 +1231,34 @@ evidence:
     path: examples/isaac_teleop_to_so101/common.py; examples/isaac_teleop_to_so101/teleoperate.py; examples/isaac_teleop_to_so101/record.py; examples/isaac_teleop_to_so101/isaac_teleop/teleop_xr_controller.py
     symbol: FPS; teleoperate; DatasetRecordConfig; XRController.get_action; ControllersSource; ControllerSnapshotTrackedT
     notes: The 30 Hz value is an upstream default, while max_xr_pose_age_ms remains an unselected project safety limit. Installed Isaac Teleop 1.3.131 source identities are recorded in the artifact.
+  gate_c_lerobot_kinematics_audit:
+    kind: upstream_source
+    status: pass
+    summary: Pinned LeRobot provides the selected Placo-backed degree-input FK and seeded IK implementation with explicit joint-name and target-frame configuration.
+    timestamp: '2026-08-30T19:09:49+03:00'
+    command: null
+    artifact_ids:
+    - piper_x_model_contract
+    repository: https://github.com/huggingface/lerobot
+    revision_type: commit
+    revision: 7e241bd630a3719a56157a497ce5d08f244784f1
+    path: src/lerobot/model/kinematics.py
+    symbol: RobotKinematics; forward_kinematics; inverse_kinematics
+    notes: The PIPER-X-specific verifier only composes the pinned one-include Xacro, removes mesh-only geometry for offline parsing, and supplies the explicit joint rename list; it implements no FK/IK mathematics.
+  gate_c_offline_model_verification:
+    kind: command_test
+    status: pass
+    summary: Pinned PIPER-X source hashes, frames, joint order/signs/limits, gripper model semantics, FK references, positive perturbations, seeded IK reference, and calibration interface passed offline.
+    timestamp: '2026-08-30T19:09:49+03:00'
+    command: uv run python tools/verify_piperx_model.py
+    artifact_ids:
+    - gate_c_offline_verification
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: No Robot class was instantiated, no CAN path was accessed, and no hardware motion occurred. Physical gripper polarity/range and measured per-arm calibration remain R1 work.
 gates:
   M0:
     state: accepted
@@ -1240,12 +1304,19 @@ gates:
     - gate_b_q1_evidence_log
     notes: Physical Q1 is PASS and all Gate B XR identity/session/behavior requirements are satisfied. The unresolved max_xr_pose_age_ms safety limit is owned by the later real teleop-to-robot-control boundary gates R2 and HIL.
   C:
-    state: resolved
+    state: accepted
     evidence_ids:
     - v43_model_urdf
+    - gate_c_lerobot_kinematics_audit
+    - gate_c_offline_model_verification
     artifact_ids:
     - piper_x_authoritative_xacro
-    notes: Pinned model/frame facts migrated; v5.2 offline FK/IK/reference command tests are not complete.
+    - piper_x_base_urdf_lf
+    - piper_x_gripper_xacro_lf
+    - piper_x_model_contract
+    - piper_x_calibration_interface
+    - gate_c_offline_verification
+    notes: Authoritative PIPER-X model, frame/TCP, joint rename/sign/order, gripper model boundary, calibration interface, and upstream LeRobot FK/IK checks are accepted offline. Physical calibration and gripper polarity/range remain R1 evidence.
   D0:
     state: unresolved
     evidence_ids: []

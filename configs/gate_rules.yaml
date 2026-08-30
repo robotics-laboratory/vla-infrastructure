@@ -87,6 +87,9 @@ C:
   - model.frames.left_ee
   - model.frames.right_base
   - model.frames.right_ee
+  - model.calibration_interface.revision
+  - model.calibration_interface.artifact_id
+  - model.calibration_interface.frame_convention
   required_nonempty_paths: []
   required_evidence_kinds:
   - upstream_source
@@ -94,6 +97,7 @@ C:
   required_artifact_kinds:
   - model_asset
   - test_output
+  - calibration
   mandatory: true
 D0:
   prerequisites:

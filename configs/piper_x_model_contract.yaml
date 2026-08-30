@@ -1,0 +1,146 @@
+revision: piper_x_model_contract_v1
+model:
+  name: piper_x
+  repository: https://github.com/agilexrobotics/agx_arm_urdf
+  commit: f6642ce0d7872c686f29c99e9e10cd23d1d49313
+  base_urdf:
+    path: piper_x/urdf/piper_x_description.urdf
+    upstream_sha256_crlf: 34126caac7d5b37bc2409f337ac246afbe0bb8cd47fc9f16df5038f19bd21e3a
+    local_path: artifacts/piper_x/f6642ce0d7872c686f29c99e9e10cd23d1d49313/piper_x_description.urdf
+    local_sha256_lf: e47b92d15c89ea7f8a9cb825f058e10cb61d56ca6aebf9d2aab11868c9265974
+  gripper_xacro:
+    path: piper_x/urdf/piper_x_with_gripper_description.xacro
+    upstream_sha256_crlf: 0ee3f52f9acf3060a7f3e439c6e5e46b6a53d4fa509dd495045548be6b7f90cd
+    local_path: artifacts/piper_x/f6642ce0d7872c686f29c99e9e10cd23d1d49313/piper_x_with_gripper_description.xacro
+    local_sha256_lf: 497de5cb4e8bbefbe32bf5e18177877e2cdb74af2e6b2fb47bb9156fb0e8e1b3
+  local_normalization: Exact upstream text with CRLF normalized to LF; verifier checks both local and reconstructed upstream hashes.
+frames:
+  root: world
+  base: base_link
+  serial_links: [link1, link2, link3, link4, link5, link6]
+  flange: flange_link
+  tool: gripper_base
+  tcp: gripper_base
+  world_to_base_link:
+    xyz_m: [0.0, 0.0, 0.0]
+    rpy_rad: [0.0, 0.0, 0.0]
+  link6_to_flange_link:
+    xyz_m: [0.0, 0.0, 0.0]
+    rpy_rad: [0.0, 0.0, 0.0]
+  flange_link_to_gripper_base:
+    xyz_m: [0.0, 0.0, 0.0045]
+    rpy_rad: [0.0, 0.0, 1.5707963]
+  namespace: Frame names are arm-local; bimanual runtimes must namespace each model instance.
+joint_mapping:
+- plugin_name: joint_1
+  urdf_name: joint1
+  order: 1
+  scale_urdf_rad_per_plugin_degree: 0.017453292519943295
+  sign: 1
+  limits_deg: [-150.0, 150.0]
+- plugin_name: joint_2
+  urdf_name: joint2
+  order: 2
+  scale_urdf_rad_per_plugin_degree: 0.017453292519943295
+  sign: 1
+  limits_deg: [0.0, 180.0]
+- plugin_name: joint_3
+  urdf_name: joint3
+  order: 3
+  scale_urdf_rad_per_plugin_degree: 0.017453292519943295
+  sign: 1
+  limits_deg: [-170.0, 0.0]
+- plugin_name: joint_4
+  urdf_name: joint4
+  order: 4
+  scale_urdf_rad_per_plugin_degree: 0.017453292519943295
+  sign: 1
+  limits_deg: [-89.0, 89.0]
+- plugin_name: joint_5
+  urdf_name: joint5
+  order: 5
+  scale_urdf_rad_per_plugin_degree: 0.017453292519943295
+  sign: 1
+  limits_deg: [-89.0, 89.0]
+- plugin_name: joint_6
+  urdf_name: joint6
+  order: 6
+  scale_urdf_rad_per_plugin_degree: 0.017453292519943295
+  sign: 1
+  limits_deg: [-120.0, 120.0]
+gripper:
+  gate_a_action: Signed piper_sdk travel command in millimeters; sign is preserved to GripperCtrl.
+  gate_a_observation: Absolute value of piper_sdk reported travel in millimeters.
+  model_joint: gripper
+  model_coordinate: Nonnegative full aperture in meters.
+  model_limits_m: [0.0, 0.1]
+  finger_mimics:
+    gripper_joint1: {multiplier: 0.5, offset: 0.0}
+    gripper_joint2: {multiplier: -0.5, offset: 0.0}
+  mapping_boundary: The URDF aperture is not the Gate A training label; runtime mapping awaits physical zero/polarity/range evidence at R1.
+kinematics:
+  implementation: lerobot.model.RobotKinematics
+  lerobot_version: 0.6.1
+  lerobot_revision: 7e241bd630a3719a56157a497ce5d08f244784f1
+  solver: placo
+  target_frame: gripper_base
+  joint_names: [joint1, joint2, joint3, joint4, joint5, joint6]
+  input_units: degree
+  source_composition: Resolve the one pinned Xacro include and omit mesh-only visual/collision elements for offline parsing.
+verification:
+  matrix_absolute_tolerance: 1.0e-9
+  joint_limit_tolerance_deg: 1.0e-5
+  ik_position_tolerance_m: 1.0e-8
+  ik_orientation_tolerance_rad: 1.0e-8
+  ik_iterations: 100
+  ik_target_q_deg: [0.0, 30.0, -60.0, 15.0, 20.0, -25.0]
+  ik_seed_q_deg: [0.0, 20.0, -50.0, 5.0, 10.0, -15.0]
+  fk_references:
+    zero:
+      q_deg: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+      T_base_tcp:
+      - [0.086981942705, -0.00000002799, 0.996209888348, 0.101120963592]
+      - [-0.000000052927, 1.0, 0.000000032718, 0.000000003926]
+      - [-0.996209888348, -0.000000055572, 0.086981942705, 0.217196009152]
+      - [0.0, 0.0, 0.0, 1.0]
+    sample:
+      q_deg: [0.0, 30.0, -60.0, 15.0, 20.0, -25.0]
+      T_base_tcp:
+      - [0.173991421797, 0.435774849386, 0.883078289725, 0.090577440903]
+      - [-0.397131303646, 0.851650735027, -0.342020106415, -0.013509784056]
+      - [-0.901118034891, -0.291189467822, 0.321239756295, 0.510291743817]
+      - [0.0, 0.0, 0.0, 1.0]
+  positive_direction_reference:
+    q_deg: [0.0, 30.0, -60.0, 0.0, 20.0, 0.0]
+    delta_deg: 1.0
+    T_base_tcp:
+      joint_1:
+      - [0.573346173965, 0.263758132813, 0.775696984766, 0.077332223229]
+      - [0.010007759003, 0.944439693048, -0.328532359068, -0.012162002359]
+      - [-0.819252103787, 0.196125759578, 0.538851256722, 0.536176960631]
+      - [0.0, 0.0, 0.0, 1.0]
+      joint_2:
+      - [0.559048252652, 0.283580897529, 0.779132161936, 0.084307377239]
+      - [-0.000000035999, 0.939692636055, -0.342020101374, -0.013509783429]
+      - [-0.829135122405, 0.191205711997, 0.525333536426, 0.534768308327]
+      - [0.0, 0.0, 0.0, 1.0]
+      joint_3:
+      - [0.559048252652, 0.283580897529, 0.779132161936, 0.081225556995]
+      - [-0.000000035999, 0.939692636055, -0.342020101374, -0.013509783544]
+      - [-0.829135122405, 0.191205711997, 0.525333536426, 0.530863245596]
+      - [0.0, 0.0, 0.0, 1.0]
+      joint_4:
+      - [0.559048252652, 0.283580897529, 0.779132161936, 0.078212891633]
+      - [-0.000000035999, 0.939692636055, -0.342020101374, -0.013509783457]
+      - [-0.829135122405, 0.191205711997, 0.525333536426, 0.534569007377]
+      - [0.0, 0.0, 0.0, 1.0]
+      joint_5:
+      - [0.573433509819, 0.293593681022, 0.764837734608, 0.076910395562]
+      - [-0.000000035083, 0.93358044262, -0.358367907543, -0.014155521775]
+      - [-0.819252103944, 0.205500140197, 0.53534632021, 0.536038515639]
+      - [0.0, 0.0, 0.0, 1.0]
+      joint_6:
+      - [0.578236349957, 0.270150235943, 0.7698451621, 0.077108188948]
+      - [0.016399862134, 0.939549517056, -0.342020101049, -0.013509783418]
+      - [-0.815704461254, 0.210393809365, 0.538851256722, 0.536176960631]
+      - [0.0, 0.0, 0.0, 1.0]

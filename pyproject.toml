@@ -6,7 +6,7 @@ requires-python = "==3.12.13"
 dependencies = [
     "PyYAML==6.0.3",
     "jsonschema==4.26.0",
-    "lerobot==0.6.1",
+    "lerobot[kinematics]==0.6.1",
     "lerobot_robot_piperx",
     "piper-sdk==0.6.1",
 ]
