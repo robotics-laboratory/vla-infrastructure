@@ -1,0 +1,583 @@
+M0:
+  prerequisites: []
+  required_paths:
+  - migration.mode
+  - migration.state
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - command_test
+  required_artifact_kinds:
+  - test_output
+  mandatory: true
+E0:
+  prerequisites:
+  - M0
+  required_paths:
+  - environments.core.manager
+  - environments.core.python_version
+  - environments.core.spec_artifact_id
+  - environments.core.canonical_launch_prefix
+  - execution_profiles.offline_tests.command
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - command_test
+  required_artifact_kinds:
+  - environment_spec
+  - test_output
+  mandatory: true
+A:
+  prerequisites:
+  - E0
+  required_paths:
+  - implementation.lerobot.version
+  - implementation.lerobot.revision
+  - implementation.robot_plugin.package
+  - implementation.robot_plugin.version
+  - implementation.driver.backend
+  - implementation.driver.version
+  - implementation.driver.command_api
+  - robot_contract.revision
+  - robot_contract.action_representation
+  - robot_contract.observation_representation
+  - robot_contract.processor_contract_revision
+  - robot_contract.gripper.policy_meaning
+  - robot_contract.gripper.units
+  required_nonempty_paths:
+  - robot_contract.action_features
+  - robot_contract.observation_features
+  required_evidence_kinds:
+  - upstream_source
+  - command_test
+  required_artifact_kinds:
+  - test_output
+  mandatory: true
+B:
+  prerequisites:
+  - E0
+  required_paths:
+  - implementation.isaac_teleop.version
+  - teleop.real.resolved_implementation
+  - teleop.real.left_source
+  - teleop.real.right_source
+  - execution_profiles.quest_xr_real.command
+  - timing.clock_domain
+  - timing.teleop_sample_fps
+  - timing.max_xr_pose_age_ms
+  - timing.stale_behavior
+  required_nonempty_paths:
+  - teleop.real.evidence_ids
+  required_evidence_kinds:
+  - human_gate
+  - command_test
+  required_artifact_kinds:
+  - log
+  - test_output
+  human_evidence_required: true
+  mandatory: true
+C:
+  prerequisites:
+  - A
+  required_paths:
+  - model.authoritative_source.repository
+  - model.authoritative_source.revision_type
+  - model.authoritative_source.revision
+  - model.authoritative_source.path
+  - model.authoritative_source.sha256
+  - model.authoritative_source.artifact_id
+  - model.frames.left_base
+  - model.frames.left_ee
+  - model.frames.right_base
+  - model.frames.right_ee
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - upstream_source
+  - command_test
+  required_artifact_kinds:
+  - model_asset
+  - test_output
+  mandatory: true
+D0:
+  prerequisites:
+  - A
+  - C
+  required_paths:
+  - dataset.temporal_semantics.causality_test_evidence_id
+  - dataset.common_training_view.task_feature
+  - dataset.common_training_view.schema_fingerprint_sha256
+  - dataset.provenance_schema.storage
+  - timing.dataset_fps
+  required_nonempty_paths:
+  - dataset.common_training_view.input_features
+  - dataset.feature_classification.training_input
+  - dataset.provenance_schema.fields
+  - dataset.cameras
+  required_evidence_kinds:
+  - command_test
+  required_artifact_kinds:
+  - test_output
+  - processor_config
+  mandatory: true
+  special_check: dataset_contract
+S0:
+  prerequisites:
+  - D0
+  - C
+  - E0
+  required_paths:
+  - implementation.isaac_lab.version
+  - implementation.isaac_lab.revision
+  - implementation.mujoco.version
+  - implementation.mujoco.revision
+  - environments.isaac.manager
+  - environments.mujoco.manager
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - upstream_source
+  - document_review
+  required_artifact_kinds:
+  - report
+  mandatory: true
+S1:
+  prerequisites:
+  - S0
+  required_paths:
+  - simulation.isaac.robot_asset.source
+  - simulation.isaac.robot_asset.revision
+  - simulation.isaac.robot_asset.artifact_id
+  - simulation.isaac.task.task_id
+  - simulation.isaac.task.revision
+  - simulation.isaac.processors.observation_to_policy
+  - simulation.isaac.processors.policy_action_to_native
+  - simulation.isaac.processors.reset_semantics
+  - simulation.isaac.execution.physics_dt_s
+  - simulation.isaac.execution.control_dt_s
+  - simulation.isaac.execution.action_repeat
+  - simulation.isaac.execution.control_mode
+  - simulation.isaac.execution.actuator_type
+  - simulation.isaac.execution.saturation_semantics
+  - simulation.isaac.execution.reset_seed_protocol
+  - simulation.isaac.parity.report_artifact_id
+  - execution_profiles.isaac_env.command
+  - model.parity_tolerances.position_m
+  - model.parity_tolerances.orientation_rad
+  - model.parity_tolerances.zero_position
+  - model.parity_tolerances.joint_limit
+  required_nonempty_paths:
+  - simulation.isaac.parity.evidence_ids
+  required_evidence_kinds:
+  - command_test
+  - artifact_validation
+  required_artifact_kinds:
+  - model_asset
+  - parity_report
+  - test_output
+  mandatory: true
+S2:
+  prerequisites:
+  - S1
+  required_paths:
+  - teleop.isaac.resolved_implementation
+  - teleop.isaac.left_source
+  - teleop.isaac.right_source
+  - teleop.isaac.processor_revision
+  - execution_profiles.isaac_vr_record.command
+  required_nonempty_paths:
+  - teleop.isaac.evidence_ids
+  required_evidence_kinds:
+  - human_gate
+  - command_test
+  required_artifact_kinds:
+  - log
+  - test_output
+  human_evidence_required: true
+  mandatory: true
+D1:
+  prerequisites:
+  - S2
+  - D0
+  required_paths:
+  - dataset.temporal_semantics.converters.isaac_human.obs_t_field
+  - dataset.temporal_semantics.converters.isaac_human.action_t_field
+  - dataset.temporal_semantics.converters.isaac_human.outcome_field
+  - dataset.temporal_semantics.converters.isaac_human.termination_field
+  - simulation.isaac.recorder.backend
+  - simulation.isaac.recorder.native_format
+  - simulation.isaac.recorder.conversion_revision
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - artifact_validation
+  - command_test
+  required_artifact_kinds:
+  - dataset_manifest
+  - test_output
+  required_dataset_source:
+    runtime: isaac
+    source_class: human_vr
+  mandatory: true
+G1:
+  prerequisites:
+  - S1
+  - D0
+  required_paths:
+  - simulation.isaac.generator.source_class
+  - simulation.isaac.generator.backend
+  - simulation.isaac.generator.revision
+  - simulation.isaac.generator.requires_seed_demos
+  - simulation.isaac.generator.success_signal
+  - simulation.isaac.generator.report_artifact_id
+  - dataset.temporal_semantics.converters.isaac_automated.obs_t_field
+  - dataset.temporal_semantics.converters.isaac_automated.action_t_field
+  - dataset.temporal_semantics.converters.isaac_automated.outcome_field
+  - dataset.temporal_semantics.converters.isaac_automated.termination_field
+  - simulation.isaac.generator.report_summary.attempted
+  - simulation.isaac.generator.report_summary.successful
+  - simulation.isaac.generator.report_summary.rejected
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - run
+  - artifact_validation
+  required_artifact_kinds:
+  - dataset_manifest
+  - generation_report
+  required_dataset_source_runtime: isaac
+  required_dataset_source_automated: true
+  mandatory: true
+D2a:
+  prerequisites:
+  - D1
+  - G1
+  required_paths: []
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - artifact_validation
+  required_artifact_kinds:
+  - parity_report
+  mandatory: true
+M1:
+  prerequisites:
+  - S0
+  required_paths:
+  - simulation.mujoco.model_asset.source
+  - simulation.mujoco.model_asset.revision
+  - simulation.mujoco.model_asset.artifact_id
+  - simulation.mujoco.task.task_id
+  - simulation.mujoco.task.revision
+  - simulation.mujoco.processors.observation_to_policy
+  - simulation.mujoco.processors.policy_action_to_native
+  - simulation.mujoco.processors.reset_semantics
+  - simulation.mujoco.execution.physics_dt_s
+  - simulation.mujoco.execution.control_dt_s
+  - simulation.mujoco.execution.action_repeat
+  - simulation.mujoco.execution.control_mode
+  - simulation.mujoco.execution.actuator_type
+  - simulation.mujoco.execution.saturation_semantics
+  - simulation.mujoco.execution.reset_seed_protocol
+  - simulation.mujoco.parity.report_artifact_id
+  - execution_profiles.mujoco_env.command
+  - model.parity_tolerances.position_m
+  - model.parity_tolerances.orientation_rad
+  - model.parity_tolerances.zero_position
+  - model.parity_tolerances.joint_limit
+  required_nonempty_paths:
+  - simulation.mujoco.parity.evidence_ids
+  required_evidence_kinds:
+  - command_test
+  - artifact_validation
+  required_artifact_kinds:
+  - model_asset
+  - parity_report
+  - test_output
+  mandatory: true
+E1:
+  prerequisites:
+  - S1
+  required_paths:
+  - evaluation.isaac_run
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - run
+  required_artifact_kinds:
+  - run_manifest
+  - eval_result
+  mandatory: true
+  special_check: eval_isaac
+E2:
+  prerequisites:
+  - M1
+  required_paths:
+  - evaluation.mujoco_run
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - run
+  required_artifact_kinds:
+  - run_manifest
+  - eval_result
+  mandatory: true
+  special_check: eval_mujoco
+E3:
+  prerequisites:
+  - E1
+  - E2
+  required_paths:
+  - evaluation.shared_policy_contract_revision
+  - evaluation.cross_sim.initial_condition_policy
+  - evaluation.cross_sim.parity_report_artifact_id
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - artifact_validation
+  required_artifact_kinds:
+  - parity_report
+  special_check: cross_sim
+  mandatory: true
+R0:
+  prerequisites:
+  - A
+  - C
+  - E0
+  required_paths:
+  - hardware.left.can_interface
+  - hardware.left.identity
+  - hardware.left.firmware_actual
+  - hardware.left.driver_profile
+  - hardware.left.command_api
+  - hardware.left.command_mode
+  - hardware.left.sign_semantics_revision
+  - hardware.right.can_interface
+  - hardware.right.identity
+  - hardware.right.firmware_actual
+  - hardware.right.driver_profile
+  - hardware.right.command_api
+  - hardware.right.command_mode
+  - hardware.right.sign_semantics_revision
+  - execution_profiles.piper_readonly.command
+  required_nonempty_paths:
+  - hardware.left.evidence_ids
+  - hardware.right.evidence_ids
+  required_evidence_kinds:
+  - hardware_observation
+  required_artifact_kinds:
+  - hardware_log
+  hardware_evidence_required: true
+  mandatory: true
+R1:
+  prerequisites:
+  - R0
+  required_paths:
+  - safety.max_joint_step_or_slew.mode
+  - safety.max_joint_step_or_slew.value
+  - safety.max_joint_step_or_slew.units
+  - safety.low_level_fail_safe.owner
+  - safety.low_level_fail_safe.trigger
+  - safety.low_level_fail_safe.deadline_ms
+  - safety.low_level_fail_safe.effect
+  - timing.max_joint_state_age_ms
+  - execution_profiles.piper_motion.command
+  - model.calibration.revision
+  - model.calibration.artifact_id
+  - model.calibration.frame_convention
+  required_nonempty_paths:
+  - safety.low_level_fail_safe.evidence_ids
+  - safety.max_joint_step_or_slew.evidence_ids
+  - model.calibration.evidence_ids
+  required_evidence_kinds:
+  - hardware_observation
+  - human_gate
+  required_artifact_kinds:
+  - safety_report
+  - hardware_log
+  - calibration
+  human_evidence_required: true
+  hardware_evidence_required: true
+  mandatory: true
+R1B:
+  prerequisites:
+  - R1
+  required_paths:
+  - safety.bimanual.collision_strategy
+  - safety.bimanual.workspace_artifact_id
+  required_nonempty_paths:
+  - safety.bimanual.evidence_ids
+  required_evidence_kinds:
+  - human_gate
+  - hardware_observation
+  required_artifact_kinds:
+  - workspace_model
+  - safety_report
+  human_evidence_required: true
+  hardware_evidence_required: true
+  mandatory: true
+R2:
+  prerequisites:
+  - B
+  - R1B
+  - D0
+  required_paths:
+  - dataset.temporal_semantics.converters.real_human.obs_t_field
+  - dataset.temporal_semantics.converters.real_human.action_t_field
+  - dataset.temporal_semantics.converters.real_human.outcome_field
+  - dataset.temporal_semantics.converters.real_human.termination_field
+  - execution_profiles.real_dataset_record.command
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - human_gate
+  - artifact_validation
+  required_artifact_kinds:
+  - dataset_manifest
+  - hardware_log
+  human_evidence_required: true
+  required_dataset_source:
+    runtime: real
+    source_class: human_vr
+  mandatory: true
+D2b:
+  prerequisites:
+  - D2a
+  - R2
+  required_paths: []
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - artifact_validation
+  required_artifact_kinds:
+  - parity_report
+  mandatory: true
+DM:
+  prerequisites:
+  - D2b
+  required_paths:
+  - dataset.materialization.projection_artifact_id
+  - dataset.materialization.final_dataset.identity_type
+  - dataset.materialization.final_dataset.manifest_artifact_id
+  - dataset.materialization.final_dataset.schema_fingerprint_sha256
+  - execution_profiles.dataset_materialize.command
+  required_nonempty_paths:
+  - dataset.materialization.selected_source_ids
+  - dataset.materialization.projected_schema_fingerprints
+  required_evidence_kinds:
+  - artifact_validation
+  required_artifact_kinds:
+  - dataset_manifest
+  - projection_config
+  special_check: dataset_materialization
+  mandatory: true
+DQ:
+  prerequisites:
+  - DM
+  required_paths:
+  - dataset.qa.report_artifact_id
+  - execution_profiles.dataset_qa.command
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - artifact_validation
+  - command_test
+  required_artifact_kinds:
+  - qa_report
+  - test_output
+  mandatory: true
+T0:
+  prerequisites:
+  - DQ
+  required_paths: []
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - command_test
+  required_artifact_kinds:
+  - checkpoint
+  - test_output
+  mandatory_if: requirements.capabilities.training_compatibility_smoke
+HIL:
+  prerequisites:
+  - R1B
+  - B
+  - D0
+  required_paths:
+  - hil.generation_owner
+  - hil.generation_invalidation_scope
+  - hil.stale_chunk_policy
+  - hil.rebase_implementation
+  - hil.mixed_modes.human_left_policy_right.policy_observation_scope
+  - hil.mixed_modes.human_left_policy_right.suppressed_arm_policy_action
+  - hil.mixed_modes.human_left_policy_right.untouched_arm_chunk_policy
+  - hil.mixed_modes.policy_left_human_right.policy_observation_scope
+  - hil.mixed_modes.policy_left_human_right.suppressed_arm_policy_action
+  - hil.mixed_modes.policy_left_human_right.untouched_arm_chunk_policy
+  - safety.takeover_jump_tolerance.value
+  - safety.takeover_jump_tolerance.units
+  - execution_profiles.hil.command
+  required_nonempty_paths:
+  - hil.evidence_ids
+  required_evidence_kinds:
+  - command_test
+  - human_gate
+  required_artifact_kinds:
+  - test_output
+  - hardware_log
+  human_evidence_required: true
+  mandatory_if: requirements.capabilities.hil
+R3:
+  prerequisites:
+  - R1B
+  - E1
+  - E2
+  - E3
+  required_paths:
+  - real_rollout.checkpoint_artifact_id
+  - real_rollout.checkpoint_sha256
+  - real_rollout.policy_config_artifact_id
+  - real_rollout.preprocessor_artifact_id
+  - real_rollout.postprocessor_artifact_id
+  - real_rollout.task_id
+  - real_rollout.task_revision
+  - real_rollout.start_stop_procedure_artifact_id
+  - real_rollout.authorization_evidence_id
+  - real_rollout.accepted_command_log_artifact_id
+  - real_rollout.result_artifact_id
+  - execution_profiles.real_rollout.command
+  - timing.policy_inference_fps
+  - timing.robot_command_fps
+  - timing.max_policy_action_age_ms
+  - timing.inference.mode
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - human_gate
+  - run
+  - hardware_observation
+  required_artifact_kinds:
+  - run_manifest
+  - rollout_result
+  - hardware_log
+  - safety_report
+  human_evidence_required: true
+  hardware_evidence_required: true
+  special_check: real_rollout
+  mandatory_if: requirements.capabilities.real_rollout
+  conditional_prerequisites:
+    requirements.capabilities.hil:
+    - HIL
+B0:
+  prerequisites:
+  - S0
+  required_paths:
+  - benchmark.integration.raw_artifact_policy
+  - benchmark.integration.profile_template
+  - execution_profiles.benchmark_template.command
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - document_review
+  - command_test
+  required_artifact_kinds:
+  - benchmark_protocol
+  - test_output
+  mandatory_if: requirements.capabilities.benchmark_native_architecture
+B1:
+  prerequisites:
+  - B0
+  required_paths:
+  - benchmark.selected
+  required_nonempty_paths: []
+  required_evidence_kinds:
+  - run
+  required_artifact_kinds:
+  - run_manifest
+  - eval_result
+  - benchmark_protocol
+  mandatory_if: requirements.capabilities.selected_benchmark

@@ -1,203 +1,86 @@
 # SAFETY_TIMING.md
 
-## 1. Canonical action-label terminology
+## Machine-readable ownership
 
-Do not invent new action classes; use these names only to reason about pipeline points.
+All resolved values below live in `configs/resolved_contract.yaml`.
 
-```text
-data_action
-    action in the resolved dataset/policy semantic space
-
-dataset_action
-    output after all deterministic transformations that the project intentionally
-    wants reflected in the training label
-
-device_accepted_command
-    command actually accepted/sent after Robot/driver/device residual behavior,
-    when observable
-```
-
-Canonical flow:
-
-```text
-policy/human data_action
-↓
-HIL merge if applicable
-↓
-deterministic label processors
-  limits / slew / conversions / IK only where applicable to the chosen data space
-↓
-dataset_action
-├─> dataset.action
-└─> normal Robot/send path
-      ↓
-residual Robot/driver/device safety
-      ↓
-device_accepted_command (if observable)
-```
-
-For the baseline joint-space dataset, IK is normally before the data action reaches this label path, not repeated here.
-
----
-
-## 2. Deterministic vs residual safety
-
-Reuse current safety first.
-
-Inspect:
-
-```text
-LeRobot processors
-selected Robot/plugin
-selected AgileX driver
-device/controller
-```
-
-Move/share deterministic transformations that should define the learning target into the resolved label-processor sequence where practical.
-
-Keep emergency/device-native clamp as residual safety.
-
-If residual behavior changes the command, make the mismatch diagnosable. Store `device_accepted_command` only if the actual workflow needs it and it is observable.
-
----
-
-## 3. Freshness clock domain
-
-Default safety timebase:
-
-> host monotonic receipt/capture timestamp unless an explicitly synchronized clock domain is configured and verified.
-
-Never compare unrelated Quest/robot/host wall clocks for safety age.
-
-Source timestamps may still be recorded as diagnostics.
-
-Resolve numeric:
-
-```text
-max_xr_pose_age_ms
-max_joint_state_age_ms
-max_policy_action_age_ms
-```
-
-and explicit stale behavior for each:
-
-```text
-stale XR -> hold | pause | stop | other resolved fail-safe
-stale joint state -> ...
-stale policy action -> ...
-```
-
-These behaviors belong in `configs/resolved_contract.yaml`.
-
----
-
-## 4. Watchdog / fail-safe
-
-Strong invariant:
-
-> failure/stall of the main process AND failure/stall of an optional hardware-host process must not permit indefinite continuation of the last command.
-
-Preferred evidence order:
-
-```text
-1. device/controller/firmware deadline or command timeout
-2. driver/SDK fail-safe that is actually backed by controller/device behavior
-3. separate hardware-host heartbeat as an additional layer
-```
-
-A same-process thread is insufficient.
-
-A separate host process alone is not a complete substitute if it can hang after the last command.
+## Timing
 
 Resolve:
 
 ```text
+clock domain
+dataset FPS
+teleop sampling FPS
+camera FPS by canonical role
+policy inference FPS
+robot command FPS
+Isaac physics/control dt and decimation
+MuJoCo physics/control dt and decimation
+max XR pose age
+max joint-state age
+max policy-action age
+stale behavior
+```
+
+For chunk/RTC inference additionally resolve:
+
+```text
+inference mode
+chunk horizon
+execution horizon
+interpolation multiplier
+stale-chunk rule
+age reference semantics
+```
+
+Chunk-only fields are required only for chunked modes.
+
+## Low-level fail-safe [[gate:R1]]
+
+Resolve and physically verify:
+
+```text
 owner
-trigger/deadline
-effect: hold | controlled_stop | disable | other
+trigger
+deadline_ms
+safe effect
 hardware evidence
 ```
 
-If no verified low-level stop/deadline/fail-safe exists, autonomous real-hardware gate does not pass.
+A Python unit test does not prove a device-level fail-safe.
 
----
+## Joint command safety [[gate:R1]]
 
-## 5. One-session XR invariant
-
-For the pinned LeRobot/Isaac Teleop path, use one Isaac Teleop/CloudXR session lifecycle per process.
+Resolve:
 
 ```text
-ONE session
-  ├─ left controller stream
-  └─ right controller stream
+maximum step or slew policy
+units
+gripper range/polarity
+residual clipping/smoothing behavior
 ```
 
-Do not instantiate separate process-local CloudXR/TeleopSession lifecycles for left/right arms.
+Where observable, compare `dataset_action` and `device_accepted_command`; record residual modification rate/magnitude.
 
----
+## Takeover continuity [[gate:HIL]]
 
-## 6. Frames
+Resolve a measurable takeover/release jump tolerance from evidence.
 
-Use:
+## Bimanual safety [[gate:R1B]]
 
-```text
-T_A_B transforms coordinates from frame B into frame A.
-p_A = T_A_B * p_B
-```
-
-Store exact frame names and calibration artifact/hash in the resolved contract.
-
-Do not scatter frame fixes through code.
-
----
-
-## 7. Kinematics acceptance
-
-Do not require:
+Before shared real workspace:
 
 ```text
-IK(FK(q)) == q
-```
-
-Use:
-
-```text
-target pose
-→ IK
-→ q
-→ FK
-→ solved pose
-```
-
-and check numeric:
-
-- position error
-- orientation error
-- joint limits
-- continuity/max step
-
----
-
-## 8. Inter-arm safety gate
-
-Before simultaneous real bimanual operation, one of these MUST be verified:
-
-```text
-A. verified inter-arm collision handling
+verified collision strategy
 OR
-B. conservatively non-overlapping allowed workspaces for left/right arms
+conservatively disjoint workspaces
 ```
 
-Baseline should prefer B because it is smaller and easier to verify.
+Workspace/collision artifacts are machine-referenced.
 
-Full collision checking may remain an advanced feature.
+## Emergency stop
 
-`if needed` is not sufficient for the real bimanual gate.
+A reachable physical E-stop is required for first autonomous real rollout.
 
----
-
-## 9. Numeric thresholds
-
-Unknown hardware values remain `DECIDE/PIN`.
-
-Codex must not invent them.
+Simulation never proves real hardware watchdog/collision behavior.

@@ -1,105 +1,89 @@
 # SIMULATION_POLICY.md
 
-## 1. Principle
+## Mandatory scope
 
-Simulators are tools, not project architecture.
+Isaac:
+- PIPER-X environment;
+- Quest/VR teleoperation;
+- dataset recording;
+- automated episode generation;
+- policy evaluation.
 
-Do not create a universal simulator backend and do not create a simulator-specific environment until its pinned runtime proves one is needed.
+MuJoCo:
+- PIPER-X environment;
+- policy evaluation.
 
-Read `ENVIRONMENT_POLICY.md`.
+## No universal simulator API
 
----
-
-## 2. MuJoCo
-
-Use only if it materially improves:
-
-- deterministic offline tests
-- lightweight physics/kinematics CI
-- cheap Robot-like simulation
-
-Keep it in `core` if compatible.
-
-A separate `mujoco` environment requires an actual dependency/runtime conflict.
-
-Preserve native Gym evaluation semantics.
-
----
-
-## 3. EmbodiChain
-
-Optional.
-
-Before integration:
-
-- pin exact version/commit
-- inspect current API
-- verify PIPER-X support
-- verify dependency/runtime compatibility with core
-- create a special environment only if incompatibility is demonstrated
-
-Do not make it a blocker for Quest -> dataset baseline.
-
----
-
-## 4. Isaac / LW-BenchHub
-
-Use as reference/alternative simulation where useful.
-
-Do not assume `DoublePiper` geometry equals PIPER-X.
-
-Distinguish:
+Use:
 
 ```text
-Isaac Teleop dependency used in the core XR/control path
-vs
-Isaac Sim/vendor simulator runtime
+policy contract
+<-> sim-specific LeRobot processors/adapters
+<-> native Gym/EnvHub/simulator environment
 ```
 
-They may have different environment requirements.
+Raw native observation/action dictionaries may differ.
 
-Do not split the core Quest control path merely because Isaac Sim itself has a vendor-specific runtime.
+## Required simulator execution semantics
 
----
-
-## 5. RoboTwin
-
-Reuse pinned native LeRobot RoboTwin integration.
-
-Before benchmark acceptance:
+For each runtime resolve:
 
 ```text
-1. pin LeRobot integration
-2. pin benchmark/dataset revision
-3. resolve environment ownership
-4. smoke-test declared action space
-5. smoke-test observation keys/shapes
-6. record known upstream issues
+physics timestep
+control timestep
+decimation/action repeat
+control mode
+actuator type
+gains where relevant
+saturation/ranges
+action hold/interpolation semantics
+reset seed/distribution
 ```
 
-Create a RoboTwin-specific environment only if pinned dependencies cannot coexist with core or its runtime explicitly requires isolation.
+Do not claim Isaac and MuJoCo physics are equivalent. Make each side reproducible and explicit.
 
-Do not create `RoboTwinBackend`.
+## Isaac
 
----
-
-## 6. Process/environment isolation
-
-Default:
+Prefer native upstream components:
 
 ```text
-one core environment
-direct in-process integration
+Isaac Lab
+Isaac Teleop
+RecorderManager
+Mimic / SkillGen / native datagen
+LeRobot Env/EnvHub evaluation seams
 ```
 
-A special environment normally implies a separate process.
+Use generic Piper/DoublePiper assets only as references unless exact PIPER-X equivalence is proven.
 
-Allow it only after a real:
+## MuJoCo
 
-- Python/dependency conflict
-- torch/CUDA conflict
-- vendor runtime requirement
-- simulator process requirement
-- stability/failure-domain requirement
+Prefer a Gymnasium environment and normal LeRobot environment processors/eval path. Build only the missing PIPER-X/task adapter.
 
-Then use the smallest transport needed, and only after confirming the process boundary is semantically acceptable.
+## Processor contract
+
+For both mandatory simulators resolve:
+
+```text
+native observation -> policy observation
+policy action -> native action
+```
+
+Processor config/state/reset semantics are part of reproducibility.
+
+## Cross-simulator parity
+
+Interface parity:
+
+```text
+policy feature names/shapes
+action names/shapes
+units/gripper semantics
+processor revisions
+task identity
+success/timeout semantics
+horizon
+```
+
+Embodiment parity additionally includes home/zero, joint limits, positive direction, FK/TCP and gripper endpoints.

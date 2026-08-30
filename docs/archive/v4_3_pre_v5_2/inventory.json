@@ -1,0 +1,19 @@
+{
+  "baseline": "v4.3 instruction lineage with live contract schema_version 3, contract_revision 7",
+  "git_commit": "d8c31a6d5c3141d3bb35b78aac7772774e59b9c0",
+  "files": [
+    {"original_path":"AGENTS.md","archived_path":"docs/archive/v4_3_pre_v5_2/AGENTS.md","sha256":"2ef11ef81bdcf22aed8df7af5d00c7ab5aaa27ec19b1ef5c75ef7b414b4a9e7f"},
+    {"original_path":"README.md","archived_path":"docs/archive/v4_3_pre_v5_2/README.md","sha256":"e877f6e21a7bf01ce6325208b1483440a9ed6377b395bcbe0efe5e5416805c76"},
+    {"original_path":"ENVIRONMENT_POLICY.md","archived_path":"docs/archive/v4_3_pre_v5_2/ENVIRONMENT_POLICY.md","sha256":"c02451681917f79e54e3e6d3e63e6815b808392cca6cec10b0fac24ded8afe8f"},
+    {"original_path":"PIPER_X_VERIFICATION.md","archived_path":"docs/archive/v4_3_pre_v5_2/PIPER_X_VERIFICATION.md","sha256":"ba3acd7599182de59357f8fe912f228b51a82766f8f41705d5119e0b415c4a89"},
+    {"original_path":"SAFETY_TIMING.md","archived_path":"docs/archive/v4_3_pre_v5_2/SAFETY_TIMING.md","sha256":"2e20dc462e60bcf35f54c6d61754acc06f7c0561ac1cd790f3cd08ed91ea3beb"},
+    {"original_path":"HIL_EXTENSION.md","archived_path":"docs/archive/v4_3_pre_v5_2/HIL_EXTENSION.md","sha256":"d61451306b2bc9662350c7ac76be3da9c12cf294a1ddca3bc68e9cc0adb44505"},
+    {"original_path":"IMPLEMENTATION_PLAN.md","archived_path":"docs/archive/v4_3_pre_v5_2/IMPLEMENTATION_PLAN.md","sha256":"46b36bf3388b86117a9da8011a699beae92fdf67fe27c6e1724e1585dce579fb"},
+    {"original_path":"ACCEPTANCE_CHECKLIST.md","archived_path":"docs/archive/v4_3_pre_v5_2/ACCEPTANCE_CHECKLIST.md","sha256":"c9983acbead9789c5279adfdbf5296dc28881ea64df13570ad71b44313d44ba5"},
+    {"original_path":"SIMULATION_POLICY.md","archived_path":"docs/archive/v4_3_pre_v5_2/SIMULATION_POLICY.md","sha256":"3f00125dd7512e2c4559fb9f9840832c3e83647595fd2e53150f55f6fcd1b1b3"},
+    {"original_path":"configs/resolved_contract.yaml","archived_path":"docs/archive/v4_3_pre_v5_2/configs/resolved_contract.yaml","sha256":"bb3d4dc71b0a9b2aa1a9ce402d1bf1f70e9a18e9157caa506a737f8851028fad"},
+    {"original_path":"configs/resolved_contract.schema.json","archived_path":"docs/archive/v4_3_pre_v5_2/configs/resolved_contract.schema.json","sha256":"b15aa516767882f9ea36d765341e219b3ddfc6bb89a2c9b278503a94cb231b95"},
+    {"original_path":"tools/validate_resolved_contract.py","archived_path":"docs/archive/v4_3_pre_v5_2/tools/validate_resolved_contract.py","sha256":"5f8e8b413ff4db0b0a2e0bd5f3671cb24ae9aee25c4eef0bedeb0ff8b3227022"},
+    {"original_path":"MANIFEST.sha256","archived_path":"docs/archive/v4_3_pre_v5_2/MANIFEST.sha256","sha256":"9042fd55b88e15b2b9621aa9373352ff8c22ee0929065e3d6d3e167b18d3e171"}
+  ]
+}

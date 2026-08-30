@@ -1,90 +1,71 @@
-# ACCEPTANCE_CHECKLIST.md
+# ACCEPTANCE_CHECKLIST.md — v5.2
 
-## Contract/evidence/environment consistency
+This checklist is explanatory. Machine acceptance is `configs/gate_rules.yaml` plus the validator.
 
-- [ ] `configs/resolved_contract.yaml` is the only resolved contract.
-- [ ] Every resolved static value has pinned evidence.
-- [ ] Any evidence/YAML mismatch blocked the stage.
-- [ ] Every runnable stage used the environment declared by its execution profile.
-- [ ] No unpinned/random old environment was used as accepted evidence.
-- [ ] Contract validator passes.
-- [ ] Completion flags are not true while required fields remain unresolved.
+## Contract integrity
 
-## Environment reproducibility
+- [ ] schema validation fail-closed;
+- [ ] no legacy magic placeholders;
+- [ ] no unknown profile/environment/evidence/artifact references;
+- [ ] local artifact hashes verify;
+- [ ] Markdown machine references lint;
+- [ ] migration aliases gone after migration completion.
 
-- [ ] Exactly one `core` environment was established first.
-- [ ] Core has a reproducible package/spec/lock mechanism.
-- [ ] Python version is resolved.
-- [ ] torch/CUDA/runtime expectations are resolved where relevant.
-- [ ] Canonical launch/activation procedure is recorded.
-- [ ] Manual package changes were captured in the reproducible spec.
-- [ ] Every special environment has a concrete recorded conflict/vendor-runtime reason.
-- [ ] No special environment exists merely for conceptual cleanliness.
-- [ ] Same-process components were not split across environments without an explicitly resolved architecture/process boundary.
-- [ ] Execution profile -> environment mapping is complete for each accepted stage.
+## Data semantics
 
-## PIPER-X / driver / firmware
+- [ ] explicit `obs_t/action_t` transition semantics;
+- [ ] causality regression test passes;
+- [ ] dataset.action is resolved training label;
+- [ ] accepted/native command remains separate;
+- [ ] privileged features cannot leak into policy input;
+- [ ] provenance/lineage explicit.
 
-- [ ] Candidate evidence matrix includes environment compatibility.
-- [ ] Explicit PIPER-X support checked.
-- [ ] Bimanual support checked.
-- [ ] Driver backend resolved rather than hard-coded.
-- [ ] Firmware/profile represented per arm.
-- [ ] action/observation features captured literally.
-- [ ] joint order/units/gripper semantics resolved.
-- [ ] URDF/frame evidence resolved.
+## Source datasets
 
-## Quest / XR
+- [ ] Isaac human-VR source accepted;
+- [ ] Isaac automated source accepted;
+- [ ] real human-VR source accepted;
+- [ ] D2a/D2b parity reports accepted.
 
-- [ ] Exactly one process-local Isaac Teleop/CloudXR session lifecycle is used.
-- [ ] Left/right streams come from that lifecycle.
-- [ ] The Quest/control path runs in the environment declared for `quest_xr`.
-- [ ] No custom OpenXR stack exists.
-- [ ] No accidental environment split introduced RPC into the core control path.
+## Final dataset
 
-## Dataset/action pipeline
+- [ ] deterministic materialization route pinned;
+- [ ] projected schema fingerprints identical;
+- [ ] final immutable dataset identity recorded;
+- [ ] all frames/video streams read;
+- [ ] DataLoader smoke passes;
+- [ ] semantic replay/inspection passes where applicable.
 
-- [ ] LeRobotDataset v3 is used directly.
-- [ ] HIL merge precedes deterministic label processors.
-- [ ] `dataset.action == dataset_action`.
-- [ ] Residual Robot/driver/device changes are downstream and diagnosable.
+## PIPER-X
 
-## HIL
+- [ ] static driver/API semantics pinned;
+- [ ] firmware/profile/API pinned per arm;
+- [ ] home/limits/sign tests pass;
+- [ ] Isaac FK/TCP parity accepted;
+- [ ] MuJoCo FK/TCP parity accepted;
+- [ ] gripper endpoints verified.
 
-- [ ] Pinned upstream inspected first.
-- [ ] Only remaining per-arm gap implemented.
-- [ ] generation id bound at inference dispatch.
-- [ ] old-generation result cannot enter execution queue/interpolator.
-- [ ] HIL runs from the declared execution environment.
+## Evaluation
 
-## Safety/hardware
+- [ ] actual Isaac run artifact exists;
+- [ ] actual MuJoCo run artifact exists;
+- [ ] same checkpoint SHA for cross-sim;
+- [ ] same policy/task revision;
+- [ ] seeds/reset protocol recorded;
+- [ ] episode count/horizon/success/timeout semantics recorded.
 
-- [ ] Safety clock domain explicit.
-- [ ] Stale behavior resolved.
-- [ ] Low-level fail-safe verified before autonomous hardware.
-- [ ] Simultaneous bimanual operation has collision handling OR disjoint workspaces.
-- [ ] Motion was never accepted from an undeclared environment.
+## Safety / real rollout
 
-## Simulation/benchmark
+- [ ] timing/freshness resolved;
+- [ ] low-level fail-safe physically verified;
+- [ ] joint step/slew resolved;
+- [ ] bimanual safety evidence accepted;
+- [ ] HIL accepted if required;
+- [ ] real rollout checkpoint/processors/task pinned;
+- [ ] E-stop/human authorization retained;
+- [ ] rollout artifact/result retained.
 
-- [ ] No universal simulator backend exists.
-- [ ] Simulator-specific environment exists only if justified.
-- [ ] RoboTwin uses pinned native LeRobot integration.
-- [ ] RoboTwin contract smoke tests run before score interpretation.
+## Final RC
 
-## Scope/reuse
-
-- [ ] No generic environment manager/package resolver was built.
-- [ ] No duplicate Robot/backend/dataset/runtime framework was added.
-- [ ] Large integration code triggered reuse re-audit.
-
-## Completion report
-
-- [ ] `REUSED`
-- [ ] `PINNED / VERIFIED`
-- [ ] `ENVIRONMENT`
-- [ ] `CONTRACT CHANGES`
-- [ ] `NEW CODE`
-- [ ] `NOT IMPLEMENTED`
-- [ ] `TESTS`
-- [ ] `RISKS / UNVERIFIED`
+- [ ] validator prints `FINAL RC READY`;
+- [ ] `--require-final-rc` exits 0.

@@ -9,7 +9,7 @@ from pathlib import Path
 
 import yaml
 
-from tools.validate_resolved_contract import validate_completion
+from tools.validate_resolved_contract import validate_contract, validate_gates
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
@@ -28,26 +28,33 @@ class ResolvedContractTests(unittest.TestCase):
         )
 
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("RESOLVED CONTRACT OK", result.stdout)
+        self.assertIn("CONTRACT STRUCTURALLY VALID", result.stdout)
+        self.assertIn("CONTRACT SEMANTICALLY VALID", result.stdout)
+        self.assertIn("FINAL RC NOT READY", result.stdout)
 
-    def test_gate_a_accepts_the_implemented_track_1b_artifact(self) -> None:
+    def test_gate_a_accepts_the_implemented_plugin_artifact(self) -> None:
         data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
 
-        self.assertTrue(data["status"]["track_a_gate_complete"])
+        self.assertEqual(data["gates"]["A"]["state"], "accepted")
         plugin = data["implementation"]["robot_plugin"]
-        self.assertEqual(plugin["planned_distribution_name"], "lerobot_robot_piperx")
-        self.assertEqual(plugin["package_version"], "0.1.0")
-        self.assertEqual(plugin["commit"], "PENDING_PROJECT_GIT_COMMIT")
-        self.assertEqual(validate_completion(data), [])
+        self.assertEqual(plugin["package"], "lerobot_robot_piperx")
+        self.assertEqual(plugin["version"], "0.1.0")
+        self.assertEqual(plugin["revision"], "c01076fc32794cffcc0eb10ea6157c34aeb8de24")
+        errors, ready, blockers = validate_contract(CONTRACT)
+        self.assertEqual(errors, [])
+        self.assertFalse(ready)
+        self.assertIn("B", blockers)
 
     def test_gate_a_rejects_an_unresolved_plugin_boundary(self) -> None:
         data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
-        data["implementation"]["robot_plugin"]["planned_distribution_name"] = "DECIDE/PIN"
+        data["implementation"]["robot_plugin"]["package"] = None
+        rules = yaml.safe_load(
+            (REPOSITORY_ROOT / "configs" / "gate_rules.yaml").read_text(encoding="utf-8")
+        )
 
         self.assertIn(
-            "track_a_gate_complete=true but unresolved: "
-            "implementation.robot_plugin.planned_distribution_name",
-            validate_completion(data),
+            "gate A: unresolved required path implementation.robot_plugin.package",
+            validate_gates(data, rules),
         )
 
 

@@ -1,601 +1,1324 @@
-schema_version: 3
-contract_revision: 7
-status:
-  track_a_gate_complete: true
-  static_resolution_complete: false
-  hardware_validation_complete: false
-  bimanual_real_gate_complete: false
+contract_version: 5.2.0
+schema_version: '5.2'
+project:
+  name: PIPER-X Quest multi-runtime robot-learning platform
+  robot_model: piper_x
+  bimanual: true
+  final_dataset_format: LeRobotDataset_v3
+  training_ready_claim: false
 requirements:
-  robot_model_required: piper_x
-  bimanual_required: true
-  quest_3_available: true
-  per_arm_hil_required: true
+  capabilities:
+    real_human_vr_record: true
+    isaac_human_vr_record: true
+    isaac_automated_record: true
+    isaac_eval: true
+    mujoco_eval: true
+    real_rollout: true
+    hil: true
+    benchmark_native_architecture: true
+    selected_benchmark: false
+    training_compatibility_smoke: false
+migration:
+  mode: from_v4_3
+  state: complete
+  source_contract_artifact_id: v43_source_contract
+  source_evidence_inventory:
+    core_environment:
+    - v43_core_environment_compatibility
+    - v43_e0_offline_tests
+    piper_static:
+    - v43_candidate_matrix
+    - v43_piper_x_support
+    - v43_bimanual_support
+    - v43_driver_firmware_behavior
+    - v43_driver_model_crosscheck
+    - v43_fork_vs_drop_in
+    - v43_selected_plugin_seam
+    - v43_track_1b_package_boundary
+    - v43_lerobot_version_comparison
+    - v43_driver_version_selection
+    - v43_robot_contract_static_evidence
+    - v43_gripper_static_evidence
+    - v43_a_plugin_tests
+    model:
+    - v43_model_urdf
+    quest_host:
+    - v43_quest_host_implementation
+    - v43_quest_host_tests
+    integrity:
+    - v43_root_manifest_claim
+  preserved_evidence_ids:
+  - v43_core_environment_compatibility
+  - v43_e0_offline_tests
+  - v43_candidate_matrix
+  - v43_piper_x_support
+  - v43_bimanual_support
+  - v43_driver_firmware_behavior
+  - v43_driver_model_crosscheck
+  - v43_fork_vs_drop_in
+  - v43_selected_plugin_seam
+  - v43_track_1b_package_boundary
+  - v43_lerobot_version_comparison
+  - v43_driver_version_selection
+  - v43_robot_contract_static_evidence
+  - v43_gripper_static_evidence
+  - v43_a_plugin_tests
+  - v43_model_urdf
+  - v43_quest_host_implementation
+  - v43_quest_host_tests
+  invalidated_evidence_ids:
+  - v43_root_manifest_claim
+  legacy_alias_map: {}
+  reopen_records: []
+taxonomy:
+  runtime_names:
+  - real
+  - isaac
+  - mujoco
+  source_classes:
+  - human_vr
+  - scripted_expert
+  - planner
+  - datagen
+  - policy_generated
+  - replay_or_transform
 implementation:
   lerobot:
-    repository: https://github.com/huggingface/lerobot
-    version_or_commit: 7e241bd630a3719a56157a497ce5d08f244784f1
-    package_version: 0.6.1
+    version: 0.6.1
+    revision: 7e241bd630a3719a56157a497ce5d08f244784f1
+    evidence_ids:
+    - v43_lerobot_version_comparison
+    - v43_selected_plugin_seam
   robot_plugin:
-    repository: project_local_uv_workspace
-    commit: PENDING_PROJECT_GIT_COMMIT
-    package_version: 0.1.0
-    artifact_status: implemented_and_offline_verified; final_project_commit_intentionally_pending
-    integration_form: external_lerobot_robot_plugin_adapted_from_pinned_Evo-RL_donor
-    planned_distribution_name: lerobot_robot_piperx
-    planned_import_package: lerobot_robot_piperx
-    distribution_path: packages/lerobot_robot_piperx
-    implementation_paths:
-    - packages/lerobot_robot_piperx/pyproject.toml
-    - packages/lerobot_robot_piperx/src/lerobot_robot_piperx/__init__.py
-    - packages/lerobot_robot_piperx/src/lerobot_robot_piperx/sdk.py
-    - packages/lerobot_robot_piperx/src/lerobot_robot_piperx/piperx.py
-    discovery_prefix: lerobot_robot_
-    configuration_registration: RobotConfig.register_subclass
-    construction_boundary: make_robot_from_config_dynamic_plugin_fallback
+    package: lerobot_robot_piperx
+    version: 0.1.0
+    revision: c01076fc32794cffcc0eb10ea6157c34aeb8de24
     single_arm_type: piperx_follower
     bimanual_type: bi_piperx_follower
+    evidence_ids:
+    - v43_track_1b_package_boundary
+    - v43_a_plugin_tests
   driver:
     backend: piper_sdk.C_PiperInterface_V2
-    repository: https://github.com/agilexrobotics/piper_sdk
-    version_or_commit: 0.6.1@081e7c588e5b79eeaefa67a0469bcc701c81014f
+    version: 0.6.1
+    revision: 081e7c588e5b79eeaefa67a0469bcc701c81014f
     robot_model: piper_x
-    expected_firmware_profile:
-      supported_api_profile: joint_position_J_common_across_AgileX_documented_Piper_firmware_bands
-      allowed_control_path: joint_position_J_only
-      excluded_until_actual_firmware_is_resolved:
-      - MIT
-      - CPV
-      phase_b_rule: read_and_record_each_arm_exact_firmware_before_motion; keep_MIT_and_CPV_disabled
+    command_api: C_PiperInterface_V2.JointCtrl J-position path and GripperCtrl
+    evidence_ids:
+    - v43_driver_version_selection
+    - v43_driver_firmware_behavior
   isaac_teleop:
-    repository: https://github.com/NVIDIA/IsaacTeleop
-    version_or_commit: 1.3.131
-evidence:
-  candidate_matrix:
-  - candidate: MINT-SJTU/Evo-RL
-    repository: https://github.com/MINT-SJTU/Evo-RL
-    commit: 6f2db449a21e1bac750b996f2e27cac6739aa63f
-    package_version: 0.4.4
-    paths:
-    - src/lerobot/robots/piper_follower/config_piper_follower.py
-    - src/lerobot/robots/piper_follower/piper_follower.py
-    - src/lerobot/robots/bi_piper_follower/bi_piper_follower.py
-    symbol_or_section: PiperXFollowerConfig; PiperXFollower.send_action; BiPiperXFollower
-    explicit_piper_x_support: true
-    bimanual_support: true
-    integration: in_tree_LeRobot_fork
-    driver_backend: piper_sdk_0.6.1
-    firmware_aware_piper_x_correctness: J_position_path_only; actual_firmware_required_in_Phase_B; no_runtime_profile_gate
-    action_observation_contract: explicit_14_float_bimanual_state_and_action_plus_configured_cameras
-    limits_safety: no_send_action_clip_or_slew; enforcement_owner_and_exact_command_limits_unresolved
-    maintenance_state: active_at_pinned_commit_2026-07-15
-    adaptation_required: repackage_585_lines_of_Robot_config_bimanual_and_SDK_helper_code_at_official_plugin_seam_and_change_in_tree_imports
-    core_environment_compatibility: fork_only_resolver_and_import_smoke_passed_but_does_not_prove_drop_in_architecture
-    notes: not_selected_as_runtime; exact_PIPER-X_and_bimanual_donor_for_a_future_drop_in_plugin
-  - candidate: huggingface/lerobot_PR_1481
-    repository: https://github.com/huggingface/lerobot/pull/1481
-    commit: e95395525b0c0fd1cb26f4f1494442f4aea16cb9
-    path: src/lerobot/robots/piper/piper.py
-    symbol_or_section: Piper
-    explicit_piper_x_support: false
-    bimanual_support: false
-    integration: unmerged_in_tree_pull_request
-    driver_backend: piper_sdk
-    firmware_aware_piper_x_correctness: not_provided
-    action_observation_contract: generic_single_arm_7_float_features
-    limits_safety: generic_only
-    maintenance_state: open_pull_request_at_audited_revision
-    adaptation_required: prove_PIPER-X_and_add_bimanual_support
-    core_environment_compatibility: not_selected; unmerged_in_tree_patch_is_not_a_drop_in_for_the_pinned_official_LeRobot_runtime
-    notes: open_unmerged_PR_at_audited_revision
-  - candidate: AgRoboticsResearch/lerobot_robot_piper
-    repository: https://github.com/AgRoboticsResearch/lerobot_robot_piper
-    commit: abf721d9e88ac822b18cb3413a75bb8cc0e3b34f
-    package_version: 0.1.0
-    paths:
-    - lerobot_robot_piper/config_piper.py
-    - lerobot_robot_piper/piper.py
-    symbol_or_section: PiperConfig registered as piper; Piper.send_action
-    explicit_piper_x_support: false
-    bimanual_support: false
-    integration: LeRobot_drop_in_plugin
-    driver_backend: piper_sdk_unpinned
-    firmware_aware_piper_x_correctness: not_provided
-    action_observation_contract: generic_single_arm
-    limits_safety: generic_joint_signs; no_PIPER-X_limits
-    maintenance_state: four_commits; pinned_head_2025-12-19
-    adaptation_required: prove_PIPER-X_pin_driver_add_bimanual
-    core_environment_compatibility: current_LeRobot_0.6.1_API_compatibility_not_established; candidate_rejected_first_for_generic_Piper_and_missing_bimanual_contract
-    notes: generic_Piper_only
-  - candidate: WeGo-Robotics/lerobot_robot_piper
-    repository: https://github.com/WeGo-Robotics/lerobot_robot_piper
-    commit: ceb2993d824f313272583bffe0c253fc3674327e
-    package_version: 0.3.1
-    paths:
-    - lerobot_robot_piper/config_piper.py
-    - lerobot_robot_piper/piper_follower.py
-    symbol_or_section: PiperFollowerConfig registered as piper_follower; PiperFollower.send_action
-    explicit_piper_x_support: false
-    bimanual_support: multi_arm_setup_tools_but_no_bimanual_Robot_type
-    integration: LeRobot_drop_in_plugin
-    driver_backend: piper_sdk_unpinned
-    firmware_aware_piper_x_correctness: not_provided
-    action_observation_contract: generic_single_arm_normalized_minus100_to100
-    limits_safety: configurable_relative_target_limit_but_generic_Piper_calibration
-    maintenance_state: active_at_pinned_commit_2026-08-26
-    adaptation_required: prove_PIPER-X_and_add_composite_bimanual_Robot
-    core_environment_compatibility: current_LeRobot_0.6.1_API_compatibility_not_established; candidate_rejected_first_for_generic_Piper_and_missing_bimanual_Robot_type
-    notes: multi_arm_wizard_is_not_a_bimanual_LeRobot_Robot_contract
-  - candidate: charlie8612/lerobot_robot_piper
-    repository: https://github.com/charlie8612/lerobot_robot_piper
-    commit: d9785e6256aacd9fe0128a622909e046e66aea33
-    package_version: 0.1.0
-    paths:
-    - src/lerobot_robot_piper/config_piper_follower.py
-    - src/lerobot_robot_piper/config_bi_piper_follower.py
-    - src/lerobot_robot_piper/bi_piper_follower.py
-    symbol_or_section: PiperFollowerConfig; BiPiperFollowerConfig; BiPiperFollower
-    explicit_piper_x_support: false
-    bimanual_support: true
-    integration: LeRobot_drop_in_plugin
-    driver_backend: piper_sdk
-    firmware_aware_piper_x_correctness: not_provided
-    action_observation_contract: generic_Piper_degrees_or_radians
-    limits_safety: joint_clamp_and_optional_slew_for_generic_Piper
-    maintenance_state: pinned_head_2026-06-15
-    adaptation_required: prove_PIPER-X_limits_and_firmware_behavior
-    core_environment_compatibility: current_LeRobot_0.6.1_API_compatibility_not_established; candidate_rejected_first_for_generic_Piper_semantics_and_mandatory_process_proxy
-    notes: generic_Piper_only; bimanual_path_mandates_a_right_arm_multiprocessing_proxy_and_embeds_generic_limit_policy
-  - candidate: Fediory/lerobot_piper
-    repository: https://github.com/Fediory/lerobot_piper
-    commit: 957daeb042609bcc580b7a36ef012fb55f6d200f
-    package_version: 0.1.0
-    paths:
-    - lerobot/common/robot_devices/robots/configs.py
-    - lerobot/common/robot_devices/robots/piper_bimanual.py
-    symbol_or_section: PiperBimanualRobotConfig; PiperBimanualRobot
-    explicit_piper_x_support: false
-    bimanual_support: dual_follower_replay_and_policy_only
-    integration: legacy_LeRobot_fork
-    driver_backend: piper_sdk_0.6_series
-    firmware_aware_piper_x_correctness: not_provided
-    action_observation_contract: legacy_tensor_14_DoF
-    limits_safety: incomplete_for_dual_leader_collection
-    maintenance_state: pinned_head_2026-08-10
-    adaptation_required: port_to_current_LeRobot_and_prove_PIPER-X
-    core_environment_compatibility: incompatible_architecture_for_current_core_because_it_is_a_legacy_LeRobot_fork; rejected_before_dependency_resolution
-    notes: bimanual_is_replay_and_policy_only_with_no_dual_leader_teleoperation
-  piper_x_support:
-    repository: https://github.com/MINT-SJTU/Evo-RL
-    commit: 6f2db449a21e1bac750b996f2e27cac6739aa63f
-    path: src/lerobot/robots/piper_follower/config_piper_follower.py
-    symbol_or_section: PiperXFollowerConfig registered as piperx_follower; PiperXFollower
-    notes: Donor evidence only. Explicit PIPER-X type uses the J-position JointCtrl path. AgileX pyAgxArm commit 2255d88e1fabdf20fcd1eccbc4312b4ce1cfd2d4 proves PiperX default/v183 inherit generic Piper and v188/v189 add overrides only for MIT/CPV; those modes are excluded here.
-  bimanual_support:
-    repository: https://github.com/MINT-SJTU/Evo-RL
-    commit: 6f2db449a21e1bac750b996f2e27cac6739aa63f
-    path: src/lerobot/robots/bi_piper_follower/bi_piper_follower.py
-    symbol_or_section: BiPiperFollower and BiPiperXFollower
-    notes: Composes left/right PiperXFollower instances, prefixes features with left_ and right_, splits send_action by prefix, and returns the combined sent action.
-  driver_firmware_behavior:
-    repository: https://github.com/agilexrobotics/piper_sdk
-    commit: 081e7c588e5b79eeaefa67a0469bcc701c81014f
-    path: piper_sdk/interface/piper_interface_v2.py
-    symbol_or_section: C_PiperInterface_V2.JointCtrl and GetPiperFirmwareVersion
-    notes: Version 0.6.1 exposes the exact J-position APIs used by the donor and a firmware-query API that the donor does not call. It is not model-aware and SDK joint/gripper clipping defaults off. Limit-enforcement ownership remains unresolved; actual firmware remains Phase B.
-  driver_model_crosscheck:
-    repository: https://github.com/agilexrobotics/pyAgxArm
-    commit: 2255d88e1fabdf20fcd1eccbc4312b4ce1cfd2d4
-    paths:
-    - pyAgxArm/api/agx_arm_factory.py
-    - pyAgxArm/protocols/can_protocol/drivers/piper_x/default/driver.py
-    - pyAgxArm/protocols/can_protocol/drivers/piper_x/versions/v183/driver.py
-    - pyAgxArm/protocols/can_protocol/drivers/piper_x/versions/v188/driver.py
-    - pyAgxArm/protocols/can_protocol/drivers/piper_x/versions/v189/driver.py
-    symbol_or_section: AgxArmFactory piper_x routing and PiperX Driver overrides
-    notes: Current official SDK confirms firmware bands and that PIPER-X-specific sign workarounds affect MIT/CPV, not the selected J-position path. pyAgxArm is evidence, not the selected backend.
-  fork_vs_drop_in:
-    upstream_repository: https://github.com/huggingface/lerobot
-    upstream_commits_compared:
-    - v0.4.4@8fff0fde7c79f23a93d845d1a50e985de01f8b8a
-    - v0.5.1@1396b9fab7aecddd10006c33c47a487ffdcb54b4
-    - v0.6.1@7e241bd630a3719a56157a497ce5d08f244784f1
-    upstream_path: src/lerobot/utils/import_utils.py
-    upstream_symbol_or_section: register_third_party_plugins
-    evo_repository: https://github.com/MINT-SJTU/Evo-RL
-    evo_commit: 6f2db449a21e1bac750b996f2e27cac6739aa63f
-    evo_paths:
-    - pyproject.toml
-    - src/lerobot/robots/piper_follower/piper_follower.py
-    - src/lerobot/robots/bi_piper_follower/bi_piper_follower.py
-    - src/lerobot/utils/piper_sdk.py
-    notes: Evo-RL is itself a distribution named lerobot. Its files import fork-internal and fork-only lerobot modules, so they cannot be installed unchanged beside official LeRobot. Official v0.4.4, v0.5.1, and v0.6.1 all discover external distributions prefixed lerobot_robot_. The selected minimal architecture is unmodified official LeRobot v0.6.1 plus a Track 1B external plugin adapted from the pinned Evo Robot-side donor. Only the future project-local plugin artifact and its resulting commit/version remain intentionally deferred.
-  selected_plugin_seam:
-    repository: https://github.com/huggingface/lerobot
-    commit: 7e241bd630a3719a56157a497ce5d08f244784f1
-    paths:
-    - src/lerobot/utils/import_utils.py
-    - src/lerobot/robots/config.py
-    - src/lerobot/robots/utils.py
-    - src/lerobot/scripts/lerobot_record.py
-    - src/lerobot/scripts/lerobot_replay.py
-    - src/lerobot/scripts/lerobot_eval.py
-    - src/lerobot/scripts/lerobot_rollout.py
-    symbol_or_section: register_third_party_plugins; RobotConfig; make_robot_from_config; script entry points
-    notes: register_third_party_plugins imports installed distributions whose names start with lerobot_robot_. RobotConfig is a draccus ChoiceRegistry, and make_robot_from_config dynamically locates third-party Robot classes after built-in cases. Record, replay, eval, and rollout invoke plugin discovery and use this config/factory boundary.
-  track_1b_package_boundary:
-    selected_form: project_local_external_distribution_named_lerobot_robot_piperx
-    runtime_upstream: unmodified_huggingface_lerobot_0.6.1
-    donor_repository: https://github.com/MINT-SJTU/Evo-RL
-    donor_commit: 6f2db449a21e1bac750b996f2e27cac6739aa63f
-    donor_paths:
-    - src/lerobot/robots/piper_follower/config_piper_follower.py
-    - src/lerobot/robots/piper_follower/piper_follower.py
-    - src/lerobot/robots/bi_piper_follower/config_bi_piper_follower.py
-    - src/lerobot/robots/bi_piper_follower/bi_piper_follower.py
-    - src/lerobot/utils/piper_sdk.py
-    required_registered_types:
-    - piperx_follower
-    - bi_piperx_follower
-    artifact_pin_status: implemented_as_project_local_uv_workspace_package_version_0.1.0; final_project_Git_commit_intentionally_pending
-    implementation_paths:
-    - packages/lerobot_robot_piperx/pyproject.toml
-    - packages/lerobot_robot_piperx/src/lerobot_robot_piperx/sdk.py
-    - packages/lerobot_robot_piperx/src/lerobot_robot_piperx/piperx.py
-    - tests/test_lerobot_robot_piperx.py
-    adapted_donor_symbols: PiperXFollowerConfig; PiperXFollower._motors_ft; PiperXFollower.get_observation; PiperXFollower.send_action; BiPiperXFollower._motors_ft; BiPiperXFollower._cameras_ft; BiPiperXFollower.send_action; PIPER_JOINT_NAMES; PIPER_ACTION_KEYS; milli_to_unit; unit_to_milli
-    notes: The project-local distribution is installed from the one core uv workspace and discovered by official LeRobot 0.6.1. No Evo-RL runtime dependency, LeRobot fork, special environment, RPC layer, new action ontology, clipping policy, or hardware behavior is part of this gate.
-  lerobot_version_comparison:
-    repository: https://github.com/huggingface/lerobot
-    donor_repository: https://github.com/MINT-SJTU/Evo-RL
-    donor_commit: 6f2db449a21e1bac750b996f2e27cac6739aa63f
-    common_evidence_paths:
-    - pyproject.toml
-    - src/lerobot/robots/robot.py
-    - src/lerobot/robots/config.py
-    - src/lerobot/utils/import_utils.py
-    - src/lerobot/scripts/lerobot_record.py
-    - src/lerobot/scripts/lerobot_replay.py
-    - src/lerobot/datasets/lerobot_dataset.py
-    v0_4_4:
-      tag_and_commit: v0.4.4@8fff0fde7c79f23a93d845d1a50e985de01f8b8a
-      python_requirement: Python>=3.10
-      robot_api: compatible_after_external_plugin_repackaging_and_import_relocation
-      plugin_discovery: lerobot_robot_prefix_supported
-      config_registration: RobotConfig_draccus_ChoiceRegistry_register_subclass_supported
-      workflows: record_replay_eval_use_RobotConfig_factory_and_register_third_party_plugins; no_lerobot_rollout_script
-      dataset: CODEBASE_VERSION_v3.0
-      isaac_teleop: no_official_Isaac_Teleop_example_or_CloudXR_pattern_at_this_tag
-      core_result: declared_Python_range_accepts_the_resolved_CPython_3.12.13_but_not_selected_due_to_missing_required_current_LeRobot_features
-    v0_5_1:
-      tag_and_commit: v0.5.1@1396b9fab7aecddd10006c33c47a487ffdcb54b4
-      python_requirement: Python>=3.12
-      robot_api: compatible_after_external_plugin_repackaging_and_import_relocation
-      plugin_discovery: lerobot_robot_prefix_supported
-      config_registration: RobotConfig_draccus_ChoiceRegistry_register_subclass_supported
-      workflows: record_replay_eval_use_RobotConfig_factory_and_register_third_party_plugins; no_lerobot_rollout_script
-      dataset: CODEBASE_VERSION_v3.0
-      isaac_teleop: no_official_Isaac_Teleop_example_at_this_tag
-      core_result: declared_Python_range_accepts_the_resolved_CPython_3.12.13_but_not_selected_due_to_missing_official_Isaac_Teleop_pattern_and_rollout_script
-    v0_6_1:
-      tag_and_commit: v0.6.1@7e241bd630a3719a56157a497ce5d08f244784f1
-      python_requirement: Python>=3.12
-      robot_api: compatible_after_external_plugin_repackaging_and_import_relocation; Robot_abstract_surface_is_unchanged_for_the_donor
-      plugin_discovery: lerobot_robot_prefix_supported
-      config_registration: RobotConfig_draccus_ChoiceRegistry_register_subclass_supported
-      workflows: record_replay_eval_and_rollout_register_third_party_plugins_and_use_the_Robot_boundary
-      dataset: CODEBASE_VERSION_v3.0
-      isaac_teleop:
-        path: docs/source/isaac_teleop.mdx and examples/isaac_teleop_to_so101
-        symbol_or_section: IsaacTeleopTeleoperator_single_session_lifecycle; XRController; CloudXR_lifecycle
-        dependency_evidence: isaacteleop[cloudxr,retargeters-lite]~=1.3.131; Linux; Python>=3.10; CPython_3.12_wheels_exist
-        relevance: only_compared_release_with_the_required_official_LeRobot_Isaac_Teleop_pattern
-      core_result: selected_and_resolved_in_the_CPython_3.12.13_core; donor_adaptation_remains_the_bounded_Track_1B_deliverable
-    resolution:
-      preferred_feature_candidate: v0.6.1@7e241bd630a3719a56157a497ce5d08f244784f1
-      newest_current_core_compatible_candidate: v0.6.1@7e241bd630a3719a56157a497ce5d08f244784f1
-      blocker: none_after_the_single_core_was_resolved_to_CPython_3.12.13
-      selection_status: selected_official_v0.6.1_at_7e241bd630a3719a56157a497ce5d08f244784f1
-  driver_version_selection:
-    repository: https://github.com/agilexrobotics/piper_sdk
-    selected_tag_and_commit: 0.6.1@081e7c588e5b79eeaefa67a0469bcc701c81014f
-    selected_tag_date: '2025-10-30T14:39:17+08:00'
-    latest_github_release: 0.6.1@081e7c588e5b79eeaefa67a0469bcc701c81014f
-    git_tag_0_6_2: 0.6.2@c9e8a28174e71eeaac448593cb65f8ab258a92fe
-    git_tag_0_6_2_date: '2026-07-31T17:17:49+08:00'
-    github_release_0_6_2: absent_at_audit; GitHub_Releases_latest_is_0.6.1
-    pypi_release_0_6_2: present; uploaded_2026-07-31
-    repository_master: c9e8a28174e71eeaac448593cb65f8ab258a92fe; setup.py_and_piper_sdk/version.py_declare_0.6.2
-    release_metadata_sources:
-    - https://github.com/agilexrobotics/piper_sdk/releases
-    - https://pypi.org/project/piper-sdk/
-    - git_refs/tags/0.6.1_and_0.6.2
-    - master:setup.py_and_piper_sdk/version.py
-    evo_repository: https://github.com/MINT-SJTU/Evo-RL
-    evo_commit: 6f2db449a21e1bac750b996f2e27cac6739aa63f
-    evo_commit_date: '2026-07-15T22:08:53+08:00'
-    evo_path: pyproject.toml
-    evo_section: project.dependencies
-    evo_constraint: piper_sdk>=0.6.1,<0.7.0
-    api_path: piper_sdk.C_PiperInterface_V2 via Evo get_piper_sdk; ConnectPort; MasterSlaveConfig; EnablePiper; MotionCtrl_2 MOVE_J; JointCtrl; GetArmJointMsgs; GetArmGripperMsgs; GripperCtrl; DisconnectPort
-    notes: 0.6.1 was the only available version satisfying Evo's declared range when the pinned donor commit was made, and it remains the latest GitHub Release. A later 0.6.2 Git tag and PyPI release exist and master declares 0.6.2, but there is no 0.6.2 GitHub Release object. The post-donor commit changes C_PiperInterface_V2 transmit internals, including JointCtrl message construction. Pinning 0.6.1 intentionally reproduces the donor's contemporaneous and latest-GitHub-Release API rather than accepting later code admitted only by Evo's open range; this does not assert that 0.6.2 is incompatible.
-  robot_contract_static_evidence:
-    repository: https://github.com/MINT-SJTU/Evo-RL
-    commit: 6f2db449a21e1bac750b996f2e27cac6739aa63f
-    paths:
-    - src/lerobot/utils/piper_sdk.py
-    - src/lerobot/robots/piper_follower/piper_follower.py
-    - src/lerobot/robots/bi_piper_follower/bi_piper_follower.py
-    symbol_or_section: PIPER_JOINT_NAMES; PIPER_ACTION_KEYS; PiperFollower._motors_ft; PiperFollower.get_observation; PiperFollower.send_action; BiPiperFollower._motors_ft; BiPiperFollower._cameras_ft; BiPiperFollower.send_action
-    notes: Establishes feature names/order, left/right prefixing, degree and millimeter conversion, observation absolute-value behavior for gripper travel, all-six-joint send gating, 0.001-unit rounding, and returned sent-action contents.
-  gripper_static_evidence:
-    repository: https://github.com/agilexrobotics/piper_sdk
-    commit: 081e7c588e5b79eeaefa67a0469bcc701c81014f
-    paths:
-    - piper_sdk/interface/piper_interface_v2.py
-    - asserts/Q&A.MD
-    symbol_or_section: C_PiperInterface_V2.GetArmGripperMsgs; C_PiperInterface_V2.GripperCtrl; Q&A section 1
-    notes: SDK field is gripper travel in 0.001 mm and zero is a configured end-effector reference. Exact physical polarity and usable range are device setup/hardware observations and remain unresolved.
-  core_environment_compatibility:
-    selected_stack: official_LeRobot_v0.6.1_at_7e241bd630a3719a56157a497ce5d08f244784f1_plus_piper_sdk_0.6.1
-    python_requirements: LeRobot_v0.4.4_requires_Python_greater_equal_3.10; LeRobot_v0.5.1_and_v0.6.1_require_Python_greater_equal_3.12; piper_sdk_0.6.1_requires_Python_greater_equal_3.6
-    resolved_python: CPython_3.12.13
-    static_result: official_LeRobot_v0.6.1_piper_sdk_0.6.1_and_lerobot_robot_piperx_0.1.0_imported_from_the_CPython_3.12.13_core; official_plugin_discovery_and_factory_smokes_passed_with_fake_SDK_only
-    provisional_trial: Evo-RL_fork_runtime_removed; donor_commit_remains_evidence_only
-    exact_selected_path_lock: uv.lock@49f8222339a375cc67e5121c837af43267294a8bbd21f0e563fbab519ced72d2
-    same_process_result: left_and_right_PiperXFollower_instances_are_directly_composed_by_BiPiperXFollower_in_the_single_CPython_3.12.13_core; official_LeRobot_piper_sdk_and_the_resolved_isaacteleop_1.3.131_group_share_the_core_spec; actual_Quest_CloudXR_lifecycle_remains_Track_B; no_special_environment_created
+    version: 1.3.131
+    revision: 1.3.131
+    evidence_ids:
+    - v43_quest_host_implementation
+  isaac_lab:
+    version: null
+    revision: null
+    evidence_ids: []
+  mujoco:
+    version: null
+    revision: null
+    evidence_ids: []
+environments:
+  core:
+    id: core
+    purpose: LeRobot, real PIPER-X, host Quest diagnostics, and offline tooling
+    manager: uv
+    python_version: CPython 3.12.13
+    spec_artifact_id: core_uv_lock
+    torch_version: 2.7.1+cu126
+    cuda_runtime: PyTorch bundled CUDA 12.6
+    vendor_runtime: null
+    system_requirements:
+    - native Linux
+    - CloudXR runtime and EULA required only for physical Quest work
+    canonical_launch_prefix: uv run
+  isaac:
+    id: isaac
+    purpose: Isaac Sim/Lab teleop, recording, generation, eval
+    manager: null
+    python_version: null
+    spec_artifact_id: null
+    torch_version: null
+    cuda_runtime: null
+    vendor_runtime: null
+    system_requirements: []
+    canonical_launch_prefix: null
+  mujoco:
+    id: mujoco
+    purpose: MuJoCo PIPER-X evaluation
+    manager: null
+    python_version: null
+    spec_artifact_id: null
+    torch_version: null
+    cuda_runtime: null
+    vendor_runtime: null
+    system_requirements: []
+    canonical_launch_prefix: null
+execution_profiles:
+  offline_tests:
+    environment: core
+    working_directory: .
+    command:
+    - uv
+    - run
+    - pytest
+    - -q
+    prerequisites: []
+  quest_xr_real:
+    environment: core
+    working_directory: .
+    command:
+    - uv
+    - run
+    - --group
+    - isaac-teleop
+    - python
+    - tools/quest_xr_diagnostics.py
+    prerequisites:
+    - physical Quest human acceptance is not yet complete
+  real_dataset_record:
+    environment: core
+    working_directory: .
+    command: null
+    prerequisites: []
+  real_rollout:
+    environment: core
+    working_directory: .
+    command: null
+    prerequisites: []
+  hil:
+    environment: core
+    working_directory: .
+    command: null
+    prerequisites: []
+  piper_readonly:
+    environment: core
+    working_directory: .
+    command: null
+    prerequisites: []
+  piper_motion:
+    environment: core
+    working_directory: .
+    command: null
+    prerequisites: []
+  isaac_env:
+    environment: isaac
+    working_directory: .
+    command: null
+    prerequisites: []
+  isaac_vr_record:
+    environment: isaac
+    working_directory: .
+    command: null
+    prerequisites: []
+  isaac_generate:
+    environment: isaac
+    working_directory: .
+    command: null
+    prerequisites: []
+  isaac_dataset_convert:
+    environment: isaac
+    working_directory: .
+    command: null
+    prerequisites: []
+  isaac_eval:
+    environment: isaac
+    working_directory: .
+    command: null
+    prerequisites: []
+  mujoco_env:
+    environment: mujoco
+    working_directory: .
+    command: null
+    prerequisites: []
+  mujoco_eval:
+    environment: mujoco
+    working_directory: .
+    command: null
+    prerequisites: []
+  dataset_materialize:
+    environment: core
+    working_directory: .
+    command: null
+    prerequisites: []
+  dataset_qa:
+    environment: core
+    working_directory: .
+    command: null
+    prerequisites: []
+  benchmark_template:
+    environment: core
+    working_directory: .
+    command: null
+    prerequisites: []
 robot_contract:
+  revision: piperx_plugin_0.1.0_contract_v1
+  action_representation: ordered left-then-right absolute joint degrees and signed gripper travel
+  observation_representation: ordered left-then-right measured joint degrees and absolute gripper travel
   action_features:
-    left_joint_1.pos: float
-    left_joint_2.pos: float
-    left_joint_3.pos: float
-    left_joint_4.pos: float
-    left_joint_5.pos: float
-    left_joint_6.pos: float
-    left_gripper.pos: float
-    right_joint_1.pos: float
-    right_joint_2.pos: float
-    right_joint_3.pos: float
-    right_joint_4.pos: float
-    right_joint_5.pos: float
-    right_joint_6.pos: float
-    right_gripper.pos: float
+  - name: left_joint_1.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: absolute_joint_position_command
+    side: left
+    frame: null
+    range: null
+  - name: left_joint_2.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: absolute_joint_position_command
+    side: left
+    frame: null
+    range: null
+  - name: left_joint_3.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: absolute_joint_position_command
+    side: left
+    frame: null
+    range: null
+  - name: left_joint_4.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: absolute_joint_position_command
+    side: left
+    frame: null
+    range: null
+  - name: left_joint_5.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: absolute_joint_position_command
+    side: left
+    frame: null
+    range: null
+  - name: left_joint_6.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: absolute_joint_position_command
+    side: left
+    frame: null
+    range: null
+  - name: left_gripper.pos
+    shape: [1]
+    dtype: float64
+    units: millimeter
+    representation: scalar_absolute_position
+    semantic: signed_gripper_travel_command
+    side: left
+    frame: null
+    range: null
+  - name: right_joint_1.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: absolute_joint_position_command
+    side: right
+    frame: null
+    range: null
+  - name: right_joint_2.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: absolute_joint_position_command
+    side: right
+    frame: null
+    range: null
+  - name: right_joint_3.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: absolute_joint_position_command
+    side: right
+    frame: null
+    range: null
+  - name: right_joint_4.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: absolute_joint_position_command
+    side: right
+    frame: null
+    range: null
+  - name: right_joint_5.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: absolute_joint_position_command
+    side: right
+    frame: null
+    range: null
+  - name: right_joint_6.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: absolute_joint_position_command
+    side: right
+    frame: null
+    range: null
+  - name: right_gripper.pos
+    shape: [1]
+    dtype: float64
+    units: millimeter
+    representation: scalar_absolute_position
+    semantic: signed_gripper_travel_command
+    side: right
+    frame: null
+    range: null
   observation_features:
-    fixed_scalar_features:
-      left_joint_1.pos: float
-      left_joint_2.pos: float
-      left_joint_3.pos: float
-      left_joint_4.pos: float
-      left_joint_5.pos: float
-      left_joint_6.pos: float
-      left_gripper.pos: float
-      right_joint_1.pos: float
-      right_joint_2.pos: float
-      right_joint_3.pos: float
-      right_joint_4.pos: float
-      right_joint_5.pos: float
-      right_joint_6.pos: float
-      right_gripper.pos: float
-    configured_camera_feature_rule: left_<camera_key> or right_<camera_key> maps to height_width_3; no camera features when both arm camera configs are empty
-  joint_order:
-    left:
-    - left_joint_1.pos
-    - left_joint_2.pos
-    - left_joint_3.pos
-    - left_joint_4.pos
-    - left_joint_5.pos
-    - left_joint_6.pos
-    right:
-    - right_joint_1.pos
-    - right_joint_2.pos
-    - right_joint_3.pos
-    - right_joint_4.pos
-    - right_joint_5.pos
-    - right_joint_6.pos
-  bimanual_feature_order:
-  - left_joint_1.pos
-  - left_joint_2.pos
-  - left_joint_3.pos
-  - left_joint_4.pos
-  - left_joint_5.pos
-  - left_joint_6.pos
-  - left_gripper.pos
-  - right_joint_1.pos
-  - right_joint_2.pos
-  - right_joint_3.pos
-  - right_joint_4.pos
-  - right_joint_5.pos
-  - right_joint_6.pos
-  - right_gripper.pos
-  units:
-    joints: degrees
-    gripper: millimeters_of_piper_sdk_gripper_travel
+  - name: left_joint_1.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: measured_joint_position
+    side: left
+    frame: null
+    range: null
+  - name: left_joint_2.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: measured_joint_position
+    side: left
+    frame: null
+    range: null
+  - name: left_joint_3.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: measured_joint_position
+    side: left
+    frame: null
+    range: null
+  - name: left_joint_4.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: measured_joint_position
+    side: left
+    frame: null
+    range: null
+  - name: left_joint_5.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: measured_joint_position
+    side: left
+    frame: null
+    range: null
+  - name: left_joint_6.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: measured_joint_position
+    side: left
+    frame: null
+    range: null
+  - name: left_gripper.pos
+    shape: [1]
+    dtype: float64
+    units: millimeter
+    representation: scalar_absolute_position
+    semantic: absolute_measured_gripper_travel
+    side: left
+    frame: null
+    range: null
+  - name: right_joint_1.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: measured_joint_position
+    side: right
+    frame: null
+    range: null
+  - name: right_joint_2.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: measured_joint_position
+    side: right
+    frame: null
+    range: null
+  - name: right_joint_3.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: measured_joint_position
+    side: right
+    frame: null
+    range: null
+  - name: right_joint_4.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: measured_joint_position
+    side: right
+    frame: null
+    range: null
+  - name: right_joint_5.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: measured_joint_position
+    side: right
+    frame: null
+    range: null
+  - name: right_joint_6.pos
+    shape: [1]
+    dtype: float64
+    units: degree
+    representation: scalar_absolute_position
+    semantic: measured_joint_position
+    side: right
+    frame: null
+    range: null
+  - name: right_gripper.pos
+    shape: [1]
+    dtype: float64
+    units: millimeter
+    representation: scalar_absolute_position
+    semantic: absolute_measured_gripper_travel
+    side: right
+    frame: null
+    range: null
+  processor_contract_revision: lerobot_robot_piperx_0.1.0_send_action_rounding_contract
   gripper:
-    meaning: piper_sdk_gripper_travel_relative_to_the_device_configured_zero
-    command_units: millimeters
-    observation_transform: absolute_value_of_reported_travel_then_convert_0.001_mm_to_mm
-    command_transform: preserve_sign_then_round_mm_to_0.001_mm_integer
-    physical_zero_and_polarity: DECIDE/PIN
-    usable_range_mm: DECIDE/PIN
-  declared_joint_limits_artifact:
-    repository: https://github.com/agilexrobotics/agx_arm_urdf
-    commit: f6642ce0d7872c686f29c99e9e10cd23d1d49313
-    path: piper_x/urdf/piper_x_description.urdf
-    sha256: 34126caac7d5b37bc2409f337ac246afbe0bb8cd47fc9f16df5038f19bd21e3a
-    limits_degrees:
-      joint_1: [-150.0, 150.0]
-      joint_2: [0.0, 180.0]
-      joint_3: [-170.0, 0.0]
-      joint_4: [-89.0, 89.0]
-      joint_5: [-89.0, 89.0]
-      joint_6: [-120.0, 120.0]
-    notes: Pinned model declarations only; they are not selected command-clipping limits. The xacro declares a 0.1 m gripper travel while piper_sdk's optional generic software limit uses 0.07 m, so command-limit ownership/range remain unresolved. Hardware limits remain Phase B.
-  declared_send_action:
-    clips_joint_limits: false
-    slew_limits: false
-    returns_changed_or_sent_action: true
-    transforms:
-    - require_all_six_joint_keys_per_arm_or_ignore_partial_joint_action
-    - round_joint_degrees_to_0.001_before_JointCtrl
-    - round_gripper_millimeters_to_0.001_before_GripperCtrl
-    - return_only_values_actually_forwarded_after_rounding
-    residual_driver_behavior: piper_sdk_0.6.1_SDK_joint_and_gripper_clipping_defaults_false
-    joint_limit_enforcement_owner: DECIDE/PIN
-    gripper_limit_enforcement_owner: DECIDE/PIN
+    policy_meaning: piper_sdk gripper travel relative to device-configured zero
+    units: millimeter
+    command_range: null
+    observation_range: null
+    polarity: null
 model:
-  urdf:
+  authoritative_source:
     repository: https://github.com/agilexrobotics/agx_arm_urdf
-    commit: f6642ce0d7872c686f29c99e9e10cd23d1d49313
+    revision_type: commit
+    revision: f6642ce0d7872c686f29c99e9e10cd23d1d49313
     path: piper_x/urdf/piper_x_with_gripper_description.xacro
     sha256: 0ee3f52f9acf3060a7f3e439c6e5e46b6a53d4fa509dd495045548be6b7f90cd
+    artifact_id: piper_x_authoritative_xacro
   frames:
     left_base: base_link
     left_ee: gripper_base
     right_base: base_link
     right_ee: gripper_base
-    evidence:
-      repository: https://github.com/agilexrobotics/agx_arm_urdf
-      commit: f6642ce0d7872c686f29c99e9e10cd23d1d49313
-      path: piper_x/urdf/piper_x_with_gripper_description.xacro
-      symbol_or_section: base_link; flange_joint; flange_link; gripper_base_joint; gripper_base
-      notes: The model defines gripper_base as the fixed gripper-body frame downstream of link6 and flange_link. It is the selected model end-effector frame; any calibrated operational TCP offset remains Track C rather than a hardware-observed Gate A fact.
-    namespace_note: names_are_arm_local; bimanual_composition_must_namespace_each_model_instance
+  calibration:
+    revision: null
+    artifact_id: null
+    frame_convention: null
+    evidence_ids: []
+  parity_tolerances:
+    position_m: null
+    orientation_rad: null
+    zero_position: null
+    joint_limit: null
+timing:
+  clock_domain: host monotonic receipt timestamp
+  dataset_fps: null
+  teleop_sample_fps: null
+  camera_fps: {}
+  policy_inference_fps: null
+  robot_command_fps: null
+  max_xr_pose_age_ms: null
+  max_joint_state_age_ms: null
+  max_policy_action_age_ms: null
+  stale_behavior: null
+  inference:
+    mode: null
+    chunk_horizon: null
+    execution_horizon: null
+    interpolation_multiplier: null
+    stale_chunk_rule: null
+    action_age_reference: null
+safety:
+  max_joint_step_or_slew:
+    mode: null
+    value: null
+    units: null
+    evidence_ids: []
+  takeover_jump_tolerance:
+    value: null
+    units: null
+    evidence_ids: []
+  low_level_fail_safe:
+    owner: null
+    trigger: null
+    deadline_ms: null
+    effect: null
+    evidence_ids: []
+  bimanual:
+    collision_strategy: null
+    workspace_artifact_id: null
+    evidence_ids: []
+  emergency_stop:
+    required: true
+    evidence_ids: []
 hardware:
   left:
-    robot_id: DECIDE/PIN
-    can_adapter_serial: DECIDE/PIN
-    can_interface: DECIDE/PIN
-    firmware_actual: DECIDE/PIN
-    firmware_profile_resolved: DECIDE/PIN
+    can_interface: null
+    identity: null
+    firmware_actual: null
+    driver_profile: null
+    robot_model: piper_x
+    command_api: null
+    command_mode: null
+    sign_semantics_revision: null
+    evidence_ids: []
   right:
-    robot_id: DECIDE/PIN
-    can_adapter_serial: DECIDE/PIN
-    can_interface: DECIDE/PIN
-    firmware_actual: DECIDE/PIN
-    firmware_profile_resolved: DECIDE/PIN
-hardware_validation:
-  left_right_identity_verified: false
-  joint_direction_verified: false
-  joint_units_verified: false
-  gripper_polarity_verified: false
-  gripper_range_verified: false
-  clipping_verified: false
-  slew_behavior_verified: false
-  returned_or_accepted_command_verified: false
-  low_level_fail_safe_verified: false
-quest_mapping:
-  session_policy: one_isaac_teleop_cloudxr_session_per_process
-  left_controller_source: isaacteleop_1.3.131_ControllersSource.controller_left_from_shared_TeleopSession
-  right_controller_source: isaacteleop_1.3.131_ControllersSource.controller_right_from_shared_TeleopSession
-  calibration_artifact:
-    path: DECIDE/PIN
-    sha256: DECIDE/PIN
-  clutch_rebase_implementation: lerobot_0.6.1_examples.isaac_teleop_to_so101.isaac_teleop.Clutch_in_common.setup_xr;_PIPER-X_frame_application_deferred_to_Track_C
-  host_diagnostics: tools/quest_xr_diagnostics.py;_one_shared_ControllersSource_and_one_TeleopSession_construction_path;_physical_Quest_validation_not_run
-processors:
-  data_action_space: resolved_piper_robot_action_space
-  deterministic_label_pipeline:
-    sequence:
-    - HIL_merge_if_applicable
-    - emit_dataset_action_to_dataset.action_and_Robot.send_action
-    configuration_owner: inline_in_configs/resolved_contract.yaml
-    transformation_ownership: DECIDE/PIN
-    implementation_status: no_joint_or_gripper_limit_enforcement_is_assigned_to_the_label_pipeline_by_Gate_A
-  residual_device_safety_expected: true
+    can_interface: null
+    identity: null
+    firmware_actual: null
+    driver_profile: null
+    robot_model: piper_x
+    command_api: null
+    command_mode: null
+    sign_semantics_revision: null
+    evidence_ids: []
+teleop:
+  semantic_session_invariant: one_xr_session_lifecycle_owns_coherent_left_right_streams
+  real:
+    execution_profile: quest_xr_real
+    resolved_implementation: tools.quest_xr_diagnostics.SharedQuestSession
+    left_source: isaacteleop.ControllersSource.LEFT from one shared ControllersSource
+    right_source: isaacteleop.ControllersSource.RIGHT from one shared ControllersSource
+    processor_revision: null
+    evidence_ids:
+    - v43_quest_host_implementation
+    - v43_quest_host_tests
+  isaac:
+    execution_profile: isaac_vr_record
+    resolved_implementation: null
+    left_source: null
+    right_source: null
+    processor_revision: null
+    evidence_ids: []
 dataset:
   format: LeRobotDataset_v3
-  action_rule: dataset_action_after_deterministic_label_processors
-  contract_hash_recording:
-    algorithm: sha256
-    source_file: configs/resolved_contract.yaml
-  cameras:
-    front: DECIDE/PIN
-    left_wrist: DECIDE/PIN_OR_DISABLED
-    right_wrist: DECIDE/PIN_OR_DISABLED
-hil:
-  per_arm_required: true
-  per_arm_verified: false
-  intervention_left_feature: DECIDE/PIN
-  intervention_right_feature: DECIDE/PIN
-  intervention_any:
-    storage: derived_compatibility_field_if_upstream_requires
-    formula: intervention_left OR intervention_right
-  policy_generation_id_required_for_async_or_inflight_results: true
-  generation_owner: DECIDE/PIN
-  stale_chunk_invalidation_required: true
-timing:
-  safety_clock_domain: host_monotonic_receipt_unless_explicitly_synchronized
-  control_fps: DECIDE/PIN
-  max_xr_pose_age_ms: DECIDE/PIN
-  max_joint_state_age_ms: DECIDE/PIN
-  max_policy_action_age_ms: DECIDE/PIN
-  stale_behavior:
-    xr: DECIDE/PIN
-    joint_state: DECIDE/PIN
-    policy: DECIDE/PIN
-safety:
-  max_joint_step_or_slew: DECIDE/PIN
-  takeover_jump_tolerance: DECIDE/PIN
-  fk_position_error_tolerance: DECIDE/PIN
-  fk_orientation_error_tolerance: DECIDE/PIN
-  low_level_fail_safe:
-    owner: DECIDE/PIN
-    trigger_or_deadline: DECIDE/PIN
-    effect: DECIDE/PIN
-    evidence: DECIDE/PIN
-  bimanual_inter_arm:
-    mode: DECIDE/PIN
-    workspace_artifact:
-      path: DECIDE/PIN
-      sha256: DECIDE/PIN
+  temporal_semantics:
+    pairing: obs_t_action_t
+    observation_phase: pre_decision_t
+    action_phase: decision_t
+    native_actuation_phase: after_dataset_action_t
+    next_observation_phase: post_transition_t
+    outcome_phase: transition_t
+    causality_test_evidence_id: null
+    converters:
+      isaac_human:
+        obs_t_field: null
+        action_t_field: null
+        outcome_field: null
+        termination_field: null
+      isaac_automated:
+        obs_t_field: null
+        action_t_field: null
+        outcome_field: null
+        termination_field: null
+      real_human:
+        obs_t_field: null
+        action_t_field: null
+        outcome_field: null
+        termination_field: null
+  common_training_view:
+    input_features: []
+    target_features:
+    - action
+    task_feature: null
+    schema_fingerprint_sha256: null
+  feature_classification:
+    training_input: []
+    training_target:
+    - action
+    evaluation_only: []
+    provenance_only: []
+    privileged_debug: []
+  provenance_schema:
+    storage: null
+    sidecar_artifact_id: null
+    fields: {}
+  cameras: {}
+  sources: {}
+  materialization:
+    strategy: deterministic_projection_then_merge
+    selected_source_ids: []
+    projection_artifact_id: null
+    projected_schema_fingerprints: {}
+    final_dataset:
+      identity_type: null
+      repo_id: null
+      revision: null
+      manifest_artifact_id: null
+      schema_fingerprint_sha256: null
+    execution_profile: dataset_materialize
+  qa:
+    full_frame_iteration_required: true
+    all_video_streams_required: true
+    dataloader_smoke_required: true
+    semantic_replay_required_where_applicable: true
+    report_artifact_id: null
+    execution_profile: dataset_qa
+simulation:
+  isaac:
+    environment_id: isaac
+    robot_asset:
+      source: null
+      revision: null
+      artifact_id: null
+      sha256: null
+    task:
+      task_id: null
+      revision: null
+      instruction: null
+      success_semantics_revision: null
+      reset_distribution_revision: null
+      workspace_frame: null
+    processors:
+      observation_to_policy: null
+      policy_action_to_native: null
+      config_artifact_ids: []
+      state_artifact_ids: []
+      reset_semantics: null
+    execution:
+      physics_dt_s: null
+      control_dt_s: null
+      action_repeat: null
+      control_mode: null
+      actuator_type: null
+      actuator_config_artifact_id: null
+      saturation_semantics: null
+      action_hold_or_interpolation: null
+      reset_seed_protocol: null
+    recorder:
+      backend: null
+      native_format: null
+      conversion_revision: null
+      execution_profile: isaac_vr_record
+    generator:
+      source_class: null
+      backend: null
+      revision: null
+      requires_seed_demos: null
+      success_signal: null
+      execution_profile: isaac_generate
+      report_artifact_id: null
+      report_summary:
+        attempted: null
+        successful: null
+        rejected: null
+        failure_categories: {}
+    parity:
+      report_artifact_id: null
+      evidence_ids: []
+  mujoco:
+    environment_id: mujoco
+    model_asset:
+      source: null
+      revision: null
+      artifact_id: null
+      sha256: null
+    task:
+      task_id: null
+      revision: null
+      instruction: null
+      success_semantics_revision: null
+      reset_distribution_revision: null
+      workspace_frame: null
+    processors:
+      observation_to_policy: null
+      policy_action_to_native: null
+      config_artifact_ids: []
+      state_artifact_ids: []
+      reset_semantics: null
+    execution:
+      physics_dt_s: null
+      control_dt_s: null
+      action_repeat: null
+      control_mode: null
+      actuator_type: null
+      actuator_config_artifact_id: null
+      saturation_semantics: null
+      action_hold_or_interpolation: null
+      reset_seed_protocol: null
+    parity:
+      report_artifact_id: null
+      evidence_ids: []
+evaluation:
+  shared_policy_contract_revision: null
+  isaac_run: null
+  mujoco_run: null
+  cross_sim:
+    same_checkpoint_required: true
+    same_policy_contract_required: true
+    same_task_revision_required: true
+    initial_condition_policy: null
+    parity_report_artifact_id: null
 benchmark:
-  robotwin:
-    lerobot_pin: DECIDE/PIN
-    dataset_or_benchmark_revision: DECIDE/PIN
-    action_space_smoke_test: not_run
-    observation_space_smoke_test: not_run
-    known_issue_notes: DECIDE/PIN
-environments:
-  core:
-    required: true
-    purpose: main_runtime_and_default_development
-    manager_or_launcher: uv
-    python_version: CPython_3.12.13
-    spec_artifact:
-      path: uv.lock
-      sha256: a928d4df514c10bc77717e95a4b56ccffa4686041e9ed655c86f96d5fe586c33
-    torch_version: 2.7.1+cu126
-    cuda_runtime: PyTorch_bundled_CUDA_12.6; torch.cuda.is_available_true_on_validation_host
-    system_or_vendor_runtime: native_Linux; isaacteleop_group_is_Linux_only; CloudXR_runtime_and_EULA_are_Track_B_prerequisites
-    canonical_launch_prefix: uv run
-    selected_stack_smoke_test: CPython_3.12.13_official_LeRobot_0.6.1_piper_sdk_0.6.1_and_lerobot_robot_piperx_0.1.0_plugin_discovery_and_factory_imported_without_hardware
-    current_lock_status: core_uv_lock_regenerated_with_pytest_9.1.1_in_the_dev_group_and_uv_sync_--frozen_completed;_isaac-teleop_group_materialized_with_uv_sync_--frozen_--group_isaac-teleop_for_quest_xr_host_diagnostics
-    components:
-    - project
-    - lerobot
-    - lerobot_robot_piperx_0.1.0
-    - agilex_driver
-    - dataset
-    - replay
-    - rollout
-    - hil
-    - isaac_teleop_1.3.131_materialized_quest_xr_group
-  special: {}
-execution_profiles:
-  offline_tests: core
-  core_runtime: core
-  piper_readonly: core
-  piper_motion: core
-  quest_xr: core
-  dataset_record: DECIDE/PIN
-  replay: core
-  rollout: core
-  hil: core
-  mujoco: DECIDE/PIN_OR_NOT_REQUIRED
-  isaac_sim: DECIDE/PIN_OR_NOT_REQUIRED
-  embodichain: DECIDE/PIN_OR_NOT_REQUIRED
-  robotwin: DECIDE/PIN_OR_NOT_REQUIRED
-environment_policy:
-  default_environment: core
-  special_environment_requires_evidence: true
-  same_process_components_must_share_compatible_environment: true
-  untracked_manual_package_mutations_allowed_for_acceptance: false
+  integration:
+    upstream_owns_protocol: true
+    official_score_requires_official_protocol: true
+    profile_template: benchmark_template
+    processor_boundary: edge_only
+    raw_artifact_policy: null
+    readiness_evidence_ids: []
+  selected: null
+hil:
+  required: true
+  intervention_left_feature: intervention_left
+  intervention_right_feature: intervention_right
+  generation_owner: null
+  generation_invalidation_scope: null
+  stale_chunk_policy: null
+  rebase_implementation: null
+  takeover_tolerance_ref: safety.takeover_jump_tolerance
+  mixed_modes:
+    human_left_policy_right:
+      policy_observation_scope: null
+      suppressed_arm_policy_action: null
+      untouched_arm_chunk_policy: null
+    policy_left_human_right:
+      policy_observation_scope: null
+      suppressed_arm_policy_action: null
+      untouched_arm_chunk_policy: null
+  evidence_ids: []
+real_rollout:
+  execution_profile: real_rollout
+  checkpoint_artifact_id: null
+  checkpoint_sha256: null
+  policy_config_artifact_id: null
+  preprocessor_artifact_id: null
+  postprocessor_artifact_id: null
+  task_id: null
+  task_revision: null
+  start_stop_procedure_artifact_id: null
+  authorization_evidence_id: null
+  accepted_command_log_artifact_id: null
+  result_artifact_id: null
+artifacts:
+  v43_source_contract:
+    kind: source_bundle
+    sha256: bb3d4dc71b0a9b2aa1a9ce402d1bf1f70e9a18e9157caa506a737f8851028fad
+    path: docs/archive/v4_3_pre_v5_2/configs/resolved_contract.yaml
+    uri: null
+    description: Exact pre-migration live v4.3-lineage resolved contract
+  v43_archive_inventory:
+    kind: report
+    sha256: 1371a8fc547c53f3d251e1b05af8a869605ebc6cd86a5eb1e81ab1ac01bc4554
+    path: docs/archive/v4_3_pre_v5_2/inventory.json
+    uri: null
+    description: Machine-readable archived-file inventory at migration start
+  migration_matrix:
+    kind: report
+    sha256: 15437d01d4f25d7ddf9eb5b4918141763aad88490678dd215dfd1a22281e19ab
+    path: docs/migration/V4_3_TO_V5_2_MIGRATION_MATRIX.md
+    uri: null
+    description: Pre-contract v4.3 to v5.2 domain and gate migration matrix
+  v52_pack_manifest_output:
+    kind: test_output
+    sha256: 564d4e0c86298c3ad9afce346669a8ed7339806d72b915c7c511e413a82bb7c9
+    path: docs/migration/evidence/V5_2_PACK_MANIFEST_VERIFICATION.txt
+    uri: null
+    description: Attached v5.2 pack SHA and complete manifest verification output
+  pre_contract_offline_runtime_tests:
+    kind: test_output
+    sha256: 9790479b9e53aedc921b42ef0dc2d56014f595dab44f3f14c656778af647e49d
+    path: docs/migration/evidence/PRE_CONTRACT_OFFLINE_RUNTIME_TESTS.txt
+    uri: null
+    description: Existing PIPER-X and host-XR offline test output plus uv lock check
+  core_uv_lock:
+    kind: environment_spec
+    sha256: a928d4df514c10bc77717e95a4b56ccffa4686041e9ed655c86f96d5fe586c33
+    path: uv.lock
+    uri: null
+    description: Core uv lock; pyproject.toml is the paired project specification
+  piper_x_authoritative_xacro:
+    kind: model_asset
+    sha256: 0ee3f52f9acf3060a7f3e439c6e5e46b6a53d4fa509dd495045548be6b7f90cd
+    path: null
+    uri: https://raw.githubusercontent.com/agilexrobotics/agx_arm_urdf/f6642ce0d7872c686f29c99e9e10cd23d1d49313/piper_x/urdf/piper_x_with_gripper_description.xacro
+    description: Pinned PIPER-X-with-gripper Xacro identity preserved from the old contract
+  final_m0_checks:
+    kind: test_output
+    sha256: a3c8d85ab0554a117644ba470a2cce7ff1d66ab55305f6623b0ef26f6f79a89b
+    path: docs/migration/evidence/FINAL_M0_CHECKS.txt
+    uri: null
+    description: Final live lock, validator, M0, linter, tests, Ruff, mypy, and Final-RC-negative results
+  migration_report:
+    kind: report
+    sha256: d42466c54b48dac462a8d8fa0d14be60b1b9f29fbaa674003a81d68b380d6398
+    path: docs/migration/V4_3_TO_V5_2_MIGRATION_REPORT.md
+    uri: null
+    description: Completed v4.3 to v5.2 Hardened M0 migration report
+evidence:
+  v52_pack_manifest_check:
+    kind: command_test
+    status: pass
+    summary: Attached v5.2 pack manifest verified completely.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: "sha256sum -c MANIFEST.sha256"
+    artifact_ids:
+    - v52_pack_manifest_output
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: All 31 archive members matched; cache residue was not installed.
+  m0_final_validation:
+    kind: command_test
+    status: pass
+    summary: Final live v5.2 migration checks passed and Final RC correctly remained not ready.
+    timestamp: '2026-08-30T11:04:26+03:00'
+    command: "uv lock --check; validator; M0 assertion; spec linter; pytest; Ruff; mypy"
+    artifact_ids:
+    - final_m0_checks
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: Offline migration checks only; the Final-RC negative assertion exited 1 as required.
+  v43_core_environment_compatibility:
+    kind: document_review
+    status: pass
+    summary: Old core-environment compatibility record remains supported.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: null
+    artifact_ids:
+    - v43_source_contract
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: The live pyproject.toml and uv.lock retain CPython 3.12.13, LeRobot 0.6.1, piper-sdk 0.6.1, and the local plugin.
+  v43_e0_offline_tests:
+    kind: command_test
+    status: pass
+    summary: The existing core lock and offline runtime remain usable.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: "uv lock --check"
+    artifact_ids:
+    - pre_contract_offline_runtime_tests
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: Revalidated during M0 without dependency changes.
+  v43_candidate_matrix:
+    kind: document_review
+    status: pass
+    summary: The old candidate matrix is preserved as historical selection evidence.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: null
+    artifact_ids:
+    - v43_source_contract
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: Preserved from the exact archived v4.3 contract and rechecked against the live repository.
+  v43_piper_x_support:
+    kind: upstream_source
+    status: pass
+    summary: Pinned Evo-RL donor explicitly implements PiperXFollower.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: null
+    artifact_ids:
+    - v43_source_contract
+    repository: https://github.com/MINT-SJTU/Evo-RL
+    revision_type: commit
+    revision: 6f2db449a21e1bac750b996f2e27cac6739aa63f
+    path: src/lerobot/robots/piper_follower/config_piper_follower.py
+    symbol: PiperXFollowerConfig; PiperXFollower
+    notes: Preserved from the exact archived v4.3 contract and rechecked against the live repository.
+  v43_bimanual_support:
+    kind: upstream_source
+    status: pass
+    summary: Pinned donor composes left and right PIPER-X followers.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: null
+    artifact_ids:
+    - v43_source_contract
+    repository: https://github.com/MINT-SJTU/Evo-RL
+    revision_type: commit
+    revision: 6f2db449a21e1bac750b996f2e27cac6739aa63f
+    path: src/lerobot/robots/bi_piper_follower/bi_piper_follower.py
+    symbol: BiPiperFollower; BiPiperXFollower
+    notes: Preserved from the exact archived v4.3 contract and rechecked against the live repository.
+  v43_driver_firmware_behavior:
+    kind: upstream_source
+    status: pass
+    summary: Pinned piper_sdk exposes the selected J-position APIs and firmware query.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: null
+    artifact_ids:
+    - v43_source_contract
+    repository: https://github.com/agilexrobotics/piper_sdk
+    revision_type: commit
+    revision: 081e7c588e5b79eeaefa67a0469bcc701c81014f
+    path: piper_sdk/interface/piper_interface_v2.py
+    symbol: C_PiperInterface_V2.JointCtrl; GetPiperFirmwareVersion
+    notes: Preserved from the exact archived v4.3 contract and rechecked against the live repository.
+  v43_driver_model_crosscheck:
+    kind: upstream_source
+    status: pass
+    summary: Pinned pyAgxArm source distinguishes PIPER-X firmware/API paths.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: null
+    artifact_ids:
+    - v43_source_contract
+    repository: https://github.com/agilexrobotics/pyAgxArm
+    revision_type: commit
+    revision: 2255d88e1fabdf20fcd1eccbc4312b4ce1cfd2d4
+    path: pyAgxArm/protocols/can_protocol/drivers/piper_x/default/driver.py
+    symbol: PiperX driver profiles
+    notes: Preserved from the exact archived v4.3 contract and rechecked against the live repository.
+  v43_fork_vs_drop_in:
+    kind: document_review
+    status: pass
+    summary: The selected architecture remains official LeRobot plus a third-party plugin.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: null
+    artifact_ids:
+    - v43_source_contract
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: No Evo-RL fork became a runtime dependency.
+  v43_selected_plugin_seam:
+    kind: upstream_source
+    status: pass
+    summary: Pinned LeRobot provides third-party robot discovery and factory seams.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: null
+    artifact_ids:
+    - v43_source_contract
+    repository: https://github.com/huggingface/lerobot
+    revision_type: commit
+    revision: 7e241bd630a3719a56157a497ce5d08f244784f1
+    path: src/lerobot/utils/import_utils.py
+    symbol: register_third_party_plugins
+    notes: Preserved from the exact archived v4.3 contract and rechecked against the live repository.
+  v43_track_1b_package_boundary:
+    kind: document_review
+    status: pass
+    summary: The local external plugin package boundary remains implemented.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: null
+    artifact_ids:
+    - v43_source_contract
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: Live package revision c01076fc32794cffcc0eb10ea6157c34aeb8de24; runtime source deliberately unchanged.
+  v43_lerobot_version_comparison:
+    kind: upstream_source
+    status: pass
+    summary: The old version audit selected official LeRobot 0.6.1.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: null
+    artifact_ids:
+    - v43_source_contract
+    repository: https://github.com/huggingface/lerobot
+    revision_type: commit
+    revision: 7e241bd630a3719a56157a497ce5d08f244784f1
+    path: pyproject.toml
+    symbol: project version and dependencies
+    notes: Preserved from the exact archived v4.3 contract and rechecked against the live repository.
+  v43_driver_version_selection:
+    kind: upstream_source
+    status: pass
+    summary: The old driver audit selected piper-sdk 0.6.1.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: null
+    artifact_ids:
+    - v43_source_contract
+    repository: https://github.com/agilexrobotics/piper_sdk
+    revision_type: commit
+    revision: 081e7c588e5b79eeaefa67a0469bcc701c81014f
+    path: piper_sdk/version.py
+    symbol: piper_sdk version
+    notes: Preserved from the exact archived v4.3 contract and rechecked against the live repository.
+  v43_robot_contract_static_evidence:
+    kind: upstream_source
+    status: pass
+    summary: Pinned donor and live plugin support the migrated feature and conversion semantics.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: null
+    artifact_ids:
+    - v43_source_contract
+    repository: https://github.com/MINT-SJTU/Evo-RL
+    revision_type: commit
+    revision: 6f2db449a21e1bac750b996f2e27cac6739aa63f
+    path: src/lerobot/robots/piper_follower/piper_follower.py
+    symbol: action_features; observation_features; send_action
+    notes: Preserved from the exact archived v4.3 contract and rechecked against the live repository.
+  v43_gripper_static_evidence:
+    kind: upstream_source
+    status: pass
+    summary: Pinned SDK defines gripper travel fields and 0.001 mm command units.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: null
+    artifact_ids:
+    - v43_source_contract
+    repository: https://github.com/agilexrobotics/piper_sdk
+    revision_type: commit
+    revision: 081e7c588e5b79eeaefa67a0469bcc701c81014f
+    path: piper_sdk/interface/piper_interface_v2.py
+    symbol: GetArmGripperMsgs; GripperCtrl
+    notes: Preserved from the exact archived v4.3 contract and rechecked against the live repository.
+  v43_a_plugin_tests:
+    kind: command_test
+    status: pass
+    summary: The live single-arm and bimanual plugin passed all offline tests.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: "uv run pytest -q tests/test_lerobot_robot_piperx.py"
+    artifact_ids:
+    - pre_contract_offline_runtime_tests
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: No hardware methods were invoked; fake SDK only.
+  v43_model_urdf:
+    kind: upstream_source
+    status: pass
+    summary: Pinned PIPER-X Xacro identity and frame names are preserved.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: null
+    artifact_ids:
+    - piper_x_authoritative_xacro
+    repository: https://github.com/agilexrobotics/agx_arm_urdf
+    revision_type: commit
+    revision: f6642ce0d7872c686f29c99e9e10cd23d1d49313
+    path: piper_x/urdf/piper_x_with_gripper_description.xacro
+    symbol: base_link; gripper_base
+    notes: Preserved from the exact archived v4.3 contract and rechecked against the live repository.
+  v43_quest_host_implementation:
+    kind: document_review
+    status: pass
+    summary: One host-side TeleopSession lifecycle owns both controller outputs.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: null
+    artifact_ids:
+    - v43_source_contract
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: Physical Quest connection and Q1 human evidence were not performed.
+  v43_quest_host_tests:
+    kind: command_test
+    status: pass
+    summary: Host-side shared-session XR diagnostics passed offline tests.
+    timestamp: '2026-08-30T10:41:38+03:00'
+    command: "uv run pytest -q tests/test_quest_xr_diagnostics.py"
+    artifact_ids:
+    - pre_contract_offline_runtime_tests
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: Fake NVIDIA objects only; not physical Quest evidence.
+gates:
+  M0:
+    state: accepted
+    evidence_ids:
+    - v52_pack_manifest_check
+    - m0_final_validation
+    artifact_ids:
+    - v43_source_contract
+    - v43_archive_inventory
+    - migration_matrix
+    - v52_pack_manifest_output
+    - final_m0_checks
+    - migration_report
+    notes: v5.2 control-plane migration inventory and pack verification complete.
+  E0:
+    state: accepted
+    evidence_ids:
+    - v43_e0_offline_tests
+    artifact_ids:
+    - core_uv_lock
+    - pre_contract_offline_runtime_tests
+    notes: Existing single core uv environment preserved and revalidated.
+  A:
+    state: accepted
+    evidence_ids:
+    - v43_piper_x_support
+    - v43_bimanual_support
+    - v43_driver_firmware_behavior
+    - v43_selected_plugin_seam
+    - v43_a_plugin_tests
+    artifact_ids:
+    - pre_contract_offline_runtime_tests
+    notes: Existing static PIPER-X plugin/driver contract migrated and offline-revalidated.
+  B:
+    state: smoke_validated
+    evidence_ids:
+    - v43_quest_host_implementation
+    - v43_quest_host_tests
+    artifact_ids:
+    - pre_contract_offline_runtime_tests
+    notes: Host path exists, but physical Quest human evidence, timing, reconnect, tracking-loss, and shutdown acceptance are absent.
+  C:
+    state: resolved
+    evidence_ids:
+    - v43_model_urdf
+    artifact_ids:
+    - piper_x_authoritative_xacro
+    notes: Pinned model/frame facts migrated; v5.2 offline FK/IK/reference command tests are not complete.
+  D0:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: Old label prose does not satisfy v5.2 temporal causality and common-training-view requirements.
+  S0:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No v5.2 simulator/evaluation upstream audit was performed during M0.
+  S1:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No Isaac environment implementation was performed.
+  S2:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No physical Quest-to-Isaac validation was performed.
+  D1:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No Isaac human-VR dataset exists.
+  G1:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No automated Isaac dataset generation exists.
+  D2a:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No Isaac source parity evidence exists.
+  M1:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No MuJoCo environment implementation was performed.
+  E1:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No Isaac policy evaluation run exists.
+  E2:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No MuJoCo policy evaluation run exists.
+  E3:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No cross-simulator evaluation exists.
+  R0:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No hardware/CAN/firmware observation was performed.
+  R1:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No authorized one-arm motion or fail-safe validation was performed.
+  R1B:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No bimanual physical safety evidence exists.
+  R2:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No real human-VR dataset exists.
+  D2b:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No real-to-Isaac parity evidence exists.
+  DM:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No mixed-source dataset materialization exists.
+  DQ:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No dataset QA or semantic replay exists.
+  T0:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: Training compatibility smoke is not currently required and was not run.
+  HIL:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No per-arm HIL implementation or physical intervention evidence exists.
+  R3:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No real policy rollout was authorized or run.
+  B0:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No benchmark integration readiness work was performed.
+  B1:
+    state: unresolved
+    evidence_ids: []
+    artifact_ids: []
+    notes: No benchmark is selected and no benchmark run exists.
+release:
+  final_rc_state: not_ready

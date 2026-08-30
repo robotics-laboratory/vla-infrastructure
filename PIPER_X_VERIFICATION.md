@@ -1,159 +1,94 @@
 # PIPER_X_VERIFICATION.md
 
-## Purpose
+## Goal
 
-Select and verify the actual PIPER-X LeRobot Robot + AgileX driver/firmware stack and ensure the selected stack is reproducible in the environment that will own it.
+Resolve a real PIPER-X embodiment contract and prove that Isaac/MuJoCo mappings preserve intended robot semantics.
 
-Do not assume:
+## Static/driver evidence [[gate:A]]
 
-```text
-generic Piper == Piper X
-latest SDK == best integration
-legacy piper_sdk == mandatory
-pyAgxArm == mandatory
-```
-
-All resolved values go only to `configs/resolved_contract.yaml`.
-
----
-
-## 1. Candidate evidence matrix
-
-Build a matrix:
+Pin:
 
 ```text
-candidate
-× explicit PIPER-X support
-× bimanual support
-× LeRobot plugin seam vs fork
-× driver backend
-× firmware-aware PIPER-X correctness
-× action/observation contract clarity
-× limits/safety behavior
-× maintenance state
-× adaptation required
-× core-environment compatibility
+LeRobot revision
+PIPER-X LeRobot plugin/package
+AgileX driver revision
+robot model variant
+exact command API/control mode
+action features
+observation features
+joint order
+joint units/representation
+gripper semantics
+model source
 ```
 
-Prefer the smallest correct integration.
+Generic Piper is not accepted as PIPER-X without evidence.
 
----
+## Hardware runtime contract [[gate:R0]] / [[gate:R1]]
 
-## 2. Driver backend resolution
-
-Treat the driver as a resolved choice.
-
-Audit the driver required by the selected plugin and current official candidate(s), potentially including:
+For each arm resolve independently:
 
 ```text
-pyAgxArm
-legacy agilexrobotics/piper_sdk
-```
-
-Resolve:
-
-```text
-driver backend
-repo/version/commit
-robot model/profile
-firmware profile expected by driver
-actual firmware left/right
-PIPER-X-specific sign/workaround behavior
-environment requirements
-```
-
-Do not rewrite a correct plugin solely to use a newer SDK.
-
----
-
-## 3. Phase A — Static contract resolution
-
-Resolve without commanding hardware:
-
-```text
-Robot implementation/pin
-PIPER-X and bimanual evidence
-driver backend/pin
-firmware compatibility logic
-action_features / observation_features
-joint order / units / gripper semantics
-declared limits
-send_action behavior
-URDF/model/frame names
-deterministic processor pipeline
-declared fail-safe mechanisms
-required Python/runtime/dependency constraints
-```
-
-Evidence should be re-checkable:
-
-```yaml
-repository: ...
-commit: ...
-path: ...
-symbol_or_section: ...
-notes: ...
-```
-
-Also resolve whether the selected Robot/plugin/driver stack can run in the `core` environment.
-
-If not, follow `ENVIRONMENT_POLICY.md`; do not invent a process boundary casually.
-
-### Phase A gate
-
-`status.static_resolution_complete` may become true only after:
-
-```bash
-python tools/validate_resolved_contract.py configs/resolved_contract.yaml
-```
-
-passes.
-
----
-
-## 4. Phase B — Hardware validation
-
-Validate per arm:
-
-```text
+CAN/device identity
 actual firmware
-CAN identity
-left/right identity
-joint direction/units
-gripper polarity/range
-saturation
-clipping/slew
-returned/accepted command behavior
-limits
-fail-safe behavior
+driver profile
+robot model
+command API
+command mode
+sign semantics revision
 ```
 
-Do not turn requirements into verified facts without evidence.
+Firmware alone is not a complete command contract. Do not transfer a workaround from a different driver/API path without evidence.
 
----
+## Executable embodiment parity
 
-## 5. Action/driver rule
-
-Determine where deterministic transformations happen:
+For the authoritative reference, Isaac and MuJoCo test:
 
 ```text
-label processor
-Robot action processor
-Robot.send_action()
-driver
-device/controller
+home/zero pose
+joint lower/upper limits
+positive perturbation J1..J6
+gripper endpoints
+sampled q vectors
+FK/TCP
 ```
 
-Transformations that should define the learning target belong in the resolved deterministic label path where practical.
+Resolve tolerances from evidence:
 
-Residual device safety remains a final guard.
+```text
+max position error
+max orientation error
+zero tolerance
+joint-limit tolerance
+```
 
----
+Do not invent numeric tolerances in the specification.
 
-## 6. Acceptance
+## Sign test
 
-Offline integration requires Phase A plus a reproducible resolved environment for the selected stack.
+For each joint:
 
-Real hardware requires the relevant Phase B fields.
+```text
+q_home -> q_home + small positive delta on one joint
+```
 
-Simultaneous bimanual operation also requires the inter-arm safety gate from `SAFETY_TIMING.md`.
+verify intended positive direction and TCP response.
+
+## Model asset
+
+Pin immutable repository/revision/path/hash or equivalent immutable artifact.
+
+"Official repository" alone is not sufficient acceptance evidence.
+
+## Calibration
+
+Calibration is a first-class artifact:
+
+```text
+revision
+artifact id/hash
+frame convention
+date/source evidence
+```
+
+Changed calibration invalidates dependent evidence as defined by the gate graph.

@@ -1,0 +1,45 @@
+Archive:
+/home/ebulochkin/.codex/attachments/3255b88c-09d5-4011-9924-84d621bb6152/piper_x_codex_instruction_pack_v5_2_hardened.zip
+
+Archive SHA-256:
+e46212c9188d5c9a49a7c4f176e1a7d8c0edec5b1d568d937818ba51c71251b3
+
+Command:
+sha256sum -c MANIFEST.sha256
+
+Working directory:
+/tmp/piper-v5.2-pack.6Qiwr2
+
+Result:
+.pytest_cache/.gitignore: OK
+.pytest_cache/CACHEDIR.TAG: OK
+.pytest_cache/README.md: OK
+.pytest_cache/v/cache/nodeids: OK
+ACCEPTANCE_CHECKLIST.md: OK
+AGENTS.md: OK
+BENCHMARK_POLICY.md: OK
+CAPABILITY_MATRIX.md: OK
+DATASET_MATERIALIZATION.md: OK
+DATA_COLLECTION_POLICY.md: OK
+DESIGN_BASIS.md: OK
+ENVIRONMENT_POLICY.md: OK
+EVALUATION_POLICY.md: OK
+GATE_SPEC.md: OK
+HIL_EXTENSION.md: OK
+IMPLEMENTATION_PLAN.md: OK
+MIGRATION_V4_3_V5_1_TO_V5_2.md: OK
+NORMATIVE_MODEL.md: OK
+PIPER_X_VERIFICATION.md: OK
+README.md: OK
+SAFETY_TIMING.md: OK
+SIMULATION_POLICY.md: OK
+SOURCE_REFERENCES.md: OK
+configs/gate_rules.yaml: OK
+configs/resolved_contract.schema.json: OK
+configs/resolved_contract.yaml: OK
+tests/test_validator_baseline.py: OK
+tests/test_validator_negative.py: OK
+tools/lint_spec_references.py: OK
+tools/validate_resolved_contract.py: OK
+
+Exit status: 0

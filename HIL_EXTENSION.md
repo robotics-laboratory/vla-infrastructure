@@ -1,159 +1,64 @@
 # HIL_EXTENSION.md
 
-## 1. Reuse rule
+## Scope
 
-Run the HIL implementation/tests from the environment mapped to the `hil` execution profile in `configs/resolved_contract.yaml`. If HIL requires a separate environment from the main control process, treat that as an architecture/process-boundary issue under `ENVIRONMENT_POLICY.md`, not as a shell convenience.
+Per-arm HIL is a narrow project extension around the selected LeRobot inference/control path. Do not replace upstream inference, recorder or policy runtime.
 
-
-Inspect pinned current LeRobot DAgger/HIL first.
-
-Implement ONLY the remaining per-arm gap.
-
-If the pinned upstream already provides correct independent per-arm semantics, reuse it.
-
----
-
-## 2. Required modes
+## Required modes
 
 ```text
-POLICY_BOTH
-HUMAN_LEFT + POLICY_RIGHT
-POLICY_LEFT + HUMAN_RIGHT
-HUMAN_BOTH
+POLICY_LEFT  + POLICY_RIGHT
+HUMAN_LEFT   + POLICY_RIGHT
+POLICY_LEFT  + HUMAN_RIGHT
+HUMAN_LEFT   + HUMAN_RIGHT
 ```
 
-Authoritative intervention bits:
+Authoritative intervention features:
 
 ```text
 intervention_left
 intervention_right
 ```
 
-If compatibility requires a global field:
+## Mixed-mode semantics
+
+The machine contract resolves:
 
 ```text
-intervention_any = intervention_left OR intervention_right
+does policy receive fresh full-bimanual observations?
+what happens to the suppressed arm policy action?
+does the untouched arm continue a pre-takeover chunk?
+what invalidates global vs per-arm generations?
+what state is used to rebase on release?
 ```
 
-It is derived, never independent truth.
+No mixed-mode behavior is inferred from names alone.
 
----
+## Generation invalidation
 
-## 3. Correct action pipeline
-
-Use the same data action space resolved for recording/training:
+If async/chunk inference is used:
 
 ```text
-policy data_action ────────────┐
-processed human data_action ───┼─> per-arm merge
-takeover mask ─────────────────┘
-                                      ↓
-                              merged_data_action
-                                      ↓
-                     deterministic label processors
-                                      ↓
-                               dataset_action
-                                      ↓
-                               dataset.action
-                                      ↓
-                          normal Robot/send path
+request -> generation id
+generation transition -> invalidate stale requests/results/queued chunks/interpolator state
 ```
 
-Do not skip deterministic label processors between HIL merge and `dataset.action`.
+A stale result must never enter execution after invalidation.
 
-Do not call `dataset.action` the actually executed/sent command unless separately verified.
+## Takeover/release
 
----
+Use measured robot state for release/rebase when required. Resolve takeover/release continuity tolerance in `safety`.
 
-## 4. Quest takeover/release
+## Machine evidence [[gate:HIL]]
 
-Use current measured robot state and existing LeRobot Isaac Teleop clutch/rebase/FK pattern where possible.
-
-The first human command after takeover must satisfy the configured continuity tolerance.
-
----
-
-## 5. Async policy generation protocol
-
-A queue flush is insufficient because an old request can still be in flight.
-
-The control/inference owner maintains:
+Requires:
 
 ```text
-policy_generation_id
+deterministic concurrency tests
+physical human-gate evidence
+rebase implementation reference
+generation owner/invalidation fields
+mixed-mode semantics
 ```
 
-### Request association
-
-At the moment an inference request is dispatched:
-
-```text
-request_id -> current policy_generation_id
-```
-
-must be fixed.
-
-The result retains that generation association regardless of its later receipt timestamp.
-
-### Generation invalidation event
-
-At least these events invalidate prior context:
-
-```text
-takeover transition
-release transition
-rebase/reset that invalidates policy context
-```
-
-The control owner must perform the invalidation transition as one logical operation:
-
-```text
-1. increment policy_generation_id
-2. invalidate queued old-generation actions/chunks
-3. mark pending old-generation results unacceptable
-4. reset/reseed interpolator / relevant state
-5. acquire fresh full observation
-6. dispatch a new request tagged with the new generation
-```
-
-Exact locking/async primitive depends on the current upstream architecture. Do not create a generic concurrency framework.
-
-### Result acceptance
-
-Before a result enters the execution queue/interpolator:
-
-```text
-result.generation_id == current policy_generation_id
-```
-
-must hold.
-
-Otherwise discard it even if the receipt timestamp is fresh.
-
----
-
-## 6. Bimanual stale-chunk rule
-
-Do not assume the untouched arm's old trajectory remains valid after the other arm is corrected.
-
-Default conservative behavior:
-
-```text
-invalidate old bimanual chunk
-→ fresh full observation
-→ fresh policy inference
-```
-
-unless a pinned policy/runtime provides a stronger verified partial-replanning guarantee.
-
----
-
-## 7. Do not build
-
-- generic ActionMux framework
-- replacement DAgger runtime
-- custom episode recorder
-- custom policy engine
-- generic request broker solely for generation IDs
-
-Modify the narrowest upstream seam.
+Avoid timing-sensitive sleeps as race proof.

@@ -1,0 +1,15 @@
+Command: uv lock --check
+Environment/profile: core / offline_tests
+Result:
+Resolved 80 packages in 10ms
+Exit status: 0
+
+Command: uv run pytest -q tests/test_lerobot_robot_piperx.py tests/test_quest_xr_diagnostics.py
+Environment/profile: core / offline_tests
+Result:
+.............                                                            [100%]
+13 passed in 2.17s
+Exit status: 0
+
+Scope:
+Offline PIPER-X plugin and host-side Quest lifecycle tests only. No hardware, CAN, physical Quest, simulator, HIL, dataset, or rollout action was performed.

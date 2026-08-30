@@ -1,277 +1,629 @@
 #!/usr/bin/env python3
-"""
-Small gate validator for configs/resolved_contract.yaml.
-
-v4.5 adds environment and staged Gate A invariants:
-- core must exist;
-- accepted stages must map to declared environments;
-- special environments require a reason and reproducible spec;
-- Track A requires pinned donor/upstream inputs and a concrete external-plugin boundary,
-  while the project-local Track 1B artifact pin may remain intentionally deferred;
-- completion flags cannot hide DECIDE/PIN values.
-
-This is validation, not an environment-management framework.
-"""
-
 from __future__ import annotations
-
+import argparse
+import hashlib
 import json
+import re
 import sys
 from pathlib import Path
+from typing import Any
 
 try:
     import yaml
 except ImportError as exc:
-    raise SystemExit("PyYAML is required") from exc
+    print(f"VALIDATOR DEPENDENCY ERROR: PyYAML unavailable: {exc}", file=sys.stderr)
+    raise SystemExit(2)
+try:
+    import jsonschema
+except ImportError as exc:
+    print(f"VALIDATOR DEPENDENCY ERROR: jsonschema unavailable: {exc}", file=sys.stderr)
+    raise SystemExit(2)
 
-PIN_PREFIX = "DECIDE/PIN"
+PLACEHOLDER_PREFIXES = ("DECIDE/PIN", "MIGRATE/PRESERVE")
+COMMIT_RE = re.compile(r"^[0-9a-fA-F]{7,40}$")
+SHA_RE = re.compile(r"^[0-9a-fA-F]{64}$")
+AUTOMATED = {"scripted_expert", "planner", "datagen", "policy_generated"}
+REQUIRED_PROVENANCE = {
+    "runtime",
+    "source_class",
+    "task_revision",
+    "embodiment_revision",
+    "processor_contract_revision",
+    "dataset_revision",
+    "conversion_revision",
+}
 
-def get_path(data, path):
-    cur = data
+
+def load_yaml(p: Path):
+    return yaml.safe_load(p.read_text(encoding="utf-8"))
+
+
+def get_path(d: Any, path: str):
+    cur = d
     for part in path.split("."):
         if not isinstance(cur, dict) or part not in cur:
             return None
         cur = cur[part]
     return cur
 
-def unresolved(value):
-    if isinstance(value, str):
-        return value.startswith(PIN_PREFIX)
-    if isinstance(value, dict):
-        return any(unresolved(v) for v in value.values())
-    if isinstance(value, list):
-        return any(unresolved(v) for v in value)
+
+def walk(v, p=""):
+    if isinstance(v, dict):
+        for k, x in v.items():
+            yield from walk(x, f"{p}.{k}" if p else k)
+    elif isinstance(v, list):
+        for i, x in enumerate(v):
+            yield from walk(x, f"{p}[{i}]")
+    else:
+        yield p, v
+
+
+def resolved(v):
+    return v is not None and (not isinstance(v, str) or bool(v.strip()))
+
+
+def nonempty(v):
+    return v is not None and (not isinstance(v, (str, list, dict)) or len(v) > 0)
+
+
+def project_root(contract_path: Path):
+    return contract_path.resolve().parent.parent
+
+
+def validate_schema(d, schema_path):
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    val = jsonschema.Draft202012Validator(schema)
+    out = []
+    for e in sorted(val.iter_errors(d), key=lambda e: list(e.absolute_path)):
+        loc = ".".join(str(x) for x in e.absolute_path) or "<root>"
+        out.append(f"schema {loc}: {e.message}")
+    return out
+
+
+def validate_artifacts(d, root):
+    out = []
+    for aid, a in d["artifacts"].items():
+        if not SHA_RE.fullmatch(a["sha256"]):
+            out.append(f"artifact {aid}: invalid SHA-256 syntax")
+            continue
+        path = a.get("path")
+        uri = a.get("uri")
+        if not path and not uri:
+            out.append(f"artifact {aid}: path or uri required")
+        if path:
+            p = Path(path)
+            p = p if p.is_absolute() else root / p
+            if not p.exists():
+                out.append(f"artifact {aid}: local path missing: {p}")
+                continue
+            if p.is_file():
+                actual = hashlib.sha256(p.read_bytes()).hexdigest()
+                if actual.lower() != a["sha256"].lower():
+                    out.append(f"artifact {aid}: SHA-256 mismatch")
+    return out
+
+
+def validate_evidence(d):
+    out = []
+    arts = d["artifacts"]
+    for eid, e in d["evidence"].items():
+        for aid in e["artifact_ids"]:
+            if aid not in arts:
+                out.append(f"evidence {eid}: unknown artifact {aid}")
+        if e["kind"] == "upstream_source":
+            for k in ("repository", "revision_type", "revision", "path"):
+                if not e.get(k):
+                    out.append(f"evidence {eid}: upstream_source requires {k}")
+            if (
+                e.get("revision_type") == "commit"
+                and e.get("revision")
+                and not COMMIT_RE.fullmatch(e["revision"])
+            ):
+                out.append(f"evidence {eid}: invalid commit revision")
+        if (
+            e["kind"]
+            in {"command_test", "artifact_validation", "human_gate", "hardware_observation", "run"}
+            and e["status"] == "pass"
+            and not e["artifact_ids"]
+        ):
+            out.append(f"evidence {eid}: passing {e['kind']} requires artifact_ids")
+    return out
+
+
+def validate_generic_refs(d):
+    out = []
+    arts = d["artifacts"]
+    evs = d["evidence"]
+
+    def rec(v, path=""):
+        if isinstance(v, dict):
+            for k, x in v.items():
+                p = f"{path}.{k}" if path else k
+                # migration inventory may refer to legacy evidence not in current registry.
+                if p.startswith("migration.source_evidence_inventory") or p.startswith(
+                    "migration.invalidated_evidence_ids"
+                ):
+                    pass
+                elif k.endswith("_artifact_id") and x is not None and x not in arts:
+                    out.append(f"{p}: unknown artifact {x}")
+                elif k == "artifact_ids" and isinstance(x, list):
+                    for a in x:
+                        if a not in arts:
+                            out.append(f"{p}: unknown artifact {a}")
+                elif k.endswith("_evidence_id") and x is not None and x not in evs:
+                    out.append(f"{p}: unknown evidence {x}")
+                elif k == "evidence_ids" and isinstance(x, list):
+                    for e in x:
+                        if e not in evs:
+                            out.append(f"{p}: unknown evidence {e}")
+                rec(x, p)
+        elif isinstance(v, list):
+            for i, x in enumerate(v):
+                rec(x, f"{path}[{i}]")
+
+    # Gate refs handled by gate validation; migration preserved ids can refer legacy inventory.
+    for k, v in d.items():
+        if k not in {"gates", "migration"}:
+            rec(v, k)
+    return out
+
+
+def validate_profiles(d):
+    out = []
+    for n, p in d["execution_profiles"].items():
+        if p["environment"] not in d["environments"]:
+            out.append(f"execution profile {n}: unknown environment {p['environment']}")
+    return out
+
+
+def validate_migration(d):
+    out = []
+    m = d["migration"]
+    if m["mode"] == "fresh" and m["state"] != "not_required":
+        out.append("fresh migration mode requires state=not_required")
+    if m["mode"] != "fresh":
+        if m["state"] == "not_required":
+            out.append("migrated project cannot use state=not_required")
+        if not m["source_contract_artifact_id"]:
+            out.append("migrated project requires source_contract_artifact_id")
+        elif m["source_contract_artifact_id"] not in d["artifacts"]:
+            out.append("migration source_contract_artifact_id must reference a registered artifact")
+        elif d["artifacts"][m["source_contract_artifact_id"]]["kind"] != "source_bundle":
+            out.append("migration source contract artifact must be kind=source_bundle")
+    if m["state"] in {"complete", "not_required"} and m["legacy_alias_map"]:
+        out.append("legacy source aliases forbidden after migration completion")
+    if m["state"] == "complete":
+        inv = {x for ids in m["source_evidence_inventory"].values() for x in ids}
+        disp = set(m["preserved_evidence_ids"]) | set(m["invalidated_evidence_ids"])
+        missing = sorted(inv - disp)
+        if missing:
+            out.append(f"migration silently discarded inventoried evidence: {missing}")
+        for eid in m["preserved_evidence_ids"]:
+            if eid not in d["evidence"]:
+                out.append(
+                    f"migration preserved evidence not registered in current evidence: {eid}"
+                )
+    return out
+
+
+def validate_feature_contract(d):
+    out = []
+    rc = d["robot_contract"]
+    for kind in ("action_features", "observation_features"):
+        names = [f["name"] for f in rc[kind]]
+        if len(names) != len(set(names)):
+            out.append(f"robot_contract.{kind}: duplicate feature names")
+    cls = d["dataset"]["feature_classification"]
+    seen: dict[str, str] = {}
+    for cat, names in cls.items():
+        for name in names:
+            if name in seen:
+                out.append(f"dataset feature {name}: classified as both {seen[name]} and {cat}")
+            seen[name] = cat
+    inputs = set(d["dataset"]["common_training_view"]["input_features"])
+    if inputs != set(cls["training_input"]):
+        out.append("common training input feature set != feature_classification.training_input")
+    if inputs & set(cls["privileged_debug"]):
+        out.append("privileged_debug feature leaked into policy training inputs")
+    return out
+
+
+def validate_timing(d):
+    out = []
+    inf = d["timing"]["inference"]
+    mode = inf["mode"]
+    if mode in {"chunked_sync", "rtc_async"}:
+        for k in (
+            "chunk_horizon",
+            "execution_horizon",
+            "interpolation_multiplier",
+            "stale_chunk_rule",
+            "action_age_reference",
+        ):
+            if not resolved(inf[k]):
+                out.append(f"chunked inference requires timing.inference.{k}")
+    return out
+
+
+def validate_eval_run(d, name):
+    out: list[str] = []
+    run = d["evaluation"].get(name)
+    if run is None:
+        return out
+    expected = {
+        "checkpoint_artifact_id": "checkpoint",
+        "policy_config_artifact_id": "policy_config",
+        "preprocessor_artifact_id": "processor_config",
+        "postprocessor_artifact_id": "processor_config",
+        "run_manifest_artifact_id": "run_manifest",
+        "result_artifact_id": "eval_result",
+        "raw_log_artifact_id": "log",
+    }
+    for field, kind in expected.items():
+        aid = run[field]
+        a = d["artifacts"].get(aid)
+        if not a:
+            out.append(f"{name}: unknown artifact {field}={aid}")
+        elif a["kind"] != kind:
+            out.append(f"{name}: artifact {aid} must be {kind}, got {a['kind']}")
+    cp = d["artifacts"].get(run["checkpoint_artifact_id"])
+    if cp and cp["sha256"].lower() != run["checkpoint_sha256"].lower():
+        out.append(f"{name}: checkpoint SHA mismatch")
+    if run["execution_profile"] not in d["execution_profiles"]:
+        out.append(f"{name}: unknown execution profile")
+    expected_profile = "isaac_eval" if name == "isaac_run" else "mujoco_eval"
+    if run["execution_profile"] != expected_profile:
+        out.append(f"{name}: execution_profile must be {expected_profile}")
+    return out
+
+
+def validate_cross_sim(d):
+    out = []
+    a = d["evaluation"]["isaac_run"]
+    m = d["evaluation"]["mujoco_run"]
+    if a is None or m is None:
+        return ["cross-sim acceptance requires both evaluation runs"]
+    if a["checkpoint_sha256"].lower() != m["checkpoint_sha256"].lower():
+        out.append("cross-sim evaluation uses different checkpoint SHA-256 values")
+    if a["policy_contract_revision"] != m["policy_contract_revision"]:
+        out.append("cross-sim evaluation uses different policy contract revisions")
+    if (a["task_id"], a["task_revision"]) != (m["task_id"], m["task_revision"]):
+        out.append("cross-sim evaluation uses different canonical task id/revision")
+    return out
+
+
+def has_source(d, runtime, source_class=None, automated=False):
+    for s in d["dataset"]["sources"].values():
+        if s["runtime"] != runtime:
+            continue
+        if source_class and s["source_class"] != source_class:
+            continue
+        if automated and s["source_class"] not in AUTOMATED:
+            continue
+        return True
     return False
 
-STATIC_REQUIRED = [
-    "implementation.lerobot.version_or_commit",
-    "implementation.robot_plugin.repository",
-    "implementation.robot_plugin.commit",
-    "implementation.driver.backend",
-    "implementation.driver.version_or_commit",
-    "implementation.driver.robot_model",
-    "implementation.isaac_teleop.version_or_commit",
-    "evidence.piper_x_support",
-    "evidence.bimanual_support",
-    "evidence.driver_firmware_behavior",
-    "robot_contract.action_features",
-    "robot_contract.observation_features",
-    "robot_contract.joint_order",
-    "robot_contract.units",
-    "robot_contract.gripper",
-    "model.urdf",
-    "model.frames",
-    "quest_mapping.calibration_artifact",
-    "quest_mapping.clutch_rebase_implementation",
-    "processors.deterministic_label_pipeline",
-    "environments.core.manager_or_launcher",
-    "environments.core.python_version",
-    "environments.core.spec_artifact.path",
-    "environments.core.canonical_launch_prefix",
-]
 
-TRACK_A_REQUIRED = [
-    "implementation.lerobot.repository",
-    "implementation.lerobot.version_or_commit",
-    "implementation.robot_plugin.artifact_status",
-    "implementation.robot_plugin.integration_form",
-    "implementation.robot_plugin.planned_distribution_name",
-    "implementation.robot_plugin.planned_import_package",
-    "implementation.robot_plugin.discovery_prefix",
-    "implementation.robot_plugin.configuration_registration",
-    "implementation.robot_plugin.construction_boundary",
-    "implementation.robot_plugin.single_arm_type",
-    "implementation.robot_plugin.bimanual_type",
-    "implementation.driver.backend",
-    "implementation.driver.repository",
-    "implementation.driver.version_or_commit",
-    "implementation.driver.robot_model",
-    "implementation.driver.expected_firmware_profile",
-    "evidence.candidate_matrix",
-    "evidence.piper_x_support",
-    "evidence.bimanual_support",
-    "evidence.driver_firmware_behavior",
-    "evidence.fork_vs_drop_in",
-    "evidence.selected_plugin_seam",
-    "evidence.track_1b_package_boundary",
-    "evidence.core_environment_compatibility",
-    "robot_contract.action_features",
-    "robot_contract.observation_features",
-    "robot_contract.joint_order",
-    "robot_contract.units",
-    "robot_contract.gripper.meaning",
-    "robot_contract.gripper.command_units",
-    "robot_contract.gripper.observation_transform",
-    "robot_contract.gripper.command_transform",
-    "robot_contract.declared_joint_limits_artifact",
-    "robot_contract.declared_send_action.clips_joint_limits",
-    "robot_contract.declared_send_action.slew_limits",
-    "robot_contract.declared_send_action.returns_changed_or_sent_action",
-    "robot_contract.declared_send_action.transforms",
-    "robot_contract.declared_send_action.residual_driver_behavior",
-    "model.urdf",
-    "model.frames",
-    "processors.deterministic_label_pipeline.sequence",
-    "processors.deterministic_label_pipeline.implementation_status",
-    "environments.core.manager_or_launcher",
-    "environments.core.python_version",
-    "environments.core.spec_artifact",
-    "environments.core.torch_version",
-    "environments.core.cuda_runtime",
-    "environments.core.canonical_launch_prefix",
-    "execution_profiles.offline_tests",
-]
+def validate_materialization(d):
+    out = []
+    m = d["dataset"]["materialization"]
+    sources = d["dataset"]["sources"]
+    sel = m["selected_source_ids"]
+    fps = m["projected_schema_fingerprints"]
+    final = m["final_dataset"]["schema_fingerprint_sha256"]
+    for sid in sel:
+        if sid not in sources:
+            out.append(f"dataset materialization selects unknown source {sid}")
+        if sid not in fps:
+            out.append(f"dataset materialization missing projected schema fingerprint for {sid}")
+    vals = [fps[s] for s in sel if s in fps]
+    if vals and len({v.lower() for v in vals}) != 1:
+        out.append("projected source feature schemas differ")
+    if vals and final and any(v.lower() != final.lower() for v in vals):
+        out.append("projected source schema fingerprint != final dataset schema fingerprint")
+    fd = m["final_dataset"]
+    if fd["identity_type"] == "hub_revision" and (not fd["repo_id"] or not fd["revision"]):
+        out.append("hub_revision final dataset identity requires repo_id and revision")
+    if fd["manifest_artifact_id"] and fd["manifest_artifact_id"] not in d["artifacts"]:
+        out.append("final dataset manifest artifact is not registered")
+    elif (
+        fd["manifest_artifact_id"]
+        and d["artifacts"][fd["manifest_artifact_id"]]["kind"] != "dataset_manifest"
+    ):
+        out.append("final dataset manifest artifact must be kind=dataset_manifest")
+    for runtime, sc in [("real", "human_vr"), ("isaac", "human_vr")]:
+        if not any(
+            s in sources and sources[s]["runtime"] == runtime and sources[s]["source_class"] == sc
+            for s in sel
+        ):
+            out.append(f"materialization missing selected source runtime={runtime}, source={sc}")
+    if not any(
+        s in sources
+        and sources[s]["runtime"] == "isaac"
+        and sources[s]["source_class"] in AUTOMATED
+        for s in sel
+    ):
+        out.append("materialization missing selected automated Isaac source")
+    return out
 
-HARDWARE_REQUIRED = [
-    "hardware.left",
-    "hardware.right",
-    "timing.control_fps",
-    "timing.max_xr_pose_age_ms",
-    "timing.max_joint_state_age_ms",
-    "timing.max_policy_action_age_ms",
-    "timing.stale_behavior",
-    "safety.max_joint_step_or_slew",
-    "safety.takeover_jump_tolerance",
-    "safety.low_level_fail_safe",
-]
 
-HARDWARE_VERIFY_FLAGS = [
-    "hardware_validation.left_right_identity_verified",
-    "hardware_validation.joint_direction_verified",
-    "hardware_validation.joint_units_verified",
-    "hardware_validation.gripper_polarity_verified",
-    "hardware_validation.gripper_range_verified",
-    "hardware_validation.clipping_verified",
-    "hardware_validation.slew_behavior_verified",
-    "hardware_validation.returned_or_accepted_command_verified",
-    "hardware_validation.low_level_fail_safe_verified",
-]
+def validate_dataset_contract(d):
+    out = []
+    prov = set(d["dataset"]["provenance_schema"]["fields"])
+    miss = sorted(REQUIRED_PROVENANCE - prov)
+    if miss:
+        out.append(f"dataset provenance schema missing mandatory fields: {miss}")
+    eid = d["dataset"]["temporal_semantics"]["causality_test_evidence_id"]
+    ev = d["evidence"].get(eid) if eid else None
+    if not ev or ev["kind"] != "command_test" or ev["status"] != "pass":
+        out.append("dataset causality test must reference PASS command_test evidence")
+    return out
 
-def validate_schema(data, contract_path):
-    schema_path = contract_path.with_name("resolved_contract.schema.json")
-    if not schema_path.exists():
-        return [f"schema file missing: {schema_path}"]
-    try:
-        import jsonschema
-    except ImportError:
-        return []
-    schema = json.loads(schema_path.read_text(encoding="utf-8"))
-    try:
-        jsonschema.validate(data, schema)
-    except jsonschema.ValidationError as exc:
-        return [f"JSON Schema validation failed: {exc.message}"]
-    return []
 
-def validate_environments(data):
-    errors = []
-    envs = data.get("environments", {})
-    core = envs.get("core")
-    special = envs.get("special", {})
-    profiles = data.get("execution_profiles", {})
+def validate_eval_binding(d, name):
+    out = []
+    run = d["evaluation"].get(name)
+    if run is None:
+        return [f"{name}: run manifest missing"]
+    sim = "isaac" if name == "isaac_run" else "mujoco"
+    task = d["simulation"][sim]["task"]
+    if (run["task_id"], run["task_revision"]) != (task["task_id"], task["revision"]):
+        out.append(f"{name}: run task does not match resolved {sim} task")
+    shared = d["evaluation"]["shared_policy_contract_revision"]
+    if shared and run["policy_contract_revision"] != shared:
+        out.append(
+            f"{name}: policy contract revision does not match evaluation.shared_policy_contract_revision"
+        )
+    return out
 
-    if not isinstance(core, dict):
-        errors.append("environments.core is required")
-        return errors
 
-    if core.get("required") is not True:
-        errors.append("environments.core.required must be true")
+def validate_real_rollout(d):
+    out = []
+    rr = d["real_rollout"]
+    exp = {
+        "checkpoint_artifact_id": "checkpoint",
+        "policy_config_artifact_id": "policy_config",
+        "preprocessor_artifact_id": "processor_config",
+        "postprocessor_artifact_id": "processor_config",
+        "start_stop_procedure_artifact_id": "safety_report",
+        "accepted_command_log_artifact_id": "hardware_log",
+        "result_artifact_id": "rollout_result",
+    }
+    for f, k in exp.items():
+        aid = rr[f]
+        a = d["artifacts"].get(aid) if aid else None
+        if not a:
+            out.append(f"real_rollout: unknown/missing artifact {f}={aid}")
+        elif a["kind"] != k:
+            out.append(f"real_rollout: artifact {aid} must be {k}")
+    cp = d["artifacts"].get(rr["checkpoint_artifact_id"]) if rr["checkpoint_artifact_id"] else None
+    if cp and rr["checkpoint_sha256"] and cp["sha256"].lower() != rr["checkpoint_sha256"].lower():
+        out.append("real_rollout checkpoint SHA mismatch")
+    ev = (
+        d["evidence"].get(rr["authorization_evidence_id"])
+        if rr["authorization_evidence_id"]
+        else None
+    )
+    if not ev or ev["kind"] != "human_gate" or ev["status"] != "pass":
+        out.append("real_rollout requires PASS human authorization evidence")
+    a = d["evaluation"]["isaac_run"]
+    m = d["evaluation"]["mujoco_run"]
+    if (
+        a
+        and rr["checkpoint_sha256"]
+        and rr["checkpoint_sha256"].lower() != a["checkpoint_sha256"].lower()
+    ):
+        out.append("real_rollout checkpoint was not the checkpoint accepted by Isaac eval")
+    if (
+        m
+        and rr["checkpoint_sha256"]
+        and rr["checkpoint_sha256"].lower() != m["checkpoint_sha256"].lower()
+    ):
+        out.append("real_rollout checkpoint was not the checkpoint accepted by MuJoCo eval")
+    return out
 
-    # Every resolved execution profile must reference core or an existing special env.
-    known = {"core"} | set(special.keys())
-    for profile, env_id in profiles.items():
-        if not isinstance(env_id, str):
-            errors.append(f"execution profile {profile} must be a string environment id")
+
+def validate_generation_summary(d):
+    g = d["simulation"]["isaac"]["generator"]["report_summary"]
+    out = []
+    if all(isinstance(g[k], int) for k in ("attempted", "successful", "rejected")):
+        if g["attempted"] < g["successful"] + g["rejected"]:
+            out.append("generation report attempted < successful + rejected")
+    return out
+
+
+def mandatory(rule, d):
+    return rule.get("mandatory") is True or (
+        rule.get("mandatory_if") and get_path(d, rule["mandatory_if"]) is True
+    )
+
+
+def accepted(d, g):
+    return d["gates"][g]["state"] == "accepted"
+
+
+def ev_kinds(d, g):
+    return {
+        d["evidence"][e]["kind"]
+        for e in d["gates"][g]["evidence_ids"]
+        if e in d["evidence"] and d["evidence"][e]["status"] == "pass"
+    }
+
+
+def art_kinds(d, g):
+    return {d["artifacts"][a]["kind"] for a in d["gates"][g]["artifact_ids"] if a in d["artifacts"]}
+
+
+def validate_gates(d, rules):
+    out = []
+    if set(d["gates"]) != set(rules):
+        return ["contract gate IDs and gate_rules IDs differ"]
+    for gid, g in d["gates"].items():
+        if g["state"] != "accepted":
             continue
-        if env_id.startswith("DECIDE/PIN"):
-            continue
-        if env_id not in known:
-            errors.append(f"execution profile {profile} references unknown environment: {env_id}")
+        r = rules[gid]
+        deps = list(r.get("prerequisites", []))
+        for cond, ids in r.get("conditional_prerequisites", {}).items():
+            if get_path(d, cond) is True:
+                deps += ids
+        for dep in deps:
+            if not accepted(d, dep):
+                out.append(f"gate {gid}: prerequisite {dep} is not accepted")
+        for p in r.get("required_paths", []):
+            if not resolved(get_path(d, p)):
+                out.append(f"gate {gid}: unresolved required path {p}")
+        for p in r.get("required_nonempty_paths", []):
+            if not nonempty(get_path(d, p)):
+                out.append(f"gate {gid}: empty required path {p}")
+        for e in g["evidence_ids"]:
+            if e not in d["evidence"]:
+                out.append(f"gate {gid}: unknown evidence {e}")
+            elif d["evidence"][e]["status"] != "pass":
+                out.append(f"gate {gid}: evidence {e} is not PASS")
+        for a in g["artifact_ids"]:
+            if a not in d["artifacts"]:
+                out.append(f"gate {gid}: unknown artifact {a}")
+        ek = ev_kinds(d, gid)
+        ak = art_kinds(d, gid)
+        for k in r.get("required_evidence_kinds", []):
+            if k not in ek:
+                out.append(f"gate {gid}: missing PASS evidence kind {k}")
+        for k in r.get("required_artifact_kinds", []):
+            if k not in ak:
+                out.append(f"gate {gid}: missing artifact kind {k}")
+        if r.get("human_evidence_required") and "human_gate" not in ek:
+            out.append(f"gate {gid}: human evidence required")
+        if r.get("hardware_evidence_required") and "hardware_observation" not in ek:
+            out.append(f"gate {gid}: hardware evidence required")
+        ds = r.get("required_dataset_source")
+        if ds:
+            matches = [
+                (sid, src)
+                for sid, src in d["dataset"]["sources"].items()
+                if src["runtime"] == ds["runtime"] and src["source_class"] == ds["source_class"]
+            ]
+            if not matches:
+                out.append(f"gate {gid}: required dataset source missing: {ds}")
+            elif matches[0][1]["manifest_artifact_id"] not in g["artifact_ids"]:
+                out.append(
+                    f"gate {gid}: dataset source manifest must be attached to gate artifacts"
+                )
+        if r.get("required_dataset_source_automated"):
+            matches = [
+                (sid, src)
+                for sid, src in d["dataset"]["sources"].items()
+                if src["runtime"] == r.get("required_dataset_source_runtime", "isaac")
+                and src["source_class"] in AUTOMATED
+            ]
+            if not matches:
+                out.append(f"gate {gid}: automated dataset source missing")
+            elif matches[0][1]["manifest_artifact_id"] not in g["artifact_ids"]:
+                out.append(
+                    f"gate {gid}: automated dataset source manifest must be attached to gate artifacts"
+                )
+        sp = r.get("special_check")
+        if sp == "cross_sim":
+            out += validate_cross_sim(d)
+        elif sp == "dataset_materialization":
+            out += validate_materialization(d)
+        elif sp == "real_rollout":
+            out += validate_real_rollout(d)
+        elif sp == "dataset_contract":
+            out += validate_dataset_contract(d)
+        elif sp == "eval_isaac":
+            out += validate_eval_binding(d, "isaac_run")
+        elif sp == "eval_mujoco":
+            out += validate_eval_binding(d, "mujoco_run")
+    return out
 
-    # Any special env must justify itself and be reproducible.
-    for env_id, spec in special.items():
-        if not isinstance(spec, dict):
-            errors.append(f"special environment {env_id} must be an object")
-            continue
-        for key in ("reason", "evidence", "manager_or_launcher", "python_version",
-                    "spec_artifact", "canonical_launch_prefix"):
-            if key not in spec or unresolved(spec[key]):
-                errors.append(f"special environment {env_id} unresolved field: {key}")
 
-    return errors
+def derive_final(d, rules):
+    blockers = []
+    if d["migration"]["state"] not in {"complete", "not_required"}:
+        blockers.append("migration")
+    for gid, r in rules.items():
+        if mandatory(r, d) and not accepted(d, gid):
+            blockers.append(gid)
+    return not blockers, blockers
 
-def validate_completion(data):
-    errors = []
 
-    if data.get("status", {}).get("track_a_gate_complete"):
-        for path in TRACK_A_REQUIRED:
-            value = get_path(data, path)
-            if value is None or unresolved(value):
-                errors.append(f"track_a_gate_complete=true but unresolved: {path}")
-        if get_path(data, "execution_profiles.offline_tests") != "core":
-            errors.append("track_a_gate_complete requires execution_profiles.offline_tests=core")
-        if data.get("environments", {}).get("special"):
-            errors.append("track_a_gate_complete must not create a special environment without evidence")
+def validate_contract(contract_path: Path, rules_path: Path | None = None):
+    d = load_yaml(contract_path)
+    root = project_root(contract_path)
+    schema_path = contract_path.parent / "resolved_contract.schema.json"
+    rules = load_yaml(rules_path or contract_path.parent / "gate_rules.yaml")
+    errors = validate_schema(d, schema_path)
+    if errors:
+        return errors, False, ["schema-invalid"]
+    for p, v in walk(d):
+        if isinstance(v, str) and v.startswith(PLACEHOLDER_PREFIXES):
+            errors.append(f"{p}: legacy magic placeholder forbidden")
+    errors += (
+        validate_profiles(d)
+        + validate_artifacts(d, root)
+        + validate_evidence(d)
+        + validate_generic_refs(d)
+        + validate_migration(d)
+        + validate_feature_contract(d)
+        + validate_timing(d)
+        + validate_eval_run(d, "isaac_run")
+        + validate_eval_run(d, "mujoco_run")
+        + validate_generation_summary(d)
+        + validate_gates(d, rules)
+    )
+    if (
+        d["project"]["training_ready_claim"]
+        != d["requirements"]["capabilities"]["training_compatibility_smoke"]
+    ):
+        errors.append("training_ready_claim must equal training_compatibility_smoke requirement")
+    if d["requirements"]["capabilities"]["hil"] != d["hil"]["required"]:
+        errors.append("requirements.capabilities.hil must equal hil.required")
+    ready, blockers = derive_final(d, rules)
+    asserted = d["release"]["final_rc_state"] == "ready"
+    if asserted != ready:
+        errors.append(
+            f"release.final_rc_state inconsistent with derived readiness: asserted={d['release']['final_rc_state']} derived={'ready' if ready else 'not_ready'} blockers={blockers}"
+        )
+    return errors, ready, blockers
 
-    if data.get("status", {}).get("static_resolution_complete"):
-        for path in STATIC_REQUIRED:
-            value = get_path(data, path)
-            if value is None or unresolved(value):
-                errors.append(f"static_resolution_complete=true but unresolved: {path}")
-
-        # Core-relevant accepted profiles must no longer be unresolved.
-        for profile in ("offline_tests", "core_runtime", "replay", "rollout", "hil"):
-            value = get_path(data, f"execution_profiles.{profile}")
-            if value is None or unresolved(value):
-                errors.append(f"static_resolution_complete=true but unresolved execution profile: {profile}")
-
-    if data.get("status", {}).get("hardware_validation_complete"):
-        for path in HARDWARE_REQUIRED:
-            value = get_path(data, path)
-            if value is None or unresolved(value):
-                errors.append(f"hardware_validation_complete=true but unresolved: {path}")
-        for path in HARDWARE_VERIFY_FLAGS:
-            if get_path(data, path) is not True:
-                errors.append(f"hardware_validation_complete=true but not verified: {path}")
-        for profile in ("piper_readonly", "piper_motion"):
-            value = get_path(data, f"execution_profiles.{profile}")
-            if value is None or unresolved(value):
-                errors.append(f"hardware_validation_complete=true but unresolved execution profile: {profile}")
-
-    if data.get("status", {}).get("bimanual_real_gate_complete"):
-        if data.get("status", {}).get("hardware_validation_complete") is not True:
-            errors.append("bimanual_real_gate_complete=true requires hardware_validation_complete=true")
-        mode = get_path(data, "safety.bimanual_inter_arm.mode")
-        if mode not in {"verified_collision_handling", "disjoint_workspaces"}:
-            errors.append("bimanual_real_gate_complete requires verified collision handling or disjoint workspaces")
-
-    return errors
 
 def main():
-    contract_path = Path(sys.argv[1] if len(sys.argv) > 1 else "configs/resolved_contract.yaml")
-    data = yaml.safe_load(contract_path.read_text(encoding="utf-8"))
-
-    errors = []
-    errors += validate_schema(data, contract_path)
-    errors += validate_environments(data)
-    errors += validate_completion(data)
-
+    ap = argparse.ArgumentParser()
+    ap.add_argument("contract", nargs="?", default="configs/resolved_contract.yaml")
+    ap.add_argument("--rules")
+    ap.add_argument("--require-final-rc", action="store_true")
+    ap.add_argument("--require-gate")
+    args = ap.parse_args()
+    try:
+        errors, ready, blockers = validate_contract(
+            Path(args.contract), Path(args.rules) if args.rules else None
+        )
+    except Exception as exc:
+        print(f"VALIDATOR INTERNAL/DEPENDENCY ERROR: {exc}", file=sys.stderr)
+        return 2
     if errors:
-        print("RESOLVED CONTRACT INVALID")
-        for err in errors:
-            print(f"- {err}")
+        print("CONTRACT INVALID")
+        [print("-", e) for e in errors]
         return 1
-
-    print("RESOLVED CONTRACT OK")
-    print("- core environment policy is structurally valid")
-    if data["status"].get("track_a_gate_complete"):
-        print("- Track A static resolution is complete")
-    if not data["status"]["static_resolution_complete"]:
-        print("- static resolution is intentionally incomplete")
-    if not data["status"]["hardware_validation_complete"]:
-        print("- hardware validation is intentionally incomplete")
-    if not data["status"]["bimanual_real_gate_complete"]:
-        print("- bimanual real-operation gate is intentionally incomplete")
+    print("CONTRACT STRUCTURALLY VALID")
+    print("CONTRACT SEMANTICALLY VALID")
+    if ready:
+        print("FINAL RC READY")
+    else:
+        print("FINAL RC NOT READY")
+        print("BLOCKERS:", ", ".join(blockers))
+    if args.require_gate:
+        d = load_yaml(Path(args.contract))
+        if (
+            args.require_gate not in d["gates"]
+            or d["gates"][args.require_gate]["state"] != "accepted"
+        ):
+            print(f"GATE NOT ACCEPTED: {args.require_gate}", file=sys.stderr)
+            return 1
+    if args.require_final_rc and not ready:
+        return 1
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

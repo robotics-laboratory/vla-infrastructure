@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PIPER-X resolved contract v3",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "contract_revision",
+    "status",
+    "requirements",
+    "implementation",
+    "evidence",
+    "robot_contract",
+    "model",
+    "hardware",
+    "hardware_validation",
+    "quest_mapping",
+    "processors",
+    "dataset",
+    "hil",
+    "timing",
+    "safety",
+    "benchmark",
+    "environments",
+    "execution_profiles",
+    "environment_policy"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 3
+    },
+    "contract_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "status": {
+      "type": "object",
+      "required": [
+        "track_a_gate_complete",
+        "static_resolution_complete",
+        "hardware_validation_complete",
+        "bimanual_real_gate_complete"
+      ],
+      "properties": {
+        "track_a_gate_complete": {
+          "type": "boolean"
+        },
+        "static_resolution_complete": {
+          "type": "boolean"
+        },
+        "hardware_validation_complete": {
+          "type": "boolean"
+        },
+        "bimanual_real_gate_complete": {
+          "type": "boolean"
+        }
+      }
+    },
+    "requirements": {
+      "type": "object",
+      "required": [
+        "robot_model_required",
+        "bimanual_required",
+        "quest_3_available",
+        "per_arm_hil_required"
+      ],
+      "properties": {
+        "robot_model_required": {
+          "const": "piper_x"
+        },
+        "bimanual_required": {
+          "const": true
+        },
+        "quest_3_available": {
+          "const": true
+        },
+        "per_arm_hil_required": {
+          "const": true
+        }
+      }
+    },
+    "implementation": {
+      "type": "object"
+    },
+    "evidence": {
+      "type": "object"
+    },
+    "robot_contract": {
+      "type": "object"
+    },
+    "model": {
+      "type": "object"
+    },
+    "hardware": {
+      "type": "object"
+    },
+    "hardware_validation": {
+      "type": "object"
+    },
+    "quest_mapping": {
+      "type": "object",
+      "properties": {
+        "session_policy": {
+          "const": "one_isaac_teleop_cloudxr_session_per_process"
+        }
+      }
+    },
+    "processors": {
+      "type": "object"
+    },
+    "dataset": {
+      "type": "object"
+    },
+    "hil": {
+      "type": "object"
+    },
+    "timing": {
+      "type": "object",
+      "properties": {
+        "safety_clock_domain": {
+          "type": "string"
+        }
+      }
+    },
+    "safety": {
+      "type": "object"
+    },
+    "benchmark": {
+      "type": "object"
+    },
+    "environments": {
+      "type": "object",
+      "required": [
+        "core",
+        "special"
+      ],
+      "properties": {
+        "core": {
+          "type": "object",
+          "required": [
+            "required",
+            "purpose",
+            "manager_or_launcher",
+            "python_version",
+            "spec_artifact",
+            "canonical_launch_prefix",
+            "components"
+          ]
+        },
+        "special": {
+          "type": "object"
+        }
+      }
+    },
+    "execution_profiles": {
+      "type": "object"
+    },
+    "environment_policy": {
+      "type": "object",
+      "required": [
+        "default_environment",
+        "special_environment_requires_evidence",
+        "same_process_components_must_share_compatible_environment",
+        "untracked_manual_package_mutations_allowed_for_acceptance"
+      ],
+      "properties": {
+        "default_environment": {
+          "const": "core"
+        },
+        "special_environment_requires_evidence": {
+          "const": true
+        },
+        "same_process_components_must_share_compatible_environment": {
+          "const": true
+        },
+        "untracked_manual_package_mutations_allowed_for_acceptance": {
+          "const": false
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}
