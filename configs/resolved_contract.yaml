@@ -109,21 +109,23 @@ implementation:
     - v43_driver_firmware_behavior
   isaac_teleop:
     version: 1.3.131
-    revision: 1.3.131
+    revision: 7002ed63d69454ae4f15c0ee19f803fd2846592b
     evidence_ids:
     - v43_quest_host_implementation
+    - gate_s0_isaac_teleop_upstream_audit
   isaac_lab:
     version: null
     revision: null
     evidence_ids: []
   mujoco:
-    version: null
-    revision: null
-    evidence_ids: []
+    version: 3.9.0
+    revision: 237c17e48539b6c90bf90d3161547cbdcbfaa1e0
+    evidence_ids:
+    - gate_s0_mujoco_upstream_audit
 environments:
   core:
     id: core
-    purpose: LeRobot, real PIPER-X, host Quest diagnostics, and offline tooling
+    purpose: LeRobot, real PIPER-X, MuJoCo, host Quest diagnostics, and offline tooling
     manager: uv
     python_version: CPython 3.12.13
     spec_artifact_id: core_uv_lock
@@ -147,15 +149,17 @@ environments:
     canonical_launch_prefix: null
   mujoco:
     id: mujoco
-    purpose: MuJoCo PIPER-X evaluation
-    manager: null
-    python_version: null
-    spec_artifact_id: null
-    torch_version: null
-    cuda_runtime: null
-    vendor_runtime: null
-    system_requirements: []
-    canonical_launch_prefix: null
+    purpose: Conceptual MuJoCo record mapped to the exact core environment; not a separate installation
+    manager: uv
+    python_version: CPython 3.12.13
+    spec_artifact_id: core_uv_lock
+    torch_version: 2.7.1+cu126
+    cuda_runtime: PyTorch bundled CUDA 12.6; MuJoCo itself does not require CUDA
+    vendor_runtime: MuJoCo 3.9.0 canonical PyPI wheel with bundled MuJoCo library
+    system_requirements:
+    - same native Linux requirements as core
+    - EGL is available for bounded headless camera rendering
+    canonical_launch_prefix: uv run
 execution_profiles:
   offline_tests:
     environment: core
@@ -222,7 +226,7 @@ execution_profiles:
     command: null
     prerequisites: []
   isaac_dataset_convert:
-    environment: isaac
+    environment: core
     working_directory: .
     command: null
     prerequisites: []
@@ -232,12 +236,12 @@ execution_profiles:
     command: null
     prerequisites: []
   mujoco_env:
-    environment: mujoco
+    environment: core
     working_directory: .
     command: null
     prerequisites: []
   mujoco_eval:
-    environment: mujoco
+    environment: core
     working_directory: .
     command: null
     prerequisites: []
@@ -628,11 +632,13 @@ teleop:
     - gate_b_q1_physical_check
   isaac:
     execution_profile: isaac_vr_record
-    resolved_implementation: null
-    left_source: null
-    right_source: null
+    resolved_implementation: Conditional upstream path isaaclab_teleop.IsaacTeleopDevice and IsaacTeleopCfg with one TeleopSessionLifecycle; S0 remains blocked on the Isaac environment
+    left_source: isaacteleop ControllersSource.LEFT controller_left OptionalTensorGroup from the one shared session
+    right_source: isaacteleop ControllersSource.RIGHT controller_right OptionalTensorGroup from the one shared session
     processor_revision: null
-    evidence_ids: []
+    evidence_ids:
+    - gate_s0_isaac_upstream_audit
+    - gate_s0_isaac_teleop_upstream_audit
 dataset:
   format: LeRobotDataset_v3
   policy_data_contract_revision: piper_x_d0_policy_data_v1
@@ -924,8 +930,8 @@ simulation:
   isaac:
     environment_id: isaac
     robot_asset:
-      source: null
-      revision: null
+      source: Accepted Gate C PIPER-X URDF/Xacro imported through Isaac Lab UrdfFileCfg/UrdfConverter; AgileX piper_isaac_sim USD rejected as non-equivalent reference
+      revision: f6642ce0d7872c686f29c99e9e10cd23d1d49313
       artifact_id: null
       sha256: null
     task:
@@ -936,8 +942,8 @@ simulation:
       reset_distribution_revision: null
       workspace_frame: null
     processors:
-      observation_to_policy: null
-      policy_action_to_native: null
+      observation_to_policy: Conditional LeRobot PolicyProcessorPipeline step for named Isaac measured radians/model aperture/RGB to accepted D0 degrees/signed-mm/two-camera view
+      policy_action_to_native: Conditional LeRobot PolicyProcessorPipeline step for accepted D0 degrees/signed-mm to named Isaac joint-radian/model-aperture action
       config_artifact_ids: []
       state_artifact_ids: []
       reset_semantics: null
@@ -952,16 +958,16 @@ simulation:
       action_hold_or_interpolation: null
       reset_seed_protocol: null
     recorder:
-      backend: null
-      native_format: null
+      backend: Conditional Isaac Lab RecorderManager with ActionStateRecorderManagerCfg and minimal D0 recorder terms
+      native_format: Isaac Lab HDF5DatasetFileHandler format_version 1; deterministic D1 conversion to LeRobotDataset v3 required
       conversion_revision: null
       execution_profile: isaac_vr_record
     generator:
-      source_class: null
-      backend: null
-      revision: null
-      requires_seed_demos: null
-      success_signal: null
+      source_class: scripted_expert
+      backend: Conditional task-local state machine composed with Isaac Lab ManagerBasedRLEnv and RecorderManager
+      revision: ffff603eafc6b74264a5261cc0183d6a65390d78
+      requires_seed_demos: false
+      success_signal: Isaac Lab TerminationManager term named success; retain all attempted/success/failed counts and artifacts
       execution_profile: isaac_generate
       report_artifact_id: null
       report_summary:
@@ -975,8 +981,8 @@ simulation:
   mujoco:
     environment_id: mujoco
     model_asset:
-      source: null
-      revision: null
+      source: Deterministic MuJoCo public-parser MJCF derivation from the accepted Gate C PIPER-X URDF/Xacro; generic AgileX Piper MJCF rejected
+      revision: f6642ce0d7872c686f29c99e9e10cd23d1d49313
       artifact_id: null
       sha256: null
     task:
@@ -987,8 +993,8 @@ simulation:
       reset_distribution_revision: null
       workspace_frame: null
     processors:
-      observation_to_policy: null
-      policy_action_to_native: null
+      observation_to_policy: LeRobot PolicyProcessorPipeline step for named MuJoCo qpos/model aperture/Renderer RGB to accepted D0 degrees/signed-mm/two-camera view
+      policy_action_to_native: LeRobot PolicyProcessorPipeline step for accepted D0 degrees/signed-mm to named MuJoCo joint-radian/model-aperture actuators
       config_artifact_ids: []
       state_artifact_ids: []
       reset_semantics: null
@@ -1089,10 +1095,10 @@ artifacts:
     description: Existing PIPER-X and host-XR offline test output plus uv lock check
   core_uv_lock:
     kind: environment_spec
-    sha256: d0bcb1242aac1a3893bf2f1ba59bd58897c9fb4ff4ada54a30aabcd085437a3e
+    sha256: ef20dd821a6b64299f3e2ed75a320edad29d0584cd60ed9693d05ed614c36a4b
     path: uv.lock
     uri: null
-    description: Core uv lock including LeRobot 0.6.1's official kinematics extra for Gate C; pyproject.toml is the paired project specification
+    description: Core uv lock including LeRobot 0.6.1 kinematics plus the Gate S0 MuJoCo 3.9.0 and Gymnasium 1.3.0 pins; pyproject.toml is the paired project specification
   piper_x_authoritative_xacro:
     kind: model_asset
     sha256: 0ee3f52f9acf3060a7f3e439c6e5e46b6a53d4fa509dd495045548be6b7f90cd
@@ -1165,6 +1171,18 @@ artifacts:
     path: docs/project/GATE_D0_CAUSALITY_TEST.txt
     uri: null
     description: Focused same-tick obs_t/action_t frame-construction regression and explicit t-1/t+1 rejection
+  gate_s0_upstream_audit:
+    kind: report
+    sha256: a5cdf89c92ec3c407e867086646c751e3a8ade5af28362c7d41b7e83a91f3936
+    path: docs/project/GATE_S0_UPSTREAM_AUDIT.md
+    uri: null
+    description: Focused current upstream audit, conditional Isaac paths, selected MuJoCo paths, PIPER-X adaptation, D0 mapping, reuse accounting, and exact S0 blockers
+  gate_s0_compatibility_probes_output:
+    kind: test_output
+    sha256: c95d52e76d524155f04783b0638403fe35d5d0c53456d00c7f3de009eeec27cd
+    path: docs/project/GATE_S0_COMPATIBILITY_PROBES.txt
+    uri: null
+    description: Exact Isaac/LeRobot resolver failure, Isaac host requirement comparison, AgileX asset comparison, and passing core MuJoCo lock/API/render probes
 evidence:
   v52_pack_manifest_check:
     kind: command_test
@@ -1531,6 +1549,78 @@ evidence:
     path: tests/test_gate_d0_contract.py
     symbol: test_record_loop_frame_seam_preserves_obs_t_action_t; test_causality_oracle_rejects_both_off_by_one_directions; test_d0_contract_matches_upstream_processors_and_fingerprint
     notes: The core profile lacks LeRobot's optional datasets extra, so the approved exact frame-construction seam fallback was used with no dependency change.
+  gate_s0_isaac_upstream_audit:
+    kind: upstream_source
+    status: pass
+    summary: Current supported Isaac Lab candidates, their exact dependencies, native environment/recording/generation seams, and published Isaac Sim host requirements were audited; no supportable S0 Isaac pin exists for the accepted stack and current host.
+    timestamp: '2026-08-31T08:07:36+03:00'
+    command: Pinned-source inspection plus an exact uv resolver dry run for LeRobot 0.6.1 and Isaac Lab v3.0.0-beta2.patch1 dependencies.
+    artifact_ids:
+    - gate_s0_upstream_audit
+    - gate_s0_compatibility_probes_output
+    repository: https://github.com/isaac-sim/IsaacLab
+    revision_type: commit
+    revision: ffff603eafc6b74264a5261cc0183d6a65390d78
+    path: pyproject.toml; source/isaaclab/setup.py; source/isaaclab/isaaclab/envs/manager_based_env.py; source/isaaclab/isaaclab/managers/recorder_manager.py; source/isaaclab/isaaclab/utils/datasets/hdf5_dataset_file_handler.py
+    symbol: ManagerBasedRLEnv; ActionManager; ObservationManager; TerminationManager; RecorderManager; HDF5DatasetFileHandler
+    notes: Evidence status is pass for the audit, not for Gate S0. Isaac Lab v3.0.0-beta2.patch1 requires Isaac Sim 6.0.1.0 and Transformers 4.57.6; its exact supported environment conflicts with accepted LeRobot 0.6.1 at huggingface-hub, while this host also misses the published driver and disk minima. The stable Isaac Lab v2.3.2 line requires Python 3.11 and is incompatible with LeRobot 0.6.1 Python >=3.12.
+  gate_s0_isaac_teleop_upstream_audit:
+    kind: upstream_source
+    status: pass
+    summary: The official Isaac Lab plus Isaac Teleop CloudXR path was pinned through one shared XR session lifecycle and one bimanual controller source; only a thin PIPER-X mapping remains conditional on a supportable Isaac environment.
+    timestamp: '2026-08-31T08:07:36+03:00'
+    command: Pinned-source inspection of isaaclab_teleop and Isaac Teleop controller/session implementations.
+    artifact_ids:
+    - gate_s0_upstream_audit
+    repository: https://github.com/NVIDIA/IsaacTeleop
+    revision_type: commit
+    revision: 7002ed63d69454ae4f15c0ee19f803fd2846592b
+    path: isaacteleop/isaac_teleop_device.py; isaacteleop/teleop_session_manager.py; isaacteleop/controller_input.py
+    symbol: IsaacTeleopDevice; TeleopSessionLifecycle; TeleopSession; ControllersSource; ControllerSnapshotTrackedT; XrAnchorManager
+    notes: The selected conditional path preserves LEFT and RIGHT identity, grip/aim poses, rotations, buttons, thumbsticks, squeeze, trigger, validity, and the upstream rebase seam. tools/quest_xr_diagnostics.py remains evidence/debug tooling only.
+  gate_s0_mujoco_upstream_audit:
+    kind: upstream_source
+    status: pass
+    summary: MuJoCo 3.9.0 and Gymnasium 1.3.0 were pinned in core and their public step/reset/camera APIs and normal LeRobot processor/evaluation boundary were selected for later M1/E2 work.
+    timestamp: '2026-08-31T08:07:36+03:00'
+    command: Pinned-source and package-metadata inspection followed by locked import, reset/step, and headless EGL render probes.
+    artifact_ids:
+    - gate_s0_upstream_audit
+    - gate_s0_compatibility_probes_output
+    repository: https://github.com/google-deepmind/mujoco
+    revision_type: commit
+    revision: 237c17e48539b6c90bf90d3161547cbdcbfaa1e0
+    path: python/mujoco; include/mujoco/mujoco.h
+    symbol: MjModel; MjData; mj_resetData; mj_step; Renderer
+    notes: Gymnasium 1.3.0 is pinned at commit 53bf3e9a884783eb72ad3fc8b15780914c97c3e1. Both packages support Python 3.12; Gymnasium satisfies LeRobot 0.6.1's >=1.1.1,<2 requirement. The executable PIPER-X environment remains M1 work.
+  gate_s0_live_policy_review:
+    kind: document_review
+    status: pass
+    summary: All live S0-required policy, contract, schema, plan, accepted-gate evidence, PIPER-X implementation/model, environment, and dependency records were reviewed as authoritative.
+    timestamp: '2026-08-31T08:07:36+03:00'
+    command: Read-only review of the live repository inputs enumerated by the Gate S0 task.
+    artifact_ids:
+    - gate_s0_upstream_audit
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: The accepted PRE-S0 transition audit was not reopened; no contradiction was found. The original v5.2 pack was used only as baseline/reference.
+  gate_s0_compatibility_probes:
+    kind: command_test
+    status: pass
+    summary: Bounded compatibility probes reproduced the exact Isaac dependency conflict and host gaps, while the selected MuJoCo/Gymnasium lock, step/reset, and headless camera path passed in core.
+    timestamp: '2026-08-31T08:07:36+03:00'
+    command: uv resolver dry run for exact Isaac/LeRobot pins; nvidia-smi and host capacity inspection; uv lock; MuJoCo one-joint reset/step and EGL Renderer smoke probes.
+    artifact_ids:
+    - gate_s0_compatibility_probes_output
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: No Isaac Sim task was launched, no reusable simulator implementation was created, no Quest session was opened, and no robot/CAN operation occurred.
 gates:
   M0:
     state: accepted
@@ -1600,10 +1690,17 @@ gates:
     - gate_d0_causality_test_output
     notes: Canonical PIPER-X policy/data, same-tick causality, 30 FPS fixed-grid timing, wrist-camera roles, provenance isolation, identity label processing, and runtime/device command separation are accepted offline with no runtime implementation.
   S0:
-    state: unresolved
-    evidence_ids: []
-    artifact_ids: []
-    notes: No v5.2 simulator/evaluation upstream audit was performed during M0.
+    state: blocked
+    evidence_ids:
+    - gate_s0_isaac_upstream_audit
+    - gate_s0_isaac_teleop_upstream_audit
+    - gate_s0_mujoco_upstream_audit
+    - gate_s0_live_policy_review
+    - gate_s0_compatibility_probes
+    artifact_ids:
+    - gate_s0_upstream_audit
+    - gate_s0_compatibility_probes_output
+    notes: The audit is complete but acceptance is blocked. Stable Isaac Lab v2.3.2 requires Python 3.11, while LeRobot 0.6.1 requires Python >=3.12. Isaac Lab v3.0.0-beta2.patch1 is Python-compatible but its exact Transformers 4.57.6 requires huggingface-hub <1, conflicting with LeRobot 0.6.1's huggingface-hub >=1.6; additionally, the current NVIDIA driver 580.159.03 is below Isaac Sim 6.0.1's published 595.58.03 minimum and available disk is below the published 50 GB minimum. No supported exact Isaac environment pin can therefore be registered, and no project RPC/framework workaround is authorized.
   S1:
     state: unresolved
     evidence_ids: []
