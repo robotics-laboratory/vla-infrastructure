@@ -466,7 +466,15 @@
         "crop_resize_revision",
         "missing_frame_behavior",
         "intrinsics_artifact_id",
-        "extrinsics_artifact_id"
+        "extrinsics_artifact_id",
+        "acquisition_owner",
+        "policy_observation_status",
+        "processor_mapping",
+        "runtime_binding",
+        "runtime_binding_owner",
+        "policy_tensor_shape",
+        "policy_tensor_dtype",
+        "policy_tensor_range"
       ],
       "properties": {
         "feature_key": {
@@ -539,7 +547,133 @@
             "string",
             "null"
           ]
+        },
+        "acquisition_owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_observation_status": {
+          "const": "training_input"
+        },
+        "processor_mapping": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runtime_binding": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "runtime_binding_owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_tensor_shape": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "policy_tensor_dtype": {
+          "const": "float32"
+        },
+        "policy_tensor_range": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": 0.0
+            },
+            {
+              "const": 1.0
+            }
+          ],
+          "items": false,
+          "minItems": 2,
+          "maxItems": 2
         }
+      }
+    },
+    "canonical_vector_feature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "feature_key",
+        "dtype",
+        "shape",
+        "names",
+        "units",
+        "semantics",
+        "policy_role",
+        "source_owner",
+        "processor_chain",
+        "derived"
+      ],
+      "properties": {
+        "feature_key": {"type": "string", "minLength": 1},
+        "dtype": {"const": "float32"},
+        "shape": {
+          "type": "array",
+          "items": {"type": "integer", "minimum": 1},
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "names": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "units": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 1
+        },
+        "semantics": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 1
+        },
+        "policy_role": {
+          "type": "string",
+          "enum": ["training_input", "training_target"]
+        },
+        "source_owner": {"type": "string", "minLength": 1},
+        "processor_chain": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 1
+        },
+        "derived": {"type": "boolean"}
+      }
+    },
+    "processor_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "pipeline",
+        "steps",
+        "deterministic",
+        "stateful",
+        "serialization_artifact_id",
+        "reset_boundary"
+      ],
+      "properties": {
+        "owner": {"type": "string", "minLength": 1},
+        "pipeline": {"type": "string", "minLength": 1},
+        "steps": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 1
+        },
+        "deterministic": {"type": "boolean"},
+        "stateful": {"type": "boolean"},
+        "serialization_artifact_id": {"type": "string", "minLength": 1},
+        "reset_boundary": {"type": "string", "minLength": 1}
       }
     },
     "provenance_field": {
@@ -2230,7 +2364,12 @@
       "additionalProperties": false,
       "required": [
         "format",
+        "policy_data_contract_revision",
         "temporal_semantics",
+        "observation_contract",
+        "action_label_pipeline",
+        "processor_ownership",
+        "resampling",
         "common_training_view",
         "feature_classification",
         "provenance_schema",
@@ -2243,6 +2382,10 @@
         "format": {
           "const": "LeRobotDataset_v3"
         },
+        "policy_data_contract_revision": {
+          "type": "string",
+          "minLength": 1
+        },
         "temporal_semantics": {
           "type": "object",
           "additionalProperties": false,
@@ -2250,9 +2393,18 @@
             "pairing",
             "observation_phase",
             "action_phase",
+            "source_action_phase",
+            "dataset_action_phase",
             "native_actuation_phase",
+            "runtime_command_phase",
+            "device_accepted_command_phase",
             "next_observation_phase",
             "outcome_phase",
+            "outcome_definition",
+            "label_fixed_before_runtime_mapping",
+            "persistence_call_phase",
+            "dataset_timestamp_clock",
+            "pacing_clock",
             "causality_test_evidence_id",
             "converters"
           ],
@@ -2266,14 +2418,42 @@
             "action_phase": {
               "const": "decision_t"
             },
+            "source_action_phase": {
+              "const": "controller_output_for_obs_t"
+            },
+            "dataset_action_phase": {
+              "const": "deterministic_label_output_t"
+            },
             "native_actuation_phase": {
               "const": "after_dataset_action_t"
+            },
+            "runtime_command_phase": {
+              "const": "after_dataset_action_t_before_transition_t"
+            },
+            "device_accepted_command_phase": {
+              "const": "runtime_or_device_residual_after_runtime_command_t"
             },
             "next_observation_phase": {
               "const": "post_transition_t"
             },
             "outcome_phase": {
               "const": "transition_t"
+            },
+            "outcome_definition": {
+              "type": "string",
+              "minLength": 1
+            },
+            "label_fixed_before_runtime_mapping": {
+              "const": true
+            },
+            "persistence_call_phase": {
+              "const": "after_send_action_before_next_tick"
+            },
+            "dataset_timestamp_clock": {
+              "const": "episode_relative_fixed_grid_frame_index_div_dataset_fps"
+            },
+            "pacing_clock": {
+              "const": "host_monotonic_time_perf_counter"
             },
             "causality_test_evidence_id": {
               "type": [
@@ -2402,6 +2582,165 @@
             }
           }
         },
+        "observation_contract": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["state", "raw_vs_derived_rule", "policy_whitelist"],
+          "properties": {
+            "state": {"$ref": "#/$defs/canonical_vector_feature"},
+            "raw_vs_derived_rule": {"type": "string", "minLength": 1},
+            "policy_whitelist": {
+              "type": "array",
+              "items": {"type": "string", "minLength": 1},
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          }
+        },
+        "action_label_pipeline": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_action",
+            "label_processor",
+            "dataset_action",
+            "runtime_mapping",
+            "device_accepted_command"
+          ],
+          "properties": {
+            "source_action": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["owner", "representation", "feature_names", "units"],
+              "properties": {
+                "owner": {"type": "string", "minLength": 1},
+                "representation": {"type": "string", "minLength": 1},
+                "feature_names": {
+                  "type": "array",
+                  "items": {"type": "string", "minLength": 1},
+                  "minItems": 1,
+                  "uniqueItems": true
+                },
+                "units": {
+                  "type": "array",
+                  "items": {"type": "string", "minLength": 1},
+                  "minItems": 1
+                }
+              }
+            },
+            "label_processor": {"$ref": "#/$defs/processor_binding"},
+            "dataset_action": {"$ref": "#/$defs/canonical_vector_feature"},
+            "runtime_mapping": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "owner",
+                "pipeline",
+                "steps",
+                "stored_label_mutation_allowed",
+                "send_action_return_semantics"
+              ],
+              "properties": {
+                "owner": {"type": "string", "minLength": 1},
+                "pipeline": {"type": "string", "minLength": 1},
+                "steps": {
+                  "type": "array",
+                  "items": {"type": "string", "minLength": 1},
+                  "minItems": 1
+                },
+                "stored_label_mutation_allowed": {"const": false},
+                "send_action_return_semantics": {"type": "string", "minLength": 1}
+              }
+            },
+            "device_accepted_command": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "observable_at_d0",
+                "observation_source",
+                "evidence_owner",
+                "definitionally_equal_to_dataset_action"
+              ],
+              "properties": {
+                "observable_at_d0": {"const": false},
+                "observation_source": {"type": "null"},
+                "evidence_owner": {"type": "string", "minLength": 1},
+                "definitionally_equal_to_dataset_action": {"const": false}
+              }
+            }
+          }
+        },
+        "processor_ownership": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "label_processors",
+            "policy_processors",
+            "runtime_device_mapping",
+            "stateful_processors",
+            "transform_classification"
+          ],
+          "properties": {
+            "label_processors": {"type": "string", "minLength": 1},
+            "policy_processors": {"type": "string", "minLength": 1},
+            "runtime_device_mapping": {"type": "string", "minLength": 1},
+            "stateful_processors": {"type": "array", "maxItems": 0},
+            "transform_classification": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "units_conversion",
+                "feature_rename_reorder",
+                "normalization",
+                "frame_mapping",
+                "clipping",
+                "rounding",
+                "gripper_conversion",
+                "left_right_composition",
+                "camera_preprocessing"
+              ],
+              "properties": {
+                "units_conversion": {"type": "string", "minLength": 1},
+                "feature_rename_reorder": {"type": "string", "minLength": 1},
+                "normalization": {"type": "string", "minLength": 1},
+                "frame_mapping": {"type": "string", "minLength": 1},
+                "clipping": {"type": "string", "minLength": 1},
+                "rounding": {"type": "string", "minLength": 1},
+                "gripper_conversion": {"type": "string", "minLength": 1},
+                "left_right_composition": {"type": "string", "minLength": 1},
+                "camera_preprocessing": {"type": "string", "minLength": 1}
+              }
+            }
+          }
+        },
+        "resampling": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "canonical_fps",
+            "grid",
+            "exact_rate_behavior",
+            "faster_source_behavior",
+            "slower_source_behavior",
+            "duplicate_policy",
+            "drop_policy",
+            "interpolation_policy",
+            "causality_rule",
+            "recording_command_relationship"
+          ],
+          "properties": {
+            "canonical_fps": {"const": 30},
+            "grid": {"const": "episode_relative_frame_index_div_fps"},
+            "exact_rate_behavior": {"type": "string", "minLength": 1},
+            "faster_source_behavior": {"type": "string", "minLength": 1},
+            "slower_source_behavior": {"type": "string", "minLength": 1},
+            "duplicate_policy": {"const": "forbidden"},
+            "drop_policy": {"type": "string", "minLength": 1},
+            "interpolation_policy": {"const": "none"},
+            "causality_rule": {"type": "string", "minLength": 1},
+            "recording_command_relationship": {"type": "string", "minLength": 1}
+          }
+        },
         "common_training_view": {
           "type": "object",
           "additionalProperties": false,
@@ -2409,6 +2748,8 @@
             "input_features",
             "target_features",
             "task_feature",
+            "task_semantics",
+            "schema_fingerprint_algorithm",
             "schema_fingerprint_sha256"
           ],
           "properties": {
@@ -2431,6 +2772,13 @@
                 "string",
                 "null"
               ]
+            },
+            "task_semantics": {
+              "type": "string",
+              "minLength": 1
+            },
+            "schema_fingerprint_algorithm": {
+              "const": "sha256_canonical_json_ordered_feature_spec_v1"
             },
             "schema_fingerprint_sha256": {
               "type": [

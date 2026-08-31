@@ -104,8 +104,27 @@ D0:
   - A
   - C
   required_paths:
+  - dataset.policy_data_contract_revision
+  - dataset.temporal_semantics.source_action_phase
+  - dataset.temporal_semantics.dataset_action_phase
+  - dataset.temporal_semantics.runtime_command_phase
+  - dataset.temporal_semantics.device_accepted_command_phase
+  - dataset.temporal_semantics.dataset_timestamp_clock
+  - dataset.temporal_semantics.pacing_clock
   - dataset.temporal_semantics.causality_test_evidence_id
+  - dataset.observation_contract.state.feature_key
+  - dataset.action_label_pipeline.label_processor.pipeline
+  - dataset.action_label_pipeline.dataset_action.feature_key
+  - dataset.action_label_pipeline.runtime_mapping.pipeline
+  - dataset.action_label_pipeline.device_accepted_command.observable_at_d0
+  - dataset.processor_ownership.label_processors
+  - dataset.processor_ownership.policy_processors
+  - dataset.processor_ownership.runtime_device_mapping
+  - dataset.resampling.canonical_fps
+  - dataset.resampling.interpolation_policy
   - dataset.common_training_view.task_feature
+  - dataset.common_training_view.task_semantics
+  - dataset.common_training_view.schema_fingerprint_algorithm
   - dataset.common_training_view.schema_fingerprint_sha256
   - dataset.provenance_schema.storage
   - timing.dataset_fps
@@ -114,11 +133,16 @@ D0:
   - dataset.feature_classification.training_input
   - dataset.provenance_schema.fields
   - dataset.cameras
+  - dataset.action_label_pipeline.source_action.feature_names
+  - dataset.action_label_pipeline.dataset_action.names
+  - dataset.observation_contract.state.names
   required_evidence_kinds:
+  - upstream_source
   - command_test
   required_artifact_kinds:
   - test_output
   - processor_config
+  - report
   mandatory: true
   special_check: dataset_contract
 S0:

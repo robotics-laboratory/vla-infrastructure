@@ -357,7 +357,101 @@ def validate_dataset_contract(d):
     ev = d["evidence"].get(eid) if eid else None
     if not ev or ev["kind"] != "command_test" or ev["status"] != "pass":
         out.append("dataset causality test must reference PASS command_test evidence")
+    dataset = d["dataset"]
+    action_names = [feature["name"] for feature in d["robot_contract"]["action_features"]]
+    observation_names = [feature["name"] for feature in d["robot_contract"]["observation_features"]]
+    action_units = [feature["units"] for feature in d["robot_contract"]["action_features"]]
+    observation_units = [feature["units"] for feature in d["robot_contract"]["observation_features"]]
+    action = dataset["action_label_pipeline"]["dataset_action"]
+    state = dataset["observation_contract"]["state"]
+    source_action = dataset["action_label_pipeline"]["source_action"]
+    if action["names"] != action_names or source_action["feature_names"] != action_names:
+        out.append("D0 action order must exactly match the accepted Gate A Robot.action_features order")
+    if state["names"] != observation_names:
+        out.append("D0 observation.state order must exactly match Gate A Robot.observation_features")
+    if action["units"] != action_units or source_action["units"] != action_units:
+        out.append("D0 action units must exactly preserve the accepted Gate A units")
+    if state["units"] != observation_units:
+        out.append("D0 observation.state units must exactly preserve the accepted Gate A units")
+    if action["shape"] != [len(action_names)] or state["shape"] != [len(observation_names)]:
+        out.append("D0 state/action vector shapes must equal their ordered scalar counts")
+    camera_features = [camera["feature_key"] for camera in dataset["cameras"].values()]
+    expected_inputs = [state["feature_key"], *camera_features, dataset["common_training_view"]["task_feature"]]
+    if dataset["common_training_view"]["input_features"] != expected_inputs:
+        out.append("D0 common training inputs must be ordered state, canonical cameras, then task")
+    if dataset["common_training_view"]["target_features"] != [action["feature_key"]]:
+        out.append("D0 common training target must be the one canonical dataset action")
+    if dataset["observation_contract"]["policy_whitelist"] != expected_inputs:
+        out.append("D0 policy whitelist must exactly equal the common training inputs")
+    if dataset["processor_ownership"]["stateful_processors"]:
+        out.append("D0 must not select stateful processors")
+    if dataset["action_label_pipeline"]["label_processor"]["stateful"]:
+        out.append("D0 identity label processor must be stateless")
+    if dataset["action_label_pipeline"]["runtime_mapping"]["stored_label_mutation_allowed"]:
+        out.append("runtime/device mapping must not mutate the stored D0 label")
+    if dataset["action_label_pipeline"]["device_accepted_command"]["observable_at_d0"]:
+        out.append("D0 must not claim unobserved hardware accepted-command evidence")
+    fps = d["timing"]["dataset_fps"]
+    if fps != dataset["resampling"]["canonical_fps"]:
+        out.append("timing.dataset_fps must equal D0 resampling.canonical_fps")
+    if any(camera["nominal_fps"] != fps for camera in dataset["cameras"].values()):
+        out.append("each canonical D0 camera nominal_fps must equal dataset_fps")
+    expected_fingerprint = canonical_training_schema_fingerprint(d)
+    if dataset["common_training_view"]["schema_fingerprint_sha256"] != expected_fingerprint:
+        out.append(
+            "D0 common training schema fingerprint mismatch: "
+            f"expected {expected_fingerprint}"
+        )
     return out
+
+
+def canonical_training_schema_fingerprint(d):
+    """Hash only the ordered, operational common-training feature specification."""
+    dataset = d["dataset"]
+    state = dataset["observation_contract"]["state"]
+    action = dataset["action_label_pipeline"]["dataset_action"]
+    ordered_features = [
+        {
+            "feature_key": state["feature_key"],
+            "dtype": state["dtype"],
+            "shape": state["shape"],
+            "names": state["names"],
+            "units": state["units"],
+            "semantics": state["semantics"],
+        }
+    ]
+    for camera in dataset["cameras"].values():
+        ordered_features.append(
+            {
+                "feature_key": camera["feature_key"],
+                "storage_dtype": "video",
+                "capture_dtype": camera["dtype"],
+                "capture_shape": camera["shape"],
+                "color_space": camera["color_space"],
+                "policy_tensor_dtype": camera["policy_tensor_dtype"],
+                "policy_tensor_shape": camera["policy_tensor_shape"],
+                "policy_tensor_range": camera["policy_tensor_range"],
+            }
+        )
+    ordered_features.append(
+        {
+            "feature_key": dataset["common_training_view"]["task_feature"],
+            "dtype": "string",
+            "semantic": "natural_language_instruction",
+        }
+    )
+    ordered_features.append(
+        {
+            "feature_key": action["feature_key"],
+            "dtype": action["dtype"],
+            "shape": action["shape"],
+            "names": action["names"],
+            "units": action["units"],
+            "semantics": action["semantics"],
+        }
+    )
+    encoded = json.dumps(ordered_features, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def validate_eval_binding(d, name):

@@ -121,6 +121,7 @@ def test13_firmware_not_enough_for_r0():
 def test14_d0_needs_causality():
     x = d()
     x["gates"]["D0"]["state"] = "accepted"
+    x["dataset"]["temporal_semantics"]["causality_test_evidence_id"] = None
     errs = mod.validate_gates(x, yaml.safe_load((ROOT / "configs/gate_rules.yaml").read_text()))
     assert any("causality_test_evidence_id" in e or "causality test" in e for e in errs)
 

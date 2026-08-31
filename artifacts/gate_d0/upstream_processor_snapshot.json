@@ -1,0 +1,36 @@
+{
+  "lerobot_revision": "7e241bd630a3719a56157a497ce5d08f244784f1",
+  "lerobot_version": "0.6.1",
+  "pipelines": {
+    "robot_action_processor": {
+      "name": "DataProcessorPipeline",
+      "steps": [
+        {
+          "class": "lerobot.processor.pipeline.IdentityProcessorStep",
+          "config": {}
+        }
+      ]
+    },
+    "robot_observation_processor": {
+      "name": "DataProcessorPipeline",
+      "steps": [
+        {
+          "class": "lerobot.processor.pipeline.IdentityProcessorStep",
+          "config": {}
+        }
+      ]
+    },
+    "teleop_action_processor": {
+      "name": "DataProcessorPipeline",
+      "steps": [
+        {
+          "class": "lerobot.processor.pipeline.IdentityProcessorStep",
+          "config": {}
+        }
+      ]
+    }
+  },
+  "reset_semantics": "DataProcessorPipeline.reset calls reset on every ordered step; selected IdentityProcessorStep has no state.",
+  "serialization_semantics": "get_config emits ordered step class/config entries; non-empty state_dict entries are stored in per-step safetensors files.",
+  "stateful_processors_selected_by_d0": []
+}

@@ -551,10 +551,12 @@ model:
     zero_position: null
     joint_limit: null
 timing:
-  clock_domain: host monotonic receipt timestamp
-  dataset_fps: null
+  clock_domain: Recording pacing uses host monotonic time.perf_counter; stored LeRobotDataset timestamps use the episode-relative fixed grid frame_index / dataset_fps.
+  dataset_fps: 30
   teleop_sample_fps: 30
-  camera_fps: {}
+  camera_fps:
+    left_wrist: 30
+    right_wrist: 30
   policy_inference_fps: null
   robot_command_fps: null
   max_xr_pose_age_ms: null
@@ -633,14 +635,24 @@ teleop:
     evidence_ids: []
 dataset:
   format: LeRobotDataset_v3
+  policy_data_contract_revision: piper_x_d0_policy_data_v1
   temporal_semantics:
     pairing: obs_t_action_t
     observation_phase: pre_decision_t
     action_phase: decision_t
+    source_action_phase: controller_output_for_obs_t
+    dataset_action_phase: deterministic_label_output_t
     native_actuation_phase: after_dataset_action_t
+    runtime_command_phase: after_dataset_action_t_before_transition_t
+    device_accepted_command_phase: runtime_or_device_residual_after_runtime_command_t
     next_observation_phase: post_transition_t
     outcome_phase: transition_t
-    causality_test_evidence_id: null
+    outcome_definition: Runtime transition, success, termination, failure, or device response caused by runtime_command_t; it is not part of obs_t.
+    label_fixed_before_runtime_mapping: true
+    persistence_call_phase: after_send_action_before_next_tick
+    dataset_timestamp_clock: episode_relative_fixed_grid_frame_index_div_dataset_fps
+    pacing_clock: host_monotonic_time_perf_counter
+    causality_test_evidence_id: gate_d0_causality_regression
     converters:
       isaac_human:
         obs_t_field: null
@@ -657,24 +669,237 @@ dataset:
         action_t_field: null
         outcome_field: null
         termination_field: null
+  observation_contract:
+    state:
+      feature_key: observation.state
+      dtype: float32
+      shape: [14]
+      names:
+      - left_joint_1.pos
+      - left_joint_2.pos
+      - left_joint_3.pos
+      - left_joint_4.pos
+      - left_joint_5.pos
+      - left_joint_6.pos
+      - left_gripper.pos
+      - right_joint_1.pos
+      - right_joint_2.pos
+      - right_joint_3.pos
+      - right_joint_4.pos
+      - right_joint_5.pos
+      - right_joint_6.pos
+      - right_gripper.pos
+      units: [degree, degree, degree, degree, degree, degree, millimeter, degree, degree, degree, degree, degree, degree, millimeter]
+      semantics: [measured_joint_position, measured_joint_position, measured_joint_position, measured_joint_position, measured_joint_position, measured_joint_position, absolute_measured_gripper_travel, measured_joint_position, measured_joint_position, measured_joint_position, measured_joint_position, measured_joint_position, measured_joint_position, absolute_measured_gripper_travel]
+      policy_role: training_input
+      source_owner: Runtime observation provider; real path is BiPiperXFollower.get_observation composed from both PiperXFollower instances.
+      processor_chain:
+      - lerobot.robot_observation_processor.IdentityProcessorStep
+      - lerobot.aggregate_pipeline_dataset_features
+      - lerobot.build_dataset_frame_float32
+      derived: false
+    raw_vs_derived_rule: Only the 14 measured Gate A scalars are canonical state; FK/IK pose, velocity, force, torque, and normalized gripper values are absent unless a later owned processor declares them as derived outside this revision.
+    policy_whitelist:
+    - observation.state
+    - observation.images.left_wrist
+    - observation.images.right_wrist
+    - task
+  action_label_pipeline:
+    source_action:
+      owner: Current controller/source after its owned control solution emits the Gate A RobotAction mapping for obs_t.
+      representation: Flat ordered RobotAction mapping in the accepted PIPER-X boundary units; no policy normalization.
+      feature_names:
+      - left_joint_1.pos
+      - left_joint_2.pos
+      - left_joint_3.pos
+      - left_joint_4.pos
+      - left_joint_5.pos
+      - left_joint_6.pos
+      - left_gripper.pos
+      - right_joint_1.pos
+      - right_joint_2.pos
+      - right_joint_3.pos
+      - right_joint_4.pos
+      - right_joint_5.pos
+      - right_joint_6.pos
+      - right_gripper.pos
+      units: [degree, degree, degree, degree, degree, degree, millimeter, degree, degree, degree, degree, degree, degree, millimeter]
+    label_processor:
+      owner: LeRobot teleop_action_processor at the canonical RobotAction seam
+      pipeline: lerobot.processor.RobotProcessorPipeline
+      steps:
+      - lerobot.processor.pipeline.IdentityProcessorStep
+      deterministic: true
+      stateful: false
+      serialization_artifact_id: gate_d0_processor_snapshot
+      reset_boundary: Stateless; pipeline.reset is still called at every episode boundary by any source path that supplies additional stateful steps.
+    dataset_action:
+      feature_key: action
+      dtype: float32
+      shape: [14]
+      names:
+      - left_joint_1.pos
+      - left_joint_2.pos
+      - left_joint_3.pos
+      - left_joint_4.pos
+      - left_joint_5.pos
+      - left_joint_6.pos
+      - left_gripper.pos
+      - right_joint_1.pos
+      - right_joint_2.pos
+      - right_joint_3.pos
+      - right_joint_4.pos
+      - right_joint_5.pos
+      - right_joint_6.pos
+      - right_gripper.pos
+      units: [degree, degree, degree, degree, degree, degree, millimeter, degree, degree, degree, degree, degree, degree, millimeter]
+      semantics: [absolute_joint_position_command, absolute_joint_position_command, absolute_joint_position_command, absolute_joint_position_command, absolute_joint_position_command, absolute_joint_position_command, signed_gripper_travel_command, absolute_joint_position_command, absolute_joint_position_command, absolute_joint_position_command, absolute_joint_position_command, absolute_joint_position_command, absolute_joint_position_command, signed_gripper_travel_command]
+      policy_role: training_target
+      source_owner: LeRobot teleop_action_processor output packed by build_dataset_frame using the ordered action names.
+      processor_chain:
+      - lerobot.teleop_action_processor.IdentityProcessorStep
+      - lerobot.aggregate_pipeline_dataset_features
+      - lerobot.build_dataset_frame_float32
+      derived: false
+    runtime_mapping:
+      owner: Runtime-specific LeRobot robot_action_processor followed by Robot.send_action or env.step mapping.
+      pipeline: lerobot.processor.RobotProcessorPipeline_then_Robot.send_action
+      steps:
+      - lerobot.processor.pipeline.IdentityProcessorStep
+      - lerobot_robot_piperx.BiPiperXFollower.send_action_for_real_runtime
+      - source_runtime_native_mapping_for_simulators_selected_later
+      stored_label_mutation_allowed: false
+      send_action_return_semantics: LeRobot returns the action actually sent to motors, potentially clipped or modified; the PIPER-X plugin returns the SDK command after integer milli-unit round-trip, not hardware acceptance feedback, and record_loop does not store this return as dataset.action.
+    device_accepted_command:
+      observable_at_d0: false
+      observation_source: null
+      evidence_owner: R1 hardware evidence or the later simulator-native step result where observable.
+      definitionally_equal_to_dataset_action: false
+  processor_ownership:
+    label_processors: Deterministic source_action to dataset_action transforms only; D0 selects upstream IdentityProcessorStep at the canonical RobotAction seam and later source gates must pin any source-specific steps without changing the output schema.
+    policy_processors: LeRobot policy pre/postprocessor pipelines own model normalization, batching, device transfer, and any policy-specific rename; no policy or normalization is selected by D0.
+    runtime_device_mapping: robot_action_processor plus Robot.send_action/env.step owns runtime units, native ordering, safety residuals, clipping, and device rounding after dataset_action.
+    stateful_processors: []
+    transform_classification:
+      units_conversion: None in the D0 label processor; PIPER-X degree/millimeter to SDK integer milli-units belongs to runtime/device mapping.
+      feature_rename_reorder: LeRobot feature aggregation/build_dataset_frame packs the explicit left-then-right name order into observation.state and action.
+      normalization: None in canonical data semantics; only an explicit serialized LeRobot policy processor may normalize later.
+      frame_mapping: None in canonical data semantics; source/runtime-specific controller or simulator mapping owns any frame transform.
+      clipping: None in label semantics; runtime safety or device clipping is residual behavior and must not replace dataset.action.
+      rounding: PIPER-X unit_to_milli integer rounding is runtime/device mapping; send_action return evidence is separate from the label.
+      gripper_conversion: No label conversion; signed millimeter command and absolute millimeter observation are preserved, with SDK integer conversion only at send_action.
+      left_right_composition: BiPiperXFollower owns deterministic left_ then right_ flat composition; LeRobot packs that declared order.
+      camera_preprocessing: Runtime providers supply canonical uint8 RGB HWC frames; LeRobot video decoding deterministically exposes float32 RGB CHW in [0,1], with no D0 crop or resize.
+  resampling:
+    canonical_fps: 30
+    grid: episode_relative_frame_index_div_fps
+    exact_rate_behavior: One obs_t/source_action_t/dataset_action_t sample is accepted for each canonical tick.
+    faster_source_behavior: Causally select the latest complete sample at or before each target tick and drop intervening samples.
+    slower_source_behavior: Reject or abort the source episode/projection; do not synthesize missing canonical ticks.
+    duplicate_policy: forbidden
+    drop_policy: Only faster-source samples not selected by causal decimation may be dropped; canonical output ticks are never dropped silently.
+    interpolation_policy: none
+    causality_rule: No future sample may contribute to tick t; obs_t and dataset_action_t must retain the same source tick identity.
+    recording_command_relationship: Pinned record_loop makes one send_action attempt per accepted dataset tick but this is not a separately guaranteed hardware command FPS; overrunning sources are rejected by the slower-source rule.
   common_training_view:
-    input_features: []
+    input_features:
+    - observation.state
+    - observation.images.left_wrist
+    - observation.images.right_wrist
+    - task
     target_features:
     - action
-    task_feature: null
-    schema_fingerprint_sha256: null
+    task_feature: task
+    task_semantics: Natural-language instruction string recovered by LeRobotDataset from task_index and the dataset task table; identical task_id/revision semantics are required across sources.
+    schema_fingerprint_algorithm: sha256_canonical_json_ordered_feature_spec_v1
+    schema_fingerprint_sha256: eb7e4613e5f8d0ff59039874555e6f2d73b728973e64cc01da8414e010d8d33d
   feature_classification:
-    training_input: []
+    training_input:
+    - observation.state
+    - observation.images.left_wrist
+    - observation.images.right_wrist
+    - task
     training_target:
     - action
-    evaluation_only: []
-    provenance_only: []
+    evaluation_only:
+    - timestamp
+    - frame_index
+    - episode_index
+    - index
+    - task_index
+    provenance_only:
+    - provenance.runtime
+    - provenance.source_class
+    - provenance.task_id
+    - provenance.task_revision
+    - provenance.embodiment_revision
+    - provenance.processor_contract_revision
+    - provenance.dataset_revision
+    - provenance.conversion_revision
+    - provenance.generator_revision
+    - provenance.source_demonstration_lineage
+    - provenance.randomization_seed
+    - provenance.policy_checkpoint
     privileged_debug: []
   provenance_schema:
-    storage: null
+    storage: hybrid
     sidecar_artifact_id: null
-    fields: {}
-  cameras: {}
+    fields:
+      runtime: {key: runtime, scope: dataset, type: string, required: true}
+      source_class: {key: source_class, scope: dataset, type: string, required: true}
+      task_id: {key: task_id, scope: dataset, type: string, required: true}
+      task_revision: {key: task_revision, scope: dataset, type: string, required: true}
+      embodiment_revision: {key: embodiment_revision, scope: dataset, type: string, required: true}
+      processor_contract_revision: {key: processor_contract_revision, scope: dataset, type: string, required: true}
+      dataset_revision: {key: dataset_revision, scope: dataset, type: string, required: true}
+      conversion_revision: {key: conversion_revision, scope: dataset, type: string, required: true}
+      generator_revision: {key: generator_revision, scope: dataset, type: string, required: false}
+      source_demonstration_lineage: {key: source_demonstration_lineage, scope: sidecar, type: object, required: false}
+      randomization_seed: {key: randomization_seed, scope: episode, type: int, required: false}
+      policy_checkpoint: {key: policy_checkpoint, scope: dataset, type: string, required: false}
+  cameras:
+    left_wrist:
+      feature_key: observation.images.left_wrist
+      shape: [480, 640, 3]
+      dtype: uint8
+      color_space: RGB
+      resolution: [640, 480]
+      nominal_fps: 30
+      timestamp_source: Shared dataset tick timestamp; LeRobot video frame lookup uses the episode-relative timestamp.
+      freshness_source: Camera.async_read returns the latest unconsumed frame and waits for a new frame up to its configured timeout.
+      crop_resize_revision: null
+      missing_frame_behavior: Abort/reject the episode tick path; no stale-frame duplication.
+      intrinsics_artifact_id: null
+      extrinsics_artifact_id: null
+      acquisition_owner: Left-arm runtime camera provider configured under key wrist; BiPiperXFollower exposes left_wrist.
+      policy_observation_status: training_input
+      processor_mapping: LeRobot video storage from uint8 RGB HWC, then decoder output float32 RGB CHW divided by 255; no crop/resize.
+      runtime_binding: null
+      runtime_binding_owner: Per-runtime source configuration; no device index/path belongs to D0.
+      policy_tensor_shape: [3, 480, 640]
+      policy_tensor_dtype: float32
+      policy_tensor_range: [0.0, 1.0]
+    right_wrist:
+      feature_key: observation.images.right_wrist
+      shape: [480, 640, 3]
+      dtype: uint8
+      color_space: RGB
+      resolution: [640, 480]
+      nominal_fps: 30
+      timestamp_source: Shared dataset tick timestamp; LeRobot video frame lookup uses the episode-relative timestamp.
+      freshness_source: Camera.async_read returns the latest unconsumed frame and waits for a new frame up to its configured timeout.
+      crop_resize_revision: null
+      missing_frame_behavior: Abort/reject the episode tick path; no stale-frame duplication.
+      intrinsics_artifact_id: null
+      extrinsics_artifact_id: null
+      acquisition_owner: Right-arm runtime camera provider configured under key wrist; BiPiperXFollower exposes right_wrist.
+      policy_observation_status: training_input
+      processor_mapping: LeRobot video storage from uint8 RGB HWC, then decoder output float32 RGB CHW divided by 255; no crop/resize.
+      runtime_binding: null
+      runtime_binding_owner: Per-runtime source configuration; no device index/path belongs to D0.
+      policy_tensor_shape: [3, 480, 640]
+      policy_tensor_dtype: float32
+      policy_tensor_range: [0.0, 1.0]
   sources: {}
   materialization:
     strategy: deterministic_projection_then_merge
@@ -922,6 +1147,24 @@ artifacts:
     path: docs/project/GATE_B_Q1_EVIDENCE.txt
     uri: null
     description: Audited physical Quest Q1 observations, CloudXR runtime facts, and pinned timing behavior
+  gate_d0_upstream_audit:
+    kind: report
+    sha256: 6ab451233c4d3233635d36b98e823dad0e0adbaf45f125c084e5b418d578e3b8
+    path: docs/project/GATE_D0_UPSTREAM_AUDIT.md
+    uri: null
+    description: Pinned LeRobot Robot, recording, processor, dataset v3, timestamp, episode, and video semantic audit with byte-identical source hashes
+  gate_d0_processor_snapshot:
+    kind: processor_config
+    sha256: 42a9543d5289d73a768a708be195afba6cabebc36ba27e8afa8cf798289ffb64
+    path: artifacts/gate_d0/upstream_processor_snapshot.json
+    uri: null
+    description: Serialized output of pinned LeRobot default recording processor get_config plus reset/state semantics
+  gate_d0_causality_test_output:
+    kind: test_output
+    sha256: 35546bc9f20b63f7005aa1b2e212a24d68ae694713ea3baf714044b67843f0a0
+    path: docs/project/GATE_D0_CAUSALITY_TEST.txt
+    uri: null
+    description: Focused same-tick obs_t/action_t frame-construction regression and explicit t-1/t+1 rejection
 evidence:
   v52_pack_manifest_check:
     kind: command_test
@@ -1259,6 +1502,35 @@ evidence:
     path: null
     symbol: null
     notes: No Robot class was instantiated, no CAN path was accessed, and no hardware motion occurred. Physical gripper polarity/range and measured per-arm calibration remain R1 work.
+  gate_d0_pinned_lerobot_audit:
+    kind: upstream_source
+    status: pass
+    summary: Pinned LeRobot Robot, record_loop, processor, feature, DatasetWriter, LeRobotDataset v3, and video semantics were audited at the accepted commit and match installed 0.6.1 byte-for-byte.
+    timestamp: '2026-08-30T22:50:16+03:00'
+    command: Fetch seven official raw files at the pinned commit and compare SHA-256 with installed 0.6.1.
+    artifact_ids:
+    - gate_d0_upstream_audit
+    repository: https://github.com/huggingface/lerobot
+    revision_type: commit
+    revision: 7e241bd630a3719a56157a497ce5d08f244784f1
+    path: src/lerobot/robots/robot.py; src/lerobot/scripts/lerobot_record.py; src/lerobot/processor/pipeline.py; src/lerobot/processor/factory.py; src/lerobot/datasets/lerobot_dataset.py; src/lerobot/datasets/dataset_writer.py; src/lerobot/utils/feature_utils.py
+    symbol: Robot.action_features; Robot.observation_features; Robot.send_action; record_loop; DataProcessorPipeline; make_default_processors; LeRobotDataset; DatasetWriter.add_frame; build_dataset_frame
+    notes: Executable code stores teleop_action_processor output as dataset.action; robot_action_processor output and send_action return remain runtime/device-side values.
+  gate_d0_causality_regression:
+    kind: command_test
+    status: pass
+    summary: Synthetic obs_t=t and action_t=1000+t remained exactly same-tick through the pinned processor/build_dataset_frame seam; both off-by-one directions were rejected.
+    timestamp: '2026-08-30T22:50:16+03:00'
+    command: uv run pytest -q tests/test_gate_d0_contract.py
+    artifact_ids:
+    - gate_d0_causality_test_output
+    - gate_d0_processor_snapshot
+    repository: null
+    revision_type: null
+    revision: null
+    path: tests/test_gate_d0_contract.py
+    symbol: test_record_loop_frame_seam_preserves_obs_t_action_t; test_causality_oracle_rejects_both_off_by_one_directions; test_d0_contract_matches_upstream_processors_and_fingerprint
+    notes: The core profile lacks LeRobot's optional datasets extra, so the approved exact frame-construction seam fallback was used with no dependency change.
 gates:
   M0:
     state: accepted
@@ -1318,10 +1590,15 @@ gates:
     - gate_c_offline_verification
     notes: Authoritative PIPER-X model, frame/TCP, joint rename/sign/order, gripper model boundary, calibration interface, and upstream LeRobot FK/IK checks are accepted offline. Physical calibration and gripper polarity/range remain R1 evidence.
   D0:
-    state: unresolved
-    evidence_ids: []
-    artifact_ids: []
-    notes: Old label prose does not satisfy v5.2 temporal causality and common-training-view requirements.
+    state: accepted
+    evidence_ids:
+    - gate_d0_pinned_lerobot_audit
+    - gate_d0_causality_regression
+    artifact_ids:
+    - gate_d0_upstream_audit
+    - gate_d0_processor_snapshot
+    - gate_d0_causality_test_output
+    notes: Canonical PIPER-X policy/data, same-tick causality, 30 FPS fixed-grid timing, wrist-camera roles, provenance isolation, identity label processing, and runtime/device command separation are accepted offline with no runtime implementation.
   S0:
     state: unresolved
     evidence_ids: []
