@@ -1,6 +1,6 @@
 # ACCEPTANCE_CHECKLIST.md — v5.2
 
-This checklist is explanatory. Machine acceptance is `configs/gate_rules.yaml` plus the validator.
+This checklist is explanatory. Machine acceptance is `../configs/gate_rules.yaml` plus the validator.
 
 ## Contract integrity
 

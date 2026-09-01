@@ -11,7 +11,7 @@ Do not build a robotics framework.
 For every task:
 
 ```text
-NORMATIVE_MODEL.md
+docs/NORMATIVE_MODEL.md
 configs/resolved_contract.yaml
 configs/gate_rules.yaml
 the topic policy document
@@ -20,9 +20,9 @@ the topic policy document
 For hardware/safety also read:
 
 ```text
-PIPER_X_VERIFICATION.md
-SAFETY_TIMING.md
-HIL_EXTENSION.md
+docs/PIPER_X_VERIFICATION.md
+docs/SAFETY_TIMING.md
+docs/HIL_EXTENSION.md
 ```
 
 ## Mandatory upstream audit

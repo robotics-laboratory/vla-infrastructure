@@ -1,6 +1,6 @@
 # GATE_SPEC.md
 
-`configs/gate_rules.yaml` is the machine DAG. This file is the human-readable standalone definition.
+`../configs/gate_rules.yaml` is the machine DAG. This file is the human-readable standalone definition.
 
 ## [[gate:M0]] Baseline / migration
 

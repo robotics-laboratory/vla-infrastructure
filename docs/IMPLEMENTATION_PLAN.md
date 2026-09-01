@@ -61,7 +61,7 @@ Benchmark branch:
 
 ## Per-gate workflow
 
-1. read `NORMATIVE_MODEL.md` and `configs/gate_rules.yaml`;
+1. read `NORMATIVE_MODEL.md` and `../configs/gate_rules.yaml`;
 2. verify prerequisites;
 3. use declared [[profile:offline_tests]] or the gate-specific profile;
 4. inspect pinned upstream before code;

@@ -78,30 +78,30 @@ Do not collapse them into one project-owned `rollout()` abstraction.
 
 ## Canonical files
 
-Read `NORMATIVE_MODEL.md` first.
+Read `docs/NORMATIVE_MODEL.md` first.
 
 Live repository operating commands preserved from the pre-v5.2 project are in
 `docs/project/CORE_ENVIRONMENT_OPERATIONS.md`; that note is operational, not a
 second resolved contract.
 
 - `AGENTS.md`
-- `NORMATIVE_MODEL.md`
-- `CAPABILITY_MATRIX.md`
-- `GATE_SPEC.md`
-- `DATA_COLLECTION_POLICY.md`
-- `DATASET_MATERIALIZATION.md`
-- `SIMULATION_POLICY.md`
-- `EVALUATION_POLICY.md`
-- `BENCHMARK_POLICY.md`
-- `ENVIRONMENT_POLICY.md`
-- `PIPER_X_VERIFICATION.md`
-- `SAFETY_TIMING.md`
-- `HIL_EXTENSION.md`
-- `IMPLEMENTATION_PLAN.md`
-- `ACCEPTANCE_CHECKLIST.md`
-- `MIGRATION_V4_3_V5_1_TO_V5_2.md`
-- `DESIGN_BASIS.md`
-- `SOURCE_REFERENCES.md`
+- `docs/NORMATIVE_MODEL.md`
+- `docs/CAPABILITY_MATRIX.md`
+- `docs/GATE_SPEC.md`
+- `docs/DATA_COLLECTION_POLICY.md`
+- `docs/DATASET_MATERIALIZATION.md`
+- `docs/SIMULATION_POLICY.md`
+- `docs/EVALUATION_POLICY.md`
+- `docs/BENCHMARK_POLICY.md`
+- `docs/ENVIRONMENT_POLICY.md`
+- `docs/PIPER_X_VERIFICATION.md`
+- `docs/SAFETY_TIMING.md`
+- `docs/HIL_EXTENSION.md`
+- `docs/IMPLEMENTATION_PLAN.md`
+- `docs/ACCEPTANCE_CHECKLIST.md`
+- `docs/MIGRATION_V4_3_V5_1_TO_V5_2.md`
+- `docs/DESIGN_BASIS.md`
+- `docs/SOURCE_REFERENCES.md`
 - `configs/resolved_contract.yaml`
 - `configs/resolved_contract.schema.json`
 - `configs/gate_rules.yaml`

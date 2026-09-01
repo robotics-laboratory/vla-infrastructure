@@ -2,7 +2,7 @@
 
 ## Machine-readable ownership
 
-All resolved values below live in `configs/resolved_contract.yaml`.
+All resolved values below live in `../configs/resolved_contract.yaml`.
 
 ## Timing
 

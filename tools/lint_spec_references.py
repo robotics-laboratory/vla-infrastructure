@@ -17,7 +17,8 @@ def main():
     profiles = set(c["execution_profiles"])
     sources = set(c["taxonomy"]["source_classes"])
     errors = []
-    for p in sorted(root.glob("*.md")):
+    spec_paths = [*root.glob("*.md"), *(root / "docs").glob("*.md")]
+    for p in sorted(spec_paths):
         text = p.read_text(encoding="utf-8")
         # Mentions explaining why v5.2 bans old magic placeholders are allowed only in README/NORMATIVE/MIGRATION.
         if p.name not in {"README.md", "NORMATIVE_MODEL.md", "MIGRATION_V4_3_V5_1_TO_V5_2.md"}:

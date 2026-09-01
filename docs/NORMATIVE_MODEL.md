@@ -13,7 +13,7 @@ A resolved value is not proof by itself.
 These define what is allowed and what must be proven:
 
 ```text
-AGENTS.md
+../AGENTS.md
 NORMATIVE_MODEL.md
 CAPABILITY_MATRIX.md
 GATE_SPEC.md
@@ -26,13 +26,13 @@ ENVIRONMENT_POLICY.md
 PIPER_X_VERIFICATION.md
 SAFETY_TIMING.md
 HIL_EXTENSION.md
-configs/resolved_contract.schema.json
-configs/gate_rules.yaml
+../configs/resolved_contract.schema.json
+../configs/gate_rules.yaml
 ```
 
 ### Resolved facts
 
-`configs/resolved_contract.yaml` is the sole machine-readable store of project-specific resolved values. It does not override the static specification.
+`../configs/resolved_contract.yaml` is the sole machine-readable store of project-specific resolved values. It does not override the static specification.
 
 ### Evidence
 
@@ -114,4 +114,4 @@ Normative Markdown references machine IDs as:
 [[source:human_vr]]
 ```
 
-`tools/lint_spec_references.py` checks these identifiers.
+`../tools/lint_spec_references.py` checks these identifiers.
