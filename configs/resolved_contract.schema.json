@@ -829,6 +829,82 @@
           }
         }
       }
+    },
+    "process_role": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "environment",
+        "owns"
+      ],
+      "properties": {
+        "environment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "profile_ownership": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "execution_mode",
+        "environments"
+      ],
+      "properties": {
+        "execution_mode": {
+          "type": "string",
+          "enum": [
+            "single_process",
+            "multi_process"
+          ]
+        },
+        "environments": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "boundary_operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request_fields",
+        "response_fields"
+      ],
+      "properties": {
+        "request_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "response_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
     }
   },
   "type": "object",
@@ -843,6 +919,7 @@
     "implementation",
     "environments",
     "execution_profiles",
+    "process_architecture",
     "robot_contract",
     "model",
     "timing",
@@ -1440,6 +1517,257 @@
       },
       "additionalProperties": {
         "$ref": "#/$defs/profile"
+      }
+    },
+    "process_architecture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revision",
+        "same_process_lerobot_isaac_required",
+        "generic_simulator_api_exists",
+        "rpc_implementation_selected",
+        "shared_semantic_boundary",
+        "processes",
+        "profile_ownership",
+        "eval_boundary",
+        "control_boundary"
+      ],
+      "properties": {
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "same_process_lerobot_isaac_required": {
+          "const": false
+        },
+        "generic_simulator_api_exists": {
+          "const": false
+        },
+        "rpc_implementation_selected": {
+          "const": false
+        },
+        "shared_semantic_boundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "gate",
+            "contract_revision",
+            "schema_fingerprint_sha256"
+          ],
+          "properties": {
+            "gate": {
+              "const": "D0"
+            },
+            "contract_revision": {
+              "type": "string",
+              "minLength": 1
+            },
+            "schema_fingerprint_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{64}$"
+            }
+          }
+        },
+        "processes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "core_lerobot",
+            "isaac_native"
+          ],
+          "properties": {
+            "core_lerobot": {
+              "$ref": "#/$defs/process_role"
+            },
+            "isaac_native": {
+              "$ref": "#/$defs/process_role"
+            }
+          }
+        },
+        "profile_ownership": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "offline_tests",
+            "isaac_env",
+            "isaac_vr_record",
+            "isaac_generate",
+            "isaac_dataset_convert",
+            "isaac_eval",
+            "mujoco_env",
+            "mujoco_eval"
+          ],
+          "properties": {
+            "offline_tests": {
+              "$ref": "#/$defs/profile_ownership"
+            },
+            "isaac_env": {
+              "$ref": "#/$defs/profile_ownership"
+            },
+            "isaac_vr_record": {
+              "$ref": "#/$defs/profile_ownership"
+            },
+            "isaac_generate": {
+              "$ref": "#/$defs/profile_ownership"
+            },
+            "isaac_dataset_convert": {
+              "$ref": "#/$defs/profile_ownership"
+            },
+            "isaac_eval": {
+              "$ref": "#/$defs/profile_ownership"
+            },
+            "mujoco_env": {
+              "$ref": "#/$defs/profile_ownership"
+            },
+            "mujoco_eval": {
+              "$ref": "#/$defs/profile_ownership"
+            }
+          }
+        },
+        "eval_boundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "protocol_revision",
+            "semantics",
+            "transport_selection",
+            "handshake_fields",
+            "reset",
+            "step",
+            "lifecycle_operations",
+            "health_state",
+            "max_step_requests_in_flight",
+            "automatic_retry_after_ambiguous_timeout",
+            "transport_failure_classification",
+            "transport_failure_is_task_truncation",
+            "native_dictionaries_cross_boundary",
+            "python_pickle_allowed"
+          ],
+          "properties": {
+            "protocol_revision": {
+              "type": "string",
+              "minLength": 1
+            },
+            "semantics": {
+              "const": "synchronous_episode_sensitive"
+            },
+            "transport_selection": {
+              "const": "deferred"
+            },
+            "handshake_fields": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "reset": {
+              "$ref": "#/$defs/boundary_operation"
+            },
+            "step": {
+              "$ref": "#/$defs/boundary_operation"
+            },
+            "lifecycle_operations": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "health_state": {
+              "const": "minimal"
+            },
+            "max_step_requests_in_flight": {
+              "const": 1
+            },
+            "automatic_retry_after_ambiguous_timeout": {
+              "const": false
+            },
+            "transport_failure_classification": {
+              "const": "infrastructure_failure"
+            },
+            "transport_failure_is_task_truncation": {
+              "const": false
+            },
+            "native_dictionaries_cross_boundary": {
+              "const": false
+            },
+            "python_pickle_allowed": {
+              "const": false
+            }
+          }
+        },
+        "control_boundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "implementation_state",
+            "semantics",
+            "independent_of_eval",
+            "transport_selection",
+            "command_fields",
+            "observation_fields",
+            "stale_commands_dropped",
+            "stale_commands_replayed",
+            "native_fail_safe_owner",
+            "excluded_ownership"
+          ],
+          "properties": {
+            "implementation_state": {
+              "const": "deferred"
+            },
+            "semantics": {
+              "const": "asynchronous_freshness_sensitive"
+            },
+            "independent_of_eval": {
+              "const": true
+            },
+            "transport_selection": {
+              "const": "deferred"
+            },
+            "command_fields": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "observation_fields": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "stale_commands_dropped": {
+              "const": true
+            },
+            "stale_commands_replayed": {
+              "const": false
+            },
+            "native_fail_safe_owner": {
+              "const": "runtime_specific"
+            },
+            "excluded_ownership": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          }
+        }
       }
     },
     "robot_contract": {

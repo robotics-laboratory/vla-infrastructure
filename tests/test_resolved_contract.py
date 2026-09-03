@@ -9,7 +9,11 @@ from pathlib import Path
 
 import yaml
 
-from tools.validate_resolved_contract import validate_contract, validate_gates
+from tools.validate_resolved_contract import (
+    validate_contract,
+    validate_gates,
+    validate_process_architecture,
+)
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
@@ -73,6 +77,88 @@ class ResolvedContractTests(unittest.TestCase):
             "gate A: unresolved required path implementation.robot_plugin.package",
             validate_gates(data, rules),
         )
+
+    def test_gate_s0_is_an_audit_selection_gate_not_an_isaac_runtime_gate(self) -> None:
+        data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        rules = yaml.safe_load(
+            (REPOSITORY_ROOT / "configs" / "gate_rules.yaml").read_text(encoding="utf-8")
+        )
+
+        self.assertEqual(data["gates"]["S0"]["state"], "accepted")
+        for gate_id in ("M0", "E0", "A", "B", "C", "D0"):
+            self.assertEqual(data["gates"][gate_id]["state"], "accepted")
+        self.assertEqual(
+            rules["S0"]["required_evidence_kinds"],
+            ["upstream_source", "document_review"],
+        )
+        self.assertEqual(rules["S0"]["required_artifact_kinds"], ["report"])
+        self.assertNotIn(
+            "environments.isaac.spec_artifact_id", rules["S0"]["required_paths"]
+        )
+        self.assertNotIn(
+            "execution_profiles.isaac_env.command", rules["S0"]["required_paths"]
+        )
+        self.assertIn(
+            "execution_profiles.isaac_env.command", rules["S1"]["required_paths"]
+        )
+        self.assertEqual(
+            rules["S1"]["required_evidence_kinds"],
+            ["command_test", "artifact_validation"],
+        )
+        self.assertIn(
+            "gate_s0_isaac_compatibility_remediation",
+            data["gates"]["S0"]["artifact_ids"],
+        )
+
+    def test_process_architecture_keeps_eval_and_control_semantics_distinct(self) -> None:
+        data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        architecture = data["process_architecture"]
+
+        self.assertEqual(validate_process_architecture(data), [])
+        self.assertEqual(
+            architecture["profile_ownership"]["isaac_eval"],
+            {"execution_mode": "multi_process", "environments": ["core", "isaac"]},
+        )
+        self.assertEqual(
+            architecture["eval_boundary"]["semantics"],
+            "synchronous_episode_sensitive",
+        )
+        self.assertEqual(
+            architecture["control_boundary"]["semantics"],
+            "asynchronous_freshness_sensitive",
+        )
+        self.assertTrue(architecture["control_boundary"]["independent_of_eval"])
+        self.assertEqual(architecture["eval_boundary"]["transport_selection"], "deferred")
+        self.assertEqual(
+            architecture["control_boundary"]["transport_selection"], "deferred"
+        )
+        self.assertFalse(architecture["rpc_implementation_selected"])
+        self.assertFalse(architecture["generic_simulator_api_exists"])
+
+        probe = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        probe["process_architecture"]["eval_boundary"][
+            "automatic_retry_after_ambiguous_timeout"
+        ] = True
+        errors, _, _ = validate_contract_from_data_for_schema_probe(probe)
+        self.assertTrue(
+            any("automatic_retry_after_ambiguous_timeout" in error for error in errors), errors
+        )
+
+
+def validate_contract_from_data_for_schema_probe(data: dict) -> tuple[list[str], bool, list[str]]:
+    """Run the checked-in validator against an in-memory mutation via a temp contract."""
+    import tempfile
+
+    with tempfile.TemporaryDirectory(dir=REPOSITORY_ROOT) as directory:
+        temp_contract = Path(directory) / "resolved_contract.yaml"
+        temp_schema = Path(directory) / "resolved_contract.schema.json"
+        temp_rules = Path(directory) / "gate_rules.yaml"
+        temp_contract.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
+        temp_schema.write_bytes(
+            (REPOSITORY_ROOT / "configs" / "resolved_contract.schema.json").read_bytes()
+        )
+        temp_rules.write_bytes((REPOSITORY_ROOT / "configs" / "gate_rules.yaml").read_bytes())
+        return validate_contract(temp_contract, temp_rules)
 
 
 if __name__ == "__main__":

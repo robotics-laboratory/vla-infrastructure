@@ -32,6 +32,61 @@ REQUIRED_PROVENANCE = {
     "dataset_revision",
     "conversion_revision",
 }
+EXPECTED_PROCESS_PROFILE_OWNERSHIP = {
+    "offline_tests": ("single_process", ["core"]),
+    "isaac_env": ("single_process", ["isaac"]),
+    "isaac_vr_record": ("single_process", ["isaac"]),
+    "isaac_generate": ("single_process", ["isaac"]),
+    "isaac_dataset_convert": ("single_process", ["core"]),
+    "isaac_eval": ("multi_process", ["core", "isaac"]),
+    "mujoco_env": ("single_process", ["core"]),
+    "mujoco_eval": ("single_process", ["core"]),
+}
+EXPECTED_EVAL_HANDSHAKE_FIELDS = [
+    "protocol_revision",
+    "D0_contract_fingerprint",
+    "environment_revision",
+    "PIPER_X_asset_model_revision",
+    "task_id",
+    "task_revision",
+    "processor_revision",
+    "horizon",
+]
+EXPECTED_EVAL_RESET_FIELDS = {
+    "request_fields": ["run_id", "episode_id", "seed", "task_id", "task_revision"],
+    "response_fields": ["canonical_D0_obs_0", "effective_seed"],
+}
+EXPECTED_EVAL_STEP_FIELDS = {
+    "request_fields": ["episode_id", "step_index", "canonical_D0_action_t"],
+    "response_fields": [
+        "canonical_D0_obs_t_plus_1",
+        "reward_t",
+        "terminated_t",
+        "truncated_t",
+        "success_t",
+        "termination_reason",
+    ],
+}
+EXPECTED_CONTROL_COMMAND_FIELDS = [
+    "canonical_PIPER_X_command_semantics",
+    "sequence",
+    "source_timestamp",
+    "source_control_state",
+]
+EXPECTED_CONTROL_OBSERVATION_FIELDS = [
+    "measured_canonical_observation_where_required",
+    "sim_timestamp",
+    "sequence",
+    "health_state",
+]
+EXPECTED_CONTROL_EXCLUSIONS = [
+    "reset",
+    "seeds",
+    "episode_metrics",
+    "recording",
+    "generation",
+    "asset_management",
+]
 
 
 def load_yaml(p: Path):
@@ -173,6 +228,68 @@ def validate_profiles(d):
     for n, p in d["execution_profiles"].items():
         if p["environment"] not in d["environments"]:
             out.append(f"execution profile {n}: unknown environment {p['environment']}")
+    for name, environment in d["environments"].items():
+        aid = environment["spec_artifact_id"]
+        if aid is not None and aid in d["artifacts"] and d["artifacts"][aid]["kind"] != "environment_spec":
+            out.append(f"environment {name}: spec artifact {aid} must be environment_spec")
+    return out
+
+
+def validate_process_architecture(d):
+    out = []
+    architecture = d["process_architecture"]
+    shared = architecture["shared_semantic_boundary"]
+    dataset = d["dataset"]
+    if shared["contract_revision"] != dataset["policy_data_contract_revision"]:
+        out.append("process architecture must reference the accepted D0 contract revision")
+    if (
+        shared["schema_fingerprint_sha256"]
+        != dataset["common_training_view"]["schema_fingerprint_sha256"]
+    ):
+        out.append("process architecture D0 fingerprint mismatch")
+
+    expected_process_environments = {"core_lerobot": "core", "isaac_native": "isaac"}
+    for name, expected_environment in expected_process_environments.items():
+        actual = architecture["processes"][name]["environment"]
+        if actual != expected_environment:
+            out.append(
+                f"process architecture {name}: environment must be {expected_environment}"
+            )
+
+    ownership = architecture["profile_ownership"]
+    for name, (mode, environments) in EXPECTED_PROCESS_PROFILE_OWNERSHIP.items():
+        record = ownership[name]
+        if record["execution_mode"] != mode or record["environments"] != environments:
+            out.append(
+                f"process architecture profile {name}: expected {mode} environments={environments}"
+            )
+        if d["execution_profiles"][name]["environment"] != environments[0]:
+            out.append(
+                f"execution profile {name}: primary environment must be {environments[0]}"
+            )
+        for environment in record["environments"]:
+            if environment not in d["environments"]:
+                out.append(
+                    f"process architecture profile {name}: unknown environment {environment}"
+                )
+
+    eval_boundary = architecture["eval_boundary"]
+    if eval_boundary["handshake_fields"] != EXPECTED_EVAL_HANDSHAKE_FIELDS:
+        out.append("EVAL boundary handshake fields/order mismatch")
+    if eval_boundary["reset"] != EXPECTED_EVAL_RESET_FIELDS:
+        out.append("EVAL boundary reset fields/order mismatch")
+    if eval_boundary["step"] != EXPECTED_EVAL_STEP_FIELDS:
+        out.append("EVAL boundary step fields/order mismatch")
+    if eval_boundary["lifecycle_operations"] != ["abort", "close"]:
+        out.append("EVAL boundary lifecycle operations must be abort, close")
+
+    control = architecture["control_boundary"]
+    if control["command_fields"] != EXPECTED_CONTROL_COMMAND_FIELDS:
+        out.append("CONTROL boundary command fields/order mismatch")
+    if control["observation_fields"] != EXPECTED_CONTROL_OBSERVATION_FIELDS:
+        out.append("CONTROL boundary observation fields/order mismatch")
+    if control["excluded_ownership"] != EXPECTED_CONTROL_EXCLUSIONS:
+        out.append("CONTROL boundary excluded ownership mismatch")
     return out
 
 
@@ -654,6 +771,7 @@ def validate_contract(contract_path: Path, rules_path: Path | None = None):
             errors.append(f"{p}: legacy magic placeholder forbidden")
     errors += (
         validate_profiles(d)
+        + validate_process_architecture(d)
         + validate_artifacts(d, root)
         + validate_evidence(d)
         + validate_generic_refs(d)

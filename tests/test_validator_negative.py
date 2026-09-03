@@ -87,7 +87,7 @@ def test10_b0_boolean_not_proof():
     x = d()
     x["gates"]["B0"]["state"] = "accepted"
     errs = mod.validate_gates(x, yaml.safe_load((ROOT / "configs/gate_rules.yaml").read_text()))
-    assert any("prerequisite S0" in e for e in errs)
+    assert any("benchmark.integration.raw_artifact_policy" in e for e in errs)
 
 
 def test11_unknown_env_profile():

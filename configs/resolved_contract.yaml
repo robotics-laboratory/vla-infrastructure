@@ -114,9 +114,11 @@ implementation:
     - v43_quest_host_implementation
     - gate_s0_isaac_teleop_upstream_audit
   isaac_lab:
-    version: null
-    revision: null
-    evidence_ids: []
+    version: 3.0.0-beta2.patch1
+    revision: ffff603eafc6b74264a5261cc0183d6a65390d78
+    evidence_ids:
+    - gate_s0_isaac_upstream_audit
+    - gate_s0_process_boundary_decision
   mujoco:
     version: 3.9.0
     revision: 237c17e48539b6c90bf90d3161547cbdcbfaa1e0
@@ -138,15 +140,20 @@ environments:
     canonical_launch_prefix: uv run
   isaac:
     id: isaac
-    purpose: Isaac Sim/Lab teleop, recording, generation, eval
-    manager: null
-    python_version: null
-    spec_artifact_id: null
-    torch_version: null
-    cuda_runtime: null
-    vendor_runtime: null
-    system_requirements: []
-    canonical_launch_prefix: null
+    purpose: Isolated Isaac application/runtime for PIPER-X simulation, teleoperation, native recording, generation, and the Isaac endpoint side of E1; LeRobot is excluded
+    manager: uv
+    python_version: CPython 3.12.13
+    spec_artifact_id: isaac_environment_selection
+    torch_version: 2.11.0+cu128
+    cuda_runtime: PyTorch bundled CUDA 12.8
+    vendor_runtime: Isaac Sim 6.0.1.0 with Isaac Lab v3.0.0-beta2.patch1 at ffff603eafc6b74264a5261cc0183d6a65390d78; Isaac Teleop 1.3.131 where later S2 requires it
+    system_requirements:
+    - Ubuntu 22.04 or 24.04 x86_64
+    - NVIDIA RTX 4080 or newer with at least 16 GB VRAM
+    - at least 32 GB RAM and 50 GB SSD storage
+    - NVIDIA published/tested Linux driver 595.58.03 for Isaac Sim 6.0.1
+    - materialization, compatibility check, and launch evidence are owned by S1
+    canonical_launch_prefix: uv run --project <pinned-isaaclab-checkout>
   mujoco:
     id: mujoco
     purpose: Conceptual MuJoCo record mapped to the exact core environment; not a separate installation
@@ -231,10 +238,12 @@ execution_profiles:
     command: null
     prerequisites: []
   isaac_eval:
-    environment: isaac
+    environment: core
     working_directory: .
     command: null
-    prerequisites: []
+    prerequisites:
+    - Multi-process profile with a core LeRobot evaluator and isolated isaac native environment process
+    - EVAL transport/codec, endpoint, proxy, and runnable command are deferred to E1
   mujoco_env:
     environment: core
     working_directory: .
@@ -260,6 +269,105 @@ execution_profiles:
     working_directory: .
     command: null
     prerequisites: []
+process_architecture:
+  revision: piper_x_process_boundaries_v1
+  same_process_lerobot_isaac_required: false
+  generic_simulator_api_exists: false
+  rpc_implementation_selected: false
+  shared_semantic_boundary:
+    gate: D0
+    contract_revision: piper_x_d0_policy_data_v1
+    schema_fingerprint_sha256: eb7e4613e5f8d0ff59039874555e6f2d73b728973e64cc01da8414e010d8d33d
+  processes:
+    core_lerobot:
+      environment: core
+      owns:
+      - LeRobot 0.6.1 checkpoint loading
+      - policy preprocessing and postprocessing
+      - policy inference
+      - lerobot-eval aggregation
+      - evaluation manifests
+      - seed-set selection
+    isaac_native:
+      environment: isaac
+      owns:
+      - Isaac application/runtime
+      - PIPER-X environment, physics, rendering, and cameras
+      - task and reset with seeded RNG application
+      - D0/native processors
+      - reward, success, termination, and truncation
+      - native recording
+  profile_ownership:
+    offline_tests:
+      execution_mode: single_process
+      environments: [core]
+    isaac_env:
+      execution_mode: single_process
+      environments: [isaac]
+    isaac_vr_record:
+      execution_mode: single_process
+      environments: [isaac]
+    isaac_generate:
+      execution_mode: single_process
+      environments: [isaac]
+    isaac_dataset_convert:
+      execution_mode: single_process
+      environments: [core]
+    isaac_eval:
+      execution_mode: multi_process
+      environments: [core, isaac]
+    mujoco_env:
+      execution_mode: single_process
+      environments: [core]
+    mujoco_eval:
+      execution_mode: single_process
+      environments: [core]
+  eval_boundary:
+    protocol_revision: piper_x_eval_boundary_v1
+    semantics: synchronous_episode_sensitive
+    transport_selection: deferred
+    handshake_fields:
+    - protocol_revision
+    - D0_contract_fingerprint
+    - environment_revision
+    - PIPER_X_asset_model_revision
+    - task_id
+    - task_revision
+    - processor_revision
+    - horizon
+    reset:
+      request_fields: [run_id, episode_id, seed, task_id, task_revision]
+      response_fields: [canonical_D0_obs_0, effective_seed]
+    step:
+      request_fields: [episode_id, step_index, canonical_D0_action_t]
+      response_fields: [canonical_D0_obs_t_plus_1, reward_t, terminated_t, truncated_t, success_t, termination_reason]
+    lifecycle_operations: [abort, close]
+    health_state: minimal
+    max_step_requests_in_flight: 1
+    automatic_retry_after_ambiguous_timeout: false
+    transport_failure_classification: infrastructure_failure
+    transport_failure_is_task_truncation: false
+    native_dictionaries_cross_boundary: false
+    python_pickle_allowed: false
+  control_boundary:
+    implementation_state: deferred
+    semantics: asynchronous_freshness_sensitive
+    independent_of_eval: true
+    transport_selection: deferred
+    command_fields:
+    - canonical_PIPER_X_command_semantics
+    - sequence
+    - source_timestamp
+    - source_control_state
+    observation_fields:
+    - measured_canonical_observation_where_required
+    - sim_timestamp
+    - sequence
+    - health_state
+    stale_commands_dropped: true
+    stale_commands_replayed: false
+    native_fail_safe_owner: runtime_specific
+    excluded_ownership: [reset, seeds, episode_metrics, recording, generation, asset_management]
 robot_contract:
   revision: piperx_plugin_0.1.0_contract_v1
   action_representation: ordered left-then-right absolute joint degrees and signed gripper travel
@@ -632,7 +740,7 @@ teleop:
     - gate_b_q1_physical_check
   isaac:
     execution_profile: isaac_vr_record
-    resolved_implementation: Conditional upstream path isaaclab_teleop.IsaacTeleopDevice and IsaacTeleopCfg with one TeleopSessionLifecycle; S0 remains blocked on the Isaac environment
+    resolved_implementation: Selected upstream path isaaclab_teleop.IsaacTeleopDevice and IsaacTeleopCfg with one TeleopSessionLifecycle in the isolated isaac environment; implementation and validation remain S2 work
     left_source: isaacteleop ControllersSource.LEFT controller_left OptionalTensorGroup from the one shared session
     right_source: isaacteleop ControllersSource.RIGHT controller_right OptionalTensorGroup from the one shared session
     processor_revision: null
@@ -1183,6 +1291,24 @@ artifacts:
     path: docs/project/GATE_S0_COMPATIBILITY_PROBES.txt
     uri: null
     description: Exact Isaac/LeRobot resolver failure, Isaac host requirement comparison, AgileX asset comparison, and passing core MuJoCo lock/API/render probes
+  gate_s0_isaac_compatibility_remediation:
+    kind: report
+    sha256: 4b264da718dab434a0d672281e18ec753343915fc18bf0ef9475ccc36b35f88c
+    path: docs/project/GATE_S0_ISAAC_COMPATIBILITY_REMEDIATION.md
+    uri: null
+    description: Preserved focused remediation proving that no released same-process Isaac plus LeRobot environment is supportable
+  gate_s0_process_boundary_decision:
+    kind: report
+    sha256: edbfbf1e1889d652a67718d24cad4649a1c7666ca333d419ea4a1f36c3676ed4
+    path: docs/project/GATE_S0_PROCESS_BOUNDARY_DECISION.md
+    uri: null
+    description: Follow-up semantic analysis and narrow process-boundary decision that removes same-process E1 as an S0 requirement without erasing the dependency conflict
+  isaac_environment_selection:
+    kind: environment_spec
+    sha256: 85435a4ffe84fe47fc5e9e01b3975249bd396f9ae8bdbcd92e26167ba3e793cd
+    path: configs/environments/isaac_v3_0_0_beta2_patch1.yaml
+    uri: null
+    description: Exact isolated Isaac vendor-stack selection and reproducible materialization strategy; installation and execution remain S1 evidence
 evidence:
   v52_pack_manifest_check:
     kind: command_test
@@ -1621,6 +1747,23 @@ evidence:
     path: null
     symbol: null
     notes: No Isaac Sim task was launched, no reusable simulator implementation was created, no Quest session was opened, and no robot/CAN operation occurred.
+  gate_s0_process_boundary_decision:
+    kind: document_review
+    status: pass
+    summary: Semantic same-process analysis selected a narrow synchronous EVAL process boundary, kept CONTROL separate and deferred, and assigned Isaac installation plus host eligibility to S1 under the live machine rules.
+    timestamp: '2026-09-01T12:43:02+03:00'
+    command: Read-only comparison of the S0/S1/E1 gate rules, validator acceptance logic, live policies, historical audit/remediation, and selected environment manifest.
+    artifact_ids:
+    - gate_s0_upstream_audit
+    - gate_s0_isaac_compatibility_remediation
+    - gate_s0_process_boundary_decision
+    - isaac_environment_selection
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: The earlier resolver and host findings remain valid. No transport, RPC, Isaac installation, simulator runtime, or host change was performed.
 gates:
   M0:
     state: accepted
@@ -1690,22 +1833,26 @@ gates:
     - gate_d0_causality_test_output
     notes: Canonical PIPER-X policy/data, same-tick causality, 30 FPS fixed-grid timing, wrist-camera roles, provenance isolation, identity label processing, and runtime/device command separation are accepted offline with no runtime implementation.
   S0:
-    state: blocked
+    state: accepted
     evidence_ids:
     - gate_s0_isaac_upstream_audit
     - gate_s0_isaac_teleop_upstream_audit
     - gate_s0_mujoco_upstream_audit
     - gate_s0_live_policy_review
     - gate_s0_compatibility_probes
+    - gate_s0_process_boundary_decision
     artifact_ids:
     - gate_s0_upstream_audit
     - gate_s0_compatibility_probes_output
-    notes: The audit is complete but acceptance is blocked. Stable Isaac Lab v2.3.2 requires Python 3.11, while LeRobot 0.6.1 requires Python >=3.12. Isaac Lab v3.0.0-beta2.patch1 is Python-compatible but its exact Transformers 4.57.6 requires huggingface-hub <1, conflicting with LeRobot 0.6.1's huggingface-hub >=1.6; additionally, the current NVIDIA driver 580.159.03 is below Isaac Sim 6.0.1's published 595.58.03 minimum and available disk is below the published 50 GB minimum. No supported exact Isaac environment pin can therefore be registered, and no project RPC/framework workaround is authorized.
+    - gate_s0_isaac_compatibility_remediation
+    - gate_s0_process_boundary_decision
+    - isaac_environment_selection
+    notes: Accepted as the machine-defined upstream audit/selection gate. The historical audit and remediation still prove same-process incompatibility; the follow-up decision proves same-process E1 is not required and selects isolated core/isaac processes with synchronous one-step-in-flight D0 EVAL semantics. Transport and CONTROL implementation remain deferred. Isaac installation, driver 595.58.03 eligibility, storage, launch, task, and parity evidence are owned by S1.
   S1:
     state: unresolved
     evidence_ids: []
     artifact_ids: []
-    notes: No Isaac environment implementation was performed.
+    notes: No Isaac environment implementation was performed. Materializing the selected vendor environment remains blocked on the current host by driver 580.159.03 versus published/tested 595.58.03 and insufficient target-filesystem storage; S1 must also verify the vendor dependency set, launch, task, and parity.
   S2:
     state: unresolved
     evidence_ids: []
@@ -1735,7 +1882,7 @@ gates:
     state: unresolved
     evidence_ids: []
     artifact_ids: []
-    notes: No Isaac policy evaluation run exists.
+    notes: No Isaac policy evaluation run exists. The core evaluator plus isolated Isaac endpoint semantics are selected, but protocol/codec, endpoint, proxy, tests, manifests, and transport remain E1 work.
   E2:
     state: unresolved
     evidence_ids: []
