@@ -41,6 +41,28 @@ MODEL_PATH = ROOT / "configs/piper_x_model_contract.yaml"
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--report", type=Path)
+parser.add_argument(
+    "--s2-teleop",
+    action="store_true",
+    help="Run the S2 Quest-to-simulation loop on this exact S1 environment.",
+)
+parser.add_argument(
+    "--s2-cloudxr-profile",
+    choices=("cloudxrjs", "standalone"),
+    default="cloudxrjs",
+)
+parser.add_argument("--s2-max-control-steps", type=int, default=300)
+parser.add_argument("--s2-reset-step", type=int, default=120)
+parser.add_argument(
+    "--s2-require-session",
+    action=argparse.BooleanOptionalAction,
+    default=True,
+)
+parser.add_argument(
+    "--s2-require-tracking",
+    action="store_true",
+    help="Require at least one valid physical sample from each controller.",
+)
 AppLauncher.add_app_launcher_args(parser)
 parser.set_defaults(headless=True, enable_cameras=True)
 args_cli = parser.parse_args()
@@ -814,6 +836,12 @@ def main() -> int:
     env = BimanualPiperXIsaacEnvironment(
         sim, left, right, camera, wrist_paths, camera_prim_expression, physics_probe
     )
+
+    if args_cli.s2_teleop:
+        print("[S2] extending the accepted S1 environment", flush=True)
+        from isaac_s2_runtime import run_s2
+
+        return run_s2(env, args_cli, simulation_app)
 
     print("[S1] running native camera continuous/reset/identity regression", flush=True)
     camera_validation = _camera_regression(env, 0)

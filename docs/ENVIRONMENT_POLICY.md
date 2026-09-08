@@ -50,6 +50,14 @@ Unknown environment references are invalid.
 
 No accepted manual `pip install` may exist outside the reproducible spec.
 
+## Dependency ownership across environments
+
+A dependency version is owned by the runtime/environment that executes it. Separate
+accepted environments may carry different upstream-supported versions when their
+reproducible specifications require them. Such facts must be recorded under the
+owning runtime, reference that environment's spec artifact, and must not also be
+represented by an ambiguous project-global pin.
+
 ## Dependency conflict
 
 ```text

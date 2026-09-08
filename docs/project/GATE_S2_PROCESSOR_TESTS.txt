@@ -1,0 +1,27 @@
+GATE S2 PROCESSOR TEST OUTPUT
+
+Date: 2026-09-08
+Command: .venv/bin/python -m unittest discover -s tests -p 'test_isaac_s2_processor.py' -v
+
+PASS test_all_translation_axes_and_signs_are_preserved_for_each_arm
+PASS test_clutch_freezes_and_release_rebases_independently
+PASS test_fixed_upstream_action_layout
+PASS test_left_and_right_routes_are_independent
+PASS test_reset_clears_clutch_tracking_and_gripper_state
+PASS test_scale_is_one_concrete_symmetric_configuration
+PASS test_tracking_invalid_holds_and_recovery_discards_first_delta
+PASS test_trigger_binary_gripper_mapping_is_independent
+PASS test_unavailable_disconnect_and_reconnect_do_not_replay
+PASS test_xyzw_spatial_rotation_axes_and_scale
+
+Ran 10 tests in 0.032s
+OK
+
+Coverage: independent left/right routing; signed +/- X/Y/Z translation; XYZW
+quaternion roll/pitch/yaw convention; translation/rotation gains; independent
+clutch and release rebase; gripper polarity and routing; invalid tracking and
+first-frame recovery; disconnect/reconnect no-replay; reset cleanup; exact 20-D
+upstream action layout.
+
+These are synthetic pure-processor checks. They do not replace physical Quest
+human acceptance.

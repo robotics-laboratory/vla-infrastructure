@@ -55,7 +55,8 @@ B:
   prerequisites:
   - E0
   required_paths:
-  - implementation.isaac_teleop.version
+  - teleop.real.runtime_dependencies.isaacteleop.version
+  - teleop.real.runtime_dependencies.isaacteleop.revision
   - teleop.real.resolved_implementation
   - teleop.real.left_source
   - teleop.real.right_source
@@ -157,6 +158,12 @@ S0:
   - implementation.mujoco.revision
   - environments.isaac.manager
   - environments.mujoco.manager
+  - teleop.isaac.runtime_dependencies.isaacteleop.version
+  - teleop.isaac.runtime_dependencies.isaacteleop.revision
+  - teleop.isaac.runtime_dependencies.isaacteleop.source_artifact_id
+  - teleop.isaac.runtime_dependencies.isaaclab_teleop.version
+  - teleop.isaac.runtime_dependencies.isaaclab_teleop.revision
+  - teleop.isaac.runtime_dependencies.isaaclab_teleop.source_artifact_id
   required_nonempty_paths: []
   required_evidence_kinds:
   - upstream_source

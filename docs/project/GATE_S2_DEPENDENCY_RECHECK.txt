@@ -1,0 +1,72 @@
+GATE S2 CANDIDATE B DEPENDENCY RECHECK
+
+Date: 2026-09-08
+Environment: /data/ebulochkin/envs/isaac-s1-candidate-b
+Candidate checkout: /data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact
+Candidate SHA: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
+Dependency source: Candidate B frozen uv.lock, teleop extra
+
+EXPANSION COMMAND
+
+VIRTUAL_ENV=/data/ebulochkin/envs/isaac-s1-candidate-b \
+UV_CACHE_DIR=/data/ebulochkin/isaaclab_candidate_qualification/20260907/uv_cache \
+UV_LINK_MODE=copy \
+uv sync --project /data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact \
+  --frozen --extra teleop --active
+
+RESULT
+
+PASS - frozen expansion completed.
+PASS - upstream checkout remained clean at the exact Candidate B SHA.
+PASS - pyproject SHA-256 remained b691862409ab8ad58b074ac32ce7f071e3895ec10975444b9e62995741ace159.
+PASS - uv.lock SHA-256 remained 80eb2c4e1155dd9e9736506d41cdbe327df74ee2b005bdecc0fb7c87c8b8bb84.
+PASS - isaacteleop is exactly 1.4.98rc1.
+PASS - isaaclab_teleop is exactly 0.8.0.
+PASS - Isaac Lab package is 16.4.0 from release/3.0.0 at the exact SHA.
+PASS - Isaac Sim is exactly 6.0.1.0.
+PASS - bundled CloudXR runtime is exactly 6.2.1.
+PASS - websockets is the frozen 16.1.1 selected by the teleop stack.
+PASS - host driver observed by both Isaac runs is 580.159.03.
+PASS - Gate B/core was not changed and retains isaacteleop 1.3.131 / CloudXR 6.2.0.
+
+UV PIP CHECK
+
+Checked 279 packages. Exactly the same 11 previously recorded incompatibilities remain:
+
+1. numba requires NumPy <2.5; frozen environment has NumPy 2.5.1.
+2. isaacsim-core requires MuJoCo 3.8.0; frozen environment has 3.11.0.
+3. isaacsim-core requires mujoco-warp 3.8.0.3; frozen environment has 3.11.0.
+4. isaacsim-core requires Newton 1.2.1; frozen environment has 1.5.1.
+5. isaacsim-core requires Newton USD schemas 0.2.0; frozen environment has 0.4.1.
+6. cmeel-boost requires NumPy >=2.3,<2.4; frozen environment has 2.5.1.
+7. isaacsim-kernel requires NumPy 2.3.1; frozen environment has 2.5.1.
+8. isaacsim-kernel requires websockets 12.0; frozen environment has 16.1.1.
+9. isaacsim-kernel requires typing-extensions 4.12.2; frozen environment has 4.16.0.
+10. isaacsim-kernel requires coverage 7.4.4; frozen environment has 7.15.2.
+11. open3d requires ipywidgets >=8.0.4; it is not installed.
+
+NEW CONFLICTS INTRODUCED BY TELEOP ACTIVATION: 0
+
+RUNTIME IMPACT
+
+- The standalone CloudXR/OpenXR lifecycle started one TeleopSession and its one
+  bimanual controller tracker, stepped the S1 scene and two cameras, reset, and
+  stopped with exit 0.
+- The Candidate B XR Kit experience and teleop bridge loaded and retained both
+  cameras for the bounded no-client smoke with exit 0.
+- The websockets metadata disagreement did not fail CloudXR launch, OpenXR
+  instance/session creation in standalone mode, XR bridge startup, or shutdown.
+- The remaining disagreements did not fail the S1 non-XR regression, S2 IK,
+  articulation, physics, rendering, or camera paths exercised here.
+- They remain visible frozen-workspace metadata incompatibilities; no package was
+  repinned to conceal them.
+
+XR NO-CLIENT LIMITATION
+
+Without a Quest client the XR Kit bridge correctly deferred TeleopSession creation
+until OpenXR handles became available. After the bounded process stopped its
+auto-launched CloudXR runtime, Kit emitted transient broken-pipe /
+XR_ERROR_INSTANCE_LOST diagnostics while its XR polling unwound. The upstream
+example uses the same device-before-app shutdown order and the process exited 0,
+but clean physical-client disconnect/shutdown remains a required human check and
+is not inferred from this no-client run.

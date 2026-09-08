@@ -1,0 +1,68 @@
+GATE S2 AUTOMATED RUNTIME EVIDENCE
+
+Date: 2026-09-08
+Gate status: AUTOMATED PREREQUISITES PASS; PHYSICAL QUEST HUMAN GATE PENDING
+
+S1 NON-XR REGRESSION AFTER TELEOP EXPANSION
+
+Command: OMNI_KIT_ACCEPT_EULA=Y python tools/launch_isaac_s1.py
+Result: PASS / exit 0 / clean application shutdown
+Result: /data/ebulochkin/cache/isaac-s1/runs/20260908T082044Z/result.json
+Result SHA-256: e7154d99d2789ffe6434dce4262d847e66eaade679dfa56beefa960d5ef633b9
+Log: /data/ebulochkin/cache/isaac-s1/runs/20260908T082044Z/stdout.log
+Log SHA-256: 1af2fb8a9266e9f3532cd6fe5c765438f3683f687a88d18db9c014711086fd05
+
+The accepted S1 scene, Gate C embodiment, task/control/reset lifecycle, and two
+upstream wrist cameras passed unchanged after the frozen teleop extra expansion.
+
+STANDALONE TELEOP LIFECYCLE SMOKE
+
+Command: OMNI_KIT_ACCEPT_EULA=Y python tools/launch_isaac_s2.py --smoke
+Result: PASS / exit 0
+Result: /data/ebulochkin/cache/isaac-s2/runs/20260908T120827Z/result.json
+Result SHA-256: 23c68f00d8f3e89d1223b3d9e078d3eb0a4d5aaa0ed4e37278cbffc2fa83f081
+Log: /data/ebulochkin/cache/isaac-s2/runs/20260908T120827Z/stdout.log
+Log SHA-256: eafa6daa4fffc964523477e812ea2abc2e38a8afa65a53303f39c6c95e598d4e
+
+- CloudXR 6.2.1 auto-launched.
+- One standalone OpenXR instance/session and one two-controller tracker started.
+- The one S2 ControllersSource pipeline produced 60 action frames.
+- With no physical client, both streams remained safely inactive for 60/60 frames.
+- Host reset at step 30 reset S1, processor, IK, and upstream state.
+- Both 640x480 uint8 RGB HWC wrist cameras were valid and advanced 60/60 frames.
+- No IK saturation or inactive/reset target discontinuity occurred.
+- CloudXR and TeleopSession stopped and the process exited 0.
+
+CANDIDATE B XR KIT EXPERIENCE SMOKE
+
+Command: OMNI_KIT_ACCEPT_EULA=Y python tools/launch_isaac_s2.py --xr-smoke
+Result: PASS for bounded no-client XR/camera startup / exit 0
+Result: /data/ebulochkin/cache/isaac-s2/runs/20260908T115125Z/result.json
+Result SHA-256: 827130a29242536baedda37b931f202ba114e12060aaed28cae60c3679d86696
+Log: /data/ebulochkin/cache/isaac-s2/runs/20260908T115125Z/stdout.log
+Log SHA-256: cec9be4a6065956095d1833ccab9aacbd5cf541c68e28844af709174a3582352
+
+- Candidate B selected the XR OpenXR experience and injected its KitVisualizer.
+- `isaacsim.kit.xr.teleop.bridge` loaded; XR and AR settings were enabled.
+- CloudXR 6.2.1 launched with the frozen cloudxrjs profile.
+- Without a Quest client, OpenXR handles and TeleopSession creation stayed deferred.
+- Physics/control ran 60 steps with zero inactive motion intent.
+- Both 640x480 uint8 RGB HWC wrist cameras were valid and advanced 60/60 frames.
+- Process exit was 0. No physical connection or clean client disconnect is claimed;
+  the no-client teardown diagnostics are recorded in the dependency recheck.
+
+LOAD OBSERVATIONS
+
+Standalone: 3.42 control Hz, 13.68 physics Hz, 98% GPU, 22.28 GiB of 24.56 GiB VRAM.
+XR Kit: 3.60 control Hz, 14.41 physics Hz, 98% GPU, 22.99-23.01 GiB of 24.56 GiB VRAM.
+
+The upstream workstation check also reported CPU single-thread at 0.61-0.65 of
+reference, CPU governor `powersave`, and 31 GiB system RAM versus its recommended
+60 GiB. These are retained host-load/infrastructure conditions. No other user's
+process was stopped and no camera resolution or accepted S1 behavior was weakened.
+
+PHYSICAL BOUNDARY
+
+Tracking-valid frame counts were zero in both no-client runs. Identity, physical
+axes, scale usability, clutch feel, gripper control, intentional tracking loss,
+disconnect/reconnect, and reset with a live physical session remain unproved.

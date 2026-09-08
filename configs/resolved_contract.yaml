@@ -77,6 +77,12 @@ migration:
     - gate_s0_isaac_upstream_audit
     - gate_s0_compatibility_probes
     - gate_s0_process_boundary_decision
+  - gate: S0
+    reason: unsupported_dependency
+    summary: 'NARROW SCOPED DEPENDENCY AMENDMENT — Reopened only the ambiguous project-global Isaac Teleop dependency fact. Gate B/core retains isaacteleop 1.3.131 at 7002ed63, while Candidate B/Isaac uses its frozen supported isaacteleop 1.4.98rc1 and isaaclab_teleop 0.8.0 at 913ac53f; no runtime or process boundary changed.'
+    evidence_ids:
+    - gate_s0_candidate_b_teleop_dependency_audit
+    - gate_s0_teleop_dependency_scope_review
 taxonomy:
   runtime_names:
   - real
@@ -114,12 +120,6 @@ implementation:
     evidence_ids:
     - v43_driver_version_selection
     - v43_driver_firmware_behavior
-  isaac_teleop:
-    version: 1.3.131
-    revision: 7002ed63d69454ae4f15c0ee19f803fd2846592b
-    evidence_ids:
-    - v43_quest_host_implementation
-    - gate_s0_isaac_teleop_upstream_audit
   isaac_lab:
     version: release/3.0.0
     revision: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
@@ -153,13 +153,13 @@ environments:
     spec_artifact_id: isaac_environment_selection
     torch_version: 2.11.0+cu128
     cuda_runtime: PyTorch bundled CUDA 12.8
-    vendor_runtime: Isaac Sim 6.0.1.0 with Isaac Lab release/3.0.0 at 913ac53f51b2f8d02c9e121caa4cbdd06262948e; exact upstream frozen workspace with documented overrides; Isaac Teleop remains a later S2 environment expansion
+    vendor_runtime: Isaac Sim 6.0.1.0 with Isaac Lab release/3.0.0 at 913ac53f51b2f8d02c9e121caa4cbdd06262948e; exact upstream frozen workspace with documented overrides and the frozen S2 teleop extra activated
     system_requirements:
     - Ubuntu 22.04 or 24.04 x86_64
     - NVIDIA RTX 4080 or newer with at least 16 GB VRAM
     - at least 32 GB RAM and 50 GB SSD storage
     - Candidate B recommends Linux NVIDIA driver 580.95.05 or later; actual unchanged 580.159.03 satisfies the baseline and passed the qualified runtime
-    - Candidate B upstream override-dependencies produce 11 retained uv/pip metadata conflicts; the qualified S1 surface passes, and S2/Isaac Teleop/XR must recheck the expanded environment
+    - Candidate B upstream override-dependencies produce 11 retained uv/pip metadata conflicts; the expanded S1/S2 surfaces pass their automated required paths with no new conflict
     canonical_launch_prefix: uv run --project /data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact --frozen --no-sync
   mujoco:
     id: mujoco
@@ -236,8 +236,14 @@ execution_profiles:
   isaac_vr_record:
     environment: isaac
     working_directory: .
-    command: null
-    prerequisites: []
+    command:
+    - python3
+    - tools/launch_isaac_s2.py
+    prerequisites:
+    - OMNI_KIT_ACCEPT_EULA=Y after accepting the NVIDIA EULA
+    - Exact frozen Candidate B environment and Gate C assets are materialized under /data/ebulochkin
+    - Physical Meta Quest 3 CloudXR client is available for S2 human acceptance
+    - This S2 command controls simulation only and records no D1 dataset
   isaac_generate:
     environment: isaac
     working_directory: .
@@ -741,6 +747,18 @@ teleop:
   semantic_session_invariant: one_xr_session_lifecycle_owns_coherent_left_right_streams
   real:
     execution_profile: quest_xr_real
+    runtime_dependencies:
+      isaacteleop:
+        package: isaacteleop
+        version: 1.3.131
+        revision_type: commit
+        revision: 7002ed63d69454ae4f15c0ee19f803fd2846592b
+        source_artifact_id: core_uv_lock
+        source_detail: Exact core uv.lock isaac-teleop dependency group used by the accepted Gate B physical Quest runtime.
+        evidence_ids:
+        - v43_quest_host_implementation
+        - gate_b_q1_physical_check
+        - gate_b_pinned_timing_audit
     resolved_implementation: isaacteleop.teleop_session_manager.TeleopSession with one shared isaacteleop.ControllersSource
     left_source: isaacteleop.ControllersSource.LEFT from one shared ControllersSource
     right_source: isaacteleop.ControllersSource.RIGHT from one shared ControllersSource
@@ -751,13 +769,35 @@ teleop:
     - gate_b_q1_physical_check
   isaac:
     execution_profile: isaac_vr_record
-    resolved_implementation: Selected upstream path isaaclab_teleop.IsaacTeleopDevice and IsaacTeleopCfg with one TeleopSessionLifecycle in the isolated isaac environment; implementation and validation remain S2 work
-    left_source: isaacteleop ControllersSource.LEFT controller_left OptionalTensorGroup from the one shared session
-    right_source: isaacteleop ControllersSource.RIGHT controller_right OptionalTensorGroup from the one shared session
-    processor_revision: null
+    runtime_dependencies:
+      isaacteleop:
+        package: isaacteleop
+        version: 1.4.98rc1
+        revision_type: version
+        revision: 1.4.98rc1
+        source_artifact_id: isaac_environment_selection
+        source_detail: Exact Candidate B frozen uv.lock teleop-extra resolution; NVIDIA wheel SHA-256 d2b36e21c0c690d1e6624d022d9bf5c661f7f7bf71e7f5c9b22a41b3640ea53f; bundled CloudXR runtime reports 6.2.1. Gate B/core's separate CloudXR 6.2.0 fact is unchanged.
+        evidence_ids:
+        - gate_s0_candidate_b_teleop_dependency_audit
+      isaaclab_teleop:
+        package: isaaclab_teleop
+        version: 0.8.0
+        revision_type: commit
+        revision: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
+        source_artifact_id: isaac_environment_selection
+        source_detail: Candidate B source/isaaclab_teleop editable package selected by the exact frozen teleop extra.
+        evidence_ids:
+        - gate_s0_candidate_b_teleop_dependency_audit
+    resolved_implementation: tools/launch_isaac_s2.py extends the sole accepted S1 Candidate B process with isaaclab_teleop.IsaacTeleopDevice/IsaacTeleopCfg, one TeleopSessionLifecycle, one bimanual ControllersSource, upstream Se3RelRetargeter, the concrete PIPER-X S2 processor, and upstream Isaac Lab DifferentialIKController
+    left_source: isaacteleop ControllersSource.LEFT controller_left OptionalTensorGroup from the one shared piper_x_s2_controllers source and lifecycle
+    right_source: isaacteleop ControllersSource.RIGHT controller_right OptionalTensorGroup from the one shared piper_x_s2_controllers source and lifecycle
+    processor_revision: piper_x_isaac_s2_bimanual_relative_v1
     evidence_ids:
     - gate_s0_isaac_upstream_audit
     - gate_s0_isaac_teleop_upstream_audit
+    - gate_s2_upstream_reuse_audit
+    - gate_s2_automated_runtime
+    - gate_s2_s1_non_xr_regression
 dataset:
   format: LeRobotDataset_v3
   policy_data_contract_revision: piper_x_d0_policy_data_v1
@@ -1198,7 +1238,7 @@ artifacts:
     description: Machine-readable archived-file inventory at migration start
   migration_matrix:
     kind: report
-    sha256: 15437d01d4f25d7ddf9eb5b4918141763aad88490678dd215dfd1a22281e19ab
+    sha256: 9081930d277c23cd61e680de5133dde94717141a2efe6aea94e055b470329196
     path: docs/migration/V4_3_TO_V5_2_MIGRATION_MATRIX.md
     uri: null
     description: Pre-contract v4.3 to v5.2 domain and gate migration matrix
@@ -1294,7 +1334,7 @@ artifacts:
     description: Focused same-tick obs_t/action_t frame-construction regression and explicit t-1/t+1 rejection
   gate_s0_upstream_audit:
     kind: report
-    sha256: ccc416115f7a3ee22c5c76ff285edbfffe384e373e2a638db9c19b0947fe7ef8
+    sha256: cec6d7de80d98764ab7519a1838a15dd3dcb065f7ceeed8d8c03edb2cd79d16d
     path: docs/project/GATE_S0_UPSTREAM_AUDIT.md
     uri: null
     description: Formal S0 Isaac repin audit selecting Candidate B while preserving D0, Gate C, MuJoCo, and process-boundary architecture
@@ -1318,10 +1358,16 @@ artifacts:
     description: Repin confirmation preserving isolated Isaac, separate EVAL/CONTROL boundaries, deferred transports, and no generic RPC/backend
   isaac_environment_selection:
     kind: environment_spec
-    sha256: f7cf38218e2c6b2848fa79132c02a8734de43be8a064e13e8bd0142673a1de20
+    sha256: 646b9ca780cee26c907eeae4922036f3c857c16f12332da94630c894f3c4c377
     path: configs/environments/isaac_release_3_0_0.yaml
     uri: null
-    description: Exact Candidate B isolated frozen workspace, override/conflict list, driver baseline/observation, and S2 expansion recheck policy
+    description: Exact Candidate B isolated frozen workspace, scoped S2 teleop dependency pins, override/conflict list, driver observation, and expansion recheck policy
+  gate_s0_teleop_dependency_amendment:
+    kind: report
+    sha256: a9ee6384a3c13cb019847d869d8985eef4ea36f13ca19f17327a8935c77ad1d3
+    path: docs/project/GATE_S0_TELEOP_DEPENDENCY_AMENDMENT.md
+    uri: null
+    description: Narrow S0 amendment replacing the ambiguous global Isaac Teleop pin with Gate B/core and Candidate B/Isaac runtime-scoped dependency facts
   isaac_s1_runtime_config:
     kind: processor_config
     sha256: ee7b0b6aea022236fb029720e098c17cf7fd3f9e2e1a3d2d302ece182c8780d3
@@ -1358,6 +1404,72 @@ artifacts:
     path: docs/project/GATE_S1_PARITY_REPORT.json
     uri: null
     description: Executable Candidate B comparison with accepted Gate C frames, FK references, joint directions/limits, zero position, and gripper aperture
+  isaac_s2_runtime_config:
+    kind: processor_config
+    sha256: 06ca4eada4603bb3e3b92a055c23146b6b7b4bf7f9fe02e9a5a9df4035446875
+    path: configs/isaac_s2_runtime.yaml
+    uri: null
+    description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
+  gate_s2_upstream_audit:
+    kind: report
+    sha256: a6342fa78cc7db26c3ac3a3c55541c452e6924306527f874b3d0719d84f36c10
+    path: docs/project/GATE_S2_UPSTREAM_AUDIT.md
+    uri: null
+    description: Mandatory S2 upstream audit selecting the minimum Candidate B composition and exact remaining PIPER-X edge mapping
+  gate_s2_dependency_recheck:
+    kind: test_output
+    sha256: 8c770c24b478c5d5c7d04a24156eaabac7811f786b5e898219b99fd464889076
+    path: docs/project/GATE_S2_DEPENDENCY_RECHECK.txt
+    uri: null
+    description: Exact post-expansion package inventory, retained 11 conflicts, zero new conflicts, and observed S1/S2 runtime impact
+  gate_s2_processor_tests:
+    kind: test_output
+    sha256: bf802b5d763fabb6f8b94083d7fc6362c14269b099f68f31efca7d6fce0c6443
+    path: docs/project/GATE_S2_PROCESSOR_TESTS.txt
+    uri: null
+    description: Ten focused synthetic tests for bimanual routing, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking recovery, reconnect, reset, and action layout
+  gate_s2_runtime_evidence_summary:
+    kind: test_output
+    sha256: e279c4578da1417f2a0ccc39e6fc83a1a11111dc4a96b9deb55eef0405b36c3f
+    path: docs/project/GATE_S2_RUNTIME_EVIDENCE.txt
+    uri: null
+    description: Exact S1 regression and standalone/XR no-client S2 smoke commands, hashes, camera/load metrics, limitations, and pending physical boundary
+  gate_s2_standalone_result:
+    kind: test_output
+    sha256: 23c68f00d8f3e89d1223b3d9e078d3eb0a4d5aaa0ed4e37278cbffc2fa83f081
+    path: /data/ebulochkin/cache/isaac-s2/runs/20260908T120827Z/result.json
+    uri: null
+    description: Structured standalone S2 lifecycle result with one session/controller source, reset, safe inactive behavior, two cameras, load, and clean process exit
+  gate_s2_standalone_stdout:
+    kind: log
+    sha256: eafa6daa4fffc964523477e812ea2abc2e38a8afa65a53303f39c6c95e598d4e
+    path: /data/ebulochkin/cache/isaac-s2/runs/20260908T120827Z/stdout.log
+    uri: null
+    description: Complete standalone CloudXR/OpenXR/Isaac S2 smoke stdout
+  gate_s2_xr_result:
+    kind: test_output
+    sha256: 827130a29242536baedda37b931f202ba114e12060aaed28cae60c3679d86696
+    path: /data/ebulochkin/cache/isaac-s2/runs/20260908T115125Z/result.json
+    uri: null
+    description: Structured bounded Candidate B XR Kit no-client result retaining both accepted S1 wrist cameras
+  gate_s2_xr_stdout:
+    kind: log
+    sha256: cec9be4a6065956095d1833ccab9aacbd5cf541c68e28844af709174a3582352
+    path: /data/ebulochkin/cache/isaac-s2/runs/20260908T115125Z/stdout.log
+    uri: null
+    description: Complete XR Kit/cloudxrjs no-client stdout including deferred handle acquisition and teardown diagnostics
+  gate_s2_s1_regression_result:
+    kind: test_output
+    sha256: e7154d99d2789ffe6434dce4262d847e66eaade679dfa56beefa960d5ef633b9
+    path: /data/ebulochkin/cache/isaac-s1/runs/20260908T082044Z/result.json
+    uri: null
+    description: Full accepted S1 non-XR regression result after exact frozen teleop-extra activation
+  gate_s2_s1_regression_stdout:
+    kind: log
+    sha256: 1af2fb8a9266e9f3532cd6fe5c765438f3683f687a88d18db9c014711086fd05
+    path: /data/ebulochkin/cache/isaac-s1/runs/20260908T082044Z/stdout.log
+    uri: null
+    description: Full accepted S1 non-XR regression stdout after exact frozen teleop-extra activation
 evidence:
   v52_pack_manifest_check:
     kind: command_test
@@ -1753,6 +1865,35 @@ evidence:
     path: isaacteleop/isaac_teleop_device.py; isaacteleop/teleop_session_manager.py; isaacteleop/controller_input.py
     symbol: IsaacTeleopDevice; TeleopSessionLifecycle; TeleopSession; ControllersSource; ControllerSnapshotTrackedT; XrAnchorManager
     notes: The selected conditional path preserves LEFT and RIGHT identity, grip/aim poses, rotations, buttons, thumbsticks, squeeze, trigger, validity, and the upstream rebase seam. tools/quest_xr_diagnostics.py remains evidence/debug tooling only.
+  gate_s0_candidate_b_teleop_dependency_audit:
+    kind: upstream_source
+    status: pass
+    summary: Candidate B's exact teleop extra selects isaacteleop 1.4.98rc1 and its in-tree isaaclab_teleop 0.8.0 package at the accepted Isaac Lab commit.
+    timestamp: '2026-09-08T10:49:19+03:00'
+    command: Inspect exact clean Candidate B pyproject.toml, uv.lock, source/isaaclab_teleop/pyproject.toml, and changelog; run frozen teleop-extra resolution dry-run without installing.
+    artifact_ids:
+    - gate_s0_teleop_dependency_amendment
+    - isaac_environment_selection
+    repository: https://github.com/isaac-sim/IsaacLab
+    revision_type: commit
+    revision: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
+    path: pyproject.toml; uv.lock; source/isaaclab_teleop/pyproject.toml
+    symbol: project.optional-dependencies.teleop; isaacteleop locked package; isaaclab_teleop project version
+    notes: Gate B/core remains on its separate accepted isaacteleop 1.3.131 dependency. No global repin, checkout mutation, environment merge, or S1 runtime change occurred.
+  gate_s0_teleop_dependency_scope_review:
+    kind: document_review
+    status: pass
+    summary: The v5.2 contract now owns Isaac Teleop dependency pins under each teleop runtime and rejects cross-environment spec bindings.
+    timestamp: '2026-09-08T10:49:19+03:00'
+    command: Review amended schema, gate rules, validator, environment selection, and Gate B/S0/S1 ownership invariants; run focused validator tests.
+    artifact_ids:
+    - gate_s0_teleop_dependency_amendment
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: Only S0 teleop dependency ownership was reopened. Gate B evidence/runtime and accepted S1 implementation remain unchanged.
   gate_s0_mujoco_upstream_audit:
     kind: upstream_source
     status: pass
@@ -1862,6 +2003,58 @@ evidence:
     path: null
     symbol: null
     notes: Maximum position/orientation errors were 2.450e-7 m and 1.644e-6 rad versus 5e-4 tolerances; zero error was 0 and joint-limit error 1.161e-7 versus 2e-5 tolerances.
+  gate_s2_upstream_reuse_audit:
+    kind: upstream_source
+    status: pass
+    summary: Exact Candidate B XR/session/controller/anchor/SE3/rebase/IK/camera APIs were audited and composed with one bimanual ControllersSource and the accepted S1 environment.
+    timestamp: '2026-09-08T14:55:00+03:00'
+    command: Inspect Candidate B at the exact commit and compare its anchor transform, Se3RelRetargeter, lifecycle, XR experiences, DifferentialIKController, and example shutdown order with the concrete S2 composition.
+    artifact_ids:
+    - gate_s2_upstream_audit
+    - isaac_s2_runtime_config
+    - gate_s2_dependency_recheck
+    repository: https://github.com/isaac-sim/IsaacLab
+    revision_type: commit
+    revision: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
+    path: source/isaaclab_teleop; source/isaaclab/isaaclab/controllers/differential_ik.py; apps/isaaclab.python.xr.openxr.kit; apps/isaaclab.python.xr.openxr.headless.kit
+    symbol: IsaacTeleopDevice; TeleopSessionLifecycle; XrAnchorManager; Se3RelRetargeter; ControllersSource; DifferentialIKController
+    notes: Candidate B owns XR/session/retargeting/IK. Project code only defines the PIPER-X bimanual processor and suppresses one redundant optional anchor-hotkey source. No generic framework, recorder, RPC, LeRobot, CAN, or physical robot path was added.
+  gate_s2_automated_runtime:
+    kind: command_test
+    status: pass
+    summary: Ten pure processor checks plus standalone and Candidate B XR Kit no-client smokes passed with the exact frozen teleop versions, bimanual S1 articulation, reset, safe inactive behavior, and two 640x480 wrist cameras.
+    timestamp: '2026-09-08T14:55:00+03:00'
+    command: unittest S2 processor discovery; OMNI_KIT_ACCEPT_EULA=Y python tools/launch_isaac_s2.py --smoke; OMNI_KIT_ACCEPT_EULA=Y python tools/launch_isaac_s2.py --xr-smoke
+    artifact_ids:
+    - gate_s2_processor_tests
+    - gate_s2_dependency_recheck
+    - gate_s2_runtime_evidence_summary
+    - gate_s2_standalone_result
+    - gate_s2_standalone_stdout
+    - gate_s2_xr_result
+    - gate_s2_xr_stdout
+    - isaac_s2_runtime_config
+    repository: null
+    revision_type: null
+    revision: null
+    path: tools/launch_isaac_s2.py; tools/run_isaac_s1.py; tools/isaac_s2_runtime.py; tools/isaac_s2_upstream.py; tools/isaac_s2_processor.py; tests/test_isaac_s2_processor.py
+    symbol: run_s2; build_piper_x_bimanual_pipeline; BimanualS2TeleopProcessor; DifferentialIKController
+    notes: The standalone run created a TeleopSession and controller tracker. The XR Kit no-client run loaded the teleop bridge but correctly deferred session creation without OpenXR client handles. Physical claims and clean client disconnect remain pending; both no-client tracking counts were zero.
+  gate_s2_s1_non_xr_regression:
+    kind: command_test
+    status: pass
+    summary: The unchanged accepted S1 non-XR production path passed its full task, reset, Gate C parity, and two-camera regression after Candidate B teleop-extra activation.
+    timestamp: '2026-09-08T11:20:44+03:00'
+    command: OMNI_KIT_ACCEPT_EULA=Y python tools/launch_isaac_s1.py
+    artifact_ids:
+    - gate_s2_s1_regression_result
+    - gate_s2_s1_regression_stdout
+    repository: null
+    revision_type: null
+    revision: null
+    path: tools/launch_isaac_s1.py; tools/run_isaac_s1.py
+    symbol: main; BimanualPiperXIsaacEnvironment
+    notes: Exit 0. Candidate B remained clean at the accepted SHA; S1's non-XR launch command, scene, cameras, task, reset, and D0/native mapping were not replaced.
 gates:
   M0:
     state: accepted
@@ -1934,7 +2127,8 @@ gates:
     state: accepted
     evidence_ids:
     - gate_s0_isaac_upstream_audit
-    - gate_s0_isaac_teleop_upstream_audit
+    - gate_s0_candidate_b_teleop_dependency_audit
+    - gate_s0_teleop_dependency_scope_review
     - gate_s0_mujoco_upstream_audit
     - gate_s0_live_policy_review
     - gate_s0_compatibility_probes
@@ -1945,7 +2139,8 @@ gates:
     - gate_s0_isaac_compatibility_remediation
     - gate_s0_process_boundary_decision
     - isaac_environment_selection
-    notes: Candidate B release/3.0.0 at 913ac53f is selected in its exact isolated frozen workspace. Its upstream overrides and 11 pip metadata conflicts are explicit; the qualified S1 surface passes and S2/Isaac Teleop/XR must recheck expansion. Driver 580.159.03 satisfies the documented 580.95.05+ baseline and passed empirically. The historical S0 reopen is resolved; D0, Gate C, MuJoCo, separate EVAL/CONTROL boundaries, deferred transports, and no-generic-backend decisions are unchanged.
+    - gate_s0_teleop_dependency_amendment
+    notes: Candidate B release/3.0.0 at 913ac53f is selected in its exact isolated frozen workspace. Gate B/core owns isaacteleop 1.3.131 at 7002ed63 while Candidate B/Isaac owns frozen isaacteleop 1.4.98rc1 and in-tree isaaclab_teleop 0.8.0; there is no global teleop pin. Its upstream overrides and 11 pip metadata conflicts are explicit; the expanded S1/S2 automated surfaces reproduce the same 11 with zero new conflict and no exercised required-path failure. Driver 580.159.03 satisfies the documented 580.95.05+ baseline and passed empirically. The narrow S0 reopen is resolved; Gate B, S1, D0, Gate C, MuJoCo, separate EVAL/CONTROL boundaries, deferred transports, and no-generic-backend decisions are unchanged.
   S1:
     state: accepted
     evidence_ids:
@@ -1962,9 +2157,23 @@ gates:
     notes: Accepted on exact Candidate B with the sole S1 runtime path and one upstream regex-batched Camera over two independently parented wrist prims. Final evidence proves 440/440 valid continuously changing RGB frames, correct left/right identity and wrist follow, reset within 0.026 px with no stale frame, bounded task/control/physics behavior, Gate C parity, and clean shutdown. S2 was not started.
   S2:
     state: unresolved
-    evidence_ids: []
-    artifact_ids: []
-    notes: No physical Quest-to-Isaac validation was performed. Before enabling S2, Isaac Teleop, or XR, recheck all 11 Candidate B dependency metadata conflicts, resolve the expanded frozen environment, and repeat pip-check, import, camera, reset, and lifecycle validation.
+    evidence_ids:
+    - gate_s2_upstream_reuse_audit
+    - gate_s2_automated_runtime
+    - gate_s2_s1_non_xr_regression
+    artifact_ids:
+    - isaac_s2_runtime_config
+    - gate_s2_upstream_audit
+    - gate_s2_dependency_recheck
+    - gate_s2_processor_tests
+    - gate_s2_runtime_evidence_summary
+    - gate_s2_standalone_result
+    - gate_s2_standalone_stdout
+    - gate_s2_xr_result
+    - gate_s2_xr_stdout
+    - gate_s2_s1_regression_result
+    - gate_s2_s1_regression_stdout
+    notes: The exact Candidate B teleop extra, retained 11 metadata conflicts, processor, standalone lifecycle, XR Kit startup, reset, two wrist cameras, and S1 non-XR regression are validated. S2 remains unresolved because no physical Quest-to-sim human gate exists; no-client smokes do not prove identity, axes, scale, clutch, gripper, tracking recovery, reconnect, or live-session reset.
   D1:
     state: unresolved
     evidence_ids: []

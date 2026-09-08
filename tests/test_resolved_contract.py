@@ -13,6 +13,7 @@ from tools.validate_resolved_contract import (
     validate_contract,
     validate_gates,
     validate_process_architecture,
+    validate_teleop_dependencies,
 )
 
 
@@ -55,6 +56,20 @@ class ResolvedContractTests(unittest.TestCase):
         )
 
         self.assertEqual(data["gates"]["B"]["state"], "accepted")
+        real_dependency = data["teleop"]["real"]["runtime_dependencies"]["isaacteleop"]
+        isaac_dependencies = data["teleop"]["isaac"]["runtime_dependencies"]
+        self.assertEqual(real_dependency["version"], "1.3.131")
+        self.assertEqual(
+            real_dependency["revision"],
+            "7002ed63d69454ae4f15c0ee19f803fd2846592b",
+        )
+        self.assertEqual(isaac_dependencies["isaacteleop"]["version"], "1.4.98rc1")
+        self.assertEqual(isaac_dependencies["isaaclab_teleop"]["version"], "0.8.0")
+        self.assertNotIn("isaac_teleop", data["implementation"])
+        self.assertIn(
+            "teleop.real.runtime_dependencies.isaacteleop.version",
+            rules["B"]["required_paths"],
+        )
         self.assertNotIn("timing.max_xr_pose_age_ms", rules["B"]["required_paths"])
         self.assertIn("timing.max_xr_pose_age_ms", rules["R2"]["required_paths"])
         self.assertIn("timing.max_xr_pose_age_ms", rules["HIL"]["required_paths"])
@@ -108,6 +123,83 @@ class ResolvedContractTests(unittest.TestCase):
         self.assertIn(
             "gate_s0_isaac_compatibility_remediation",
             data["gates"]["S0"]["artifact_ids"],
+        )
+        self.assertIn(
+            "teleop.isaac.runtime_dependencies.isaacteleop.version",
+            rules["S0"]["required_paths"],
+        )
+        self.assertIn(
+            "teleop.isaac.runtime_dependencies.isaaclab_teleop.version",
+            rules["S0"]["required_paths"],
+        )
+
+    def test_teleop_dependencies_are_scoped_to_their_execution_environments(self) -> None:
+        data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+
+        self.assertEqual(validate_teleop_dependencies(data), [])
+        self.assertEqual(
+            data["teleop"]["real"]["runtime_dependencies"]["isaacteleop"][
+                "source_artifact_id"
+            ],
+            data["environments"]["core"]["spec_artifact_id"],
+        )
+        self.assertEqual(
+            data["teleop"]["isaac"]["runtime_dependencies"]["isaacteleop"][
+                "source_artifact_id"
+            ],
+            data["environments"]["isaac"]["spec_artifact_id"],
+        )
+
+        wrong_spec = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        wrong_spec["teleop"]["isaac"]["runtime_dependencies"]["isaacteleop"][
+            "source_artifact_id"
+        ] = "core_uv_lock"
+        self.assertIn(
+            "teleop.isaac.runtime_dependencies.isaacteleop: source artifact must be "
+            "isaac_environment_selection for isaac",
+            validate_teleop_dependencies(wrong_spec),
+        )
+
+        wrong_profile = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        wrong_profile["teleop"]["real"]["execution_profile"] = "isaac_vr_record"
+        self.assertIn(
+            "teleop.real: execution profile must use core environment",
+            validate_teleop_dependencies(wrong_profile),
+        )
+
+    def test_gate_s2_cannot_accept_without_physical_human_evidence(self) -> None:
+        data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        rules = yaml.safe_load(
+            (REPOSITORY_ROOT / "configs" / "gate_rules.yaml").read_text(encoding="utf-8")
+        )
+
+        self.assertEqual(data["gates"]["S2"]["state"], "unresolved")
+        self.assertEqual(
+            data["execution_profiles"]["isaac_vr_record"]["command"],
+            ["python3", "tools/launch_isaac_s2.py"],
+        )
+        self.assertEqual(
+            data["teleop"]["isaac"]["processor_revision"],
+            "piper_x_isaac_s2_bimanual_relative_v1",
+        )
+        probe = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        probe["gates"]["S2"]["state"] = "accepted"
+        errors = validate_gates(probe, rules)
+        self.assertIn("gate S2: missing PASS evidence kind human_gate", errors)
+        self.assertIn("gate S2: human evidence required", errors)
+
+    def test_schema_rejects_the_ambiguous_global_isaac_teleop_field(self) -> None:
+        data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        data["implementation"]["isaac_teleop"] = {
+            "version": "1.3.131",
+            "revision": "7002ed63d69454ae4f15c0ee19f803fd2846592b",
+            "evidence_ids": [],
+        }
+
+        errors, _, _ = validate_contract_from_data_for_schema_probe(data)
+        self.assertTrue(
+            any("Additional properties are not allowed" in error for error in errors),
+            errors,
         )
 
     def test_process_architecture_keeps_eval_and_control_semantics_distinct(self) -> None:

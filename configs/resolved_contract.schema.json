@@ -905,6 +905,66 @@
           "uniqueItems": true
         }
       }
+    },
+    "runtime_dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "package",
+        "version",
+        "revision_type",
+        "revision",
+        "source_artifact_id",
+        "source_detail",
+        "evidence_ids"
+      ],
+      "properties": {
+        "package": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "revision_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "commit",
+            "version",
+            null
+          ]
+        },
+        "revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_artifact_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_detail": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     }
   },
   "type": "object",
@@ -1199,7 +1259,6 @@
         "lerobot",
         "robot_plugin",
         "driver",
-        "isaac_teleop",
         "isaac_lab",
         "mujoco"
       ],
@@ -1317,35 +1376,6 @@
               "type": "string"
             },
             "command_api": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "evidence_ids": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "isaac_teleop": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "version",
-            "revision",
-            "evidence_ids"
-          ],
-          "properties": {
-            "version": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "revision": {
               "type": [
                 "string",
                 "null"
@@ -2596,6 +2626,7 @@
           "additionalProperties": false,
           "required": [
             "execution_profile",
+            "runtime_dependencies",
             "resolved_implementation",
             "left_source",
             "right_source",
@@ -2605,6 +2636,18 @@
           "properties": {
             "execution_profile": {
               "type": "string"
+            },
+            "runtime_dependencies": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "isaacteleop"
+              ],
+              "properties": {
+                "isaacteleop": {
+                  "$ref": "#/$defs/runtime_dependency"
+                }
+              }
             },
             "resolved_implementation": {
               "type": [
@@ -2643,6 +2686,7 @@
           "additionalProperties": false,
           "required": [
             "execution_profile",
+            "runtime_dependencies",
             "resolved_implementation",
             "left_source",
             "right_source",
@@ -2652,6 +2696,22 @@
           "properties": {
             "execution_profile": {
               "type": "string"
+            },
+            "runtime_dependencies": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "isaacteleop",
+                "isaaclab_teleop"
+              ],
+              "properties": {
+                "isaacteleop": {
+                  "$ref": "#/$defs/runtime_dependency"
+                },
+                "isaaclab_teleop": {
+                  "$ref": "#/$defs/runtime_dependency"
+                }
+              }
             },
             "resolved_implementation": {
               "type": [

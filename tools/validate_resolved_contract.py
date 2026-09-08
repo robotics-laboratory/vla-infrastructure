@@ -235,6 +235,42 @@ def validate_profiles(d):
     return out
 
 
+def validate_teleop_dependencies(d):
+    """Keep Quest dependency pins owned by their actual execution environments."""
+    out = []
+    expected = {"real": "core", "isaac": "isaac"}
+    for runtime, expected_environment in expected.items():
+        binding = d["teleop"][runtime]
+        profile_name = binding["execution_profile"]
+        profile = d["execution_profiles"].get(profile_name)
+        if profile is None:
+            out.append(f"teleop.{runtime}: unknown execution profile {profile_name}")
+        elif profile["environment"] != expected_environment:
+            out.append(
+                f"teleop.{runtime}: execution profile must use {expected_environment} environment"
+            )
+
+        environment = d["environments"][expected_environment]
+        expected_artifact = environment["spec_artifact_id"]
+        for name, dependency in binding["runtime_dependencies"].items():
+            if dependency["package"] != name:
+                out.append(
+                    f"teleop.{runtime}.runtime_dependencies.{name}: package name mismatch"
+                )
+            if dependency["source_artifact_id"] != expected_artifact:
+                out.append(
+                    f"teleop.{runtime}.runtime_dependencies.{name}: source artifact must be "
+                    f"{expected_artifact} for {expected_environment}"
+                )
+            if dependency["revision_type"] == "commit" and not COMMIT_RE.fullmatch(
+                dependency["revision"] or ""
+            ):
+                out.append(
+                    f"teleop.{runtime}.runtime_dependencies.{name}: invalid commit revision"
+                )
+    return out
+
+
 def validate_process_architecture(d):
     out = []
     architecture = d["process_architecture"]
@@ -771,6 +807,7 @@ def validate_contract(contract_path: Path, rules_path: Path | None = None):
             errors.append(f"{p}: legacy magic placeholder forbidden")
     errors += (
         validate_profiles(d)
+        + validate_teleop_dependencies(d)
         + validate_process_architecture(d)
         + validate_artifacts(d, root)
         + validate_evidence(d)

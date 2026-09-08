@@ -22,7 +22,7 @@ are retained there.
 | S0/S1 Isaac runtime | Candidate B `913ac53f…`; rejected candidates are recorded only in the remediation artifact | AppLauncher, Kit lifecycle, PhysX/Fabric, articulation, reset, Camera renderer backend | none for accepted S1; local scope is the Gate C binding, task, D0 edge, and parity evidence | one Isaac-specific config, D0 edge processors, concrete runner | isolated Candidate B frozen uv workspace; LeRobot absent | upstream owns application, simulation, rendering, and sensors |
 | S1 bimanual cameras | Candidate B `913ac53f…` | parented `Camera` prims, regex-batched Camera view, pose propagation, RGB publication, reset | none for accepted S1; local scope is exact wrist bindings, D0 role keys, and current regression evidence | direct `CameraCfg`, no camera abstraction | same isolated Isaac environment | upstream native two-camera form passed 440/440 frames |
 | S1 PIPER-X embodiment/control | Isaac Lab B plus Gate C asset `f6642ce…` | URDF conversion, Articulation, implicit actuators, joint targets | none for accepted S1; local scope is deterministic composition, two namespaces, D0 unit/order conversion, and parity | thin asset materializer and named mappings | generated USD/cache stays under `/data/ebulochkin` | no duplicate FK/IK or robot backend is needed |
-| S2 Isaac Quest/XR | Candidate B plus Isaac Teleop `7002ed…` | XR session, controller source, Isaac teleop device | later install/import and physical PIPER-X mapping/behavior evidence | deferred S2 config/mapping only | **must recheck** the expanded dependency/runtime surface | S1 does not justify an XR or CONTROL framework |
+| S2 Isaac Quest/XR | Candidate B `913ac53f…`; frozen `isaacteleop==1.4.98rc1`; in-tree `isaaclab_teleop==0.8.0` | XR experiences, session lifecycle, controller sources, rebase and retargeting seams | physical PIPER-X mapping/behavior evidence after automated qualification | one concrete S2 processor/config only | expanded frozen surface rechecked with the same 11 conflicts and no new conflict | S1 does not justify an XR or CONTROL framework |
 | D1/G1 native recording/generation | Candidate B `913ac53f…` | RecorderManager, HDF5 handler, manager/task patterns | later D0 recorder terms/conversion and task-local source | deferred to D1/G1 | same environment, rechecked when expanded | upstream recorder remains authoritative |
 | E1 evaluation | LeRobot `7e241bd…` in core; Candidate B in Isaac | LeRobot policy/eval and native Isaac environment | transport/endpoint/run manifest | deferred E1 boundary adapter | separate core/isaac processes already selected | no replacement evaluator or universal simulator API |
 | M1/E2 MuJoCo | MuJoCo `237c17e…`, Gymnasium 1.3.0, core lock | normal MuJoCo/Gym/LeRobot seams | unchanged later PIPER-X task adapter | deferred M1 config/processors | core environment unchanged | the Isaac repin does not affect this path |
@@ -54,9 +54,21 @@ override list is recorded verbatim in
 `configs/environments/isaac_release_3_0_0.yaml`. `uv pip check` reports 11
 incompatibilities, recorded verbatim in the environment manifest and compatibility
 artifact. These were present during the passing Candidate B qualification; no
-required S1 path failed, so they are not an S1 blocker. The resolution, imports,
-camera/reset/lifecycle paths, and conflict list must be rechecked before S2 adds
-Isaac Teleop/XR or when another Isaac environment surface is added.
+required S1 path failed, so they are not an S1 blocker. The S2 frozen teleop-extra
+expansion then reproduced exactly the same 11 incompatibilities and no new ones;
+standalone CloudXR/OpenXR, the XR Kit experience, IK/articulation, camera/reset,
+and the S1 non-XR regression exercised without a required-path failure. Later
+environment expansion must repeat this check.
+
+## Runtime-scoped Isaac Teleop dependencies
+
+`implementation.isaac_teleop` was an ambiguous historical field, not a valid
+project-global pin. It has been replaced by the existing `teleop.real` and
+`teleop.isaac` runtime ownership records. Gate B/core remains on
+`isaacteleop==1.3.131` at `7002ed63…`; Candidate B/S2 follows Candidate B's exact
+frozen teleop extra with `isaacteleop==1.4.98rc1` and its in-tree
+`isaaclab_teleop==0.8.0`. The full amendment and preserved-gate analysis is recorded
+in `GATE_S0_TELEOP_DEPENDENCY_AMENDMENT.md`.
 
 ## Preserved decisions
 
