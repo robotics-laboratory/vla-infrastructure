@@ -1,222 +1,120 @@
-Gate S0 bounded compatibility probes
-=====================================
+GATE S0 ISAAC REPIN COMPATIBILITY PROBES
+DATE: 2026-09-08
+RESULT: PASS
 
-Timestamp: 2026-08-31T08:00:37+03:00
-Live repository HEAD before S0 edits:
-  0515b74809497a983c25da39c9dbe2fee3fe2741
+REOPEN SCOPE
+- Reopened only stale Isaac Lab pin, isolated environment, dependency metadata,
+  driver conclusion, and affected S0 evidence/artifacts.
+- D0, Gate C, MuJoCo, EVAL/CONTROL boundary decisions, and unrelated accepted
+  gates were not reopened.
 
-Scope
------
-
-These were dependency, host-metadata, source-tree, and minimal MuJoCo API probes.
-No Isaac Sim process was installed or launched. No robot/CAN API was opened. No
-Quest session was opened. The only simulator execution was a disposable one-joint
-MuJoCo compile/step and a 64x48 offscreen camera render.
-
-1. Current NVIDIA candidate source identity
---------------------------------------------
-
-Repository:
-  https://github.com/isaac-sim/IsaacLab
-Tag:
-  v3.0.0-beta2.patch1
-Commit:
-  ffff603eafc6b74264a5261cc0183d6a65390d78
-
-Commands:
-  git rev-parse HEAD
-  git describe --tags --exact-match
-
-Output:
-  ffff603eafc6b74264a5261cc0183d6a65390d78
-  v3.0.0-beta2.patch1
-
-Pinned source metadata at that commit:
-  root pyproject.toml: requires-python = ">=3.12,<3.13"
-  root pyproject.toml: torch==2.10.0
-  root pyproject.toml: torchvision==0.25.0
-  source/isaaclab/setup.py: gymnasium==1.2.1
-  source/isaaclab/setup.py: transformers==4.57.6
-  source/isaaclab/setup.py: isaacsim[all,extscache]==6.0.1.0
-  source/isaaclab_teleop/setup.py:
-    isaacteleop[retargeters,ui,cloudxr]~=1.3.0
-
-The same release contains a stale source/isaaclab/config/extension.toml pipapi
-entry for gymnasium==0.29.0. The package/install metadata and release environment
-select 1.2.1; this inconsistency is an additional S1 installation risk, not a
-license to silently downgrade Gymnasium.
-
-2. Accepted LeRobot identity and dependency boundary
-----------------------------------------------------
-
-Repository:
-  https://github.com/huggingface/lerobot
-Version/tag:
-  0.6.1 / v0.6.1
-Commit:
-  7e241bd630a3719a56157a497ce5d08f244784f1
-
-Pinned pyproject.toml requirements:
-  requires-python = ">=3.12"
-  huggingface-hub>=1.6.0,<2.0.0
-  gymnasium>=1.1.1,<2.0.0
-  torch>=2.7,<2.12
-  torchvision>=0.22,<0.27
-  optional transformers-dep: transformers>=5.4.0,<5.6.0
-
-3. Same-process Isaac/LeRobot resolver probe
---------------------------------------------
-
-Command (dry-run; no packages installed):
-  UV_CACHE_DIR=/tmp/s0-uv-cache uv pip install --dry-run \
-    --python .venv/bin/python --upgrade \
-    'lerobot==0.6.1' 'torch==2.10.0' 'torchvision==0.25.0' \
-    'gymnasium==1.2.1' 'numpy>=2,<2.3' 'transformers==4.57.6' \
-    'isaacteleop[retargeters,ui,cloudxr]==1.3.131'
-
-Output (exit 1):
-  No solution found when resolving dependencies:
-  Because lerobot==0.6.1 depends on huggingface-hub>=1.6.0,<2.0.0 and
-  transformers==4.57.6 depends on huggingface-hub>=0.34.0,<1.0,
-  lerobot==0.6.1 and transformers==4.57.6 are incompatible.
-
-Conclusion:
-  The current NVIDIA 3.0 beta fixes the Python 3.12 / torch range issue, but its
-  exact Transformers pin makes the supported environment unsatisfiable with the
-  accepted LeRobot 0.6.1 package. Removing/overriding either upstream dependency
-  is unsupported. A custom RPC or replacement policy runtime was not invented.
-
-4. Stable Isaac Lab alternative
--------------------------------
-
-Repository/tag/commit:
-  https://github.com/isaac-sim/IsaacLab
-  v2.3.2
-  37ddf626871758333d6ed89cf64ad702aef127d0
-
-Pinned source facts:
-  Isaac Sim 5.1 recommended
-  Isaac Sim 5.x requires Python 3.11
-  torch>=2.7 with CUDA 12.8 install path
-  gymnasium==1.2.1
-  transformers==4.57.6
-
-Conclusion:
-  Rejected for the selected evaluation seam. Isaac Sim 5.x requires Python 3.11,
-  while LeRobot 0.6.1 requires Python >=3.12. The same Transformers/Hugging Face
-  Hub conflict remains. Running LeRobot unsupported on 3.11 is not an acceptable
-  pin.
-
-5. Isaac host requirements probe
---------------------------------
-
-Commands:
-  nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv,noheader
-  free -g
-  df -BG --output=size,used,avail,pcent,target /home/ebulochkin/vla_infrastructure
-  ldd --version
-
-Output:
-  NVIDIA GeForce RTX 4090, 580.159.03, 24564 MiB
-  RAM total: 31 GiB; available: 11 GiB
-  filesystem: 938 GiB total, 864 GiB used, 27 GiB available, 98% used
-  glibc 2.35
-
-Official Isaac Sim 6.0.1 x86_64 minimums audited on 2026-08-31:
-  Ubuntu 22.04/24.04
-  32 GB RAM
-  50 GB SSD
-  RTX 4080
-  16 GB VRAM
-  NVIDIA-tested Linux driver 595.58.03
-
-Conclusion:
-  GPU model, VRAM, Ubuntu/glibc meet the published baseline. The installed Linux
-  driver 580.159.03 is below the published/tested 595.58.03 requirement, and only
-  27 GiB is free on the target filesystem versus the 50 GB minimum. The machine is
-  not eligible for an Isaac Sim 6.0.1 S1 installation without external host
-  changes. RAM reports 31 GiB because binary units are displayed for nominal 32 GB;
-  S1 must use NVIDIA's compatibility checker after the hard blockers are cleared.
-
-6. Isaac Teleop source identity
--------------------------------
-
-Repository/tag/commit:
-  https://github.com/NVIDIA/IsaacTeleop
-  v1.3.131
-  7002ed63d69454ae4f15c0ee19f803fd2846592b
-
-The source exposes one ControllersSource with controller_left and controller_right,
-pose/rotation validity fields, buttons, thumbstick, squeeze, and trigger. The live
-Gate B physical evidence already accepted version 1.3.131 with CloudXR 6.2.0. This
-probe made no physical connection.
-
-7. AgileX Isaac asset audit
----------------------------
-
-Repository/commit/date:
-  https://github.com/agilexrobotics/piper_isaac_sim
-  8e1f88fdb7afca49c40e9a0c1c01cc588e86f0d2
-  2025-12-10T18:18:49+08:00
-
-Files/hashes:
-  USD/piper_x_v1.usd
-    8af9c84ca87d3acebf47a362be3e21465ddd951acd1f3fb114c4c97ad5fc3cc2
-  piper_x_description/urdf/piper_x_description.urdf
-    7d4b9bcb49f9d337fa429a681c360af9a86a465ebd2d6d405aecfa0ddd7b20d8
-
-The repository has no LICENSE/COPYING/NOTICE file. Its PIPER-X source is not Gate C
-equivalent: link names are Link1..Link8 rather than link1..link6 plus flange/TCP;
-joint-1 zero-frame RPY is 0 instead of Gate C pi; joints 2, 4, 5, and 6 use different
-origins; joint-4/5/6 limits are approximately +/-90, +/-90, +/-180 degrees rather
-than Gate C +/-89, +/-89, +/-120 degrees; masses/inertias differ; and the gripper is
-two independent prismatic joints without Gate C's aperture/mimic contract. The USD
-is therefore a reference only, not the selected embodiment.
-
-8. MuJoCo/core resolution and bounded execution
-------------------------------------------------
-
-Selected pins:
-  mujoco==3.9.0
-  Gymnasium==1.3.0
-  CPython 3.12.13
-
+QUALIFICATION ARTIFACT INTEGRITY
 Command:
-  UV_CACHE_DIR=/tmp/s0-uv-cache uv lock
+  cd /data/ebulochkin/isaaclab_candidate_qualification/20260907
+  sha256sum -c MANIFEST.sha256
+Result:
+  all 25 listed files OK
+Key identities:
+  REPORT.md 1983c241727e5726971aaab8d4a1b806df798384bbea0cedd6e0e14ecc72d918
+  COMMANDS.sh ad26ea76b64a7e9d85c9775071e225e13ef683fc581ae1cb4d6e53dad4703099
+  Candidate B one-camera result 3c25ce92a72d6db52cceb2e76c5a6fc770313cd3bda9eefd4b2955f8c68e8d86
+  Candidate B two-camera result bec0a1468bd6727e1a29c13c2a342d808133c28663bdbbc58390a45286af6020
 
-Output:
-  Resolved 124 packages
-  Added mujoco v3.9.0 and its locked dependencies
+EXACT RUNTIME
+  Isaac Lab selection: release/3.0.0
+  Git HEAD: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
+  Checkout: exact detached clean checkout
+  Isaac Lab distribution/source version: 16.4.0
+  Isaac Sim: 6.0.1.0
+  Python: 3.12.13
+  torch/vision/audio: 2.11.0/0.26.0/2.11.0 +cu128
+  CUDA runtime: 12.8
+  warp-lang: 1.16.0
+  usd-exchange: 2.3.0
+  LeRobot present: false
+  GPU: NVIDIA GeForce RTX 4090
 
-Minimal API probe output:
-  mujoco=3.9.0 gymnasium=1.3.0 nq=1 nu=1 ncam=1 time=0.002000
-  reset_seed=PASS step_tuple=5
+QUALIFICATION OUTCOME
+- Candidate B 913ac53f...: PASS without an Isaac Lab/renderer patch or project
+  camera workaround.
+- Superseded and rejected candidate outcomes are retained only in the registered
+  HISTORICAL / RESOLVED / NOT CURRENT RUNTIME remediation artifact.
+- Gate C PIPER-X articulation initialized, reset, moved, and remained finite.
+- One camera: 220/220 valid counted RGB frames.
+- Two-camera regex-batched path: 440/440 valid counted RGB frames.
+- Frames were 480x640x3 uint8 RGB; every 110-frame sequence had 110 unique
+  hashes and 109 consecutive changes per camera.
+- Independent wrists produced independent camera pose and rendered-view changes.
+- Rendered target motion was 275.7 to 280.5 px.
+- Reset returned both cameras to baseline with 0.0255 px and 0.00845 px
+  centroid errors and changed the pre-reset frame.
+- Both authoritative processes exited 0 after simulation_app.close().
 
-Offscreen EGL camera probe output:
-  renderer_shape=(48, 64, 3) dtype=uint8 camera=left_wrist
+DRIVER
+  Candidate B documented recommendation: Linux 580.95.05 or later
+  Actual kernel/user-space driver: 580.159.03
+  Documented baseline satisfied: yes
+  Empirical Candidate B compatibility: PASS
+  Driver change required: no
 
-Conclusion:
-  MuJoCo and Gymnasium resolve and execute in the existing core environment with
-  accepted LeRobot 0.6.1. A separate MuJoCo environment and RPC boundary are not
-  justified.
+UPSTREAM OVERRIDE MECHANISM
+Candidate B's exact pyproject.toml uses [tool.uv].override-dependencies, which
+replaces requirements for every requester. The authoritative environment was
+created with:
+  uv sync --frozen --extra isaacsim --active
+No project-local dependency metadata or installed distribution was patched.
 
-9. MuJoCo embodiment candidates
---------------------------------
+EXACT UPSTREAM OVERRIDES
+  numpy>=2
+  mujoco~=3.11.0
+  mujoco-warp~=3.11.0
+  newton[sim]==1.5.1
+  newton-usd-schemas>=0.4.1
+  torch==2.11.0
+  torchvision==0.26.0
+  torchaudio==2.11.0
+  typing-extensions>=4.15.0
+  websockets>=14.0,<17.0.0
+  coverage>=7.6.1
+  packaging>=20,<27
 
-The official AgileX piper_isaac_sim tree has generic Piper MJCF under
-piper_description/mujoco_model, but no PIPER-X MJCF under piper_x_description.
-The generic file identifies model="piper" and has limits/control ranges that do
-not match Gate C; it is rejected as the PIPER-X embodiment. No Piper model was
-found in the audited MuJoCo Menagerie listing, and Menagerie itself states that it
-is not an officially supported Google product. The selected M1 strategy is a
-deterministic Gate C URDF-to-MJCF derivation using MuJoCo's public parser/save
-boundary, followed only by task actuators, cameras, and verified gripper coupling.
+UV PIP CHECK: 11 INCOMPATIBILITIES (RETAINED, NOT HIDDEN)
+1. numba requires numpy>=1.22,<2.5; numpy 2.5.1 is installed.
+2. isaacsim-core requires mujoco==3.8.0; mujoco 3.11.0 is installed.
+3. isaacsim-core requires mujoco-warp==3.8.0.3; 3.11.0 is installed.
+4. isaacsim-core requires newton[sim]==1.2.1; newton 1.5.1 is installed.
+5. isaacsim-core requires newton-usd-schemas==0.2.0; 0.4.1 is installed.
+6. cmeel-boost requires numpy>=2.3,<2.4 on Python >=3.11; 2.5.1 is installed.
+7. isaacsim-kernel requires numpy==2.3.1; 2.5.1 is installed.
+8. isaacsim-kernel requires websockets==12.0; 16.1.1 is installed.
+9. isaacsim-kernel requires typing-extensions==4.12.2; 4.16.0 is installed.
+10. isaacsim-kernel requires coverage==7.4.4; 7.15.2 is installed.
+11. open3d requires ipywidgets>=8.0.4; ipywidgets is not installed.
 
-Overall probe verdict
----------------------
+CONCLUSION
+The exact frozen Candidate B workspace passed the entire qualified S1 surface
+despite those metadata conflicts. No actual required S1 path failed, so the
+conflicts are not an S1 blocker. Recheck resolution, pip-check, imports, cameras,
+reset, and lifecycle when S2 adds Isaac Teleop/XR or another environment expansion.
 
-MuJoCo -> core: PASS.
-Isaac supported same-process environment: BLOCKED.
-Isaac host eligibility for 6.0.1: BLOCKED.
-Gate S0 cannot be accepted until both Isaac blocker classes are cleared and the
-candidate dependency set resolves without unsupported upstream overrides.
+UNCHANGED MUJOCO/CORE PROBES
+  Selected: mujoco==3.9.0, Gymnasium==1.3.0, CPython 3.12.13
+  Locked API probe: nq=1, nu=1, ncam=1, time=0.002000
+  Reset/step: reset_seed=PASS, step_tuple=5
+  EGL render: shape=(48,64,3), dtype=uint8, camera=left_wrist
+Result: PASS. MuJoCo remains in core; no separate environment or RPC is justified.
+
+UNCHANGED ASSET CONCLUSION
+The audited AgileX piper_isaac_sim PIPER-X model remains a non-equivalent
+reference. Gate C commit f6642ce0d7872c686f29c99e9e10cd23d1d49313 remains
+the sole authoritative embodiment source for Isaac conversion.
+
+BOUNDARIES
+- Isaac remains isolated and excludes LeRobot.
+- Same-process LeRobot+Isaac is not required.
+- EVAL and CONTROL remain separate; their transports remain deferred.
+- No generic simulator/camera/backend/RPC abstraction was introduced.
+
+NO HARDWARE / DRIVER MUTATION
+No CAN access, robot motion, /data/piper-stand mutation, or NVIDIA driver change
+was performed.

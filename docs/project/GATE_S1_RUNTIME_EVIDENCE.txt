@@ -1,0 +1,92 @@
+GATE S1 AUTHORITATIVE CANDIDATE B RUNTIME EVIDENCE
+==================================================
+
+Date: 2026-09-08
+Command:
+  OMNI_KIT_ACCEPT_EULA=Y python3 tools/launch_isaac_s1.py
+
+Authoritative result:
+  path: /data/ebulochkin/cache/isaac-s1/runs/20260908T065807Z/result.json
+  sha256: 2f2db5e95275c841ce2478cffd8952b04135087e3f1e290b31ae557054090ad5
+  passed: true
+
+Authoritative stdout:
+  path: /data/ebulochkin/cache/isaac-s1/runs/20260908T065807Z/stdout.log
+  sha256: fcd1e4e1db87a2441777fd4ac890b017562e7ae39709c3d140bb7600564bb8f8
+  child exit code: 0
+  clean shutdown observed by launcher: true
+
+Exact environment:
+  Isaac Lab release/3.0.0 commit 913ac53f51b2f8d02c9e121caa4cbdd06262948e
+  imported source version 16.4.0 from the exact Candidate B checkout
+  Isaac Sim 6.0.1.0
+  Python 3.12.13
+  torch/torchvision/torchaudio 2.11.0+cu128 / 0.26.0+cu128 / 2.11.0+cu128
+  GPU NVIDIA GeForce RTX 4090; CUDA available
+  host NVIDIA driver 580.159.03, unchanged
+  LeRobot present: false
+  retained upstream override conflicts: 11
+
+Runtime architecture assertions:
+  native upstream Camera with regex-batched FrameView over two gripper_base children: PASS
+  Fabric: enabled
+  camera output: 640x480 uint8 RGB HWC
+
+Camera regression (two sequences x two cameras x 110 frames = 440):
+  valid frames: 440/440
+  unique hashes within each 110-frame sequence: 110/110 for all four sequences
+  consecutive hash changes: 109/109 for all four sequences
+  strictly increasing camera frame counters: PASS
+  target visible frames: 440/440
+  left target centroid motion: 279.515-279.542 px
+  right target centroid motion: 286.845-286.889 px
+  left camera translation/rotation: 0.071826 m / 0.380709 rad
+  right camera translation/rotation: 0.084627 m / 0.513608 rad
+  maximum camera position composition error: 6.706e-8 m
+  maximum camera orientation composition error: 6.906e-4 rad
+
+Independent identity regression:
+  left +15 deg joint-1: left pose moved 0.045849 m / 0.261799 rad; right pose moved 0 m / 0 rad
+  right -15 deg joint-1: right pose moved 0.045849 m / 0.261799 rad; left pose moved 0 m / 0 rad
+  rendered target shifts, left perturbation [left,right]: [181.334, 0.013] px
+  rendered target shifts, right perturbation [left,right]: [2.021, 176.439] px
+  D0 key/path identity: PASS
+
+Reset:
+  both post-reset camera position residuals: 0 m
+  both pre-reset frame hashes differ from the post-reset hashes
+  post-reset images valid: true
+  target centroid return error left/right: 0.025799 / 0.009364 px
+  repeated D0 reset-state maximum error: 0
+  home-state maximum error: 0
+
+Task/control/physics:
+  120 Hz physics, 30 Hz control, action repeat 4, render interval 1 physics tick
+  native control: absolute joint position, implicit PhysX force PD drives
+  D0 labels preserved before native unit conversion and clipping
+  successful episode: terminated=true, truncated=false, steps=3
+  maximum successful joint/gripper errors: 0.000668 deg / 0.000175 mm
+  timeout/saturation episode: terminated=false, truncated=true, steps=120, native_saturated=true
+  dynamic physics probe z: 0.286577 m -> 0.030000 m
+
+Gate C parity:
+  report: docs/project/GATE_S1_PARITY_REPORT.json
+  passed: true
+  maximum FK/direction position error: 2.450e-7 m (tolerance 5.0e-4 m)
+  maximum FK/direction orientation error: 1.644e-6 rad (tolerance 5.0e-4 rad)
+  joint-limit error: 1.161e-7 rad-or-m (tolerance 2.0e-5)
+  zero-position error: 0 (tolerance 2.0e-5)
+  gripper finger travel: 0.0500000007 / 0.0499999896 m for accepted 0.0-0.1 m aperture
+
+Repository validation after S0 re-acceptance and S1 acceptance:
+  qualification MANIFEST.sha256: all 25 entries OK
+  core uv lock --check: PASS
+  resolved-contract validator --require-gate S0: PASS
+  resolved-contract validator --require-gate S1: PASS
+  normative reference lint: PASS
+  pytest: 55 passed
+  unittest discovery: 17 passed
+  Ruff: PASS
+  mypy: no issues in 10 source files
+  git diff --check: PASS
+  Candidate B uv pip check: exactly 11 retained incompatibilities (expected nonzero metadata audit; exact list is registered in GATE_S0_COMPATIBILITY_PROBES.txt)

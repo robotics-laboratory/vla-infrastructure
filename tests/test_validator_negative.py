@@ -48,6 +48,9 @@ def test04_r3_requires_hardware_chain():
 
 def test05_e1_requires_s1():
     x = d()
+    # The live baseline now has S1 accepted; force the missing prerequisite
+    # so this remains a negative validator test rather than a stale gate-state assertion.
+    x["gates"]["S1"]["state"] = "unresolved"
     x["gates"]["E1"]["state"] = "accepted"
     errs = mod.validate_gates(x, yaml.safe_load((ROOT / "configs/gate_rules.yaml").read_text()))
     assert any("prerequisite S1" in e for e in errs)

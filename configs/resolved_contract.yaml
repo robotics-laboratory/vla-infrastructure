@@ -69,7 +69,14 @@ migration:
   invalidated_evidence_ids:
   - v43_root_manifest_claim
   legacy_alias_map: {}
-  reopen_records: []
+  reopen_records:
+  - gate: S0
+    reason: upstream_bug
+    summary: 'HISTORICAL / RESOLVED / NOT CURRENT RUNTIME — Reopened only the stale Isaac pin/environment evidence; Candidate B release/3.0.0 at 913ac53f passed exact runtime, Gate C articulation, native bimanual cameras, reset, and shutdown, so the affected S0 facts were amended and re-accepted.'
+    evidence_ids:
+    - gate_s0_isaac_upstream_audit
+    - gate_s0_compatibility_probes
+    - gate_s0_process_boundary_decision
 taxonomy:
   runtime_names:
   - real
@@ -114,8 +121,8 @@ implementation:
     - v43_quest_host_implementation
     - gate_s0_isaac_teleop_upstream_audit
   isaac_lab:
-    version: 3.0.0-beta2.patch1
-    revision: ffff603eafc6b74264a5261cc0183d6a65390d78
+    version: release/3.0.0
+    revision: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
     evidence_ids:
     - gate_s0_isaac_upstream_audit
     - gate_s0_process_boundary_decision
@@ -146,14 +153,14 @@ environments:
     spec_artifact_id: isaac_environment_selection
     torch_version: 2.11.0+cu128
     cuda_runtime: PyTorch bundled CUDA 12.8
-    vendor_runtime: Isaac Sim 6.0.1.0 with Isaac Lab v3.0.0-beta2.patch1 at ffff603eafc6b74264a5261cc0183d6a65390d78; Isaac Teleop 1.3.131 where later S2 requires it
+    vendor_runtime: Isaac Sim 6.0.1.0 with Isaac Lab release/3.0.0 at 913ac53f51b2f8d02c9e121caa4cbdd06262948e; exact upstream frozen workspace with documented overrides; Isaac Teleop remains a later S2 environment expansion
     system_requirements:
     - Ubuntu 22.04 or 24.04 x86_64
     - NVIDIA RTX 4080 or newer with at least 16 GB VRAM
     - at least 32 GB RAM and 50 GB SSD storage
-    - NVIDIA published/tested Linux driver 595.58.03 for Isaac Sim 6.0.1
-    - materialization, compatibility check, and launch evidence are owned by S1
-    canonical_launch_prefix: uv run --project <pinned-isaaclab-checkout>
+    - Candidate B recommends Linux NVIDIA driver 580.95.05 or later; actual unchanged 580.159.03 satisfies the baseline and passed the qualified runtime
+    - Candidate B upstream override-dependencies produce 11 retained uv/pip metadata conflicts; the qualified S1 surface passes, and S2/Isaac Teleop/XR must recheck the expanded environment
+    canonical_launch_prefix: uv run --project /data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact --frozen --no-sync
   mujoco:
     id: mujoco
     purpose: Conceptual MuJoCo record mapped to the exact core environment; not a separate installation
@@ -220,8 +227,12 @@ execution_profiles:
   isaac_env:
     environment: isaac
     working_directory: .
-    command: null
-    prerequisites: []
+    command:
+    - python3
+    - tools/launch_isaac_s1.py
+    prerequisites:
+    - OMNI_KIT_ACCEPT_EULA=Y after accepting the NVIDIA EULA
+    - Candidate B checkout, frozen environment, and Gate C asset paths from isaac_environment_selection are materialized under /data/ebulochkin
   isaac_vr_record:
     environment: isaac
     working_directory: .
@@ -658,10 +669,10 @@ model:
     frame_convention: null
     evidence_ids: []
   parity_tolerances:
-    position_m: null
-    orientation_rad: null
-    zero_position: null
-    joint_limit: null
+    position_m: 0.0005
+    orientation_rad: 0.0005
+    zero_position: 2.0e-05
+    joint_limit: 2.0e-05
 timing:
   clock_domain: Recording pacing uses host monotonic time.perf_counter; stored LeRobotDataset timestamps use the episode-relative fixed grid frame_index / dataset_fps.
   dataset_fps: 30
@@ -1040,31 +1051,32 @@ simulation:
     robot_asset:
       source: Accepted Gate C PIPER-X URDF/Xacro imported through Isaac Lab UrdfFileCfg/UrdfConverter; AgileX piper_isaac_sim USD rejected as non-equivalent reference
       revision: f6642ce0d7872c686f29c99e9e10cd23d1d49313
-      artifact_id: null
-      sha256: null
+      artifact_id: isaac_s1_gate_c_composed_urdf
+      sha256: 103af50b99b17e4ff962b7f563459672ad89556661de79cbd30c1792fea92a6f
     task:
-      task_id: null
-      revision: null
-      instruction: null
-      success_semantics_revision: null
-      reset_distribution_revision: null
-      workspace_frame: null
+      task_id: PiperX-Isaac-Bimanual-JointReach-S1-v0
+      revision: piper_x_isaac_bimanual_joint_reach_s1_v1
+      instruction: Move both PIPER-X arms to the named joint/aperture target.
+      success_semantics_revision: max_abs_joint_2deg_and_aperture_2mm_v1
+      reset_distribution_revision: deterministic_bimanual_home_seeded_v1
+      workspace_frame: each arm-local base_link
     processors:
-      observation_to_policy: Conditional LeRobot PolicyProcessorPipeline step for named Isaac measured radians/model aperture/RGB to accepted D0 degrees/signed-mm/two-camera view
-      policy_action_to_native: Conditional LeRobot PolicyProcessorPipeline step for accepted D0 degrees/signed-mm to named Isaac joint-radian/model-aperture action
-      config_artifact_ids: []
+      observation_to_policy: tools.isaac_s1_runtime.native_observation_to_d0 maps named Isaac measured radians/model aperture and batched upstream RGB to accepted D0 degrees/absolute-mm/left-right uint8 RGB without importing LeRobot
+      policy_action_to_native: tools.isaac_s1_runtime.d0_action_to_native preserves the accepted D0 label, then maps named degrees and signed-mm to separate clipped Isaac joint-radian/model-aperture targets
+      config_artifact_ids:
+      - isaac_s1_runtime_config
       state_artifact_ids: []
-      reset_semantics: null
+      reset_semantics: Seed Python/NumPy/torch; write fixed namespaced roots and home joints, zero velocities, retain the same drive targets, reset asset/sensor buffers, perform 24 qualified non-evidence renderer-settling ticks, and acquire fresh upstream Camera RGB on the next normal physics tick
     execution:
-      physics_dt_s: null
-      control_dt_s: null
-      action_repeat: null
-      control_mode: null
-      actuator_type: null
-      actuator_config_artifact_id: null
-      saturation_semantics: null
-      action_hold_or_interpolation: null
-      reset_seed_protocol: null
+      physics_dt_s: 0.008333333333333333
+      control_dt_s: 0.03333333333333333
+      action_repeat: 4
+      control_mode: absolute joint position
+      actuator_type: Isaac Lab implicit PhysX force PD drive
+      actuator_config_artifact_id: isaac_s1_runtime_config
+      saturation_semantics: Preserve dataset_action_t exactly; only the subsequent native target is unit-converted and clipped to the accepted URDF limits, with saturation reported separately
+      action_hold_or_interpolation: Zero-order hold of one native target for four 120 Hz physics steps; no interpolation
+      reset_seed_protocol: Seed Python random, NumPy, and torch before the deterministic fixed reset; accepted S1 evidence uses seed 0
     recorder:
       backend: Conditional Isaac Lab RecorderManager with ActionStateRecorderManagerCfg and minimal D0 recorder terms
       native_format: Isaac Lab HDF5DatasetFileHandler format_version 1; deterministic D1 conversion to LeRobotDataset v3 required
@@ -1073,7 +1085,7 @@ simulation:
     generator:
       source_class: scripted_expert
       backend: Conditional task-local state machine composed with Isaac Lab ManagerBasedRLEnv and RecorderManager
-      revision: ffff603eafc6b74264a5261cc0183d6a65390d78
+      revision: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
       requires_seed_demos: false
       success_signal: Isaac Lab TerminationManager term named success; retain all attempted/success/failed counts and artifacts
       execution_profile: isaac_generate
@@ -1084,8 +1096,9 @@ simulation:
         rejected: null
         failure_categories: {}
     parity:
-      report_artifact_id: null
-      evidence_ids: []
+      report_artifact_id: gate_s1_parity_report
+      evidence_ids:
+      - gate_s1_embodiment_parity
   mujoco:
     environment_id: mujoco
     model_asset:
@@ -1281,34 +1294,70 @@ artifacts:
     description: Focused same-tick obs_t/action_t frame-construction regression and explicit t-1/t+1 rejection
   gate_s0_upstream_audit:
     kind: report
-    sha256: a5cdf89c92ec3c407e867086646c751e3a8ade5af28362c7d41b7e83a91f3936
+    sha256: ccc416115f7a3ee22c5c76ff285edbfffe384e373e2a638db9c19b0947fe7ef8
     path: docs/project/GATE_S0_UPSTREAM_AUDIT.md
     uri: null
-    description: Focused current upstream audit, conditional Isaac paths, selected MuJoCo paths, PIPER-X adaptation, D0 mapping, reuse accounting, and exact S0 blockers
+    description: Formal S0 Isaac repin audit selecting Candidate B while preserving D0, Gate C, MuJoCo, and process-boundary architecture
   gate_s0_compatibility_probes_output:
     kind: test_output
-    sha256: c95d52e76d524155f04783b0638403fe35d5d0c53456d00c7f3de009eeec27cd
+    sha256: 5d53f44a6578eb95581fc97d323ebb769927724ec34db39d4cb38b4365b13d5a
     path: docs/project/GATE_S0_COMPATIBILITY_PROBES.txt
     uri: null
-    description: Exact Isaac/LeRobot resolver failure, Isaac host requirement comparison, AgileX asset comparison, and passing core MuJoCo lock/API/render probes
+    description: Candidate B qualification integrity, runtime, driver, exact override/conflict, camera/reset/shutdown, and unchanged MuJoCo compatibility evidence
   gate_s0_isaac_compatibility_remediation:
     kind: report
-    sha256: 4b264da718dab434a0d672281e18ec753343915fc18bf0ef9475ccc36b35f88c
+    sha256: 1b3fbe301322e2f1349d9c1ad3668869724aee701af24d8f0c6b87a25f48628d
     path: docs/project/GATE_S0_ISAAC_COMPATIBILITY_REMEDIATION.md
     uri: null
-    description: Preserved focused remediation proving that no released same-process Isaac plus LeRobot environment is supportable
+    description: HISTORICAL / RESOLVED / NOT CURRENT RUNTIME record of the rejected Isaac candidates, Candidate B selection, and retained dependency caveat
   gate_s0_process_boundary_decision:
     kind: report
-    sha256: edbfbf1e1889d652a67718d24cad4649a1c7666ca333d419ea4a1f36c3676ed4
+    sha256: bc93f1ea3b7708438ced4da77b85ffbd8e83caecea51aae7ded74adc004ce626
     path: docs/project/GATE_S0_PROCESS_BOUNDARY_DECISION.md
     uri: null
-    description: Follow-up semantic analysis and narrow process-boundary decision that removes same-process E1 as an S0 requirement without erasing the dependency conflict
+    description: Repin confirmation preserving isolated Isaac, separate EVAL/CONTROL boundaries, deferred transports, and no generic RPC/backend
   isaac_environment_selection:
     kind: environment_spec
-    sha256: 85435a4ffe84fe47fc5e9e01b3975249bd396f9ae8bdbcd92e26167ba3e793cd
-    path: configs/environments/isaac_v3_0_0_beta2_patch1.yaml
+    sha256: f7cf38218e2c6b2848fa79132c02a8734de43be8a064e13e8bd0142673a1de20
+    path: configs/environments/isaac_release_3_0_0.yaml
     uri: null
-    description: Exact isolated Isaac vendor-stack selection and reproducible materialization strategy; installation and execution remain S1 evidence
+    description: Exact Candidate B isolated frozen workspace, override/conflict list, driver baseline/observation, and S2 expansion recheck policy
+  isaac_s1_runtime_config:
+    kind: processor_config
+    sha256: ee7b0b6aea022236fb029720e098c17cf7fd3f9e2e1a3d2d302ece182c8780d3
+    path: configs/isaac_s1_runtime.yaml
+    uri: null
+    description: Concrete S1 Candidate B asset, D0 edge, task, control, reset, and upstream-native bimanual wrist-camera configuration
+  isaac_s1_gate_c_composed_urdf:
+    kind: model_asset
+    sha256: 103af50b99b17e4ff962b7f563459672ad89556661de79cbd30c1792fea92a6f
+    path: /data/ebulochkin/assets/isaac_s1/piper_x_gate_c.urdf
+    uri: null
+    description: Deterministic Isaac-importable composition of the accepted Gate C PIPER-X Xacro/URDF, preserving frames and meshes and adding only bounded aperture-carrier dynamics
+  gate_s1_runtime_result:
+    kind: test_output
+    sha256: 2f2db5e95275c841ce2478cffd8952b04135087e3f1e290b31ae557054090ad5
+    path: /data/ebulochkin/cache/isaac-s1/runs/20260908T065807Z/result.json
+    uri: null
+    description: Authoritative structured Candidate B S1 result covering environment, articulation, task/control, two native wrist cameras, reset, parity, and process exit
+  gate_s1_runtime_stdout:
+    kind: log
+    sha256: fcd1e4e1db87a2441777fd4ac890b017562e7ae39709c3d140bb7600564bb8f8
+    path: /data/ebulochkin/cache/isaac-s1/runs/20260908T065807Z/stdout.log
+    uri: null
+    description: Complete authoritative headless Isaac S1 stdout including startup, articulation initialization, execution, result, and shutdown
+  gate_s1_runtime_evidence_summary:
+    kind: test_output
+    sha256: b37732e8f43c0d0d97e21d5bef28a57fc63b760f4b0fc87a18fdbcb6b66c7d58
+    path: docs/project/GATE_S1_RUNTIME_EVIDENCE.txt
+    uri: null
+    description: Human-readable exact S1 command, artifact hashes, native-camera metrics, task/control/reset results, and parity summary
+  gate_s1_parity_report:
+    kind: parity_report
+    sha256: 87f8c022bac9b794ee16913efc7936951fbed705f7660c4494c16d89ab559b64
+    path: docs/project/GATE_S1_PARITY_REPORT.json
+    uri: null
+    description: Executable Candidate B comparison with accepted Gate C frames, FK references, joint directions/limits, zero position, and gripper aperture
 evidence:
   v52_pack_manifest_check:
     kind: command_test
@@ -1678,18 +1727,18 @@ evidence:
   gate_s0_isaac_upstream_audit:
     kind: upstream_source
     status: pass
-    summary: Current supported Isaac Lab candidates, their exact dependencies, native environment/recording/generation seams, and published Isaac Sim host requirements were audited; no supportable S0 Isaac pin exists for the accepted stack and current host.
-    timestamp: '2026-08-31T08:07:36+03:00'
-    command: Pinned-source inspection plus an exact uv resolver dry run for LeRobot 0.6.1 and Isaac Lab v3.0.0-beta2.patch1 dependencies.
+    summary: Candidate B release/3.0.0 exact upstream lifecycle, articulation, parented regex-batched Camera, reset, recorder/generation, frozen workspace, and host requirements were audited; rejected-candidate history is confined to the remediation artifact.
+    timestamp: '2026-09-08T08:00:00+03:00'
+    command: Exact Candidate B source inspection plus qualification manifest verification, frozen environment inventory, uv pip check, and native one-camera/two-camera runtime evidence review.
     artifact_ids:
     - gate_s0_upstream_audit
     - gate_s0_compatibility_probes_output
     repository: https://github.com/isaac-sim/IsaacLab
     revision_type: commit
-    revision: ffff603eafc6b74264a5261cc0183d6a65390d78
-    path: pyproject.toml; source/isaaclab/setup.py; source/isaaclab/isaaclab/envs/manager_based_env.py; source/isaaclab/isaaclab/managers/recorder_manager.py; source/isaaclab/isaaclab/utils/datasets/hdf5_dataset_file_handler.py
-    symbol: ManagerBasedRLEnv; ActionManager; ObservationManager; TerminationManager; RecorderManager; HDF5DatasetFileHandler
-    notes: Evidence status is pass for the audit, not for Gate S0. Isaac Lab v3.0.0-beta2.patch1 requires Isaac Sim 6.0.1.0 and Transformers 4.57.6; its exact supported environment conflicts with accepted LeRobot 0.6.1 at huggingface-hub, while this host also misses the published driver and disk minima. The stable Isaac Lab v2.3.2 line requires Python 3.11 and is incompatible with LeRobot 0.6.1 Python >=3.12.
+    revision: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
+    path: pyproject.toml; uv.lock; docs/source/setup/installation/index.rst; source/isaaclab/isaaclab/sensors/camera/camera.py; source/isaaclab/isaaclab/assets/articulation/articulation.py
+    symbol: AppLauncher; SimulationContext; Articulation; Camera; CameraCfg; FrameView
+    notes: The exact frozen workspace intentionally uses upstream override-dependencies and reports 11 pip metadata conflicts. The qualified S1 surface passed despite them. Linux driver 580.95.05+ is documented; unchanged host 580.159.03 passed empirically. Recheck the expanded environment for S2/Isaac Teleop/XR.
   gate_s0_isaac_teleop_upstream_audit:
     kind: upstream_source
     status: pass
@@ -1723,8 +1772,8 @@ evidence:
     kind: document_review
     status: pass
     summary: All live S0-required policy, contract, schema, plan, accepted-gate evidence, PIPER-X implementation/model, environment, and dependency records were reviewed as authoritative.
-    timestamp: '2026-08-31T08:07:36+03:00'
-    command: Read-only review of the live repository inputs enumerated by the Gate S0 task.
+    timestamp: '2026-09-08T08:00:00+03:00'
+    command: Read-only review of AGENTS.md, all NORMATIVE_MODEL static-specification files, resolved contract/schema/gate rules, affected S0 evidence, Candidate B sources, and qualification artifacts.
     artifact_ids:
     - gate_s0_upstream_audit
     repository: null
@@ -1732,13 +1781,13 @@ evidence:
     revision: null
     path: null
     symbol: null
-    notes: The accepted PRE-S0 transition audit was not reopened; no contradiction was found. The original v5.2 pack was used only as baseline/reference.
+    notes: Only stale Isaac facts were reopened. D0, Gate C, MuJoCo, EVAL/CONTROL separation, and all unrelated accepted gates remain valid.
   gate_s0_compatibility_probes:
     kind: command_test
     status: pass
-    summary: Bounded compatibility probes reproduced the exact Isaac dependency conflict and host gaps, while the selected MuJoCo/Gymnasium lock, step/reset, and headless camera path passed in core.
-    timestamp: '2026-08-31T08:07:36+03:00'
-    command: uv resolver dry run for exact Isaac/LeRobot pins; nvidia-smi and host capacity inspection; uv lock; MuJoCo one-joint reset/step and EGL Renderer smoke probes.
+    summary: Candidate B exact identity, native Gate C articulation, 220 one-camera plus 440 bimanual camera frames, independent wrist following, reset, clean exit, driver compatibility, manifest integrity, and retained metadata conflicts passed review/probes.
+    timestamp: '2026-09-08T08:00:00+03:00'
+    command: cd /data/ebulochkin/isaaclab_candidate_qualification/20260907 && sha256sum -c MANIFEST.sha256; exact checkout/import/package/driver inspection; review authoritative Candidate B result and process logs.
     artifact_ids:
     - gate_s0_compatibility_probes_output
     repository: null
@@ -1746,13 +1795,13 @@ evidence:
     revision: null
     path: null
     symbol: null
-    notes: No Isaac Sim task was launched, no reusable simulator implementation was created, no Quest session was opened, and no robot/CAN operation occurred.
+    notes: Candidate B ran in its isolated frozen environment with LeRobot absent. No project dependency patch, driver change, Quest session, robot/CAN operation, or generic runtime abstraction was used. The 11 pip-check incompatibilities remain visible and require S2 expansion recheck.
   gate_s0_process_boundary_decision:
     kind: document_review
     status: pass
-    summary: Semantic same-process analysis selected a narrow synchronous EVAL process boundary, kept CONTROL separate and deferred, and assigned Isaac installation plus host eligibility to S1 under the live machine rules.
-    timestamp: '2026-09-01T12:43:02+03:00'
-    command: Read-only comparison of the S0/S1/E1 gate rules, validator acceptance logic, live policies, historical audit/remediation, and selected environment manifest.
+    summary: Candidate B repin preserves the narrow synchronous EVAL boundary, separate deferred CONTROL boundary, isolated Isaac process, LeRobot exclusion, and no generic RPC/backend.
+    timestamp: '2026-09-08T08:00:00+03:00'
+    command: Re-evaluate the accepted process semantics against Candidate B qualification, live S0/S1/E1 rules, and the amended environment manifest.
     artifact_ids:
     - gate_s0_upstream_audit
     - gate_s0_isaac_compatibility_remediation
@@ -1763,7 +1812,56 @@ evidence:
     revision: null
     path: null
     symbol: null
-    notes: The earlier resolver and host findings remain valid. No transport, RPC, Isaac installation, simulator runtime, or host change was performed.
+    notes: The current runtime does not change process semantics. EVAL and CONTROL transport selection remain deferred; no RPC or host change was performed.
+  gate_s1_candidate_b_runtime:
+    kind: command_test
+    status: pass
+    summary: The exact isolated Candidate B environment launched the concrete bimanual PIPER-X S1 task, executed 120 Hz physics and 30 Hz absolute-position control, handled success and timeout/saturation semantics, returned deterministic D0 reset state, and shut down with exit code 0.
+    timestamp: '2026-09-08T09:59:20+03:00'
+    command: OMNI_KIT_ACCEPT_EULA=Y python3 tools/launch_isaac_s1.py
+    artifact_ids:
+    - gate_s1_runtime_result
+    - gate_s1_runtime_stdout
+    - gate_s1_runtime_evidence_summary
+    - isaac_s1_runtime_config
+    repository: null
+    revision_type: null
+    revision: null
+    path: tools/launch_isaac_s1.py; tools/run_isaac_s1.py; tools/isaac_s1_runtime.py
+    symbol: main; BimanualPiperXIsaacEnvironment; d0_action_to_native; native_observation_to_d0
+    notes: Exact runtime SHA, clean upstream checkout and frozen lock hashes are checked before launch. LeRobot is absent. The 11 documented override-induced metadata conflicts remain visible but no required S1 path failed.
+  gate_s1_native_camera_regression:
+    kind: artifact_validation
+    status: pass
+    summary: Two correctly identified 640x480 uint8 RGB wrist cameras produced 440/440 valid, unique, continuously advancing final S1 frames through the upstream parented regex-batched Camera path, followed independent wrists, reset to baseline within 0.026 px, and reused no pre-reset frame.
+    timestamp: '2026-09-08T09:59:20+03:00'
+    command: Validate result.json upstream camera path, paths/roles, shapes/dtypes, frame counts/hashes/counters, pose composition, unilateral motion, target motion, reset images, and process status.
+    artifact_ids:
+    - gate_s1_runtime_result
+    - gate_s1_runtime_evidence_summary
+    - isaac_s1_runtime_config
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: The sole camera implementation is the upstream parented Camera/FrameView path with Fabric enabled. The qualified lifecycle settles for 24 physics ticks and captures the next normal physics tick.
+  gate_s1_embodiment_parity:
+    kind: artifact_validation
+    status: pass
+    summary: The imported bimanual Isaac articulation matches the accepted Gate C base/gripper frames, FK references, positive joint directions, zero state, joint limits, and 0-100 mm aperture within the registered tolerances.
+    timestamp: '2026-09-08T09:59:20+03:00'
+    command: Extract and validate the authoritative result parity object against configs/piper_x_model_contract.yaml and the deterministic composed URDF.
+    artifact_ids:
+    - gate_s1_parity_report
+    - isaac_s1_gate_c_composed_urdf
+    - gate_s1_runtime_result
+    repository: null
+    revision_type: null
+    revision: null
+    path: null
+    symbol: null
+    notes: Maximum position/orientation errors were 2.450e-7 m and 1.644e-6 rad versus 5e-4 tolerances; zero error was 0 and joint-limit error 1.161e-7 versus 2e-5 tolerances.
 gates:
   M0:
     state: accepted
@@ -1847,17 +1945,26 @@ gates:
     - gate_s0_isaac_compatibility_remediation
     - gate_s0_process_boundary_decision
     - isaac_environment_selection
-    notes: Accepted as the machine-defined upstream audit/selection gate. The historical audit and remediation still prove same-process incompatibility; the follow-up decision proves same-process E1 is not required and selects isolated core/isaac processes with synchronous one-step-in-flight D0 EVAL semantics. Transport and CONTROL implementation remain deferred. Isaac installation, driver 595.58.03 eligibility, storage, launch, task, and parity evidence are owned by S1.
+    notes: Candidate B release/3.0.0 at 913ac53f is selected in its exact isolated frozen workspace. Its upstream overrides and 11 pip metadata conflicts are explicit; the qualified S1 surface passes and S2/Isaac Teleop/XR must recheck expansion. Driver 580.159.03 satisfies the documented 580.95.05+ baseline and passed empirically. The historical S0 reopen is resolved; D0, Gate C, MuJoCo, separate EVAL/CONTROL boundaries, deferred transports, and no-generic-backend decisions are unchanged.
   S1:
-    state: unresolved
-    evidence_ids: []
-    artifact_ids: []
-    notes: No Isaac environment implementation was performed. Materializing the selected vendor environment remains blocked on the current host by driver 580.159.03 versus published/tested 595.58.03 and insufficient target-filesystem storage; S1 must also verify the vendor dependency set, launch, task, and parity.
+    state: accepted
+    evidence_ids:
+    - gate_s1_candidate_b_runtime
+    - gate_s1_native_camera_regression
+    - gate_s1_embodiment_parity
+    artifact_ids:
+    - isaac_s1_gate_c_composed_urdf
+    - isaac_s1_runtime_config
+    - gate_s1_runtime_result
+    - gate_s1_runtime_stdout
+    - gate_s1_runtime_evidence_summary
+    - gate_s1_parity_report
+    notes: Accepted on exact Candidate B with the sole S1 runtime path and one upstream regex-batched Camera over two independently parented wrist prims. Final evidence proves 440/440 valid continuously changing RGB frames, correct left/right identity and wrist follow, reset within 0.026 px with no stale frame, bounded task/control/physics behavior, Gate C parity, and clean shutdown. S2 was not started.
   S2:
     state: unresolved
     evidence_ids: []
     artifact_ids: []
-    notes: No physical Quest-to-Isaac validation was performed.
+    notes: No physical Quest-to-Isaac validation was performed. Before enabling S2, Isaac Teleop, or XR, recheck all 11 Candidate B dependency metadata conflicts, resolve the expanded frozen environment, and repeat pip-check, import, camera, reset, and lifecycle validation.
   D1:
     state: unresolved
     evidence_ids: []

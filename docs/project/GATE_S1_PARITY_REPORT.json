@@ -1,0 +1,45 @@
+{
+  "artifact_revision": "piper_x_isaac_gate_c_parity_v1",
+  "authoritative_result_sha256": "2f2db5e95275c841ce2478cffd8952b04135087e3f1e290b31ae557054090ad5",
+  "environment": {
+    "isaac_lab_commit": "913ac53f51b2f8d02c9e121caa4cbdd06262948e",
+    "isaac_sim_version": "6.0.1.0"
+  },
+  "fk": {
+    "left_sample": {"orientation_error_rad": 8.445159980836615e-07, "position_error_m": 6.727959661752669e-08},
+    "left_zero": {"orientation_error_rad": 1.643997241831047e-06, "position_error_m": 1.9537444693358745e-07},
+    "right_sample": {"orientation_error_rad": 8.445159980836615e-07, "position_error_m": 7.825166811548502e-08},
+    "right_zero": {"orientation_error_rad": 1.643997241831047e-06, "position_error_m": 1.9153884230337071e-07}
+  },
+  "frames": ["base_link", "flange_link", "gripper_base"],
+  "gripper": {
+    "expected_each_m": 0.05,
+    "finger_displacements_m": [0.05000000074505806, 0.049999989569187164],
+    "model_aperture_endpoints_m": [0.0, 0.1]
+  },
+  "joint_limit_error_rad_or_m": 1.1611619044060717e-07,
+  "joint_names": ["joint1", "joint2", "joint3", "joint4", "joint5", "joint6", "gripper"],
+  "maximum_orientation_error_rad": 1.643997241831047e-06,
+  "maximum_position_error_m": 2.4496577549247795e-07,
+  "namespaces": ["/World/LeftPiper", "/World/RightPiper"],
+  "passed": true,
+  "positive_direction": {
+    "joint_1": {"orientation_error_rad": 9.675433087795115e-07, "position_error_m": 2.4496577549247795e-07},
+    "joint_2": {"orientation_error_rad": 1.2612404805123943e-06, "position_error_m": 2.0344374878011982e-07},
+    "joint_3": {"orientation_error_rad": 1.1408880199522978e-06, "position_error_m": 1.4156289977082863e-07},
+    "joint_4": {"orientation_error_rad": 1.1603785952289626e-06, "position_error_m": 1.6653130340925512e-07},
+    "joint_5": {"orientation_error_rad": 1.2670368951250752e-06, "position_error_m": 1.4202661040217894e-07},
+    "joint_6": {"orientation_error_rad": 1.2354491548642782e-06, "position_error_m": 1.395097253973963e-07}
+  },
+  "source_asset": {
+    "composed_urdf_sha256": "103af50b99b17e4ff962b7f563459672ad89556661de79cbd30c1792fea92a6f",
+    "gate_c_revision": "f6642ce0d7872c686f29c99e9e10cd23d1d49313"
+  },
+  "tolerances": {
+    "joint_limit": 2e-05,
+    "orientation_rad": 0.0005,
+    "position_m": 0.0005,
+    "zero_position": 2e-05
+  },
+  "zero_position_error_rad_or_m": 0.0
+}

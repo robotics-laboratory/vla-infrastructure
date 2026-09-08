@@ -1,0 +1,105 @@
+spec_revision: piper_x_isaac_environment_selection_v2
+status: selected_materialized_and_s1_qualified
+acceptance_owner:
+  selection: S0
+  materialization_and_execution: S1
+environment_id: isaac
+purpose: Isolated NVIDIA Isaac application/runtime for PIPER-X simulation, rendering, teleoperation, native recording, generation, and the Isaac side of E1.
+manager: uv
+canonical_launch_prefix: uv run --project /data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact --frozen --no-sync
+python:
+  implementation: CPython
+  version: 3.12.13
+upstream:
+  isaac_lab:
+    repository: https://github.com/isaac-sim/IsaacLab
+    release_branch: release/3.0.0
+    commit: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
+    source_version: 16.4.0
+    checkout: /data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact
+    checkout_state: exact detached clean checkout
+    install_strategy: Exact upstream frozen workspace using uv sync --frozen --extra isaacsim --active; no project-local dependency patch.
+  isaac_sim:
+    distribution: isaacsim[all,extscache]
+    version: 6.0.1.0
+  isaac_teleop:
+    repository: https://github.com/NVIDIA/IsaacTeleop
+    version: 1.3.131
+    commit: 7002ed63d69454ae4f15c0ee19f803fd2846592b
+    scope: Required by the later S2/isaac_vr_record path; not installed or qualified by S1.
+frozen_workspace:
+  pyproject_sha256: b691862409ab8ad58b074ac32ce7f071e3895ec10975444b9e62995741ace159
+  uv_lock_sha256: 80eb2c4e1155dd9e9736506d41cdbe327df74ee2b005bdecc0fb7c87c8b8bb84
+  materialized_environment: /data/ebulochkin/envs/isaac-s1-candidate-b
+  materialization_command: VIRTUAL_ENV=<materialized_environment> UV_CACHE_DIR=<qualification_root>/uv_cache UV_LINK_MODE=copy uv sync --frozen --extra isaacsim --active
+  override_mechanism: Candidate B upstream pyproject.toml [tool.uv].override-dependencies replaces requirements for every requester; these are upstream-owned overrides, not project-local edits.
+  override_dependencies:
+  - numpy>=2
+  - mujoco~=3.11.0
+  - mujoco-warp~=3.11.0
+  - newton[sim]==1.5.1
+  - newton-usd-schemas>=0.4.1
+  - torch==2.11.0
+  - torchvision==0.26.0
+  - torchaudio==2.11.0
+  - typing-extensions>=4.15.0
+  - websockets>=14.0,<17.0.0
+  - coverage>=7.6.1
+  - packaging>=20,<27
+  pip_check_conflicts:
+  - numba requires numpy>=1.22,<2.5; installed numpy is 2.5.1
+  - isaacsim-core requires mujoco==3.8.0; installed mujoco is 3.11.0
+  - isaacsim-core requires mujoco-warp==3.8.0.3; installed mujoco-warp is 3.11.0
+  - isaacsim-core requires newton[sim]==1.2.1; installed newton is 1.5.1
+  - isaacsim-core requires newton-usd-schemas==0.2.0; installed newton-usd-schemas is 0.4.1
+  - cmeel-boost requires numpy>=2.3,<2.4 on Python >=3.11; installed numpy is 2.5.1
+  - isaacsim-kernel requires numpy==2.3.1; installed numpy is 2.5.1
+  - isaacsim-kernel requires websockets==12.0; installed websockets is 16.1.1
+  - isaacsim-kernel requires typing-extensions==4.12.2; installed typing-extensions is 4.16.0
+  - isaacsim-kernel requires coverage==7.4.4; installed coverage is 7.15.2
+  - open3d requires ipywidgets>=8.0.4; ipywidgets is not installed
+  qualification_conclusion: The qualified S1 runtime surface passed with the exact frozen lock and all 11 conflicts present; no required S1 runtime path failed.
+  expansion_policy: Re-run resolution, pip-check, import, camera, reset, and lifecycle compatibility when the environment expands for S2, Isaac Teleop, or XR. A future actual required-path failure reopens the affected gate.
+pins:
+  torch: 2.11.0+cu128
+  torchvision: 0.26.0+cu128
+  torchaudio: 2.11.0+cu128
+  cuda_runtime: PyTorch CUDA 12.8
+  warp_lang: 1.16.0
+  usd_exchange: 2.3.0
+isolation:
+  lerobot_installed: false
+  core_packages_installed: false
+  same_process_lerobot_isaac_required: false
+  reason: The accepted process architecture keeps LeRobot policy/evaluation ownership in core and the native Isaac runtime in this isolated environment.
+system_requirements:
+  operating_system: Ubuntu 22.04 or 24.04 x86_64
+  gpu_minimum: NVIDIA RTX 4080
+  vram_minimum: 16 GB
+  ram_minimum: 32 GB
+  storage_minimum: 50 GB SSD
+  nvidia_driver_documented_recommendation: 580.95.05 or later
+host_observation_at_acceptance:
+  nvidia_driver: 580.159.03
+  documented_baseline_satisfied: true
+  empirical_candidate_b_runtime_compatible: true
+  driver_change_required: false
+  gpu: NVIDIA GeForce RTX 4090
+qualification:
+  root: /data/ebulochkin/isaaclab_candidate_qualification/20260907
+  manifest_sha256: b18012f517e40f11a51a5af102b9355c5fe0086b2b6ddb83f7b63e8e3bce7d1b
+  report_sha256: 1983c241727e5726971aaab8d4a1b806df798384bbea0cedd6e0e14ecc72d918
+  one_camera_result_sha256: 3c25ce92a72d6db52cceb2e76c5a6fc770313cd3bda9eefd4b2955f8c68e8d86
+  two_camera_result_sha256: bec0a1468bd6727e1a29c13c2a342d808133c28663bdbbc58390a45286af6020
+  manifest_check: pass
+  candidate_b_result: pass
+transport:
+  eval_boundary_selected: true
+  eval_transport_selection: deferred
+  control_boundary_selected: true
+  control_transport_selection: deferred
+  rpc_implementation: false
+notes:
+- Candidate B passed with the normal upstream Isaac Lab Camera lifecycle and a regex-batched Camera over two independently wrist-parented camera prims.
+- The accepted D0 contract, Gate C model, MuJoCo selection, and isolated process boundaries are unchanged.
+- This S0 selection does not qualify the S2 Isaac Teleop/XR dependency surface.
