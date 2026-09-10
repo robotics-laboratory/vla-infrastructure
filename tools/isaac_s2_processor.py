@@ -15,14 +15,18 @@ from typing import Literal, Sequence
 import numpy as np
 
 
-PROCESSOR_REVISION = "piper_x_isaac_s2_bimanual_relative_v1"
-UPSTREAM_TRANSLATION_SCALE = 10.0
-UPSTREAM_ROTATION_SCALE = 10.0
+PROCESSOR_REVISION = "piper_x_isaac_s2_bimanual_relative_v2"
+NORMAL_TRANSLATION_SCALE = 2.0
+NORMAL_ROTATION_SCALE = 2.0
+PRECISE_TRANSLATION_SCALE = 0.5
+PRECISE_ROTATION_SCALE = 0.5
 DEFAULT_CLUTCH_THRESHOLD = 0.5
-DEFAULT_GRIPPER_THRESHOLD = 0.5
+DEFAULT_SENSITIVITY_TOGGLE_THRESHOLD = 0.5
 DEFAULT_GRIPPER_APERTURE_M = 0.05
 OPEN_GRIPPER_APERTURE_M = 0.1
 CLOSED_GRIPPER_APERTURE_M = 0.0
+
+SensitivityMode = Literal["normal", "precise"]
 
 
 @dataclass(frozen=True)
@@ -35,6 +39,7 @@ class ControllerDeltaSample:
     grip_pose_valid: bool
     squeeze_value: float
     trigger_value: float
+    sensitivity_button_value: float
 
     def __post_init__(self) -> None:
         for field_name in ("delta_position_m", "delta_rotation_rotvec_rad"):
@@ -54,6 +59,7 @@ class ArmTeleopCommand:
     tracking_valid: bool
     clutch_active: bool
     rebased: bool
+    sensitivity_mode: SensitivityMode
     transition: str
 
 
@@ -68,10 +74,15 @@ class BimanualTeleopCommand:
 class S2ProcessorConfig:
     """Small concrete configuration selected from upstream/Gate C semantics."""
 
-    translation_scale: float = UPSTREAM_TRANSLATION_SCALE
-    rotation_scale: float = UPSTREAM_ROTATION_SCALE
+    normal_translation_scale: float = NORMAL_TRANSLATION_SCALE
+    normal_rotation_scale: float = NORMAL_ROTATION_SCALE
+    precise_translation_scale: float = PRECISE_TRANSLATION_SCALE
+    precise_rotation_scale: float = PRECISE_ROTATION_SCALE
+    initial_sensitivity_mode: SensitivityMode = "normal"
+    sensitivity_toggle_threshold: float = DEFAULT_SENSITIVITY_TOGGLE_THRESHOLD
     clutch_threshold: float = DEFAULT_CLUTCH_THRESHOLD
-    gripper_threshold: float = DEFAULT_GRIPPER_THRESHOLD
+    gripper_trigger_min: float = 0.0
+    gripper_trigger_max: float = 1.0
     gripper_open_m: float = OPEN_GRIPPER_APERTURE_M
     gripper_closed_m: float = CLOSED_GRIPPER_APERTURE_M
     reset_gripper_m: float = DEFAULT_GRIPPER_APERTURE_M
@@ -83,6 +94,8 @@ class _ArmState:
     clutch_active: bool = False
     rebase_pending: bool = True
     gripper_aperture_m: float = DEFAULT_GRIPPER_APERTURE_M
+    sensitivity_mode: SensitivityMode = "normal"
+    sensitivity_button_pressed: bool = False
 
 
 class BimanualS2TeleopProcessor:
@@ -91,37 +104,56 @@ class BimanualS2TeleopProcessor:
     def __init__(self, config: S2ProcessorConfig | None = None) -> None:
         self.config = config or S2ProcessorConfig()
         self._validate_config()
-        self._states = {"left": _ArmState(), "right": _ArmState()}
+        self._states = {side: self._new_state() for side in ("left", "right")}
 
     def _validate_config(self) -> None:
         cfg = self.config
         numeric = (
-            cfg.translation_scale,
-            cfg.rotation_scale,
+            cfg.normal_translation_scale,
+            cfg.normal_rotation_scale,
+            cfg.precise_translation_scale,
+            cfg.precise_rotation_scale,
+            cfg.sensitivity_toggle_threshold,
             cfg.clutch_threshold,
-            cfg.gripper_threshold,
+            cfg.gripper_trigger_min,
+            cfg.gripper_trigger_max,
             cfg.gripper_open_m,
             cfg.gripper_closed_m,
             cfg.reset_gripper_m,
         )
         if not all(math.isfinite(value) for value in numeric):
             raise ValueError("S2 processor configuration must be finite")
-        if cfg.translation_scale <= 0.0 or cfg.rotation_scale <= 0.0:
+        scales = (
+            cfg.normal_translation_scale,
+            cfg.normal_rotation_scale,
+            cfg.precise_translation_scale,
+            cfg.precise_rotation_scale,
+        )
+        if not all(value > 0.0 for value in scales):
             raise ValueError("S2 translation and rotation scales must be positive")
+        if cfg.initial_sensitivity_mode not in ("normal", "precise"):
+            raise ValueError("initial_sensitivity_mode must be normal or precise")
+        if not 0.0 <= cfg.sensitivity_toggle_threshold <= 1.0:
+            raise ValueError("sensitivity_toggle_threshold must be in [0, 1]")
         if not 0.0 <= cfg.clutch_threshold <= 1.0:
             raise ValueError("clutch_threshold must be in [0, 1]")
-        if not 0.0 <= cfg.gripper_threshold <= 1.0:
-            raise ValueError("gripper_threshold must be in [0, 1]")
+        if not cfg.gripper_trigger_min < cfg.gripper_trigger_max:
+            raise ValueError("gripper trigger maximum must exceed its minimum")
+        if cfg.gripper_open_m < cfg.gripper_closed_m:
+            raise ValueError("open gripper aperture must not be below closed")
         if not cfg.gripper_closed_m <= cfg.reset_gripper_m <= cfg.gripper_open_m:
             raise ValueError("reset gripper aperture must lie between closed and open")
+
+    def _new_state(self) -> _ArmState:
+        return _ArmState(
+            gripper_aperture_m=self.config.reset_gripper_m,
+            sensitivity_mode=self.config.initial_sensitivity_mode,
+        )
 
     def reset(self) -> None:
         """Clear episode/session state and require a fresh valid rebase per arm."""
 
-        self._states = {
-            side: _ArmState(gripper_aperture_m=self.config.reset_gripper_m)
-            for side in ("left", "right")
-        }
+        self._states = {side: self._new_state() for side in ("left", "right")}
 
     def session_inactive(self) -> BimanualTeleopCommand:
         """Enter the safe simulation hold state without replaying stale intent."""
@@ -132,6 +164,7 @@ class BimanualS2TeleopProcessor:
             state.tracking_valid = False
             state.clutch_active = False
             state.rebase_pending = True
+            state.sensitivity_button_pressed = False
             commands[side] = self._hold(state, "session_inactive")
         return BimanualTeleopCommand(commands["left"], commands["right"], False)
 
@@ -159,6 +192,7 @@ class BimanualS2TeleopProcessor:
             and np.isfinite(sample.delta_rotation_rotvec_rad).all()
             and math.isfinite(sample.squeeze_value)
             and math.isfinite(sample.trigger_value)
+            and math.isfinite(sample.sensitivity_button_value)
         )
         tracked = sample.available and sample.grip_pose_valid and finite
         if not tracked:
@@ -168,18 +202,33 @@ class BimanualS2TeleopProcessor:
             state.rebase_pending = True
             return self._hold(state, transition)
 
-        state.gripper_aperture_m = (
-            self.config.gripper_closed_m
-            if sample.trigger_value > self.config.gripper_threshold
-            else self.config.gripper_open_m
+        trigger_fraction = (sample.trigger_value - self.config.gripper_trigger_min) / (
+            self.config.gripper_trigger_max - self.config.gripper_trigger_min
+        )
+        trigger_fraction = min(1.0, max(0.0, trigger_fraction))
+        state.gripper_aperture_m = self.config.gripper_open_m + trigger_fraction * (
+            self.config.gripper_closed_m - self.config.gripper_open_m
         )
         clutch = sample.squeeze_value > self.config.clutch_threshold
+        sensitivity_pressed = (
+            sample.sensitivity_button_value > self.config.sensitivity_toggle_threshold
+        )
 
         if state.rebase_pending:
             state.rebase_pending = False
             state.tracking_valid = True
             state.clutch_active = clutch
+            # A held button on recovery is not a fresh user toggle.
+            state.sensitivity_button_pressed = sensitivity_pressed
             return self._hold(state, "tracking_rebased", rebased=True)
+
+        sensitivity_toggled = sensitivity_pressed and not state.sensitivity_button_pressed
+        state.sensitivity_button_pressed = sensitivity_pressed
+        if sensitivity_toggled:
+            state.sensitivity_mode = "precise" if state.sensitivity_mode == "normal" else "normal"
+            state.tracking_valid = True
+            state.clutch_active = clutch
+            return self._hold(state, f"sensitivity_switched_{state.sensitivity_mode}")
 
         if clutch:
             transition = "clutch_engaged" if not state.clutch_active else "clutch_held"
@@ -193,10 +242,11 @@ class BimanualS2TeleopProcessor:
             return self._hold(state, "clutch_release_rebased", rebased=True)
 
         state.tracking_valid = True
+        translation_scale, rotation_scale = self._active_scales(state)
         delta = np.concatenate(
             (
-                sample.delta_position_m * self.config.translation_scale,
-                sample.delta_rotation_rotvec_rad * self.config.rotation_scale,
+                sample.delta_position_m * translation_scale,
+                sample.delta_rotation_rotvec_rad * rotation_scale,
             )
         )
         return ArmTeleopCommand(
@@ -206,13 +256,23 @@ class BimanualS2TeleopProcessor:
             tracking_valid=True,
             clutch_active=False,
             rebased=False,
+            sensitivity_mode=state.sensitivity_mode,
             transition="motion",
         )
 
+    def _active_scales(self, state: _ArmState) -> tuple[float, float]:
+        if state.sensitivity_mode == "precise":
+            return (
+                self.config.precise_translation_scale,
+                self.config.precise_rotation_scale,
+            )
+        return (
+            self.config.normal_translation_scale,
+            self.config.normal_rotation_scale,
+        )
+
     @staticmethod
-    def _hold(
-        state: _ArmState, transition: str, *, rebased: bool = False
-    ) -> ArmTeleopCommand:
+    def _hold(state: _ArmState, transition: str, *, rebased: bool = False) -> ArmTeleopCommand:
         return ArmTeleopCommand(
             delta_pose=np.zeros(6, dtype=np.float64),
             gripper_aperture_m=state.gripper_aperture_m,
@@ -220,6 +280,7 @@ class BimanualS2TeleopProcessor:
             tracking_valid=state.tracking_valid,
             clutch_active=state.clutch_active,
             rebased=rebased,
+            sensitivity_mode=state.sensitivity_mode,
             transition=transition,
         )
 
@@ -280,15 +341,17 @@ def _quat_multiply_xyzw(left: np.ndarray, right: np.ndarray) -> np.ndarray:
     )
 
 
-def unpack_pipeline_action(values: Sequence[float]) -> tuple[ControllerDeltaSample, ControllerDeltaSample]:
+def unpack_pipeline_action(
+    values: Sequence[float],
+) -> tuple[ControllerDeltaSample, ControllerDeltaSample]:
     """Decode the one fixed S2 upstream pipeline layout."""
 
     action = np.asarray(values, dtype=np.float64)
-    if action.shape != (20,):
-        raise ValueError(f"S2 upstream action must have shape (20,), got {action.shape}")
+    if action.shape != (22,):
+        raise ValueError(f"S2 upstream action must have shape (22,), got {action.shape}")
 
     def arm(offset: int) -> ControllerDeltaSample:
-        controls = action[offset + 6 : offset + 10]
+        controls = action[offset + 6 : offset + 11]
         return ControllerDeltaSample(
             delta_position_m=action[offset : offset + 3],
             delta_rotation_rotvec_rad=action[offset + 3 : offset + 6],
@@ -296,6 +359,7 @@ def unpack_pipeline_action(values: Sequence[float]) -> tuple[ControllerDeltaSamp
             grip_pose_valid=bool(controls[1] > 0.5),
             squeeze_value=float(controls[2]),
             trigger_value=float(controls[3]),
+            sensitivity_button_value=float(controls[4]),
         )
 
-    return arm(0), arm(10)
+    return arm(0), arm(11)

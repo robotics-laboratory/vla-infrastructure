@@ -1,6 +1,7 @@
 GATE S2 CANDIDATE B DEPENDENCY RECHECK
 
-Date: 2026-09-08
+Initial expansion: 2026-09-08
+Post-remediation recheck: 2026-09-09
 Environment: /data/ebulochkin/envs/isaac-s1-candidate-b
 Candidate checkout: /data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact
 Candidate SHA: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
@@ -46,6 +47,12 @@ Checked 279 packages. Exactly the same 11 previously recorded incompatibilities 
 11. open3d requires ipywidgets >=8.0.4; it is not installed.
 
 NEW CONFLICTS INTRODUCED BY TELEOP ACTIVATION: 0
+
+POST-REMEDIATION RESULT
+
+The exact Candidate B environment was rechecked after the S2 v2 remediation.
+Candidate SHA and all pinned runtime versions were unchanged. `uv pip check`
+again reported exactly the same 11 items above and no additional conflict.
 
 RUNTIME IMPACT
 

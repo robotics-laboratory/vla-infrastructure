@@ -180,7 +180,7 @@ class ResolvedContractTests(unittest.TestCase):
         )
         self.assertEqual(
             data["teleop"]["isaac"]["processor_revision"],
-            "piper_x_isaac_s2_bimanual_relative_v1",
+            "piper_x_isaac_s2_bimanual_relative_v2",
         )
         probe = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
         probe["gates"]["S2"]["state"] = "accepted"

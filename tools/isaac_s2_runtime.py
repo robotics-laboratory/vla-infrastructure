@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from functools import partial
 import hashlib
 import importlib.metadata
 import json
@@ -9,7 +10,7 @@ from pathlib import Path
 import platform
 import subprocess
 import time
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import yaml
@@ -19,6 +20,7 @@ from isaac_s2_processor import (
     BimanualS2TeleopProcessor,
     PROCESSOR_REVISION,
     S2ProcessorConfig,
+    SensitivityMode,
     unpack_pipeline_action,
 )
 from isaac_s2_upstream import (
@@ -69,12 +71,9 @@ class _BimanualDifferentialIk:
             command_type="pose", use_relative_mode=True, ik_method="dls"
         )
         self.controllers = tuple(
-            DifferentialIKController(cfg, num_envs=1, device=env.sim.device)
-            for _ in env.robots
+            DifferentialIKController(cfg, num_envs=1, device=env.sim.device) for _ in env.robots
         )
-        for controller, robot, ids in zip(
-            self.controllers, env.robots, env.joint_ids, strict=True
-        ):
+        for controller, robot, ids in zip(self.controllers, env.robots, env.joint_ids, strict=True):
             limits = robot.data.joint_limits.torch[0, ids[:6], :]
             controller.set_joint_pos_limits(limits[:, 0], limits[:, 1])
 
@@ -92,12 +91,7 @@ class _BimanualDifferentialIk:
             position, quaternion = subtract_frame_transforms(
                 root_world[:, :3], root_world[:, 3:], tcp_world[:, :3], tcp_world[:, 3:]
             )
-            poses.append(
-                self.torch.cat((position, quaternion), dim=-1)[0]
-                .detach()
-                .cpu()
-                .numpy()
-            )
+            poses.append(self.torch.cat((position, quaternion), dim=-1)[0].detach().cpu().numpy())
         return poses
 
     def apply(self, command) -> bool:
@@ -149,13 +143,9 @@ def _camera_sample(env, previous_indices: np.ndarray | None) -> dict[str, Any]:
     for index, role in enumerate(("left_wrist", "right_wrist")):
         image = images[f"observation.images.{role}"]
         valid = bool(
-            image.shape == (480, 640, 3)
-            and image.dtype == np.uint8
-            and np.isfinite(image).all()
+            image.shape == (480, 640, 3) and image.dtype == np.uint8 and np.isfinite(image).all()
         )
-        advanced = previous_indices is None or bool(
-            frame_indices[index] > previous_indices[index]
-        )
+        advanced = previous_indices is None or bool(frame_indices[index] > previous_indices[index])
         result["roles"][role] = {
             "frame_index": int(frame_indices[index]),
             "valid": valid,
@@ -207,23 +197,40 @@ def run_s2(env, args_cli, simulation_app) -> int:
     if mismatches:
         raise RuntimeError(f"S2 upstream version mismatch: {mismatches}")
 
+    sensitivity = config["processor"]["sensitivity"]
+    gripper = config["processor"]["gripper"]
     processor_cfg = S2ProcessorConfig(
-        translation_scale=float(config["processor"]["translation_scale"]),
-        rotation_scale=float(config["processor"]["rotation_scale"]),
+        normal_translation_scale=float(sensitivity["modes"]["normal"]["translation_scale"]),
+        normal_rotation_scale=float(sensitivity["modes"]["normal"]["rotation_scale"]),
+        precise_translation_scale=float(sensitivity["modes"]["precise"]["translation_scale"]),
+        precise_rotation_scale=float(sensitivity["modes"]["precise"]["rotation_scale"]),
+        initial_sensitivity_mode=cast(SensitivityMode, str(sensitivity["initial_mode"])),
+        sensitivity_toggle_threshold=float(sensitivity["toggle_threshold"]),
         clutch_threshold=float(config["processor"]["clutch"]["threshold"]),
-        gripper_threshold=float(config["processor"]["gripper"]["threshold"]),
-        gripper_open_m=float(config["processor"]["gripper"]["open_aperture_m"]),
-        gripper_closed_m=float(config["processor"]["gripper"]["closed_aperture_m"]),
-        reset_gripper_m=float(config["processor"]["gripper"]["reset_aperture_m"]),
+        gripper_trigger_min=float(gripper["trigger_input_range"][0]),
+        gripper_trigger_max=float(gripper["trigger_input_range"][1]),
+        gripper_open_m=float(gripper["open_aperture_m"]),
+        gripper_closed_m=float(gripper["closed_aperture_m"]),
+        reset_gripper_m=float(gripper["reset_aperture_m"]),
     )
     processor = BimanualS2TeleopProcessor(processor_cfg)
     ik = _BimanualDifferentialIk(env)
     cloudxr_env = (
         CLOUDXR_JS_ENV if args_cli.s2_cloudxr_profile == "cloudxrjs" else CLOUDXR_STANDALONE_ENV
     )
+    presentation = config["xr_presentation"]
+    anchor_position = tuple(float(value) for value in presentation["anchor_pos_m"])
+    anchor_rotation = tuple(float(value) for value in presentation["anchor_rot_xyzw"])
     teleop_cfg = IsaacTeleopCfg(
-        xr_cfg=XrCfg(anchor_pos=(0.0, 0.0, 0.0)),
-        pipeline_builder=build_piper_x_bimanual_pipeline,
+        xr_cfg=XrCfg(
+            anchor_pos=anchor_position,
+            anchor_rot=anchor_rotation,
+            near_plane=float(presentation["near_plane_m"]),
+        ),
+        pipeline_builder=partial(
+            build_piper_x_bimanual_pipeline,
+            sensitivity_control=str(sensitivity["toggle_control"]),
+        ),
         sim_device=env.sim.device,
         teleoperation_active_default=True,
     )
@@ -245,6 +252,10 @@ def run_s2(env, args_cli, simulation_app) -> int:
     session_started_ever = False
     action_frames = 0
     tracking_valid_frames = {"left": 0, "right": 0}
+    sensitivity_mode_frames = {
+        "left": {"normal": 0, "precise": 0},
+        "right": {"normal": 0, "precise": 0},
+    }
     transition_counts: dict[str, int] = {}
     maximum_rebase_motion_m = {"left": 0.0, "right": 0.0}
     saturated_frames = 0
@@ -280,7 +291,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 command = processor.session_inactive()
             else:
                 if tuple(action.shape) != (PIPELINE_ACTION_DIM,):
-                    raise RuntimeError(f"unexpected S2 pipeline action shape: {tuple(action.shape)}")
+                    raise RuntimeError(
+                        f"unexpected S2 pipeline action shape: {tuple(action.shape)}"
+                    )
                 action_frames += 1
                 left, right = unpack_pipeline_action(action.detach().cpu().numpy())
                 command = processor.advance(
@@ -300,6 +313,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 strict=True,
             ):
                 tracking_valid_frames[side] += int(arm.tracking_valid)
+                sensitivity_mode_frames[side][arm.sensitivity_mode] += 1
                 transition_counts[f"{side}:{arm.transition}"] = (
                     transition_counts.get(f"{side}:{arm.transition}", 0) + 1
                 )
@@ -322,6 +336,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                             "session_running": device.session_running,
                             "left": command.left.transition,
                             "right": command.right.transition,
+                            "left_mode": command.left.sensitivity_mode,
+                            "right_mode": command.right.sensitivity_mode,
                             "camera_valid": camera["valid"],
                         },
                         sort_keys=True,
@@ -359,11 +375,36 @@ def run_s2(env, args_cli, simulation_app) -> int:
         ),
         "processor": {
             "revision": PROCESSOR_REVISION,
-            "translation_scale": processor_cfg.translation_scale,
-            "rotation_scale": processor_cfg.rotation_scale,
+            "sensitivity": {
+                "toggle_control": sensitivity["toggle_control"],
+                "scope": sensitivity["scope"],
+                "initial_mode": processor_cfg.initial_sensitivity_mode,
+                "normal": {
+                    "translation_scale": processor_cfg.normal_translation_scale,
+                    "rotation_scale": processor_cfg.normal_rotation_scale,
+                },
+                "precise": {
+                    "translation_scale": processor_cfg.precise_translation_scale,
+                    "rotation_scale": processor_cfg.precise_rotation_scale,
+                },
+                "switch_behavior": ("rising edge changes mode and emits zero Cartesian delta"),
+            },
             "clutch": "independent squeeze > 0.5; release discards one delta",
-            "gripper": "independent binary trigger > 0.5 closes",
+            "gripper": (
+                "independent analog trigger [0,1] maps linearly and monotonically "
+                "from 0.1 m open to 0.0 m closed"
+            ),
+            "tracking_recovery": (
+                "unusable pose invalidates upstream SE(3) baseline and smoothing; "
+                "first recovered frame emits zero delta"
+            ),
             "source_timestamp_threshold": None,
+        },
+        "xr_presentation": {
+            "anchor_pos_m": anchor_position,
+            "anchor_rot_xyzw": anchor_rotation,
+            "near_plane_m": float(presentation["near_plane_m"]),
+            "authoritative_scene_geometry_changed": False,
         },
         "session": {
             "single_controller_source": True,
@@ -379,6 +420,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
             "physics_hz": (control_steps * 4) / elapsed,
             "saturated_frames": saturated_frames,
             "tracking_valid_frames": tracking_valid_frames,
+            "sensitivity_mode_frames": sensitivity_mode_frames,
             "transitions": transition_counts,
             "maximum_rebase_or_clutch_tcp_motion_m": maximum_rebase_motion_m,
         },

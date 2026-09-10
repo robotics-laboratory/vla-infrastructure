@@ -50,16 +50,64 @@ from isaaclab_teleop.session_lifecycle import (  # type: ignore[import-not-found
 from isaaclab_teleop.xr_anchor_manager import XrAnchorManager  # type: ignore[import-not-found]
 
 
-PIPELINE_ACTION_DIM = 20
+PIPELINE_ACTION_DIM = 22
+
+
+def _controller_grip_pose_is_usable(controller: Any) -> bool:
+    """Reject absent, explicitly invalid, non-finite, and zero-quaternion poses."""
+
+    if controller.is_none or not bool(controller[ControllerInputIndex.GRIP_IS_VALID]):
+        return False
+    position = np.from_dlpack(controller[ControllerInputIndex.GRIP_POSITION])
+    orientation = np.from_dlpack(controller[ControllerInputIndex.GRIP_ORIENTATION])
+    return bool(
+        np.isfinite(position).all()
+        and np.isfinite(orientation).all()
+        and np.linalg.norm(orientation) > 1.0e-8
+    )
+
+
+class TrackingSafeSe3RelRetargeter(Se3RelRetargeter):
+    """Close Candidate B's absent-controller relative-reference gap.
+
+    Pinned ``Se3RelRetargeter`` already invalidates its baseline when a present
+    controller reports ``GRIP_IS_VALID=false``.  Its ``is_none`` branch emits
+    zero but retains the old pose and smoothing accumulator.  A controller
+    recovering at another physical pose therefore creates one large stale
+    delta and filtered residuals.  This narrow adapter applies the same reset
+    semantics to every unusable pose before delegating valid samples upstream.
+    """
+
+    def _invalidate_relative_reference(self) -> None:
+        self._smoothed_delta_pos = np.zeros(3)
+        self._smoothed_delta_rot = np.zeros(3)
+        self._previous_wrist = np.asarray([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0])
+        self._previous_thumb_tip = None
+        self._previous_index_tip = None
+        self._first_frame = True
+
+    def _compute_fn(self, inputs: RetargeterIO, outputs: RetargeterIO, context: Any) -> None:
+        controller = inputs[self._config.input_device]
+        if not _controller_grip_pose_is_usable(controller):
+            self._invalidate_relative_reference()
+            outputs["ee_delta"][0] = np.zeros(6, dtype=np.float32)
+            return
+        super()._compute_fn(inputs, outputs, context)
 
 
 class ControllerStateRetargeter(BaseRetargeter):
-    """Expose availability, grip validity, squeeze, and trigger for one side."""
+    """Expose validity and the three S2 controls for one controller side."""
 
-    def __init__(self, side: str, name: str) -> None:
+    def __init__(self, side: str, sensitivity_control: str, name: str) -> None:
         if side not in (ControllersSource.LEFT, ControllersSource.RIGHT):
             raise ValueError(f"unsupported controller source: {side}")
+        sensitivity_indices = {
+            "thumbstick_click": ControllerInputIndex.THUMBSTICK_CLICK,
+        }
+        if sensitivity_control not in sensitivity_indices:
+            raise ValueError(f"unsupported sensitivity control: {sensitivity_control}")
         self._side = side
+        self._sensitivity_index = sensitivity_indices[sensitivity_control]
         super().__init__(name=name)
 
     def input_spec(self) -> RetargeterIOType:
@@ -72,7 +120,7 @@ class ControllerStateRetargeter(BaseRetargeter):
                 [
                     NDArrayType(
                         "state_array",
-                        shape=(4,),
+                        shape=(5,),
                         dtype=DLDataType.FLOAT,
                         dtype_bits=32,
                     )
@@ -83,18 +131,21 @@ class ControllerStateRetargeter(BaseRetargeter):
     def _compute_fn(self, inputs: RetargeterIO, outputs: RetargeterIO, context: Any) -> None:
         del context
         controller = inputs[self._side]
-        state = np.zeros(4, dtype=np.float32)
+        state = np.zeros(5, dtype=np.float32)
         if not controller.is_none:
             state[:] = (
                 1.0,
-                float(bool(controller[ControllerInputIndex.GRIP_IS_VALID])),
+                float(_controller_grip_pose_is_usable(controller)),
                 float(controller[ControllerInputIndex.SQUEEZE_VALUE]),
                 float(controller[ControllerInputIndex.TRIGGER_VALUE]),
+                float(controller[self._sensitivity_index]),
             )
         outputs["state"][0] = state
 
 
-def build_piper_x_bimanual_pipeline() -> OutputCombiner:
+def build_piper_x_bimanual_pipeline(
+    sensitivity_control: str = "thumbstick_click",
+) -> OutputCombiner:
     """Build the one-source bimanual controller pipeline used by S2."""
 
     controllers = ControllersSource(name="piper_x_s2_controllers")
@@ -104,9 +155,9 @@ def build_piper_x_bimanual_pipeline() -> OutputCombiner:
     connected: dict[str, Any] = {}
     for side in ("left", "right"):
         source = ControllersSource.LEFT if side == "left" else ControllersSource.RIGHT
-        # Keep upstream filtering/rebase behavior but leave the two explicit gains
-        # to the pure S2 processor. Their selected values equal NVIDIA's defaults.
-        pose = Se3RelRetargeter(
+        # Keep upstream filtering/deadband behavior but leave both config-selected
+        # sensitivity-mode gains to the pure PIPER-X S2 processor.
+        pose = TrackingSafeSe3RelRetargeter(
             Se3RetargeterConfig(
                 input_device=source,
                 zero_out_xy_rotation=False,
@@ -117,28 +168,28 @@ def build_piper_x_bimanual_pipeline() -> OutputCombiner:
             ),
             name=f"{side}_controller_delta",
         )
-        state = ControllerStateRetargeter(source, name=f"{side}_controller_state")
-        connected[f"{side}_delta"] = pose.connect(
-            {source: transformed.output(source)}
+        state = ControllerStateRetargeter(
+            source,
+            sensitivity_control=sensitivity_control,
+            name=f"{side}_controller_state",
         )
-        connected[f"{side}_state"] = state.connect(
-            {source: transformed.output(source)}
-        )
+        connected[f"{side}_delta"] = pose.connect({source: transformed.output(source)})
+        connected[f"{side}_state"] = state.connect({source: transformed.output(source)})
     left_delta_names = [f"left_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]
-    right_delta_names = [
-        f"right_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")
-    ]
+    right_delta_names = [f"right_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]
     left_state_names = [
         "left_available",
         "left_grip_valid",
         "left_squeeze",
         "left_trigger",
+        "left_sensitivity_button",
     ]
     right_state_names = [
         "right_available",
         "right_grip_valid",
         "right_squeeze",
         "right_trigger",
+        "right_sensitivity_button",
     ]
     reorderer = TensorReorderer(
         input_config={
@@ -147,12 +198,7 @@ def build_piper_x_bimanual_pipeline() -> OutputCombiner:
             "right_delta": right_delta_names,
             "right_state": right_state_names,
         },
-        output_order=(
-            left_delta_names
-            + left_state_names
-            + right_delta_names
-            + right_state_names
-        ),
+        output_order=(left_delta_names + left_state_names + right_delta_names + right_state_names),
         name="piper_x_s2_action",
         input_types={name: "array" for name in connected},
     )
