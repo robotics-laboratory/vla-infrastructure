@@ -185,6 +185,39 @@ down with exit code zero in both XR runs. With no Quest connected, the XR
 session correctly remained inactive; physical stream stability is therefore
 not claimed.
 
+## Grasp-contact stabilization
+
+The clean pre-investigation state is recoverable at
+`checkpoint/robosyn-vr-demo-pre-grasp-shake-20260911`, commit `aa5d934`.
+The scripted probe held the arm fixed, placed the 40 mm / 35 g procedural cube
+between the left fingers, issued one constant zero-aperture command, and sampled
+180 settled physics ticks at 120 Hz. This excludes Quest trigger noise, IK,
+retargeting, and arm motion as causes.
+
+The imported USD already applies `NewtonMimicAPI` constraints from
+`gripper_joint1/2` to the geometry-free `gripper` aperture leader. The previous
+demo configuration additionally drove all three joints at 2000 stiffness,
+100 damping, and 10 N each. The three drives saturated against the cube and
+fought the contact/mimic constraint loop. Candidate B's upstream robot configs
+instead actuate the leader and set passive/mimic joints to zero stiffness and
+damping.
+
+| 120 Hz settled metric | previous demo | demo-only fix |
+|---|---:|---:|
+| leader joint peak-to-peak | 5.467 mm | 0.296 mm |
+| follower 1 peak-to-peak | 2.202 mm | 0.211 mm |
+| follower 2 peak-to-peak | 2.035 mm | 0.009 mm |
+| cube position peak-to-peak | 2.176 mm | 0.120 mm |
+| mean reported contact force | 19.582 N | 2.184 N |
+
+The demo-only fix drives only `gripper` at 400 stiffness, 40 damping, and a
+2 N effort limit; the two imported mimic followers remain passive. Cube
+geometry, collision mesh, friction, D0 aperture semantics, analog trigger
+mapping, and the production S1 robot configuration are unchanged. The 2 N
+candidate provides about 3.8x the 35 g cube's weight in available dynamic
+friction at the configured 0.6 coefficient, but still requires a physical
+Quest pick/move test before acceptance.
+
 ## Validation and regressions
 
 - Procedural scene, candidate home, contacts, table collision, task objects,
@@ -192,7 +225,8 @@ not claimed.
 - Test-asset profile: PASS; button/pen/beaker prims valid and reset smoke within
   `3.743 mm`.
 - Wrist HUD startup: PASS for both feeds using upstream zero-copy path.
-- Core tests: `72 passed, 9 skipped` (the skips are environment-conditioned).
+- Core plus pinned isaac-teleop tests after grasp stabilization: `72 passed,
+  11 skipped` (the skips are environment-conditioned).
 - Exact Candidate B processor/upstream tests: `22 passed`, including shared-Y
   mapping, held-button debounce, repeated NORMAL/PRECISE switches with zero
   switch-frame delta, X display mapping, B backdrop mapping/debounce, and no
@@ -210,6 +244,11 @@ not claimed.
   `/data/ebulochkin/cache/isaac-s2/runs/20260911T130749Z/result.json`.
 - Updated stock S1 regression: PASS, including both 110-frame camera sequences:
   `/data/ebulochkin/cache/isaac-s1/runs/20260911T130822Z/result.json`.
+- Post-grasp-fix standalone demo smoke: PASS; both articulations report one
+  400/40/2 N leader drive and zero-stiffness/damping mimic followers, scene
+  preflight passes, reset passes, both wrist cameras advance 60/60 frames, and
+  the unchanged S2 loop shuts down cleanly:
+  `/data/ebulochkin/cache/robosyn-vr-demo/runs/20260911T141639351652Z-dual_cube_to_matching_plates-hud-off/result.json`.
 - Tracking-loss recovery, clutch/rebase, analog gripper, and normal/precise
   sensitivity remain covered by the S2 processor suite. Exact controller-field
   tests cover Y, X, and B without changing the 22-value production S2 action.

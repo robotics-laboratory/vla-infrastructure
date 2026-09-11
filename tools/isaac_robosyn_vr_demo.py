@@ -750,6 +750,45 @@ def _spawn_asset_profile() -> tuple[list[Any], dict[str, str]]:
     }
 
 
+def _demo_robot_cfg(
+    robot_cfg_factory,
+    config: dict[str, Any],
+    prim_path: str,
+    position: tuple[float, float, float],
+    usd_path: str,
+    *,
+    home_per_arm: np.ndarray,
+) -> ArticulationCfg:
+    """Keep imported mimic followers passive in this experiment scene."""
+
+    cfg = robot_cfg_factory(
+        prim_path,
+        position,
+        usd_path,
+        home_per_arm=home_per_arm,
+        enable_self_collisions=True,
+        activate_contact_sensors=True,
+    )
+    gripper = config["demo_physics"]["gripper_contact"]
+    leader = gripper["leader_drive"]
+    follower = gripper["mimic_follower_drive"]
+    cfg.actuators["gripper_position_drives"] = ImplicitActuatorCfg(
+        joint_names_expr=[str(gripper["leader_joint"])],
+        effort_limit_sim=float(leader["effort_limit_n"]),
+        velocity_limit_sim=float(leader["velocity_limit_m_s"]),
+        stiffness=float(leader["stiffness_n_m"]),
+        damping=float(leader["damping_n_s_m"]),
+    )
+    cfg.actuators["gripper_mimic_followers"] = ImplicitActuatorCfg(
+        joint_names_expr=[str(gripper["mimic_follower_joint_expr"])],
+        effort_limit_sim=float(follower["effort_limit_n"]),
+        velocity_limit_sim=float(follower["velocity_limit_m_s"]),
+        stiffness=float(follower["stiffness_n_m"]),
+        damping=float(follower["damping_n_s_m"]),
+    )
+    return cfg
+
+
 def _physics_probe() -> RigidObject:
     return RigidObject(
         RigidObjectCfg(
@@ -841,23 +880,23 @@ def run_robosyn_vr_demo(
     home_right = np.asarray(homes["right"], dtype=np.float64)
     bases = config["scene"]["robot_bases_m"]
     left = Articulation(
-        robot_cfg_factory(
+        _demo_robot_cfg(
+            robot_cfg_factory,
+            config,
             "/World/LeftPiper",
             tuple(bases["left"]),
             converter.usd_path,
             home_per_arm=home_left,
-            enable_self_collisions=True,
-            activate_contact_sensors=True,
         )
     )
     right = Articulation(
-        robot_cfg_factory(
+        _demo_robot_cfg(
+            robot_cfg_factory,
+            config,
             "/World/RightPiper",
             tuple(bases["right"]),
             converter.usd_path,
             home_per_arm=home_right,
-            enable_self_collisions=True,
-            activate_contact_sensors=True,
         )
     )
     wrist_paths = tuple(

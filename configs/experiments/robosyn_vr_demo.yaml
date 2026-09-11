@@ -11,6 +11,24 @@ environment:
   isaaclab_teleop_version: 0.8.0
   cloudxr_runtime_version: 6.2.1
 
+demo_physics:
+  gripper_contact:
+    status: DEMO_ONLY_CONTACT_STABILITY_TUNING
+    canonical_geometry_change: none
+    leader_joint: gripper
+    leader_drive:
+      effort_limit_n: 2.0
+      velocity_limit_m_s: 3.0
+      stiffness_n_m: 400.0
+      damping_n_s_m: 40.0
+    mimic_follower_joint_expr: gripper_joint[1-2]
+    mimic_follower_drive:
+      effort_limit_n: 1.0
+      velocity_limit_m_s: 3.0
+      stiffness_n_m: 0.0
+      damping_n_s_m: 0.0
+    rationale: The imported USD already constrains both fingers with NewtonMimicAPI. Only the geometry-free aperture leader is driven; duplicate high-gain follower drives caused contact-loop saturation and visible grasp oscillation.
+
 scene:
   robot_bases_m:
     left: [0.233, 0.300, 0.825]

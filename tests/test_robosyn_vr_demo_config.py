@@ -13,6 +13,18 @@ def test_physical_retest_values_are_demo_only_and_geometry_is_unchanged() -> Non
         (ROOT / "configs/experiments/robosyn_vr_demo.yaml").read_text(encoding="utf-8")
     )
     assert config["status"] == "EXPERIMENTAL_TEST_ONLY_NOT_A_GATE"
+    gripper = config["demo_physics"]["gripper_contact"]
+    assert gripper["canonical_geometry_change"] == "none"
+    assert gripper["leader_joint"] == "gripper"
+    assert gripper["leader_drive"] == {
+        "effort_limit_n": 2.0,
+        "velocity_limit_m_s": 3.0,
+        "stiffness_n_m": 400.0,
+        "damping_n_s_m": 40.0,
+    }
+    assert gripper["mimic_follower_joint_expr"] == "gripper_joint[1-2]"
+    assert gripper["mimic_follower_drive"]["stiffness_n_m"] == 0.0
+    assert gripper["mimic_follower_drive"]["damping_n_s_m"] == 0.0
     assert config["scene"]["robot_bases_m"] == {
         "left": [0.233, 0.3, 0.825],
         "right": [0.233, -0.3, 0.825],
