@@ -138,6 +138,54 @@ class IsaacS2ProcessorTests(unittest.TestCase):
         np.testing.assert_array_equal(command.left.delta_pose, np.zeros(6))
         self.assertEqual(command.left.sensitivity_mode, "normal")
 
+    def test_demo_candidate_gains_and_shared_y_edges_switch_both_without_jump(self) -> None:
+        processor = BimanualS2TeleopProcessor(
+            S2ProcessorConfig(
+                normal_translation_scale=4.0,
+                normal_rotation_scale=4.0,
+                precise_translation_scale=1.0,
+                precise_rotation_scale=1.0,
+            )
+        )
+        processor.advance(_sample(), _sample())
+        motion = ControllerDeltaSample(
+            np.full(3, 0.01), np.full(3, 0.02), True, True, 0.0, 0.5, 0.0
+        )
+        command = processor.advance(motion, motion)
+        np.testing.assert_allclose(command.left.delta_pose, [0.04] * 3 + [0.08] * 3)
+        np.testing.assert_allclose(command.right.delta_pose, [0.04] * 3 + [0.08] * 3)
+
+        pressed = ControllerDeltaSample(
+            np.full(3, 0.01), np.full(3, 0.02), True, True, 0.0, 0.5, 1.0
+        )
+        command = processor.advance(pressed, pressed)
+        self.assertEqual(command.left.sensitivity_mode, "precise")
+        self.assertEqual(command.right.sensitivity_mode, "precise")
+        np.testing.assert_array_equal(command.left.delta_pose, np.zeros(6))
+        np.testing.assert_array_equal(command.right.delta_pose, np.zeros(6))
+
+        # A held physical button is a state, not a stream of toggle commands.
+        for _ in range(5):
+            command = processor.advance(pressed, pressed)
+            self.assertEqual(command.left.sensitivity_mode, "precise")
+            self.assertEqual(command.right.sensitivity_mode, "precise")
+            np.testing.assert_allclose(command.left.delta_pose, [0.01] * 3 + [0.02] * 3)
+            np.testing.assert_allclose(command.right.delta_pose, [0.01] * 3 + [0.02] * 3)
+
+        for _ in range(3):
+            processor.advance(motion, motion)
+            command = processor.advance(pressed, pressed)
+            self.assertEqual(command.left.sensitivity_mode, "normal")
+            self.assertEqual(command.right.sensitivity_mode, "normal")
+            np.testing.assert_array_equal(command.left.delta_pose, np.zeros(6))
+            np.testing.assert_array_equal(command.right.delta_pose, np.zeros(6))
+            processor.advance(motion, motion)
+            command = processor.advance(pressed, pressed)
+            self.assertEqual(command.left.sensitivity_mode, "precise")
+            self.assertEqual(command.right.sensitivity_mode, "precise")
+            np.testing.assert_array_equal(command.left.delta_pose, np.zeros(6))
+            np.testing.assert_array_equal(command.right.delta_pose, np.zeros(6))
+
     def test_clutch_freezes_and_release_rebases_independently(self) -> None:
         moving = ControllerDeltaSample(np.ones(3), np.ones(3), True, True, 1.0, 0.0, 0.0)
         command = self.processor.advance(moving, _sample())

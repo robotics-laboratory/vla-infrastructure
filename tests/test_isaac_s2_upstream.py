@@ -32,6 +32,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
                 ControllerStateRetargeter,
                 TrackingSafeSe3RelRetargeter,
             )
+            from tools.isaac_robosyn_vr_demo import DemoRuntime
         except ModuleNotFoundError as exc:
             raise unittest.SkipTest(f"Candidate B teleop stack unavailable: {exc}") from exc
 
@@ -41,6 +42,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         cls.ControllerInputIndex = ControllerInputIndex
         cls.ControllerButtonRetargeter = ControllerButtonRetargeter
         cls.ControllerStateRetargeter = ControllerStateRetargeter
+        cls.DemoRuntime = DemoRuntime
         cls.TrackingSafeSe3RelRetargeter = TrackingSafeSe3RelRetargeter
 
     def _controller(
@@ -53,9 +55,12 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         squeeze=0.0,
         trigger=0.0,
         sensitivity=0.0,
+        primary=0.0,
         secondary=0.0,
+        side=None,
     ):
-        group = self.OptionalTensorGroup(retargeter.input_spec()[self.ControllersSource.LEFT])
+        side = side or self.ControllersSource.LEFT
+        group = self.OptionalTensorGroup(retargeter.input_spec()[side])
         group[self.ControllerInputIndex.GRIP_IS_VALID] = valid
         group[self.ControllerInputIndex.GRIP_POSITION] = np.asarray(position, dtype=np.float32)
         group[self.ControllerInputIndex.GRIP_ORIENTATION] = np.asarray(
@@ -65,6 +70,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         group[self.ControllerInputIndex.SQUEEZE_VALUE] = squeeze
         group[self.ControllerInputIndex.TRIGGER_VALUE] = trigger
         group[self.ControllerInputIndex.THUMBSTICK_CLICK] = sensitivity
+        group[self.ControllerInputIndex.PRIMARY_CLICK] = primary
         group[self.ControllerInputIndex.SECONDARY_CLICK] = secondary
         return group
 
@@ -151,10 +157,36 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         self.assertEqual(state[0], 1.0)
         self.assertEqual(state[1], 0.0)
 
-    def test_demo_display_output_uses_free_left_secondary_button(self) -> None:
+    def test_demo_sensitivity_uses_left_y_for_both_arm_state_outputs(self) -> None:
+        left = self.ControllersSource.LEFT
+        right = self.ControllersSource.RIGHT
+        left_state = self.ControllerStateRetargeter(
+            left, sensitivity_control="left_secondary_click", name="left_demo_state"
+        )
+        left_controller = self._controller(
+            left_state, [0.1, 0.2, 0.3], secondary=1.0, side=left
+        )
+        state = np.asarray(left_state({left: left_controller})["state"][0])
+        self.assertEqual(state[4], 1.0)
+
+        right_state = self.ControllerStateRetargeter(
+            right, sensitivity_control="left_secondary_click", name="right_demo_state"
+        )
+        right_controller = self._controller(
+            right_state, [0.3, 0.2, 0.1], trigger=0.75, side=right
+        )
+        left_controller = self._controller(
+            right_state, [0.1, 0.2, 0.3], secondary=1.0, side=left
+        )
+        state = np.asarray(
+            right_state({left: left_controller, right: right_controller})["state"][0]
+        )
+        np.testing.assert_allclose(state, [1.0, 1.0, 0.0, 0.75, 1.0])
+
+    def test_demo_display_output_uses_free_left_primary_x_button(self) -> None:
         side = self.ControllersSource.LEFT
         retargeter = self.ControllerButtonRetargeter(
-            side, control="secondary_click", name="display_test"
+            side, control="primary_click", name="display_test"
         )
         controller = self._controller(
             retargeter,
@@ -162,10 +194,81 @@ class IsaacS2UpstreamTests(unittest.TestCase):
             squeeze=0.25,
             trigger=0.75,
             sensitivity=1.0,
-            secondary=1.0,
+            primary=1.0,
         )
         value = np.asarray(retargeter({side: controller})["button"][0])
         np.testing.assert_array_equal(value, [1.0])
+
+    def test_demo_display_edges_hide_panels_without_closing_rgb_source(self) -> None:
+        class Container:
+            def __init__(self):
+                self.show_count = 0
+                self.hide_count = 0
+
+            def show(self):
+                self.show_count += 1
+
+            def hide(self):
+                self.hide_count += 1
+
+        class Feed:
+            def __init__(self):
+                self.panel = type("Panel", (), {"_container": Container()})()
+
+        class Session:
+            def __init__(self):
+                self._manager = None
+                self.bind_count = 0
+                self.refresh_count = 0
+                self.close_count = 0
+
+            def bind(self, _env):
+                self.bind_count += 1
+                self._manager = type("Manager", (), {"_feeds": [Feed(), Feed()]})()
+
+            def refresh(self):
+                self.refresh_count += 1
+
+            def close(self):
+                self.close_count += 1
+
+        runtime = self.DemoRuntime.__new__(self.DemoRuntime)
+        runtime.config = {
+            "vr_camera_feeds": {"quest_button": "X"},
+        }
+        runtime.display_control = "left_primary_click"
+        runtime.feed_session_prepared_enabled = True
+        runtime._feed_session = Session()
+        runtime._env = object()
+        runtime._display_visible = False
+        runtime._feed_bound = False
+        runtime._feed_bound_ever = False
+        runtime._button_pressed = False
+        runtime._toggle_count = 0
+
+        runtime.consume_display_button(1.0)
+        feeds = runtime._feed_session._manager._feeds
+        self.assertTrue(runtime._display_visible)
+        self.assertEqual(runtime._feed_session.bind_count, 1)
+        self.assertEqual(runtime._feed_session.refresh_count, 1)
+        self.assertTrue(all(feed.panel._container.show_count == 1 for feed in feeds))
+
+        runtime.consume_display_button(1.0)
+        self.assertEqual(runtime._toggle_count, 1)
+        runtime.consume_display_button(0.0)
+        runtime.consume_display_button(1.0)
+        self.assertFalse(runtime._display_visible)
+        self.assertEqual(runtime._feed_session.close_count, 0)
+        self.assertTrue(all(feed.panel._container.hide_count == 1 for feed in feeds))
+
+        runtime.consume_display_button(0.0)
+        runtime.consume_display_button(1.0)
+        self.assertTrue(runtime._display_visible)
+        self.assertEqual(runtime._feed_session.bind_count, 1)
+        self.assertTrue(all(feed.panel._container.show_count == 2 for feed in feeds))
+
+        runtime.close()
+        self.assertEqual(runtime._feed_session.close_count, 1)
 
 
 if __name__ == "__main__":

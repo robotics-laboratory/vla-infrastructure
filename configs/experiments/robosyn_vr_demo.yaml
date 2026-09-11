@@ -73,18 +73,31 @@ cameras:
     canonical_d0_input: false
 
 xr_presentation:
-  anchor_pos_m: [-0.05, 0.0, 1.20]
+  anchor_pos_m: [-0.05, 0.0, -0.25]
   anchor_rot_xyzw: [0.0, 0.0, -0.7071067811865475, 0.7071067811865476]
   near_plane_m: 0.10
   scale: 1.0
-  rationale: The static anchor places the nominal viewer just behind the table; -90 degree world yaw maps OpenXR forward to scene +X. Physical comfort remains a demo check.
+  rationale: Physical Quest evidence showed +1.20 m placed the workspace far below the viewer. The demo-only anchor Z is lowered to -0.25 m, which raises the unchanged table/robots in XR; -90 degree world yaw still maps OpenXR forward to scene +X.
+
+teleop_tuning:
+  sensitivity:
+    initial_mode: normal
+    toggle_control: left_secondary_click
+    quest_button: Y
+    toggle_threshold: 0.5
+    scope: both arms receive the same edge-triggered left Y value
+    modes:
+      normal: {translation_scale: 4.0, rotation_scale: 4.0}
+      precise: {translation_scale: 1.0, rotation_scale: 1.0}
+    switch_behavior: One rising edge toggles both per-arm modes and emits zero Cartesian delta on the switching frame; holding does not retrigger.
+    status: DEMO_ONLY_CANDIDATE_REQUIRES_PHYSICAL_RETEST
 
 vr_camera_feeds:
   implementation: upstream isaaclab_teleop XrCameraFeedSession and Kit SceneUI presenter
   initial_visibility: false
-  toggle_control: left_secondary_click
-  quest_button: Y
-  semantics: Display resources only; both wrist cameras continue acquiring at 30 Hz while panels are hidden.
+  toggle_control: left_primary_click
+  quest_button: X
+  semantics: Display-only UiContainer show/hide after one upstream binding; both wrist cameras and the feed acquisition continue at 30 Hz while panels are hidden.
   performance_mode: not_implemented
   layout:
     mode: horizontal

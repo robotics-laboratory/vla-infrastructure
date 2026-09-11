@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
@@ -127,6 +128,8 @@ class DemoRuntime:
         self.validation: dict[str, Any] = {}
         self._env = None
         self._display_visible = False
+        self._feed_bound = False
+        self._feed_bound_ever = False
         self._button_pressed = False
         self._toggle_count = 0
         self._runtime_frames: dict[str, int] = {}
@@ -170,6 +173,10 @@ class DemoRuntime:
     def xr_presentation(self) -> dict[str, Any]:
         return self.config["xr_presentation"]
 
+    @property
+    def sensitivity(self) -> dict[str, Any]:
+        return self.config["teleop_tuning"]["sensitivity"]
+
     def reset_scene(self) -> None:
         for asset in self.dynamic_assets:
             asset.write_root_pose_to_sim_index(root_pose=asset.data.default_root_pose.torch.clone())
@@ -188,6 +195,11 @@ class DemoRuntime:
             for sensors in self.contact_sensors.values():
                 for sensor in sensors:
                     sensor.update(dt, force_recompute=True)
+        # Viewer-start panels may be shown again by upstream after an XR
+        # reconnect. Reassert display-only OFF without touching capture or the
+        # Replicator binding.
+        if self._feed_bound and not self._display_visible:
+            self._set_upstream_panel_visibility(False)
 
     def open(self, env) -> None:
         self._env = env
@@ -197,20 +209,58 @@ class DemoRuntime:
             self._set_display(True)
 
     def close(self) -> None:
-        self._feed_session.close()
+        if self._feed_bound:
+            self._feed_session.close()
+            self._feed_bound = False
         self._env = None
 
     def after_reset(self) -> None:
         self._button_pressed = False
-        if self._display_visible:
+        if self._feed_bound:
             self._feed_session.refresh()
+            self._set_upstream_panel_visibility(self._display_visible)
 
-    def consume_display_button(self, value: float) -> None:
+    def consume_display_button(
+        self, value: float, *, event_origin: str = "controller_pipeline"
+    ) -> None:
         pressed = bool(value > 0.5)
         if pressed and not self._button_pressed:
             self._set_display(not self._display_visible)
             self._toggle_count += 1
+            print(
+                json.dumps(
+                    {
+                        "capture_continues": True,
+                        "control": self.display_control,
+                        "display_visible": self._display_visible,
+                        "event": "demo_vr_camera_feed_visibility_changed",
+                        "event_origin": event_origin,
+                        "feed_bound": self._feed_bound,
+                        "quest_button": self.config["vr_camera_feeds"]["quest_button"],
+                    },
+                    sort_keys=True,
+                ),
+                flush=True,
+            )
         self._button_pressed = pressed
+
+    def _set_upstream_panel_visibility(self, visible: bool) -> None:
+        """Show/hide pinned upstream SceneUI panels without closing their RGB source."""
+
+        manager = self._feed_session._manager
+        if manager is None:
+            raise RuntimeError("upstream XR camera feed manager is not bound")
+        feeds = tuple(manager._feeds)
+        if len(feeds) != 2:
+            raise RuntimeError(f"expected two upstream wrist feed panels, got {len(feeds)}")
+        for feed in feeds:
+            container = feed.panel._container
+            if container is None:
+                raise RuntimeError("upstream XR camera feed panel has no UiContainer")
+            if visible:
+                container.show()
+            else:
+                container.hide()
 
     def _set_display(self, visible: bool) -> None:
         if visible == self._display_visible:
@@ -222,10 +272,18 @@ class DemoRuntime:
                 raise RuntimeError(
                     "upstream XR CameraFeedSession is unavailable in this Kit experience"
                 )
-            self._feed_session.bind(self._env)
-            self._feed_session.refresh()
+            if not self._feed_bound:
+                self._feed_session.bind(self._env)
+                self._feed_bound = True
+                self._feed_bound_ever = True
+                self._feed_session.refresh()
+            self._set_upstream_panel_visibility(True)
         else:
-            self._feed_session.close()
+            # Closing here detaches the pinned Replicator RGB annotator shared
+            # with Isaac Lab Camera and makes the next Camera.update() fail.
+            # UiContainer visibility is the upstream display-only mechanism;
+            # final resource teardown remains in close().
+            self._set_upstream_panel_visibility(False)
         self._display_visible = visible
         print(f"[DEMO] wrist camera display {'ON' if visible else 'OFF'}", flush=True)
 
@@ -258,8 +316,9 @@ class DemoRuntime:
                 "final": self._display_visible,
                 "toggle_count": self._toggle_count,
                 "control": self.display_control,
-                "quest_button": "Y",
+                "quest_button": self.config["vr_camera_feeds"]["quest_button"],
                 "capture_continues_when_hidden": True,
+                "feed_bound_ever": self._feed_bound_ever,
                 "upstream_session_prepared_enabled": self.feed_session_prepared_enabled,
             },
             "optional_demo_performance_mode": "not_implemented",

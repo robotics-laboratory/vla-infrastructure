@@ -199,7 +199,11 @@ def run_s2(env, args_cli, simulation_app) -> int:
     if mismatches:
         raise RuntimeError(f"S2 upstream version mismatch: {mismatches}")
 
-    sensitivity = config["processor"]["sensitivity"]
+    sensitivity = (
+        experiment.sensitivity
+        if experiment is not None
+        else config["processor"]["sensitivity"]
+    )
     gripper = config["processor"]["gripper"]
     processor_cfg = S2ProcessorConfig(
         normal_translation_scale=float(sensitivity["modes"]["normal"]["translation_scale"]),
@@ -299,9 +303,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     before_pose = ik.tcp_poses_base()
 
                 session_started_ever |= device.session_running
+                display_button_value = 0.0
                 if action is None:
-                    if experiment is not None:
-                        experiment.consume_display_button(0.0)
                     command = processor.session_inactive()
                 else:
                     if tuple(action.shape) != (pipeline_action_dim,):
@@ -311,14 +314,51 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     action_frames += 1
                     action_numpy = action.detach().cpu().numpy()
                     if experiment is not None:
-                        experiment.consume_display_button(
-                            float(action_numpy[DEMO_DISPLAY_BUTTON_INDEX])
+                        display_button_value = float(
+                            action_numpy[DEMO_DISPLAY_BUTTON_INDEX]
                         )
                     left, right = unpack_pipeline_action(action_numpy[:PIPELINE_ACTION_DIM])
                     command = processor.advance(
                         left,
                         right,
                         session_active=events.is_active is not False,
+                    )
+                if experiment is not None:
+                    smoke_display_edge = bool(
+                        args_cli.demo_display_toggle_smoke
+                        and control_steps in (10, 20, 40, 50)
+                    )
+                    experiment.consume_display_button(
+                        1.0 if smoke_display_edge else display_button_value,
+                        event_origin=(
+                            "bounded_xr_smoke_after_controller_mapping"
+                            if args_cli.demo_display_toggle_smoke
+                            else "controller_pipeline"
+                        ),
+                    )
+                mode_changes = {
+                    side: arm.sensitivity_mode
+                    for side, arm in zip(
+                        ("left", "right"),
+                        (command.left, command.right),
+                        strict=True,
+                    )
+                    if arm.transition.startswith("sensitivity_switched_")
+                }
+                if mode_changes:
+                    print(
+                        json.dumps(
+                            {
+                                "control": sensitivity["toggle_control"],
+                                "event": "sensitivity_mode_changed",
+                                "modes": mode_changes,
+                                "session_running": device.session_running,
+                                "step": control_steps,
+                                "zero_delta_on_switch": True,
+                            },
+                            sort_keys=True,
+                        ),
+                        flush=True,
                     )
                 saturated_frames += int(ik.apply(command))
                 env._advance(4)
@@ -408,6 +448,11 @@ def run_s2(env, args_cli, simulation_app) -> int:
             "revision": PROCESSOR_REVISION,
             "sensitivity": {
                 "toggle_control": sensitivity["toggle_control"],
+                **(
+                    {"quest_button": sensitivity["quest_button"]}
+                    if "quest_button" in sensitivity
+                    else {}
+                ),
                 "scope": sensitivity["scope"],
                 "initial_mode": processor_cfg.initial_sensitivity_mode,
                 "normal": {

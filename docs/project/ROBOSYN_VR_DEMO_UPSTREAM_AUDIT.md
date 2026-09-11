@@ -39,9 +39,11 @@ reused without claiming acceptance.
 - Expose the two existing wrist-camera viewpoints as distinct named upstream
   Camera instances because upstream PiP selects batch element zero of a named
   camera; preserve the existing two-image D0 edge through a demo-only facade.
-- Append one demo-only controller field for a rising-edge display toggle.
-- Bind/close the upstream feed session and collect demo-only reset, collision,
-  camera-rate and performance diagnostics.
+- Route the free left secondary/Y field to both existing sensitivity inputs and
+  append the free left primary/X field for a rising-edge display toggle.
+- Bind the upstream feed session once, show/hide its existing SceneUI
+  `UiContainer` without detaching the shared RGB annotator, close only at final
+  shutdown, and collect demo-only diagnostics.
 - Import a small number of low-repair RoboSyn test assets and quarantine the
   rest rather than building asset infrastructure.
 
@@ -49,9 +51,10 @@ reused without claiming acceptance.
 
 - One experiment YAML plus one test-asset manifest.
 - One concrete demo scene composer/camera facade and one launcher.
-- One optional one-float `left_secondary_click` output appended after the
+- One optional one-float `left_primary_click` output appended after the
   unchanged 22-value S2 action. The S2 processor receives exactly its original
-  first 22 values.
+  first 22 values; the demo config routes `left_secondary_click` into both
+  existing per-arm sensitivity slots and selects only demo gains.
 - No new policy processor, task backend, recorder, IK implementation, camera
   protocol, or D0 field.
 

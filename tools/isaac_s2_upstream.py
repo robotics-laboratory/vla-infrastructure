@@ -103,17 +103,28 @@ class ControllerStateRetargeter(BaseRetargeter):
     def __init__(self, side: str, sensitivity_control: str, name: str) -> None:
         if side not in (ControllersSource.LEFT, ControllersSource.RIGHT):
             raise ValueError(f"unsupported controller source: {side}")
-        sensitivity_indices = {
-            "thumbstick_click": ControllerInputIndex.THUMBSTICK_CLICK,
+        sensitivity_sources = {
+            "thumbstick_click": (side, ControllerInputIndex.THUMBSTICK_CLICK),
+            "left_secondary_click": (
+                ControllersSource.LEFT,
+                ControllerInputIndex.SECONDARY_CLICK,
+            ),
         }
-        if sensitivity_control not in sensitivity_indices:
+        if sensitivity_control not in sensitivity_sources:
             raise ValueError(f"unsupported sensitivity control: {sensitivity_control}")
         self._side = side
-        self._sensitivity_index = sensitivity_indices[sensitivity_control]
+        self._sensitivity_side, self._sensitivity_index = sensitivity_sources[
+            sensitivity_control
+        ]
         super().__init__(name=name)
 
     def input_spec(self) -> RetargeterIOType:
-        return {self._side: OptionalType(ControllerInput())}
+        sides = (
+            (self._side,)
+            if self._side == self._sensitivity_side
+            else (self._side, self._sensitivity_side)
+        )
+        return {side: OptionalType(ControllerInput()) for side in sides}
 
     def output_spec(self) -> RetargeterIOType:
         return {
@@ -133,6 +144,7 @@ class ControllerStateRetargeter(BaseRetargeter):
     def _compute_fn(self, inputs: RetargeterIO, outputs: RetargeterIO, context: Any) -> None:
         del context
         controller = inputs[self._side]
+        sensitivity_controller = inputs[self._sensitivity_side]
         state = np.zeros(5, dtype=np.float32)
         if not controller.is_none:
             state[:] = (
@@ -140,7 +152,11 @@ class ControllerStateRetargeter(BaseRetargeter):
                 float(_controller_grip_pose_is_usable(controller)),
                 float(controller[ControllerInputIndex.SQUEEZE_VALUE]),
                 float(controller[ControllerInputIndex.TRIGGER_VALUE]),
-                float(controller[self._sensitivity_index]),
+                (
+                    0.0
+                    if sensitivity_controller.is_none
+                    else float(sensitivity_controller[self._sensitivity_index])
+                ),
             )
         outputs["state"][0] = state
 
@@ -151,7 +167,10 @@ class ControllerButtonRetargeter(BaseRetargeter):
     def __init__(self, side: str, control: str, name: str) -> None:
         if side not in (ControllersSource.LEFT, ControllersSource.RIGHT):
             raise ValueError(f"unsupported controller source: {side}")
-        controls = {"secondary_click": ControllerInputIndex.SECONDARY_CLICK}
+        controls = {
+            "primary_click": ControllerInputIndex.PRIMARY_CLICK,
+            "secondary_click": ControllerInputIndex.SECONDARY_CLICK,
+        }
         if control not in controls:
             raise ValueError(f"unsupported controller button: {control}")
         self._side = side
@@ -212,17 +231,27 @@ def build_piper_x_bimanual_pipeline(
             name=f"{side}_controller_state",
         )
         connected[f"{side}_delta"] = pose.connect({source: transformed.output(source)})
-        connected[f"{side}_state"] = state.connect({source: transformed.output(source)})
+        connected[f"{side}_state"] = state.connect(
+            {
+                input_side: transformed.output(input_side)
+                for input_side in state.input_spec()
+            }
+        )
     if display_control is not None:
-        if display_control != "left_secondary_click":
+        display_controls = {
+            "left_primary_click": (ControllersSource.LEFT, "primary_click"),
+            "left_secondary_click": (ControllersSource.LEFT, "secondary_click"),
+        }
+        if display_control not in display_controls:
             raise ValueError(f"unsupported display control: {display_control}")
+        display_side, display_button = display_controls[display_control]
         display = ControllerButtonRetargeter(
-            ControllersSource.LEFT,
-            control="secondary_click",
+            display_side,
+            control=display_button,
             name="robosyn_demo_display_button",
         )
         connected["demo_display"] = display.connect(
-            {ControllersSource.LEFT: transformed.output(ControllersSource.LEFT)}
+            {display_side: transformed.output(display_side)}
         )
     left_delta_names = [f"left_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]
     right_delta_names = [f"right_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]

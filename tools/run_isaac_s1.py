@@ -83,6 +83,11 @@ parser.add_argument(
     type=Path,
     help="Optional PNG destination for the non-D0 demo scene camera.",
 )
+parser.add_argument(
+    "--demo-display-toggle-smoke",
+    action="store_true",
+    help=argparse.SUPPRESS,
+)
 AppLauncher.add_app_launcher_args(parser)
 parser.set_defaults(headless=True, enable_cameras=True)
 args_cli = parser.parse_args()
