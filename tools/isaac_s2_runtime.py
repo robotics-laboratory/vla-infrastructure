@@ -24,6 +24,7 @@ from isaac_s2_processor import (
     unpack_pipeline_action,
 )
 from isaac_s2_upstream import (
+    DEMO_DISPLAY_BUTTON_INDEX,
     PIPELINE_ACTION_DIM,
     build_piper_x_bimanual_pipeline,
     create_piper_x_teleop_device,
@@ -173,6 +174,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     from isaaclab_teleop.xr_cfg import XrCfg  # type: ignore[import-not-found]
 
     config = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+    experiment = getattr(env, "experiment_runtime", None)
     expected = config["environment"]
     actual_versions = {
         "isaac_sim": importlib.metadata.version("isaacsim"),
@@ -218,19 +220,23 @@ def run_s2(env, args_cli, simulation_app) -> int:
     cloudxr_env = (
         CLOUDXR_JS_ENV if args_cli.s2_cloudxr_profile == "cloudxrjs" else CLOUDXR_STANDALONE_ENV
     )
-    presentation = config["xr_presentation"]
+    presentation = (
+        experiment.xr_presentation if experiment is not None else config["xr_presentation"]
+    )
     anchor_position = tuple(float(value) for value in presentation["anchor_pos_m"])
     anchor_rotation = tuple(float(value) for value in presentation["anchor_rot_xyzw"])
+    pipeline_kwargs = {"sensitivity_control": str(sensitivity["toggle_control"])}
+    pipeline_action_dim = PIPELINE_ACTION_DIM
+    if experiment is not None:
+        pipeline_kwargs["display_control"] = experiment.display_control
+        pipeline_action_dim = experiment.pipeline_action_dim
     teleop_cfg = IsaacTeleopCfg(
         xr_cfg=XrCfg(
             anchor_pos=anchor_position,
             anchor_rot=anchor_rotation,
             near_plane=float(presentation["near_plane_m"]),
         ),
-        pipeline_builder=partial(
-            build_piper_x_bimanual_pipeline,
-            sensitivity_control=str(sensitivity["toggle_control"]),
-        ),
+        pipeline_builder=partial(build_piper_x_bimanual_pipeline, **pipeline_kwargs),
         sim_device=env.sim.device,
         teleoperation_active_default=True,
     )
@@ -246,6 +252,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     ik.reset()
     started = time.perf_counter()
     gpu_start = _gpu_observation()
+    gpu_samples = [gpu_start]
     previous_camera_indices: np.ndarray | None = None
     camera_valid_frames = 0
     camera_advanced_frames = 0
@@ -266,87 +273,105 @@ def run_s2(env, args_cli, simulation_app) -> int:
         f"kit_xr_bridge={bool(args_cli.xr)}",
         flush=True,
     )
-    with device:
-        for step in range(1, args_cli.s2_max_control_steps + 1):
-            if not simulation_app.is_running():
-                break
-            control_steps = step
-            before_pose = ik.tcp_poses_base()
-            action = device.advance()
-            events = poll_control_events(device)
-            host_reset = args_cli.s2_reset_step > 0 and control_steps == args_cli.s2_reset_step
-            if events.should_reset or host_reset:
-                env.reset(0)
-                processor.reset()
-                ik.reset()
-                # Camera frame indices are local to a reset epoch. Comparing the
-                # first post-reset index with the prior epoch would report a
-                # false stale frame even when both RGB observations are valid.
-                previous_camera_indices = None
-                device.reset(pause=False)
+    try:
+        with device:
+            if experiment is not None:
+                experiment.open(env)
+            for step in range(1, args_cli.s2_max_control_steps + 1):
+                if not simulation_app.is_running():
+                    break
+                control_steps = step
                 before_pose = ik.tcp_poses_base()
+                action = device.advance()
+                events = poll_control_events(device)
+                host_reset = args_cli.s2_reset_step > 0 and control_steps == args_cli.s2_reset_step
+                if events.should_reset or host_reset:
+                    env.reset(0)
+                    processor.reset()
+                    ik.reset()
+                    if experiment is not None:
+                        experiment.after_reset()
+                    # Camera frame indices are local to a reset epoch. Comparing the
+                    # first post-reset index with the prior epoch would report a
+                    # false stale frame even when both RGB observations are valid.
+                    previous_camera_indices = None
+                    device.reset(pause=False)
+                    before_pose = ik.tcp_poses_base()
 
-            session_started_ever |= device.session_running
-            if action is None:
-                command = processor.session_inactive()
-            else:
-                if tuple(action.shape) != (PIPELINE_ACTION_DIM,):
-                    raise RuntimeError(
-                        f"unexpected S2 pipeline action shape: {tuple(action.shape)}"
+                session_started_ever |= device.session_running
+                if action is None:
+                    if experiment is not None:
+                        experiment.consume_display_button(0.0)
+                    command = processor.session_inactive()
+                else:
+                    if tuple(action.shape) != (pipeline_action_dim,):
+                        raise RuntimeError(
+                            f"unexpected S2 pipeline action shape: {tuple(action.shape)}"
+                        )
+                    action_frames += 1
+                    action_numpy = action.detach().cpu().numpy()
+                    if experiment is not None:
+                        experiment.consume_display_button(
+                            float(action_numpy[DEMO_DISPLAY_BUTTON_INDEX])
+                        )
+                    left, right = unpack_pipeline_action(action_numpy[:PIPELINE_ACTION_DIM])
+                    command = processor.advance(
+                        left,
+                        right,
+                        session_active=events.is_active is not False,
                     )
-                action_frames += 1
-                left, right = unpack_pipeline_action(action.detach().cpu().numpy())
-                command = processor.advance(
-                    left,
-                    right,
-                    session_active=events.is_active is not False,
-                )
-            saturated_frames += int(ik.apply(command))
-            env._advance(4)
-            after_pose = ik.tcp_poses_base()
+                saturated_frames += int(ik.apply(command))
+                env._advance(4)
+                after_pose = ik.tcp_poses_base()
 
-            for side, arm, before, after in zip(
-                ("left", "right"),
-                (command.left, command.right),
-                before_pose,
-                after_pose,
-                strict=True,
-            ):
-                tracking_valid_frames[side] += int(arm.tracking_valid)
-                sensitivity_mode_frames[side][arm.sensitivity_mode] += 1
-                transition_counts[f"{side}:{arm.transition}"] = (
-                    transition_counts.get(f"{side}:{arm.transition}", 0) + 1
-                )
-                if arm.rebased or arm.clutch_active:
-                    maximum_rebase_motion_m[side] = max(
-                        maximum_rebase_motion_m[side],
-                        float(np.linalg.norm(after[:3] - before[:3])),
+                for side, arm, before, after in zip(
+                    ("left", "right"),
+                    (command.left, command.right),
+                    before_pose,
+                    after_pose,
+                    strict=True,
+                ):
+                    tracking_valid_frames[side] += int(arm.tracking_valid)
+                    sensitivity_mode_frames[side][arm.sensitivity_mode] += 1
+                    transition_counts[f"{side}:{arm.transition}"] = (
+                        transition_counts.get(f"{side}:{arm.transition}", 0) + 1
                     )
+                    if arm.rebased or arm.clutch_active:
+                        maximum_rebase_motion_m[side] = max(
+                            maximum_rebase_motion_m[side],
+                            float(np.linalg.norm(after[:3] - before[:3])),
+                        )
 
-            camera = _camera_sample(env, previous_camera_indices)
-            previous_camera_indices = camera.pop("frame_indices")
-            camera_valid_frames += int(camera["valid"])
-            camera_advanced_frames += int(camera["strictly_advanced"])
-            if control_steps % 30 == 0:
-                print(
-                    json.dumps(
-                        {
-                            "event": "s2_status",
-                            "step": control_steps,
-                            "session_running": device.session_running,
-                            "left": command.left.transition,
-                            "right": command.right.transition,
-                            "left_mode": command.left.sensitivity_mode,
-                            "right_mode": command.right.sensitivity_mode,
-                            "camera_valid": camera["valid"],
-                        },
-                        sort_keys=True,
-                    ),
-                    flush=True,
-                )
+                camera = _camera_sample(env, previous_camera_indices)
+                previous_camera_indices = camera.pop("frame_indices")
+                camera_valid_frames += int(camera["valid"])
+                camera_advanced_frames += int(camera["strictly_advanced"])
+                if experiment is not None and control_steps % 15 == 0:
+                    gpu_samples.append(_gpu_observation())
+                if control_steps % 30 == 0:
+                    print(
+                        json.dumps(
+                            {
+                                "event": "s2_status",
+                                "step": control_steps,
+                                "session_running": device.session_running,
+                                "left": command.left.transition,
+                                "right": command.right.transition,
+                                "left_mode": command.left.sensitivity_mode,
+                                "right_mode": command.right.sensitivity_mode,
+                                "camera_valid": camera["valid"],
+                            },
+                            sort_keys=True,
+                        ),
+                        flush=True,
+                    )
+    finally:
+        if experiment is not None:
+            experiment.close()
 
     elapsed = time.perf_counter() - started
     gpu_end = _gpu_observation()
+    gpu_samples.append(gpu_end)
     session_requirement_met = session_started_ever or not args_cli.s2_require_session
     tracking_requirement_met = (
         all(count > 0 for count in tracking_valid_frames.values())
@@ -360,8 +385,14 @@ def run_s2(env, args_cli, simulation_app) -> int:
         and tracking_requirement_met
     )
     report = {
-        "gate": "S2",
-        "status": "runtime_smoke_passed_physical_human_gate_required" if passed else "failed",
+        "gate": "NONE_EXPERIMENTAL" if experiment is not None else "S2",
+        "status": (
+            "experimental_runtime_smoke_passed_physical_demo_required"
+            if experiment is not None and passed
+            else "runtime_smoke_passed_physical_human_gate_required"
+            if passed
+            else "failed"
+        ),
         "environment": {
             **actual_versions,
             "python": platform.python_version(),
@@ -405,6 +436,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
             "anchor_rot_xyzw": anchor_rotation,
             "near_plane_m": float(presentation["near_plane_m"]),
             "authoritative_scene_geometry_changed": False,
+            **({"experimental_scene_geometry_applied": True} if experiment is not None else {}),
         },
         "session": {
             "single_controller_source": True,
@@ -434,6 +466,11 @@ def run_s2(env, args_cli, simulation_app) -> int:
         "physical_human_gate": "required_not_implied_by_runtime_smoke",
         "passed": passed,
     }
+    if experiment is not None:
+        report["gpu"]["samples"] = gpu_samples
+        report["experiment"] = experiment.performance_report(elapsed, camera_advanced_frames)
+        report["canonical_d0_changed"] = False
+        report["production_gate_status_changed"] = False
     if args_cli.report is not None:
         args_cli.report.write_text(
             json.dumps(jsonable(report), indent=2, sort_keys=True) + "\n",

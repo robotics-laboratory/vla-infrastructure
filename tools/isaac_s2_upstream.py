@@ -51,6 +51,8 @@ from isaaclab_teleop.xr_anchor_manager import XrAnchorManager  # type: ignore[im
 
 
 PIPELINE_ACTION_DIM = 22
+DEMO_PIPELINE_ACTION_DIM = 23
+DEMO_DISPLAY_BUTTON_INDEX = 22
 
 
 def _controller_grip_pose_is_usable(controller: Any) -> bool:
@@ -143,10 +145,46 @@ class ControllerStateRetargeter(BaseRetargeter):
         outputs["state"][0] = state
 
 
+class ControllerButtonRetargeter(BaseRetargeter):
+    """Expose one explicitly selected controller button for an experiment."""
+
+    def __init__(self, side: str, control: str, name: str) -> None:
+        if side not in (ControllersSource.LEFT, ControllersSource.RIGHT):
+            raise ValueError(f"unsupported controller source: {side}")
+        controls = {"secondary_click": ControllerInputIndex.SECONDARY_CLICK}
+        if control not in controls:
+            raise ValueError(f"unsupported controller button: {control}")
+        self._side = side
+        self._index = controls[control]
+        super().__init__(name=name)
+
+    def input_spec(self) -> RetargeterIOType:
+        return {self._side: OptionalType(ControllerInput())}
+
+    def output_spec(self) -> RetargeterIOType:
+        return {
+            "button": TensorGroupType(
+                "button",
+                [NDArrayType("button_array", shape=(1,), dtype=DLDataType.FLOAT, dtype_bits=32)],
+            )
+        }
+
+    def _compute_fn(self, inputs: RetargeterIO, outputs: RetargeterIO, context: Any) -> None:
+        del context
+        controller = inputs[self._side]
+        value = 0.0 if controller.is_none else float(controller[self._index])
+        outputs["button"][0] = np.asarray([value], dtype=np.float32)
+
+
 def build_piper_x_bimanual_pipeline(
     sensitivity_control: str = "thumbstick_click",
+    display_control: str | None = None,
 ) -> OutputCombiner:
-    """Build the one-source bimanual controller pipeline used by S2."""
+    """Build the one-source bimanual controller pipeline used by S2.
+
+    ``display_control`` is an opt-in experiment output appended after the
+    unchanged 22-value S2 action. Production S2 callers leave it unset.
+    """
 
     controllers = ControllersSource(name="piper_x_s2_controllers")
     world_transform = ValueInput("world_T_anchor", TransformMatrix())
@@ -175,6 +213,17 @@ def build_piper_x_bimanual_pipeline(
         )
         connected[f"{side}_delta"] = pose.connect({source: transformed.output(source)})
         connected[f"{side}_state"] = state.connect({source: transformed.output(source)})
+    if display_control is not None:
+        if display_control != "left_secondary_click":
+            raise ValueError(f"unsupported display control: {display_control}")
+        display = ControllerButtonRetargeter(
+            ControllersSource.LEFT,
+            control="secondary_click",
+            name="robosyn_demo_display_button",
+        )
+        connected["demo_display"] = display.connect(
+            {ControllersSource.LEFT: transformed.output(ControllersSource.LEFT)}
+        )
     left_delta_names = [f"left_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]
     right_delta_names = [f"right_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]
     left_state_names = [
@@ -191,25 +240,31 @@ def build_piper_x_bimanual_pipeline(
         "right_trigger",
         "right_sensitivity_button",
     ]
+    input_config = {
+        "left_delta": left_delta_names,
+        "left_state": left_state_names,
+        "right_delta": right_delta_names,
+        "right_state": right_state_names,
+    }
+    output_order = left_delta_names + left_state_names + right_delta_names + right_state_names
+    if display_control is not None:
+        input_config["demo_display"] = ["demo_display_button"]
+        output_order += ["demo_display_button"]
     reorderer = TensorReorderer(
-        input_config={
-            "left_delta": left_delta_names,
-            "left_state": left_state_names,
-            "right_delta": right_delta_names,
-            "right_state": right_state_names,
-        },
-        output_order=(left_delta_names + left_state_names + right_delta_names + right_state_names),
+        input_config=input_config,
+        output_order=output_order,
         name="piper_x_s2_action",
         input_types={name: "array" for name in connected},
     )
-    packed = reorderer.connect(
-        {
-            "left_delta": connected["left_delta"].output("ee_delta"),
-            "left_state": connected["left_state"].output("state"),
-            "right_delta": connected["right_delta"].output("ee_delta"),
-            "right_state": connected["right_state"].output("state"),
-        }
-    )
+    reorder_inputs = {
+        "left_delta": connected["left_delta"].output("ee_delta"),
+        "left_state": connected["left_state"].output("state"),
+        "right_delta": connected["right_delta"].output("ee_delta"),
+        "right_state": connected["right_state"].output("state"),
+    }
+    if display_control is not None:
+        reorder_inputs["demo_display"] = connected["demo_display"].output("button")
+    packed = reorderer.connect(reorder_inputs)
     return OutputCombiner({"action": packed.output("output")})
 
 

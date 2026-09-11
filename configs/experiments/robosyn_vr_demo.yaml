@@ -1,0 +1,103 @@
+revision: piper_x_robosyn_vr_demo_v1
+status: EXPERIMENTAL_TEST_ONLY_NOT_A_GATE
+extends_runtime: configs/isaac_s2_runtime.yaml
+base_checkpoint: 031143d576d923d6029d0226d963cbedaec1f6d4
+
+environment:
+  isaac_lab_commit: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
+  isaac_lab_package_version: 16.4.0
+  isaac_sim_version: 6.0.1.0
+  isaacteleop_version: 1.4.98rc1
+  isaaclab_teleop_version: 0.8.0
+  cloudxr_runtime_version: 6.2.1
+
+scene:
+  robot_bases_m:
+    left: [0.233, 0.300, 0.825]
+    right: [0.233, -0.300, 0.825]
+  robot_base_rot_xyzw: [0.0, 0.0, 0.0, 1.0]
+  base_separation_m: 0.600
+  table:
+    center_m: [0.725, 0.0, 0.775]
+    size_m: [1.0, 1.0, 0.1]
+    top_z_m: 0.825
+    color_rgb: [0.53, 0.49, 0.43]
+    static_friction: 0.8
+    dynamic_friction: 0.6
+  floor: {size_m: [6.0, 6.0], color_rgb: [0.12, 0.14, 0.16]}
+  backdrop: {center_m: [1.55, 0.0, 1.15], size_m: [0.06, 3.0, 2.3], color_rgb: [0.18, 0.21, 0.25]}
+  lighting:
+    dome: {intensity: 1700.0, color_rgb: [0.82, 0.86, 0.92]}
+    key: {intensity: 2200.0, color_rgb: [1.0, 0.91, 0.78], angle_deg: 25.0}
+  candidate_home_d0_per_arm:
+    left: [-20.0, 90.0, -50.0, 0.0, 0.0, 0.0, 50.0]
+    right: [20.0, 90.0, -50.0, 0.0, 0.0, 0.0, 50.0]
+  home_policy: Candidate homes are demo-only and may be replaced only after the bounded collision/reachability smoke.
+
+profiles:
+  default: dual_cube_to_matching_plates
+  available: [dual_cube_to_matching_plates, robosyn_asset_lab]
+  dual_cube_to_matching_plates:
+    left_cube: {position_m: [0.52, 0.17, 0.847], edge_m: 0.04, color_rgb: [0.10, 0.42, 0.92]}
+    right_cube: {position_m: [0.52, -0.17, 0.847], edge_m: 0.04, color_rgb: [0.96, 0.36, 0.10]}
+    left_plate: {position_m: [0.72, 0.17, 0.831], diameter_m: 0.14, thickness_m: 0.008, color_rgb: [0.10, 0.42, 0.92]}
+    right_plate: {position_m: [0.72, -0.17, 0.831], diameter_m: 0.14, thickness_m: 0.008, color_rgb: [0.96, 0.36, 0.10]}
+  robosyn_asset_lab:
+    manifest: configs/experiments/robosyn_test_assets.yaml
+    placement_note: Sparse tabletop inspection profile; no per-asset environment and no production asset bank.
+
+cameras:
+  wrist:
+    roles: [left_wrist, right_wrist]
+    width: 640
+    height: 480
+    target_fps: 30.0
+    focal_length_mm: 18.0
+    horizontal_aperture_mm: 20.955
+    clipping_range_m: [0.02, 10.0]
+    offset_xyz_m: [0.10, 0.0, 0.05]
+    offset_quat_xyzw: [0.0, 0.0, 0.0, 1.0]
+    d0_contract_change: none
+  scene:
+    role: demo_scene
+    eye_m: [0.10, 0.05, 1.43]
+    target_m: [0.65, 0.0, 0.88]
+    up: [0.0, 0.0, 1.0]
+    width: 640
+    height: 480
+    target_fps: 30.0
+    horizontal_fov_deg: 60.0
+    horizontal_aperture_mm: 20.955
+    focal_length_mm: 18.147558
+    clipping_range_m: [0.02, 10.0]
+    canonical_d0_input: false
+
+xr_presentation:
+  anchor_pos_m: [-0.05, 0.0, 1.20]
+  anchor_rot_xyzw: [0.0, 0.0, -0.7071067811865475, 0.7071067811865476]
+  near_plane_m: 0.10
+  scale: 1.0
+  rationale: The static anchor places the nominal viewer just behind the table; -90 degree world yaw maps OpenXR forward to scene +X. Physical comfort remains a demo check.
+
+vr_camera_feeds:
+  implementation: upstream isaaclab_teleop XrCameraFeedSession and Kit SceneUI presenter
+  initial_visibility: false
+  toggle_control: left_secondary_click
+  quest_button: Y
+  semantics: Display resources only; both wrist cameras continue acquiring at 30 Hz while panels are hidden.
+  performance_mode: not_implemented
+  layout:
+    mode: horizontal
+    placement: viewer_start
+    center_offset_m: [0.0, -0.28]
+    distance_m: 0.78
+    panel_width_m: 0.28
+    panel_gap_m: 0.035
+    max_update_hz: 30.0
+
+validation:
+  settle_physics_steps: 120
+  maximum_home_drift_deg: 1.0
+  minimum_scene_rgb_stddev: 5.0
+  profile_reset_position_tolerance_m: 0.005
+  collision_smoke: PhysX contact reporting plus finite state and bounded settled joint drift; demo-only self-collisions enabled.

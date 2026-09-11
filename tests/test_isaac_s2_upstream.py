@@ -28,6 +28,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
                 ControllerInputIndex,
             )
             from tools.isaac_s2_upstream import (
+                ControllerButtonRetargeter,
                 ControllerStateRetargeter,
                 TrackingSafeSe3RelRetargeter,
             )
@@ -38,6 +39,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         cls.ControllersSource = ControllersSource
         cls.OptionalTensorGroup = OptionalTensorGroup
         cls.ControllerInputIndex = ControllerInputIndex
+        cls.ControllerButtonRetargeter = ControllerButtonRetargeter
         cls.ControllerStateRetargeter = ControllerStateRetargeter
         cls.TrackingSafeSe3RelRetargeter = TrackingSafeSe3RelRetargeter
 
@@ -51,6 +53,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         squeeze=0.0,
         trigger=0.0,
         sensitivity=0.0,
+        secondary=0.0,
     ):
         group = self.OptionalTensorGroup(retargeter.input_spec()[self.ControllersSource.LEFT])
         group[self.ControllerInputIndex.GRIP_IS_VALID] = valid
@@ -62,6 +65,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         group[self.ControllerInputIndex.SQUEEZE_VALUE] = squeeze
         group[self.ControllerInputIndex.TRIGGER_VALUE] = trigger
         group[self.ControllerInputIndex.THUMBSTICK_CLICK] = sensitivity
+        group[self.ControllerInputIndex.SECONDARY_CLICK] = secondary
         return group
 
     def _delta(self, retargeter, group):
@@ -146,6 +150,22 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         state = np.asarray(retargeter({side: default})["state"][0])
         self.assertEqual(state[0], 1.0)
         self.assertEqual(state[1], 0.0)
+
+    def test_demo_display_output_uses_free_left_secondary_button(self) -> None:
+        side = self.ControllersSource.LEFT
+        retargeter = self.ControllerButtonRetargeter(
+            side, control="secondary_click", name="display_test"
+        )
+        controller = self._controller(
+            retargeter,
+            [0.1, 0.2, 0.3],
+            squeeze=0.25,
+            trigger=0.75,
+            sensitivity=1.0,
+            secondary=1.0,
+        )
+        value = np.asarray(retargeter({side: controller})["button"][0])
+        np.testing.assert_array_equal(value, [1.0])
 
 
 if __name__ == "__main__":

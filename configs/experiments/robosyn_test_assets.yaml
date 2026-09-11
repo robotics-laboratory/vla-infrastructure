@@ -1,0 +1,62 @@
+revision: robosyn_test_assets_v1
+classification: TEST_ONLY_NOT_APPROVED_FOR_PRODUCTION
+source_checkout: /data/ebulochkin/assets/robosyn_vr_demo/RoboSynChallenge
+source_commit: 9815e9eee86f3dda88860ca971f71354f157d41c
+redistribution: prohibited_from_this_demo_branch_pending_per_asset_provenance_review
+assets:
+  - asset_id: robosyn_button
+    source_path: assets/button/button.urdf
+    source_commit: 9815e9eee86f3dda88860ca971f71354f157d41c
+    sha256: 8bf9ef077ff676f0d4fddc6210e098da2aa0979a788f2671bca76f45c57fc289
+    format: urdf
+    resolved_scale: [1.0, 1.0, 1.0]
+    collision_strategy: source STL collisions; fixed-base URDF articulation with its source prismatic press joint
+    status: loaded_smoke_passed
+  - asset_id: robosyn_beaker
+    source_path: assets/Beaker/Beaker.usd
+    source_commit: 9815e9eee86f3dda88860ca971f71354f157d41c
+    sha256: a76d750df3a72709fc9155ee1588404f125cdaed53a25db843c53a2db8ac19aa
+    format: usd
+    resolved_scale: [0.014, 0.014, 0.015]
+    collision_strategy: source rigid-body mesh collision; direct USD reference with 0.01 source-stage metersPerUnit correction
+    status: loaded_smoke_passed
+  - asset_id: robosyn_pen
+    source_path: assets/Pen/the_pen.obj
+    source_commit: 9815e9eee86f3dda88860ca971f71354f157d41c
+    sha256: 7789d1b8525c7e8de978b33962f6e732d2fbcc9350fd652a433ec833cf203bcb
+    format: obj
+    resolved_scale: [1.0, 1.6, 1.6]
+    collision_strategy: Isaac Lab MeshConverter convex hull; generated USD remains under /data/ebulochkin/assets/robosyn_vr_demo/converted
+    status: loaded_smoke_passed
+  - asset_id: robosyn_pen_holder
+    source_path: assets/PenHolder/pen_holder.obj
+    source_commit: 9815e9eee86f3dda88860ca971f71354f157d41c
+    sha256: d491c6aad9024cbae6cb9d7f84b48a6f9c092c240e1a49fec188a34d67f641b0
+    format: obj
+    resolved_scale: [0.56, 0.45, 0.56]
+    collision_strategy: none selected; open non-watertight holder needs decomposition tuning
+    status: quarantined_collision_repair_exceeds_demo_scope
+  - asset_id: robosyn_basket
+    source_path: assets/Basket/kago3_deform.obj
+    source_commit: 9815e9eee86f3dda88860ca971f71354f157d41c
+    sha256: 4ac940ef5cf0389a5210f0eb164cc4d74d06c7aafcfdd374ce8f68ad0a3fb13b
+    format: obj
+    resolved_scale: [1.0, 0.5, 0.82]
+    collision_strategy: none selected; open 97k-face non-watertight basket needs decomposition tuning
+    status: quarantined_collision_repair_exceeds_demo_scope
+  - asset_id: robosyn_test_tube
+    source_path: assets/test_tube_standard.ply
+    source_commit: 9815e9eee86f3dda88860ca971f71354f157d41c
+    sha256: b5501fe9b9ada9a4f76bd26b7f64fb003d2ba200d0d7d3e8cd1dc93002ab6994
+    format: ply
+    resolved_scale: [1.1, 1.1, 1.3]
+    collision_strategy: none selected; pinned Isaac Lab MeshConverter does not accept PLY
+    status: quarantined_unsupported_source_format
+  - asset_id: robosyn_test_tube_rack
+    source_path: assets/test_tube_rack_standard.ply
+    source_commit: 9815e9eee86f3dda88860ca971f71354f157d41c
+    sha256: fd90bd1bfaf715257c3bcefafe5a4790df217c3bf55d0ce3abcb1843e48760b5
+    format: ply
+    resolved_scale: [1.1, 1.1, 1.1]
+    collision_strategy: none selected; unsupported PLY plus open rack geometry would require SDF/decomposition tuning
+    status: quarantined_unsupported_format_and_collision_repair
