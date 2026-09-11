@@ -44,10 +44,7 @@ class _BimanualCameraData:
     def output(self) -> dict[str, torch.Tensor]:
         return {
             "rgb": torch.cat(
-                tuple(
-                    _tensor(camera.data.output["rgba"])[..., :3]
-                    for camera in self._cameras
-                ),
+                tuple(_tensor(camera.data.output["rgba"])[..., :3] for camera in self._cameras),
                 dim=0,
             )
         }
@@ -124,14 +121,18 @@ class DemoRuntime:
         self.imported_prims = imported_prims
         self.hud_on_start = hud_on_start
         self.display_control = str(config["vr_camera_feeds"]["toggle_control"])
-        self.pipeline_action_dim = 23
+        self.backdrop_control = str(config["scene"]["backdrop"]["toggle_control"])
+        self.pipeline_action_dim = 24
         self.validation: dict[str, Any] = {}
         self._env = None
         self._display_visible = False
         self._feed_bound = False
         self._feed_bound_ever = False
-        self._button_pressed = False
-        self._toggle_count = 0
+        self._display_button_pressed = False
+        self._display_toggle_count = 0
+        self._backdrop_visible = True
+        self._backdrop_button_pressed = False
+        self._backdrop_toggle_count = 0
         self._runtime_frames: dict[str, int] = {}
         self._runtime_capture_cycles = 0
         self._validation_complete = False
@@ -177,6 +178,14 @@ class DemoRuntime:
     def sensitivity(self) -> dict[str, Any]:
         return self.config["teleop_tuning"]["sensitivity"]
 
+    @property
+    def display_toggle_count(self) -> int:
+        return self._display_toggle_count
+
+    @property
+    def backdrop_toggle_count(self) -> int:
+        return self._backdrop_toggle_count
+
     def reset_scene(self) -> None:
         for asset in self.dynamic_assets:
             asset.write_root_pose_to_sim_index(root_pose=asset.data.default_root_pose.torch.clone())
@@ -205,6 +214,7 @@ class DemoRuntime:
         self._env = env
         self._runtime_frames = self._camera_frames()
         self._runtime_capture_cycles = self.camera_rig.capture_cycles_total
+        self._set_backdrop_visibility(bool(self.config["scene"]["backdrop"]["initial_visibility"]))
         if self.hud_on_start:
             self._set_display(True)
 
@@ -215,7 +225,9 @@ class DemoRuntime:
         self._env = None
 
     def after_reset(self) -> None:
-        self._button_pressed = False
+        # Preserve edge state across a scene reset so a physically held X/B
+        # cannot be interpreted as a second press in the new reset epoch.
+        self._set_backdrop_visibility(self._backdrop_visible)
         if self._feed_bound:
             self._feed_session.refresh()
             self._set_upstream_panel_visibility(self._display_visible)
@@ -224,9 +236,9 @@ class DemoRuntime:
         self, value: float, *, event_origin: str = "controller_pipeline"
     ) -> None:
         pressed = bool(value > 0.5)
-        if pressed and not self._button_pressed:
+        if pressed and not self._display_button_pressed:
             self._set_display(not self._display_visible)
-            self._toggle_count += 1
+            self._display_toggle_count += 1
             print(
                 json.dumps(
                     {
@@ -242,7 +254,47 @@ class DemoRuntime:
                 ),
                 flush=True,
             )
-        self._button_pressed = pressed
+        self._display_button_pressed = pressed
+
+    def consume_backdrop_button(
+        self, value: float, *, event_origin: str = "controller_pipeline"
+    ) -> None:
+        pressed = bool(value > 0.5)
+        if pressed and not self._backdrop_button_pressed:
+            self._set_backdrop_visibility(not self._backdrop_visible)
+            self._backdrop_toggle_count += 1
+            print(
+                json.dumps(
+                    {
+                        "backdrop_visible": self._backdrop_visible,
+                        "control": self.backdrop_control,
+                        "event": "demo_backdrop_visibility_changed",
+                        "event_origin": event_origin,
+                        "quest_button": self.config["scene"]["backdrop"]["quest_button"],
+                        "visual_only": True,
+                    },
+                    sort_keys=True,
+                ),
+                flush=True,
+            )
+        self._backdrop_button_pressed = pressed
+
+    def _set_backdrop_visibility(self, visible: bool) -> None:
+        """Toggle only the visual USD backdrop; robot/table physics are untouched."""
+
+        import omni.usd  # type: ignore[import-not-found]
+        from pxr import UsdGeom  # type: ignore[import-not-found]
+
+        stage = omni.usd.get_context().get_stage()
+        prim = stage.GetPrimAtPath("/World/RobosynDemo/Backdrop")
+        if not prim.IsValid():
+            raise RuntimeError("demo backdrop prim is missing")
+        imageable = UsdGeom.Imageable(prim)
+        if visible:
+            imageable.MakeVisible()
+        else:
+            imageable.MakeInvisible()
+        self._backdrop_visible = visible
 
     def _set_upstream_panel_visibility(self, visible: bool) -> None:
         """Show/hide pinned upstream SceneUI panels without closing their RGB source."""
@@ -314,12 +366,20 @@ class DemoRuntime:
             "vr_feed_visibility": {
                 "initial": self.hud_on_start,
                 "final": self._display_visible,
-                "toggle_count": self._toggle_count,
+                "toggle_count": self._display_toggle_count,
                 "control": self.display_control,
                 "quest_button": self.config["vr_camera_feeds"]["quest_button"],
                 "capture_continues_when_hidden": True,
                 "feed_bound_ever": self._feed_bound_ever,
                 "upstream_session_prepared_enabled": self.feed_session_prepared_enabled,
+            },
+            "backdrop_visibility": {
+                "initial": bool(self.config["scene"]["backdrop"]["initial_visibility"]),
+                "final": self._backdrop_visible,
+                "toggle_count": self._backdrop_toggle_count,
+                "control": self.backdrop_control,
+                "quest_button": self.config["scene"]["backdrop"]["quest_button"],
+                "visual_only": True,
             },
             "optional_demo_performance_mode": "not_implemented",
             "validation": self.validation,
@@ -351,6 +411,7 @@ class DemoRuntime:
         }
         required_paths = [
             "/World/RobosynDemo/Table",
+            "/World/RobosynDemo/Backdrop",
             "/World/LeftPiper",
             "/World/RightPiper",
             "/World/RobosynDemo/SceneCamera",

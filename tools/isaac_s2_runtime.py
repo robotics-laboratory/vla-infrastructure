@@ -24,6 +24,7 @@ from isaac_s2_processor import (
     unpack_pipeline_action,
 )
 from isaac_s2_upstream import (
+    DEMO_BACKDROP_BUTTON_INDEX,
     DEMO_DISPLAY_BUTTON_INDEX,
     PIPELINE_ACTION_DIM,
     build_piper_x_bimanual_pipeline,
@@ -200,9 +201,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
         raise RuntimeError(f"S2 upstream version mismatch: {mismatches}")
 
     sensitivity = (
-        experiment.sensitivity
-        if experiment is not None
-        else config["processor"]["sensitivity"]
+        experiment.sensitivity if experiment is not None else config["processor"]["sensitivity"]
     )
     gripper = config["processor"]["gripper"]
     processor_cfg = S2ProcessorConfig(
@@ -233,6 +232,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     pipeline_action_dim = PIPELINE_ACTION_DIM
     if experiment is not None:
         pipeline_kwargs["display_control"] = experiment.display_control
+        pipeline_kwargs["backdrop_control"] = experiment.backdrop_control
         pipeline_action_dim = experiment.pipeline_action_dim
     teleop_cfg = IsaacTeleopCfg(
         xr_cfg=XrCfg(
@@ -304,6 +304,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
 
                 session_started_ever |= device.session_running
                 display_button_value = 0.0
+                backdrop_button_value = 0.0
                 if action is None:
                     command = processor.session_inactive()
                 else:
@@ -314,9 +315,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     action_frames += 1
                     action_numpy = action.detach().cpu().numpy()
                     if experiment is not None:
-                        display_button_value = float(
-                            action_numpy[DEMO_DISPLAY_BUTTON_INDEX]
-                        )
+                        display_button_value = float(action_numpy[DEMO_DISPLAY_BUTTON_INDEX])
+                        backdrop_button_value = float(action_numpy[DEMO_BACKDROP_BUTTON_INDEX])
                     left, right = unpack_pipeline_action(action_numpy[:PIPELINE_ACTION_DIM])
                     command = processor.advance(
                         left,
@@ -325,14 +325,24 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     )
                 if experiment is not None:
                     smoke_display_edge = bool(
-                        args_cli.demo_display_toggle_smoke
-                        and control_steps in (10, 20, 40, 50)
+                        args_cli.demo_display_toggle_smoke and control_steps in (10, 20, 40, 50)
                     )
                     experiment.consume_display_button(
                         1.0 if smoke_display_edge else display_button_value,
                         event_origin=(
                             "bounded_xr_smoke_after_controller_mapping"
                             if args_cli.demo_display_toggle_smoke
+                            else "controller_pipeline"
+                        ),
+                    )
+                    smoke_backdrop_edge = bool(
+                        args_cli.demo_backdrop_toggle_smoke and control_steps in (15, 25, 45, 55)
+                    )
+                    experiment.consume_backdrop_button(
+                        1.0 if smoke_backdrop_edge else backdrop_button_value,
+                        event_origin=(
+                            "bounded_xr_smoke_after_controller_mapping"
+                            if args_cli.demo_backdrop_toggle_smoke
                             else "controller_pipeline"
                         ),
                     )
@@ -417,12 +427,22 @@ def run_s2(env, args_cli, simulation_app) -> int:
         all(count > 0 for count in tracking_valid_frames.values())
         or not args_cli.s2_require_tracking
     )
+    display_toggle_requirement_met = bool(
+        not args_cli.demo_display_toggle_smoke
+        or (experiment is not None and experiment.display_toggle_count == 4)
+    )
+    backdrop_toggle_requirement_met = bool(
+        not args_cli.demo_backdrop_toggle_smoke
+        or (experiment is not None and experiment.backdrop_toggle_count == 4)
+    )
     passed = bool(
         control_steps == args_cli.s2_max_control_steps
         and camera_valid_frames == control_steps
         and camera_advanced_frames == control_steps
         and session_requirement_met
         and tracking_requirement_met
+        and display_toggle_requirement_met
+        and backdrop_toggle_requirement_met
     )
     report = {
         "gate": "NONE_EXPERIMENTAL" if experiment is not None else "S2",
@@ -489,6 +509,14 @@ def run_s2(env, args_cli, simulation_app) -> int:
             "action_frames": action_frames,
             "require_session": bool(args_cli.s2_require_session),
             "require_physical_tracking": bool(args_cli.s2_require_tracking),
+            **(
+                {
+                    "demo_display_toggle_smoke_met": display_toggle_requirement_met,
+                    "demo_backdrop_toggle_smoke_met": backdrop_toggle_requirement_met,
+                }
+                if experiment is not None
+                else {}
+            ),
         },
         "execution": {
             "control_steps": control_steps,

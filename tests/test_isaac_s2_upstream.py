@@ -31,6 +31,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
                 ControllerButtonRetargeter,
                 ControllerStateRetargeter,
                 TrackingSafeSe3RelRetargeter,
+                build_piper_x_bimanual_pipeline,
             )
             from tools.isaac_robosyn_vr_demo import DemoRuntime
         except ModuleNotFoundError as exc:
@@ -44,6 +45,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         cls.ControllerStateRetargeter = ControllerStateRetargeter
         cls.DemoRuntime = DemoRuntime
         cls.TrackingSafeSe3RelRetargeter = TrackingSafeSe3RelRetargeter
+        cls.build_piper_x_bimanual_pipeline = staticmethod(build_piper_x_bimanual_pipeline)
 
     def _controller(
         self,
@@ -163,21 +165,15 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         left_state = self.ControllerStateRetargeter(
             left, sensitivity_control="left_secondary_click", name="left_demo_state"
         )
-        left_controller = self._controller(
-            left_state, [0.1, 0.2, 0.3], secondary=1.0, side=left
-        )
+        left_controller = self._controller(left_state, [0.1, 0.2, 0.3], secondary=1.0, side=left)
         state = np.asarray(left_state({left: left_controller})["state"][0])
         self.assertEqual(state[4], 1.0)
 
         right_state = self.ControllerStateRetargeter(
             right, sensitivity_control="left_secondary_click", name="right_demo_state"
         )
-        right_controller = self._controller(
-            right_state, [0.3, 0.2, 0.1], trigger=0.75, side=right
-        )
-        left_controller = self._controller(
-            right_state, [0.1, 0.2, 0.3], secondary=1.0, side=left
-        )
+        right_controller = self._controller(right_state, [0.3, 0.2, 0.1], trigger=0.75, side=right)
+        left_controller = self._controller(right_state, [0.1, 0.2, 0.3], secondary=1.0, side=left)
         state = np.asarray(
             right_state({left: left_controller, right: right_controller})["state"][0]
         )
@@ -198,6 +194,30 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         )
         value = np.asarray(retargeter({side: controller})["button"][0])
         np.testing.assert_array_equal(value, [1.0])
+
+    def test_demo_backdrop_output_uses_free_right_secondary_b_button(self) -> None:
+        side = self.ControllersSource.RIGHT
+        retargeter = self.ControllerButtonRetargeter(
+            side, control="secondary_click", name="backdrop_test"
+        )
+        controller = self._controller(
+            retargeter,
+            [0.1, 0.2, 0.3],
+            secondary=1.0,
+            side=side,
+        )
+        value = np.asarray(retargeter({side: controller})["button"][0])
+        np.testing.assert_array_equal(value, [1.0])
+
+    def test_demo_controls_append_two_values_without_changing_production_shape(self) -> None:
+        production = self.build_piper_x_bimanual_pipeline()
+        demo = self.build_piper_x_bimanual_pipeline(
+            sensitivity_control="left_secondary_click",
+            display_control="left_primary_click",
+            backdrop_control="right_secondary_click",
+        )
+        self.assertEqual(production.output_types()["action"].types[0].shape, (22,))
+        self.assertEqual(demo.output_types()["action"].types[0].shape, (24,))
 
     def test_demo_display_edges_hide_panels_without_closing_rgb_source(self) -> None:
         class Container:
@@ -243,8 +263,8 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         runtime._display_visible = False
         runtime._feed_bound = False
         runtime._feed_bound_ever = False
-        runtime._button_pressed = False
-        runtime._toggle_count = 0
+        runtime._display_button_pressed = False
+        runtime._display_toggle_count = 0
 
         runtime.consume_display_button(1.0)
         feeds = runtime._feed_session._manager._feeds
@@ -254,7 +274,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         self.assertTrue(all(feed.panel._container.show_count == 1 for feed in feeds))
 
         runtime.consume_display_button(1.0)
-        self.assertEqual(runtime._toggle_count, 1)
+        self.assertEqual(runtime._display_toggle_count, 1)
         runtime.consume_display_button(0.0)
         runtime.consume_display_button(1.0)
         self.assertFalse(runtime._display_visible)
@@ -269,6 +289,35 @@ class IsaacS2UpstreamTests(unittest.TestCase):
 
         runtime.close()
         self.assertEqual(runtime._feed_session.close_count, 1)
+
+    def test_demo_backdrop_toggle_is_rising_edge_only(self) -> None:
+        runtime = self.DemoRuntime.__new__(self.DemoRuntime)
+        runtime.config = {
+            "scene": {"backdrop": {"quest_button": "B"}},
+        }
+        runtime.backdrop_control = "right_secondary_click"
+        runtime._backdrop_visible = True
+        runtime._backdrop_button_pressed = False
+        runtime._backdrop_toggle_count = 0
+        runtime._feed_bound = False
+        visibility_changes = []
+
+        def set_visibility(visible):
+            visibility_changes.append(visible)
+            runtime._backdrop_visible = visible
+
+        runtime._set_backdrop_visibility = set_visibility
+        runtime.consume_backdrop_button(1.0)
+        runtime.consume_backdrop_button(1.0)
+        runtime.after_reset()
+        runtime.consume_backdrop_button(1.0)
+        self.assertEqual(visibility_changes, [False, False])
+        self.assertEqual(runtime._backdrop_toggle_count, 1)
+
+        runtime.consume_backdrop_button(0.0)
+        runtime.consume_backdrop_button(1.0)
+        self.assertEqual(visibility_changes, [False, False, True])
+        self.assertEqual(runtime._backdrop_toggle_count, 2)
 
 
 if __name__ == "__main__":

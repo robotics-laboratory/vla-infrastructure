@@ -123,7 +123,7 @@ def main() -> int:
             ]
         )
         if args.xr_smoke:
-            command.extend(["--xr", "--demo-display-toggle-smoke"])
+            command.extend(["--xr", "--demo-display-toggle-smoke", "--demo-backdrop-toggle-smoke"])
     else:
         command.extend(
             [

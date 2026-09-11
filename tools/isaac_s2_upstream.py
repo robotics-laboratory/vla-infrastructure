@@ -51,8 +51,9 @@ from isaaclab_teleop.xr_anchor_manager import XrAnchorManager  # type: ignore[im
 
 
 PIPELINE_ACTION_DIM = 22
-DEMO_PIPELINE_ACTION_DIM = 23
+DEMO_PIPELINE_ACTION_DIM = 24
 DEMO_DISPLAY_BUTTON_INDEX = 22
+DEMO_BACKDROP_BUTTON_INDEX = 23
 
 
 def _controller_grip_pose_is_usable(controller: Any) -> bool:
@@ -113,9 +114,7 @@ class ControllerStateRetargeter(BaseRetargeter):
         if sensitivity_control not in sensitivity_sources:
             raise ValueError(f"unsupported sensitivity control: {sensitivity_control}")
         self._side = side
-        self._sensitivity_side, self._sensitivity_index = sensitivity_sources[
-            sensitivity_control
-        ]
+        self._sensitivity_side, self._sensitivity_index = sensitivity_sources[sensitivity_control]
         super().__init__(name=name)
 
     def input_spec(self) -> RetargeterIOType:
@@ -198,11 +197,12 @@ class ControllerButtonRetargeter(BaseRetargeter):
 def build_piper_x_bimanual_pipeline(
     sensitivity_control: str = "thumbstick_click",
     display_control: str | None = None,
+    backdrop_control: str | None = None,
 ) -> OutputCombiner:
     """Build the one-source bimanual controller pipeline used by S2.
 
-    ``display_control`` is an opt-in experiment output appended after the
-    unchanged 22-value S2 action. Production S2 callers leave it unset.
+    The optional demo controls are appended after the unchanged 22-value S2
+    action. Production S2 callers leave both unset.
     """
 
     controllers = ControllersSource(name="piper_x_s2_controllers")
@@ -232,10 +232,7 @@ def build_piper_x_bimanual_pipeline(
         )
         connected[f"{side}_delta"] = pose.connect({source: transformed.output(source)})
         connected[f"{side}_state"] = state.connect(
-            {
-                input_side: transformed.output(input_side)
-                for input_side in state.input_spec()
-            }
+            {input_side: transformed.output(input_side) for input_side in state.input_spec()}
         )
     if display_control is not None:
         display_controls = {
@@ -252,6 +249,21 @@ def build_piper_x_bimanual_pipeline(
         )
         connected["demo_display"] = display.connect(
             {display_side: transformed.output(display_side)}
+        )
+    if backdrop_control is not None:
+        backdrop_controls = {
+            "right_secondary_click": (ControllersSource.RIGHT, "secondary_click"),
+        }
+        if backdrop_control not in backdrop_controls:
+            raise ValueError(f"unsupported backdrop control: {backdrop_control}")
+        backdrop_side, backdrop_button = backdrop_controls[backdrop_control]
+        backdrop = ControllerButtonRetargeter(
+            backdrop_side,
+            control=backdrop_button,
+            name="robosyn_demo_backdrop_button",
+        )
+        connected["demo_backdrop"] = backdrop.connect(
+            {backdrop_side: transformed.output(backdrop_side)}
         )
     left_delta_names = [f"left_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]
     right_delta_names = [f"right_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]
@@ -279,6 +291,9 @@ def build_piper_x_bimanual_pipeline(
     if display_control is not None:
         input_config["demo_display"] = ["demo_display_button"]
         output_order += ["demo_display_button"]
+    if backdrop_control is not None:
+        input_config["demo_backdrop"] = ["demo_backdrop_button"]
+        output_order += ["demo_backdrop_button"]
     reorderer = TensorReorderer(
         input_config=input_config,
         output_order=output_order,
@@ -293,6 +308,8 @@ def build_piper_x_bimanual_pipeline(
     }
     if display_control is not None:
         reorder_inputs["demo_display"] = connected["demo_display"].output("button")
+    if backdrop_control is not None:
+        reorder_inputs["demo_backdrop"] = connected["demo_backdrop"].output("button")
     packed = reorderer.connect(reorder_inputs)
     return OutputCombiner({"action": packed.output("output")})
 

@@ -89,13 +89,14 @@ All three camera tensors passed shape/dtype/freshness smoke. Their configured
 simulation-time rate is 30 Hz; the observed wall-time rate scales with RTF.
 
 The experiment-only XR presentation uses scale `1.0`, anchor position
-`[-0.05, 0, -0.25]`, quaternion
+`[-0.05, 0, -0.10]`, quaternion
 `[0, 0, -0.7071067812, 0.7071067812]`, and near plane `0.10 m`. This maps XR
-forward to scene `+X`. The Z value is a demo-only physical-retest candidate:
-the first Quest run showed that `+1.20 m` put the unchanged table far too low,
-so lowering the simulation anchor raises the table to `1.075 m` in the XR
-floor frame. Physical comfort still requires confirmation; no robot or table
-geometry was moved to compensate for presentation.
+forward to scene `+X`. The Z value is a demo-only physical-retest candidate.
+Physical evidence showed `+1.20 m` was far too low and the subsequent
+`-0.25 m` setting slightly too high. The new value lowers the unchanged scene
+by `0.15 m`, putting the table surface at `0.925 m` in the XR floor frame.
+Physical comfort still requires confirmation; no robot or table geometry was
+moved to compensate for presentation.
 
 The same physical run found the inherited S2 gains too slow. Only the demo
 config now selects NORMAL translation/rotation `4.0 / 4.0` and PRECISE
@@ -104,9 +105,13 @@ config now selects NORMAL translation/rotation `4.0 / 4.0` and PRECISE
 ## Wrist-camera panels
 
 The implementation is upstream `isaaclab_teleop` `XrCameraFeedSession` with
-`XrCameraFeedCfg`, horizontal viewer-start layout, and the Kit SceneUI
-presenter. The XR smoke confirmed feed-owned zero-copy CUDA annotators for both
-`left_wrist` and `right_wrist`.
+`XrCameraFeedCfg`, horizontal head-locked layout, and the Kit SceneUI presenter.
+The physical log proved that X reached the runtime, both feeds bound, and the
+old viewer-start anchor captured successfully, despite the panels not being
+visible to the operator. The narrow presentation fix selects upstream
+`head_locked`, keeping both compact panels in front of the viewer instead of at
+that captured world pose. The XR smoke confirmed feed-owned zero-copy CUDA
+annotators for both `left_wrist` and `right_wrist`.
 
 The audited `ControllersSource` exposes grip pose/valid, primary, secondary,
 thumbstick X/Y/click, menu, squeeze, and trigger. Upstream reserves only right
@@ -114,7 +119,9 @@ thumbstick X/Y/click, menu, squeeze, and trigger. Upstream reserves only right
 separate message channel. Demo sensitivity therefore uses left
 `SECONDARY_CLICK` (Quest Y), routed to both existing per-arm edge handlers, and
 the display toggle uses free left `PRIMARY_CLICK` (Quest X). Squeeze clutch and
-analog trigger gripper are unchanged.
+analog trigger gripper are unchanged. Free right `SECONDARY_CLICK` (Quest B)
+now edge-toggles only the visual USD backdrop. It does not change table/robot
+geometry, physics, XR lifecycle, or orientation.
 
 DISPLAY ON binds and refreshes the upstream session once. DISPLAY OFF now calls
 only the pinned SceneUI `UiContainer.hide()` path; ON after that calls `show()`
@@ -185,28 +192,30 @@ not claimed.
 - Test-asset profile: PASS; button/pen/beaker prims valid and reset smoke within
   `3.743 mm`.
 - Wrist HUD startup: PASS for both feeds using upstream zero-copy path.
-- Core tests: `72 passed, 6 skipped` (the skips are environment-conditioned).
-- Exact Candidate B processor/upstream tests: `19 passed`, including shared-Y
+- Core tests: `72 passed, 9 skipped` (the skips are environment-conditioned).
+- Exact Candidate B processor/upstream tests: `22 passed`, including shared-Y
   mapping, held-button debounce, repeated NORMAL/PRECISE switches with zero
-  switch-frame delta, X display mapping, and no mid-session feed close.
+  switch-frame delta, X display mapping, B backdrop mapping/debounce, and no
+  mid-session feed close.
 - Updated standalone demo smoke: PASS with the configured `4.0 / 4.0` and
-  `1.0 / 1.0` gains and `[-0.05, 0, -0.25]` anchor:
-  `/data/ebulochkin/cache/robosyn-vr-demo/runs/20260911T124038829352Z-dual_cube_to_matching_plates-hud-off/result.json`.
-- Updated XR Kit smoke: PASS, four injected post-mapping X edges
-  (`ON -> OFF -> ON -> OFF`), reset between pairs, both zero-copy feeds, 60/60
-  valid and advancing camera frames, clean shutdown, and no annotator error:
-  `/data/ebulochkin/cache/robosyn-vr-demo/runs/20260911T124506940513Z-dual_cube_to_matching_plates-hud-off/result.json`.
+  `1.0 / 1.0` gains and `[-0.05, 0, -0.10]` anchor:
+  `/data/ebulochkin/cache/robosyn-vr-demo/runs/20260911T130630768531Z-dual_cube_to_matching_plates-hud-off/result.json`.
+- Updated XR Kit smoke: PASS, four injected post-mapping X edges and four B
+  edges, reset between pairs, both zero-copy feeds, backdrop visibility
+  round-trips, 60/60 valid and advancing camera frames, clean shutdown, and no
+  annotator error:
+  `/data/ebulochkin/cache/robosyn-vr-demo/runs/20260911T130700296111Z-dual_cube_to_matching_plates-hud-off/result.json`.
 - Updated stock S2 smoke: PASS with its original thumbstick mapping and original
   `2.0 / 2.0`, `0.5 / 0.5` gains:
-  `/data/ebulochkin/cache/isaac-s2/runs/20260911T124204Z/result.json`.
+  `/data/ebulochkin/cache/isaac-s2/runs/20260911T130749Z/result.json`.
 - Updated stock S1 regression: PASS, including both 110-frame camera sequences:
-  `/data/ebulochkin/cache/isaac-s1/runs/20260911T124240Z/result.json`.
+  `/data/ebulochkin/cache/isaac-s1/runs/20260911T130822Z/result.json`.
 - Tracking-loss recovery, clutch/rebase, analog gripper, and normal/precise
   sensitivity remain covered by the S2 processor suite. Exact controller-field
-  tests cover Y and X without changing the 22-value production S2 action.
+  tests cover Y, X, and B without changing the 22-value production S2 action.
 
 No Quest was connected during the post-fix automated runs, so a live CloudXR
-client remaining connected through physical Y/X presses and the new anchor's
+client remaining connected through physical Y/X/B presses and the new anchor's
 comfort remain explicit retest items. This does not mark the demo or S2
 accepted.
 
@@ -225,7 +234,9 @@ accepted.
    lose and restore one controller's tracking; confirm zero-jump rebase.
 5. Press X once for both wrist panels and X again to hide them. Repeat twice;
    confirm the scene, wrist cameras, teleop and CloudXR stream remain live.
-6. Move both colored cubes to their matching plates and confirm the scene
+6. Press B once to hide only the background wall, then B again to restore it;
+   confirm neither press moves the scene or interrupts either arm.
+7. Move both colored cubes to their matching plates and confirm the scene
    camera framing remains centered. Run for two minutes, then stop through the
    existing S2 control path and keep the generated result/log directory.
 

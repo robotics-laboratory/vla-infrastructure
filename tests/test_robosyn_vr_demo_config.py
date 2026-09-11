@@ -21,7 +21,7 @@ def test_physical_retest_values_are_demo_only_and_geometry_is_unchanged() -> Non
     assert config["scene"]["table"]["size_m"] == [1.0, 1.0, 0.1]
 
     presentation = config["xr_presentation"]
-    assert presentation["anchor_pos_m"] == [-0.05, 0.0, -0.25]
+    assert presentation["anchor_pos_m"] == [-0.05, 0.0, -0.1]
     assert presentation["scale"] == 1.0
 
     sensitivity = config["teleop_tuning"]["sensitivity"]
@@ -33,3 +33,9 @@ def test_physical_retest_values_are_demo_only_and_geometry_is_unchanged() -> Non
     }
     assert config["vr_camera_feeds"]["toggle_control"] == "left_primary_click"
     assert config["vr_camera_feeds"]["quest_button"] == "X"
+    assert config["vr_camera_feeds"]["layout"]["placement"] == "head_locked"
+
+    backdrop = config["scene"]["backdrop"]
+    assert backdrop["toggle_control"] == "right_secondary_click"
+    assert backdrop["quest_button"] == "B"
+    assert backdrop["initial_visibility"] is True

@@ -25,7 +25,13 @@ scene:
     static_friction: 0.8
     dynamic_friction: 0.6
   floor: {size_m: [6.0, 6.0], color_rgb: [0.12, 0.14, 0.16]}
-  backdrop: {center_m: [1.55, 0.0, 1.15], size_m: [0.06, 3.0, 2.3], color_rgb: [0.18, 0.21, 0.25]}
+  backdrop:
+    center_m: [1.55, 0.0, 1.15]
+    size_m: [0.06, 3.0, 2.3]
+    color_rgb: [0.18, 0.21, 0.25]
+    initial_visibility: true
+    toggle_control: right_secondary_click
+    quest_button: B
   lighting:
     dome: {intensity: 1700.0, color_rgb: [0.82, 0.86, 0.92]}
     key: {intensity: 2200.0, color_rgb: [1.0, 0.91, 0.78], angle_deg: 25.0}
@@ -73,11 +79,11 @@ cameras:
     canonical_d0_input: false
 
 xr_presentation:
-  anchor_pos_m: [-0.05, 0.0, -0.25]
+  anchor_pos_m: [-0.05, 0.0, -0.10]
   anchor_rot_xyzw: [0.0, 0.0, -0.7071067811865475, 0.7071067811865476]
   near_plane_m: 0.10
   scale: 1.0
-  rationale: Physical Quest evidence showed +1.20 m placed the workspace far below the viewer. The demo-only anchor Z is lowered to -0.25 m, which raises the unchanged table/robots in XR; -90 degree world yaw still maps OpenXR forward to scene +X.
+  rationale: Physical Quest evidence showed +1.20 m was far too low and -0.25 m was slightly too high. The demo-only anchor Z is now -0.10 m, lowering the unchanged table/robots by 0.15 m relative to the previous run; -90 degree world yaw still maps OpenXR forward to scene +X.
 
 teleop_tuning:
   sensitivity:
@@ -101,7 +107,7 @@ vr_camera_feeds:
   performance_mode: not_implemented
   layout:
     mode: horizontal
-    placement: viewer_start
+    placement: head_locked
     center_offset_m: [0.0, -0.28]
     distance_m: 0.78
     panel_width_m: 0.28
