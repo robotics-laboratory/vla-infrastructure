@@ -6,7 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any
+from typing import Any, Callable
 
 import numpy as np
 import torch
@@ -122,7 +122,11 @@ class DemoRuntime:
         self.hud_on_start = hud_on_start
         self.display_control = str(config["vr_camera_feeds"]["toggle_control"])
         self.backdrop_control = str(config["scene"]["backdrop"]["toggle_control"])
-        self.pipeline_action_dim = 24
+        self.recenter_control = str(config["xr_presentation"]["recenter"]["toggle_control"])
+        self.recenter_view_prim_path = str(
+            config["xr_presentation"]["recenter"]["view_prim_path"]
+        )
+        self.pipeline_action_dim = 25
         self.validation: dict[str, Any] = {}
         self._env = None
         self._display_visible = False
@@ -133,6 +137,9 @@ class DemoRuntime:
         self._backdrop_visible = True
         self._backdrop_button_pressed = False
         self._backdrop_toggle_count = 0
+        self._recenter_button_pressed = False
+        self._recenter_request_count = 0
+        self._recenter_scheduled_count = 0
         self._runtime_frames: dict[str, int] = {}
         self._runtime_capture_cycles = 0
         self._validation_complete = False
@@ -186,6 +193,14 @@ class DemoRuntime:
     def backdrop_toggle_count(self) -> int:
         return self._backdrop_toggle_count
 
+    @property
+    def recenter_request_count(self) -> int:
+        return self._recenter_request_count
+
+    @property
+    def recenter_scheduled_count(self) -> int:
+        return self._recenter_scheduled_count
+
     def reset_scene(self) -> None:
         for asset in self.dynamic_assets:
             asset.write_root_pose_to_sim_index(root_pose=asset.data.default_root_pose.torch.clone())
@@ -215,8 +230,23 @@ class DemoRuntime:
         self._runtime_frames = self._camera_frames()
         self._runtime_capture_cycles = self.camera_rig.capture_cycles_total
         self._set_backdrop_visibility(bool(self.config["scene"]["backdrop"]["initial_visibility"]))
+        self._prebind_camera_panels()
         if self.hud_on_start:
             self._set_display(True)
+
+    def _prebind_camera_panels(self) -> None:
+        """Complete Candidate B's bind phase before XR session entry."""
+
+        # Candidate B's two-phase lifecycle requires bind(env) before entering
+        # the XR teleop session. Build both SceneUI panels now, initially
+        # hidden, so X only changes visibility after the headset connects.
+        if self.feed_session_prepared_enabled:
+            self._feed_session.bind(self._env)
+            self._feed_bound = True
+            self._feed_bound_ever = True
+            self._feed_session.refresh()
+            self._set_upstream_panel_visibility(False)
+            print("[DEMO] wrist camera panels prebound hidden before XR session", flush=True)
 
     def close(self) -> None:
         if self._feed_bound:
@@ -279,6 +309,42 @@ class DemoRuntime:
             )
         self._backdrop_button_pressed = pressed
 
+    def consume_recenter_button(
+        self,
+        value: float,
+        *,
+        schedule_recenter: Callable[[], bool],
+        event_origin: str = "controller_pipeline",
+    ) -> bool:
+        """Schedule one XR recenter per R3 press and report whether it ran."""
+
+        pressed = bool(value > 0.5)
+        scheduled = False
+        if pressed and not self._recenter_button_pressed:
+            self._recenter_request_count += 1
+            scheduled = bool(schedule_recenter())
+            self._recenter_scheduled_count += int(scheduled)
+            print(
+                json.dumps(
+                    {
+                        "authoritative_scene_geometry_changed": False,
+                        "control": self.recenter_control,
+                        "event": "demo_xr_recenter_requested",
+                        "event_origin": event_origin,
+                        "quest_button": self.config["xr_presentation"]["recenter"][
+                            "quest_button"
+                        ],
+                        "scheduled": scheduled,
+                        "session_restart": False,
+                        "view_prim_path": self.recenter_view_prim_path,
+                    },
+                    sort_keys=True,
+                ),
+                flush=True,
+            )
+        self._recenter_button_pressed = pressed
+        return scheduled
+
     def _set_backdrop_visibility(self, visible: bool) -> None:
         """Toggle only the visual USD backdrop; robot/table physics are untouched."""
 
@@ -325,10 +391,9 @@ class DemoRuntime:
                     "upstream XR CameraFeedSession is unavailable in this Kit experience"
                 )
             if not self._feed_bound:
-                self._feed_session.bind(self._env)
-                self._feed_bound = True
-                self._feed_bound_ever = True
-                self._feed_session.refresh()
+                raise RuntimeError(
+                    "upstream XR camera panels were not bound before the XR session"
+                )
             self._set_upstream_panel_visibility(True)
         else:
             # Closing here detaches the pinned Replicator RGB annotator shared
@@ -380,6 +445,15 @@ class DemoRuntime:
                 "control": self.backdrop_control,
                 "quest_button": self.config["scene"]["backdrop"]["quest_button"],
                 "visual_only": True,
+            },
+            "xr_recenter": {
+                "request_count": self._recenter_request_count,
+                "scheduled_count": self._recenter_scheduled_count,
+                "control": self.recenter_control,
+                "quest_button": self.config["xr_presentation"]["recenter"]["quest_button"],
+                "view_prim_path": self.recenter_view_prim_path,
+                "upstream_mechanism": "XRCore.schedule_teleport_to_view",
+                "authoritative_scene_geometry_changed": False,
             },
             "optional_demo_performance_mode": "not_implemented",
             "validation": self.validation,

@@ -51,9 +51,10 @@ from isaaclab_teleop.xr_anchor_manager import XrAnchorManager  # type: ignore[im
 
 
 PIPELINE_ACTION_DIM = 22
-DEMO_PIPELINE_ACTION_DIM = 24
+DEMO_PIPELINE_ACTION_DIM = 25
 DEMO_DISPLAY_BUTTON_INDEX = 22
 DEMO_BACKDROP_BUTTON_INDEX = 23
+DEMO_RECENTER_BUTTON_INDEX = 24
 
 
 def _controller_grip_pose_is_usable(controller: Any) -> bool:
@@ -169,6 +170,7 @@ class ControllerButtonRetargeter(BaseRetargeter):
         controls = {
             "primary_click": ControllerInputIndex.PRIMARY_CLICK,
             "secondary_click": ControllerInputIndex.SECONDARY_CLICK,
+            "thumbstick_click": ControllerInputIndex.THUMBSTICK_CLICK,
         }
         if control not in controls:
             raise ValueError(f"unsupported controller button: {control}")
@@ -198,11 +200,12 @@ def build_piper_x_bimanual_pipeline(
     sensitivity_control: str = "thumbstick_click",
     display_control: str | None = None,
     backdrop_control: str | None = None,
+    recenter_control: str | None = None,
 ) -> OutputCombiner:
     """Build the one-source bimanual controller pipeline used by S2.
 
     The optional demo controls are appended after the unchanged 22-value S2
-    action. Production S2 callers leave both unset.
+    action. Production S2 callers leave all of them unset.
     """
 
     controllers = ControllersSource(name="piper_x_s2_controllers")
@@ -265,6 +268,21 @@ def build_piper_x_bimanual_pipeline(
         connected["demo_backdrop"] = backdrop.connect(
             {backdrop_side: transformed.output(backdrop_side)}
         )
+    if recenter_control is not None:
+        recenter_controls = {
+            "right_thumbstick_click": (ControllersSource.RIGHT, "thumbstick_click"),
+        }
+        if recenter_control not in recenter_controls:
+            raise ValueError(f"unsupported recenter control: {recenter_control}")
+        recenter_side, recenter_button = recenter_controls[recenter_control]
+        recenter = ControllerButtonRetargeter(
+            recenter_side,
+            control=recenter_button,
+            name="robosyn_demo_recenter_button",
+        )
+        connected["demo_recenter"] = recenter.connect(
+            {recenter_side: transformed.output(recenter_side)}
+        )
     left_delta_names = [f"left_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]
     right_delta_names = [f"right_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]
     left_state_names = [
@@ -294,6 +312,9 @@ def build_piper_x_bimanual_pipeline(
     if backdrop_control is not None:
         input_config["demo_backdrop"] = ["demo_backdrop_button"]
         output_order += ["demo_backdrop_button"]
+    if recenter_control is not None:
+        input_config["demo_recenter"] = ["demo_recenter_button"]
+        output_order += ["demo_recenter_button"]
     reorderer = TensorReorderer(
         input_config=input_config,
         output_order=output_order,
@@ -310,6 +331,8 @@ def build_piper_x_bimanual_pipeline(
         reorder_inputs["demo_display"] = connected["demo_display"].output("button")
     if backdrop_control is not None:
         reorder_inputs["demo_backdrop"] = connected["demo_backdrop"].output("button")
+    if recenter_control is not None:
+        reorder_inputs["demo_recenter"] = connected["demo_recenter"].output("button")
     packed = reorderer.connect(reorder_inputs)
     return OutputCombiner({"action": packed.output("output")})
 
@@ -360,6 +383,26 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
     @property
     def session_running(self) -> bool:
         return bool(self._session_lifecycle.is_active)
+
+    def schedule_recenter_to_view(self, view_prim_path: str) -> bool:
+        """Use Kit XR's teleport-to-view operation without restarting the session.
+
+        The caller holds robot motion for this frame. The injected execution
+        reset clears upstream relative-pose history on the following frame;
+        the demo runtime consumes that reset without resetting the environment.
+        """
+
+        xr_core = self._anchor_manager.xr_core
+        if xr_core is None or not xr_core.is_xr_display_enabled():
+            return False
+        view_pose = xr_core.get_world_transform_matrix(view_prim_path)
+        xr_core.schedule_teleport_to_view(
+            self._anchor_manager.anchor_headset_path,
+            view_pose,
+        )
+        self._session_lifecycle.request_reset(pause=False)
+        self._session_lifecycle.reset_haptics()
+        return True
 
 
 def create_piper_x_teleop_device(

@@ -84,6 +84,11 @@ xr_presentation:
   near_plane_m: 0.10
   scale: 1.0
   rationale: Physical Quest evidence showed +1.20 m was far too low and -0.25 m was slightly too high. The demo-only anchor Z is now -0.10 m, lowering the unchanged table/robots by 0.15 m relative to the previous run; -90 degree world yaw still maps OpenXR forward to scene +X.
+  recenter:
+    toggle_control: right_thumbstick_click
+    quest_button: R3
+    view_prim_path: /World/RobosynDemo/SceneCamera
+    behavior: One rising edge uses XRCore.schedule_teleport_to_view so the current physical HMD pose matches the validated demo scene-camera pose; the robot/table USD geometry and 1:1 scale are unchanged.
 
 teleop_tuning:
   sensitivity:
@@ -108,9 +113,9 @@ vr_camera_feeds:
   layout:
     mode: horizontal
     placement: head_locked
-    center_offset_m: [0.0, -0.28]
-    distance_m: 0.78
-    panel_width_m: 0.28
+    center_offset_m: [0.0, -0.18]
+    distance_m: 0.65
+    panel_width_m: 0.36
     panel_gap_m: 0.035
     max_update_hz: 30.0
 

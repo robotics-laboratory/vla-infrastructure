@@ -26,6 +26,7 @@ from isaac_s2_processor import (
 from isaac_s2_upstream import (
     DEMO_BACKDROP_BUTTON_INDEX,
     DEMO_DISPLAY_BUTTON_INDEX,
+    DEMO_RECENTER_BUTTON_INDEX,
     PIPELINE_ACTION_DIM,
     build_piper_x_bimanual_pipeline,
     create_piper_x_teleop_device,
@@ -233,6 +234,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     if experiment is not None:
         pipeline_kwargs["display_control"] = experiment.display_control
         pipeline_kwargs["backdrop_control"] = experiment.backdrop_control
+        pipeline_kwargs["recenter_control"] = experiment.recenter_control
         pipeline_action_dim = experiment.pipeline_action_dim
     teleop_cfg = IsaacTeleopCfg(
         xr_cfg=XrCfg(
@@ -271,6 +273,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     maximum_rebase_motion_m = {"left": 0.0, "right": 0.0}
     saturated_frames = 0
     control_steps = 0
+    recenter_execution_reset_pending = False
 
     print(
         f"[S2] CloudXR {actual_versions['cloudxr']} profile={args_cli.s2_cloudxr_profile} "
@@ -278,9 +281,12 @@ def run_s2(env, args_cli, simulation_app) -> int:
         flush=True,
     )
     try:
+        if experiment is not None:
+            # Pinned Candidate B requires camera-feed bind(env) before the XR
+            # teleop session is entered. This also makes the panels available
+            # when X is first pressed after the headset connects.
+            experiment.open(env)
         with device:
-            if experiment is not None:
-                experiment.open(env)
             for step in range(1, args_cli.s2_max_control_steps + 1):
                 if not simulation_app.is_running():
                     break
@@ -288,8 +294,25 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 before_pose = ik.tcp_poses_base()
                 action = device.advance()
                 events = poll_control_events(device)
+                recenter_execution_reset = bool(
+                    recenter_execution_reset_pending and events.should_reset
+                )
+                if recenter_execution_reset:
+                    recenter_execution_reset_pending = False
+                    print(
+                        json.dumps(
+                            {
+                                "environment_reset": False,
+                                "event": "demo_xr_recenter_retargeters_rebased",
+                                "session_running": device.session_running,
+                                "step": control_steps,
+                            },
+                            sort_keys=True,
+                        ),
+                        flush=True,
+                    )
                 host_reset = args_cli.s2_reset_step > 0 and control_steps == args_cli.s2_reset_step
-                if events.should_reset or host_reset:
+                if (events.should_reset and not recenter_execution_reset) or host_reset:
                     env.reset(0)
                     processor.reset()
                     ik.reset()
@@ -305,6 +328,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 session_started_ever |= device.session_running
                 display_button_value = 0.0
                 backdrop_button_value = 0.0
+                recenter_button_value = 0.0
                 if action is None:
                     command = processor.session_inactive()
                 else:
@@ -317,6 +341,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     if experiment is not None:
                         display_button_value = float(action_numpy[DEMO_DISPLAY_BUTTON_INDEX])
                         backdrop_button_value = float(action_numpy[DEMO_BACKDROP_BUTTON_INDEX])
+                        recenter_button_value = float(action_numpy[DEMO_RECENTER_BUTTON_INDEX])
                     left, right = unpack_pipeline_action(action_numpy[:PIPELINE_ACTION_DIM])
                     command = processor.advance(
                         left,
@@ -346,6 +371,27 @@ def run_s2(env, args_cli, simulation_app) -> int:
                             else "controller_pipeline"
                         ),
                     )
+                    smoke_recenter_edge = bool(
+                        args_cli.demo_recenter_smoke and control_steps in (18, 48)
+                    )
+                    recenter_scheduled = experiment.consume_recenter_button(
+                        1.0 if smoke_recenter_edge else recenter_button_value,
+                        schedule_recenter=lambda: device.schedule_recenter_to_view(
+                            experiment.recenter_view_prim_path
+                        ),
+                        event_origin=(
+                            "bounded_xr_smoke_after_controller_mapping"
+                            if args_cli.demo_recenter_smoke
+                            else "controller_pipeline"
+                        ),
+                    )
+                    if recenter_scheduled:
+                        # Hold the accepted target on the teleport frame. The
+                        # upstream execution reset clears its SE(3) history on
+                        # the next frame; processor hold marks both arms for a
+                        # fresh no-motion rebase as well.
+                        command = processor.session_inactive()
+                        recenter_execution_reset_pending = True
                 mode_changes = {
                     side: arm.sensitivity_mode
                     for side, arm in zip(
@@ -435,6 +481,10 @@ def run_s2(env, args_cli, simulation_app) -> int:
         not args_cli.demo_backdrop_toggle_smoke
         or (experiment is not None and experiment.backdrop_toggle_count == 4)
     )
+    recenter_smoke_requirement_met = bool(
+        not args_cli.demo_recenter_smoke
+        or (experiment is not None and experiment.recenter_request_count == 2)
+    )
     passed = bool(
         control_steps == args_cli.s2_max_control_steps
         and camera_valid_frames == control_steps
@@ -443,6 +493,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
         and tracking_requirement_met
         and display_toggle_requirement_met
         and backdrop_toggle_requirement_met
+        and recenter_smoke_requirement_met
     )
     report = {
         "gate": "NONE_EXPERIMENTAL" if experiment is not None else "S2",
@@ -513,6 +564,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 {
                     "demo_display_toggle_smoke_met": display_toggle_requirement_met,
                     "demo_backdrop_toggle_smoke_met": backdrop_toggle_requirement_met,
+                    "demo_recenter_smoke_met": recenter_smoke_requirement_met,
                 }
                 if experiment is not None
                 else {}

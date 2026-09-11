@@ -93,6 +93,11 @@ parser.add_argument(
     action="store_true",
     help=argparse.SUPPRESS,
 )
+parser.add_argument(
+    "--demo-recenter-smoke",
+    action="store_true",
+    help=argparse.SUPPRESS,
+)
 AppLauncher.add_app_launcher_args(parser)
 parser.set_defaults(headless=True, enable_cameras=True)
 args_cli = parser.parse_args()

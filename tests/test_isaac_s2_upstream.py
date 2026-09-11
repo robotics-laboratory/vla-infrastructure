@@ -30,6 +30,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
             from tools.isaac_s2_upstream import (
                 ControllerButtonRetargeter,
                 ControllerStateRetargeter,
+                PiperXIsaacTeleopDevice,
                 TrackingSafeSe3RelRetargeter,
                 build_piper_x_bimanual_pipeline,
             )
@@ -43,6 +44,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         cls.ControllerInputIndex = ControllerInputIndex
         cls.ControllerButtonRetargeter = ControllerButtonRetargeter
         cls.ControllerStateRetargeter = ControllerStateRetargeter
+        cls.PiperXIsaacTeleopDevice = PiperXIsaacTeleopDevice
         cls.DemoRuntime = DemoRuntime
         cls.TrackingSafeSe3RelRetargeter = TrackingSafeSe3RelRetargeter
         cls.build_piper_x_bimanual_pipeline = staticmethod(build_piper_x_bimanual_pipeline)
@@ -209,15 +211,30 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         value = np.asarray(retargeter({side: controller})["button"][0])
         np.testing.assert_array_equal(value, [1.0])
 
-    def test_demo_controls_append_two_values_without_changing_production_shape(self) -> None:
+    def test_demo_recenter_output_uses_free_right_thumbstick_click(self) -> None:
+        side = self.ControllersSource.RIGHT
+        retargeter = self.ControllerButtonRetargeter(
+            side, control="thumbstick_click", name="recenter_test"
+        )
+        controller = self._controller(
+            retargeter,
+            [0.1, 0.2, 0.3],
+            sensitivity=1.0,
+            side=side,
+        )
+        value = np.asarray(retargeter({side: controller})["button"][0])
+        np.testing.assert_array_equal(value, [1.0])
+
+    def test_demo_controls_append_three_values_without_changing_production_shape(self) -> None:
         production = self.build_piper_x_bimanual_pipeline()
         demo = self.build_piper_x_bimanual_pipeline(
             sensitivity_control="left_secondary_click",
             display_control="left_primary_click",
             backdrop_control="right_secondary_click",
+            recenter_control="right_thumbstick_click",
         )
         self.assertEqual(production.output_types()["action"].types[0].shape, (22,))
-        self.assertEqual(demo.output_types()["action"].types[0].shape, (24,))
+        self.assertEqual(demo.output_types()["action"].types[0].shape, (25,))
 
     def test_demo_display_edges_hide_panels_without_closing_rgb_source(self) -> None:
         class Container:
@@ -266,8 +283,13 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         runtime._display_button_pressed = False
         runtime._display_toggle_count = 0
 
-        runtime.consume_display_button(1.0)
+        runtime._prebind_camera_panels()
         feeds = runtime._feed_session._manager._feeds
+        self.assertEqual(runtime._feed_session.bind_count, 1)
+        self.assertEqual(runtime._feed_session.refresh_count, 1)
+        self.assertTrue(all(feed.panel._container.hide_count == 1 for feed in feeds))
+
+        runtime.consume_display_button(1.0)
         self.assertTrue(runtime._display_visible)
         self.assertEqual(runtime._feed_session.bind_count, 1)
         self.assertEqual(runtime._feed_session.refresh_count, 1)
@@ -279,7 +301,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         runtime.consume_display_button(1.0)
         self.assertFalse(runtime._display_visible)
         self.assertEqual(runtime._feed_session.close_count, 0)
-        self.assertTrue(all(feed.panel._container.hide_count == 1 for feed in feeds))
+        self.assertTrue(all(feed.panel._container.hide_count == 2 for feed in feeds))
 
         runtime.consume_display_button(0.0)
         runtime.consume_display_button(1.0)
@@ -289,6 +311,82 @@ class IsaacS2UpstreamTests(unittest.TestCase):
 
         runtime.close()
         self.assertEqual(runtime._feed_session.close_count, 1)
+
+    def test_demo_recenter_is_edge_triggered_and_uses_upstream_xr_teleport(self) -> None:
+        runtime = self.DemoRuntime.__new__(self.DemoRuntime)
+        runtime.config = {
+            "xr_presentation": {"recenter": {"quest_button": "R3"}},
+        }
+        runtime.recenter_control = "right_thumbstick_click"
+        runtime.recenter_view_prim_path = "/World/RobosynDemo/SceneCamera"
+        runtime._recenter_button_pressed = False
+        runtime._recenter_request_count = 0
+        runtime._recenter_scheduled_count = 0
+        calls = []
+
+        def schedule():
+            calls.append(True)
+            return True
+
+        self.assertTrue(runtime.consume_recenter_button(1.0, schedule_recenter=schedule))
+        self.assertFalse(runtime.consume_recenter_button(1.0, schedule_recenter=schedule))
+        self.assertFalse(runtime.consume_recenter_button(0.0, schedule_recenter=schedule))
+        self.assertTrue(runtime.consume_recenter_button(1.0, schedule_recenter=schedule))
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(runtime.recenter_request_count, 2)
+        self.assertEqual(runtime.recenter_scheduled_count, 2)
+
+        class XrCore:
+            def __init__(self):
+                self.teleports = []
+
+            @staticmethod
+            def is_xr_display_enabled():
+                return True
+
+            @staticmethod
+            def get_world_transform_matrix(path):
+                return ("view_pose", path)
+
+            def schedule_teleport_to_view(self, anchor, pose):
+                self.teleports.append((anchor, pose))
+
+        class Lifecycle:
+            def __init__(self):
+                self.resets = []
+                self.haptic_resets = 0
+
+            def request_reset(self, pause=False):
+                self.resets.append(pause)
+
+            def reset_haptics(self):
+                self.haptic_resets += 1
+
+        xr_core = XrCore()
+        lifecycle = Lifecycle()
+        device = self.PiperXIsaacTeleopDevice.__new__(self.PiperXIsaacTeleopDevice)
+        device._anchor_manager = type(
+            "AnchorManager",
+            (),
+            {
+                "xr_core": xr_core,
+                "anchor_headset_path": "/World/XRAnchor",
+                "cleanup": lambda self: None,
+            },
+        )()
+        device._session_lifecycle = lifecycle
+        self.assertTrue(device.schedule_recenter_to_view(runtime.recenter_view_prim_path))
+        self.assertEqual(
+            xr_core.teleports,
+            [
+                (
+                    "/World/XRAnchor",
+                    ("view_pose", "/World/RobosynDemo/SceneCamera"),
+                )
+            ],
+        )
+        self.assertEqual(lifecycle.resets, [False])
+        self.assertEqual(lifecycle.haptic_resets, 1)
 
     def test_demo_backdrop_toggle_is_rising_edge_only(self) -> None:
         runtime = self.DemoRuntime.__new__(self.DemoRuntime)
