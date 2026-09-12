@@ -106,7 +106,7 @@ xr_presentation:
     toggle_control: right_thumbstick_click
     quest_button: R3
     view_prim_path: /World/RobosynDemo/SceneCamera
-    behavior: One rising edge uses XRCore.schedule_teleport_to_view so the current physical HMD pose matches the validated demo scene-camera pose; the robot/table USD geometry and 1:1 scale are unchanged.
+    behavior: One rising edge uses XRCore.schedule_teleport_to_view so the current physical HMD pose matches the validated demo scene-camera pose; controller poses use XRCore's full physical-to-virtual transform including the resulting space origin, while robot/table USD geometry and 1:1 scale remain unchanged.
 
 teleop_tuning:
   sensitivity:
@@ -123,10 +123,11 @@ teleop_tuning:
 
 vr_camera_feeds:
   implementation: upstream isaaclab_teleop XrCameraFeedSession and Kit SceneUI presenter
+  upload_path: cpu_staged
   initial_visibility: false
   toggle_control: left_primary_click
   quest_button: X
-  semantics: Display-only UiContainer show/hide after one upstream binding; both wrist cameras and the feed acquisition continue at 30 Hz while panels are hidden.
+  semantics: Display-only UiContainer show/hide after one upstream binding; both wrist cameras and the feed acquisition continue at 30 Hz while panels are hidden. Physical diagnostics showed valid non-uniform RGB and opaque alpha before the panels, so the demo stages unchanged upstream RGBA through the supported CPU ByteImageProvider compatibility path instead of the gray triangulated direct-GPU presentation path.
   performance_mode: not_implemented
   layout:
     mode: horizontal

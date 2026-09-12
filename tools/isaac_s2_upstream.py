@@ -57,6 +57,38 @@ DEMO_BACKDROP_BUTTON_INDEX = 23
 DEMO_RECENTER_BUTTON_INDEX = 24
 
 
+def _gf_row_matrix_to_numpy_transform(matrix: Any) -> np.ndarray:
+    """Convert a USD/Gf row-vector matrix to the pipeline's column-vector convention."""
+
+    values = np.asarray(
+        [[float(matrix[row][column]) for column in range(4)] for row in range(4)],
+        dtype=np.float32,
+    ).T
+    if not np.isfinite(values).all():
+        raise RuntimeError("XR physical-to-virtual transform contains non-finite values")
+    if not np.allclose(values[3], [0.0, 0.0, 0.0, 1.0], atol=1.0e-5):
+        raise RuntimeError("XR physical-to-virtual transform is not affine")
+    return values
+
+
+class _NavigationAwareXrAnchorManager(XrAnchorManager):
+    """Include XRCore space-origin navigation in the controller world transform.
+
+    ``XrAnchorManager.get_world_matrix`` intentionally represents the authored
+    stage anchor. Kit teleport/recenter additionally changes XR's space origin,
+    which is not part of that matrix. XRCore exposes the full physical-to-
+    virtual transform specifically for consumers of raw physical poses.
+    """
+
+    def get_world_matrix(self) -> np.ndarray:
+        xr_core = self.xr_core
+        if xr_core is not None and xr_core.is_xr_display_enabled():
+            physical_to_virtual = xr_core.get_physical_to_virtual_world_transform()
+            if physical_to_virtual is not None:
+                return _gf_row_matrix_to_numpy_transform(physical_to_virtual)
+        return super().get_world_matrix()
+
+
 def _controller_grip_pose_is_usable(controller: Any) -> bool:
     """Reject absent, explicitly invalid, non-finite, and zero-quaternion poses."""
 
@@ -358,11 +390,20 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
         *,
         cloudxr_env_file: str,
         use_kit_xr_bridge: bool,
+        include_xr_navigation_in_controller_transform: bool = False,
     ) -> None:
         # This mirrors only Candidate B IsaacTeleopDevice.__init__; inherited
         # public lifecycle/advance/reset methods remain authoritative.
         self._cfg = cfg
-        self._anchor_manager = XrAnchorManager(cfg.xr_cfg)
+        anchor_manager_type = (
+            _NavigationAwareXrAnchorManager
+            if include_xr_navigation_in_controller_transform
+            else XrAnchorManager
+        )
+        self._anchor_manager = anchor_manager_type(cfg.xr_cfg)
+        self._include_xr_navigation_in_controller_transform = bool(
+            include_xr_navigation_in_controller_transform
+        )
         self._command_handler = CommandHandler()
         self._session_lifecycle = _SingleControllerSourceLifecycle(
             cfg,
@@ -392,6 +433,10 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
         the demo runtime consumes that reset without resetting the environment.
         """
 
+        if not self._include_xr_navigation_in_controller_transform:
+            raise RuntimeError(
+                "XR recenter requires the navigation-aware controller transform"
+            )
         xr_core = self._anchor_manager.xr_core
         if xr_core is None or not xr_core.is_xr_display_enabled():
             return False
@@ -410,6 +455,7 @@ def create_piper_x_teleop_device(
     *,
     cloudxr_env_file: str,
     use_kit_xr_bridge: bool,
+    include_xr_navigation_in_controller_transform: bool = False,
 ) -> PiperXIsaacTeleopDevice:
     """Perform Candidate B's prescribed bridge setup and create the S2 device."""
 
@@ -419,4 +465,7 @@ def create_piper_x_teleop_device(
         cfg,
         cloudxr_env_file=cloudxr_env_file,
         use_kit_xr_bridge=use_kit_xr_bridge,
+        include_xr_navigation_in_controller_transform=(
+            include_xr_navigation_in_controller_transform
+        ),
     )

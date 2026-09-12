@@ -41,8 +41,9 @@ def test_physical_retest_values_are_demo_only_and_geometry_is_unchanged() -> Non
         "view_prim_path": "/World/RobosynDemo/SceneCamera",
         "behavior": (
             "One rising edge uses XRCore.schedule_teleport_to_view so the current physical "
-            "HMD pose matches the validated demo scene-camera pose; the robot/table USD "
-            "geometry and 1:1 scale are unchanged."
+            "HMD pose matches the validated demo scene-camera pose; controller poses use "
+            "XRCore's full physical-to-virtual transform including the resulting space "
+            "origin, while robot/table USD geometry and 1:1 scale remain unchanged."
         ),
     }
 
@@ -55,6 +56,7 @@ def test_physical_retest_values_are_demo_only_and_geometry_is_unchanged() -> Non
     }
     assert config["vr_camera_feeds"]["toggle_control"] == "left_primary_click"
     assert config["vr_camera_feeds"]["quest_button"] == "X"
+    assert config["vr_camera_feeds"]["upload_path"] == "cpu_staged"
     assert config["vr_camera_feeds"]["layout"]["placement"] == "head_locked"
     assert config["vr_camera_feeds"]["layout"]["center_offset_m"] == [0.0, -0.18]
     assert config["vr_camera_feeds"]["layout"]["distance_m"] == 0.65

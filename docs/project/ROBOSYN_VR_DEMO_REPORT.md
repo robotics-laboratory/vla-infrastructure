@@ -110,8 +110,20 @@ The physical log proved that X reached the runtime, both feeds bound, and the
 old viewer-start anchor captured successfully, despite the panels not being
 visible to the operator. The narrow presentation fix selects upstream
 `head_locked`, keeping both compact panels in front of the viewer instead of at
-that captured world pose. The XR smoke confirmed feed-owned zero-copy CUDA
-annotators for both `left_wrist` and `right_wrist`.
+that captured world pose. A later physical run exposed two gray triangulated
+panels. Runtime diagnostics now prove that both source images are non-uniform
+camera frames and that their alpha is already fully opaque, so the sensors and
+RGBA content are not the cause. This localizes the failure downstream of
+capture, in XR presentation; the next compatibility candidate specifically
+bypasses the direct CUDA-pointer upload branch.
+
+The feed source, layout, panels, subscription, and visibility lifecycle remain
+upstream-owned. A demo-only presenter delegate now stages the unchanged RGBA
+frames into a reusable CPU tensor, selecting the same upstream panel's
+`ByteImageProvider.set_bytes_data` path instead of
+`set_bytes_data_from_gpu`. Capture remains upstream zero-copy CUDA; only the
+final presentation upload is staged. Physical confirmation that the panels now
+show images is still required.
 
 The audited `ControllersSource` exposes grip pose/valid, primary, secondary,
 thumbstick X/Y/click, menu, squeeze, and trigger. Upstream reserves only right
@@ -128,6 +140,25 @@ only the pinned SceneUI `UiContainer.hide()` path; ON after that calls `show()`
 without rebinding. Both wrist cameras and feed acquisition keep running while
 hidden. Final resource close happens only after the control loop, so no
 performance improvement is claimed and no sensor performance mode was added.
+
+### R3 controller-frame root cause and remediation
+
+The R3 edge correctly called upstream `XRCore.schedule_teleport_to_view` and
+then the existing S2 lifecycle reset/rebase. The reset prevented an arm jump,
+but `ControllersSource` still received
+`XrAnchorManager.get_world_matrix()`. That matrix represents the authored
+stage anchor only; Kit teleport additionally changes the XR navigation space
+origin. Consequently the visible world rotated/repositioned while physical
+controller poses continued to be mapped through the pre-teleport axes.
+
+For this experiment only, the existing single `ControllersSource` now reads
+`XRCore.get_physical_to_virtual_world_transform()` every frame. The upstream
+API explicitly includes the anchor, anchor-to-space-origin transform, and
+scale. Its USD/Gf row-vector matrix is transposed into the existing pipeline's
+column-vector convention. R3 remains one rising-edge request, scale remains
+1:1, no robot/table geometry moves, and the existing reset/rebase handles the
+transition without restarting the session. Production S2 continues to use the
+original `XrAnchorManager` path.
 
 ### Physical Y shutdown root cause and remediation
 
@@ -180,6 +211,14 @@ fix uses wrist RGBA once for both upstream PiP and D0 RGB and stops forced
 contact-tensor reads after preflight; no scene element or camera was silently
 disabled.
 
+The CPU presentation compatibility candidate was also smoke-tested twice while
+an unrelated Python workload already occupied approximately `11.7 GiB` and
+`100%` GPU before demo startup. The final run still passed lifecycle and camera
+validation, but its `1.9323 Hz` control / `7.7292 Hz` physics result is
+contaminated and is not a valid replacement for the clean table above. A clean
+GPU comparison is deferred until that external workload is absent; no update
+rate or scene element was changed based on the contaminated sample.
+
 XR Kit, the CloudXR runtime, and the upstream feed lifecycle started and shut
 down with exit code zero in both XR runs. With no Quest connected, the XR
 session correctly remained inactive; physical stream stability is therefore
@@ -227,7 +266,7 @@ Quest pick/move test before acceptance.
 - Wrist HUD startup: PASS for both feeds using upstream zero-copy path.
 - Core plus pinned isaac-teleop tests after grasp stabilization: `72 passed,
   11 skipped` (the skips are environment-conditioned).
-- Exact Candidate B processor/upstream tests: `22 passed`, including shared-Y
+- Exact Candidate B processor/upstream tests: `26 passed`, including shared-Y
   mapping, held-button debounce, repeated NORMAL/PRECISE switches with zero
   switch-frame delta, X display mapping, B backdrop mapping/debounce, and no
   mid-session feed close.
@@ -242,6 +281,11 @@ Quest pick/move test before acceptance.
 - Updated stock S2 smoke: PASS with its original thumbstick mapping and original
   `2.0 / 2.0`, `0.5 / 0.5` gains:
   `/data/ebulochkin/cache/isaac-s2/runs/20260911T130749Z/result.json`.
+- Post-R3-fix stock S2 smoke: PASS, 60/60 cameras, session remained running,
+  and the report explicitly retained
+  `XrAnchorManager.get_world_matrix` rather than the experiment-only
+  navigation-aware transform:
+  `/data/ebulochkin/cache/isaac-s2/runs/20260912T113526Z/result.json`.
 - Updated stock S1 regression: PASS, including both 110-frame camera sequences:
   `/data/ebulochkin/cache/isaac-s1/runs/20260911T130822Z/result.json`.
 - Post-grasp-fix standalone demo smoke: PASS; both articulations report one
@@ -252,10 +296,21 @@ Quest pick/move test before acceptance.
 - Tracking-loss recovery, clutch/rebase, analog gripper, and normal/precise
   sensitivity remain covered by the S2 processor suite. Exact controller-field
   tests cover Y, X, and B without changing the 22-value production S2 action.
+- Navigation-transform tests apply two different upstream
+  physical-to-virtual matrices and verify that the controller mapping tracks
+  the changed XR space origin. R3 debounce and upstream teleport dispatch pass.
+- CPU presentation tests verify reusable-buffer allocation and byte-for-byte
+  RGBA preservation. Final no-client XR smoke bound both zero-copy wrist
+  sources to CPU uploads (`RGB stddev 30.3344/32.0653`, alpha `255/255`),
+  advanced all 60/60 camera frames, exercised X/B/R3 events and reset, and
+  exited cleanly:
+  `/data/ebulochkin/cache/robosyn-vr-demo/runs/20260912T113103366077Z-dual_cube_to_matching_plates-hud-on/result.json`.
+- Repository regression after these changes: `72 passed, 13 skipped`; Ruff:
+  PASS. Exact Candidate B processor/upstream suite: `26/26` PASS.
 
-No Quest was connected during the post-fix automated runs, so a live CloudXR
-client remaining connected through physical Y/X/B presses and the new anchor's
-comfort remain explicit retest items. This does not mark the demo or S2
+No Quest was connected during the post-fix automated runs, so physical R3 axis
+alignment, actual panel pixels, and a live CloudXR client remaining connected
+through R3/X remain explicit retest items. This does not mark the demo or S2
 accepted.
 
 ## Physical Quest demo procedure
@@ -265,18 +320,18 @@ accepted.
 2. Connect Quest 3 through the same working S2 CloudXR flow; wait for both
    controllers to track. Confirm the table is slightly below eye level, ahead,
    and at 1:1 scale.
-3. Move left, right, then both arms in NORMAL. Press and release Y once; confirm
-   one logged switch to PRECISE for both arms, no jump and no stream restart.
-   Hold Y for two seconds and confirm it does not switch repeatedly; release
-   and press once more to return both arms to NORMAL.
-4. Verify both squeeze clutch/release paths and both analog triggers. Briefly
-   lose and restore one controller's tracking; confirm zero-jump rebase.
-5. Press X once for both wrist panels and X again to hide them. Repeat twice;
-   confirm the scene, wrist cameras, teleop and CloudXR stream remain live.
-6. Press B once to hide only the background wall, then B again to restore it;
-   confirm neither press moves the scene or interrupts either arm.
-7. Move both colored cubes to their matching plates and confirm the scene
-   camera framing remains centered. Run for two minutes, then stop through the
-   existing S2 control path and keep the generated result/log directory.
+3. Before R3, with squeeze released, move each controller forward/right/up;
+   confirm its robot follows the same visible directions. Then hold squeeze
+   clutch so the robots stay still, face the desired workspace direction,
+   press and release R3 once, and wait one second. Release clutch and repeat all
+   three axes for both arms; confirm axes still match, neither arm jumps, and
+   the CloudXR session never restarts.
+4. Press X once. Confirm two rectangular panels show distinct live LEFT WRIST
+   and RIGHT WRIST images rather than gray triangles; move each wrist to verify
+   the matching image advances. Press X again and confirm only the panels hide.
+5. Recheck Y NORMAL/PRECISE once, both analog triggers, one clutch/rebase, and a
+   brief tracking-loss/recovery. Pick and move one cube to confirm the retained
+   no-shake grasp fix. Stop through the existing S2 path and keep the generated
+   result/log directory.
 
 Preflight status: `READY_FOR_PHYSICAL_RETEST`; not accepted.

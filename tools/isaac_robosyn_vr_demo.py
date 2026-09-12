@@ -36,6 +36,52 @@ def _cpu(value) -> np.ndarray:
     return _tensor(value).detach().cpu().numpy()
 
 
+class _CpuStagedFeedPresenter:
+    """Select upstream SceneUI's CPU provider path for CloudXR compatibility.
+
+    The pinned presenter remains responsible for the feed source, panels,
+    SceneUI lifecycle, and frame subscription. This adapter only stages its
+    unchanged RGBA tensor to a reusable CPU buffer before the upstream panel
+    uploads it through ``ByteImageProvider``.
+    """
+
+    def __init__(self, upstream_presenter: Any) -> None:
+        self._upstream = upstream_presenter
+
+    def create_image_source(self, camera_name: str, camera: Any, cfg: Any = None) -> Any:
+        return self._upstream.create_image_source(camera_name, camera, cfg)
+
+    def create_panel(self, descriptor: Any, width: int, height: int) -> Any:
+        return self._upstream.create_panel(descriptor, width, height)
+
+    def subscribe_to_frame_updates(self, callback: Callable[[Any], None]) -> Any:
+        return self._upstream.subscribe_to_frame_updates(callback)
+
+    @staticmethod
+    def prepare_upload_image(
+        camera_name: str,
+        image: torch.Tensor,
+        previous_source: torch.Tensor | None = None,
+        previous_upload: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        del camera_name, previous_source
+        if image.device.type == "cpu":
+            return image
+        if (
+            previous_upload is not None
+            and previous_upload.device.type == "cpu"
+            and tuple(previous_upload.shape) == tuple(image.shape)
+            and previous_upload.dtype == image.dtype
+        ):
+            return previous_upload
+        return torch.empty(tuple(image.shape), dtype=image.dtype, device="cpu")
+
+    @staticmethod
+    def stage_upload_image(image: torch.Tensor, upload_image: torch.Tensor) -> None:
+        if upload_image is not image:
+            upload_image.copy_(image, non_blocking=False)
+
+
 class _BimanualCameraData:
     def __init__(self, cameras: tuple[Camera, Camera]) -> None:
         self._cameras = cameras
@@ -176,6 +222,16 @@ class DemoRuntime:
             env_cfg, enabled=True, camera_rendering_enabled=True
         )
         self.feed_session_prepared_enabled = bool(self._feed_session.enabled)
+        self.feed_upload_path = str(config["vr_camera_feeds"]["upload_path"])
+        if self.feed_session_prepared_enabled:
+            if self.feed_upload_path != "cpu_staged":
+                raise ValueError(
+                    f"unsupported demo XR camera upload path: {self.feed_upload_path}"
+                )
+            presenter = self._feed_session._presenter
+            if presenter is None:
+                raise RuntimeError("upstream XR camera feed presenter is unavailable")
+            self._feed_session._presenter = _CpuStagedFeedPresenter(presenter)
 
     @property
     def xr_presentation(self) -> dict[str, Any]:
@@ -246,6 +302,40 @@ class DemoRuntime:
             self._feed_bound_ever = True
             self._feed_session.refresh()
             self._set_upstream_panel_visibility(False)
+            manager = self._feed_session._manager
+            feeds = tuple(manager._feeds) if manager is not None else ()
+            diagnostics = []
+            for feed in feeds:
+                source_image = feed.image
+                upload_image = feed.upload_image
+                diagnostics.append(
+                    {
+                        "camera": feed.cfg.camera_name,
+                        "rgb_stddev": float(upload_image[..., :3].float().std().item()),
+                        "source_alpha_range": [
+                            int(source_image[..., 3].min().item()),
+                            int(source_image[..., 3].max().item()),
+                        ],
+                        "source_device": source_image.device.type,
+                        "upload_alpha_range": [
+                            int(upload_image[..., 3].min().item()),
+                            int(upload_image[..., 3].max().item()),
+                        ],
+                        "upload_device": upload_image.device.type,
+                    }
+                )
+            print(
+                json.dumps(
+                    {
+                        "event": "demo_vr_camera_feed_bound",
+                        "feeds": diagnostics,
+                        "layout": self.config["vr_camera_feeds"]["layout"]["placement"],
+                        "upload_path": self.feed_upload_path,
+                    },
+                    sort_keys=True,
+                ),
+                flush=True,
+            )
             print("[DEMO] wrist camera panels prebound hidden before XR session", flush=True)
 
     def close(self) -> None:
@@ -437,6 +527,7 @@ class DemoRuntime:
                 "capture_continues_when_hidden": True,
                 "feed_bound_ever": self._feed_bound_ever,
                 "upstream_session_prepared_enabled": self.feed_session_prepared_enabled,
+                "upload_path": self.feed_upload_path,
             },
             "backdrop_visibility": {
                 "initial": bool(self.config["scene"]["backdrop"]["initial_visibility"]),
@@ -453,6 +544,9 @@ class DemoRuntime:
                 "quest_button": self.config["xr_presentation"]["recenter"]["quest_button"],
                 "view_prim_path": self.recenter_view_prim_path,
                 "upstream_mechanism": "XRCore.schedule_teleport_to_view",
+                "controller_transform_source": (
+                    "XRCore.get_physical_to_virtual_world_transform"
+                ),
                 "authoritative_scene_geometry_changed": False,
             },
             "optional_demo_performance_mode": "not_implemented",

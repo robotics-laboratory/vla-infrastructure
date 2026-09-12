@@ -250,6 +250,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
         teleop_cfg,
         cloudxr_env_file=cloudxr_env,
         use_kit_xr_bridge=bool(args_cli.xr),
+        include_xr_navigation_in_controller_transform=experiment is not None,
     )
 
     reset_observation = env.reset(0)
@@ -551,6 +552,11 @@ def run_s2(env, args_cli, simulation_app) -> int:
             "anchor_pos_m": anchor_position,
             "anchor_rot_xyzw": anchor_rotation,
             "near_plane_m": float(presentation["near_plane_m"]),
+            "controller_transform_source": (
+                "XRCore.get_physical_to_virtual_world_transform"
+                if experiment is not None
+                else "XrAnchorManager.get_world_matrix"
+            ),
             "authoritative_scene_geometry_changed": False,
             **({"experimental_scene_geometry_applied": True} if experiment is not None else {}),
         },

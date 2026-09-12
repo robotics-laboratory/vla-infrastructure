@@ -31,6 +31,9 @@ reused without claiming acceptance.
 - `XrCameraFeedSession`, `XrCameraFeedCfg`, `XrCameraFeedLayoutCfg`, and the Kit
   SceneUI camera-panel presenter, including its existing zero-copy/fallback
   upload path.
+- Kit `XRCore.schedule_teleport_to_view` for presentation recentering and
+  `XRCore.get_physical_to_virtual_world_transform` for the corresponding full
+  anchor, navigation-space-origin, axis, and scale transform.
 
 ## EXACT REMAINING GAP
 
@@ -44,7 +47,16 @@ reused without claiming acceptance.
   append free right secondary/B for visual-only backdrop visibility.
 - Bind the upstream feed session once, show/hide its existing SceneUI
   `UiContainer` without detaching the shared RGB annotator, close only at final
-  shutdown, and collect demo-only diagnostics.
+  shutdown, and collect demo-only diagnostics. Physical capture diagnostics
+  show valid non-uniform RGB and opaque alpha before the gray triangulated
+  panels, localizing the remaining compatibility gap downstream of capture;
+  bypass the direct CUDA-pointer SceneUI branch through the presenter's
+  supported CPU `ByteImageProvider` path without changing acquisition or panel
+  ownership.
+- After R3 teleport, feed `ControllersSource` the full upstream
+  physical-to-virtual transform rather than the authored anchor alone. This
+  keeps controller deltas aligned with the newly presented world and then uses
+  the existing S2 reset/rebase path to avoid a command jump.
 - Import a small number of low-repair RoboSyn test assets and quarantine the
   rest rather than building asset infrastructure.
 
@@ -52,11 +64,16 @@ reused without claiming acceptance.
 
 - One experiment YAML plus one test-asset manifest.
 - One concrete demo scene composer/camera facade and one launcher.
-- Two optional one-float outputs (`left_primary_click`,
-  `right_secondary_click`) appended after the unchanged 22-value S2 action.
+- Three optional one-float outputs (`left_primary_click`,
+  `right_secondary_click`, `right_thumbstick_click`) appended after the
+  unchanged 22-value S2 action.
   The S2 processor receives exactly its original first 22 values; the demo
   config routes `left_secondary_click` into both existing per-arm sensitivity
   slots and selects only demo gains.
+- One demo-only navigation-aware subclass of the pinned `XrAnchorManager` and
+  one narrow presenter delegate that stages the unchanged upstream RGBA tensor
+  to a reusable CPU buffer. Production S2 retains its original anchor manager
+  and upload path.
 - No new policy processor, task backend, recorder, IK implementation, camera
   protocol, or D0 field.
 

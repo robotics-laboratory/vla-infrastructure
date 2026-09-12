@@ -32,9 +32,14 @@ class IsaacS2UpstreamTests(unittest.TestCase):
                 ControllerStateRetargeter,
                 PiperXIsaacTeleopDevice,
                 TrackingSafeSe3RelRetargeter,
+                _gf_row_matrix_to_numpy_transform,
+                _NavigationAwareXrAnchorManager,
                 build_piper_x_bimanual_pipeline,
             )
-            from tools.isaac_robosyn_vr_demo import DemoRuntime
+            from tools.isaac_robosyn_vr_demo import (
+                DemoRuntime,
+                _CpuStagedFeedPresenter,
+            )
         except ModuleNotFoundError as exc:
             raise unittest.SkipTest(f"Candidate B teleop stack unavailable: {exc}") from exc
 
@@ -46,7 +51,12 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         cls.ControllerStateRetargeter = ControllerStateRetargeter
         cls.PiperXIsaacTeleopDevice = PiperXIsaacTeleopDevice
         cls.DemoRuntime = DemoRuntime
+        cls.CpuStagedFeedPresenter = _CpuStagedFeedPresenter
         cls.TrackingSafeSe3RelRetargeter = TrackingSafeSe3RelRetargeter
+        cls.NavigationAwareXrAnchorManager = _NavigationAwareXrAnchorManager
+        cls.gf_row_matrix_to_numpy_transform = staticmethod(
+            _gf_row_matrix_to_numpy_transform
+        )
         cls.build_piper_x_bimanual_pipeline = staticmethod(build_piper_x_bimanual_pipeline)
 
     def _controller(
@@ -237,6 +247,8 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         self.assertEqual(demo.output_types()["action"].types[0].shape, (25,))
 
     def test_demo_display_edges_hide_panels_without_closing_rgb_source(self) -> None:
+        import torch
+
         class Container:
             def __init__(self):
                 self.show_count = 0
@@ -251,6 +263,9 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         class Feed:
             def __init__(self):
                 self.panel = type("Panel", (), {"_container": Container()})()
+                self.cfg = type("Cfg", (), {"camera_name": "wrist"})()
+                self.image = torch.full((2, 2, 4), 255, dtype=torch.uint8)
+                self.upload_image = self.image.clone()
 
         class Session:
             def __init__(self):
@@ -271,9 +286,13 @@ class IsaacS2UpstreamTests(unittest.TestCase):
 
         runtime = self.DemoRuntime.__new__(self.DemoRuntime)
         runtime.config = {
-            "vr_camera_feeds": {"quest_button": "X"},
+            "vr_camera_feeds": {
+                "quest_button": "X",
+                "layout": {"placement": "head_locked"},
+            },
         }
         runtime.display_control = "left_primary_click"
+        runtime.feed_upload_path = "cpu_staged"
         runtime.feed_session_prepared_enabled = True
         runtime._feed_session = Session()
         runtime._env = object()
@@ -374,6 +393,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
                 "cleanup": lambda self: None,
             },
         )()
+        device._include_xr_navigation_in_controller_transform = True
         device._session_lifecycle = lifecycle
         self.assertTrue(device.schedule_recenter_to_view(runtime.recenter_view_prim_path))
         self.assertEqual(
@@ -387,6 +407,98 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         )
         self.assertEqual(lifecycle.resets, [False])
         self.assertEqual(lifecycle.haptic_resets, 1)
+
+    def test_demo_recenter_controller_transform_tracks_xr_space_origin(self) -> None:
+        class Matrix:
+            def __init__(self, rows):
+                self.rows = rows
+
+            def __getitem__(self, index):
+                return self.rows[index]
+
+        first = Matrix(
+            [
+                [0.0, 1.0, 0.0, 0.0],
+                [-1.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0],
+                [0.1, 0.2, 0.3, 1.0],
+            ]
+        )
+        second = Matrix(
+            [
+                [1.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0],
+                [0.8, -0.4, 1.2, 1.0],
+            ]
+        )
+
+        class XrCore:
+            matrix = first
+
+            @staticmethod
+            def is_xr_display_enabled():
+                return True
+
+            def get_physical_to_virtual_world_transform(self):
+                return self.matrix
+
+        manager = self.NavigationAwareXrAnchorManager.__new__(
+            self.NavigationAwareXrAnchorManager
+        )
+        manager._xr_core = XrCore()
+
+        np.testing.assert_allclose(
+            manager.get_world_matrix(),
+            np.asarray(
+                [
+                    [0.0, -1.0, 0.0, 0.1],
+                    [1.0, 0.0, 0.0, 0.2],
+                    [0.0, 0.0, 1.0, 0.3],
+                    [0.0, 0.0, 0.0, 1.0],
+                ],
+                dtype=np.float32,
+            ),
+        )
+        manager._xr_core.matrix = second
+        np.testing.assert_allclose(
+            manager.get_world_matrix(),
+            np.asarray(
+                [
+                    [1.0, 0.0, 0.0, 0.8],
+                    [0.0, 1.0, 0.0, -0.4],
+                    [0.0, 0.0, 1.0, 1.2],
+                    [0.0, 0.0, 0.0, 1.0],
+                ],
+                dtype=np.float32,
+            ),
+        )
+
+    def test_demo_camera_feed_cpu_staging_preserves_rgba_and_reuses_buffer(self) -> None:
+        import torch
+
+        source = torch.zeros((8, 12, 4), dtype=torch.uint8)
+        source[..., :3] = 73
+        source[..., 3] = 0
+        upload = torch.empty_like(source)
+
+        self.CpuStagedFeedPresenter.stage_upload_image(source, upload)
+
+        self.assertTrue(torch.equal(upload, source))
+        reused = self.CpuStagedFeedPresenter.prepare_upload_image(
+            "left_wrist",
+            type(
+                "CudaImage",
+                (),
+                {
+                    "device": type("Device", (), {"type": "cuda"})(),
+                    "shape": source.shape,
+                    "dtype": source.dtype,
+                },
+            )(),
+            previous_upload=upload,
+        )
+        self.assertIs(reused, upload)
 
     def test_demo_backdrop_toggle_is_rising_edge_only(self) -> None:
         runtime = self.DemoRuntime.__new__(self.DemoRuntime)
