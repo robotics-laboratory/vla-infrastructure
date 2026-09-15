@@ -1,0 +1,17 @@
+{
+  "physical_client": false,
+  "scope": "same process; 120 Hz physics and 4 renders per control step unchanged",
+  "provider": {
+    "sequence_ms": {
+      "samples": 0,
+      "mean_ms": NaN,
+      "median_ms": NaN
+    },
+    "raw_cpu_ms": {
+      "samples": 0,
+      "mean_ms": NaN,
+      "median_ms": NaN
+    }
+  },
+  "phases": []
+}

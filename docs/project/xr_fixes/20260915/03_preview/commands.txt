@@ -1,0 +1,9 @@
+# Run from the experiment worktree; common environment:
+export PYTHONNOUSERSITE=1 OMNI_KIT_ACCEPT_EULA=YES
+export PYTHONPATH=/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab
+export XDG_CACHE_HOME=/data/ebulochkin/cache/robosyn-vr-demo
+/data/ebulochkin/envs/isaac-s1-candidate-b/bin/python -m unittest tests.test_isaac_s2_upstream tests.test_isaac_s2_processor -v > docs/project/xr_fixes/20260915/03_preview/tests.log 2>&1
+/data/ebulochkin/envs/isaac-s1-candidate-b/bin/python docs/project/xr_fixes/20260915/03_preview/preview_probe.py --robosyn-vr-demo --s2-teleop --device cuda:0 --xr --s2-cloudxr-profile cloudxrjs --s2-max-control-steps 80 --s2-reset-step 40 --no-s2-require-session --report docs/project/xr_fixes/20260915/03_preview/result.json > docs/project/xr_fixes/20260915/03_preview/isaac.log 2>&1
+/data/ebulochkin/envs/isaac-s1-candidate-b/bin/python tools/run_isaac_s1.py --robosyn-vr-demo --s2-teleop --device cuda:0 --xr --s2-cloudxr-profile cloudxrjs --s2-max-control-steps 60 --s2-reset-step 40 --no-s2-require-session --demo-display-toggle-smoke --demo-backdrop-toggle-smoke --demo-recenter-smoke --report docs/project/xr_fixes/20260915/03_preview/runtime_result.json > docs/project/xr_fixes/20260915/03_preview/runtime_isaac.log 2>&1
+/home/ebulochkin/vla_infrastructure/.venv/bin/ruff check tools/isaac_s2_upstream.py tools/isaac_s2_runtime.py tools/isaac_robosyn_vr_demo.py tests/test_isaac_s2_upstream.py
+nvidia-smi --query-compute-apps=pid,process_name,used_gpu_memory --format=csv > docs/project/xr_fixes/20260915/03_preview/gpu_processes.csv

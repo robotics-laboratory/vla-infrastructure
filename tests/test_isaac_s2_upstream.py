@@ -40,7 +40,9 @@ class IsaacS2UpstreamTests(unittest.TestCase):
             )
             from tools.isaac_robosyn_vr_demo import (
                 DemoRuntime,
+                _CpuRgbaPanel,
                 _CpuStagedFeedPresenter,
+                _FreshVisibleFeedUpdates,
             )
         except ModuleNotFoundError as exc:
             raise unittest.SkipTest(f"Candidate B teleop stack unavailable: {exc}") from exc
@@ -54,6 +56,8 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         cls.PiperXIsaacTeleopDevice = PiperXIsaacTeleopDevice
         cls.DemoRuntime = DemoRuntime
         cls.CpuStagedFeedPresenter = _CpuStagedFeedPresenter
+        cls.CpuRgbaPanel = _CpuRgbaPanel
+        cls.FreshVisibleFeedUpdates = _FreshVisibleFeedUpdates
         cls.TrackingSafeSe3RelRetargeter = TrackingSafeSe3RelRetargeter
         cls.NavigationAwareXrAnchorManager = _NavigationAwareXrAnchorManager
         cls.gf_row_matrix_to_numpy_transform = staticmethod(_gf_row_matrix_to_numpy_transform)
@@ -625,13 +629,126 @@ class IsaacS2UpstreamTests(unittest.TestCase):
                 return panel
 
             presenter = self.CpuStagedFeedPresenter(SimpleNamespace(create_panel=create_panel))
-            self.assertIs(presenter.create_panel(descriptor, 640, 480), panel)
+            self.assertIs(presenter.create_panel(descriptor, 640, 480)._upstream, panel)
             self.assertEqual(calls, [(descriptor, 640, 480)])
             self.assertEqual(component.width, 0.36 / meters_per_unit)
             self.assertEqual(component.height, 0.31 / meters_per_unit)
             self.assertEqual(component.resolution_scale, 1.0)
             self.assertAlmostEqual(component.width * component.unit_to_pixel_scale, 640)
             self.assertGreater(component.height * component.unit_to_pixel_scale, 480 + 22)
+
+    def test_raw_cpu_upload_preserves_bytes_and_retains_buffer_until_close(self) -> None:
+        import ctypes
+        import sys
+        import torch
+
+        uploads, invalidations, closes = [], [], []
+        pointer = ctypes.PYFUNCTYPE(ctypes.c_void_p, ctypes.py_object, ctypes.c_char_p)(
+            ctypes.cast(ctypes.pythonapi.PyCapsule_GetPointer, ctypes.c_void_p).value
+        )
+
+        def upload(capsule, size, fmt):
+            uploads.append(
+                (ctypes.string_at(pointer(capsule, None), size[0] * size[1] * 4), size, fmt)
+            )
+
+        widget = SimpleNamespace(invalidate=lambda: invalidations.append(True))
+        upstream = SimpleNamespace(
+            _provider=SimpleNamespace(set_raw_bytes_data=upload),
+            _component=SimpleNamespace(scene_widget=widget),
+            close=lambda: closes.append(True),
+        )
+        panel = self.CpuRgbaPanel(upstream)
+        image = torch.arange(48, dtype=torch.uint8).reshape(3, 4, 4)
+        gf = SimpleNamespace(TextureFormat=SimpleNamespace(RGBA8_UNORM="RGBA8"))
+        sc = SimpleNamespace(
+            Widget=SimpleNamespace(UpdatePolicy=SimpleNamespace(ON_DEMAND="demand"))
+        )
+        with patch.dict(sys.modules, {"omni.gpu_foundation_factory": gf, "omni.ui.scene": sc}):
+            panel.upload(image)
+            self.assertEqual(uploads, [(image.numpy().tobytes(), [4, 3], "RGBA8")])
+            self.assertIs(panel._retained_image, image)
+            self.assertEqual(widget.update_policy, "demand")
+            self.assertEqual(invalidations, [True])
+            with self.assertRaises(TypeError):
+                panel.upload(image.float())
+            with self.assertRaises(ValueError):
+                panel.upload(image[:, ::2])
+            panel.close()
+            panel.close()
+            panel.upload(image)
+        self.assertEqual(len(uploads), 1)
+        self.assertIsNone(panel._retained_image)
+        self.assertEqual(closes, [True])
+
+    def test_preview_skips_hidden_and_duplicate_frames_before_acquisition(self) -> None:
+        import torch
+        from isaaclab_teleop.camera_feed import _XrCameraFeedManager
+
+        acquired = []
+        feeds = [
+            SimpleNamespace(
+                cfg=SimpleNamespace(camera_name=side, max_update_hz=30.0),
+                camera=SimpleNamespace(frame=torch.tensor([7])),
+                next_update_time=0.0,
+            )
+            for side in ("left", "right")
+        ]
+        manager = SimpleNamespace(
+            _feeds=feeds, _publish_feed=lambda f: acquired.append(f.cfg.camera_name)
+        )
+        visible = [False]
+        updates = self.FreshVisibleFeedUpdates(manager, lambda: visible[0])
+        manager.update = updates.update
+        with patch("tools.isaac_robosyn_vr_demo.time.monotonic", return_value=1.0):
+            _XrCameraFeedManager._on_frame(manager, None)
+            self.assertEqual(acquired, [])
+            visible[0] = True
+            _XrCameraFeedManager._on_frame(manager, None)
+            self.assertEqual(acquired, ["left", "right"])
+        with patch("tools.isaac_robosyn_vr_demo.time.monotonic", return_value=1.1):
+            manager.update()
+            self.assertEqual(acquired, ["left", "right"])
+            feeds[1].camera.frame += 1
+            manager.update()
+            self.assertEqual(acquired, ["left", "right", "right"])
+            visible[0] = False
+            feeds[0].camera.frame += 1
+            manager.update()
+            self.assertEqual(len(acquired), 3)
+            visible[0] = True
+            manager.update()
+            self.assertEqual(acquired[-1], "left")
+        self.assertEqual(updates.counters["hidden_callbacks"], 2)
+        self.assertGreater(updates.counters["duplicate_frames"], 0)
+
+    def test_preview_throttle_keeps_latest_frame_and_reset_invalidates_identity(self) -> None:
+        import torch
+
+        acquired = []
+        feed = SimpleNamespace(
+            cfg=SimpleNamespace(camera_name="left", max_update_hz=30.0),
+            camera=SimpleNamespace(frame=torch.tensor([7])),
+            next_update_time=0.0,
+        )
+        manager = SimpleNamespace(
+            _feeds=[feed], _publish_feed=lambda f: acquired.append(int(f.camera.frame[0]))
+        )
+        updates = self.FreshVisibleFeedUpdates(manager, lambda: True)
+        for now, frame in ((1.0, 7), (1.01, 8), (1.02, 9), (1.04, 10)):
+            feed.camera.frame[0] = frame
+            with patch("tools.isaac_robosyn_vr_demo.time.monotonic", return_value=now):
+                updates.update()
+        self.assertEqual(acquired, [7, 10])
+        # A reset can reuse the same numeric frame. A replacement camera can too.
+        updates.invalidate()
+        with patch("tools.isaac_robosyn_vr_demo.time.monotonic", return_value=1.1):
+            updates.update()
+        feed.camera = SimpleNamespace(frame=torch.tensor([10]))
+        with patch("tools.isaac_robosyn_vr_demo.time.monotonic", return_value=1.2):
+            updates.update()
+        self.assertEqual(acquired, [7, 10, 10, 10])
+        self.assertEqual(updates.counters["throttled_frames"], 2)
 
     def test_demo_backdrop_toggle_is_rising_edge_only(self) -> None:
         runtime = self.DemoRuntime.__new__(self.DemoRuntime)

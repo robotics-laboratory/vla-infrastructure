@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import ctypes
 import hashlib
 import json
+import time
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, Callable
@@ -36,13 +38,108 @@ def _cpu(value) -> np.ndarray:
     return _tensor(value).detach().cpu().numpy()
 
 
+class _CpuRgbaPanel:
+    """Use Kit's raw CPU buffer upload while upstream owns the panel lifetime."""
+
+    def __init__(self, upstream_panel: Any) -> None:
+        self._upstream = upstream_panel
+        self._closed = False
+        self._retained_image: torch.Tensor | None = None
+        # An isolated signature avoids changing ctypes.pythonapi's shared
+        # PyCapsule_New binding, which other Kit extensions also use.
+        self._capsule_new = ctypes.PYFUNCTYPE(
+            ctypes.py_object, ctypes.c_void_p, ctypes.c_char_p, ctypes.c_void_p
+        )(ctypes.cast(ctypes.pythonapi.PyCapsule_New, ctypes.c_void_p).value)
+
+    @property
+    def _component(self):
+        return self._upstream._component
+
+    @property
+    def _container(self):
+        return self._upstream._container
+
+    def upload(self, image: torch.Tensor) -> None:
+        if self._closed:
+            return
+        if image.device.type != "cpu" or image.dtype != torch.uint8:
+            raise TypeError("demo panel requires CPU uint8 RGBA")
+        if image.ndim != 3 or image.shape[-1] != 4 or not image.is_contiguous():
+            raise ValueError("demo panel requires contiguous HWC RGBA")
+        if image.shape[0] == 0 or image.shape[1] == 0:
+            raise ValueError("demo panel image dimensions must be positive")
+        from omni.gpu_foundation_factory import TextureFormat  # type: ignore[import-not-found]
+        from omni.ui.scene import Widget  # type: ignore[import-not-found]
+
+        self._retained_image = image
+        capsule = self._capsule_new(image.data_ptr(), None, None)
+        self._upstream._provider.set_raw_bytes_data(
+            capsule, [int(image.shape[1]), int(image.shape[0])], TextureFormat.RGBA8_UNORM
+        )
+        widget = self._component.scene_widget
+        if widget is not None:
+            widget.update_policy = Widget.UpdatePolicy.ON_DEMAND
+            widget.invalidate()
+
+    def close(self) -> None:
+        if not self._closed:
+            self._upstream.close()
+            self._retained_image = None
+            self._closed = True
+
+
+class _FreshVisibleFeedUpdates:
+    """Filter preview callbacks before upstream acquisition, staging and upload.
+
+    Candidate B has no public callback predicate. Its existing _on_frame calls
+    manager.update dynamically; only that scheduling boundary is adapted.
+    Upstream _publish_feed and refresh still own cameras and image lifetime.
+    """
+
+    def __init__(self, manager: Any, is_visible: Callable[[], bool]) -> None:
+        self._manager = manager
+        self._is_visible = is_visible
+        self._last_frames: dict[str, tuple[int, int]] = {}
+        self.counters = dict(
+            callbacks=0,
+            hidden_callbacks=0,
+            duplicate_frames=0,
+            throttled_frames=0,
+            published_frames=0,
+        )
+
+    def invalidate(self) -> None:
+        self._last_frames.clear()
+
+    def update(self) -> None:
+        self.counters["callbacks"] += 1
+        if not self._is_visible():
+            self.counters["hidden_callbacks"] += 1
+            return
+        now = time.monotonic()
+        for feed in self._manager._feeds:
+            name = feed.cfg.camera_name
+            frame = (id(feed.camera), int(_tensor(feed.camera.frame).reshape(-1)[0].item()))
+            if self._last_frames.get(name) == frame:
+                self.counters["duplicate_frames"] += 1
+                continue
+            if now < feed.next_update_time:
+                self.counters["throttled_frames"] += 1
+                continue
+            self._manager._publish_feed(feed)
+            period = 0.0 if feed.cfg.max_update_hz == 0.0 else 1.0 / feed.cfg.max_update_hz
+            feed.next_update_time = now + period
+            self._last_frames[name] = frame
+            self.counters["published_frames"] += 1
+
+
 class _CpuStagedFeedPresenter:
     """Select upstream SceneUI's CPU provider path for CloudXR compatibility.
 
     The pinned presenter remains responsible for the feed source, panels,
     SceneUI lifecycle, and frame subscription. This adapter only stages its
     unchanged RGBA tensor to a reusable CPU buffer before the upstream panel
-    uploads it through ``ByteImageProvider``.
+    uploads it through ``ByteImageProvider``'s raw buffer API.
     """
 
     def __init__(self, upstream_presenter: Any) -> None:
@@ -64,7 +161,7 @@ class _CpuStagedFeedPresenter:
         except Exception:
             panel.close()
             raise
-        return panel
+        return _CpuRgbaPanel(panel)
 
     def subscribe_to_frame_updates(self, callback: Callable[[Any], None]) -> Any:
         return self._upstream.subscribe_to_frame_updates(callback)
@@ -188,6 +285,8 @@ class DemoRuntime:
         self._display_visible = False
         self._feed_bound = False
         self._feed_bound_ever = False
+        self._feed_updates: _FreshVisibleFeedUpdates | None = None
+        self._feed_update_report: dict[str, int] = {}
         self._display_button_pressed = False
         self._display_toggle_count = 0
         self._backdrop_visible = True
@@ -308,6 +407,13 @@ class DemoRuntime:
             self._feed_session.bind(self._env)
             self._feed_bound = True
             self._feed_bound_ever = True
+            manager = self._feed_session._manager
+            if manager is None:
+                raise RuntimeError("upstream XR camera feed manager is unavailable")
+            self._feed_updates = _FreshVisibleFeedUpdates(manager, lambda: self._display_visible)
+            manager.update = self._feed_updates.update
+            # One initial publication validates the compatibility buffer.
+            # Subsequent hidden callbacks return before any feed acquisition.
             self._feed_session.refresh()
             self._set_upstream_panel_visibility(False)
             manager = self._feed_session._manager
@@ -354,8 +460,11 @@ class DemoRuntime:
 
     def close(self) -> None:
         if self._feed_bound:
+            if self._feed_updates is not None:
+                self._feed_update_report = dict(self._feed_updates.counters)
             self._feed_session.close()
             self._feed_bound = False
+            self._feed_updates = None
         self._env = None
 
     def after_reset(self) -> None:
@@ -363,7 +472,10 @@ class DemoRuntime:
         # cannot be interpreted as a second press in the new reset epoch.
         self._set_backdrop_visibility(self._backdrop_visible)
         if self._feed_bound:
-            self._feed_session.refresh()
+            # Refresh/reset may recycle a frame number or replace its camera.
+            self._feed_updates.invalidate()
+            self._feed_session._manager.refresh(publish=False)
+            self._feed_updates.update()
             self._set_upstream_panel_visibility(self._display_visible)
 
     def consume_display_button(
@@ -528,6 +640,11 @@ class DemoRuntime:
                 "right_wrist": 30.0,
                 "demo_scene": 30.0,
             },
+            "camera_feed_updates": (
+                dict(self._feed_updates.counters)
+                if self._feed_updates is not None
+                else self._feed_update_report
+            ),
             "vr_feed_visibility": {
                 "initial": self.hud_on_start,
                 "final": self._display_visible,
@@ -538,6 +655,8 @@ class DemoRuntime:
                 "feed_bound_ever": self._feed_bound_ever,
                 "upstream_session_prepared_enabled": self.feed_session_prepared_enabled,
                 "upload_path": self.feed_upload_path,
+                "provider_api": "ByteImageProvider.set_raw_bytes_data CPU RGBA8_UNORM",
+                "preview_policy": "visible fresh camera frames; on-demand UI texture capture",
             },
             "backdrop_visibility": {
                 "initial": bool(self.config["scene"]["backdrop"]["initial_visibility"]),
@@ -557,7 +676,7 @@ class DemoRuntime:
                 "controller_transform_source": ("XRCore.get_physical_to_virtual_world_transform"),
                 "authoritative_scene_geometry_changed": False,
             },
-            "optional_demo_performance_mode": "not_implemented",
+            "optional_demo_performance_mode": "preview_uploads_optimized_renderer_unchanged",
             "validation": self.validation,
         }
 

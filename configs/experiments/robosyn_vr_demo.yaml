@@ -130,8 +130,8 @@ vr_camera_feeds:
   initial_visibility: false
   toggle_control: left_primary_click
   quest_button: X
-  semantics: Display-only UiContainer show/hide after one upstream binding; both wrist cameras and the feed acquisition continue at 30 Hz while panels are hidden. Physical diagnostics showed valid non-uniform RGB and opaque alpha before the panels, so the demo stages unchanged upstream RGBA through the supported CPU ByteImageProvider compatibility path instead of the gray triangulated direct-GPU presentation path.
-  performance_mode: not_implemented
+  semantics: X changes upstream UiContainer visibility after one binding. Camera capture continues at configured simulation 30 Hz; hidden preview callbacks skip acquisition, staging and upload. Visible panels publish fresh camera frames at most 30 Hz through ByteImageProvider.set_raw_bytes_data with retained CPU uint8 RGBA buffers and on-demand SceneUI capture. Physics and renderer cadence are unchanged; panel visibility still requires physical Quest verification.
+  performance_mode: preview_uploads_optimized_renderer_unchanged
   layout:
     mode: horizontal
     placement: head_locked
