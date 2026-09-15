@@ -1,0 +1,8 @@
+/data/ebulochkin/cache/robosyn-vr-demo/runs/20260912T134947898064Z-dual_cube_to_matching_plates-hud-off/stdout.log
+SHA256: a01ef0afbe995e2cf713856f50a2c03bded6197f3aa836be1f21ddd037c5a0a3
+453: {"authoritative_scene_geometry_changed": false, "control": "right_thumbstick_click", "event": "demo_xr_recenter_requested", "event_origin": "controller_pipeline", "quest_button": "R3", "scheduled": true, "session_restart": false, "view_prim_path": "/World/RobosynDemo/SceneCamera"}
+456: {"environment_reset": false, "event": "demo_xr_recenter_retargeters_rebased", "session_running": true, "step": 107}
+464: {"authoritative_scene_geometry_changed": false, "control": "right_thumbstick_click", "event": "demo_xr_recenter_requested", "event_origin": "controller_pipeline", "quest_button": "R3", "scheduled": true, "session_restart": false, "view_prim_path": "/World/RobosynDemo/SceneCamera"}
+465: {"environment_reset": false, "event": "demo_xr_recenter_retargeters_rebased", "session_running": true, "step": 149}
+512: {"authoritative_scene_geometry_changed": false, "control": "right_thumbstick_click", "event": "demo_xr_recenter_requested", "event_origin": "controller_pipeline", "quest_button": "R3", "scheduled": true, "session_restart": false, "view_prim_path": "/World/RobosynDemo/SceneCamera"}
+515: {"environment_reset": false, "event": "demo_xr_recenter_retargeters_rebased", "session_running": true, "step": 377}

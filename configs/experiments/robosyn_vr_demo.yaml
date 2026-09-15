@@ -103,6 +103,8 @@ xr_presentation:
   scale: 1.0
   rationale: Physical Quest evidence showed +1.20 m was far too low and -0.25 m was slightly too high. The demo-only anchor Z is now -0.10 m, lowering the unchanged table/robots by 0.15 m relative to the previous run; -90 degree world yaw still maps OpenXR forward to scene +X.
   recenter:
+    execution_mode: sync
+    motion_barrier: Hold until the scheduled HMD world pose is applied, then reset upstream relative history and emit a zero-motion rebase. Missing active XR transforms also hold motion.
     toggle_control: right_thumbstick_click
     quest_button: R3
     view_prim_path: /World/RobosynDemo/SceneCamera

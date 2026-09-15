@@ -6,6 +6,8 @@ environment. It deliberately builds one ControllersSource carrying both hands.
 
 from __future__ import annotations
 
+import json
+import time
 from typing import Any
 
 import numpy as np
@@ -71,6 +73,10 @@ def _gf_row_matrix_to_numpy_transform(matrix: Any) -> np.ndarray:
     return values
 
 
+class _XrWorldTransformUnavailable(RuntimeError):
+    """An active XR session cannot currently map physical poses into the world."""
+
+
 class _NavigationAwareXrAnchorManager(XrAnchorManager):
     """Include XRCore space-origin navigation in the controller world transform.
 
@@ -84,8 +90,14 @@ class _NavigationAwareXrAnchorManager(XrAnchorManager):
         xr_core = self.xr_core
         if xr_core is not None and xr_core.is_xr_display_enabled():
             physical_to_virtual = xr_core.get_physical_to_virtual_world_transform()
-            if physical_to_virtual is not None:
+            if physical_to_virtual is None:
+                raise _XrWorldTransformUnavailable(
+                    "active XR physical-to-virtual transform is unavailable"
+                )
+            try:
                 return _gf_row_matrix_to_numpy_transform(physical_to_virtual)
+            except RuntimeError as exc:
+                raise _XrWorldTransformUnavailable(str(exc)) from exc
         return super().get_world_matrix()
 
 
@@ -395,6 +407,12 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
         # This mirrors only Candidate B IsaacTeleopDevice.__init__; inherited
         # public lifecycle/advance/reset methods remain authoritative.
         self._cfg = cfg
+        if include_xr_navigation_in_controller_transform:
+            from isaacteleop.teleop_session_manager import RetargetingExecutionConfig
+
+            # Relative deltas must belong to the current navigation frame. The
+            # upstream pipelined default can return a pre-teleport result.
+            cfg.retargeting_execution = RetargetingExecutionConfig(mode="sync")
         anchor_manager_type = (
             _NavigationAwareXrAnchorManager
             if include_xr_navigation_in_controller_transform
@@ -404,6 +422,10 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
         self._include_xr_navigation_in_controller_transform = bool(
             include_xr_navigation_in_controller_transform
         )
+        self._pending_recenter_view: np.ndarray | None = None
+        self._last_navigation_transform: np.ndarray | None = None
+        self._navigation_epoch = 0
+        self.navigation_reset_applied = False
         self._command_handler = CommandHandler()
         self._session_lifecycle = _SingleControllerSourceLifecycle(
             cfg,
@@ -425,27 +447,89 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
     def session_running(self) -> bool:
         return bool(self._session_lifecycle.is_active)
 
+    def advance(self, target_T_world=None):
+        """Rebase relative history only after XR applies the requested viewpoint."""
+        self.navigation_reset_applied = False
+        if not self._include_xr_navigation_in_controller_transform:
+            return super().advance(target_T_world)
+        xr_core = self._anchor_manager.xr_core
+        if xr_core is None or not xr_core.is_xr_display_enabled():
+            self._last_navigation_transform = None
+            self._pending_recenter_view = None
+            return super().advance(target_T_world)
+        try:
+            transform = self._anchor_manager.get_world_matrix()
+        except _XrWorldTransformUnavailable:
+            self._last_navigation_transform = None
+            return None
+
+        applied_recenter = self._pending_recenter_view is not None
+        if applied_recenter:
+            head = xr_core.get_input_device("/user/head")
+            if head is None:
+                return None
+            try:
+                head_pose = _gf_row_matrix_to_numpy_transform(head.get_virtual_world_pose(""))
+            except RuntimeError:
+                return None
+            requested = self._pending_recenter_view
+            # Scheduling may span several app updates. Allow modest head motion
+            # between request and application; these are completion tolerances,
+            # not physical acceptance tolerances. A changed matrix alone cannot
+            # acknowledge a repeated/no-op teleport to the same viewpoint.
+            position_error = np.linalg.norm(head_pose[:3, 3] - requested[:3, 3])
+            relative_rotation = head_pose[:3, :3] @ requested[:3, :3].T
+            angle_error = np.arccos(np.clip((np.trace(relative_rotation) - 1.0) / 2.0, -1.0, 1.0))
+            if position_error > 0.05 or angle_error > 0.1:
+                return None
+            self._pending_recenter_view = None
+
+        previous = self._last_navigation_transform
+        if (
+            applied_recenter
+            or previous is None
+            or not np.allclose(transform, previous, rtol=0.0, atol=1e-5)
+        ):
+            self._session_lifecycle.request_reset(pause=False)
+            self._session_lifecycle.reset_haptics()
+            self.navigation_reset_applied = True
+            self._navigation_epoch += 1
+            print(
+                json.dumps(
+                    {
+                        "event": "demo_xr_navigation_frame_applied",
+                        "monotonic_ns": time.monotonic_ns(),
+                        "epoch": self._navigation_epoch,
+                        "recenter": applied_recenter,
+                        "world_T_physical": transform.tolist(),
+                    },
+                    sort_keys=True,
+                ),
+                flush=True,
+            )
+        self._last_navigation_transform = transform.copy()
+        return super().advance(target_T_world)
+
     def schedule_recenter_to_view(self, view_prim_path: str) -> bool:
         """Use Kit XR's teleport-to-view operation without restarting the session.
 
-        The caller holds robot motion for this frame. The injected execution
-        reset clears upstream relative-pose history on the following frame;
-        the demo runtime consumes that reset without resetting the environment.
+        The caller holds robot motion for this frame. Subsequent advance calls
+        hold until the actual HMD world pose reaches the requested viewpoint,
+        then reset upstream history using the applied navigation transform.
         """
 
         if not self._include_xr_navigation_in_controller_transform:
-            raise RuntimeError(
-                "XR recenter requires the navigation-aware controller transform"
-            )
+            raise RuntimeError("XR recenter requires the navigation-aware controller transform")
         xr_core = self._anchor_manager.xr_core
         if xr_core is None or not xr_core.is_xr_display_enabled():
             return False
         view_pose = xr_core.get_world_transform_matrix(view_prim_path)
+        requested = _gf_row_matrix_to_numpy_transform(view_pose)
         xr_core.schedule_teleport_to_view(
             self._anchor_manager.anchor_headset_path,
             view_pose,
         )
-        self._session_lifecycle.request_reset(pause=False)
+        self._pending_recenter_view = requested
         self._session_lifecycle.reset_haptics()
         return True
 

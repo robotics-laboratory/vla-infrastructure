@@ -98,8 +98,6 @@ class _BimanualDifferentialIk:
         return poses
 
     def apply(self, command) -> bool:
-        from isaaclab.utils.math import subtract_frame_transforms  # type: ignore[import-not-found]
-
         native = []
         saturated = False
         for robot, wrist_id, ids, controller, arm_command in zip(
@@ -111,10 +109,8 @@ class _BimanualDifferentialIk:
             strict=True,
         ):
             tcp_world = robot.data.body_link_pose_w.torch[:, wrist_id]
-            root_world = robot.data.root_pose_w.torch
-            ee_pos, ee_quat = subtract_frame_transforms(
-                root_world[:, :3], root_world[:, 3:], tcp_world[:, :3], tcp_world[:, 3:]
-            )
+            # Pose, spatial delta and Jacobian share the Isaac world frame.
+            ee_pos, ee_quat = tcp_world[:, :3], tcp_world[:, 3:]
             joint_pos = robot.data.joint_pos.torch[:, ids[:6]]
             jacobian_index = wrist_id - 1 if robot.is_fixed_base else wrist_id
             jacobian_joint_ids = [joint_id + robot.num_base_dofs for joint_id in ids[:6]]
@@ -274,7 +270,6 @@ def run_s2(env, args_cli, simulation_app) -> int:
     maximum_rebase_motion_m = {"left": 0.0, "right": 0.0}
     saturated_frames = 0
     control_steps = 0
-    recenter_execution_reset_pending = False
 
     print(
         f"[S2] CloudXR {actual_versions['cloudxr']} profile={args_cli.s2_cloudxr_profile} "
@@ -296,15 +291,16 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 action = device.advance()
                 events = poll_control_events(device)
                 recenter_execution_reset = bool(
-                    recenter_execution_reset_pending and events.should_reset
+                    device.navigation_reset_applied and events.should_reset
                 )
                 if recenter_execution_reset:
-                    recenter_execution_reset_pending = False
+                    processor.session_inactive()
                     print(
                         json.dumps(
                             {
                                 "environment_reset": False,
-                                "event": "demo_xr_recenter_retargeters_rebased",
+                                "event": "demo_xr_navigation_retargeters_rebased",
+                                "monotonic_ns": time.monotonic_ns(),
                                 "session_running": device.session_running,
                                 "step": control_steps,
                             },
@@ -313,7 +309,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         flush=True,
                     )
                 host_reset = args_cli.s2_reset_step > 0 and control_steps == args_cli.s2_reset_step
-                if (events.should_reset and not recenter_execution_reset) or host_reset:
+                if (
+                    action is not None and events.should_reset and not recenter_execution_reset
+                ) or host_reset:
                     env.reset(0)
                     processor.reset()
                     ik.reset()
@@ -375,7 +373,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     smoke_recenter_edge = bool(
                         args_cli.demo_recenter_smoke and control_steps in (18, 48)
                     )
-                    recenter_scheduled = experiment.consume_recenter_button(
+                    recenter_scheduled = (
+                        action is not None or args_cli.demo_recenter_smoke
+                    ) and experiment.consume_recenter_button(
                         1.0 if smoke_recenter_edge else recenter_button_value,
                         schedule_recenter=lambda: device.schedule_recenter_to_view(
                             experiment.recenter_view_prim_path
@@ -388,11 +388,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     )
                     if recenter_scheduled:
                         # Hold the accepted target on the teleport frame. The
-                        # upstream execution reset clears its SE(3) history on
-                        # the next frame; processor hold marks both arms for a
-                        # fresh no-motion rebase as well.
+                        # Device.advance keeps holding until the scheduled view
+                        # is applied, then rebases upstream relative history.
                         command = processor.session_inactive()
-                        recenter_execution_reset_pending = True
                 mode_changes = {
                     side: arm.sensitivity_mode
                     for side, arm in zip(

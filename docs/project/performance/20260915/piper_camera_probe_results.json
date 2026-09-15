@@ -1,0 +1,184 @@
+[
+  {
+    "mode": "current",
+    "control_hz": 32.19394555232794,
+    "physics_hz": 128.77578220931176,
+    "wall_seconds": 1.2424696418456733,
+    "timings": {
+      "robot_0_write": {
+        "calls": 160,
+        "seconds": 0.016279835486784577,
+        "ms_per_call": 0.10174897179240361
+      },
+      "robot_1_write": {
+        "calls": 160,
+        "seconds": 0.011475384468212724,
+        "ms_per_call": 0.07172115292632952
+      },
+      "render": {
+        "calls": 160,
+        "seconds": 0.002749888226389885,
+        "ms_per_call": 0.01718680141493678
+      },
+      "physics_and_render": {
+        "calls": 160,
+        "seconds": 0.46631512232124805,
+        "ms_per_call": 2.9144695145078003
+      },
+      "robot_0_update": {
+        "calls": 160,
+        "seconds": 0.013656982686370611,
+        "ms_per_call": 0.08535614178981632
+      },
+      "robot_1_update": {
+        "calls": 160,
+        "seconds": 0.008468053070828319,
+        "ms_per_call": 0.05292533169267699
+      },
+      "camera_update": {
+        "calls": 160,
+        "seconds": 0.6616058254148811,
+        "ms_per_call": 4.135036408843007
+      },
+      "observation_cpu": {
+        "calls": 40,
+        "seconds": 0.018563731806352735,
+        "ms_per_call": 0.46409329515881836
+      }
+    }
+  },
+  {
+    "mode": "render_once",
+    "control_hz": 32.052692161422264,
+    "physics_hz": 128.21076864568906,
+    "wall_seconds": 1.247945096110925,
+    "timings": {
+      "robot_0_write": {
+        "calls": 160,
+        "seconds": 0.01630386314354837,
+        "ms_per_call": 0.10189914464717731
+      },
+      "robot_1_write": {
+        "calls": 160,
+        "seconds": 0.011429426493123174,
+        "ms_per_call": 0.07143391558201984
+      },
+      "physics_and_render": {
+        "calls": 160,
+        "seconds": 0.4678010675124824,
+        "ms_per_call": 2.923756671953015
+      },
+      "robot_0_update": {
+        "calls": 160,
+        "seconds": 0.013010854134336114,
+        "ms_per_call": 0.08131783833960071
+      },
+      "robot_1_update": {
+        "calls": 160,
+        "seconds": 0.007812846917659044,
+        "ms_per_call": 0.04883029323536903
+      },
+      "camera_update": {
+        "calls": 160,
+        "seconds": 0.6674914858303964,
+        "ms_per_call": 4.171821786439978
+      },
+      "render": {
+        "calls": 40,
+        "seconds": 0.0007204846478998661,
+        "ms_per_call": 0.018012116197496653
+      },
+      "observation_cpu": {
+        "calls": 40,
+        "seconds": 0.01847974327392876,
+        "ms_per_call": 0.46199358184821904
+      }
+    }
+  },
+  {
+    "mode": "current",
+    "control_hz": 32.080731390598395,
+    "physics_hz": 128.32292556239358,
+    "wall_seconds": 1.246854366036132,
+    "timings": {
+      "robot_0_write": {
+        "calls": 160,
+        "seconds": 0.01580837438814342,
+        "ms_per_call": 0.09880233992589638
+      },
+      "robot_1_write": {
+        "calls": 160,
+        "seconds": 0.011543796164914966,
+        "ms_per_call": 0.07214872603071854
+      },
+      "render": {
+        "calls": 160,
+        "seconds": 0.0026538039091974497,
+        "ms_per_call": 0.01658627443248406
+      },
+      "physics_and_render": {
+        "calls": 160,
+        "seconds": 0.46732580102980137,
+        "ms_per_call": 2.9207862564362586
+      },
+      "robot_0_update": {
+        "calls": 160,
+        "seconds": 0.01283611380495131,
+        "ms_per_call": 0.08022571128094569
+      },
+      "robot_1_update": {
+        "calls": 160,
+        "seconds": 0.008194409077987075,
+        "ms_per_call": 0.05121505673741922
+      },
+      "camera_update": {
+        "calls": 160,
+        "seconds": 0.666766747366637,
+        "ms_per_call": 4.167292171041481
+      },
+      "observation_cpu": {
+        "calls": 40,
+        "seconds": 0.018439564388245344,
+        "ms_per_call": 0.4609891097061336
+      }
+    }
+  },
+  {
+    "mode": "no_camera_products",
+    "control_hz": 80.46016732136732,
+    "physics_hz": 321.8406692854693,
+    "wall_seconds": 0.497140402905643,
+    "timings": {
+      "robot_0_write": {
+        "calls": 160,
+        "seconds": 0.015087919542565942,
+        "ms_per_call": 0.09429949714103714
+      },
+      "robot_1_write": {
+        "calls": 160,
+        "seconds": 0.012146515771746635,
+        "ms_per_call": 0.07591572357341647
+      },
+      "render": {
+        "calls": 160,
+        "seconds": 0.002539972076192498,
+        "ms_per_call": 0.015874825476203114
+      },
+      "physics_and_render": {
+        "calls": 160,
+        "seconds": 0.44816653802990913,
+        "ms_per_call": 2.801040862686932
+      },
+      "robot_0_update": {
+        "calls": 160,
+        "seconds": 0.012397729558870196,
+        "ms_per_call": 0.07748580974293873
+      },
+      "robot_1_update": {
+        "calls": 160,
+        "seconds": 0.008246633689850569,
+        "ms_per_call": 0.051541460561566055
+      }
+    }
+  }
+]

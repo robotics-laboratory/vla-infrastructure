@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import importlib.metadata
 import unittest
+from types import SimpleNamespace
+from unittest.mock import patch
 
 import numpy as np
 
@@ -54,9 +56,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         cls.CpuStagedFeedPresenter = _CpuStagedFeedPresenter
         cls.TrackingSafeSe3RelRetargeter = TrackingSafeSe3RelRetargeter
         cls.NavigationAwareXrAnchorManager = _NavigationAwareXrAnchorManager
-        cls.gf_row_matrix_to_numpy_transform = staticmethod(
-            _gf_row_matrix_to_numpy_transform
-        )
+        cls.gf_row_matrix_to_numpy_transform = staticmethod(_gf_row_matrix_to_numpy_transform)
         cls.build_piper_x_bimanual_pipeline = staticmethod(build_piper_x_bimanual_pipeline)
 
     def _controller(
@@ -89,7 +89,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         return group
 
     def _delta(self, retargeter, group):
-        result = retargeter({self.ControllersSource.LEFT: group})["ee_delta"][0]
+        result = retargeter({next(iter(retargeter.input_spec())): group})["ee_delta"][0]
         return np.asarray(result)
 
     def test_absence_clears_pose_baseline_and_smoothing_before_far_recovery(self) -> None:
@@ -365,7 +365,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
 
             @staticmethod
             def get_world_transform_matrix(path):
-                return ("view_pose", path)
+                return np.eye(4).tolist()
 
             def schedule_teleport_to_view(self, anchor, pose):
                 self.teleports.append((anchor, pose))
@@ -401,11 +401,11 @@ class IsaacS2UpstreamTests(unittest.TestCase):
             [
                 (
                     "/World/XRAnchor",
-                    ("view_pose", "/World/RobosynDemo/SceneCamera"),
+                    np.eye(4).tolist(),
                 )
             ],
         )
-        self.assertEqual(lifecycle.resets, [False])
+        self.assertEqual(lifecycle.resets, [])
         self.assertEqual(lifecycle.haptic_resets, 1)
 
     def test_demo_recenter_controller_transform_tracks_xr_space_origin(self) -> None:
@@ -443,9 +443,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
             def get_physical_to_virtual_world_transform(self):
                 return self.matrix
 
-        manager = self.NavigationAwareXrAnchorManager.__new__(
-            self.NavigationAwareXrAnchorManager
-        )
+        manager = self.NavigationAwareXrAnchorManager.__new__(self.NavigationAwareXrAnchorManager)
         manager._xr_core = XrCore()
 
         np.testing.assert_allclose(
@@ -473,6 +471,108 @@ class IsaacS2UpstreamTests(unittest.TestCase):
                 dtype=np.float32,
             ),
         )
+
+    def _navigation_device(self):
+        class Core:
+            matrix = np.eye(4).tolist()
+            head_pose = np.eye(4).tolist()
+            requested = np.eye(4)
+            requested[3, :3] = [0.6, 0.1, 1.4]
+            teleports = []
+
+            def is_xr_display_enabled(self):
+                return True
+
+            def get_physical_to_virtual_world_transform(self):
+                return self.matrix
+
+            def get_world_transform_matrix(self, path):
+                return self.requested.tolist()
+
+            def get_input_device(self, path):
+                return SimpleNamespace(get_virtual_world_pose=lambda _: self.head_pose)
+
+            def schedule_teleport_to_view(self, anchor, pose):
+                self.teleports.append((anchor, pose))
+
+        core = Core()
+        manager = self.NavigationAwareXrAnchorManager.__new__(self.NavigationAwareXrAnchorManager)
+        manager._xr_core = core
+        manager._xr_anchor_headset_path = "/World/XRAnchor"
+        lifecycle = SimpleNamespace(
+            resets=[],
+            request_reset=lambda pause=False: lifecycle.resets.append(pause),
+            reset_haptics=lambda: None,
+        )
+        device = self.PiperXIsaacTeleopDevice.__new__(self.PiperXIsaacTeleopDevice)
+        device._anchor_manager = manager
+        device._session_lifecycle = lifecycle
+        device._include_xr_navigation_in_controller_transform = True
+        device._pending_recenter_view = None
+        device._last_navigation_transform = None
+        device._navigation_epoch = 0
+        return device, core, lifecycle
+
+    def test_recenter_holds_across_delayed_application_then_resets_once(self) -> None:
+        device, core, lifecycle = self._navigation_device()
+        self.assertTrue(device.schedule_recenter_to_view("/World/Camera"))
+        base = self.PiperXIsaacTeleopDevice.__bases__[0]
+        with patch.object(base, "advance", return_value="fresh_frame") as advance:
+            for _ in range(3):
+                self.assertIsNone(device.advance())
+            advance.assert_not_called()
+            self.assertEqual(lifecycle.resets, [])
+            core.head_pose = core.requested.tolist()
+            core.matrix = core.requested.tolist()
+            self.assertEqual(device.advance(), "fresh_frame")
+            self.assertTrue(device.navigation_reset_applied)
+            self.assertEqual(lifecycle.resets, [False])
+            self.assertEqual(device.advance(), "fresh_frame")
+            self.assertFalse(device.navigation_reset_applied)
+            self.assertEqual(lifecycle.resets, [False])
+            # The already reached viewpoint is a valid repeat/no-op target.
+            device.schedule_recenter_to_view("/World/Camera")
+            self.assertEqual(device.advance(), "fresh_frame")
+            self.assertEqual(lifecycle.resets, [False, False])
+
+    def test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery(self) -> None:
+        device, core, lifecycle = self._navigation_device()
+        base = self.PiperXIsaacTeleopDevice.__bases__[0]
+        with patch.object(base, "advance", return_value="fresh_frame") as advance:
+            core.matrix = None
+            self.assertIsNone(device.advance())
+            with self.assertRaises(RuntimeError):
+                device._anchor_manager.get_world_matrix()
+            core.matrix = np.full((4, 4), np.nan).tolist()
+            self.assertIsNone(device.advance())
+            advance.assert_not_called()
+            core.matrix = np.eye(4).tolist()
+            self.assertEqual(device.advance(), "fresh_frame")
+            self.assertEqual(lifecycle.resets, [False])
+
+    def test_rightward_relative_motion_preserves_direction_after_navigation_yaw(self) -> None:
+        from scipy.spatial.transform import Rotation
+
+        basis = Rotation.from_euler("x", 90, degrees=True).as_matrix()
+        for side in (self.ControllersSource.LEFT, self.ControllersSource.RIGHT):
+            for yaw in (0, 90, 180, -90):
+                rotation = Rotation.from_euler("z", yaw, degrees=True).as_matrix() @ basis
+                matrix = np.eye(4)
+                matrix[:3, :3] = rotation
+                matrix[:3, 3] = [0.6, 0.1, 1.4]
+                transformed = self.gf_row_matrix_to_numpy_transform(matrix.T.tolist())
+                retargeter = self.TrackingSafeSe3RelRetargeter(
+                    self.Se3RetargeterConfig(input_device=side, delta_pos_scale_factor=1.0),
+                    "navigation_axes",
+                )
+                p0 = transformed[:3, :3] @ [0.2, 1.2, -0.4] + transformed[:3, 3]
+                p1 = p0 + transformed[:3, :3] @ [0.01, 0, 0]
+                np.testing.assert_array_equal(
+                    self._delta(retargeter, self._controller(retargeter, p0, side=side)),
+                    np.zeros(6),
+                )
+                delta = self._delta(retargeter, self._controller(retargeter, p1, side=side))
+                np.testing.assert_allclose(delta[:3], 0.005 * rotation[:, 0], atol=1e-6)
 
     def test_demo_camera_feed_cpu_staging_preserves_rgba_and_reuses_buffer(self) -> None:
         import torch

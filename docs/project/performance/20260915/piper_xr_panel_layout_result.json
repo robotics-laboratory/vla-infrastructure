@@ -1,0 +1,68 @@
+[
+  {
+    "variant": "existing",
+    "panels": [
+      {
+        "camera": "left_wrist",
+        "world_width": 0.36,
+        "world_height": 0.30999999999999994,
+        "resolution_scale": 1777.777777777778,
+        "unit_to_pixel_scale": 1.0,
+        "inferred_layout_width": 0.36,
+        "inferred_layout_height": 0.30999999999999994,
+        "scene_widget_built": true,
+        "texture_width": 640,
+        "texture_height": 551,
+        "frame_computed_width": 64.54012298583984,
+        "frame_computed_height": 22.0
+      },
+      {
+        "camera": "right_wrist",
+        "world_width": 0.36,
+        "world_height": 0.30999999999999994,
+        "resolution_scale": 1777.777777777778,
+        "unit_to_pixel_scale": 1.0,
+        "inferred_layout_width": 0.36,
+        "inferred_layout_height": 0.30999999999999994,
+        "scene_widget_built": true,
+        "texture_width": 640,
+        "texture_height": 551,
+        "frame_computed_width": 73.78031158447266,
+        "frame_computed_height": 22.0
+      }
+    ]
+  },
+  {
+    "variant": "pixel_layout_in_memory",
+    "panels": [
+      {
+        "camera": "left_wrist",
+        "world_width": 0.36,
+        "world_height": 0.30999999999999994,
+        "resolution_scale": 1.0,
+        "unit_to_pixel_scale": 1777.7777777777778,
+        "inferred_layout_width": 640.0,
+        "inferred_layout_height": 551.111111111111,
+        "scene_widget_built": true,
+        "texture_width": 640,
+        "texture_height": 551,
+        "frame_computed_width": 64.54012298583984,
+        "frame_computed_height": 22.0
+      },
+      {
+        "camera": "right_wrist",
+        "world_width": 0.36,
+        "world_height": 0.30999999999999994,
+        "resolution_scale": 1.0,
+        "unit_to_pixel_scale": 1777.7777777777778,
+        "inferred_layout_width": 640.0,
+        "inferred_layout_height": 551.111111111111,
+        "scene_widget_built": true,
+        "texture_width": 640,
+        "texture_height": 551,
+        "frame_computed_width": 73.78031158447266,
+        "frame_computed_height": 22.0
+      }
+    ]
+  }
+]

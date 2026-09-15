@@ -1,0 +1,57 @@
+{
+  "mode": "current",
+  "measured_advance_calls": 55,
+  "advance_ms": 193.88545145788652,
+  "timings": {
+    "panel_gpu_to_cpu": {
+      "calls": 440,
+      "seconds": 0.0781950824894011,
+      "ms_per_call": 0.1777160965668207
+    },
+    "panel_0_upload": {
+      "calls": 220,
+      "seconds": 3.792294289683923,
+      "ms_per_call": 17.237701316745106
+    },
+    "feed_publish": {
+      "calls": 440,
+      "seconds": 7.513887642649934,
+      "ms_per_call": 17.07701736965894
+    },
+    "panel_1_upload": {
+      "calls": 220,
+      "seconds": 3.493688288377598,
+      "ms_per_call": 15.880401310807263
+    },
+    "feed_manager_update": {
+      "calls": 220,
+      "seconds": 7.515284736640751,
+      "ms_per_call": 34.16038516654887
+    },
+    "render": {
+      "calls": 220,
+      "seconds": 9.646382505074143,
+      "ms_per_call": 43.84719320488247
+    },
+    "physics_and_render": {
+      "calls": 220,
+      "seconds": 10.466339315287769,
+      "ms_per_call": 47.574269614944406
+    },
+    "camera_update": {
+      "calls": 220,
+      "seconds": 0.10306116915307939,
+      "ms_per_call": 0.4684598597867245
+    },
+    "observation_cpu": {
+      "calls": 55,
+      "seconds": 0.019247645046561956,
+      "ms_per_call": 0.34995718266476283
+    },
+    "camera_validation": {
+      "calls": 55,
+      "seconds": 0.07569295400753617,
+      "ms_per_call": 1.3762355274097486
+    }
+  }
+}

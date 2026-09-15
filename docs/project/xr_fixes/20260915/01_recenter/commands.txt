@@ -1,0 +1,7 @@
+# Run from the robosyn-vr-demo worktree. Set this common environment:
+export PYTHONNOUSERSITE=1 OMNI_KIT_ACCEPT_EULA=YES
+export PYTHONPATH=/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab
+export XDG_CACHE_HOME=/data/ebulochkin/cache/robosyn-vr-demo
+/data/ebulochkin/envs/isaac-s1-candidate-b/bin/python -m unittest tests.test_isaac_s2_upstream tests.test_isaac_s2_processor -v > docs/project/xr_fixes/20260915/01_recenter/tests.log 2>&1
+/data/ebulochkin/envs/isaac-s1-candidate-b/bin/python tools/run_isaac_s1.py --robosyn-vr-demo --s2-teleop --device cuda:0 --xr --s2-cloudxr-profile cloudxrjs --s2-max-control-steps 60 --s2-reset-step 0 --no-s2-require-session --demo-recenter-smoke --report docs/project/xr_fixes/20260915/01_recenter/result.json > docs/project/xr_fixes/20260915/01_recenter/isaac.log 2>&1
+/home/ebulochkin/vla_infrastructure/.venv/bin/ruff check tools/isaac_s2_upstream.py tools/isaac_s2_runtime.py tests/test_isaac_s2_upstream.py
