@@ -5,7 +5,7 @@ Experimental `robosyn-vr-demo` branch. Canonical S1/D0 contracts and production 
 | Fix | Implementation | Saved validation | Physical status |
 |---|---|---|---|
 | 1. R3 coordinate frame | Current XR physical-to-world transform; synchronous upstream execution; hold across scheduled teleport; rebase after application; world-frame IK inputs | [01_recenter](xr_fixes/20260915/01_recenter/): 29 tests pass, 60-step Isaac smoke passes | Quest disconnected: no actual teleport/tracking; retest required |
-| 2. Camera panel layout | Pending | Pending | Retest required |
+| 2. Camera panel layout | Preserve physical size; layout at camera pixel resolution, supersampling 1 | [02_panels](xr_fixes/20260915/02_panels/): 30 tests pass, real Kit frame 640×551, 16-step smoke passes | Quest texture visibility retest required |
 | 3. Preview overhead | Pending | Pending | Retest required |
 
 ## Upstream audit / integration size re-audit
@@ -31,6 +31,12 @@ R3 no longer resets relative history immediately after merely scheduling a telep
 Tests exercise delayed application over multiple advances, a repeated teleport to the same pose, missing/invalid transforms and recovery, plus actual pinned SE(3) rightward deltas for both hands at four viewer yaws. The first failing test output is retained alongside the corrected passing output. The completion tolerances (5 cm / 0.1 rad) accommodate head motion; they are not acceptance tolerances. Excessive head movement before acknowledgment can keep motion held; see backlog.
 
 The no-client XR smoke reports `passed: true`, 60 valid advancing RGB frames, and no authoritative geometry/contract changes. Its two R3 requests have `scheduled: false`; it does not validate a live teleport. OpenXR instance-loss messages occur during final runtime shutdown and are retained in the log.
+
+## Fix 2 details and limits
+
+The thin CPU presenter corrects `WidgetComponent.unit_to_pixel_scale` to camera width divided by panel world width, and sets texture supersampling to 1. Labels, source, physical dimensions, placement and upstream lifecycle remain intact. The sizing follows the [official WidgetComponent model](https://docs.omniverse.nvidia.com/kit/docs/omni.kit.scene_view.xr_utils/1.0.2/WidgetComponent.html), checked against installed 1.0.1.
+
+The live Kit probe now computes UI frame 640×551 rather than the prior 0.36×22, with a 640×551 texture on the unchanged 0.36×0.31 world-unit panel. It deliberately makes the panels visible through the demo visibility state, so subsequent updates cannot hide them again. Both feeds have nonuniform RGB and alpha 255. This repairs demonstrated layout overflow; it cannot prove headset sampling/texture visibility without a connected Quest. Two unrelated Python GPU processes were present during this run; the captured GPU context explains why its wall time should not be compared to an idle-machine benchmark.
 
 ## Sources and prior diagnosis
 

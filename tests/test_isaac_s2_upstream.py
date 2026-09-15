@@ -262,7 +262,15 @@ class IsaacS2UpstreamTests(unittest.TestCase):
 
         class Feed:
             def __init__(self):
-                self.panel = type("Panel", (), {"_container": Container()})()
+                self.panel = SimpleNamespace(
+                    _container=Container(),
+                    _component=SimpleNamespace(
+                        width=0.36,
+                        height=0.31,
+                        unit_to_pixel_scale=640 / 0.36,
+                        resolution_scale=1.0,
+                    ),
+                )
                 self.cfg = type("Cfg", (), {"camera_name": "wrist"})()
                 self.image = torch.full((2, 2, 4), 255, dtype=torch.uint8)
                 self.upload_image = self.image.clone()
@@ -599,6 +607,31 @@ class IsaacS2UpstreamTests(unittest.TestCase):
             previous_upload=upload,
         )
         self.assertIs(reused, upload)
+
+    def test_demo_panel_uses_pixels_for_layout_without_changing_physical_size(self) -> None:
+        for meters_per_unit in (1.0, 0.01):
+            component = SimpleNamespace(
+                width=0.36 / meters_per_unit,
+                height=0.31 / meters_per_unit,
+                resolution_scale=640 / 0.36,
+                unit_to_pixel_scale=meters_per_unit,
+            )
+            panel = SimpleNamespace(_component=component)
+            descriptor = SimpleNamespace(label="LEFT WRIST")
+            calls = []
+
+            def create_panel(*args):
+                calls.append(args)
+                return panel
+
+            presenter = self.CpuStagedFeedPresenter(SimpleNamespace(create_panel=create_panel))
+            self.assertIs(presenter.create_panel(descriptor, 640, 480), panel)
+            self.assertEqual(calls, [(descriptor, 640, 480)])
+            self.assertEqual(component.width, 0.36 / meters_per_unit)
+            self.assertEqual(component.height, 0.31 / meters_per_unit)
+            self.assertEqual(component.resolution_scale, 1.0)
+            self.assertAlmostEqual(component.width * component.unit_to_pixel_scale, 640)
+            self.assertGreater(component.height * component.unit_to_pixel_scale, 480 + 22)
 
     def test_demo_backdrop_toggle_is_rising_edge_only(self) -> None:
         runtime = self.DemoRuntime.__new__(self.DemoRuntime)

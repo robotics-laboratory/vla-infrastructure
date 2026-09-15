@@ -126,6 +126,7 @@ teleop_tuning:
 vr_camera_feeds:
   implementation: upstream isaaclab_teleop XrCameraFeedSession and Kit SceneUI presenter
   upload_path: cpu_staged
+  panel_layout: Camera-resolution pixel layout; preserve upstream physical dimensions, labels and placement. Texture supersampling is 1.0.
   initial_visibility: false
   toggle_control: left_primary_click
   quest_button: X

@@ -52,7 +52,19 @@ class _CpuStagedFeedPresenter:
         return self._upstream.create_image_source(camera_name, camera, cfg)
 
     def create_panel(self, descriptor: Any, width: int, height: int) -> Any:
-        return self._upstream.create_panel(descriptor, width, height)
+        panel = self._upstream.create_panel(descriptor, width, height)
+        try:
+            # WidgetComponent's layout scale and texture supersampling differ.
+            # Candidate B uses meters for UI layout, so the 22-pixel label and
+            # 1-pixel border overflow a 0.36-unit panel. Keep its physical size
+            # and placement, but lay out children at camera pixel resolution.
+            component = panel._component
+            component.resolution_scale = 1.0
+            component.unit_to_pixel_scale = float(width) / component.width
+        except Exception:
+            panel.close()
+            raise
+        return panel
 
     def subscribe_to_frame_updates(self, callback: Callable[[Any], None]) -> Any:
         return self._upstream.subscribe_to_frame_updates(callback)
@@ -169,9 +181,7 @@ class DemoRuntime:
         self.display_control = str(config["vr_camera_feeds"]["toggle_control"])
         self.backdrop_control = str(config["scene"]["backdrop"]["toggle_control"])
         self.recenter_control = str(config["xr_presentation"]["recenter"]["toggle_control"])
-        self.recenter_view_prim_path = str(
-            config["xr_presentation"]["recenter"]["view_prim_path"]
-        )
+        self.recenter_view_prim_path = str(config["xr_presentation"]["recenter"]["view_prim_path"])
         self.pipeline_action_dim = 25
         self.validation: dict[str, Any] = {}
         self._env = None
@@ -225,9 +235,7 @@ class DemoRuntime:
         self.feed_upload_path = str(config["vr_camera_feeds"]["upload_path"])
         if self.feed_session_prepared_enabled:
             if self.feed_upload_path != "cpu_staged":
-                raise ValueError(
-                    f"unsupported demo XR camera upload path: {self.feed_upload_path}"
-                )
+                raise ValueError(f"unsupported demo XR camera upload path: {self.feed_upload_path}")
             presenter = self._feed_session._presenter
             if presenter is None:
                 raise RuntimeError("upstream XR camera feed presenter is unavailable")
@@ -322,6 +330,12 @@ class DemoRuntime:
                             int(upload_image[..., 3].max().item()),
                         ],
                         "upload_device": upload_image.device.type,
+                        "panel_layout_pixels": [
+                            feed.panel._component.width * feed.panel._component.unit_to_pixel_scale,
+                            feed.panel._component.height
+                            * feed.panel._component.unit_to_pixel_scale,
+                        ],
+                        "panel_resolution_scale": feed.panel._component.resolution_scale,
                     }
                 )
             print(
@@ -421,9 +435,7 @@ class DemoRuntime:
                         "control": self.recenter_control,
                         "event": "demo_xr_recenter_requested",
                         "event_origin": event_origin,
-                        "quest_button": self.config["xr_presentation"]["recenter"][
-                            "quest_button"
-                        ],
+                        "quest_button": self.config["xr_presentation"]["recenter"]["quest_button"],
                         "scheduled": scheduled,
                         "session_restart": False,
                         "view_prim_path": self.recenter_view_prim_path,
@@ -481,9 +493,7 @@ class DemoRuntime:
                     "upstream XR CameraFeedSession is unavailable in this Kit experience"
                 )
             if not self._feed_bound:
-                raise RuntimeError(
-                    "upstream XR camera panels were not bound before the XR session"
-                )
+                raise RuntimeError("upstream XR camera panels were not bound before the XR session")
             self._set_upstream_panel_visibility(True)
         else:
             # Closing here detaches the pinned Replicator RGB annotator shared
@@ -544,9 +554,7 @@ class DemoRuntime:
                 "quest_button": self.config["xr_presentation"]["recenter"]["quest_button"],
                 "view_prim_path": self.recenter_view_prim_path,
                 "upstream_mechanism": "XRCore.schedule_teleport_to_view",
-                "controller_transform_source": (
-                    "XRCore.get_physical_to_virtual_world_transform"
-                ),
+                "controller_transform_source": ("XRCore.get_physical_to_virtual_world_transform"),
                 "authoritative_scene_geometry_changed": False,
             },
             "optional_demo_performance_mode": "not_implemented",
