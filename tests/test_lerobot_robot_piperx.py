@@ -58,6 +58,15 @@ class FakePiper:
 
     def __init__(self, **kwargs: object):
         self.kwargs = kwargs
+        self.connect_calls = 0
+        self.disconnect_calls = 0
+        self.enable_calls = 0
+        self.disable_calls: list[int] = []
+        self.master_slave_calls: list[tuple[int, int, int, int]] = []
+        self.motion_control_calls: list[tuple[int, int, int, int]] = []
+        self.connect_error: Exception | None = None
+        self.disconnect_error: Exception | None = None
+        self.enable_result = True
         self.joint_calls: list[tuple[int, ...]] = []
         self.gripper_calls: list[tuple[int, int, int, int]] = []
         self.joint_feedback = SimpleNamespace(
@@ -70,6 +79,29 @@ class FakePiper:
         )
         self.gripper_feedback = SimpleNamespace(grippers_angle=-12345)
         FakePiper.instances.append(self)
+
+    def ConnectPort(self) -> None:
+        self.connect_calls += 1
+        if self.connect_error is not None:
+            raise self.connect_error
+
+    def DisconnectPort(self) -> None:
+        self.disconnect_calls += 1
+        if self.disconnect_error is not None:
+            raise self.disconnect_error
+
+    def EnablePiper(self) -> bool:
+        self.enable_calls += 1
+        return self.enable_result
+
+    def DisableArm(self, motor: int) -> None:
+        self.disable_calls.append(motor)
+
+    def MasterSlaveConfig(self, *args: int) -> None:
+        self.master_slave_calls.append(args)
+
+    def MotionCtrl_2(self, *args: int) -> None:
+        self.motion_control_calls.append(args)
 
     def JointCtrl(self, *commands: int) -> None:
         self.joint_calls.append(commands)
@@ -116,9 +148,15 @@ class PiperXPluginTests(unittest.TestCase):
     def mark_connected(robot: PiperXFollower | BiPiperXFollower) -> None:
         if isinstance(robot, BiPiperXFollower):
             robot.left_arm._is_connected = True
+            robot.left_arm._is_configured = True
+            robot.left_arm._is_enabled = True
             robot.right_arm._is_connected = True
+            robot.right_arm._is_configured = True
+            robot.right_arm._is_enabled = True
         else:
             robot._is_connected = True
+            robot._is_configured = True
+            robot._is_enabled = True
 
     def test_plugin_discovery_registers_both_config_types(self) -> None:
         program = """
@@ -134,7 +172,9 @@ assert BiPiperXFollowerConfig(
     right_arm_config=__import__('lerobot_robot_piperx.piperx', fromlist=['PiperXFollowerConfigBase']).PiperXFollowerConfigBase(port='right'),
 ).type == 'bi_piperx_follower'
 """
-        result = subprocess.run([sys.executable, "-c", program], text=True, capture_output=True, check=False)
+        result = subprocess.run(
+            [sys.executable, "-c", program], text=True, capture_output=True, check=False
+        )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_factory_constructs_the_single_arm_robot_without_hardware(self) -> None:
@@ -152,7 +192,9 @@ assert BiPiperXFollowerConfig(
         robot = make_robot_from_config(config)
         self.assertIsInstance(robot, BiPiperXFollower)
         self.assertEqual(robot.robot_type, "bi_piperx_follower")
-        self.assertEqual([arm.kwargs["can_name"] for arm in FakePiper.instances], ["left-can", "right-can"])
+        self.assertEqual(
+            [arm.kwargs["can_name"] for arm in FakePiper.instances], ["left-can", "right-can"]
+        )
 
     def test_single_arm_feature_names_and_observation_order_are_exact(self) -> None:
         robot = PiperXFollower(self.follower_config())
@@ -201,6 +243,54 @@ assert BiPiperXFollowerConfig(
         self.assertAlmostEqual(observation["joint_2.pos"], -2.002)
         self.assertAlmostEqual(observation["gripper.pos"], 12.345)
 
+    def test_missing_joint_telemetry_rejects_the_observation(self) -> None:
+        robot = PiperXFollower(self.follower_config())
+        self.mark_connected(robot)
+        del FakePiper.instances[0].joint_feedback.joint_4
+        with self.assertRaisesRegex(RuntimeError, "joint_4"):
+            robot.get_observation()
+
+    def test_missing_gripper_telemetry_rejects_the_observation(self) -> None:
+        robot = PiperXFollower(self.follower_config())
+        self.mark_connected(robot)
+        FakePiper.instances[0].gripper_feedback = None
+        with self.assertRaisesRegex(RuntimeError, "grippers_angle"):
+            robot.get_observation()
+
+    def test_connect_tracks_readiness_and_motion_requires_enabled_state(self) -> None:
+        robot = PiperXFollower(
+            PiperXFollowerConfig(port="fake-can", startup_sleep_s=0, enable_on_connect=False)
+        )
+        robot.connect()
+        self.assertTrue(robot.is_connected)
+        self.assertTrue(robot.is_configured)
+        self.assertFalse(robot.is_enabled)
+        self.assertFalse(robot.is_motion_ready)
+        with self.assertRaisesRegex(RuntimeError, "motion is not ready"):
+            robot.send_action(self.action())
+
+        robot.enable()
+        self.assertTrue(robot.is_enabled)
+        self.assertTrue(robot.is_motion_ready)
+        robot.send_action(self.action())
+        self.assertEqual(len(FakePiper.instances[0].joint_calls), 1)
+        robot.disconnect()
+        self.assertFalse(robot.is_connected)
+        self.assertFalse(robot.is_configured)
+        self.assertFalse(robot.is_enabled)
+        self.assertFalse(robot.is_motion_ready)
+
+    def test_enable_timeout_fails_connect_and_rolls_back(self) -> None:
+        robot = PiperXFollower(PiperXFollowerConfig(port="fake-can", startup_sleep_s=0))
+        with patch("lerobot_robot_piperx.piperx.wait_enable_piper", return_value=False):
+            with self.assertRaisesRegex(TimeoutError, "enabled state"):
+                robot.connect()
+        arm = FakePiper.instances[0]
+        self.assertEqual(arm.disable_calls, [7])
+        self.assertEqual(arm.disconnect_calls, 1)
+        self.assertFalse(robot.is_connected)
+        self.assertFalse(robot.is_motion_ready)
+
     def test_joint_and_gripper_commands_round_to_sdk_integers_and_return_sent_values(self) -> None:
         robot = PiperXFollower(self.follower_config())
         self.mark_connected(robot)
@@ -214,7 +304,9 @@ assert BiPiperXFollowerConfig(
             "gripper.pos": -7.8906,
         }
         sent = robot.send_action(action)
-        self.assertEqual(FakePiper.instances[0].joint_calls, [(1235, -2346, 3456, -4567, 5679, -6790)])
+        self.assertEqual(
+            FakePiper.instances[0].joint_calls, [(1235, -2346, 3456, -4567, 5679, -6790)]
+        )
         self.assertEqual(FakePiper.instances[0].gripper_calls, [(-7891, 1000, 1, 0)])
         self.assertEqual(
             sent,
@@ -229,13 +321,13 @@ assert BiPiperXFollowerConfig(
             },
         )
 
-    def test_partial_joints_are_ignored_while_gripper_remains_independent(self) -> None:
+    def test_partial_joints_reject_the_entire_action_before_gripper_motion(self) -> None:
         robot = PiperXFollower(self.follower_config())
         self.mark_connected(robot)
-        sent = robot.send_action({"joint_1.pos": 9.0, "gripper.pos": 4.3214})
+        with self.assertRaisesRegex(ValueError, "Partial PIPER-X joint action rejected"):
+            robot.send_action({"joint_1.pos": 9.0, "gripper.pos": 4.3214})
         self.assertEqual(FakePiper.instances[0].joint_calls, [])
-        self.assertEqual(FakePiper.instances[0].gripper_calls, [(4321, 1000, 1, 0)])
-        self.assertEqual(sent, {"gripper.pos": 4.321})
+        self.assertEqual(FakePiper.instances[0].gripper_calls, [])
 
     def test_no_project_added_clipping_or_slew_limit_is_applied(self) -> None:
         robot = PiperXFollower(self.follower_config())
@@ -267,7 +359,59 @@ assert BiPiperXFollowerConfig(
         self.assertEqual(right.joint_calls, [])
         self.assertEqual(left.gripper_calls, [(2000, 1000, 1, 0)])
         self.assertEqual(right.gripper_calls, [(-3000, 1000, 1, 0)])
-        self.assertEqual(tuple(sent), tuple(f"left_{key}" for key in PIPER_ACTION_KEYS) + ("right_gripper.pos",))
+        self.assertEqual(
+            tuple(sent), tuple(f"left_{key}" for key in PIPER_ACTION_KEYS) + ("right_gripper.pos",)
+        )
+
+    def test_bimanual_prevalidates_both_arms_before_sending_either(self) -> None:
+        robot = BiPiperXFollower(
+            BiPiperXFollowerConfig(
+                left_arm_config=PiperXFollowerConfigBase(port="left"),
+                right_arm_config=PiperXFollowerConfigBase(port="right"),
+            )
+        )
+        self.mark_connected(robot)
+        action = {f"left_{key}": value for key, value in self.action().items()}
+        action["right_joint_1.pos"] = 2.0
+        with self.assertRaisesRegex(ValueError, "Partial PIPER-X joint action rejected"):
+            robot.send_action(action)
+        left, right = FakePiper.instances
+        self.assertEqual(left.joint_calls, [])
+        self.assertEqual(right.joint_calls, [])
+
+    def test_bimanual_connect_rolls_back_left_when_right_connect_fails(self) -> None:
+        robot = BiPiperXFollower(
+            BiPiperXFollowerConfig(
+                left_arm_config=PiperXFollowerConfigBase(port="left", startup_sleep_s=0),
+                right_arm_config=PiperXFollowerConfigBase(port="right", startup_sleep_s=0),
+            )
+        )
+        left, right = FakePiper.instances
+        right.connect_error = RuntimeError("right connect failed")
+        with self.assertRaisesRegex(RuntimeError, "right connect failed"):
+            robot.connect()
+        self.assertEqual(left.disconnect_calls, 1)
+        self.assertEqual(left.disable_calls, [7])
+        self.assertEqual(right.disconnect_calls, 1)
+        self.assertFalse(robot.is_connected)
+        self.assertFalse(robot.is_motion_ready)
+
+    def test_bimanual_disconnect_cleans_right_when_left_disconnect_fails(self) -> None:
+        robot = BiPiperXFollower(
+            BiPiperXFollowerConfig(
+                left_arm_config=PiperXFollowerConfigBase(port="left", startup_sleep_s=0),
+                right_arm_config=PiperXFollowerConfigBase(port="right", startup_sleep_s=0),
+            )
+        )
+        robot.connect()
+        left, right = FakePiper.instances
+        left.disconnect_error = RuntimeError("left disconnect failed")
+        with self.assertRaisesRegex(RuntimeError, "left disconnect failed"):
+            robot.disconnect()
+        self.assertEqual(left.disconnect_calls, 1)
+        self.assertEqual(right.disconnect_calls, 1)
+        self.assertFalse(robot.is_connected)
+        self.assertFalse(robot.is_motion_ready)
 
 
 if __name__ == "__main__":

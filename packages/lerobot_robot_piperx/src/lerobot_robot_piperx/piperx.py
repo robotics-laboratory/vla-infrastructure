@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import logging
 import time
 from dataclasses import dataclass, field
 from functools import cached_property
@@ -26,8 +25,6 @@ from .sdk import (
     unit_to_milli,
     wait_enable_piper,
 )
-
-logger = logging.getLogger(__name__)
 
 
 @dataclass(kw_only=True)
@@ -74,6 +71,8 @@ class PiperXFollower(Robot):
         self.id = config.id
         self.config = config
         self._is_connected = False
+        self._is_configured = False
+        self._is_enabled = False
         interface_cls, _ = get_piper_sdk()
         self.arm = interface_cls(
             can_name=resolve_piper_can_interface(config.port),
@@ -106,26 +105,71 @@ class PiperXFollower(Robot):
     def is_connected(self) -> bool:
         return self._is_connected and all(camera.is_connected for camera in self.cameras.values())
 
+    @property
+    def is_configured(self) -> bool:
+        return self._is_connected and self._is_configured
+
+    @property
+    def is_enabled(self) -> bool:
+        return self.is_configured and self._is_enabled
+
+    @property
+    def is_motion_ready(self) -> bool:
+        return self.is_connected and self.is_configured and self.is_enabled
+
+    def _cleanup_connection(self, cameras: list[Any], *, force_disable: bool) -> list[Exception]:
+        errors: list[Exception] = []
+        if force_disable or self.config.disable_on_disconnect:
+            try:
+                self.arm.DisableArm(7)
+            except Exception as exc:
+                errors.append(exc)
+        try:
+            self.arm.DisconnectPort()
+        except Exception as exc:
+            errors.append(exc)
+        for camera in reversed(cameras):
+            try:
+                camera.disconnect()
+            except Exception as exc:
+                errors.append(exc)
+        self._is_enabled = False
+        self._is_configured = False
+        self._is_connected = False
+        return errors
+
+    @staticmethod
+    def _raise_cleanup_errors(errors: list[Exception]) -> None:
+        if not errors:
+            return
+        first, *remaining = errors
+        for error in remaining:
+            first.add_note(f"Additional cleanup failure: {error!r}")
+        raise first
+
     @check_if_already_connected
     def connect(self, calibrate: bool = True) -> None:
         del calibrate
-        self.arm.ConnectPort()
         connected_cameras: list[Any] = []
+        enable_attempted = False
         try:
+            self.arm.ConnectPort()
+            self._is_connected = True
             if self.config.startup_sleep_s > 0:
                 time.sleep(self.config.startup_sleep_s)
-            self._is_connected = True
             self.configure()
-            if self.config.enable_on_connect and not wait_enable_piper(self.arm, self.config.enable_timeout_s):
-                logger.warning("PIPER-X follower did not report enabled state before timeout.")
+            if self.config.enable_on_connect:
+                enable_attempted = True
+                self.enable()
             for camera in self.cameras.values():
                 camera.connect()
                 connected_cameras.append(camera)
-        except Exception:
-            self.arm.DisconnectPort()
-            for camera in connected_cameras:
-                camera.disconnect()
-            self._is_connected = False
+        except Exception as exc:
+            cleanup_errors = self._cleanup_connection(
+                connected_cameras, force_disable=enable_attempted
+            )
+            for error in cleanup_errors:
+                exc.add_note(f"Connect rollback failure: {error!r}")
             raise
 
     @property
@@ -136,22 +180,63 @@ class PiperXFollower(Robot):
         pass
 
     def configure(self) -> None:
+        if not self._is_connected:
+            raise RuntimeError("Cannot configure PIPER-X before the CAN connection is established.")
+        self._is_configured = False
+        self._is_enabled = False
         self.arm.MasterSlaveConfig(PIPER_ROLE_FOLLOWER, 0x00, 0x00, 0x00)
-        self.arm.MotionCtrl_2(0x01, 0x01, self.config.speed_ratio, 0xAD if self.config.high_follow else 0x00)
+        self.arm.MotionCtrl_2(
+            0x01, 0x01, self.config.speed_ratio, 0xAD if self.config.high_follow else 0x00
+        )
+        self._is_configured = True
+
+    def enable(self) -> None:
+        if not self.is_configured:
+            raise RuntimeError("Cannot enable PIPER-X before it is connected and configured.")
+        self._is_enabled = False
+        if not wait_enable_piper(self.arm, self.config.enable_timeout_s):
+            raise TimeoutError("PIPER-X follower did not report enabled state before timeout.")
+        self._is_enabled = True
+
+    @staticmethod
+    def _telemetry_value(payload: Any, field_name: str, source_name: str) -> float | int:
+        value = getattr(payload, field_name, None)
+        if value is None:
+            raise RuntimeError(
+                f"Missing required PIPER-X {source_name} telemetry field '{field_name}'."
+            )
+        return value
 
     @check_if_not_connected
     def get_observation(self) -> RobotObservation:
         joint_state = getattr(self.arm.GetArmJointMsgs(), "joint_state", None)
         observation: RobotObservation = {
-            f"{joint}.pos": milli_to_unit(getattr(joint_state, joint, 0)) for joint in PIPER_JOINT_NAMES
+            f"{joint}.pos": milli_to_unit(self._telemetry_value(joint_state, joint, "joint"))
+            for joint in PIPER_JOINT_NAMES
         }
         gripper_state = getattr(self.arm.GetArmGripperMsgs(), "gripper_state", None)
-        observation["gripper.pos"] = abs(milli_to_unit(getattr(gripper_state, "grippers_angle", 0)))
+        observation["gripper.pos"] = abs(
+            milli_to_unit(self._telemetry_value(gripper_state, "grippers_angle", "gripper"))
+        )
         observation.update({key: camera.async_read() for key, camera in self.cameras.items()})
         return observation
 
+    def _validate_action(self, action: RobotAction) -> None:
+        if not self.is_motion_ready:
+            raise RuntimeError(
+                "PIPER-X motion is not ready; connected, configured, and enabled states are required."
+            )
+        present_joint_keys = [key for key in PIPER_JOINT_ACTION_KEYS if key in action]
+        if present_joint_keys and len(present_joint_keys) != len(PIPER_JOINT_ACTION_KEYS):
+            missing = [key for key in PIPER_JOINT_ACTION_KEYS if key not in action]
+            raise ValueError(
+                "Partial PIPER-X joint action rejected; all six joint keys are required. "
+                f"Missing: {missing}"
+            )
+
     @check_if_not_connected
     def send_action(self, action: RobotAction) -> RobotAction:
+        self._validate_action(action)
         sent_action: RobotAction = {}
         if all(key in action for key in PIPER_JOINT_ACTION_KEYS):
             commands = [unit_to_milli(action[key]) for key in PIPER_JOINT_ACTION_KEYS]
@@ -162,8 +247,6 @@ class PiperXFollower(Robot):
                     for key, raw in zip(PIPER_JOINT_ACTION_KEYS, commands, strict=True)
                 }
             )
-        elif any(key in action for key in PIPER_JOINT_ACTION_KEYS):
-            logger.debug("Ignoring partial PIPER-X joint action; all six joint keys are required.")
         if self.config.sync_gripper and "gripper.pos" in action:
             command = unit_to_milli(action["gripper.pos"])
             self.arm.GripperCtrl(
@@ -177,14 +260,8 @@ class PiperXFollower(Robot):
 
     @check_if_not_connected
     def disconnect(self) -> None:
-        try:
-            if self.config.disable_on_disconnect:
-                self.arm.DisableArm(7)
-        finally:
-            self.arm.DisconnectPort()
-            for camera in self.cameras.values():
-                camera.disconnect()
-            self._is_connected = False
+        errors = self._cleanup_connection(list(self.cameras.values()), force_disable=False)
+        self._raise_cleanup_errors(errors)
 
 
 class BiPiperXFollower(Robot):
@@ -233,11 +310,35 @@ class BiPiperXFollower(Robot):
     def is_connected(self) -> bool:
         return self.left_arm.is_connected and self.right_arm.is_connected
 
+    @property
+    def is_configured(self) -> bool:
+        return self.left_arm.is_configured and self.right_arm.is_configured
+
+    @property
+    def is_enabled(self) -> bool:
+        return self.left_arm.is_enabled and self.right_arm.is_enabled
+
+    @property
+    def is_motion_ready(self) -> bool:
+        return self.left_arm.is_motion_ready and self.right_arm.is_motion_ready
+
     @check_if_already_connected
     def connect(self, calibrate: bool = True) -> None:
         del calibrate
-        self.left_arm.connect()
-        self.right_arm.connect()
+        connected_arms: list[PiperXFollower] = []
+        try:
+            self.left_arm.connect()
+            connected_arms.append(self.left_arm)
+            self.right_arm.connect()
+            connected_arms.append(self.right_arm)
+        except Exception as exc:
+            for arm in reversed(connected_arms):
+                cleanup_errors = arm._cleanup_connection(
+                    list(arm.cameras.values()), force_disable=True
+                )
+                for cleanup_exc in cleanup_errors:
+                    exc.add_note(f"Bimanual connect rollback failure: {cleanup_exc!r}")
+            raise
 
     @property
     def is_calibrated(self) -> bool:
@@ -259,16 +360,39 @@ class BiPiperXFollower(Robot):
 
     @check_if_not_connected
     def send_action(self, action: RobotAction) -> RobotAction:
-        left_action = {key.removeprefix("left_"): value for key, value in action.items() if key.startswith("left_")}
-        right_action = {
-            key.removeprefix("right_"): value for key, value in action.items() if key.startswith("right_")
+        if not self.is_motion_ready:
+            raise RuntimeError(
+                "Bimanual PIPER-X motion is not ready; both arms must be connected, configured, and enabled."
+            )
+        left_action = {
+            key.removeprefix("left_"): value
+            for key, value in action.items()
+            if key.startswith("left_")
         }
+        right_action = {
+            key.removeprefix("right_"): value
+            for key, value in action.items()
+            if key.startswith("right_")
+        }
+        self.left_arm._validate_action(left_action)
+        self.right_arm._validate_action(right_action)
         return {
-            **{f"left_{key}": value for key, value in self.left_arm.send_action(left_action).items()},
-            **{f"right_{key}": value for key, value in self.right_arm.send_action(right_action).items()},
+            **{
+                f"left_{key}": value
+                for key, value in self.left_arm.send_action(left_action).items()
+            },
+            **{
+                f"right_{key}": value
+                for key, value in self.right_arm.send_action(right_action).items()
+            },
         }
 
     @check_if_not_connected
     def disconnect(self) -> None:
-        self.left_arm.disconnect()
-        self.right_arm.disconnect()
+        errors: list[Exception] = []
+        for arm in (self.left_arm, self.right_arm):
+            try:
+                arm.disconnect()
+            except Exception as exc:
+                errors.append(exc)
+        PiperXFollower._raise_cleanup_errors(errors)
