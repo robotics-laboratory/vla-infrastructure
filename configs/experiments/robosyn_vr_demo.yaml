@@ -79,8 +79,14 @@ cameras:
     focal_length_mm: 18.0
     horizontal_aperture_mm: 20.955
     clipping_range_m: [0.02, 10.0]
-    offset_xyz_m: [0.10, 0.0, 0.05]
-    offset_quat_xyzw: [0.0, 0.0, 0.0, 1.0]
+    # Isaac Lab's `world` camera convention uses local +X as forward and +Z as up.
+    # Rotate those axes onto the PIPER gripper's +Z approach and +X upright axes.
+    # The 6 cm parent-X offset was selected from the archived real-Kit pose sweep:
+    # it leaves only the finger tips at the lower edge of the image.
+    offset_xyz_m: [0.06, 0.0, 0.0]
+    offset_quat_xyzw: [0.7071067811865476, 0.0, 0.7071067811865476, 0.0]
+    optical_axis_parent: +Z
+    up_axis_parent: +X
     d0_contract_change: none
   scene:
     role: demo_scene

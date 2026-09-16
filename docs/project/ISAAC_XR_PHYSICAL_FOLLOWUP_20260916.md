@@ -6,7 +6,7 @@ This report follows the physical Quest run saved under `xr_fixes/20260916/physic
 |---|---|---|---|
 | R3 freezes teleop | R3 scheduled at log line 875. Every later status through step 2880 is `session_inactive`; no navigation-applied event follows. The HMD pose was incorrectly required to equal the view-prim pose. | Fixed in first follow-up commit: accept the next XR transform after rendered app updates, then rebase again if it changes later. | R3 once and repeatedly while looking away/moving head; verify one held frame and no jump. |
 | Camera preview recursion | User observed camera panels in camera pixels. The optional post-update Replicator source made the preview depend on the XR composition. | Fixed in second follow-up commit: force the manager's existing Isaac Lab Camera RGBA fallback and do not attach the extra annotator. | Both feeds visible together; no nested panels. |
-| Wrist camera pose | User observed downward, inverted view away from gripper direction. Config attaches identity `world` camera pose to a gripper whose approach axis is local +Z. | Pending separate commit. | Gripper extended; view forward along approach axis with part of both fingers visible and upright. |
+| Wrist camera pose | User observed downward, inverted view away from gripper direction. Config attached identity `world` camera pose (+X optical axis) to a gripper whose approach axis is local +Z. | Fixed in third follow-up commit: optical +X maps to gripper +Z, up +Z maps to gripper +X; a real-Kit sweep selected a 6 cm parent-X offset. | Gripper extended; view forward along approach axis with only the finger tips at the lower edge and upright. |
 | Sensitivity | Six binary Y toggles appear at steps 2394–2477; precise is physically too slow. | Pending per-hand thumbstick-X slider commit. | Move each thumbstick independently through left/center/right and compare both hands. |
 | Preview height | User reports panels obscure robots. Current center offset is -0.18 m. | Pending separate layout commit. | Panels above gaze without obscuring robot workspace. |
 
@@ -15,6 +15,12 @@ This report follows the physical Quest run saved under `xr_fixes/20260916/physic
 `XRCore.schedule_teleport_to_view` changes the space-origin mapping; it does not define a contract that the returned virtual HMD matrix must numerically equal the target view-prim matrix. The first implementation therefore waited forever in the observed run. The follow-up holds the request frame only. Four normal rendered physics/app updates occur before the next control sample, whose current `physical_to_virtual_world` transform becomes the new reference. If Kit applies the teleport later, the existing navigation-change detector produces a second safe zero-motion rebase.
 
 The controller coordinate transform, synchronous upstream execution and missing-transform hold remain unchanged. Thirty-three pinned unit tests pass, including immediate resume, delayed transform application, repeated/no-op R3 and four navigation yaws for both hands. Physical Quest retest is still required.
+
+## Wrist camera pose follow-up
+
+Isaac Lab's `world` camera convention defines the camera optical axis as local +X and image-up as local +Z. PIPER-X approaches through the gripper's local +Z axis, so the previous identity rotation necessarily looked across the gripper and produced the reported downward/inverted result. The experimental demo rotation `(0.70710678, 0, 0.70710678, 0)` in XYZW maps camera +X to gripper +Z and camera +Z to gripper +X.
+
+The archived real-Kit sweep compares the original pose, both possible image-up signs, and three positions. The selected `(0.06, 0, 0)` parent-frame position is upright and leaves only the finger tips at the lower edge. The non-XR S1 camera contract remains unchanged. A physical Quest check is still needed because the no-client images establish render geometry, not headset comfort.
 
 ## Upstream audit
 

@@ -1,11 +1,31 @@
 """Isolation checks for physical-demo tuning candidates."""
 
 from pathlib import Path
+import math
 
 import yaml
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _rotate_vector_xyzw(
+    quaternion: list[float], vector: tuple[float, float, float]
+) -> tuple[float, float, float]:
+    x, y, z, w = quaternion
+    vx, vy, vz = vector
+    # Expanded q * v * q^-1 rotation; keeps this config test dependency-free.
+    return (
+        (1.0 - 2.0 * (y * y + z * z)) * vx
+        + 2.0 * (x * y - z * w) * vy
+        + 2.0 * (x * z + y * w) * vz,
+        2.0 * (x * y + z * w) * vx
+        + (1.0 - 2.0 * (x * x + z * z)) * vy
+        + 2.0 * (y * z - x * w) * vz,
+        2.0 * (x * z - y * w) * vx
+        + 2.0 * (y * z + x * w) * vy
+        + (1.0 - 2.0 * (x * x + y * y)) * vz,
+    )
 
 
 def test_physical_retest_values_are_demo_only_and_geometry_is_unchanged() -> None:
@@ -66,3 +86,25 @@ def test_physical_retest_values_are_demo_only_and_geometry_is_unchanged() -> Non
     assert backdrop["toggle_control"] == "right_secondary_click"
     assert backdrop["quest_button"] == "B"
     assert backdrop["initial_visibility"] is True
+
+
+def test_wrist_camera_looks_along_gripper_approach_and_is_upright() -> None:
+    config = yaml.safe_load(
+        (ROOT / "configs/experiments/robosyn_vr_demo.yaml").read_text(encoding="utf-8")
+    )
+    camera = config["cameras"]["wrist"]
+
+    assert camera["offset_xyz_m"] == [0.06, 0.0, 0.0]
+    assert math.isclose(sum(value * value for value in camera["offset_quat_xyzw"]), 1.0)
+    assert _rotate_vector_xyzw(camera["offset_quat_xyzw"], (1.0, 0.0, 0.0)) == (
+        0.0,
+        0.0,
+        1.0,
+    )
+    assert _rotate_vector_xyzw(camera["offset_quat_xyzw"], (0.0, 0.0, 1.0)) == (
+        1.0,
+        0.0,
+        0.0,
+    )
+    assert camera["optical_axis_parent"] == "+Z"
+    assert camera["up_axis_parent"] == "+X"

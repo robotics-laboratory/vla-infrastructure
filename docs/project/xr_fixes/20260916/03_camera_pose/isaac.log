@@ -1,0 +1,121 @@
+Loading user config located at: '/data/ebulochkin/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'
+2026-09-16T14:13:27Z [Info] [carb] Logging to file: /data/ebulochkin/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/isaacsim/kit/logs/Kit/IsaacLab/3.0/kit_20260916_171327.log
+2026-09-16T14:13:27Z [3ms] [Warning] [omni.ext.plugin] [ext: isaaclab_tasks] Extensions config 'extension.toml' doesn't exist '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_tasks' or '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_tasks/config'
+2026-09-16T14:13:27Z [4ms] [Warning] [omni.ext.plugin] [ext: isaaclab_visualizers] Extensions config 'extension.toml' doesn't exist '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_visualizers' or '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_visualizers/config'
+2026-09-16T14:13:27Z [43ms] [Warning] [omni.ext.plugin] [ext: isaaclab_assets] Extensions config 'extension.toml' doesn't exist '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_assets' or '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_assets/config'
+2026-09-16T14:13:27Z [43ms] [Warning] [omni.ext.plugin] [ext: isaaclab_newton] Extensions config 'extension.toml' doesn't exist '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_newton' or '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_newton/config'
+2026-09-16T14:13:27Z [43ms] [Warning] [omni.ext.plugin] [ext: isaaclab_ov] Extensions config 'extension.toml' doesn't exist '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_ov' or '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_ov/config'
+2026-09-16T14:13:27Z [43ms] [Warning] [omni.ext.plugin] [ext: isaaclab_rl] Extensions config 'extension.toml' doesn't exist '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_rl' or '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_rl/config'
+2026-09-16T14:13:27Z [45ms] [Warning] [omni.ext.plugin] [ext: isaaclab_physx] Extensions config 'extension.toml' doesn't exist '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_physx' or '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_physx/config'
+2026-09-16T14:13:27Z [45ms] [Warning] [omni.ext.plugin] [ext: isaaclab_teleop] Extensions config 'extension.toml' doesn't exist '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_teleop' or '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_teleop/config'
+2026-09-16T14:13:27Z [46ms] [Warning] [omni.ext.plugin] [ext: isaaclab_contrib] Extensions config 'extension.toml' doesn't exist '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_contrib' or '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_contrib/config'
+2026-09-16T14:13:27Z [47ms] [Warning] [omni.ext.plugin] [ext: isaaclab_ovphysx] Extensions config 'extension.toml' doesn't exist '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_ovphysx' or '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_ovphysx/config'
+2026-09-16T14:13:27Z [47ms] [Warning] [omni.ext.plugin] [ext: isaaclab_mimic] Extensions config 'extension.toml' doesn't exist '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_mimic' or '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_mimic/config'
+2026-09-16T14:13:27Z [47ms] [Warning] [omni.ext.plugin] [ext: isaaclab_tasks_experimental] Extensions config 'extension.toml' doesn't exist '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_tasks_experimental' or '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_tasks_experimental/config'
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1789568007.949968 2919223 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto
+W0000 00:00:1789568007.949996 2919223 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto
+2026-09-16T14:13:27Z [49ms] [Warning] [omni.ext.plugin] [ext: isaaclab_ppisp] Extensions config 'extension.toml' doesn't exist '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_ppisp' or '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_ppisp/config'
+2026-09-16T14:13:27Z [50ms] [Warning] [omni.ext.plugin] [ext: isaaclab] Extensions config 'extension.toml' doesn't exist '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab' or '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab/config'
+2026-09-16T14:13:27Z [51ms] [Warning] [omni.ext.plugin] [ext: isaaclab_experimental] Extensions config 'extension.toml' doesn't exist '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_experimental' or '/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_experimental/config'
+2026-09-16T14:13:28Z [366ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.
+2026-09-16T14:13:28Z [524ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-09-16T14:13:28Z [524ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-09-16T14:13:28Z [594ms] [Warning] [omni.rtx] Skipping unsupported non-NVIDIA GPU: Intel(R) Graphics (RPL-S)
+2026-09-16T14:13:28Z [594ms] [Warning] [omni.rtx] Skipping unsupported non-NVIDIA GPU: Intel(R) Graphics (RPL-S)
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 580.159.03    | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA GeForce RTX 4090          | Yes: 0 |     | 24564   MB | 10de      | 0          |
+|     |                                  |        |     |            | 2684      | 0b554a02.. |
+|     |                                  |        |     |            | 1         |            |
+|---------------------------------------------------------------------------------------------|
+| 1   | Intel(R) Graphics (RPL-S)        |        |     | 23894   MB | 8086      | 0          |
+|     |                                  |        |     |            | a780      | 868080a7.. |
+|     |                                  |        |     |            | 0         |            |
+|=============================================================================================|
+| OS: 22.04.5 LTS (Jammy Jellyfish) ubuntu, Version: 22.04.5, Kernel: 6.8.0-124-generic
+| Processor: 13th Gen Intel(R) Core(TM) i7-13700K
+| Bare Metal Cores: 16 | Bare Metal Logical Cores: 32
+| Available Cores:  24 
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 31859 | Free Memory: 20703
+| Total Page/Swap (MB): 67583 | Free Page/Swap: 64603
+|---------------------------------------------------------------------------------------------|
+2026-09-16T14:13:28Z [818ms] [Warning] [omni.rtx] CPU performance profile is set to powersave. This profile sets the CPU to the lowest frequency reducing performance.
+2026-09-16T14:13:28Z [825ms] [Warning] [omni.rtx] IOMMU is enabled.
+2026-09-16T14:13:29Z [1,289ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-09-16T14:13:29Z [1,289ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+[ISAACLAB] AppLauncher initialization complete
+[ISAACLAB] Kit version: 110.1.2+production.326809.f9bf0dda.gl
+[ISAACLAB] Kit kernel:  210.1.11+release.13746.80f6dc72.gl
+[ISAACLAB] Kit hash:    f9bf0dda
+[S1] loading checked configuration
+[DEMO] profile=dual_cube_to_matching_plates TEST_ONLY / NOT_APPROVED_FOR_PRODUCTION
+[INFO]: Loading local copy of remote asset 'https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.1/Isaac/IsaacLab/Environments/Grid/default_ground_plane.usda' from '/tmp/https/omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.1/Isaac/IsaacLab/Environments/Grid/default_ground_plane.usda'.
+[INFO]: Loading local copy of remote asset 'https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.1/Isaac/IsaacLab/Environments/Grid/Materials/Textures/default_ground_plane_albedo.png' from '/tmp/https/omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.1/Isaac/IsaacLab/Environments/Grid/Materials/Textures/default_ground_plane_albedo.png'.
+[INFO]: Loading local copy of remote asset 'https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.1/Isaac/IsaacLab/Environments/Grid/Materials/Textures/default_ground_plane_emissive_color.png' from '/tmp/https/omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.1/Isaac/IsaacLab/Environments/Grid/Materials/Textures/default_ground_plane_emissive_color.png'.
+[INFO]: Loading local copy of remote asset 'https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.1/Isaac/IsaacLab/Environments/Grid/Materials/Textures/default_ground_plane_emissive_mask.png' from '/tmp/https/omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.1/Isaac/IsaacLab/Environments/Grid/Materials/Textures/default_ground_plane_emissive_mask.png'.
+[INFO]: Registered backend 'physx' for factory RigidObject.
+[INFO]: Registered backend 'physx' for factory Articulation.
+[INFO]: Created new renderer for simulation: IsaacRtxRenderer
+[INFO]: Using renderer: IsaacRtxRenderer
+[INFO]: Using renderer: IsaacRtxRenderer
+[INFO]: Using renderer: IsaacRtxRenderer
+[INFO]: Registered backend 'physx' for factory ContactSensor.
+[INFO]: Simulation parameters for joints in /World/LeftPiper:
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                                                      Simulation Joint Information (Prim path: /World/LeftPiper)                                                     |
++-------+----------------+-----------+---------+----------+-----------------+------------------+------------------+-----------------+-----------------+---------------+
+| Index | Name           | Stiffness | Damping | Armature | Static Friction | Dynamic Friction | Viscous Friction | Position Limits | Velocity Limits | Effort Limits |
++-------+----------------+-----------+---------+----------+-----------------+------------------+------------------+-----------------+-----------------+---------------+
+|   0   | joint1         |  400.000  |  40.000 |  0.000   |      0.000      |      0.000       |      0.000       | [-2.618, 2.618] |      5.000      |    100.000    |
+|   1   | joint2         |  400.000  |  40.000 |  0.000   |      0.000      |      0.000       |      0.000       |  [0.000, 3.142] |      5.000      |    100.000    |
+|   2   | joint3         |  400.000  |  40.000 |  0.000   |      0.000      |      0.000       |      0.000       | [-2.967, 0.000] |      5.000      |    100.000    |
+|   3   | joint4         |  400.000  |  40.000 |  0.000   |      0.000      |      0.000       |      0.000       | [-1.553, 1.553] |      5.000      |    100.000    |
+|   4   | joint5         |  400.000  |  40.000 |  0.000   |      0.000      |      0.000       |      0.000       | [-1.553, 1.553] |      5.000      |    100.000    |
+|   5   | joint6         |  400.000  |  40.000 |  0.000   |      0.000      |      0.000       |      0.000       | [-2.094, 2.094] |      5.000      |    100.000    |
+|   6   | gripper        |  400.000  |  40.000 |  0.000   |      0.000      |      0.000       |      0.000       |  [0.000, 0.100] |      3.000      |     2.000     |
+|   7   | gripper_joint1 |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       |  [0.000, 0.050] |      3.000      |     1.000     |
+|   8   | gripper_joint2 |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       | [-0.050, 0.000] |      3.000      |     1.000     |
++-------+----------------+-----------+---------+----------+-----------------+------------------+------------------+-----------------+-----------------+---------------+
+[INFO]: Simulation parameters for joints in /World/RightPiper:
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Simulation Joint Information (Prim path: /World/RightPiper)                                                     |
++-------+----------------+-----------+---------+----------+-----------------+------------------+------------------+-----------------+-----------------+---------------+
+| Index | Name           | Stiffness | Damping | Armature | Static Friction | Dynamic Friction | Viscous Friction | Position Limits | Velocity Limits | Effort Limits |
++-------+----------------+-----------+---------+----------+-----------------+------------------+------------------+-----------------+-----------------+---------------+
+|   0   | joint1         |  400.000  |  40.000 |  0.000   |      0.000      |      0.000       |      0.000       | [-2.618, 2.618] |      5.000      |    100.000    |
+|   1   | joint2         |  400.000  |  40.000 |  0.000   |      0.000      |      0.000       |      0.000       |  [0.000, 3.142] |      5.000      |    100.000    |
+|   2   | joint3         |  400.000  |  40.000 |  0.000   |      0.000      |      0.000       |      0.000       | [-2.967, 0.000] |      5.000      |    100.000    |
+|   3   | joint4         |  400.000  |  40.000 |  0.000   |      0.000      |      0.000       |      0.000       | [-1.553, 1.553] |      5.000      |    100.000    |
+|   4   | joint5         |  400.000  |  40.000 |  0.000   |      0.000      |      0.000       |      0.000       | [-1.553, 1.553] |      5.000      |    100.000    |
+|   5   | joint6         |  400.000  |  40.000 |  0.000   |      0.000      |      0.000       |      0.000       | [-2.094, 2.094] |      5.000      |    100.000    |
+|   6   | gripper        |  400.000  |  40.000 |  0.000   |      0.000      |      0.000       |      0.000       |  [0.000, 0.100] |      3.000      |     2.000     |
+|   7   | gripper_joint1 |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       |  [0.000, 0.050] |      3.000      |     1.000     |
+|   8   | gripper_joint2 |   0.000   |  0.000  |  0.000   |      0.000      |      0.000       |      0.000       | [-0.050, 0.000] |      3.000      |     1.000     |
++-------+----------------+-----------+---------+----------+-----------------+------------------+------------------+-----------------+-----------------+---------------+
+[INFO]: Registered backend 'physx' for factory FrameView.
+/home/ebulochkin/vla_infrastructure/.worktrees/robosyn-vr-demo/tools/run_isaac_s1.py:322: DeprecationWarning: Articulation.set_joint_position_target_index is deprecated. Use articulation.actuators.target_command.set_position_index instead.
+  robot.set_joint_position_target_index(target=position, joint_ids=ids)
+[INFO]: RTX streaming completed in 0.03 s.
+/home/ebulochkin/vla_infrastructure/.worktrees/robosyn-vr-demo/tools/isaac_robosyn_vr_demo.py:701: UserWarning: PhysX does not return a total contact force. This is a known limitation in PhysX and we are fixing it for the next release. Returning 'net_normal_forces_w'.
+  float(np.linalg.norm(_cpu(sensor.data.net_forces_w), axis=-1).max(initial=0.0))
+[DEMO] validation={'candidate_home_used': True, 'maximum_home_error_deg_or_mm': 0.0, 'finite_state': True, 'maximum_arm_contact_force_n': {'left': 0.0, 'right': 0.0}, 'collision_free_at_home': True, 'home_tcp_world_m': {'left': [0.5789288878440857, 0.1740923970937729, 1.0264804363250732], 'right': [0.5789286494255066, -0.17409229278564453, 1.0264805555343628]}, 'home_tcp_separation_m': 0.34818468987951945, 'maximum_profile_reset_position_error_m': 0.002000272274017334, 'wrist_shapes': {'left_wrist': [480, 640, 3], 'right_wrist': [480, 640, 3]}, 'scene_camera': {'shape': [480, 640, 3], 'dtype': 'uint8', 'rgb_stddev': 44.580867767333984, 'frame': 30}, 'imported_prim_valid': {}, 'required_prim_valid': {'/World/RobosynDemo/Table': True, '/World/RobosynDemo/Backdrop': True, '/World/LeftPiper': True, '/World/RightPiper': True, '/World/RobosynDemo/SceneCamera': True, '/World/RobosynDemo/LeftCube': True, '/World/RobosynDemo/RightCube': True, '/World/RobosynDemo/LeftPlate': True, '/World/RobosynDemo/RightPlate': True}, 'table_collision_api': True, 'passed': True}
+2026-09-16T14:13:29Z [1,358ms] [Warning] [omni.log] Source: omni.hydra was already registered.
+2026-09-16T14:13:29Z [1,377ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-09-16T14:13:29Z [1,377ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-09-16T14:13:29Z [1,378ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-09-16T14:13:29Z [1,378ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-09-16T14:13:29Z [1,743ms] [Warning] [pxr.Semantics] pxr.Semantics is deprecated - please use Semantics instead
+2026-09-16T14:13:29Z [1,789ms] [Warning] [omni.replicator.core.scripts.extension] No material configuration file, adding configuration to material settings directly.
+2026-09-16T14:13:30Z [2,611ms] [Warning] [rtx.hydra] RenderDelegate : Warning /rtx/hydra/readTransformsFromFabricInRenderDelegate and geometry streaming are enabled together but this can cause issues with dynamic objects not streaming correctly due to problems in the transform update.
+2026-09-16T14:13:33Z [5,298ms] [Warning] [isaaclab.utils.assets] Serving remote assets from the local cache under '/tmp'. Each copy is checked against the server before use; delete the directory to force a full re-download.
+2026-09-16T14:13:34Z [6,439ms] [Warning] [isaaclab_teleop.camera_feed] XR camera PiP is unavailable because Kit SceneUI could not be loaded (ModuleNotFoundError: No module named 'omni.kit.scene_view'). Continuing without PiP.
+2026-09-16T14:13:34Z [7,000ms] [Warning] [omni.usd] Encountered USD Warnings but USD Diagnostics are currently muted. To view USD Warnings, please set the '/persistent/app/usd/muteUsdDiagnostics' setting to false in Preferences page.
+2026-09-16T14:13:35Z [8,098ms] [Warning] [omni.kit.material.library.material_extensions] Could not initialize context menu integration: No module named 'omni.kit.context_menu'

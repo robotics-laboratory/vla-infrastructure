@@ -1,0 +1,6 @@
+{
+  "configs/experiments/robosyn_vr_demo.yaml": "a929d019a867a58848f1cfa7e0872a96a9cc258b53c936203d4f1e0b6825d299",
+  "tests/test_robosyn_vr_demo_config.py": "25ef25575413412e1c7aa372d715d5ce99236cd095dd68258c48761988ca2d6d",
+  "docs/project/ISAAC_XR_PHYSICAL_FOLLOWUP_20260916.md": "d37d0b6c7ec44c57e153914ac75c813a059bf316b902b46d1f21e76f6d29fea4",
+  "docs/project/ISAAC_XR_BACKLOG_20260915.md": "b9fdf2972b91ef9a6cdb1d141d7c59c2950441c19643d316dc55268e3a2b597d"
+}
