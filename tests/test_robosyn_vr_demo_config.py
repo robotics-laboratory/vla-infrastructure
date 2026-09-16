@@ -91,23 +91,29 @@ def test_physical_retest_values_are_demo_only_and_geometry_is_unchanged() -> Non
     assert backdrop["initial_visibility"] is True
 
 
-def test_wrist_camera_looks_along_gripper_approach_and_is_upright() -> None:
+def test_wrist_camera_uses_user_selected_visual_pose() -> None:
     config = yaml.safe_load(
         (ROOT / "configs/experiments/robosyn_vr_demo.yaml").read_text(encoding="utf-8")
     )
     camera = config["cameras"]["wrist"]
 
-    assert camera["offset_xyz_m"] == [-0.055, 0.0, 0.0]
+    assert camera["offset_xyz_m"] == [-0.060, 0.0, 0.010]
     assert math.isclose(sum(value * value for value in camera["offset_quat_xyzw"]), 1.0)
-    assert _rotate_vector_xyzw(camera["offset_quat_xyzw"], (1.0, 0.0, 0.0)) == (
-        0.0,
-        0.0,
-        1.0,
+    optical_axis = _rotate_vector_xyzw(camera["offset_quat_xyzw"], (1.0, 0.0, 0.0))
+    image_up_axis = _rotate_vector_xyzw(camera["offset_quat_xyzw"], (0.0, 0.0, 1.0))
+    pitch_rad = math.radians(camera["pitch_toward_gripper_deg"])
+    assert all(
+        math.isclose(actual, expected, abs_tol=1.0e-12)
+        for actual, expected in zip(
+            optical_axis, (math.sin(pitch_rad), 0.0, math.cos(pitch_rad)), strict=True
+        )
     )
-    assert _rotate_vector_xyzw(camera["offset_quat_xyzw"], (0.0, 0.0, 1.0)) == (
-        1.0,
-        0.0,
-        0.0,
+    assert all(
+        math.isclose(actual, expected, abs_tol=1.0e-12)
+        for actual, expected in zip(
+            image_up_axis, (-math.cos(pitch_rad), 0.0, math.sin(pitch_rad)), strict=True
+        )
     )
     assert camera["optical_axis_parent"] == "+Z"
-    assert camera["up_axis_parent"] == "+X"
+    assert camera["up_axis_parent"] == "-X"
+    assert camera["output_roll_deg"] == 180.0

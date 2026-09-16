@@ -80,14 +80,17 @@ cameras:
     horizontal_aperture_mm: 20.955
     clipping_range_m: [0.02, 10.0]
     # Isaac Lab's `world` camera convention uses local +X as forward and +Z as up.
-    # Rotate those axes onto the PIPER gripper's +Z approach and +X upright axes.
+    # Start from the PIPER gripper's +Z approach axis, roll the image 180 degrees,
+    # then pitch the optical axis 3 degrees toward parent +X.
     # The gripper parent's +X axis points toward the underside in the working pose.
-    # The archived real-Kit sweep therefore mounts the camera 5.5 cm along -X:
-    # it is physically above the gripper and leaves only a small claw edge in view.
-    offset_xyz_m: [-0.055, 0.0, 0.0]
-    offset_quat_xyzw: [0.7071067811865476, 0.0, 0.7071067811865476, 0.0]
+    # User-selected render F raises the camera to -6 cm on X and advances it
+    # 1 cm along the gripper's +Z approach axis to reduce claw obstruction.
+    offset_xyz_m: [-0.060, 0.0, 0.010]
+    offset_quat_xyzw: [0.0, -0.688354575693754, 0.0, 0.7253743710122876]
     optical_axis_parent: +Z
-    up_axis_parent: +X
+    up_axis_parent: -X
+    output_roll_deg: 180.0
+    pitch_toward_gripper_deg: 3.0
     d0_contract_change: none
   scene:
     role: demo_scene
