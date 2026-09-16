@@ -44,21 +44,24 @@ EXPECTED_PROCESS_PROFILE_OWNERSHIP = {
 }
 EXPECTED_EVAL_HANDSHAKE_FIELDS = [
     "protocol_revision",
+    "run_id",
     "D0_contract_fingerprint",
     "environment_revision",
     "PIPER_X_asset_model_revision",
     "task_id",
     "task_revision",
     "processor_revision",
+    "n_episodes",
     "horizon",
 ]
 EXPECTED_EVAL_RESET_FIELDS = {
-    "request_fields": ["run_id", "episode_id", "seed", "task_id", "task_revision"],
-    "response_fields": ["canonical_D0_obs_0", "effective_seed"],
+    "request_fields": ["run_id", "request_id", "episode_id", "seed", "task_id", "task_revision"],
+    "response_fields": ["request_id", "canonical_D0_obs_0", "effective_seed"],
 }
 EXPECTED_EVAL_STEP_FIELDS = {
-    "request_fields": ["episode_id", "step_index", "canonical_D0_action_t"],
+    "request_fields": ["run_id", "request_id", "episode_id", "step_index", "canonical_D0_action_t"],
     "response_fields": [
+        "request_id",
         "canonical_D0_obs_t_plus_1",
         "reward_t",
         "terminated_t",
@@ -66,6 +69,38 @@ EXPECTED_EVAL_STEP_FIELDS = {
         "success_t",
         "termination_reason",
     ],
+}
+EXPECTED_EVAL_LIFECYCLE_FIELDS = {
+    "abort": {
+        "request_fields": ["run_id", "request_id", "episode_id", "reason"],
+        "response_fields": ["request_id", "abort_state"],
+    },
+    "close": {
+        "request_fields": ["run_id", "request_id"],
+        "response_fields": ["request_id", "close_state"],
+    },
+}
+EXPECTED_EVAL_REQUEST_IDENTITY = {
+    "field": "request_id",
+    "generation_owner": "eval_client",
+    "format": "opaque_nonempty_string_unique_within_run",
+    "required_operations": ["reset", "step", "abort", "close"],
+    "scope_fields": ["run_id", "request_id"],
+    "response_echo_required": True,
+    "reuse_with_different_operation_or_payload": "protocol_error_no_execution",
+}
+EXPECTED_EVAL_DEDUPLICATION = {
+    "owner": "eval_runtime_endpoint",
+    "key_fields": ["run_id", "request_id"],
+    "request_fingerprint": "operation_plus_canonical_payload",
+    "duplicate_same_fingerprint": "return_cached_response_without_reexecution",
+    "duplicate_different_fingerprint": "protocol_error_no_execution",
+    "survives_transport_reconnect": True,
+    "survives_endpoint_restart": False,
+    "endpoint_restart_behavior": "invalidate_run_and_classify_infrastructure_failure",
+    "retention": "until_run_close",
+    "capacity_bound": "declared_n_episodes_times_horizon_plus_lifecycle_requests",
+    "implementation_state": "deferred",
 }
 EXPECTED_CONTROL_COMMAND_FIELDS = [
     "canonical_PIPER_X_command_semantics",
@@ -333,6 +368,12 @@ def validate_process_architecture(d):
         out.append("EVAL boundary reset fields/order mismatch")
     if eval_boundary["step"] != EXPECTED_EVAL_STEP_FIELDS:
         out.append("EVAL boundary step fields/order mismatch")
+    if eval_boundary["request_identity"] != EXPECTED_EVAL_REQUEST_IDENTITY:
+        out.append("EVAL boundary request identity mismatch")
+    if eval_boundary["deduplication"] != EXPECTED_EVAL_DEDUPLICATION:
+        out.append("EVAL boundary deduplication mismatch")
+    if eval_boundary["lifecycle"] != EXPECTED_EVAL_LIFECYCLE_FIELDS:
+        out.append("EVAL boundary lifecycle fields/order mismatch")
     if eval_boundary["lifecycle_operations"] != ["abort", "close"]:
         out.append("EVAL boundary lifecycle operations must be abort, close")
 

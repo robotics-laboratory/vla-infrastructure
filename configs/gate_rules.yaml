@@ -345,6 +345,16 @@ E1:
   - S1
   required_paths:
   - evaluation.isaac_run
+  - process_architecture.eval_boundary.protocol_revision
+  - process_architecture.eval_boundary.request_identity.field
+  - process_architecture.eval_boundary.request_identity.scope_fields
+  - process_architecture.eval_boundary.lifecycle.abort.request_fields
+  - process_architecture.eval_boundary.lifecycle.close.request_fields
+  - process_architecture.eval_boundary.deduplication.key_fields
+  - process_architecture.eval_boundary.deduplication.request_fingerprint
+  - process_architecture.eval_boundary.deduplication.duplicate_same_fingerprint
+  - process_architecture.eval_boundary.deduplication.duplicate_different_fingerprint
+  - process_architecture.eval_boundary.deduplication.endpoint_restart_behavior
   required_nonempty_paths: []
   required_evidence_kinds:
   - run

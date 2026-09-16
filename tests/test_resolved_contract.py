@@ -281,10 +281,50 @@ class ResolvedContractTests(unittest.TestCase):
             "asynchronous_freshness_sensitive",
         )
         self.assertTrue(architecture["control_boundary"]["independent_of_eval"])
-        self.assertEqual(architecture["eval_boundary"]["transport_selection"], "deferred")
+        eval_boundary = architecture["eval_boundary"]
+        self.assertEqual(eval_boundary["transport_selection"], "deferred")
         self.assertEqual(architecture["control_boundary"]["transport_selection"], "deferred")
+        self.assertEqual(eval_boundary["protocol_revision"], "piper_x_eval_boundary_v2")
+        self.assertEqual(
+            eval_boundary["request_identity"]["scope_fields"],
+            ["run_id", "request_id"],
+        )
+        for operation in ("reset", "step"):
+            self.assertIn("run_id", eval_boundary[operation]["request_fields"])
+            self.assertIn("request_id", eval_boundary[operation]["request_fields"])
+            self.assertEqual(eval_boundary[operation]["response_fields"][0], "request_id")
+        for operation in ("abort", "close"):
+            lifecycle = eval_boundary["lifecycle"][operation]
+            self.assertIn("run_id", lifecycle["request_fields"])
+            self.assertIn("request_id", lifecycle["request_fields"])
+            self.assertEqual(lifecycle["response_fields"][0], "request_id")
+        self.assertEqual(
+            eval_boundary["deduplication"]["duplicate_same_fingerprint"],
+            "return_cached_response_without_reexecution",
+        )
+        self.assertEqual(
+            eval_boundary["deduplication"]["duplicate_different_fingerprint"],
+            "protocol_error_no_execution",
+        )
+        self.assertTrue(eval_boundary["deduplication"]["survives_transport_reconnect"])
+        self.assertFalse(eval_boundary["deduplication"]["survives_endpoint_restart"])
+        self.assertFalse(eval_boundary["automatic_retry_after_ambiguous_timeout"])
+        self.assertEqual(
+            eval_boundary["explicit_retry_after_ambiguous_timeout"],
+            "same_request_id_only",
+        )
+        self.assertEqual(eval_boundary["deduplication"]["implementation_state"], "deferred")
         self.assertFalse(architecture["rpc_implementation_selected"])
         self.assertFalse(architecture["generic_simulator_api_exists"])
+
+        dedup_probe = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        dedup_probe["process_architecture"]["eval_boundary"]["deduplication"][
+            "duplicate_same_fingerprint"
+        ] = "execute_again"
+        self.assertIn(
+            "EVAL boundary deduplication mismatch",
+            validate_process_architecture(dedup_probe),
+        )
 
         probe = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
         probe["process_architecture"]["eval_boundary"][

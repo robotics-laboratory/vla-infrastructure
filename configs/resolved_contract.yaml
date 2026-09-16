@@ -1,4 +1,4 @@
-contract_version: 5.2.1
+contract_version: 5.2.2
 schema_version: '5.2'
 project:
   name: PIPER-X Quest multi-runtime robot-learning platform
@@ -293,7 +293,7 @@ execution_profiles:
     command: null
     prerequisites: []
 process_architecture:
-  revision: piper_x_process_boundaries_v2
+  revision: piper_x_process_boundaries_v3
   same_process_lerobot_isaac_required: false
   generic_simulator_api_exists: false
   rpc_implementation_selected: false
@@ -346,28 +346,58 @@ process_architecture:
       execution_mode: single_process
       environments: [core]
   eval_boundary:
-    protocol_revision: piper_x_eval_boundary_v1
+    protocol_revision: piper_x_eval_boundary_v2
     semantics: synchronous_episode_sensitive
     transport_selection: deferred
     handshake_fields:
     - protocol_revision
+    - run_id
     - D0_contract_fingerprint
     - environment_revision
     - PIPER_X_asset_model_revision
     - task_id
     - task_revision
     - processor_revision
+    - n_episodes
     - horizon
     reset:
-      request_fields: [run_id, episode_id, seed, task_id, task_revision]
-      response_fields: [canonical_D0_obs_0, effective_seed]
+      request_fields: [run_id, request_id, episode_id, seed, task_id, task_revision]
+      response_fields: [request_id, canonical_D0_obs_0, effective_seed]
     step:
-      request_fields: [episode_id, step_index, canonical_D0_action_t]
-      response_fields: [canonical_D0_obs_t_plus_1, reward_t, terminated_t, truncated_t, success_t, termination_reason]
+      request_fields: [run_id, request_id, episode_id, step_index, canonical_D0_action_t]
+      response_fields: [request_id, canonical_D0_obs_t_plus_1, reward_t, terminated_t, truncated_t, success_t, termination_reason]
+    request_identity:
+      field: request_id
+      generation_owner: eval_client
+      format: opaque_nonempty_string_unique_within_run
+      required_operations: [reset, step, abort, close]
+      scope_fields: [run_id, request_id]
+      response_echo_required: true
+      reuse_with_different_operation_or_payload: protocol_error_no_execution
+    deduplication:
+      owner: eval_runtime_endpoint
+      key_fields: [run_id, request_id]
+      request_fingerprint: operation_plus_canonical_payload
+      duplicate_same_fingerprint: return_cached_response_without_reexecution
+      duplicate_different_fingerprint: protocol_error_no_execution
+      survives_transport_reconnect: true
+      survives_endpoint_restart: false
+      endpoint_restart_behavior: invalidate_run_and_classify_infrastructure_failure
+      retention: until_run_close
+      capacity_bound: declared_n_episodes_times_horizon_plus_lifecycle_requests
+      implementation_state: deferred
+    lifecycle:
+      abort:
+        request_fields: [run_id, request_id, episode_id, reason]
+        response_fields: [request_id, abort_state]
+      close:
+        request_fields: [run_id, request_id]
+        response_fields: [request_id, close_state]
     lifecycle_operations: [abort, close]
     health_state: minimal
     max_step_requests_in_flight: 1
     automatic_retry_after_ambiguous_timeout: false
+    explicit_retry_after_ambiguous_timeout: same_request_id_only
     transport_failure_classification: infrastructure_failure
     transport_failure_is_task_truncation: false
     native_dictionaries_cross_boundary: false

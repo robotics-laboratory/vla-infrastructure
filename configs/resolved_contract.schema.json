@@ -1015,7 +1015,7 @@
   ],
   "properties": {
     "contract_version": {
-      "const": "5.2.1"
+      "const": "5.2.2"
     },
     "schema_version": {
       "const": "5.2"
@@ -1681,10 +1681,14 @@
             "handshake_fields",
             "reset",
             "step",
+            "request_identity",
+            "deduplication",
+            "lifecycle",
             "lifecycle_operations",
             "health_state",
             "max_step_requests_in_flight",
             "automatic_retry_after_ambiguous_timeout",
+            "explicit_retry_after_ambiguous_timeout",
             "transport_failure_classification",
             "transport_failure_is_task_truncation",
             "native_dictionaries_cross_boundary",
@@ -1716,6 +1720,67 @@
             "step": {
               "$ref": "#/$defs/boundary_operation"
             },
+            "request_identity": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "field",
+                "generation_owner",
+                "format",
+                "required_operations",
+                "scope_fields",
+                "response_echo_required",
+                "reuse_with_different_operation_or_payload"
+              ],
+              "properties": {
+                "field": {"const": "request_id"},
+                "generation_owner": {"const": "eval_client"},
+                "format": {"const": "opaque_nonempty_string_unique_within_run"},
+                "required_operations": {"const": ["reset", "step", "abort", "close"]},
+                "scope_fields": {"const": ["run_id", "request_id"]},
+                "response_echo_required": {"const": true},
+                "reuse_with_different_operation_or_payload": {"const": "protocol_error_no_execution"}
+              }
+            },
+            "deduplication": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "owner",
+                "key_fields",
+                "request_fingerprint",
+                "duplicate_same_fingerprint",
+                "duplicate_different_fingerprint",
+                "survives_transport_reconnect",
+                "survives_endpoint_restart",
+                "endpoint_restart_behavior",
+                "retention",
+                "capacity_bound",
+                "implementation_state"
+              ],
+              "properties": {
+                "owner": {"const": "eval_runtime_endpoint"},
+                "key_fields": {"const": ["run_id", "request_id"]},
+                "request_fingerprint": {"const": "operation_plus_canonical_payload"},
+                "duplicate_same_fingerprint": {"const": "return_cached_response_without_reexecution"},
+                "duplicate_different_fingerprint": {"const": "protocol_error_no_execution"},
+                "survives_transport_reconnect": {"const": true},
+                "survives_endpoint_restart": {"const": false},
+                "endpoint_restart_behavior": {"const": "invalidate_run_and_classify_infrastructure_failure"},
+                "retention": {"const": "until_run_close"},
+                "capacity_bound": {"const": "declared_n_episodes_times_horizon_plus_lifecycle_requests"},
+                "implementation_state": {"const": "deferred"}
+              }
+            },
+            "lifecycle": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["abort", "close"],
+              "properties": {
+                "abort": {"$ref": "#/$defs/boundary_operation"},
+                "close": {"$ref": "#/$defs/boundary_operation"}
+              }
+            },
             "lifecycle_operations": {
               "type": "array",
               "items": {
@@ -1733,6 +1798,9 @@
             },
             "automatic_retry_after_ambiguous_timeout": {
               "const": false
+            },
+            "explicit_retry_after_ambiguous_timeout": {
+              "const": "same_request_id_only"
             },
             "transport_failure_classification": {
               "const": "infrastructure_failure"
