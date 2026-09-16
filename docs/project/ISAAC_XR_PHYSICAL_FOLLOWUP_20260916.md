@@ -8,7 +8,7 @@ This report follows the physical Quest run saved under `xr_fixes/20260916/physic
 | Camera preview recursion | User observed camera panels in camera pixels. The optional post-update Replicator source made the preview depend on the XR composition. | Fixed in second follow-up commit: force the manager's existing Isaac Lab Camera RGBA fallback and do not attach the extra annotator. | Both feeds visible together; no nested panels. |
 | Wrist camera pose | User observed downward, inverted view away from gripper direction. Config attached identity `world` camera pose (+X optical axis) to a gripper whose approach axis is local +Z. | Fixed in third follow-up commit: optical +X maps to gripper +Z, up +Z maps to gripper +X; a real-Kit sweep selected a 6 cm parent-X offset. | Gripper extended; view forward along approach axis with only the finger tips at the lower edge and upright. |
 | Sensitivity | Six binary Y toggles appear at steps 2394–2477; precise is physically too slow. | Fixed in fourth follow-up commit: each controller's horizontal thumbstick continuously controls only its arm from 2× through the previous 4× center speed to 6×. | Move each thumbstick independently through left/center/right and compare both hands. |
-| Preview height | User reports panels obscure robots. Current center offset is -0.18 m. | Pending separate layout commit. | Panels above gaze without obscuring robot workspace. |
+| Preview height | User reports panels obscure robots. The previous head-locked center was 0.18 m below the viewer anchor. | Fixed in fifth follow-up commit: use the upstream positive image-up direction and place the center 0.18 m above the viewer anchor. | Panels above gaze without obscuring robot workspace. |
 
 ## R3 follow-up
 
@@ -37,6 +37,22 @@ EXACT REMAINING GAP: map each upstream horizontal axis to the existing per-arm P
 PROCESSOR / CONFIG / ADAPTER REQUIRED: one existing state scalar per arm, demo config, and a bounded pure piecewise-linear processor mapping; action width remains 22 plus the three existing demo buttons.
 ENVIRONMENT IMPACT: none.
 WHY NO PROJECT FRAMEWORK IS NEEDED: the existing `ControllerStateRetargeter` and pure S2 processor already provide the required public boundaries.
+
+## Preview height follow-up
+
+Pinned `XrCameraFeedLayoutCfg.center_offset_m` defines horizontal and vertical center in metres, and its panel-local +Y is image-up. The old `(0, -0.18)` center therefore put both head-locked panels below the viewer. The experimental layout now uses `(0, +0.18)`. The measured panel height is about 0.31 m, so its lower edge is about 2.5 cm above the viewer center at the configured 0.65 m distance. Panel size, gap, texture update path and camera rendering remain unchanged.
+
+The pinned upstream layout probe resolves both panel offsets to Y `+0.18`; a real-Kit no-client smoke validates the configured session and panel creation. Physical Quest placement and comfort still require the user's retest.
+
+## Upstream audit — preview height
+
+CAPABILITY / GATE: experimental demo-only XR camera layout; no gate acceptance.
+PINNED UPSTREAM CANDIDATES: Isaac Lab 913ac53f / isaaclab_teleop 0.8.0 `XrCameraFeedLayoutCfg`, `_layout_feed_cfgs`, and head-locked SceneUI presenter.
+WHAT UPSTREAM ALREADY OWNS: head pose following, horizontal packing, metres-to-panel pose conversion and SceneUI lifetime.
+EXACT REMAINING GAP: choose a vertical center that does not cover the robot workspace.
+PROCESSOR / CONFIG / ADAPTER REQUIRED: one config value only; no runtime adapter.
+ENVIRONMENT IMPACT: none.
+WHY NO PROJECT FRAMEWORK IS NEEDED: upstream layout semantics directly express the requested placement.
 
 ## Upstream audit
 

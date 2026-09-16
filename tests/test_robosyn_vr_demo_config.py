@@ -81,7 +81,7 @@ def test_physical_retest_values_are_demo_only_and_geometry_is_unchanged() -> Non
     assert config["vr_camera_feeds"]["quest_button"] == "X"
     assert config["vr_camera_feeds"]["upload_path"] == "cpu_staged"
     assert config["vr_camera_feeds"]["layout"]["placement"] == "head_locked"
-    assert config["vr_camera_feeds"]["layout"]["center_offset_m"] == [0.0, -0.18]
+    assert config["vr_camera_feeds"]["layout"]["center_offset_m"] == [0.0, 0.18]
     assert config["vr_camera_feeds"]["layout"]["distance_m"] == 0.65
     assert config["vr_camera_feeds"]["layout"]["panel_width_m"] == 0.36
 

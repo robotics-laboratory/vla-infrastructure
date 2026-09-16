@@ -329,7 +329,8 @@ accepted.
    the CloudXR session never restarts.
 4. Press X once. Confirm two rectangular panels show distinct live LEFT WRIST
    and RIGHT WRIST images rather than gray triangles; move each wrist to verify
-   the matching image advances. Press X again and confirm only the panels hide.
+   the matching image advances. Confirm both panels sit above the eye line and
+   leave the robots unobstructed. Press X again and confirm only the panels hide.
 5. Move each thumbstick independently left/center/right and confirm only that
    arm changes between 2×/4×/6×. Recheck both analog triggers, one clutch/rebase,
    and a brief tracking-loss/recovery. Pick and move one cube to confirm the retained
