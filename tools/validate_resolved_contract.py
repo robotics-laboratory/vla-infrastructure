@@ -54,6 +54,7 @@ EXPECTED_EVAL_HANDSHAKE_FIELDS = [
     "n_episodes",
     "horizon",
 ]
+EXPECTED_EVAL_HANDSHAKE_RESPONSE_FIELDS = ["run_id", "endpoint_instance_id", "accepted"]
 EXPECTED_EVAL_RESET_FIELDS = {
     "request_fields": ["run_id", "request_id", "episode_id", "seed", "task_id", "task_revision"],
     "response_fields": ["request_id", "canonical_D0_obs_0", "effective_seed"],
@@ -98,9 +99,16 @@ EXPECTED_EVAL_DEDUPLICATION = {
     "survives_transport_reconnect": True,
     "survives_endpoint_restart": False,
     "endpoint_restart_behavior": "invalidate_run_and_classify_infrastructure_failure",
-    "retention": "until_run_close",
-    "capacity_bound": "declared_n_episodes_times_horizon_plus_lifecycle_requests",
-    "implementation_state": "deferred",
+    "retention": "through_run_close_response",
+    "capacity_bound": "declared_n_episodes_times_horizon_plus_reset_abort_and_close_requests",
+    "implementation_state": "implemented",
+}
+EXPECTED_EVAL_IMPLEMENTATION = {
+    "endpoint": "tools.isaac_eval_rpc.IsaacEvalEndpoint",
+    "client": "tools.isaac_eval_rpc.UnixEvalClient",
+    "server": "tools.isaac_eval_rpc.serve_unix_socket",
+    "codec": "utf8_json_lines_allow_nan_false",
+    "isaac_entrypoint": "tools/run_isaac_s1.py --eval-socket --eval-run-manifest",
 }
 EXPECTED_CONTROL_COMMAND_FIELDS = [
     "canonical_PIPER_X_command_semantics",
@@ -364,6 +372,8 @@ def validate_process_architecture(d):
     eval_boundary = architecture["eval_boundary"]
     if eval_boundary["handshake_fields"] != EXPECTED_EVAL_HANDSHAKE_FIELDS:
         out.append("EVAL boundary handshake fields/order mismatch")
+    if eval_boundary["handshake_response_fields"] != EXPECTED_EVAL_HANDSHAKE_RESPONSE_FIELDS:
+        out.append("EVAL boundary handshake response fields/order mismatch")
     if eval_boundary["reset"] != EXPECTED_EVAL_RESET_FIELDS:
         out.append("EVAL boundary reset fields/order mismatch")
     if eval_boundary["step"] != EXPECTED_EVAL_STEP_FIELDS:
@@ -374,6 +384,8 @@ def validate_process_architecture(d):
         out.append("EVAL boundary deduplication mismatch")
     if eval_boundary["lifecycle"] != EXPECTED_EVAL_LIFECYCLE_FIELDS:
         out.append("EVAL boundary lifecycle fields/order mismatch")
+    if eval_boundary["implementation"] != EXPECTED_EVAL_IMPLEMENTATION:
+        out.append("EVAL boundary implementation binding mismatch")
     if eval_boundary["lifecycle_operations"] != ["abort", "close"]:
         out.append("EVAL boundary lifecycle operations must be abort, close")
 
@@ -655,6 +667,15 @@ def validate_dataset_contract(d):
     temporal = dataset["temporal_semantics"]
     dataset_timestamp = temporal["dataset_timestamp"]
     source_timing = temporal["source_timing"]
+    expected_source_timing_implementation = {
+        "recorder_adapter": "tools.d0_temporal.TemporalFrameRecorder",
+        "feature_spec_factory": "tools.d0_temporal.temporal_feature_specs",
+        "qa_summary_method": "tools.d0_temporal.TemporalFrameRecorder.qa_summary",
+    }
+    if any(
+        source_timing[key] != value for key, value in expected_source_timing_implementation.items()
+    ):
+        out.append("source timing runtime implementation binding mismatch")
     if source_timing["required_fields"] != EXPECTED_SOURCE_TIMING_FIELDS:
         out.append(
             "source timing fields/order must be sequence, source_timestamp, clock_domain, age_ms"

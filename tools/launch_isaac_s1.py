@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import datetime
 import json
 import os
@@ -21,6 +22,16 @@ LAB_PYPROJECT_SHA256 = "b691862409ab8ad58b074ac32ce7f071e3895ec10975444b9e629957
 LAB_LOCK_SHA256 = "80eb2c4e1155dd9e9736506d41cdbe327df74ee2b005bdecc0fb7c87c8b8bb84"
 
 
+def _arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--eval-socket", type=Path)
+    parser.add_argument("--eval-run-manifest", type=Path)
+    args = parser.parse_args()
+    if (args.eval_socket is None) != (args.eval_run_manifest is None):
+        parser.error("--eval-socket and --eval-run-manifest must be provided together")
+    return args
+
+
 def _sha256(path: Path) -> str:
     import hashlib
 
@@ -28,6 +39,7 @@ def _sha256(path: Path) -> str:
 
 
 def main() -> int:
+    args = _arguments()
     for checkout, expected in ((LAB, LAB_COMMIT), (STORAGE / "assets/agx_arm_urdf", ASSET_COMMIT)):
         actual = subprocess.check_output(
             ["git", "-C", str(checkout), "rev-parse", "HEAD"], text=True
@@ -78,6 +90,15 @@ def main() -> int:
         "--report",
         str(output_dir / "result.json"),
     ]
+    if args.eval_socket is not None:
+        command.extend(
+            [
+                "--eval-socket",
+                str(args.eval_socket),
+                "--eval-run-manifest",
+                str(args.eval_run_manifest),
+            ]
+        )
     print(f"S1 evidence output: {output_dir}", flush=True)
     with (output_dir / "stdout.log").open("w", encoding="utf-8") as log:
         with subprocess.Popen(

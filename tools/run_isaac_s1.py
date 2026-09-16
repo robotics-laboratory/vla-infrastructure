@@ -42,6 +42,16 @@ MODEL_PATH = ROOT / "configs/piper_x_model_contract.yaml"
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--report", type=Path)
 parser.add_argument(
+    "--eval-socket",
+    type=Path,
+    help="Serve the concrete EVAL v2 boundary on this Unix-domain socket.",
+)
+parser.add_argument(
+    "--eval-run-manifest",
+    type=Path,
+    help="JSON handshake manifest for --eval-socket.",
+)
+parser.add_argument(
     "--s2-teleop",
     action="store_true",
     help="Run the S2 Quest-to-simulation loop on this exact S1 environment.",
@@ -101,6 +111,9 @@ parser.add_argument(
 AppLauncher.add_app_launcher_args(parser)
 parser.set_defaults(headless=True, enable_cameras=True)
 args_cli = parser.parse_args()
+
+if (args_cli.eval_socket is None) != (args_cli.eval_run_manifest is None):
+    parser.error("--eval-socket and --eval-run-manifest must be provided together")
 
 app_launcher = AppLauncher(args_cli)
 simulation_app = app_launcher.app
@@ -912,6 +925,18 @@ def main() -> int:
     env = BimanualPiperXIsaacEnvironment(
         sim, left, right, camera, wrist_paths, camera_prim_expression, physics_probe
     )
+
+    if args_cli.eval_socket is not None:
+        from isaac_eval_rpc import IsaacEvalEndpoint, serve_unix_socket
+
+        handshake = json.loads(args_cli.eval_run_manifest.read_text(encoding="utf-8"))
+        endpoint = IsaacEvalEndpoint(env, handshake)
+        print(
+            f"[E1] serving {endpoint.handshake['run_id']} on {args_cli.eval_socket}",
+            flush=True,
+        )
+        serve_unix_socket(endpoint, args_cli.eval_socket)
+        return 0
 
     if args_cli.s2_teleop:
         print("[S2] extending the accepted S1 environment", flush=True)

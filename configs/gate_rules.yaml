@@ -115,6 +115,9 @@ D0:
   - dataset.temporal_semantics.dataset_timestamp.clock_domain
   - dataset.temporal_semantics.dataset_timestamp.computation
   - dataset.temporal_semantics.source_timing.storage
+  - dataset.temporal_semantics.source_timing.recorder_adapter
+  - dataset.temporal_semantics.source_timing.feature_spec_factory
+  - dataset.temporal_semantics.source_timing.qa_summary_method
   - dataset.temporal_semantics.source_timing.required_fields
   - dataset.temporal_semantics.source_timing.field_types
   - dataset.temporal_semantics.source_timing.required_feature_sets_by_source_class
@@ -346,6 +349,8 @@ E1:
   required_paths:
   - evaluation.isaac_run
   - process_architecture.eval_boundary.protocol_revision
+  - process_architecture.eval_boundary.transport_selection
+  - process_architecture.eval_boundary.handshake_response_fields
   - process_architecture.eval_boundary.request_identity.field
   - process_architecture.eval_boundary.request_identity.scope_fields
   - process_architecture.eval_boundary.lifecycle.abort.request_fields
@@ -355,6 +360,10 @@ E1:
   - process_architecture.eval_boundary.deduplication.duplicate_same_fingerprint
   - process_architecture.eval_boundary.deduplication.duplicate_different_fingerprint
   - process_architecture.eval_boundary.deduplication.endpoint_restart_behavior
+  - process_architecture.eval_boundary.deduplication.implementation_state
+  - process_architecture.eval_boundary.implementation.endpoint
+  - process_architecture.eval_boundary.implementation.client
+  - process_architecture.eval_boundary.implementation.server
   required_nonempty_paths: []
   required_evidence_kinds:
   - run

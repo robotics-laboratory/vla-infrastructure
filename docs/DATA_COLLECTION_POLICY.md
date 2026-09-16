@@ -60,6 +60,12 @@ at that logical instant. Every asynchronous input that contributes to an accepte
 records `sequence`, `source_timestamp`, `clock_domain`, and `age_ms`; the frame also
 records cross-modal skew. Freshness and skew are checked before `add_frame`.
 
+`tools.d0_temporal.TemporalFrameRecorder` is the required thin edge adapter for this
+check. It enriches accepted frames with the declared LeRobot features and delegates to
+the upstream writer; a stale, future, clock-incomparable, skewed, or sequence-regressing
+bundle never reaches `LeRobotDataset.add_frame`. LeRobot remains the owner of logical
+`timestamp` and `frame_index`.
+
 For every native recorder/converter, resolve:
 
 ```text

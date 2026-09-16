@@ -110,6 +110,10 @@ class ResolvedContractTests(unittest.TestCase):
             temporal["freshness"]["enforcement_phase"],
             "after_source_selection_before_lerobot_dataset_add_frame",
         )
+        self.assertEqual(
+            temporal["source_timing"]["recorder_adapter"],
+            "tools.d0_temporal.TemporalFrameRecorder",
+        )
         by_source = temporal["source_timing"]["required_feature_sets_by_source_class"]
         self.assertIn("xr.left_pose", by_source["human_vr"])
         self.assertIn("xr.right_pose", by_source["human_vr"])
@@ -282,7 +286,7 @@ class ResolvedContractTests(unittest.TestCase):
         )
         self.assertTrue(architecture["control_boundary"]["independent_of_eval"])
         eval_boundary = architecture["eval_boundary"]
-        self.assertEqual(eval_boundary["transport_selection"], "deferred")
+        self.assertEqual(eval_boundary["transport_selection"], "unix_domain_socket_json_lines_v1")
         self.assertEqual(architecture["control_boundary"]["transport_selection"], "deferred")
         self.assertEqual(eval_boundary["protocol_revision"], "piper_x_eval_boundary_v2")
         self.assertEqual(
@@ -313,8 +317,12 @@ class ResolvedContractTests(unittest.TestCase):
             eval_boundary["explicit_retry_after_ambiguous_timeout"],
             "same_request_id_only",
         )
-        self.assertEqual(eval_boundary["deduplication"]["implementation_state"], "deferred")
-        self.assertFalse(architecture["rpc_implementation_selected"])
+        self.assertEqual(eval_boundary["deduplication"]["implementation_state"], "implemented")
+        self.assertEqual(
+            eval_boundary["implementation"]["endpoint"],
+            "tools.isaac_eval_rpc.IsaacEvalEndpoint",
+        )
+        self.assertTrue(architecture["rpc_implementation_selected"])
         self.assertFalse(architecture["generic_simulator_api_exists"])
 
         dedup_probe = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))

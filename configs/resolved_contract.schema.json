@@ -1015,7 +1015,7 @@
   ],
   "properties": {
     "contract_version": {
-      "const": "5.2.2"
+      "const": "5.2.3"
     },
     "schema_version": {
       "const": "5.2"
@@ -1591,7 +1591,7 @@
           "const": false
         },
         "rpc_implementation_selected": {
-          "const": false
+          "const": true
         },
         "shared_semantic_boundary": {
           "type": "object",
@@ -1679,6 +1679,7 @@
             "semantics",
             "transport_selection",
             "handshake_fields",
+            "handshake_response_fields",
             "reset",
             "step",
             "request_identity",
@@ -1692,7 +1693,8 @@
             "transport_failure_classification",
             "transport_failure_is_task_truncation",
             "native_dictionaries_cross_boundary",
-            "python_pickle_allowed"
+            "python_pickle_allowed",
+            "implementation"
           ],
           "properties": {
             "protocol_revision": {
@@ -1703,7 +1705,7 @@
               "const": "synchronous_episode_sensitive"
             },
             "transport_selection": {
-              "const": "deferred"
+              "const": "unix_domain_socket_json_lines_v1"
             },
             "handshake_fields": {
               "type": "array",
@@ -1713,6 +1715,9 @@
               },
               "minItems": 1,
               "uniqueItems": true
+            },
+            "handshake_response_fields": {
+              "const": ["run_id", "endpoint_instance_id", "accepted"]
             },
             "reset": {
               "$ref": "#/$defs/boundary_operation"
@@ -1767,9 +1772,9 @@
                 "survives_transport_reconnect": {"const": true},
                 "survives_endpoint_restart": {"const": false},
                 "endpoint_restart_behavior": {"const": "invalidate_run_and_classify_infrastructure_failure"},
-                "retention": {"const": "until_run_close"},
-                "capacity_bound": {"const": "declared_n_episodes_times_horizon_plus_lifecycle_requests"},
-                "implementation_state": {"const": "deferred"}
+                "retention": {"const": "through_run_close_response"},
+                "capacity_bound": {"const": "declared_n_episodes_times_horizon_plus_reset_abort_and_close_requests"},
+                "implementation_state": {"const": "implemented"}
               }
             },
             "lifecycle": {
@@ -1813,6 +1818,18 @@
             },
             "python_pickle_allowed": {
               "const": false
+            },
+            "implementation": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["endpoint", "client", "server", "codec", "isaac_entrypoint"],
+              "properties": {
+                "endpoint": {"const": "tools.isaac_eval_rpc.IsaacEvalEndpoint"},
+                "client": {"const": "tools.isaac_eval_rpc.UnixEvalClient"},
+                "server": {"const": "tools.isaac_eval_rpc.serve_unix_socket"},
+                "codec": {"const": "utf8_json_lines_allow_nan_false"},
+                "isaac_entrypoint": {"const": "tools/run_isaac_s1.py --eval-socket --eval-run-manifest"}
+              }
             }
           }
         },
@@ -2864,9 +2881,12 @@
             "source_timing": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["storage", "required_fields", "field_types", "feature_sets", "required_feature_sets_by_source_class", "cross_modal_skew_feature_key", "timestamp_requirement"],
+              "required": ["storage", "recorder_adapter", "feature_spec_factory", "qa_summary_method", "required_fields", "field_types", "feature_sets", "required_feature_sets_by_source_class", "cross_modal_skew_feature_key", "timestamp_requirement"],
               "properties": {
                 "storage": {"const": "lerobot_additional_frame_features"},
+                "recorder_adapter": {"const": "tools.d0_temporal.TemporalFrameRecorder"},
+                "feature_spec_factory": {"const": "tools.d0_temporal.temporal_feature_specs"},
+                "qa_summary_method": {"const": "tools.d0_temporal.TemporalFrameRecorder.qa_summary"},
                 "required_fields": {
                   "const": ["sequence", "source_timestamp", "clock_domain", "age_ms"]
                 },

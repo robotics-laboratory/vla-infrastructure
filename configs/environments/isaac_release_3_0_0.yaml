@@ -107,10 +107,11 @@ qualification:
   candidate_b_result: pass
 transport:
   eval_boundary_selected: true
-  eval_transport_selection: deferred
+  eval_transport_selection: unix_domain_socket_json_lines_v1
   control_boundary_selected: true
   control_transport_selection: deferred
-  rpc_implementation: false
+  rpc_implementation: true
+  rpc_scope: isaac_eval_only_no_generic_simulator_api
 notes:
 - Candidate B passed with the normal upstream Isaac Lab Camera lifecycle and a regex-batched Camera over two independently wrist-parented camera prims.
 - The accepted D0 contract, Gate C model, MuJoCo selection, and isolated process boundaries are unchanged.

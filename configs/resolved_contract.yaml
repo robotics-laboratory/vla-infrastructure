@@ -1,4 +1,4 @@
-contract_version: 5.2.2
+contract_version: 5.2.3
 schema_version: '5.2'
 project:
   name: PIPER-X Quest multi-runtime robot-learning platform
@@ -266,7 +266,9 @@ execution_profiles:
     command: null
     prerequisites:
     - Multi-process profile with a core LeRobot evaluator and isolated isaac native environment process
-    - EVAL transport/codec, endpoint, proxy, and runnable command are deferred to E1
+    - Local Unix-domain socket shared by the core evaluator and isolated Isaac endpoint
+    - Per-run JSON handshake manifest supplied to tools/launch_isaac_s1.py --eval-run-manifest
+    - Checkpoint, policy processors, run manifest, and result destinations remain run-owned E1 inputs
   mujoco_env:
     environment: core
     working_directory: .
@@ -293,10 +295,10 @@ execution_profiles:
     command: null
     prerequisites: []
 process_architecture:
-  revision: piper_x_process_boundaries_v3
+  revision: piper_x_process_boundaries_v4
   same_process_lerobot_isaac_required: false
   generic_simulator_api_exists: false
-  rpc_implementation_selected: false
+  rpc_implementation_selected: true
   shared_semantic_boundary:
     gate: D0
     contract_revision: piper_x_d0_policy_data_v2
@@ -348,7 +350,7 @@ process_architecture:
   eval_boundary:
     protocol_revision: piper_x_eval_boundary_v2
     semantics: synchronous_episode_sensitive
-    transport_selection: deferred
+    transport_selection: unix_domain_socket_json_lines_v1
     handshake_fields:
     - protocol_revision
     - run_id
@@ -360,6 +362,7 @@ process_architecture:
     - processor_revision
     - n_episodes
     - horizon
+    handshake_response_fields: [run_id, endpoint_instance_id, accepted]
     reset:
       request_fields: [run_id, request_id, episode_id, seed, task_id, task_revision]
       response_fields: [request_id, canonical_D0_obs_0, effective_seed]
@@ -383,9 +386,9 @@ process_architecture:
       survives_transport_reconnect: true
       survives_endpoint_restart: false
       endpoint_restart_behavior: invalidate_run_and_classify_infrastructure_failure
-      retention: until_run_close
-      capacity_bound: declared_n_episodes_times_horizon_plus_lifecycle_requests
-      implementation_state: deferred
+      retention: through_run_close_response
+      capacity_bound: declared_n_episodes_times_horizon_plus_reset_abort_and_close_requests
+      implementation_state: implemented
     lifecycle:
       abort:
         request_fields: [run_id, request_id, episode_id, reason]
@@ -402,6 +405,12 @@ process_architecture:
     transport_failure_is_task_truncation: false
     native_dictionaries_cross_boundary: false
     python_pickle_allowed: false
+    implementation:
+      endpoint: tools.isaac_eval_rpc.IsaacEvalEndpoint
+      client: tools.isaac_eval_rpc.UnixEvalClient
+      server: tools.isaac_eval_rpc.serve_unix_socket
+      codec: utf8_json_lines_allow_nan_false
+      isaac_entrypoint: tools/run_isaac_s1.py --eval-socket --eval-run-manifest
   control_boundary:
     implementation_state: deferred
     semantics: asynchronous_freshness_sensitive
@@ -878,6 +887,9 @@ dataset:
       freshness_eligible: false
     source_timing:
       storage: lerobot_additional_frame_features
+      recorder_adapter: tools.d0_temporal.TemporalFrameRecorder
+      feature_spec_factory: tools.d0_temporal.temporal_feature_specs
+      qa_summary_method: tools.d0_temporal.TemporalFrameRecorder.qa_summary
       required_fields: [sequence, source_timestamp, clock_domain, age_ms]
       field_types:
         sequence: int64
@@ -1467,10 +1479,22 @@ artifacts:
     description: Serialized output of pinned LeRobot default recording processor get_config plus reset/state semantics
   gate_d0_causality_test_output:
     kind: test_output
-    sha256: 98a93bbf972d4e9ba2df081dfad63e4dad16a98002c77b18392c22b3378d4caf
+    sha256: 8165e70c4f636f1ff9ce35296a7f09aef828c6bb4ed17e3936f709211480dcc5
     path: docs/project/GATE_D0_CAUSALITY_TEST.txt
     uri: null
-    description: Focused same-tick obs_t/action_t plus source-age, clock-domain, and cross-modal-skew regression
+    description: Same-tick causality plus production TemporalFrameRecorder and real LeRobotDataset v3 persistence regression
+  gate_d0_e1_runtime_audit:
+    kind: report
+    sha256: db8fd0144f2526e6b61bf5c626d88c9a87a139ade603584a91a9569beb15c59b
+    path: docs/project/GATE_D0_E1_RUNTIME_AUDIT.md
+    uri: null
+    description: Upstream ownership and minimum-adapter audit for source-time recording and the concrete isolated-Isaac EVAL boundary
+  gate_e1_rpc_test_output:
+    kind: test_output
+    sha256: 78616f6c9ed1b8854410a3f426f1cfcb6c3f03679218dd0a0706ec1d016693ab
+    path: docs/project/GATE_E1_RPC_TESTS.txt
+    uri: null
+    description: Unix-socket request identity, deduplication, ambiguous-timeout, reconnect, and restart-detection integration tests
   gate_s0_upstream_audit:
     kind: report
     sha256: cec6d7de80d98764ab7519a1838a15dd3dcb065f7ceeed8d8c03edb2cd79d16d
@@ -1494,13 +1518,13 @@ artifacts:
     sha256: bc93f1ea3b7708438ced4da77b85ffbd8e83caecea51aae7ded74adc004ce626
     path: docs/project/GATE_S0_PROCESS_BOUNDARY_DECISION.md
     uri: null
-    description: Repin confirmation preserving isolated Isaac, separate EVAL/CONTROL boundaries, deferred transports, and no generic RPC/backend
+    description: Historical S0 repin decision preserving isolated Isaac and deferring EVAL transport selection to E1; CONTROL remains separate and deferred
   isaac_environment_selection:
     kind: environment_spec
-    sha256: 646b9ca780cee26c907eeae4922036f3c857c16f12332da94630c894f3c4c377
+    sha256: b0bd7d7cb56f2039979e93cc3cb877b48aafbbe96c4f2999589e62a82a314a8a
     path: configs/environments/isaac_release_3_0_0.yaml
     uri: null
-    description: Exact Candidate B isolated frozen workspace, scoped S2 teleop dependency pins, override/conflict list, driver observation, and expansion recheck policy
+    description: Exact Candidate B isolated frozen workspace, scoped S2 pins, driver observation, and the E1-only Unix-domain transport selection
   gate_s0_teleop_dependency_amendment:
     kind: report
     sha256: a9ee6384a3c13cb019847d869d8985eef4ea36f13ca19f17327a8935c77ad1d3
@@ -2005,18 +2029,34 @@ evidence:
   gate_d0_causality_regression:
     kind: command_test
     status: pass
-    summary: Same-tick obs/action pairing passed; logical dataset time was excluded from freshness, while stale source age, excessive cross-modal skew, and incomparable clock domains were rejected.
-    timestamp: '2026-09-16T21:50:33+03:00'
-    command: uv run pytest -q tests/test_gate_d0_contract.py
+    summary: Same-tick obs/action pairing and the production temporal adapter passed against a real LeRobotDataset; logical time remained separate while invalid source age, skew, clock, and sequence states failed before add_frame.
+    timestamp: '2026-09-16T22:45:00+03:00'
+    command: uv run pytest -q tests/test_gate_d0_contract.py tests/test_d0_temporal_runtime.py
     artifact_ids:
     - gate_d0_causality_test_output
     - gate_d0_processor_snapshot
+    - gate_d0_e1_runtime_audit
     repository: null
     revision_type: null
     revision: null
-    path: tests/test_gate_d0_contract.py
-    symbol: test_record_loop_frame_seam_preserves_obs_t_action_t; test_causality_oracle_rejects_both_off_by_one_directions; test_d0_contract_matches_upstream_processors_and_fingerprint; test_source_freshness_is_independent_of_logical_dataset_timestamp; test_cross_modal_skew_and_clock_domain_are_fail_closed
-    notes: The core profile lacks LeRobot's optional datasets extra, so the approved exact frame-construction seam fallback was used with no dependency change.
+    path: tools/d0_temporal.py; tests/test_gate_d0_contract.py; tests/test_d0_temporal_runtime.py
+    symbol: TemporalFrameRecorder; test_record_loop_frame_seam_preserves_obs_t_action_t; test_real_lerobot_writer_owns_dense_timestamp_and_persists_source_time
+    notes: The core profile now enables the pinned LeRobot dataset extra. The adapter delegates accepted frames to the unmodified upstream writer and records provenance-only timing fields.
+  gate_e1_rpc_implementation_tests:
+    kind: command_test
+    status: pass
+    summary: The concrete Isaac endpoint/client passed at-most-once execution, payload-bound deduplication, reconnect, explicit same-ID retry after ambiguous timeout, and endpoint-restart invalidation tests.
+    timestamp: '2026-09-16T22:45:00+03:00'
+    command: uv run pytest -q tests/test_isaac_eval_rpc.py
+    artifact_ids:
+    - gate_e1_rpc_test_output
+    - gate_d0_e1_runtime_audit
+    repository: null
+    revision_type: null
+    revision: null
+    path: tools/isaac_eval_rpc.py; tools/run_isaac_s1.py; tools/launch_isaac_s1.py; tests/test_isaac_eval_rpc.py
+    symbol: IsaacEvalEndpoint; UnixEvalClient; serve_unix_socket
+    notes: Offline tests use a stateful concrete-environment double. A checkpoint-backed Candidate B run remains required before E1 can be accepted.
   gate_s0_isaac_upstream_audit:
     kind: upstream_source
     status: pass
@@ -2134,7 +2174,7 @@ evidence:
     revision: null
     path: null
     symbol: null
-    notes: The current runtime does not change process semantics. EVAL and CONTROL transport selection remain deferred; no RPC or host change was performed.
+    notes: At S0 acceptance no RPC or host change was performed and both transports were deferred. E1 later selected the narrow local Unix-domain EVAL boundary without changing the accepted isolated-process architecture; CONTROL remains deferred.
   gate_s1_candidate_b_runtime:
     kind: command_test
     status: pass
@@ -2323,7 +2363,8 @@ gates:
     - gate_d0_upstream_audit
     - gate_d0_processor_snapshot
     - gate_d0_causality_test_output
-    notes: D0 v2 accepts canonical PIPER-X policy/data, same-tick causality, a 30 FPS logical dataset grid, separate physical source timing with sequence/clock/age/skew metadata, independent rates, wrist-camera roles, provenance isolation, identity label processing, and runtime/device command separation offline without replacing upstream recording. Numeric source-age/skew limits remain gate-owned runtime decisions.
+    - gate_d0_e1_runtime_audit
+    notes: D0 v2 accepts canonical PIPER-X policy/data, same-tick causality, a 30 FPS logical dataset grid, separate physical source timing with sequence/clock/age/skew metadata, independent rates, wrist-camera roles, provenance isolation, identity label processing, and runtime/device command separation. The thin TemporalFrameRecorder now enforces and persists source timing immediately before the upstream LeRobot writer without replacing it. Numeric source-age/skew limits remain gate-owned runtime decisions.
   S0:
     state: accepted
     evidence_ids:
@@ -2341,7 +2382,7 @@ gates:
     - gate_s0_process_boundary_decision
     - isaac_environment_selection
     - gate_s0_teleop_dependency_amendment
-    notes: Candidate B release/3.0.0 at 913ac53f is selected in its exact isolated frozen workspace. Gate B/core owns isaacteleop 1.3.131 at 7002ed63 while Candidate B/Isaac owns frozen isaacteleop 1.4.98rc1 and in-tree isaaclab_teleop 0.8.0; there is no global teleop pin. Its upstream overrides and 11 pip metadata conflicts are explicit; the expanded S1/S2 automated surfaces reproduce the same 11 with zero new conflict and no exercised required-path failure. Driver 580.159.03 satisfies the documented 580.95.05+ baseline and passed empirically. The narrow S0 reopen is resolved; Gate B, S1, D0, Gate C, MuJoCo, separate EVAL/CONTROL boundaries, deferred transports, and no-generic-backend decisions are unchanged.
+    notes: Candidate B release/3.0.0 at 913ac53f is selected in its exact isolated frozen workspace. Gate B/core owns isaacteleop 1.3.131 at 7002ed63 while Candidate B/Isaac owns frozen isaacteleop 1.4.98rc1 and in-tree isaaclab_teleop 0.8.0; there is no global teleop pin. Its upstream overrides and 11 pip metadata conflicts are explicit; the expanded S1/S2 automated surfaces reproduce the same 11 with zero new conflict and no exercised required-path failure. Driver 580.159.03 satisfies the documented 580.95.05+ baseline and passed empirically. The S0 isolated-process and no-generic-backend decisions remain accepted; E1 has since selected the narrow local Unix-domain EVAL transport, while CONTROL transport remains deferred.
   S1:
     state: accepted
     evidence_ids:
@@ -2405,9 +2446,12 @@ gates:
     notes: No MuJoCo environment implementation was performed.
   E1:
     state: unresolved
-    evidence_ids: []
-    artifact_ids: []
-    notes: No Isaac policy evaluation run exists. The core evaluator plus isolated Isaac endpoint semantics are selected, but protocol/codec, endpoint, proxy, tests, manifests, and transport remain E1 work.
+    evidence_ids:
+    - gate_e1_rpc_implementation_tests
+    artifact_ids:
+    - gate_e1_rpc_test_output
+    - gate_d0_e1_runtime_audit
+    notes: No Isaac policy evaluation run exists. The Unix-domain JSON-Lines transport, request identity, bounded reconnect-safe dedup cache, restart detection, concrete Isaac endpoint/client, and integration tests are implemented. E1 remains unresolved until a real checkpoint run supplies its run manifest and eval result artifacts.
   E2:
     state: unresolved
     evidence_ids: []

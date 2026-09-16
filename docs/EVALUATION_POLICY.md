@@ -42,11 +42,15 @@ transport reconnect                    -> dedup cache remains valid
 endpoint restart                       -> invalidate run; infrastructure failure
 ```
 
-The cache is retained until run close and bounded by the run manifest's declared
-`n_episodes × horizon` plus lifecycle requests. This is protocol semantics, not
-authorization for a generic RPC
-framework: transport and implementation remain deferred, and MuJoCo stays single-process
-unless measured constraints justify a boundary later.
+The cache is retained through the run-close response and bounded by the run manifest's
+declared step capacity plus reset, abort, and close requests. This is protocol semantics, not
+authorization for a generic RPC framework. The one selected implementation is a local
+Unix-domain socket carrying UTF-8 JSON Lines between the core evaluator and the concrete
+Isaac process. `IsaacEvalEndpoint` owns episode ordering and the bounded dedup cache;
+`UnixEvalClient` permits one in-flight request and never retries an ambiguous timeout.
+The handshake returns an `endpoint_instance_id`, so a reconnect to a restarted process
+invalidates the run. MuJoCo stays single-process unless measured constraints justify a
+boundary later.
 
 ## Cross-sim comparison [[gate:E3]]
 
