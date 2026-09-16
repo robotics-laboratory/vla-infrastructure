@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import signal
 import subprocess
 
 import yaml
@@ -114,6 +115,7 @@ def main() -> int:
         str(LAB),
         "--frozen",
         "--no-sync",
+        "--no-managed-python",
         "python",
         str(ROOT / "tools/run_isaac_s1.py"),
         "--robosyn-vr-demo",
@@ -171,28 +173,46 @@ def main() -> int:
         )
     print(f"Demo output: {output_dir}", flush=True)
     print(f"Demo command: {' '.join(command)}", flush=True)
-    with (output_dir / "stdout.log").open("w", encoding="utf-8") as log:
-        with subprocess.Popen(
-            command,
-            cwd=ROOT,
-            env=environment,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-        ) as process:
-            assert process.stdout is not None
-            for line in process.stdout:
-                log.write(line)
-                log.flush()
-                print(line, end="", flush=True)
-            return_code = process.wait()
+    stop_requested = False
+    process: subprocess.Popen[str] | None = None
+
+    def request_stop(_signum, _frame) -> None:
+        nonlocal stop_requested
+        if stop_requested:
+            return
+        stop_requested = True
+        print("Demo stop requested; waiting for final report...", flush=True)
+        if process is not None and process.poll() is None:
+            os.killpg(process.pid, signal.SIGINT)
+
+    previous_sigint = signal.signal(signal.SIGINT, request_stop)
+    try:
+        with (output_dir / "stdout.log").open("w", encoding="utf-8") as log:
+            with subprocess.Popen(
+                command,
+                cwd=ROOT,
+                env=environment,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                start_new_session=True,
+            ) as process:
+                assert process.stdout is not None
+                for line in process.stdout:
+                    log.write(line)
+                    log.flush()
+                    print(line, end="", flush=True)
+                return_code = process.wait()
+    finally:
+        signal.signal(signal.SIGINT, previous_sigint)
     report_path = output_dir / "result.json"
     if not report_path.is_file():
         return return_code or 1
     report = json.loads(report_path.read_text(encoding="utf-8"))
     report["process"] = {
         "exit_code": return_code,
-        "clean_shutdown": return_code == 0,
+        "clean_shutdown": return_code in (0, 130),
+        "stop_requested": stop_requested,
         "stdout_log": str(output_dir / "stdout.log"),
         "launcher": str(Path(__file__).resolve()),
     }

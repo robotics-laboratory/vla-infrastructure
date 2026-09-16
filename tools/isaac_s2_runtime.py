@@ -326,6 +326,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     )
     performance_summary: dict[str, Any] | None = None
     env.performance_logger = performance
+    interrupted = False
 
     print(
         f"[S2] CloudXR {actual_versions['cloudxr']} profile={args_cli.s2_cloudxr_profile} "
@@ -600,6 +601,19 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     )
                     if window is not None:
                         print(json.dumps(window, sort_keys=True), flush=True)
+    except KeyboardInterrupt:
+        interrupted = True
+        print(
+            json.dumps(
+                {
+                    "event": "s2_stop_requested",
+                    "reason": "keyboard_interrupt",
+                    "step": control_steps,
+                },
+                sort_keys=True,
+            ),
+            flush=True,
+        )
     finally:
         try:
             if experiment is not None:
@@ -735,6 +749,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
         },
         "execution": {
             "control_steps": control_steps,
+            "stopped_by_user": interrupted,
             "wall_seconds": elapsed,
             "control_hz": control_steps / elapsed,
             "physics_hz": (control_steps * 4) / elapsed,
@@ -769,4 +784,4 @@ def run_s2(env, args_cli, simulation_app) -> int:
             encoding="utf-8",
         )
     print(json.dumps(jsonable(report), sort_keys=True), flush=True)
-    return 0 if passed else 1
+    return 130 if interrupted else (0 if passed else 1)
