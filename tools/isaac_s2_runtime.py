@@ -20,6 +20,7 @@ from isaac_s2_processor import (
     BimanualS2TeleopProcessor,
     PROCESSOR_REVISION,
     S2ProcessorConfig,
+    SensitivityControlMode,
     SensitivityMode,
     unpack_pipeline_action,
 )
@@ -200,14 +201,40 @@ def run_s2(env, args_cli, simulation_app) -> int:
     sensitivity = (
         experiment.sensitivity if experiment is not None else config["processor"]["sensitivity"]
     )
+    sensitivity_control_mode = cast(
+        SensitivityControlMode, str(sensitivity.get("control_mode", "toggle"))
+    )
+    if sensitivity_control_mode == "slider":
+        slider = sensitivity["slider"]
+        normal_scales = slider["center"]
+        precise_scales = slider["minimum"]
+        initial_sensitivity_mode: SensitivityMode = "normal"
+        sensitivity_toggle_threshold = 0.5
+    else:
+        slider = {
+            "minimum": sensitivity["modes"]["precise"],
+            "center": sensitivity["modes"]["normal"],
+            "maximum": sensitivity["modes"]["normal"],
+        }
+        normal_scales = sensitivity["modes"]["normal"]
+        precise_scales = sensitivity["modes"]["precise"]
+        initial_sensitivity_mode = cast(SensitivityMode, str(sensitivity["initial_mode"]))
+        sensitivity_toggle_threshold = float(sensitivity["toggle_threshold"])
     gripper = config["processor"]["gripper"]
     processor_cfg = S2ProcessorConfig(
-        normal_translation_scale=float(sensitivity["modes"]["normal"]["translation_scale"]),
-        normal_rotation_scale=float(sensitivity["modes"]["normal"]["rotation_scale"]),
-        precise_translation_scale=float(sensitivity["modes"]["precise"]["translation_scale"]),
-        precise_rotation_scale=float(sensitivity["modes"]["precise"]["rotation_scale"]),
-        initial_sensitivity_mode=cast(SensitivityMode, str(sensitivity["initial_mode"])),
-        sensitivity_toggle_threshold=float(sensitivity["toggle_threshold"]),
+        normal_translation_scale=float(normal_scales["translation_scale"]),
+        normal_rotation_scale=float(normal_scales["rotation_scale"]),
+        precise_translation_scale=float(precise_scales["translation_scale"]),
+        precise_rotation_scale=float(precise_scales["rotation_scale"]),
+        initial_sensitivity_mode=initial_sensitivity_mode,
+        sensitivity_control_mode=sensitivity_control_mode,
+        sensitivity_toggle_threshold=sensitivity_toggle_threshold,
+        slider_min_translation_scale=float(slider["minimum"]["translation_scale"]),
+        slider_min_rotation_scale=float(slider["minimum"]["rotation_scale"]),
+        slider_center_translation_scale=float(slider["center"]["translation_scale"]),
+        slider_center_rotation_scale=float(slider["center"]["rotation_scale"]),
+        slider_max_translation_scale=float(slider["maximum"]["translation_scale"]),
+        slider_max_rotation_scale=float(slider["maximum"]["rotation_scale"]),
         clutch_threshold=float(config["processor"]["clutch"]["threshold"]),
         gripper_trigger_min=float(gripper["trigger_input_range"][0]),
         gripper_trigger_max=float(gripper["trigger_input_range"][1]),
@@ -225,7 +252,11 @@ def run_s2(env, args_cli, simulation_app) -> int:
     )
     anchor_position = tuple(float(value) for value in presentation["anchor_pos_m"])
     anchor_rotation = tuple(float(value) for value in presentation["anchor_rot_xyzw"])
-    pipeline_kwargs = {"sensitivity_control": str(sensitivity["toggle_control"])}
+    pipeline_kwargs = {
+        "sensitivity_control": str(
+            sensitivity.get("input_control", sensitivity.get("toggle_control"))
+        )
+    }
     pipeline_action_dim = PIPELINE_ACTION_DIM
     if experiment is not None:
         pipeline_kwargs["display_control"] = experiment.display_control
@@ -262,9 +293,20 @@ def run_s2(env, args_cli, simulation_app) -> int:
     session_started_ever = False
     action_frames = 0
     tracking_valid_frames = {"left": 0, "right": 0}
+    sensitivity_modes = (
+        ("slider",) if sensitivity_control_mode == "slider" else ("normal", "precise")
+    )
     sensitivity_mode_frames = {
-        "left": {"normal": 0, "precise": 0},
-        "right": {"normal": 0, "precise": 0},
+        side: {mode: 0 for mode in sensitivity_modes} for side in ("left", "right")
+    }
+    motion_scale_observed = {
+        side: {
+            "translation_min": None,
+            "translation_max": None,
+            "rotation_min": None,
+            "rotation_max": None,
+        }
+        for side in ("left", "right")
     }
     transition_counts: dict[str, int] = {}
     maximum_rebase_motion_m = {"left": 0.0, "right": 0.0}
@@ -428,6 +470,19 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 ):
                     tracking_valid_frames[side] += int(arm.tracking_valid)
                     sensitivity_mode_frames[side][arm.sensitivity_mode] += 1
+                    observed = motion_scale_observed[side]
+                    for channel, scale in (
+                        ("translation", arm.translation_scale),
+                        ("rotation", arm.rotation_scale),
+                    ):
+                        minimum = observed[f"{channel}_min"]
+                        maximum = observed[f"{channel}_max"]
+                        observed[f"{channel}_min"] = (
+                            scale if minimum is None else min(minimum, scale)
+                        )
+                        observed[f"{channel}_max"] = (
+                            scale if maximum is None else max(maximum, scale)
+                        )
                     transition_counts[f"{side}:{arm.transition}"] = (
                         transition_counts.get(f"{side}:{arm.transition}", 0) + 1
                     )
@@ -454,6 +509,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                                 "right": command.right.transition,
                                 "left_mode": command.left.sensitivity_mode,
                                 "right_mode": command.right.sensitivity_mode,
+                                "left_scale": command.left.translation_scale,
+                                "right_scale": command.right.translation_scale,
                                 "camera_valid": camera["valid"],
                             },
                             sort_keys=True,
@@ -494,6 +551,39 @@ def run_s2(env, args_cli, simulation_app) -> int:
         and backdrop_toggle_requirement_met
         and recenter_smoke_requirement_met
     )
+    if sensitivity_control_mode == "slider":
+        sensitivity_report = {
+            "control_mode": "slider",
+            "input_control": sensitivity["input_control"],
+            "quest_control": sensitivity["quest_control"],
+            "scope": sensitivity["scope"],
+            "input_range": sensitivity["input_range"],
+            "minimum": slider["minimum"],
+            "center": slider["center"],
+            "maximum": slider["maximum"],
+            "mapping": sensitivity["mapping"],
+        }
+    else:
+        sensitivity_report = {
+            "control_mode": "toggle",
+            "toggle_control": sensitivity["toggle_control"],
+            **(
+                {"quest_button": sensitivity["quest_button"]}
+                if "quest_button" in sensitivity
+                else {}
+            ),
+            "scope": sensitivity["scope"],
+            "initial_mode": processor_cfg.initial_sensitivity_mode,
+            "normal": {
+                "translation_scale": processor_cfg.normal_translation_scale,
+                "rotation_scale": processor_cfg.normal_rotation_scale,
+            },
+            "precise": {
+                "translation_scale": processor_cfg.precise_translation_scale,
+                "rotation_scale": processor_cfg.precise_rotation_scale,
+            },
+            "switch_behavior": "rising edge changes mode and emits zero Cartesian delta",
+        }
     report = {
         "gate": "NONE_EXPERIMENTAL" if experiment is not None else "S2",
         "status": (
@@ -516,25 +606,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
         ),
         "processor": {
             "revision": PROCESSOR_REVISION,
-            "sensitivity": {
-                "toggle_control": sensitivity["toggle_control"],
-                **(
-                    {"quest_button": sensitivity["quest_button"]}
-                    if "quest_button" in sensitivity
-                    else {}
-                ),
-                "scope": sensitivity["scope"],
-                "initial_mode": processor_cfg.initial_sensitivity_mode,
-                "normal": {
-                    "translation_scale": processor_cfg.normal_translation_scale,
-                    "rotation_scale": processor_cfg.normal_rotation_scale,
-                },
-                "precise": {
-                    "translation_scale": processor_cfg.precise_translation_scale,
-                    "rotation_scale": processor_cfg.precise_rotation_scale,
-                },
-                "switch_behavior": ("rising edge changes mode and emits zero Cartesian delta"),
-            },
+            "sensitivity": sensitivity_report,
             "clutch": "independent squeeze > 0.5; release discards one delta",
             "gripper": (
                 "independent analog trigger [0,1] maps linearly and monotonically "
@@ -582,6 +654,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
             "saturated_frames": saturated_frames,
             "tracking_valid_frames": tracking_valid_frames,
             "sensitivity_mode_frames": sensitivity_mode_frames,
+            "motion_scale_observed": motion_scale_observed,
             "transitions": transition_counts,
             "maximum_rebase_or_clutch_tcp_motion_m": maximum_rebase_motion_m,
         },

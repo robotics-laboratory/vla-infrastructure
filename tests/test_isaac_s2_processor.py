@@ -186,6 +186,41 @@ class IsaacS2ProcessorTests(unittest.TestCase):
             np.testing.assert_array_equal(command.left.delta_pose, np.zeros(6))
             np.testing.assert_array_equal(command.right.delta_pose, np.zeros(6))
 
+    def test_per_hand_thumbstick_slider_is_continuous_independent_and_clamped(self) -> None:
+        processor = BimanualS2TeleopProcessor(
+            S2ProcessorConfig(
+                sensitivity_control_mode="slider",
+                slider_min_translation_scale=2.0,
+                slider_min_rotation_scale=2.0,
+                slider_center_translation_scale=4.0,
+                slider_center_rotation_scale=4.0,
+                slider_max_translation_scale=6.0,
+                slider_max_rotation_scale=6.0,
+            )
+        )
+        processor.advance(_sample(sensitivity=-1.0), _sample(sensitivity=1.0))
+
+        def motion(slider: float) -> ControllerDeltaSample:
+            return ControllerDeltaSample(
+                np.ones(3), np.ones(3), True, True, 0.0, 0.0, slider
+            )
+
+        command = processor.advance(motion(-1.0), motion(1.0))
+        np.testing.assert_allclose(command.left.delta_pose, np.full(6, 2.0))
+        np.testing.assert_allclose(command.right.delta_pose, np.full(6, 6.0))
+        self.assertEqual(command.left.sensitivity_mode, "slider")
+        self.assertEqual(command.right.sensitivity_mode, "slider")
+        self.assertEqual(command.left.translation_scale, 2.0)
+        self.assertEqual(command.right.translation_scale, 6.0)
+
+        command = processor.advance(motion(0.5), motion(-0.5))
+        np.testing.assert_allclose(command.left.delta_pose, np.full(6, 5.0))
+        np.testing.assert_allclose(command.right.delta_pose, np.full(6, 3.0))
+
+        command = processor.advance(motion(10.0), motion(-10.0))
+        np.testing.assert_allclose(command.left.delta_pose, np.full(6, 6.0))
+        np.testing.assert_allclose(command.right.delta_pose, np.full(6, 2.0))
+
     def test_clutch_freezes_and_release_rebases_independently(self) -> None:
         moving = ControllerDeltaSample(np.ones(3), np.ones(3), True, True, 1.0, 0.0, 0.0)
         command = self.processor.advance(moving, _sample())
@@ -313,11 +348,11 @@ class IsaacS2ProcessorTests(unittest.TestCase):
         np.testing.assert_array_equal(left.delta_rotation_rotvec_rad, [3.0, 4.0, 5.0])
         self.assertTrue(left.available)
         self.assertEqual(left.trigger_value, 9.0)
-        self.assertEqual(left.sensitivity_button_value, 10.0)
+        self.assertEqual(left.sensitivity_control_value, 10.0)
         np.testing.assert_array_equal(right.delta_position_m, [11.0, 12.0, 13.0])
         np.testing.assert_array_equal(right.delta_rotation_rotvec_rad, [14.0, 15.0, 16.0])
         self.assertEqual(right.trigger_value, 20.0)
-        self.assertEqual(right.sensitivity_button_value, 21.0)
+        self.assertEqual(right.sensitivity_control_value, 21.0)
 
 
 if __name__ == "__main__":

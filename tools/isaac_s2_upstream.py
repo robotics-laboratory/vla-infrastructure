@@ -144,13 +144,14 @@ class TrackingSafeSe3RelRetargeter(Se3RelRetargeter):
 
 
 class ControllerStateRetargeter(BaseRetargeter):
-    """Expose validity and the three S2 controls for one controller side."""
+    """Expose validity, gripper controls, and one motion-scale control per side."""
 
     def __init__(self, side: str, sensitivity_control: str, name: str) -> None:
         if side not in (ControllersSource.LEFT, ControllersSource.RIGHT):
             raise ValueError(f"unsupported controller source: {side}")
         sensitivity_sources = {
             "thumbstick_click": (side, ControllerInputIndex.THUMBSTICK_CLICK),
+            "thumbstick_x": (side, ControllerInputIndex.THUMBSTICK_X),
             "left_secondary_click": (
                 ControllersSource.LEFT,
                 ControllerInputIndex.SECONDARY_CLICK,
@@ -259,8 +260,8 @@ def build_piper_x_bimanual_pipeline(
     connected: dict[str, Any] = {}
     for side in ("left", "right"):
         source = ControllersSource.LEFT if side == "left" else ControllersSource.RIGHT
-        # Keep upstream filtering/deadband behavior but leave both config-selected
-        # sensitivity-mode gains to the pure PIPER-X S2 processor.
+        # Keep upstream filtering/deadband behavior but leave the config-selected
+        # motion-scale mapping to the pure PIPER-X S2 processor.
         pose = TrackingSafeSe3RelRetargeter(
             Se3RetargeterConfig(
                 input_device=source,
@@ -334,14 +335,14 @@ def build_piper_x_bimanual_pipeline(
         "left_grip_valid",
         "left_squeeze",
         "left_trigger",
-        "left_sensitivity_button",
+        "left_sensitivity_control",
     ]
     right_state_names = [
         "right_available",
         "right_grip_valid",
         "right_squeeze",
         "right_trigger",
-        "right_sensitivity_button",
+        "right_sensitivity_control",
     ]
     input_config = {
         "left_delta": left_delta_names,

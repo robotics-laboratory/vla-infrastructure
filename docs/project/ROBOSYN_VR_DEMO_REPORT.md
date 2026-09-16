@@ -128,9 +128,9 @@ show images is still required.
 The audited `ControllersSource` exposes grip pose/valid, primary, secondary,
 thumbstick X/Y/click, menu, squeeze, and trigger. Upstream reserves only right
 `PRIMARY_CLICK` (Quest A) for anchor rotation; Start/Stop/Reset arrive on the
-separate message channel. Demo sensitivity therefore uses left
-`SECONDARY_CLICK` (Quest Y), routed to both existing per-arm edge handlers, and
-the display toggle uses free left `PRIMARY_CLICK` (Quest X). Squeeze clutch and
+separate message channel. Each demo thumbstick X axis now continuously controls
+only its own arm from 2× (left) through 4× (center) to 6× (right), and the
+display toggle uses free left `PRIMARY_CLICK` (Quest X). Squeeze clutch and
 analog trigger gripper are unchanged. Free right `SECONDARY_CLICK` (Quest B)
 now edge-toggles only the visual USD backdrop. It does not change table/robot
 geometry, physics, XR lifecycle, or orientation.
@@ -293,9 +293,10 @@ Quest pick/move test before acceptance.
   preflight passes, reset passes, both wrist cameras advance 60/60 frames, and
   the unchanged S2 loop shuts down cleanly:
   `/data/ebulochkin/cache/robosyn-vr-demo/runs/20260911T141639351652Z-dual_cube_to_matching_plates-hud-off/result.json`.
-- Tracking-loss recovery, clutch/rebase, analog gripper, and normal/precise
-  sensitivity remain covered by the S2 processor suite. Exact controller-field
-  tests cover Y, X, and B without changing the 22-value production S2 action.
+- Tracking-loss recovery, clutch/rebase, analog gripper, the stock toggle modes,
+  and the demo's independent continuous speed sliders remain covered by the S2
+  processor suite. Exact controller-field tests cover both thumbstick X axes,
+  Quest X, and Quest B without changing the 22-value production S2 action.
 - Navigation-transform tests apply two different upstream
   physical-to-virtual matrices and verify that the controller mapping tracks
   the changed XR space origin. R3 debounce and upstream teleport dispatch pass.
@@ -329,8 +330,9 @@ accepted.
 4. Press X once. Confirm two rectangular panels show distinct live LEFT WRIST
    and RIGHT WRIST images rather than gray triangles; move each wrist to verify
    the matching image advances. Press X again and confirm only the panels hide.
-5. Recheck Y NORMAL/PRECISE once, both analog triggers, one clutch/rebase, and a
-   brief tracking-loss/recovery. Pick and move one cube to confirm the retained
+5. Move each thumbstick independently left/center/right and confirm only that
+   arm changes between 2×/4×/6×. Recheck both analog triggers, one clutch/rebase,
+   and a brief tracking-loss/recovery. Pick and move one cube to confirm the retained
    no-shake grasp fix. Stop through the existing S2 path and keep the generated
    result/log directory.
 

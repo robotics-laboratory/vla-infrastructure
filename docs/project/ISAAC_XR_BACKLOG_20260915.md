@@ -14,3 +14,4 @@ No canonical contract or gate is accepted by this experiment. Save new evidence 
 
 - 2026-09-16 XR-08 — Camera feedback source: implemented with `isaac_lab_camera_rgba`; 34 tests and 16-step Kit smoke pass. Physical two-panel recursion retest pending; artifacts: `xr_fixes/20260916/02_camera_feedback/`.
 - 2026-09-16 XR-09 — Wrist camera pose: optical +X now maps to the gripper +Z approach axis and image-up maps to gripper +X. A real-Kit pose sweep selected the 6 cm parent-X mount with only the finger tips visible. Physical upright/comfort retest pending; artifacts: `xr_fixes/20260916/03_camera_pose/`.
+- 2026-09-16 XR-10 — Per-hand speed slider: each upstream `THUMBSTICK_X` independently maps −1/0/+1 to 2×/4×/6× translation and rotation. 36 tests and a 16-step Kit smoke pass; physical range and comfort retest pending. Artifacts: `xr_fixes/20260916/04_per_hand_speed_slider/`.

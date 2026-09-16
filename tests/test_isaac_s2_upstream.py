@@ -73,6 +73,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         squeeze=0.0,
         trigger=0.0,
         sensitivity=0.0,
+        thumbstick_x=0.0,
         primary=0.0,
         secondary=0.0,
         side=None,
@@ -88,6 +89,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         group[self.ControllerInputIndex.SQUEEZE_VALUE] = squeeze
         group[self.ControllerInputIndex.TRIGGER_VALUE] = trigger
         group[self.ControllerInputIndex.THUMBSTICK_CLICK] = sensitivity
+        group[self.ControllerInputIndex.THUMBSTICK_X] = thumbstick_x
         group[self.ControllerInputIndex.PRIMARY_CLICK] = primary
         group[self.ControllerInputIndex.SECONDARY_CLICK] = secondary
         return group
@@ -195,6 +197,23 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         )
         np.testing.assert_allclose(state, [1.0, 1.0, 0.0, 0.75, 1.0])
 
+    def test_demo_slider_uses_each_controllers_own_thumbstick_x(self) -> None:
+        for side, value in (
+            (self.ControllersSource.LEFT, -0.75),
+            (self.ControllersSource.RIGHT, 0.625),
+        ):
+            retargeter = self.ControllerStateRetargeter(
+                side, sensitivity_control="thumbstick_x", name=f"{side}_slider_state"
+            )
+            controller = self._controller(
+                retargeter,
+                [0.1, 0.2, 0.3],
+                thumbstick_x=value,
+                side=side,
+            )
+            state = np.asarray(retargeter({side: controller})["state"][0])
+            self.assertAlmostEqual(float(state[4]), value)
+
     def test_demo_display_output_uses_free_left_primary_x_button(self) -> None:
         side = self.ControllersSource.LEFT
         retargeter = self.ControllerButtonRetargeter(
@@ -242,7 +261,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
     def test_demo_controls_append_three_values_without_changing_production_shape(self) -> None:
         production = self.build_piper_x_bimanual_pipeline()
         demo = self.build_piper_x_bimanual_pipeline(
-            sensitivity_control="left_secondary_click",
+            sensitivity_control="thumbstick_x",
             display_control="left_primary_click",
             backdrop_control="right_secondary_click",
             recenter_control="right_thumbstick_click",

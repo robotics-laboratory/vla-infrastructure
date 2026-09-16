@@ -118,15 +118,16 @@ xr_presentation:
 
 teleop_tuning:
   sensitivity:
-    initial_mode: normal
-    toggle_control: left_secondary_click
-    quest_button: Y
-    toggle_threshold: 0.5
-    scope: both arms receive the same edge-triggered left Y value
-    modes:
-      normal: {translation_scale: 4.0, rotation_scale: 4.0}
-      precise: {translation_scale: 1.0, rotation_scale: 1.0}
-    switch_behavior: One rising edge toggles both per-arm modes and emits zero Cartesian delta on the switching frame; holding does not retrigger.
+    control_mode: slider
+    input_control: thumbstick_x
+    quest_control: each controller's own horizontal thumbstick axis
+    input_range: [-1.0, 1.0]
+    scope: independent per arm
+    slider:
+      minimum: {translation_scale: 2.0, rotation_scale: 2.0}
+      center: {translation_scale: 4.0, rotation_scale: 4.0}
+      maximum: {translation_scale: 6.0, rotation_scale: 6.0}
+    mapping: Piecewise linear and clamped; left is slower, center keeps the previous normal speed, right is faster.
     status: DEMO_ONLY_CANDIDATE_REQUIRES_PHYSICAL_RETEST
 
 vr_camera_feeds:

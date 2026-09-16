@@ -15,7 +15,7 @@ from typing import Literal, Sequence
 import numpy as np
 
 
-PROCESSOR_REVISION = "piper_x_isaac_s2_bimanual_relative_v2"
+PROCESSOR_REVISION = "piper_x_isaac_s2_bimanual_relative_v3"
 NORMAL_TRANSLATION_SCALE = 2.0
 NORMAL_ROTATION_SCALE = 2.0
 PRECISE_TRANSLATION_SCALE = 0.5
@@ -26,7 +26,8 @@ DEFAULT_GRIPPER_APERTURE_M = 0.05
 OPEN_GRIPPER_APERTURE_M = 0.1
 CLOSED_GRIPPER_APERTURE_M = 0.0
 
-SensitivityMode = Literal["normal", "precise"]
+SensitivityMode = Literal["normal", "precise", "slider"]
+SensitivityControlMode = Literal["toggle", "slider"]
 
 
 @dataclass(frozen=True)
@@ -39,7 +40,7 @@ class ControllerDeltaSample:
     grip_pose_valid: bool
     squeeze_value: float
     trigger_value: float
-    sensitivity_button_value: float
+    sensitivity_control_value: float
 
     def __post_init__(self) -> None:
         for field_name in ("delta_position_m", "delta_rotation_rotvec_rad"):
@@ -60,6 +61,8 @@ class ArmTeleopCommand:
     clutch_active: bool
     rebased: bool
     sensitivity_mode: SensitivityMode
+    translation_scale: float
+    rotation_scale: float
     transition: str
 
 
@@ -79,7 +82,14 @@ class S2ProcessorConfig:
     precise_translation_scale: float = PRECISE_TRANSLATION_SCALE
     precise_rotation_scale: float = PRECISE_ROTATION_SCALE
     initial_sensitivity_mode: SensitivityMode = "normal"
+    sensitivity_control_mode: SensitivityControlMode = "toggle"
     sensitivity_toggle_threshold: float = DEFAULT_SENSITIVITY_TOGGLE_THRESHOLD
+    slider_min_translation_scale: float = NORMAL_TRANSLATION_SCALE
+    slider_min_rotation_scale: float = NORMAL_ROTATION_SCALE
+    slider_center_translation_scale: float = NORMAL_TRANSLATION_SCALE
+    slider_center_rotation_scale: float = NORMAL_ROTATION_SCALE
+    slider_max_translation_scale: float = NORMAL_TRANSLATION_SCALE
+    slider_max_rotation_scale: float = NORMAL_ROTATION_SCALE
     clutch_threshold: float = DEFAULT_CLUTCH_THRESHOLD
     gripper_trigger_min: float = 0.0
     gripper_trigger_max: float = 1.0
@@ -96,6 +106,8 @@ class _ArmState:
     gripper_aperture_m: float = DEFAULT_GRIPPER_APERTURE_M
     sensitivity_mode: SensitivityMode = "normal"
     sensitivity_button_pressed: bool = False
+    translation_scale: float = NORMAL_TRANSLATION_SCALE
+    rotation_scale: float = NORMAL_ROTATION_SCALE
 
 
 class BimanualS2TeleopProcessor:
@@ -113,6 +125,12 @@ class BimanualS2TeleopProcessor:
             cfg.normal_rotation_scale,
             cfg.precise_translation_scale,
             cfg.precise_rotation_scale,
+            cfg.slider_min_translation_scale,
+            cfg.slider_min_rotation_scale,
+            cfg.slider_center_translation_scale,
+            cfg.slider_center_rotation_scale,
+            cfg.slider_max_translation_scale,
+            cfg.slider_max_rotation_scale,
             cfg.sensitivity_toggle_threshold,
             cfg.clutch_threshold,
             cfg.gripper_trigger_min,
@@ -128,11 +146,28 @@ class BimanualS2TeleopProcessor:
             cfg.normal_rotation_scale,
             cfg.precise_translation_scale,
             cfg.precise_rotation_scale,
+            cfg.slider_min_translation_scale,
+            cfg.slider_min_rotation_scale,
+            cfg.slider_center_translation_scale,
+            cfg.slider_center_rotation_scale,
+            cfg.slider_max_translation_scale,
+            cfg.slider_max_rotation_scale,
         )
         if not all(value > 0.0 for value in scales):
             raise ValueError("S2 translation and rotation scales must be positive")
+        if cfg.sensitivity_control_mode not in ("toggle", "slider"):
+            raise ValueError("sensitivity_control_mode must be toggle or slider")
         if cfg.initial_sensitivity_mode not in ("normal", "precise"):
             raise ValueError("initial_sensitivity_mode must be normal or precise")
+        if not (
+            cfg.slider_min_translation_scale
+            <= cfg.slider_center_translation_scale
+            <= cfg.slider_max_translation_scale
+            and cfg.slider_min_rotation_scale
+            <= cfg.slider_center_rotation_scale
+            <= cfg.slider_max_rotation_scale
+        ):
+            raise ValueError("slider scales must be ordered minimum <= center <= maximum")
         if not 0.0 <= cfg.sensitivity_toggle_threshold <= 1.0:
             raise ValueError("sensitivity_toggle_threshold must be in [0, 1]")
         if not 0.0 <= cfg.clutch_threshold <= 1.0:
@@ -145,9 +180,20 @@ class BimanualS2TeleopProcessor:
             raise ValueError("reset gripper aperture must lie between closed and open")
 
     def _new_state(self) -> _ArmState:
+        slider = self.config.sensitivity_control_mode == "slider"
         return _ArmState(
             gripper_aperture_m=self.config.reset_gripper_m,
-            sensitivity_mode=self.config.initial_sensitivity_mode,
+            sensitivity_mode="slider" if slider else self.config.initial_sensitivity_mode,
+            translation_scale=(
+                self.config.slider_center_translation_scale
+                if slider
+                else self._mode_scales(self.config.initial_sensitivity_mode)[0]
+            ),
+            rotation_scale=(
+                self.config.slider_center_rotation_scale
+                if slider
+                else self._mode_scales(self.config.initial_sensitivity_mode)[1]
+            ),
         )
 
     def reset(self) -> None:
@@ -192,7 +238,7 @@ class BimanualS2TeleopProcessor:
             and np.isfinite(sample.delta_rotation_rotvec_rad).all()
             and math.isfinite(sample.squeeze_value)
             and math.isfinite(sample.trigger_value)
-            and math.isfinite(sample.sensitivity_button_value)
+            and math.isfinite(sample.sensitivity_control_value)
         )
         tracked = sample.available and sample.grip_pose_valid and finite
         if not tracked:
@@ -210,9 +256,15 @@ class BimanualS2TeleopProcessor:
             self.config.gripper_closed_m - self.config.gripper_open_m
         )
         clutch = sample.squeeze_value > self.config.clutch_threshold
-        sensitivity_pressed = (
-            sample.sensitivity_button_value > self.config.sensitivity_toggle_threshold
-        )
+        if self.config.sensitivity_control_mode == "slider":
+            state.translation_scale, state.rotation_scale = self._slider_scales(
+                sample.sensitivity_control_value
+            )
+            sensitivity_pressed = False
+        else:
+            sensitivity_pressed = (
+                sample.sensitivity_control_value > self.config.sensitivity_toggle_threshold
+            )
 
         if state.rebase_pending:
             state.rebase_pending = False
@@ -222,10 +274,17 @@ class BimanualS2TeleopProcessor:
             state.sensitivity_button_pressed = sensitivity_pressed
             return self._hold(state, "tracking_rebased", rebased=True)
 
-        sensitivity_toggled = sensitivity_pressed and not state.sensitivity_button_pressed
+        sensitivity_toggled = (
+            self.config.sensitivity_control_mode == "toggle"
+            and sensitivity_pressed
+            and not state.sensitivity_button_pressed
+        )
         state.sensitivity_button_pressed = sensitivity_pressed
         if sensitivity_toggled:
             state.sensitivity_mode = "precise" if state.sensitivity_mode == "normal" else "normal"
+            state.translation_scale, state.rotation_scale = self._mode_scales(
+                state.sensitivity_mode
+            )
             state.tracking_valid = True
             state.clutch_active = clutch
             return self._hold(state, f"sensitivity_switched_{state.sensitivity_mode}")
@@ -242,11 +301,10 @@ class BimanualS2TeleopProcessor:
             return self._hold(state, "clutch_release_rebased", rebased=True)
 
         state.tracking_valid = True
-        translation_scale, rotation_scale = self._active_scales(state)
         delta = np.concatenate(
             (
-                sample.delta_position_m * translation_scale,
-                sample.delta_rotation_rotvec_rad * rotation_scale,
+                sample.delta_position_m * state.translation_scale,
+                sample.delta_rotation_rotvec_rad * state.rotation_scale,
             )
         )
         return ArmTeleopCommand(
@@ -257,11 +315,13 @@ class BimanualS2TeleopProcessor:
             clutch_active=False,
             rebased=False,
             sensitivity_mode=state.sensitivity_mode,
+            translation_scale=state.translation_scale,
+            rotation_scale=state.rotation_scale,
             transition="motion",
         )
 
-    def _active_scales(self, state: _ArmState) -> tuple[float, float]:
-        if state.sensitivity_mode == "precise":
+    def _mode_scales(self, mode: SensitivityMode) -> tuple[float, float]:
+        if mode == "precise":
             return (
                 self.config.precise_translation_scale,
                 self.config.precise_rotation_scale,
@@ -269,6 +329,39 @@ class BimanualS2TeleopProcessor:
         return (
             self.config.normal_translation_scale,
             self.config.normal_rotation_scale,
+        )
+
+    def _slider_scales(self, input_value: float) -> tuple[float, float]:
+        value = min(1.0, max(-1.0, input_value))
+        if value < 0.0:
+            fraction = value + 1.0
+            return (
+                self.config.slider_min_translation_scale
+                + fraction
+                * (
+                    self.config.slider_center_translation_scale
+                    - self.config.slider_min_translation_scale
+                ),
+                self.config.slider_min_rotation_scale
+                + fraction
+                * (
+                    self.config.slider_center_rotation_scale
+                    - self.config.slider_min_rotation_scale
+                ),
+            )
+        return (
+            self.config.slider_center_translation_scale
+            + value
+            * (
+                self.config.slider_max_translation_scale
+                - self.config.slider_center_translation_scale
+            ),
+            self.config.slider_center_rotation_scale
+            + value
+            * (
+                self.config.slider_max_rotation_scale
+                - self.config.slider_center_rotation_scale
+            ),
         )
 
     @staticmethod
@@ -281,6 +374,8 @@ class BimanualS2TeleopProcessor:
             clutch_active=state.clutch_active,
             rebased=rebased,
             sensitivity_mode=state.sensitivity_mode,
+            translation_scale=state.translation_scale,
+            rotation_scale=state.rotation_scale,
             transition=transition,
         )
 
@@ -359,7 +454,7 @@ def unpack_pipeline_action(
             grip_pose_valid=bool(controls[1] > 0.5),
             squeeze_value=float(controls[2]),
             trigger_value=float(controls[3]),
-            sensitivity_button_value=float(controls[4]),
+            sensitivity_control_value=float(controls[4]),
         )
 
     return arm(0), arm(11)

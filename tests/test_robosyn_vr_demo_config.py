@@ -68,11 +68,14 @@ def test_physical_retest_values_are_demo_only_and_geometry_is_unchanged() -> Non
     }
 
     sensitivity = config["teleop_tuning"]["sensitivity"]
-    assert sensitivity["toggle_control"] == "left_secondary_click"
-    assert sensitivity["quest_button"] == "Y"
-    assert sensitivity["modes"] == {
-        "normal": {"translation_scale": 4.0, "rotation_scale": 4.0},
-        "precise": {"translation_scale": 1.0, "rotation_scale": 1.0},
+    assert sensitivity["control_mode"] == "slider"
+    assert sensitivity["input_control"] == "thumbstick_x"
+    assert sensitivity["input_range"] == [-1.0, 1.0]
+    assert sensitivity["scope"] == "independent per arm"
+    assert sensitivity["slider"] == {
+        "minimum": {"translation_scale": 2.0, "rotation_scale": 2.0},
+        "center": {"translation_scale": 4.0, "rotation_scale": 4.0},
+        "maximum": {"translation_scale": 6.0, "rotation_scale": 6.0},
     }
     assert config["vr_camera_feeds"]["toggle_control"] == "left_primary_click"
     assert config["vr_camera_feeds"]["quest_button"] == "X"
