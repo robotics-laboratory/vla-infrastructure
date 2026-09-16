@@ -22,6 +22,7 @@ ASSET_MANIFEST = ROOT / "configs/experiments/robosyn_test_assets.yaml"
 RUNTIME_ROOT = STORAGE / "cache/robosyn-vr-demo"
 USER_CACHE_ROOT = RUNTIME_ROOT / "users" / f"uid-{os.getuid()}"
 KIT_PORTABLE_ROOT = USER_CACHE_ROOT / "kit"
+TEMP_ROOT = USER_CACHE_ROOT / "tmp"
 
 
 def _verify_demo_inputs() -> None:
@@ -86,12 +87,14 @@ def main() -> int:
         raise RuntimeError("NVIDIA EULA acceptance is required: set OMNI_KIT_ACCEPT_EULA=Y")
 
     KIT_PORTABLE_ROOT.mkdir(parents=True, exist_ok=True)
+    TEMP_ROOT.mkdir(parents=True, exist_ok=True)
     environment = os.environ.copy()
     environment.update(
         {
             "UV_CACHE_DIR": str(QUALIFICATION / "uv_cache"),
             "UV_PROJECT_ENVIRONMENT": str(ENVIRONMENT),
             "XDG_CACHE_HOME": str(USER_CACHE_ROOT / "xdg"),
+            "TMPDIR": str(TEMP_ROOT),
             "PYTHONPATH": str(LAB / "source/isaaclab"),
             "PYTHONNOUSERSITE": "1",
         }

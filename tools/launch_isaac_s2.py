@@ -20,6 +20,7 @@ ENVIRONMENT = STORAGE / "envs/isaac-s1-candidate-b"
 RUNTIME_ROOT = STORAGE / "cache/isaac-s2"
 USER_CACHE_ROOT = RUNTIME_ROOT / "users" / f"uid-{os.getuid()}"
 KIT_PORTABLE_ROOT = USER_CACHE_ROOT / "kit"
+TEMP_ROOT = USER_CACHE_ROOT / "tmp"
 LAB_COMMIT = "913ac53f51b2f8d02c9e121caa4cbdd06262948e"
 ASSET_COMMIT = "f6642ce0d7872c686f29c99e9e10cd23d1d49313"
 LAB_PYPROJECT_SHA256 = "b691862409ab8ad58b074ac32ce7f071e3895ec10975444b9e62995741ace159"
@@ -87,12 +88,14 @@ def main() -> int:
         )
 
     KIT_PORTABLE_ROOT.mkdir(parents=True, exist_ok=True)
+    TEMP_ROOT.mkdir(parents=True, exist_ok=True)
     environment = os.environ.copy()
     environment.update(
         {
             "UV_CACHE_DIR": str(QUALIFICATION / "uv_cache"),
             "UV_PROJECT_ENVIRONMENT": str(ENVIRONMENT),
             "XDG_CACHE_HOME": str(USER_CACHE_ROOT / "xdg"),
+            "TMPDIR": str(TEMP_ROOT),
             "PYTHONPATH": str(LAB / "source/isaaclab"),
             "PYTHONNOUSERSITE": "1",
         }

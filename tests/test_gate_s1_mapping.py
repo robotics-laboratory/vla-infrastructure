@@ -112,7 +112,9 @@ def test_isaac_launchers_use_explicit_kit_portable_roots(
     assert f'RUNTIME_ROOT = STORAGE / "cache/{profile}"' in source
     assert 'USER_CACHE_ROOT = RUNTIME_ROOT / "users" / f"uid-{os.getuid()}"' in source
     assert 'KIT_PORTABLE_ROOT = USER_CACHE_ROOT / "kit"' in source
+    assert 'TEMP_ROOT = USER_CACHE_ROOT / "tmp"' in source
     assert '"XDG_CACHE_HOME": str(USER_CACHE_ROOT / "xdg")' in source
+    assert '"TMPDIR": str(TEMP_ROOT)' in source
     assert 'f"--portable-root {KIT_PORTABLE_ROOT}"' in source
 
 
