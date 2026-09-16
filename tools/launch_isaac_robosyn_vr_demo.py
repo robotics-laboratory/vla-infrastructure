@@ -19,6 +19,9 @@ from launch_isaac_s2 import ENVIRONMENT, LAB, QUALIFICATION, STORAGE, _verify
 ROOT = Path(__file__).resolve().parents[1]
 DEMO_CONFIG = ROOT / "configs/experiments/robosyn_vr_demo.yaml"
 ASSET_MANIFEST = ROOT / "configs/experiments/robosyn_test_assets.yaml"
+RUNTIME_ROOT = STORAGE / "cache/robosyn-vr-demo"
+USER_CACHE_ROOT = RUNTIME_ROOT / "users" / f"uid-{os.getuid()}"
+KIT_PORTABLE_ROOT = USER_CACHE_ROOT / "kit"
 
 
 def _verify_demo_inputs() -> None:
@@ -70,12 +73,13 @@ def main() -> int:
     if os.environ.get("OMNI_KIT_ACCEPT_EULA", "").upper() not in {"Y", "YES", "1"}:
         raise RuntimeError("NVIDIA EULA acceptance is required: set OMNI_KIT_ACCEPT_EULA=Y")
 
+    KIT_PORTABLE_ROOT.mkdir(parents=True, exist_ok=True)
     environment = os.environ.copy()
     environment.update(
         {
             "UV_CACHE_DIR": str(QUALIFICATION / "uv_cache"),
             "UV_PROJECT_ENVIRONMENT": str(ENVIRONMENT),
-            "XDG_CACHE_HOME": str(STORAGE / "cache/robosyn-vr-demo/xdg"),
+            "XDG_CACHE_HOME": str(USER_CACHE_ROOT / "xdg"),
             "PYTHONPATH": str(LAB / "source/isaaclab"),
             "PYTHONNOUSERSITE": "1",
         }
@@ -84,7 +88,7 @@ def main() -> int:
     environment.pop("VIRTUAL_ENV", None)
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     hud_name = "hud-on" if args.hud_on_start else "hud-off"
-    output_dir = STORAGE / "cache/robosyn-vr-demo/runs" / f"{stamp}-{args.profile}-{hud_name}"
+    output_dir = RUNTIME_ROOT / "runs" / f"{stamp}-{args.profile}-{hud_name}"
     output_dir.mkdir(parents=True, exist_ok=False)
     bounded = args.smoke or args.xr_smoke
     max_steps = 60 if bounded else args.max_control_steps
@@ -103,6 +107,8 @@ def main() -> int:
         args.profile,
         "--device",
         "cuda:0",
+        "--kit_args",
+        f"--portable-root {KIT_PORTABLE_ROOT}",
         "--report",
         str(output_dir / "result.json"),
         "--s2-max-control-steps",
