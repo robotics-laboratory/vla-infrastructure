@@ -19,7 +19,7 @@ reused without claiming acceptance.
 - Existing Gate C PIPER-X composed URDF and converted geometry, unchanged.
 - RoboSynChallenge snapshot
   `9815e9eee86f3dda88860ca971f71354f157d41c`, local test-only checkout under
-  `/data/ebulochkin/assets/robosyn_vr_demo/RoboSynChallenge`.
+  `/data/vla-infrastructure/assets/robosyn_vr_demo/RoboSynChallenge`.
 
 ## WHAT UPSTREAM ALREADY OWNS
 
@@ -81,7 +81,7 @@ reused without claiming acceptance.
 
 The experiment runs in the existing frozen Candidate B environment. No package
 is added. RoboSyn sources and any generated conversion cache stay under
-`/data/ebulochkin`; no large binary is committed or redistributed. Default S1
+`/data/vla-infrastructure`; no large binary is committed or redistributed. Default S1
 and S2 config/launch paths are unchanged.
 
 ## WHY NO PROJECT FRAMEWORK IS NEEDED

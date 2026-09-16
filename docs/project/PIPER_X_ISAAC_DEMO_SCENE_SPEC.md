@@ -957,8 +957,8 @@ Policy camera rendering не должно выполняться на каждо
 
 Evidence:
 
-- `/data/ebulochkin/cache/isaac-s2/runs/20260908T211945Z/result.json`;
-- `/data/ebulochkin/cache/isaac-s2/runs/20260908T212016Z/result.json`.
+- `/data/vla-infrastructure/cache/isaac-s2/runs/20260908T211945Z/result.json`;
+- `/data/vla-infrastructure/cache/isaac-s2/runs/20260908T212016Z/result.json`.
 
 Эти runs прошли собственный smoke, но не удовлетворяют real-time targets настоящего ТЗ. Третью camera нельзя считать production-ready, пока не устранена wall-clock деградация.
 

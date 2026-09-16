@@ -7,7 +7,7 @@ start D1/G1.
 ## Branch and runtime
 
 - Branch: `experiment/robosyn-vr-demo`
-- Worktree: `/home/ebulochkin/vla_infrastructure/.worktrees/robosyn-vr-demo`
+- Worktree: `<repository-root>`
 - Base/checkpoint: `031143d576d923d6029d0226d963cbedaec1f6d4`
   (`checkpoint/s2-quest-remediation-20260910`)
 - Launch: `python tools/launch_isaac_robosyn_vr_demo.py`
@@ -17,7 +17,7 @@ start D1/G1.
 
 The launcher verifies the frozen Candidate B checkout/environment and the
 RoboSyn source commit and per-file hashes before starting. Runtime outputs are
-kept under `/data/ebulochkin/cache/robosyn-vr-demo/runs`; they are not gate
+kept under `/data/vla-infrastructure/cache/robosyn-vr-demo/runs`; they are not gate
 evidence.
 
 ## Geometry and home smoke
@@ -64,8 +64,8 @@ scale, collision strategy, and status are in
 
 All source and conversion data is stored only at:
 
-- `/data/ebulochkin/assets/robosyn_vr_demo/RoboSynChallenge`
-- `/data/ebulochkin/assets/robosyn_vr_demo/converted`
+- `/data/vla-infrastructure/assets/robosyn_vr_demo/RoboSynChallenge`
+- `/data/vla-infrastructure/assets/robosyn_vr_demo/converted`
 
 The source checkout is clean at
 `9815e9eee86f3dda88860ca971f71354f157d41c`. No binary asset is committed or
@@ -164,8 +164,8 @@ original `XrAnchorManager` path.
 
 The two full physical logs are:
 
-- `/data/ebulochkin/cache/robosyn-vr-demo/runs/20260911T120807675727Z-dual_cube_to_matching_plates-hud-off/stdout.log`;
-- `/data/ebulochkin/cache/robosyn-vr-demo/runs/20260911T121148303909Z-dual_cube_to_matching_plates-hud-off/stdout.log`.
+- `/data/vla-infrastructure/cache/robosyn-vr-demo/runs/20260911T120807675727Z-dual_cube_to_matching_plates-hud-off/stdout.log`;
+- `/data/vla-infrastructure/cache/robosyn-vr-demo/runs/20260911T121148303909Z-dual_cube_to_matching_plates-hud-off/stdout.log`.
 
 Both show a healthy running session, Y-driven HUD ON and then OFF, followed by
 the first exception from the next Isaac Lab `Camera.update()`:
@@ -194,11 +194,11 @@ not physical-stream latency qualification. RTF is effective physics Hz / 120.
 Evidence:
 
 - baseline:
-  `/data/ebulochkin/cache/isaac-s2/runs/20260908T212016Z/result.json`;
+  `/data/vla-infrastructure/cache/isaac-s2/runs/20260908T212016Z/result.json`;
 - HUD OFF:
-  `/data/ebulochkin/cache/robosyn-vr-demo/runs/20260910T181722625678Z-dual_cube_to_matching_plates-hud-off/result.json`;
+  `/data/vla-infrastructure/cache/robosyn-vr-demo/runs/20260910T181722625678Z-dual_cube_to_matching_plates-hud-off/result.json`;
 - HUD ON:
-  `/data/ebulochkin/cache/robosyn-vr-demo/runs/20260910T181757892980Z-dual_cube_to_matching_plates-hud-on/result.json`.
+  `/data/vla-infrastructure/cache/robosyn-vr-demo/runs/20260910T181757892980Z-dual_cube_to_matching_plates-hud-on/result.json`.
 
 HUD ON versus OFF changed control/physics rate by `-0.15%`, and maximum VRAM
 by `+3 MiB`. The `+9 percentage-point` sampled GPU peak is the first startup
@@ -272,27 +272,27 @@ Quest pick/move test before acceptance.
   mid-session feed close.
 - Updated standalone demo smoke: PASS with the configured `4.0 / 4.0` and
   `1.0 / 1.0` gains and `[-0.05, 0, -0.10]` anchor:
-  `/data/ebulochkin/cache/robosyn-vr-demo/runs/20260911T130630768531Z-dual_cube_to_matching_plates-hud-off/result.json`.
+  `/data/vla-infrastructure/cache/robosyn-vr-demo/runs/20260911T130630768531Z-dual_cube_to_matching_plates-hud-off/result.json`.
 - Updated XR Kit smoke: PASS, four injected post-mapping X edges and four B
   edges, reset between pairs, both zero-copy feeds, backdrop visibility
   round-trips, 60/60 valid and advancing camera frames, clean shutdown, and no
   annotator error:
-  `/data/ebulochkin/cache/robosyn-vr-demo/runs/20260911T130700296111Z-dual_cube_to_matching_plates-hud-off/result.json`.
+  `/data/vla-infrastructure/cache/robosyn-vr-demo/runs/20260911T130700296111Z-dual_cube_to_matching_plates-hud-off/result.json`.
 - Updated stock S2 smoke: PASS with its original thumbstick mapping and original
   `2.0 / 2.0`, `0.5 / 0.5` gains:
-  `/data/ebulochkin/cache/isaac-s2/runs/20260911T130749Z/result.json`.
+  `/data/vla-infrastructure/cache/isaac-s2/runs/20260911T130749Z/result.json`.
 - Post-R3-fix stock S2 smoke: PASS, 60/60 cameras, session remained running,
   and the report explicitly retained
   `XrAnchorManager.get_world_matrix` rather than the experiment-only
   navigation-aware transform:
-  `/data/ebulochkin/cache/isaac-s2/runs/20260912T113526Z/result.json`.
+  `/data/vla-infrastructure/cache/isaac-s2/runs/20260912T113526Z/result.json`.
 - Updated stock S1 regression: PASS, including both 110-frame camera sequences:
-  `/data/ebulochkin/cache/isaac-s1/runs/20260911T130822Z/result.json`.
+  `/data/vla-infrastructure/cache/isaac-s1/runs/20260911T130822Z/result.json`.
 - Post-grasp-fix standalone demo smoke: PASS; both articulations report one
   400/40/2 N leader drive and zero-stiffness/damping mimic followers, scene
   preflight passes, reset passes, both wrist cameras advance 60/60 frames, and
   the unchanged S2 loop shuts down cleanly:
-  `/data/ebulochkin/cache/robosyn-vr-demo/runs/20260911T141639351652Z-dual_cube_to_matching_plates-hud-off/result.json`.
+  `/data/vla-infrastructure/cache/robosyn-vr-demo/runs/20260911T141639351652Z-dual_cube_to_matching_plates-hud-off/result.json`.
 - Tracking-loss recovery, clutch/rebase, analog gripper, the stock toggle modes,
   and the demo's independent continuous speed sliders remain covered by the S2
   processor suite. Exact controller-field tests cover both thumbstick X axes,
@@ -305,7 +305,7 @@ Quest pick/move test before acceptance.
   sources to CPU uploads (`RGB stddev 30.3344/32.0653`, alpha `255/255`),
   advanced all 60/60 camera frames, exercised X/B/R3 events and reset, and
   exited cleanly:
-  `/data/ebulochkin/cache/robosyn-vr-demo/runs/20260912T113103366077Z-dual_cube_to_matching_plates-hud-on/result.json`.
+  `/data/vla-infrastructure/cache/robosyn-vr-demo/runs/20260912T113103366077Z-dual_cube_to_matching_plates-hud-on/result.json`.
 - Repository regression after these changes: `72 passed, 13 skipped`; Ruff:
   PASS. Exact Candidate B processor/upstream suite: `26/26` PASS.
 

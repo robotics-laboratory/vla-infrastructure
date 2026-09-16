@@ -23,7 +23,7 @@ PASS test_xyzw_spatial_rotation_axes_and_scale
 
 CANDIDATE B UPSTREAM SEAM
 
-Command: PYTHONPATH=. /data/ebulochkin/envs/isaac-s1-candidate-b/bin/python -m unittest discover -s tests -p 'test_isaac_s2_upstream.py' -v
+Command: PYTHONPATH=. /data/vla-infrastructure/envs/isaac-s1-candidate-b/bin/python -m unittest discover -s tests -p 'test_isaac_s2_upstream.py' -v
 Result: PASS - 3 tests
 
 PASS test_absence_clears_pose_baseline_and_smoothing_before_far_recovery

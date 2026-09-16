@@ -125,7 +125,7 @@ raw_cpu_upload_render_once. Detailed probe outputs are written to /tmp.
 ## Historical physical-session logs
 
 Additional review located retained CloudXR server and StreamSDK logs under
-/home/ebulochkin/.cloudxr/logs, paired with the existing demo stdout files.
+$HOME/.cloudxr/logs, paired with the existing demo stdout files.
 These provide physical-session measurements independent of the temporary
 no-client probes above.
 

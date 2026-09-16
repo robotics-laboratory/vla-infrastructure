@@ -42,7 +42,7 @@ Isaac Teleop/XR, or any other environment expansion.
 Candidate B documents Linux `580.95.05` or later. The unchanged host driver is
 `580.159.03`; it satisfies the documented recommendation and passed empirically.
 No driver change is required. Heavy checkouts, environments, caches, and run
-artifacts remain under `/data/ebulochkin`; `/data/piper-stand` was not mutated.
+artifacts remain under `/data/vla-infrastructure`; `/data/piper-stand` was not mutated.
 The superseded `595.58.03` blocker was an old-pin conclusion and is not a current
 Candidate B requirement.
 

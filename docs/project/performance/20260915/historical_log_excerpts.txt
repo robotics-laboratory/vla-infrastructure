@@ -1,4 +1,4 @@
-/home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-12T135010Z.log
+$HOME/.cloudxr/logs/cxr_server.2026-09-12T135010Z.log
 155:  INFO [verifyAndLogPackedFrameStreamSize] Client connected, packed stream size: 4096x4032
 775:                GpuEndToEncodeEnd        12.208ms        11.108ms        14.380ms
 784:          PredictEndToNextPredict       105.119ms        60.499ms       164.210ms
@@ -49,7 +49,7 @@
 942:               PredictEndToGpuEnd        53.388ms        28.055ms        75.387ms
 943:             PoseInterarrivalTime        14.114ms        11.719ms        23.061ms
 944:                GpuEndToEncodeEnd        12.430ms        11.083ms        14.021ms
-/home/ebulochkin/.cloudxr/logs/cxr_streamsdk.2026-09-12T135010Z.000.log
+$HOME/.cloudxr/logs/cxr_streamsdk.2026-09-12T135010Z.000.log
 88: (W)[2026-09-12 13:50:37,370]=16:50:37=*00000*{6162161448675235317}^0001^<VideoSender>      Client requested an unknown streaming format 4096x4032@90hz!  Results may be unpredictable.
 115: (M)[2026-09-12 13:50:38,256]=16:50:38=*00312*{15157685043473073624}^0001^<NvEnc12VideoEnco> Changing encoder resolution to 4096 x 4032.
 123: (W)[2026-09-12 13:51:12,050]=16:51:12=*33780*{2695837759108362443}^0001^<BandwidthEstimat> BWE [325]: timing reset: FrameRxTime=1, frameInterval=151, avgFrameInterval=106, cumOwd=197
@@ -59,7 +59,7 @@
 142: (W)[2026-09-12 13:52:25,571]=16:52:25=*03746*{2695837759108362443}^0001^<BandwidthEstimat> BWE [1036]: timing reset: FrameRxTime=1, frameInterval=89, avgFrameInterval=100, cumOwd=207
 156: (W)[2026-09-12 13:53:31,729]=16:53:31=*66157*{2695837759108362443}^0001^<BandwidthEstimat> BWE [1680]: timing reset: FrameRxTime=2, frameInterval=149, avgFrameInterval=104, cumOwd=189
 158: (W)[2026-09-12 13:53:36,622]=16:53:36=*04892*{2695837759108362443}^0001^<BandwidthEstimat> BWE [1726]: timing reset: FrameRxTime=1, frameInterval=155, avgFrameInterval=111, cumOwd=145
-/data/ebulochkin/cache/robosyn-vr-demo/runs/20260912T134947898064Z-dual_cube_to_matching_plates-hud-off/stdout.log
+/data/vla-infrastructure/cache/robosyn-vr-demo/runs/20260912T134947898064Z-dual_cube_to_matching_plates-hud-off/stdout.log
 349: {"event": "demo_vr_camera_feed_bound", "feeds": [{"camera": "left_wrist", "rgb_stddev": 30.32493019104004, "source_alpha_range": [255, 255], "source_device": "cuda", "upload_alpha_range": [255, 255], "upload_device": "cpu"}, {"camera": "right_wrist", "rgb_stddev": 32.056766510009766, "source_alpha_range": [255, 255], "source_device": "cuda", "upload_alpha_range": [255, 255], "upload_device": "cpu"}], "layout": "head_locked", "upload_path": "cpu_staged"}
 476: [DEMO] wrist camera display ON
 477: {"capture_continues": true, "control": "left_primary_click", "display_visible": true, "event": "demo_vr_camera_feed_visibility_changed", "event_origin": "controller_pipeline", "feed_bound": true, "quest_button": "X"}

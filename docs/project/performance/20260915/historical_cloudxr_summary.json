@@ -1,6 +1,6 @@
 [
   {
-    "path": "/home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-08T140447Z.log",
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-08T140447Z.log",
     "metrics": {
       "DevicePoseInterval": {
         "samples": 75,
@@ -145,7 +145,7 @@
     }
   },
   {
-    "path": "/home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-08T141504Z.log",
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-08T141504Z.log",
     "metrics": {
       "DevicePoseInterval": {
         "samples": 94,
@@ -290,7 +290,7 @@
     }
   },
   {
-    "path": "/home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-08T142321Z.log",
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-08T142321Z.log",
     "metrics": {
       "DevicePoseInterval": {
         "samples": 81,
@@ -435,7 +435,7 @@
     }
   },
   {
-    "path": "/home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-11T120821Z.log",
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-11T120821Z.log",
     "metrics": {
       "DevicePoseInterval": {
         "samples": 32,
@@ -580,7 +580,7 @@
     }
   },
   {
-    "path": "/home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-11T121203Z.log",
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-11T121203Z.log",
     "metrics": {
       "DevicePoseInterval": {
         "samples": 35,
@@ -725,7 +725,7 @@
     }
   },
   {
-    "path": "/home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-11T124900Z.log",
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-11T124900Z.log",
     "metrics": {
       "DevicePoseInterval": {
         "samples": 61,
@@ -870,7 +870,7 @@
     }
   },
   {
-    "path": "/home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-11T125443Z.log",
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-11T125443Z.log",
     "metrics": {
       "DevicePoseInterval": {
         "samples": 41,
@@ -1015,7 +1015,7 @@
     }
   },
   {
-    "path": "/home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-11T131539Z.log",
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-11T131539Z.log",
     "metrics": {
       "DevicePoseInterval": {
         "samples": 114,
@@ -1160,7 +1160,7 @@
     }
   },
   {
-    "path": "/home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-11T145627Z.log",
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-11T145627Z.log",
     "metrics": {
       "DevicePoseInterval": {
         "samples": 258,
@@ -1305,7 +1305,7 @@
     }
   },
   {
-    "path": "/home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-12T135010Z.log",
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-12T135010Z.log",
     "metrics": {
       "DevicePoseInterval": {
         "samples": 55,

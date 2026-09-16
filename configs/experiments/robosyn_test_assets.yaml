@@ -1,6 +1,6 @@
 revision: robosyn_test_assets_v1
 classification: TEST_ONLY_NOT_APPROVED_FOR_PRODUCTION
-source_checkout: /data/ebulochkin/assets/robosyn_vr_demo/RoboSynChallenge
+source_checkout: /data/vla-infrastructure/assets/robosyn_vr_demo/RoboSynChallenge
 source_commit: 9815e9eee86f3dda88860ca971f71354f157d41c
 redistribution: prohibited_from_this_demo_branch_pending_per_asset_provenance_review
 assets:
@@ -26,7 +26,7 @@ assets:
     sha256: 7789d1b8525c7e8de978b33962f6e732d2fbcc9350fd652a433ec833cf203bcb
     format: obj
     resolved_scale: [1.0, 1.6, 1.6]
-    collision_strategy: Isaac Lab MeshConverter convex hull; generated USD remains under /data/ebulochkin/assets/robosyn_vr_demo/converted
+    collision_strategy: Isaac Lab MeshConverter convex hull; generated USD remains under /data/vla-infrastructure/assets/robosyn_vr_demo/converted
     status: loaded_smoke_passed
   - asset_id: robosyn_pen_holder
     source_path: assets/PenHolder/pen_holder.obj

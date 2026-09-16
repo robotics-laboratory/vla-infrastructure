@@ -10,7 +10,7 @@ candidate history is retained only in the registered, explicitly historical
 `GATE_S0_ISAAC_COMPATIBILITY_REMEDIATION.md` artifact.
 
 The qualification bundle at
-`/data/ebulochkin/isaaclab_candidate_qualification/20260907/` was checked with
+`/data/vla-infrastructure/isaaclab_candidate_qualification/20260907/` was checked with
 `sha256sum -c MANIFEST.sha256`; every registered file passed. The exact commands,
 host facts, results, logs, package inventory, conflict output, and source checkouts
 are retained there.
@@ -21,7 +21,7 @@ are retained there.
 |---|---|---|---|---|---|---|
 | S0/S1 Isaac runtime | Candidate B `913ac53f…`; rejected candidates are recorded only in the remediation artifact | AppLauncher, Kit lifecycle, PhysX/Fabric, articulation, reset, Camera renderer backend | none for accepted S1; local scope is the Gate C binding, task, D0 edge, and parity evidence | one Isaac-specific config, D0 edge processors, concrete runner | isolated Candidate B frozen uv workspace; LeRobot absent | upstream owns application, simulation, rendering, and sensors |
 | S1 bimanual cameras | Candidate B `913ac53f…` | parented `Camera` prims, regex-batched Camera view, pose propagation, RGB publication, reset | none for accepted S1; local scope is exact wrist bindings, D0 role keys, and current regression evidence | direct `CameraCfg`, no camera abstraction | same isolated Isaac environment | upstream native two-camera form passed 440/440 frames |
-| S1 PIPER-X embodiment/control | Isaac Lab B plus Gate C asset `f6642ce…` | URDF conversion, Articulation, implicit actuators, joint targets | none for accepted S1; local scope is deterministic composition, two namespaces, D0 unit/order conversion, and parity | thin asset materializer and named mappings | generated USD/cache stays under `/data/ebulochkin` | no duplicate FK/IK or robot backend is needed |
+| S1 PIPER-X embodiment/control | Isaac Lab B plus Gate C asset `f6642ce…` | URDF conversion, Articulation, implicit actuators, joint targets | none for accepted S1; local scope is deterministic composition, two namespaces, D0 unit/order conversion, and parity | thin asset materializer and named mappings | generated USD/cache stays under `/data/vla-infrastructure` | no duplicate FK/IK or robot backend is needed |
 | S2 Isaac Quest/XR | Candidate B `913ac53f…`; frozen `isaacteleop==1.4.98rc1`; in-tree `isaaclab_teleop==0.8.0` | XR experiences, session lifecycle, controller sources, rebase and retargeting seams | physical PIPER-X mapping/behavior evidence after automated qualification | one concrete S2 processor/config only | expanded frozen surface rechecked with the same 11 conflicts and no new conflict | S1 does not justify an XR or CONTROL framework |
 | D1/G1 native recording/generation | Candidate B `913ac53f…` | RecorderManager, HDF5 handler, manager/task patterns | later D0 recorder terms/conversion and task-local source | deferred to D1/G1 | same environment, rechecked when expanded | upstream recorder remains authoritative |
 | E1 evaluation | LeRobot `7e241bd…` in core; Candidate B in Isaac | LeRobot policy/eval and native Isaac environment | transport/endpoint/run manifest | deferred E1 boundary adapter | separate core/isaac processes already selected | no replacement evaluator or universal simulator API |

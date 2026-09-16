@@ -62,12 +62,12 @@ so no run produced a passing `result.json` or clean-shutdown claim.
 
 | Artifact | SHA-256 |
 |---|---|
-| `/data/ebulochkin/cache/isaac-s2/runs/20260908T140438Z/stdout.log` | `1b3bbd8627a887b36d65a1f12ac3daf97e84375438c8d792a8bb2fd6e7fe0a93` |
-| `/data/ebulochkin/cache/isaac-s2/runs/20260908T141455Z/stdout.log` | `dfe4557f411dc7a49f4b7c9afc23f3cfd16c0afd8325debac57ee29502301948` |
-| `/data/ebulochkin/cache/isaac-s2/runs/20260908T142313Z/stdout.log` | `88e680bdd32a5e630d686be416b4212c8dcc3d399ee663ee96fdee486ab3c0fa` |
-| `/home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-08T140447Z.log` | `9cb7fc220e3b4cf24fd6bdc52b3b1e0319851bbbd8db6f4d5a059ecf0a13ba81` |
-| `/home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-08T141504Z.log` | `281b3e87081967421eae5ed195e86b24b5d8e6bc678d62cb9cf2e98232c7b294` |
-| `/home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-08T142321Z.log` | `346e0d9fa4541b0a242fbce29751a0430aa604057edad13ae20f1ec7568f6a7d` |
+| `/data/vla-infrastructure/cache/isaac-s2/runs/20260908T140438Z/stdout.log` | `1b3bbd8627a887b36d65a1f12ac3daf97e84375438c8d792a8bb2fd6e7fe0a93` |
+| `/data/vla-infrastructure/cache/isaac-s2/runs/20260908T141455Z/stdout.log` | `dfe4557f411dc7a49f4b7c9afc23f3cfd16c0afd8325debac57ee29502301948` |
+| `/data/vla-infrastructure/cache/isaac-s2/runs/20260908T142313Z/stdout.log` | `88e680bdd32a5e630d686be416b4212c8dcc3d399ee663ee96fdee486ab3c0fa` |
+| `$HOME/.cloudxr/logs/cxr_server.2026-09-08T140447Z.log` | `9cb7fc220e3b4cf24fd6bdc52b3b1e0319851bbbd8db6f4d5a059ecf0a13ba81` |
+| `$HOME/.cloudxr/logs/cxr_server.2026-09-08T141504Z.log` | `281b3e87081967421eae5ed195e86b24b5d8e6bc678d62cb9cf2e98232c7b294` |
+| `$HOME/.cloudxr/logs/cxr_server.2026-09-08T142321Z.log` | `346e0d9fa4541b0a242fbce29751a0430aa604057edad13ae20f1ec7568f6a7d` |
 
 ## Human observations
 

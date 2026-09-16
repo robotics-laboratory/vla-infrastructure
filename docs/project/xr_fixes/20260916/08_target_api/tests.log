@@ -1,6 +1,6 @@
 Warp DeprecationWarning: warp.config.quiet is deprecated; use warp.config.log_level = warp.LOG_WARNING to suppress the init banner.
 Warp CUDA error 100: no CUDA-capable device is detected (in function init_cuda_driver, /builds/omniverse/warp/warp/native/cuda_util.cpp:333)
-/data/ebulochkin/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/torch/jit/_script.py:1488: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+/data/vla-infrastructure/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/torch/jit/_script.py:1488: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
   warnings.warn(
 test_absence_clears_pose_baseline_and_smoothing_before_far_recovery (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_absence_clears_pose_baseline_and_smoothing_before_far_recovery) ... ok
 test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery) ... {"epoch": 1, "event": "demo_xr_navigation_frame_applied", "monotonic_ns": 1809048797353858, "recenter": false, "recenter_ack": null, "world_T_physical": [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]}

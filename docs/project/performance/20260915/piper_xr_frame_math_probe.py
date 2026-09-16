@@ -2,12 +2,11 @@
 import ast
 import json
 from pathlib import Path
-from types import SimpleNamespace
 import numpy as np
 from scipy.spatial.transform import Rotation
 
-repo = Path('/home/ebulochkin/vla_infrastructure/.worktrees/robosyn-vr-demo')
-upstream = Path('/data/ebulochkin/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/isaacteleop/retargeters/se3_retargeter.py')
+repo = Path(__file__).resolve().parents[4]
+upstream = Path('/data/vla-infrastructure/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/isaacteleop/retargeters/se3_retargeter.py')
 
 def extract(path, name):
     tree = ast.parse(path.read_text())

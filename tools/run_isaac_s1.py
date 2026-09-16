@@ -885,13 +885,13 @@ def main() -> int:
     converter = sim_utils.UrdfConverter(
         sim_utils.UrdfConverterCfg(
             asset_path=str(urdf_path),
-            usd_dir=f"/data/ebulochkin/assets/isaac_s1/converted/{urdf_sha}",
+            usd_dir=f"/data/vla-infrastructure/assets/isaac_s1/converted/{urdf_sha}",
             fix_base=True,
             merge_fixed_joints=False,
             self_collision=False,
             robot_type="Manipulator",
             run_multi_physics_conversion=False,
-            ros_package_paths=[{"name": "agx_arm_description", "path": "/data/ebulochkin/assets"}],
+            ros_package_paths=[{"name": "agx_arm_description", "path": "/data/vla-infrastructure/assets"}],
             joint_drive=sim_utils.UrdfConverterCfg.JointDriveCfg(
                 drive_type="force",
                 target_type="position",

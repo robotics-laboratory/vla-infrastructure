@@ -160,7 +160,7 @@ environments:
     - at least 32 GB RAM and 50 GB SSD storage
     - Candidate B recommends Linux NVIDIA driver 580.95.05 or later; actual unchanged 580.159.03 satisfies the baseline and passed the qualified runtime
     - Candidate B upstream override-dependencies produce 11 retained uv/pip metadata conflicts; the expanded S1/S2 surfaces pass their automated required paths with no new conflict
-    canonical_launch_prefix: uv run --project /data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact --frozen --no-sync
+    canonical_launch_prefix: uv run --project /data/vla-infrastructure/isaaclab_candidate_qualification/20260907/candidate_b_exact --frozen --no-sync
   mujoco:
     id: mujoco
     purpose: Conceptual MuJoCo record mapped to the exact core environment; not a separate installation
@@ -232,7 +232,7 @@ execution_profiles:
     - tools/launch_isaac_s1.py
     prerequisites:
     - OMNI_KIT_ACCEPT_EULA=Y after accepting the NVIDIA EULA
-    - Candidate B checkout, frozen environment, and Gate C asset paths from isaac_environment_selection are materialized under /data/ebulochkin
+    - Candidate B checkout, frozen environment, and Gate C asset paths from isaac_environment_selection are materialized under /data/vla-infrastructure
   isaac_vr_record:
     environment: isaac
     working_directory: .
@@ -241,7 +241,7 @@ execution_profiles:
     - tools/launch_isaac_s2.py
     prerequisites:
     - OMNI_KIT_ACCEPT_EULA=Y after accepting the NVIDIA EULA
-    - Exact frozen Candidate B environment and Gate C assets are materialized under /data/ebulochkin
+    - Exact frozen Candidate B environment and Gate C assets are materialized under /data/vla-infrastructure
     - Physical Meta Quest 3 CloudXR client is available for S2 human acceptance
     - This S2 command controls simulation only and records no D1 dataset
   isaac_generate:
@@ -1245,7 +1245,7 @@ artifacts:
     description: Pre-contract v4.3 to v5.2 domain and gate migration matrix
   v52_pack_manifest_output:
     kind: test_output
-    sha256: 564d4e0c86298c3ad9afce346669a8ed7339806d72b915c7c511e413a82bb7c9
+    sha256: ced3bb58cf8e5b2457dcc5b3c60fb7430ee0b305fe43cac66e9e42de0709d7dd
     path: docs/migration/evidence/V5_2_PACK_MANIFEST_VERIFICATION.txt
     uri: null
     description: Attached v5.2 pack SHA and complete manifest verification output
@@ -1299,7 +1299,7 @@ artifacts:
     description: Deterministic no-hardware Gate C model, frame, joint, gripper, FK, positive-direction, IK, and calibration-interface verification output
   final_m0_checks:
     kind: test_output
-    sha256: a3c8d85ab0554a117644ba470a2cce7ff1d66ab55305f6623b0ef26f6f79a89b
+    sha256: 27bcb5e1e852b9a552d9bbd9bfa5d649c1ab9fd3a644ec83243ab8a0cb1bc6b2
     path: docs/migration/evidence/FINAL_M0_CHECKS.txt
     uri: null
     description: Final live lock, validator, M0, linter, tests, Ruff, mypy, and Final-RC-negative results
@@ -1311,7 +1311,7 @@ artifacts:
     description: Completed v4.3 to v5.2 Hardened M0 migration report
   gate_b_q1_evidence_log:
     kind: log
-    sha256: 1ec522641ae879b2e4ea516e758e94e453c7b1c7bb01085ba3d9300679d4e7c8
+    sha256: 2b4a2ee8b5761a24aef55944765805efe05478b82288ef341efecb70c71a5f64
     path: docs/project/GATE_B_Q1_EVIDENCE.txt
     uri: null
     description: Audited physical Quest Q1 observations, CloudXR runtime facts, and pinned timing behavior
@@ -1335,19 +1335,19 @@ artifacts:
     description: Focused same-tick obs_t/action_t frame-construction regression and explicit t-1/t+1 rejection
   gate_s0_upstream_audit:
     kind: report
-    sha256: cec6d7de80d98764ab7519a1838a15dd3dcb065f7ceeed8d8c03edb2cd79d16d
+    sha256: 700907806ed6267051cdf24592000b251957975795fb0b3098f688258e78c960
     path: docs/project/GATE_S0_UPSTREAM_AUDIT.md
     uri: null
     description: Formal S0 Isaac repin audit selecting Candidate B while preserving D0, Gate C, MuJoCo, and process-boundary architecture
   gate_s0_compatibility_probes_output:
     kind: test_output
-    sha256: 5d53f44a6578eb95581fc97d323ebb769927724ec34db39d4cb38b4365b13d5a
+    sha256: 30d7ee048fe18be88818b6e47ea77007aeee8af99676d236a12735d86d658f0f
     path: docs/project/GATE_S0_COMPATIBILITY_PROBES.txt
     uri: null
     description: Candidate B qualification integrity, runtime, driver, exact override/conflict, camera/reset/shutdown, and unchanged MuJoCo compatibility evidence
   gate_s0_isaac_compatibility_remediation:
     kind: report
-    sha256: 1b3fbe301322e2f1349d9c1ad3668869724aee701af24d8f0c6b87a25f48628d
+    sha256: cccd7c04eba6d1cd5f7b8b2526c96e71b7190d76afda1acf4012861eea85cff2
     path: docs/project/GATE_S0_ISAAC_COMPATIBILITY_REMEDIATION.md
     uri: null
     description: HISTORICAL / RESOLVED / NOT CURRENT RUNTIME record of the rejected Isaac candidates, Candidate B selection, and retained dependency caveat
@@ -1359,7 +1359,7 @@ artifacts:
     description: Repin confirmation preserving isolated Isaac, separate EVAL/CONTROL boundaries, deferred transports, and no generic RPC/backend
   isaac_environment_selection:
     kind: environment_spec
-    sha256: 646b9ca780cee26c907eeae4922036f3c857c16f12332da94630c894f3c4c377
+    sha256: 87a150cdc4115bfd2c6c914242cadc6755c92660ff9d3d6b41aed3b4fd827a80
     path: configs/environments/isaac_release_3_0_0.yaml
     uri: null
     description: Exact Candidate B isolated frozen workspace, scoped S2 teleop dependency pins, override/conflict list, driver observation, and expansion recheck policy
@@ -1371,31 +1371,31 @@ artifacts:
     description: Narrow S0 amendment replacing the ambiguous global Isaac Teleop pin with Gate B/core and Candidate B/Isaac runtime-scoped dependency facts
   isaac_s1_runtime_config:
     kind: processor_config
-    sha256: ee7b0b6aea022236fb029720e098c17cf7fd3f9e2e1a3d2d302ece182c8780d3
+    sha256: 3738ee7ab0ba7fe0f6c1767982d5f98df379fdb5601e047f4be04f862ea6112d
     path: configs/isaac_s1_runtime.yaml
     uri: null
     description: Concrete S1 Candidate B asset, D0 edge, task, control, reset, and upstream-native bimanual wrist-camera configuration
   isaac_s1_gate_c_composed_urdf:
     kind: model_asset
     sha256: 103af50b99b17e4ff962b7f563459672ad89556661de79cbd30c1792fea92a6f
-    path: /data/ebulochkin/assets/isaac_s1/piper_x_gate_c.urdf
+    path: /data/vla-infrastructure/assets/isaac_s1/piper_x_gate_c.urdf
     uri: null
     description: Deterministic Isaac-importable composition of the accepted Gate C PIPER-X Xacro/URDF, preserving frames and meshes and adding only bounded aperture-carrier dynamics
   gate_s1_runtime_result:
     kind: test_output
     sha256: 2f2db5e95275c841ce2478cffd8952b04135087e3f1e290b31ae557054090ad5
-    path: /data/ebulochkin/cache/isaac-s1/runs/20260908T065807Z/result.json
+    path: /data/vla-infrastructure/cache/isaac-s1/runs/20260908T065807Z/result.json
     uri: null
     description: Authoritative structured Candidate B S1 result covering environment, articulation, task/control, two native wrist cameras, reset, parity, and process exit
   gate_s1_runtime_stdout:
     kind: log
     sha256: fcd1e4e1db87a2441777fd4ac890b017562e7ae39709c3d140bb7600564bb8f8
-    path: /data/ebulochkin/cache/isaac-s1/runs/20260908T065807Z/stdout.log
+    path: /data/vla-infrastructure/cache/isaac-s1/runs/20260908T065807Z/stdout.log
     uri: null
     description: Complete authoritative headless Isaac S1 stdout including startup, articulation initialization, execution, result, and shutdown
   gate_s1_runtime_evidence_summary:
     kind: test_output
-    sha256: b37732e8f43c0d0d97e21d5bef28a57fc63b760f4b0fc87a18fdbcb6b66c7d58
+    sha256: 12cefb923babe3a8ae855c4c81945bee3884a0b561469d289bdb44c74109a2e2
     path: docs/project/GATE_S1_RUNTIME_EVIDENCE.txt
     uri: null
     description: Human-readable exact S1 command, artifact hashes, native-camera metrics, task/control/reset results, and parity summary
@@ -1413,104 +1413,104 @@ artifacts:
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
   gate_s2_upstream_audit:
     kind: report
-    sha256: 3a29872ac262755024ca9c8af4125680b2d8fe9b419df74e8231938016ed0115
+    sha256: 17b87ce1500a000588dd7ca941bfcc105a1b7a5fa4a5f106cb010a72960a085d
     path: docs/project/GATE_S2_UPSTREAM_AUDIT.md
     uri: null
     description: Mandatory S2 upstream audit selecting the minimum Candidate B composition and exact remaining PIPER-X edge mapping
   gate_s2_dependency_recheck:
     kind: test_output
-    sha256: d869e2b68d7a35489a823af176c7b5f064e7f3082087bb2a3c427deba684338d
+    sha256: 93cc58fc254b059e58cd4b3e50014971c4e085ae2413c2b2301cd1bbd9ad4e92
     path: docs/project/GATE_S2_DEPENDENCY_RECHECK.txt
     uri: null
     description: Exact post-expansion and post-remediation package inventory, retained 11 conflicts, zero new conflicts, and observed S1/S2 runtime impact
   gate_s2_processor_tests:
     kind: test_output
-    sha256: dc200cda6165850b4429732c118365f37a368f7be262cbf7416301198100f87d
+    sha256: d34cbf9f9b66476d9dcf90d4a45d703b451c0670de010295460561e07ba6646e
     path: docs/project/GATE_S2_PROCESSOR_TESTS.txt
     uri: null
     description: Twelve pure processor and three exact Candidate B seam tests for sensitivity, analog gripper, independent routing, tracking recovery, reconnect, reset, and action layout
   gate_s2_runtime_evidence_summary:
     kind: test_output
-    sha256: fa191dcdc81271276d185bdef248ad0c289c53db0ccfb634f73c643cb4b15d53
+    sha256: 54855e3d954ebe63447f5e09bb575cc9cf2d9f6b729ac2cc949a0dd36697718e
     path: docs/project/GATE_S2_RUNTIME_EVIDENCE.txt
     uri: null
     description: Exact post-remediation S1 regression and standalone/XR no-client S2 smoke commands, hashes, camera/load metrics, limitations, and pending second physical boundary
   gate_s2_standalone_result:
     kind: test_output
     sha256: a5a11c03831b3ebaf52f06ef219f68169caa5e5ee0bc024e4abc7ffca2de1ae3
-    path: /data/ebulochkin/cache/isaac-s2/runs/20260908T211945Z/result.json
+    path: /data/vla-infrastructure/cache/isaac-s2/runs/20260908T211945Z/result.json
     uri: null
     description: Structured v2 standalone S2 lifecycle result with one session/controller source, reset, safe inactive behavior, two cameras, configured remediation semantics, load, and clean process exit
   gate_s2_standalone_stdout:
     kind: log
     sha256: 7a52b6b8d1524e038112537d5e31f45abeb20e02deedf83be6d8ee670d44c049
-    path: /data/ebulochkin/cache/isaac-s2/runs/20260908T211945Z/stdout.log
+    path: /data/vla-infrastructure/cache/isaac-s2/runs/20260908T211945Z/stdout.log
     uri: null
     description: Complete standalone CloudXR/OpenXR/Isaac S2 smoke stdout
   gate_s2_xr_result:
     kind: test_output
     sha256: ab03ec72a50bcb63d0658b29f3e5178b5b970fef073305f2c7e5108221d8b76b
-    path: /data/ebulochkin/cache/isaac-s2/runs/20260908T212016Z/result.json
+    path: /data/vla-infrastructure/cache/isaac-s2/runs/20260908T212016Z/result.json
     uri: null
     description: Structured bounded Candidate B XR Kit no-client result retaining both accepted S1 wrist cameras
   gate_s2_xr_stdout:
     kind: log
     sha256: c4b26b45df47344f9cadafd590ebb20b68ee15d4c93d5a4d91fd46838a372b3e
-    path: /data/ebulochkin/cache/isaac-s2/runs/20260908T212016Z/stdout.log
+    path: /data/vla-infrastructure/cache/isaac-s2/runs/20260908T212016Z/stdout.log
     uri: null
     description: Complete XR Kit/cloudxrjs no-client stdout including deferred handle acquisition and teardown diagnostics
   gate_s2_s1_regression_result:
     kind: test_output
     sha256: 6d9e78e63bc9b35dd90bc27cb4b7db67f099e2ca9d79d927efd1c36fe8858c42
-    path: /data/ebulochkin/cache/isaac-s1/runs/20260908T211855Z/result.json
+    path: /data/vla-infrastructure/cache/isaac-s1/runs/20260908T211855Z/result.json
     uri: null
     description: Full accepted S1 non-XR regression result after the S2 v2 remediation
   gate_s2_s1_regression_stdout:
     kind: log
     sha256: d85dceca91c5ef30144d1ee405aa42bdbd2aee6abdfa2d93e0f132f47c5bd595
-    path: /data/ebulochkin/cache/isaac-s1/runs/20260908T211855Z/stdout.log
+    path: /data/vla-infrastructure/cache/isaac-s1/runs/20260908T211855Z/stdout.log
     uri: null
     description: Full accepted S1 non-XR regression stdout after the S2 v2 remediation
   gate_s2_physical_run1_summary:
     kind: report
-    sha256: e8e3096675e4c418ff36c818b4a89b5591fb499a2396e313808525fdfeef9239
+    sha256: 0cfa62897a8543bae49f709f074a26bfd1686e098606d916652d9715e7e6fcd0
     path: docs/project/GATE_S2_PHYSICAL_RUN_1_FAILED.md
     uri: null
     description: Immutable FAILED/PARTIAL first physical Quest S2 observations, exact pre-remediation checkpoint/config, raw log hashes, and tracking root cause
   gate_s2_physical_run1_stdout_a:
     kind: log
     sha256: 1b3bbd8627a887b36d65a1f12ac3daf97e84375438c8d792a8bb2fd6e7fe0a93
-    path: /data/ebulochkin/cache/isaac-s2/runs/20260908T140438Z/stdout.log
+    path: /data/vla-infrastructure/cache/isaac-s2/runs/20260908T140438Z/stdout.log
     uri: null
     description: First connected-launch runtime stdout from physical Quest S2 acceptance attempt 1
   gate_s2_physical_run1_stdout_b:
     kind: log
     sha256: dfe4557f411dc7a49f4b7c9afc23f3cfd16c0afd8325debac57ee29502301948
-    path: /data/ebulochkin/cache/isaac-s2/runs/20260908T141455Z/stdout.log
+    path: /data/vla-infrastructure/cache/isaac-s2/runs/20260908T141455Z/stdout.log
     uri: null
     description: Physical Quest S2 attempt-1 runtime stdout containing intentional tracking-invalid and recovery exercise
   gate_s2_physical_run1_stdout_c:
     kind: log
     sha256: 88e680bdd32a5e630d686be416b4212c8dcc3d399ee663ee96fdee486ab3c0fa
-    path: /data/ebulochkin/cache/isaac-s2/runs/20260908T142313Z/stdout.log
+    path: /data/vla-infrastructure/cache/isaac-s2/runs/20260908T142313Z/stdout.log
     uri: null
     description: Final connected-launch runtime stdout from physical Quest S2 acceptance attempt 1
   gate_s2_physical_run1_cloudxr_a:
     kind: log
     sha256: 9cb7fc220e3b4cf24fd6bdc52b3b1e0319851bbbd8db6f4d5a059ecf0a13ba81
-    path: /home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-08T140447Z.log
+    path: ~/.cloudxr/logs/cxr_server.2026-09-08T140447Z.log
     uri: null
     description: CloudXR server log paired with the first connected launch of physical Quest S2 attempt 1
   gate_s2_physical_run1_cloudxr_b:
     kind: log
     sha256: 281b3e87081967421eae5ed195e86b24b5d8e6bc678d62cb9cf2e98232c7b294
-    path: /home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-08T141504Z.log
+    path: ~/.cloudxr/logs/cxr_server.2026-09-08T141504Z.log
     uri: null
     description: CloudXR server log paired with the tracking-loss launch of physical Quest S2 attempt 1
   gate_s2_physical_run1_cloudxr_c:
     kind: log
     sha256: 346e0d9fa4541b0a242fbce29751a0430aa604057edad13ae20f1ec7568f6a7d
-    path: /home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-08T142321Z.log
+    path: ~/.cloudxr/logs/cxr_server.2026-09-08T142321Z.log
     uri: null
     description: CloudXR server log paired with the final connected launch of physical Quest S2 attempt 1
 evidence:
@@ -1971,7 +1971,7 @@ evidence:
     status: pass
     summary: Candidate B exact identity, native Gate C articulation, 220 one-camera plus 440 bimanual camera frames, independent wrist following, reset, clean exit, driver compatibility, manifest integrity, and retained metadata conflicts passed review/probes.
     timestamp: '2026-09-08T08:00:00+03:00'
-    command: cd /data/ebulochkin/isaaclab_candidate_qualification/20260907 && sha256sum -c MANIFEST.sha256; exact checkout/import/package/driver inspection; review authoritative Candidate B result and process logs.
+    command: cd /data/vla-infrastructure/isaaclab_candidate_qualification/20260907 && sha256sum -c MANIFEST.sha256; exact checkout/import/package/driver inspection; review authoritative Candidate B result and process logs.
     artifact_ids:
     - gate_s0_compatibility_probes_output
     repository: null

@@ -24,8 +24,8 @@ from isaaclab.sensors.camera import Camera, CameraCfg  # type: ignore[import-not
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "configs/experiments/robosyn_vr_demo.yaml"
 ASSET_MANIFEST_PATH = ROOT / "configs/experiments/robosyn_test_assets.yaml"
-ROBOSYN_ROOT = Path("/data/ebulochkin/assets/robosyn_vr_demo/RoboSynChallenge")
-CONVERTED_ROOT = Path("/data/ebulochkin/assets/robosyn_vr_demo/converted")
+ROBOSYN_ROOT = Path("/data/vla-infrastructure/assets/robosyn_vr_demo/RoboSynChallenge")
+CONVERTED_ROOT = Path("/data/vla-infrastructure/assets/robosyn_vr_demo/converted")
 PHYSICS_DT = 1.0 / 120.0
 CAMERA_PERIOD = 1.0 / 30.0
 
@@ -1091,13 +1091,13 @@ def run_robosyn_vr_demo(
     converter = sim_utils.UrdfConverter(
         sim_utils.UrdfConverterCfg(
             asset_path=str(urdf_path),
-            usd_dir=f"/data/ebulochkin/assets/isaac_s1/converted/{urdf_sha}",
+            usd_dir=f"/data/vla-infrastructure/assets/isaac_s1/converted/{urdf_sha}",
             fix_base=True,
             merge_fixed_joints=False,
             self_collision=False,
             robot_type="Manipulator",
             run_multi_physics_conversion=False,
-            ros_package_paths=[{"name": "agx_arm_description", "path": "/data/ebulochkin/assets"}],
+            ros_package_paths=[{"name": "agx_arm_description", "path": "/data/vla-infrastructure/assets"}],
             joint_drive=sim_utils.UrdfConverterCfg.JointDriveCfg(
                 drive_type="force",
                 target_type="position",

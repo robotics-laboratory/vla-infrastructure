@@ -2,7 +2,7 @@
 import sys
 from pathlib import Path
 
-target = Path('/home/ebulochkin/vla_infrastructure/.worktrees/robosyn-vr-demo/tools/run_isaac_s1.py')
+target = Path(__file__).resolve().parents[4] / "tools/run_isaac_s1.py"
 sys.path[:0] = [str(target.parent), str(target.parents[1])]
 injection = r'''
 import isaac_s2_runtime

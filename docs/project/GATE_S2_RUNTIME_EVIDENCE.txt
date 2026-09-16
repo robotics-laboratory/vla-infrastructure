@@ -8,9 +8,9 @@ S1 NON-XR REGRESSION AFTER S2 REMEDIATION
 
 Command: OMNI_KIT_ACCEPT_EULA=Y python tools/launch_isaac_s1.py
 Result: PASS / exit 0 / clean application shutdown
-Result: /data/ebulochkin/cache/isaac-s1/runs/20260908T211855Z/result.json
+Result: /data/vla-infrastructure/cache/isaac-s1/runs/20260908T211855Z/result.json
 Result SHA-256: 6d9e78e63bc9b35dd90bc27cb4b7db67f099e2ca9d79d927efd1c36fe8858c42
-Log: /data/ebulochkin/cache/isaac-s1/runs/20260908T211855Z/stdout.log
+Log: /data/vla-infrastructure/cache/isaac-s1/runs/20260908T211855Z/stdout.log
 Log SHA-256: d85dceca91c5ef30144d1ee405aa42bdbd2aee6abdfa2d93e0f132f47c5bd595
 
 The unchanged accepted S1 scene, Gate C embodiment, task/control/reset lifecycle,
@@ -21,9 +21,9 @@ STANDALONE TELEOP LIFECYCLE SMOKE
 
 Command: OMNI_KIT_ACCEPT_EULA=Y python tools/launch_isaac_s2.py --smoke
 Result: PASS / exit 0 / clean application shutdown
-Result: /data/ebulochkin/cache/isaac-s2/runs/20260908T211945Z/result.json
+Result: /data/vla-infrastructure/cache/isaac-s2/runs/20260908T211945Z/result.json
 Result SHA-256: a5a11c03831b3ebaf52f06ef219f68169caa5e5ee0bc024e4abc7ffca2de1ae3
-Log: /data/ebulochkin/cache/isaac-s2/runs/20260908T211945Z/stdout.log
+Log: /data/vla-infrastructure/cache/isaac-s2/runs/20260908T211945Z/stdout.log
 Log SHA-256: 7a52b6b8d1524e038112537d5e31f45abeb20e02deedf83be6d8ee670d44c049
 
 - CloudXR 6.2.1 auto-launched.
@@ -40,9 +40,9 @@ CANDIDATE B XR KIT EXPERIENCE SMOKE
 
 Command: OMNI_KIT_ACCEPT_EULA=Y python tools/launch_isaac_s2.py --xr-smoke
 Result: PASS for bounded no-client XR/camera startup / exit 0 / clean application shutdown
-Result: /data/ebulochkin/cache/isaac-s2/runs/20260908T212016Z/result.json
+Result: /data/vla-infrastructure/cache/isaac-s2/runs/20260908T212016Z/result.json
 Result SHA-256: ab03ec72a50bcb63d0658b29f3e5178b5b970fef073305f2c7e5108221d8b76b
-Log: /data/ebulochkin/cache/isaac-s2/runs/20260908T212016Z/stdout.log
+Log: /data/vla-infrastructure/cache/isaac-s2/runs/20260908T212016Z/stdout.log
 Log SHA-256: c4b26b45df47344f9cadafd590ebb20b68ee15d4c93d5a4d91fd46838a372b3e
 
 - Candidate B selected the XR OpenXR experience and injected its KitVisualizer.

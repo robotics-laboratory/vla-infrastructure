@@ -2,9 +2,9 @@ revision: piper_x_isaac_s1_runtime_v1
 status: accepted_executable_candidate_b_native_runtime
 environment:
   selection_artifact: configs/environments/isaac_release_3_0_0.yaml
-  project: /data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact
-  materialized_path: /data/ebulochkin/envs/isaac-s1-candidate-b
-  isaac_lab_path: /data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact
+  project: /data/vla-infrastructure/isaaclab_candidate_qualification/20260907/candidate_b_exact
+  materialized_path: /data/vla-infrastructure/envs/isaac-s1-candidate-b
+  isaac_lab_path: /data/vla-infrastructure/isaaclab_candidate_qualification/20260907/candidate_b_exact
   isaac_lab_release: release/3.0.0
   isaac_lab_commit: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
   isaac_lab_source_version: 16.4.0
@@ -18,14 +18,14 @@ environment:
   upstream_frozen_workspace: true
   upstream_override_conflicts: 11
 asset:
-  source_checkout: /data/ebulochkin/assets/agx_arm_urdf
+  source_checkout: /data/vla-infrastructure/assets/agx_arm_urdf
   source_commit: f6642ce0d7872c686f29c99e9e10cd23d1d49313
   source_xacro: piper_x/urdf/piper_x_with_gripper_description.xacro
   source_xacro_sha256: 0ee3f52f9acf3060a7f3e439c6e5e46b6a53d4fa509dd495045548be6b7f90cd
   source_base_urdf: piper_x/urdf/piper_x_description.urdf
   source_base_urdf_sha256: 34126caac7d5b37bc2409f337ac246afbe0bb8cd47fc9f16df5038f19bd21e3a
-  composed_urdf: /data/ebulochkin/assets/isaac_s1/piper_x_gate_c.urdf
-  converted_usd_dir: /data/ebulochkin/assets/isaac_s1/converted/<composed_urdf_sha256>
+  composed_urdf: /data/vla-infrastructure/assets/isaac_s1/piper_x_gate_c.urdf
+  converted_usd_dir: /data/vla-infrastructure/assets/isaac_s1/converted/<composed_urdf_sha256>
   conversion:
     importer: Isaac Lab UrdfConverter once, then two UsdFileCfg references to the same result
     fix_base: true
@@ -124,7 +124,7 @@ d0_boundary:
   camera_roles: [left_wrist, right_wrist]
   process_boundary: LeRobot remains in the isolated core process and is not imported by this environment.
 evidence:
-  authoritative_run: /data/ebulochkin/cache/isaac-s1/runs/20260908T065807Z/result.json
+  authoritative_run: /data/vla-infrastructure/cache/isaac-s1/runs/20260908T065807Z/result.json
   authoritative_run_sha256: 2f2db5e95275c841ce2478cffd8952b04135087e3f1e290b31ae557054090ad5
-  stdout_log: /data/ebulochkin/cache/isaac-s1/runs/20260908T065807Z/stdout.log
+  stdout_log: /data/vla-infrastructure/cache/isaac-s1/runs/20260908T065807Z/stdout.log
   stdout_log_sha256: fcd1e4e1db87a2441777fd4ac890b017562e7ae39709c3d140bb7600564bb8f8

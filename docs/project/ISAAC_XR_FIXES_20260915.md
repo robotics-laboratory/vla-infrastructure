@@ -70,7 +70,7 @@ The [performance diagnosis](ISAAC_CAMERA_PERFORMANCE_20260915.md), [XR diagnosis
 GATE: NONE_EXPERIMENTAL; no acceptance claim.
 REUSED: upstream device lifecycle, retargeters, XR teleport, IK, cameras and panels.
 PINNED / VERIFIED: versions above; upstream source inspection, unit tests and bounded Isaac smoke.
-EXECUTION PROFILE / ENVIRONMENT: experimental extension of `quest_xr_isaac`, Candidate B `/data/ebulochkin/envs/isaac-s1-candidate-b`; CUDA 4090.
+EXECUTION PROFILE / ENVIRONMENT: experimental extension of `quest_xr_isaac`, Candidate B `/data/vla-infrastructure/envs/isaac-s1-candidate-b`; CUDA 4090.
 CONTRACT CHANGES: none; experimental config documents sync, navigation barrier, pixel layout and preview optimization. RGB shapes, rates, D0 labels, physics and render cadence are unchanged.
 EVIDENCE ADDED: experimental test/run results only, no registered human gate evidence.
 ARTIFACTS ADDED: original diagnostic bundle and per-fix commands, logs, JSON results and SHA-256 manifests.

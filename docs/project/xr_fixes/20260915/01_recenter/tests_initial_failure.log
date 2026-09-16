@@ -1,5 +1,5 @@
 Warp DeprecationWarning: warp.config.quiet is deprecated; use warp.config.log_level = warp.LOG_WARNING to suppress the init banner.
-/data/ebulochkin/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/torch/jit/_script.py:1488: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+/data/vla-infrastructure/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/torch/jit/_script.py:1488: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
   warnings.warn(
 test_absence_clears_pose_baseline_and_smoothing_before_far_recovery (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_absence_clears_pose_baseline_and_smoothing_before_far_recovery) ... ok
 test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery) ... ERROR
@@ -49,16 +49,16 @@ test_xyzw_spatial_rotation_axes_and_scale (tests.test_isaac_s2_processor.IsaacS2
 ERROR: test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/ebulochkin/vla_infrastructure/.worktrees/robosyn-vr-demo/tests/test_isaac_s2_upstream.py", line 548, in test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery
+  File "<repository-root>/tests/test_isaac_s2_upstream.py", line 548, in test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery
     self.assertIsNone(device.advance())
                       ^^^^^^^^^^^^^^^^
-  File "/home/ebulochkin/vla_infrastructure/.worktrees/robosyn-vr-demo/tools/isaac_s2_upstream.py", line 459, in advance
+  File "<repository-root>/tools/isaac_s2_upstream.py", line 459, in advance
     transform = self._anchor_manager.get_world_matrix()
                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ebulochkin/vla_infrastructure/.worktrees/robosyn-vr-demo/tools/isaac_s2_upstream.py", line 96, in get_world_matrix
+  File "<repository-root>/tools/isaac_s2_upstream.py", line 96, in get_world_matrix
     return _gf_row_matrix_to_numpy_transform(physical_to_virtual)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ebulochkin/vla_infrastructure/.worktrees/robosyn-vr-demo/tools/isaac_s2_upstream.py", line 70, in _gf_row_matrix_to_numpy_transform
+  File "<repository-root>/tools/isaac_s2_upstream.py", line 70, in _gf_row_matrix_to_numpy_transform
     raise RuntimeError("XR physical-to-virtual transform contains non-finite values")
 RuntimeError: XR physical-to-virtual transform contains non-finite values
 
@@ -66,17 +66,17 @@ RuntimeError: XR physical-to-virtual transform contains non-finite values
 ERROR: test_rightward_relative_motion_preserves_direction_after_navigation_yaw (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_rightward_relative_motion_preserves_direction_after_navigation_yaw)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/ebulochkin/vla_infrastructure/.worktrees/robosyn-vr-demo/tests/test_isaac_s2_upstream.py", line 570, in test_rightward_relative_motion_preserves_direction_after_navigation_yaw
+  File "<repository-root>/tests/test_isaac_s2_upstream.py", line 570, in test_rightward_relative_motion_preserves_direction_after_navigation_yaw
     np.testing.assert_array_equal(self._delta(retargeter, self._controller(retargeter, p0, side=side)), np.zeros(6))
                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ebulochkin/vla_infrastructure/.worktrees/robosyn-vr-demo/tests/test_isaac_s2_upstream.py", line 94, in _delta
+  File "<repository-root>/tests/test_isaac_s2_upstream.py", line 94, in _delta
     result = retargeter({self.ControllersSource.LEFT: group})["ee_delta"][0]
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/data/ebulochkin/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/isaacteleop/retargeting_engine/interface/base_retargeter.py", line 181, in __call__
+  File "/data/vla-infrastructure/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/isaacteleop/retargeting_engine/interface/base_retargeter.py", line 181, in __call__
     self.compute(inputs, outputs, context)
-  File "/data/ebulochkin/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/isaacteleop/retargeting_engine/interface/base_retargeter.py", line 345, in compute
+  File "/data/vla-infrastructure/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/isaacteleop/retargeting_engine/interface/base_retargeter.py", line 345, in compute
     self._validate_inputs(inputs)
-  File "/data/ebulochkin/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/isaacteleop/retargeting_engine/interface/base_retargeter.py", line 395, in _validate_inputs
+  File "/data/vla-infrastructure/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/isaacteleop/retargeting_engine/interface/base_retargeter.py", line 395, in _validate_inputs
     raise ValueError(
 ValueError: Unexpected inputs {'controller_left'} (expected {'controller_right'})
 
