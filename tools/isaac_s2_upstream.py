@@ -422,7 +422,7 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
         self._include_xr_navigation_in_controller_transform = bool(
             include_xr_navigation_in_controller_transform
         )
-        self._pending_recenter_view: np.ndarray | None = None
+        self._recenter_rebase_pending = False
         self._last_navigation_transform: np.ndarray | None = None
         self._navigation_epoch = 0
         self.navigation_reset_applied = False
@@ -455,7 +455,7 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
         xr_core = self._anchor_manager.xr_core
         if xr_core is None or not xr_core.is_xr_display_enabled():
             self._last_navigation_transform = None
-            self._pending_recenter_view = None
+            self._recenter_rebase_pending = False
             return super().advance(target_T_world)
         try:
             transform = self._anchor_manager.get_world_matrix()
@@ -463,26 +463,14 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
             self._last_navigation_transform = None
             return None
 
-        applied_recenter = self._pending_recenter_view is not None
-        if applied_recenter:
-            head = xr_core.get_input_device("/user/head")
-            if head is None:
-                return None
-            try:
-                head_pose = _gf_row_matrix_to_numpy_transform(head.get_virtual_world_pose(""))
-            except RuntimeError:
-                return None
-            requested = self._pending_recenter_view
-            # Scheduling may span several app updates. Allow modest head motion
-            # between request and application; these are completion tolerances,
-            # not physical acceptance tolerances. A changed matrix alone cannot
-            # acknowledge a repeated/no-op teleport to the same viewpoint.
-            position_error = np.linalg.norm(head_pose[:3, 3] - requested[:3, 3])
-            relative_rotation = head_pose[:3, :3] @ requested[:3, :3].T
-            angle_error = np.arccos(np.clip((np.trace(relative_rotation) - 1.0) / 2.0, -1.0, 1.0))
-            if position_error > 0.05 or angle_error > 0.1:
-                return None
-            self._pending_recenter_view = None
+        # The caller schedules recenter only after this method, then advances
+        # four rendered physics ticks before the next control frame. Treat the
+        # current XR mapping on that next frame as the new reference. Comparing
+        # HMD pose with the view prim is invalid: schedule_teleport_to_view maps
+        # the physical head *through* the space origin rather than promising
+        # that those two matrices will become numerically equal.
+        applied_recenter = self._recenter_rebase_pending
+        self._recenter_rebase_pending = False
 
         previous = self._last_navigation_transform
         if (
@@ -501,6 +489,11 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
                         "monotonic_ns": time.monotonic_ns(),
                         "epoch": self._navigation_epoch,
                         "recenter": applied_recenter,
+                        "recenter_ack": (
+                            "first_control_frame_after_scheduled_app_updates"
+                            if applied_recenter
+                            else None
+                        ),
                         "world_T_physical": transform.tolist(),
                     },
                     sort_keys=True,
@@ -513,9 +506,9 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
     def schedule_recenter_to_view(self, view_prim_path: str) -> bool:
         """Use Kit XR's teleport-to-view operation without restarting the session.
 
-        The caller holds robot motion for this frame. Subsequent advance calls
-        hold until the actual HMD world pose reaches the requested viewpoint,
-        then reset upstream history using the applied navigation transform.
+        The caller holds robot motion for this frame. The next control frame
+        accepts XRCore's current navigation transform and resets relative
+        history. A later transform change triggers another zero-motion rebase.
         """
 
         if not self._include_xr_navigation_in_controller_transform:
@@ -524,12 +517,11 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
         if xr_core is None or not xr_core.is_xr_display_enabled():
             return False
         view_pose = xr_core.get_world_transform_matrix(view_prim_path)
-        requested = _gf_row_matrix_to_numpy_transform(view_pose)
         xr_core.schedule_teleport_to_view(
             self._anchor_manager.anchor_headset_path,
             view_pose,
         )
-        self._pending_recenter_view = requested
+        self._recenter_rebase_pending = True
         self._session_lifecycle.reset_haptics()
         return True
 

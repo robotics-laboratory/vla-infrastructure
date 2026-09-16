@@ -1,0 +1,2 @@
+PYTHONNOUSERSITE=1 OMNI_KIT_ACCEPT_EULA=YES PYTHONPATH=/data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab /data/ebulochkin/envs/isaac-s1-candidate-b/bin/python -m unittest tests.test_isaac_s2_upstream tests.test_isaac_s2_processor -v
+/home/ebulochkin/vla_infrastructure/.venv/bin/ruff check tools/isaac_s2_upstream.py tests/test_isaac_s2_upstream.py

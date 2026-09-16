@@ -487,7 +487,6 @@ class IsaacS2UpstreamTests(unittest.TestCase):
     def _navigation_device(self):
         class Core:
             matrix = np.eye(4).tolist()
-            head_pose = np.eye(4).tolist()
             requested = np.eye(4)
             requested[3, :3] = [0.6, 0.1, 1.4]
             teleports = []
@@ -500,9 +499,6 @@ class IsaacS2UpstreamTests(unittest.TestCase):
 
             def get_world_transform_matrix(self, path):
                 return self.requested.tolist()
-
-            def get_input_device(self, path):
-                return SimpleNamespace(get_virtual_world_pose=lambda _: self.head_pose)
 
             def schedule_teleport_to_view(self, anchor, pose):
                 self.teleports.append((anchor, pose))
@@ -520,32 +516,32 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         device._anchor_manager = manager
         device._session_lifecycle = lifecycle
         device._include_xr_navigation_in_controller_transform = True
-        device._pending_recenter_view = None
+        device._recenter_rebase_pending = False
         device._last_navigation_transform = None
         device._navigation_epoch = 0
         return device, core, lifecycle
 
-    def test_recenter_holds_across_delayed_application_then_resets_once(self) -> None:
+    def test_recenter_accepts_next_xr_frame_and_rebases_later_transform_change(self) -> None:
         device, core, lifecycle = self._navigation_device()
         self.assertTrue(device.schedule_recenter_to_view("/World/Camera"))
         base = self.PiperXIsaacTeleopDevice.__bases__[0]
-        with patch.object(base, "advance", return_value="fresh_frame") as advance:
-            for _ in range(3):
-                self.assertIsNone(device.advance())
-            advance.assert_not_called()
-            self.assertEqual(lifecycle.resets, [])
-            core.head_pose = core.requested.tolist()
-            core.matrix = core.requested.tolist()
+        with patch.object(base, "advance", return_value="fresh_frame"):
             self.assertEqual(device.advance(), "fresh_frame")
             self.assertTrue(device.navigation_reset_applied)
             self.assertEqual(lifecycle.resets, [False])
             self.assertEqual(device.advance(), "fresh_frame")
             self.assertFalse(device.navigation_reset_applied)
             self.assertEqual(lifecycle.resets, [False])
+            # XR may apply the space-origin change after the first control
+            # boundary. The observed transform change gets its own safe rebase.
+            core.matrix = core.requested.tolist()
+            self.assertEqual(device.advance(), "fresh_frame")
+            self.assertTrue(device.navigation_reset_applied)
+            self.assertEqual(lifecycle.resets, [False, False])
             # The already reached viewpoint is a valid repeat/no-op target.
             device.schedule_recenter_to_view("/World/Camera")
             self.assertEqual(device.advance(), "fresh_frame")
-            self.assertEqual(lifecycle.resets, [False, False])
+            self.assertEqual(lifecycle.resets, [False, False, False])
 
     def test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery(self) -> None:
         device, core, lifecycle = self._navigation_device()

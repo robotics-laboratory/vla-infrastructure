@@ -1,5 +1,7 @@
 # Isaac XR fixes — 2026-09-15
 
+**Superseded R3 note (2026-09-16):** the 5 cm / 0.1 rad HMD-target acknowledgment below caused a confirmed physical deadlock and has been replaced by the next-control-frame strategy documented in [the physical follow-up](ISAAC_XR_PHYSICAL_FOLLOWUP_20260916.md).
+
 Experimental `robosyn-vr-demo` branch. Canonical S1/D0 contracts and production gate states are unchanged. Implementation is split into three commits; the table records completed code checks separately from physical acceptance.
 
 | Fix | Implementation | Saved validation | Physical status |
