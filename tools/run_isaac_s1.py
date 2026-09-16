@@ -11,6 +11,7 @@ import json
 import math
 import platform
 import subprocess
+import time
 import traceback
 from pathlib import Path
 from typing import Any, cast
@@ -63,6 +64,13 @@ parser.add_argument(
 )
 parser.add_argument("--s2-max-control-steps", type=int, default=300)
 parser.add_argument("--s2-reset-step", type=int, default=120)
+parser.add_argument(
+    "--s2-performance-log",
+    type=Path,
+    help="Optional per-control-step JSONL timing log for the concrete S2 loop.",
+)
+parser.add_argument("--s2-performance-window-steps", type=int, default=30)
+parser.add_argument("--s2-performance-warmup-steps", type=int, default=30)
 parser.add_argument(
     "--s2-require-session",
     action=argparse.BooleanOptionalAction,
@@ -361,16 +369,39 @@ class BimanualPiperXIsaacEnvironment:
         return result
 
     def _advance(self, repeat: int) -> None:
+        performance = getattr(self, "performance_logger", None)
         for _ in range(repeat):
+            started_ns = time.perf_counter_ns() if performance is not None else 0
             for robot in self.robots:
                 robot.write_data_to_sim()
+            if performance is not None:
+                performance.add_nested(
+                    "physics_target_write", time.perf_counter_ns() - started_ns
+                )
+                started_ns = time.perf_counter_ns()
             self.sim.step()
+            if performance is not None:
+                performance.add_nested("sim_step", time.perf_counter_ns() - started_ns)
+                started_ns = time.perf_counter_ns()
             for robot in self.robots:
                 robot.update(PHYSICS_DT)
+            if performance is not None:
+                performance.add_nested("robot_update", time.perf_counter_ns() - started_ns)
+                started_ns = time.perf_counter_ns()
             self.camera.update(PHYSICS_DT, force_recompute=True)
+            if performance is not None:
+                performance.add_nested("camera_update", time.perf_counter_ns() - started_ns)
+                started_ns = time.perf_counter_ns()
             self.physics_probe.update(PHYSICS_DT)
+            if performance is not None:
+                performance.add_nested("physics_probe_update", time.perf_counter_ns() - started_ns)
             if self.experiment_runtime is not None:
+                started_ns = time.perf_counter_ns() if performance is not None else 0
                 self.experiment_runtime.update(PHYSICS_DT)
+                if performance is not None:
+                    performance.add_nested(
+                        "experiment_update", time.perf_counter_ns() - started_ns
+                    )
 
     def reset(self, seed: int = 0) -> dict[str, np.ndarray]:
         seed_reset(seed)

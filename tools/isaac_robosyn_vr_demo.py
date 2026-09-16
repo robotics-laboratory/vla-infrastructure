@@ -359,6 +359,14 @@ class DemoRuntime:
         return self._display_toggle_count
 
     @property
+    def display_visible(self) -> bool:
+        return self._display_visible
+
+    @property
+    def backdrop_visible(self) -> bool:
+        return self._backdrop_visible
+
+    @property
     def backdrop_toggle_count(self) -> int:
         return self._backdrop_toggle_count
 
