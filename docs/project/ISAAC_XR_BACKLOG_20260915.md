@@ -11,3 +11,5 @@
 | XR-07 | Physical benchmark pending | Reproduce the user's camera-off/on FPS in the same scene and Quest session, recording renderer/encoder/frame interval and control/pose rates separately. Existing 70/10 observation is not a controlled archived ablation. |
 
 No canonical contract or gate is accepted by this experiment. Save new evidence alongside the fix artifacts and update statuses when the checks actually run.
+
+- 2026-09-16 XR-08 — Camera feedback source: implemented with `isaac_lab_camera_rgba`; 34 tests and 16-step Kit smoke pass. Physical two-panel recursion retest pending; artifacts: `xr_fixes/20260916/02_camera_feedback/`.

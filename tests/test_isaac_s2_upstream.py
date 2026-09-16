@@ -276,6 +276,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
                     ),
                 )
                 self.cfg = type("Cfg", (), {"camera_name": "wrist"})()
+                self.image_source = None
                 self.image = torch.full((2, 2, 4), 255, dtype=torch.uint8)
                 self.upload_image = self.image.clone()
 
@@ -607,6 +608,13 @@ class IsaacS2UpstreamTests(unittest.TestCase):
             previous_upload=upload,
         )
         self.assertIs(reused, upload)
+
+    def test_demo_camera_feed_uses_camera_buffer_without_feedback_annotator(self) -> None:
+        upstream = SimpleNamespace(
+            create_image_source=lambda *_: self.fail("feedback annotator must not be created")
+        )
+        presenter = self.CpuStagedFeedPresenter(upstream)
+        self.assertIsNone(presenter.create_image_source("left_wrist", object(), object()))
 
     def test_demo_panel_uses_pixels_for_layout_without_changing_physical_size(self) -> None:
         for meters_per_unit in (1.0, 0.01):

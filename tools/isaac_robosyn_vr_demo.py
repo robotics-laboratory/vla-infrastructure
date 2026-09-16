@@ -146,7 +146,13 @@ class _CpuStagedFeedPresenter:
         self._upstream = upstream_presenter
 
     def create_image_source(self, camera_name: str, camera: Any, cfg: Any = None) -> Any:
-        return self._upstream.create_image_source(camera_name, camera, cfg)
+        del camera_name, camera, cfg
+        # Keep the preview downstream of Isaac Lab Camera's RGBA buffer. The
+        # optional feed-owned Replicator annotator runs on Kit post-update and
+        # can sample the XR composition that already contains this SceneUI
+        # panel, creating panel-within-panel feedback in a physical headset.
+        # The manager's supported fallback reads camera.data.output["rgba"].
+        return None
 
     def create_panel(self, descriptor: Any, width: int, height: int) -> Any:
         panel = self._upstream.create_panel(descriptor, width, height)
@@ -431,6 +437,11 @@ class DemoRuntime:
                             int(source_image[..., 3].max().item()),
                         ],
                         "source_device": source_image.device.type,
+                        "source": (
+                            "isaac_lab_camera_rgba"
+                            if feed.image_source is None
+                            else "feed_owned_replicator_annotator"
+                        ),
                         "upload_alpha_range": [
                             int(upload_image[..., 3].min().item()),
                             int(upload_image[..., 3].max().item()),
