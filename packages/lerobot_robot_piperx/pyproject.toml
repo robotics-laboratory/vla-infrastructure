@@ -1,6 +1,6 @@
 [project]
 name = "lerobot_robot_piperx"
-version = "0.1.0"
+version = "0.2.0"
 description = "PIPER-X follower robots for LeRobot 0.6.1."
 requires-python = "==3.12.13"
 dependencies = [

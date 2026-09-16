@@ -748,7 +748,7 @@ kinematics = [
 
 [[package]]
 name = "lerobot-robot-piperx"
-version = "0.1.0"
+version = "0.2.0"
 source = { editable = "packages/lerobot_robot_piperx" }
 dependencies = [
     { name = "lerobot" },

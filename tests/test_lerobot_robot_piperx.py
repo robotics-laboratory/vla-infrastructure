@@ -164,6 +164,7 @@ import importlib.metadata as metadata
 from lerobot.robots.config import RobotConfig
 from lerobot.utils.import_utils import register_third_party_plugins
 assert any(d.metadata['Name'] == 'lerobot_robot_piperx' for d in metadata.distributions())
+assert metadata.version('lerobot_robot_piperx') == '0.2.0'
 register_third_party_plugins()
 from lerobot_robot_piperx import BiPiperXFollowerConfig, PiperXFollowerConfig
 assert PiperXFollowerConfig(port='offline').type == 'piperx_follower'
