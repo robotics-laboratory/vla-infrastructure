@@ -6,7 +6,7 @@ This report follows the physical Quest run saved under `xr_fixes/20260916/physic
 |---|---|---|---|
 | R3 freezes teleop | R3 scheduled at log line 875. Every later status through step 2880 is `session_inactive`; no navigation-applied event follows. The HMD pose was incorrectly required to equal the view-prim pose. | Fixed in first follow-up commit: accept the next XR transform after rendered app updates, then rebase again if it changes later. | R3 once and repeatedly while looking away/moving head; verify one held frame and no jump. |
 | Camera preview recursion | User observed camera panels in camera pixels. The optional post-update Replicator source made the preview depend on the XR composition. | Fixed in second follow-up commit: force the manager's existing Isaac Lab Camera RGBA fallback and do not attach the extra annotator. | Both feeds visible together; no nested panels. |
-| Wrist camera pose | User observed downward, inverted view away from gripper direction. Config attached identity `world` camera pose (+X optical axis) to a gripper whose approach axis is local +Z. | Fixed in third follow-up commit: optical +X maps to gripper +Z, up +Z maps to gripper +X; a real-Kit sweep selected a 6 cm parent-X offset. | Gripper extended; view forward along approach axis with only the finger tips at the lower edge and upright. |
+| Wrist camera pose | User first observed a downward, inverted view; after the optical rotation fix, physical evidence showed that the camera origin was still under the gripper. | Corrected in sixth follow-up commit: keep the accepted optical rotation, but mirror the mount to 5.5 cm along gripper-parent −X, which is the upper side in the working pose. | Gripper extended; view forward along approach axis, camera physically above the gripper, small claw edge visible, image orientation unchanged. |
 | Sensitivity | Six binary Y toggles appear at steps 2394–2477; precise is physically too slow. | Fixed in fourth follow-up commit: each controller's horizontal thumbstick continuously controls only its arm from 2× through the previous 4× center speed to 6×. | Move each thumbstick independently through left/center/right and compare both hands. |
 | Preview height | User reports panels obscure robots. The previous head-locked center was 0.18 m below the viewer anchor. | Fixed in fifth follow-up commit: use the upstream positive image-up direction and place the center 0.18 m above the viewer anchor. | Panels above gaze without obscuring robot workspace. |
 
@@ -20,7 +20,13 @@ The controller coordinate transform, synchronous upstream execution and missing-
 
 Isaac Lab's `world` camera convention defines the camera optical axis as local +X and image-up as local +Z. PIPER-X approaches through the gripper's local +Z axis, so the previous identity rotation necessarily looked across the gripper and produced the reported downward/inverted result. The experimental demo rotation `(0.70710678, 0, 0.70710678, 0)` in XYZW maps camera +X to gripper +Z and camera +Z to gripper +X.
 
-The archived real-Kit sweep compares the original pose, both possible image-up signs, and three positions. The selected `(0.06, 0, 0)` parent-frame position is upright and leaves only the finger tips at the lower edge. The non-XR S1 camera contract remains unchanged. A physical Quest check is still needed because the no-client images establish render geometry, not headset comfort.
+The first archived real-Kit sweep compared the original pose, both possible image-up signs, and three positions. It correctly selected the rotation but chose the wrong side of the gripper for the camera origin. The later physical Quest observation supersedes that position result; see the mount-side correction below. The non-XR S1 camera contract remains unchanged.
+
+## Wrist camera mount-side correction
+
+The accepted orientation remains `(0.70710678, 0, 0.70710678, 0)` in XYZW: optical +X maps to gripper +Z, and camera up maps to gripper +X. The error was translational. At the demo home pose, gripper-parent +X has world Z component `−0.819`, so the previous `(+0.06, 0, 0)` offset put the camera below the gripper. The corrected `(-0.055, 0, 0)` offset moves it roughly 9.4 cm upward in world Z at that pose.
+
+The archived correction sweep first mirrors the offset and then checks small mount distances and forward offsets without changing orientation. `(-0.055, 0, 0)` is the selected upper mount: `−0.04` lets the gripper body obstruct much of the image, `−0.08` removes the claw from view, and positive approach-axis offsets also remove it. The selected render leaves a small claw edge at the top of the image. Physical Quest confirmation remains required.
 
 ## Per-hand speed slider follow-up
 

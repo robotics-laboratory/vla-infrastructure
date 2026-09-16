@@ -97,7 +97,7 @@ def test_wrist_camera_looks_along_gripper_approach_and_is_upright() -> None:
     )
     camera = config["cameras"]["wrist"]
 
-    assert camera["offset_xyz_m"] == [0.06, 0.0, 0.0]
+    assert camera["offset_xyz_m"] == [-0.055, 0.0, 0.0]
     assert math.isclose(sum(value * value for value in camera["offset_quat_xyzw"]), 1.0)
     assert _rotate_vector_xyzw(camera["offset_quat_xyzw"], (1.0, 0.0, 0.0)) == (
         0.0,
