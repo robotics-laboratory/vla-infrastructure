@@ -11,9 +11,11 @@ import yaml
 
 from tools.validate_resolved_contract import (
     validate_contract,
+    validate_dataset_contract,
     validate_gates,
     validate_process_architecture,
     validate_teleop_dependencies,
+    validate_timing,
 )
 
 
@@ -70,16 +72,85 @@ class ResolvedContractTests(unittest.TestCase):
             "teleop.real.runtime_dependencies.isaacteleop.version",
             rules["B"]["required_paths"],
         )
-        self.assertNotIn("timing.max_xr_pose_age_ms", rules["B"]["required_paths"])
-        self.assertIn("timing.max_xr_pose_age_ms", rules["R2"]["required_paths"])
-        self.assertIn("timing.max_xr_pose_age_ms", rules["HIL"]["required_paths"])
-        for gate_id in ("R2", "HIL"):
+        freshness_limits = {
+            "timing.max_camera_age_ms",
+            "timing.max_joint_age_ms",
+            "timing.max_xr_age_ms",
+            "timing.max_cross_modal_skew_ms",
+        }
+        self.assertTrue(freshness_limits.isdisjoint(rules["B"]["required_paths"]))
+        for gate_id in ("D1", "R2", "HIL"):
+            self.assertTrue(freshness_limits.issubset(rules[gate_id]["required_paths"]))
             probe = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
             probe["gates"][gate_id]["state"] = "accepted"
-            self.assertIn(
-                f"gate {gate_id}: unresolved required path timing.max_xr_pose_age_ms",
-                validate_gates(probe, rules),
-            )
+            errors = validate_gates(probe, rules)
+            for path in freshness_limits:
+                self.assertIn(
+                    f"gate {gate_id}: unresolved required path {path}",
+                    errors,
+                )
+
+    def test_temporal_contract_separates_logical_and_source_time(self) -> None:
+        data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        temporal = data["dataset"]["temporal_semantics"]
+
+        self.assertEqual(
+            data["dataset"]["policy_data_contract_revision"], "piper_x_d0_policy_data_v2"
+        )
+        self.assertEqual(temporal["dataset_timestamp"]["feature_key"], "timestamp")
+        self.assertEqual(
+            temporal["dataset_timestamp"]["computation"], "frame_index_div_dataset_fps"
+        )
+        self.assertFalse(temporal["dataset_timestamp"]["freshness_eligible"])
+        self.assertEqual(
+            temporal["source_timing"]["required_fields"],
+            ["sequence", "source_timestamp", "clock_domain", "age_ms"],
+        )
+        self.assertEqual(
+            temporal["freshness"]["enforcement_phase"],
+            "after_source_selection_before_lerobot_dataset_add_frame",
+        )
+        by_source = temporal["source_timing"]["required_feature_sets_by_source_class"]
+        self.assertIn("xr.left_pose", by_source["human_vr"])
+        self.assertIn("xr.right_pose", by_source["human_vr"])
+        self.assertNotIn("xr.left_pose", by_source["automated"])
+        self.assertEqual(validate_dataset_contract(data), [])
+
+        probe = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        probe["dataset"]["temporal_semantics"]["source_timing"]["feature_sets"][
+            "observation.state"
+        ]["source_timestamp"] = "timestamp"
+        self.assertIn(
+            "logical dataset timestamp must not be reused as source timing metadata",
+            validate_dataset_contract(probe),
+        )
+
+    def test_rates_are_independent_and_command_rate_uses_interpolation(self) -> None:
+        data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        timing = data["timing"]
+
+        self.assertEqual(timing["physics_fps"]["isaac"], 120)
+        self.assertEqual(timing["control_fps"]["isaac"], 30)
+        self.assertEqual(timing["dataset_fps"], 30)
+        self.assertEqual(timing["xr_fps"]["real"], 30)
+
+        probe = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        probe["timing"]["policy_fps"] = 10
+        probe["timing"]["inference"]["interpolation_multiplier"] = 3
+        probe["timing"]["command_fps"] = 30
+        self.assertEqual(validate_timing(probe), [])
+        probe["timing"]["command_fps"] = 29
+        self.assertIn(
+            "timing.command_fps must equal policy_fps * timing.inference.interpolation_multiplier",
+            validate_timing(probe),
+        )
+
+    def test_camera_rate_is_not_forced_to_dataset_rate(self) -> None:
+        data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        data["timing"]["camera_fps"]["left_wrist"] = 15
+        data["dataset"]["cameras"]["left_wrist"]["nominal_fps"] = 15
+
+        self.assertEqual(validate_dataset_contract(data), [])
 
     def test_gate_a_rejects_an_unresolved_plugin_boundary(self) -> None:
         data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
@@ -107,15 +178,9 @@ class ResolvedContractTests(unittest.TestCase):
             ["upstream_source", "document_review"],
         )
         self.assertEqual(rules["S0"]["required_artifact_kinds"], ["report"])
-        self.assertNotIn(
-            "environments.isaac.spec_artifact_id", rules["S0"]["required_paths"]
-        )
-        self.assertNotIn(
-            "execution_profiles.isaac_env.command", rules["S0"]["required_paths"]
-        )
-        self.assertIn(
-            "execution_profiles.isaac_env.command", rules["S1"]["required_paths"]
-        )
+        self.assertNotIn("environments.isaac.spec_artifact_id", rules["S0"]["required_paths"])
+        self.assertNotIn("execution_profiles.isaac_env.command", rules["S0"]["required_paths"])
+        self.assertIn("execution_profiles.isaac_env.command", rules["S1"]["required_paths"])
         self.assertEqual(
             rules["S1"]["required_evidence_kinds"],
             ["command_test", "artifact_validation"],
@@ -138,15 +203,11 @@ class ResolvedContractTests(unittest.TestCase):
 
         self.assertEqual(validate_teleop_dependencies(data), [])
         self.assertEqual(
-            data["teleop"]["real"]["runtime_dependencies"]["isaacteleop"][
-                "source_artifact_id"
-            ],
+            data["teleop"]["real"]["runtime_dependencies"]["isaacteleop"]["source_artifact_id"],
             data["environments"]["core"]["spec_artifact_id"],
         )
         self.assertEqual(
-            data["teleop"]["isaac"]["runtime_dependencies"]["isaacteleop"][
-                "source_artifact_id"
-            ],
+            data["teleop"]["isaac"]["runtime_dependencies"]["isaacteleop"]["source_artifact_id"],
             data["environments"]["isaac"]["spec_artifact_id"],
         )
 
@@ -221,9 +282,7 @@ class ResolvedContractTests(unittest.TestCase):
         )
         self.assertTrue(architecture["control_boundary"]["independent_of_eval"])
         self.assertEqual(architecture["eval_boundary"]["transport_selection"], "deferred")
-        self.assertEqual(
-            architecture["control_boundary"]["transport_selection"], "deferred"
-        )
+        self.assertEqual(architecture["control_boundary"]["transport_selection"], "deferred")
         self.assertFalse(architecture["rpc_implementation_selected"])
         self.assertFalse(architecture["generic_simulator_api_exists"])
 

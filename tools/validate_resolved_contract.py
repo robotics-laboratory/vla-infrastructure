@@ -71,14 +71,35 @@ EXPECTED_CONTROL_COMMAND_FIELDS = [
     "canonical_PIPER_X_command_semantics",
     "sequence",
     "source_timestamp",
+    "clock_domain",
     "source_control_state",
 ]
 EXPECTED_CONTROL_OBSERVATION_FIELDS = [
     "measured_canonical_observation_where_required",
-    "sim_timestamp",
     "sequence",
+    "source_timestamp",
+    "clock_domain",
+    "age_ms",
     "health_state",
 ]
+EXPECTED_SOURCE_TIMING_FIELDS = ["sequence", "source_timestamp", "clock_domain", "age_ms"]
+EXPECTED_SOURCE_TIMING_FEATURE_SETS = [
+    "observation.state",
+    "observation.images.left_wrist",
+    "observation.images.right_wrist",
+    "xr.left_pose",
+    "xr.right_pose",
+    "source_action",
+]
+EXPECTED_SOURCE_TIMING_BY_SOURCE_CLASS = {
+    "human_vr": EXPECTED_SOURCE_TIMING_FEATURE_SETS,
+    "automated": [
+        "observation.state",
+        "observation.images.left_wrist",
+        "observation.images.right_wrist",
+        "source_action",
+    ],
+}
 EXPECTED_CONTROL_EXCLUSIONS = [
     "reset",
     "seeds",
@@ -230,7 +251,11 @@ def validate_profiles(d):
             out.append(f"execution profile {n}: unknown environment {p['environment']}")
     for name, environment in d["environments"].items():
         aid = environment["spec_artifact_id"]
-        if aid is not None and aid in d["artifacts"] and d["artifacts"][aid]["kind"] != "environment_spec":
+        if (
+            aid is not None
+            and aid in d["artifacts"]
+            and d["artifacts"][aid]["kind"] != "environment_spec"
+        ):
             out.append(f"environment {name}: spec artifact {aid} must be environment_spec")
     return out
 
@@ -254,9 +279,7 @@ def validate_teleop_dependencies(d):
         expected_artifact = environment["spec_artifact_id"]
         for name, dependency in binding["runtime_dependencies"].items():
             if dependency["package"] != name:
-                out.append(
-                    f"teleop.{runtime}.runtime_dependencies.{name}: package name mismatch"
-                )
+                out.append(f"teleop.{runtime}.runtime_dependencies.{name}: package name mismatch")
             if dependency["source_artifact_id"] != expected_artifact:
                 out.append(
                     f"teleop.{runtime}.runtime_dependencies.{name}: source artifact must be "
@@ -265,9 +288,7 @@ def validate_teleop_dependencies(d):
             if dependency["revision_type"] == "commit" and not COMMIT_RE.fullmatch(
                 dependency["revision"] or ""
             ):
-                out.append(
-                    f"teleop.{runtime}.runtime_dependencies.{name}: invalid commit revision"
-                )
+                out.append(f"teleop.{runtime}.runtime_dependencies.{name}: invalid commit revision")
     return out
 
 
@@ -288,9 +309,7 @@ def validate_process_architecture(d):
     for name, expected_environment in expected_process_environments.items():
         actual = architecture["processes"][name]["environment"]
         if actual != expected_environment:
-            out.append(
-                f"process architecture {name}: environment must be {expected_environment}"
-            )
+            out.append(f"process architecture {name}: environment must be {expected_environment}")
 
     ownership = architecture["profile_ownership"]
     for name, (mode, environments) in EXPECTED_PROCESS_PROFILE_OWNERSHIP.items():
@@ -300,9 +319,7 @@ def validate_process_architecture(d):
                 f"process architecture profile {name}: expected {mode} environments={environments}"
             )
         if d["execution_profiles"][name]["environment"] != environments[0]:
-            out.append(
-                f"execution profile {name}: primary environment must be {environments[0]}"
-            )
+            out.append(f"execution profile {name}: primary environment must be {environments[0]}")
         for environment in record["environments"]:
             if environment not in d["environments"]:
                 out.append(
@@ -383,7 +400,8 @@ def validate_feature_contract(d):
 
 def validate_timing(d):
     out = []
-    inf = d["timing"]["inference"]
+    timing = d["timing"]
+    inf = timing["inference"]
     mode = inf["mode"]
     if mode in {"chunked_sync", "rtc_async"}:
         for k in (
@@ -395,6 +413,38 @@ def validate_timing(d):
         ):
             if not resolved(inf[k]):
                 out.append(f"chunked inference requires timing.inference.{k}")
+
+    policy_fps = timing["policy_fps"]
+    command_fps = timing["command_fps"]
+    multiplier = inf["interpolation_multiplier"]
+    if resolved(command_fps):
+        if not resolved(policy_fps) or not resolved(multiplier):
+            out.append("timing.command_fps requires policy_fps and interpolation_multiplier")
+        elif abs(command_fps - policy_fps * multiplier) > 1e-9:
+            out.append(
+                "timing.command_fps must equal policy_fps * "
+                "timing.inference.interpolation_multiplier"
+            )
+
+    isaac_execution = d["simulation"]["isaac"]["execution"]
+    physics_dt = isaac_execution["physics_dt_s"]
+    control_dt = isaac_execution["control_dt_s"]
+    isaac_physics_fps = timing["physics_fps"]["isaac"]
+    if resolved(physics_dt):
+        if not resolved(isaac_physics_fps):
+            out.append("timing.physics_fps.isaac is required when Isaac physics_dt_s is resolved")
+        elif abs(isaac_physics_fps - 1 / physics_dt) > 1e-9:
+            out.append(
+                "timing.physics_fps.isaac must equal 1 / simulation.isaac.execution.physics_dt_s"
+            )
+    isaac_control_fps = timing["control_fps"]["isaac"]
+    if resolved(control_dt):
+        if not resolved(isaac_control_fps):
+            out.append("timing.control_fps.isaac is required when Isaac control_dt_s is resolved")
+        elif abs(isaac_control_fps - 1 / control_dt) > 1e-9:
+            out.append(
+                "timing.control_fps.isaac must equal 1 / simulation.isaac.execution.control_dt_s"
+            )
     return out
 
 
@@ -514,14 +564,20 @@ def validate_dataset_contract(d):
     action_names = [feature["name"] for feature in d["robot_contract"]["action_features"]]
     observation_names = [feature["name"] for feature in d["robot_contract"]["observation_features"]]
     action_units = [feature["units"] for feature in d["robot_contract"]["action_features"]]
-    observation_units = [feature["units"] for feature in d["robot_contract"]["observation_features"]]
+    observation_units = [
+        feature["units"] for feature in d["robot_contract"]["observation_features"]
+    ]
     action = dataset["action_label_pipeline"]["dataset_action"]
     state = dataset["observation_contract"]["state"]
     source_action = dataset["action_label_pipeline"]["source_action"]
     if action["names"] != action_names or source_action["feature_names"] != action_names:
-        out.append("D0 action order must exactly match the accepted Gate A Robot.action_features order")
+        out.append(
+            "D0 action order must exactly match the accepted Gate A Robot.action_features order"
+        )
     if state["names"] != observation_names:
-        out.append("D0 observation.state order must exactly match Gate A Robot.observation_features")
+        out.append(
+            "D0 observation.state order must exactly match Gate A Robot.observation_features"
+        )
     if action["units"] != action_units or source_action["units"] != action_units:
         out.append("D0 action units must exactly preserve the accepted Gate A units")
     if state["units"] != observation_units:
@@ -529,7 +585,11 @@ def validate_dataset_contract(d):
     if action["shape"] != [len(action_names)] or state["shape"] != [len(observation_names)]:
         out.append("D0 state/action vector shapes must equal their ordered scalar counts")
     camera_features = [camera["feature_key"] for camera in dataset["cameras"].values()]
-    expected_inputs = [state["feature_key"], *camera_features, dataset["common_training_view"]["task_feature"]]
+    expected_inputs = [
+        state["feature_key"],
+        *camera_features,
+        dataset["common_training_view"]["task_feature"],
+    ]
     if dataset["common_training_view"]["input_features"] != expected_inputs:
         out.append("D0 common training inputs must be ordered state, canonical cameras, then task")
     if dataset["common_training_view"]["target_features"] != [action["feature_key"]]:
@@ -547,13 +607,43 @@ def validate_dataset_contract(d):
     fps = d["timing"]["dataset_fps"]
     if fps != dataset["resampling"]["canonical_fps"]:
         out.append("timing.dataset_fps must equal D0 resampling.canonical_fps")
-    if any(camera["nominal_fps"] != fps for camera in dataset["cameras"].values()):
-        out.append("each canonical D0 camera nominal_fps must equal dataset_fps")
+    for role, camera in dataset["cameras"].items():
+        if camera["nominal_fps"] != d["timing"]["camera_fps"].get(role):
+            out.append(f"dataset camera {role} nominal_fps must equal timing.camera_fps.{role}")
+
+    temporal = dataset["temporal_semantics"]
+    dataset_timestamp = temporal["dataset_timestamp"]
+    source_timing = temporal["source_timing"]
+    if source_timing["required_fields"] != EXPECTED_SOURCE_TIMING_FIELDS:
+        out.append(
+            "source timing fields/order must be sequence, source_timestamp, clock_domain, age_ms"
+        )
+    if list(source_timing["feature_sets"]) != EXPECTED_SOURCE_TIMING_FEATURE_SETS:
+        out.append("source timing feature-set order/content mismatch")
+    if source_timing["required_feature_sets_by_source_class"] != (
+        EXPECTED_SOURCE_TIMING_BY_SOURCE_CLASS
+    ):
+        out.append("source timing requirements by source class mismatch")
+    temporal_feature_keys = [
+        key
+        for feature_set in source_timing["feature_sets"].values()
+        for key in feature_set.values()
+    ] + [source_timing["cross_modal_skew_feature_key"]]
+    if len(temporal_feature_keys) != len(set(temporal_feature_keys)):
+        out.append("source timing feature keys must be unique")
+    if dataset_timestamp["feature_key"] in temporal_feature_keys:
+        out.append("logical dataset timestamp must not be reused as source timing metadata")
+    classified = set(dataset["feature_classification"]["provenance_only"])
+    missing_temporal = sorted(set(temporal_feature_keys) - classified)
+    if missing_temporal:
+        out.append(
+            f"source timing features missing provenance_only classification: {missing_temporal}"
+        )
+
     expected_fingerprint = canonical_training_schema_fingerprint(d)
     if dataset["common_training_view"]["schema_fingerprint_sha256"] != expected_fingerprint:
         out.append(
-            "D0 common training schema fingerprint mismatch: "
-            f"expected {expected_fingerprint}"
+            f"D0 common training schema fingerprint mismatch: expected {expected_fingerprint}"
         )
     return out
 

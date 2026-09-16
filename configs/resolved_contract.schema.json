@@ -965,6 +965,22 @@
           }
         }
       }
+    },
+    "temporal_converter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "obs_t_field",
+        "action_t_field",
+        "outcome_field",
+        "termination_field"
+      ],
+      "properties": {
+        "obs_t_field": {"type": ["string", "null"]},
+        "action_t_field": {"type": ["string", "null"]},
+        "outcome_field": {"type": ["string", "null"]},
+        "termination_field": {"type": ["string", "null"]}
+      }
     }
   },
   "type": "object",
@@ -999,7 +1015,7 @@
   ],
   "properties": {
     "contract_version": {
-      "const": "5.2.0"
+      "const": "5.2.1"
     },
     "schema_version": {
       "const": "5.2"
@@ -2134,87 +2150,77 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "clock_domain",
-        "dataset_fps",
-        "teleop_sample_fps",
+        "clock_domains",
+        "physics_fps",
+        "xr_fps",
         "camera_fps",
-        "policy_inference_fps",
-        "robot_command_fps",
-        "max_xr_pose_age_ms",
-        "max_joint_state_age_ms",
+        "control_fps",
+        "dataset_fps",
+        "policy_fps",
+        "command_fps",
+        "max_camera_age_ms",
+        "max_joint_age_ms",
+        "max_xr_age_ms",
         "max_policy_action_age_ms",
+        "max_cross_modal_skew_ms",
         "stale_behavior",
         "inference"
       ],
       "properties": {
-        "clock_domain": {
-          "type": [
-            "string",
-            "null"
-          ]
+        "clock_domains": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["pacing", "dataset", "source_requirement"],
+          "properties": {
+            "pacing": {"const": "host_monotonic_time_perf_counter"},
+            "dataset": {"const": "episode_relative_fixed_grid"},
+            "source_requirement": {"const": "host_monotonic_or_explicitly_synchronized_to_host_monotonic"}
+          }
         },
-        "dataset_fps": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "minimum": 0
+        "physics_fps": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["isaac", "mujoco"],
+          "properties": {
+            "isaac": {"type": ["number", "null"], "exclusiveMinimum": 0},
+            "mujoco": {"type": ["number", "null"], "exclusiveMinimum": 0}
+          }
         },
-        "teleop_sample_fps": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "minimum": 0
+        "xr_fps": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["real", "isaac"],
+          "properties": {
+            "real": {"type": ["number", "null"], "exclusiveMinimum": 0},
+            "isaac": {"type": ["number", "null"], "exclusiveMinimum": 0}
+          }
         },
         "camera_fps": {
           "type": "object",
           "additionalProperties": {
-            "type": "number",
+            "type": ["number", "null"],
             "exclusiveMinimum": 0
           }
         },
-        "policy_inference_fps": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "minimum": 0
+        "control_fps": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["real", "isaac", "mujoco"],
+          "properties": {
+            "real": {"type": ["number", "null"], "exclusiveMinimum": 0},
+            "isaac": {"type": ["number", "null"], "exclusiveMinimum": 0},
+            "mujoco": {"type": ["number", "null"], "exclusiveMinimum": 0}
+          }
         },
-        "robot_command_fps": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "minimum": 0
-        },
-        "max_xr_pose_age_ms": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "minimum": 0
-        },
-        "max_joint_state_age_ms": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "minimum": 0
-        },
-        "max_policy_action_age_ms": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "minimum": 0
-        },
-        "stale_behavior": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
+        "dataset_fps": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "policy_fps": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "command_fps": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "max_camera_age_ms": {"type": ["number", "null"], "minimum": 0},
+        "max_joint_age_ms": {"type": ["number", "null"], "minimum": 0},
+        "max_xr_age_ms": {"type": ["number", "null"], "minimum": 0},
+        "max_policy_action_age_ms": {"type": ["number", "null"], "minimum": 0},
+        "max_cross_modal_skew_ms": {"type": ["number", "null"], "minimum": 0},
+        "stale_behavior": {"type": ["string", "null"]},
         "inference": {
           "type": "object",
           "additionalProperties": false,
@@ -2224,56 +2230,20 @@
             "execution_horizon",
             "interpolation_multiplier",
             "stale_chunk_rule",
-            "action_age_reference"
+            "action_age_reference",
+            "command_rate_relationship"
           ],
           "properties": {
             "mode": {
-              "type": [
-                "string",
-                "null"
-              ],
-              "enum": [
-                "sync_step",
-                "chunked_sync",
-                "rtc_async",
-                "per_step",
-                "per_second",
-                null
-              ]
+              "type": ["string", "null"],
+              "enum": ["sync_step", "chunked_sync", "rtc_async", "per_step", "per_second", null]
             },
-            "chunk_horizon": {
-              "type": [
-                "integer",
-                "null"
-              ],
-              "minimum": 1
-            },
-            "execution_horizon": {
-              "type": [
-                "integer",
-                "null"
-              ],
-              "minimum": 1
-            },
-            "interpolation_multiplier": {
-              "type": [
-                "integer",
-                "null"
-              ],
-              "minimum": 1
-            },
-            "stale_chunk_rule": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "action_age_reference": {
-              "type": [
-                "string",
-                "null"
-              ]
-            }
+            "chunk_horizon": {"type": ["integer", "null"], "minimum": 1},
+            "execution_horizon": {"type": ["integer", "null"], "minimum": 1},
+            "interpolation_multiplier": {"type": ["integer", "null"], "minimum": 1},
+            "stale_chunk_rule": {"type": ["string", "null"]},
+            "action_age_reference": {"type": ["string", "null"]},
+            "command_rate_relationship": {"const": "command_fps_equals_policy_fps_times_interpolation_multiplier"}
           }
         }
       }
@@ -2791,181 +2761,104 @@
             "outcome_definition",
             "label_fixed_before_runtime_mapping",
             "persistence_call_phase",
-            "dataset_timestamp_clock",
-            "pacing_clock",
+            "dataset_timestamp",
+            "source_timing",
+            "freshness",
             "causality_test_evidence_id",
             "converters"
           ],
           "properties": {
-            "pairing": {
-              "const": "obs_t_action_t"
+            "pairing": {"const": "obs_t_action_t"},
+            "observation_phase": {"const": "pre_decision_t"},
+            "action_phase": {"const": "decision_t"},
+            "source_action_phase": {"const": "controller_output_for_obs_t"},
+            "dataset_action_phase": {"const": "deterministic_label_output_t"},
+            "native_actuation_phase": {"const": "after_dataset_action_t"},
+            "runtime_command_phase": {"const": "after_dataset_action_t_before_transition_t"},
+            "device_accepted_command_phase": {"const": "runtime_or_device_residual_after_runtime_command_t"},
+            "next_observation_phase": {"const": "post_transition_t"},
+            "outcome_phase": {"const": "transition_t"},
+            "outcome_definition": {"type": "string", "minLength": 1},
+            "label_fixed_before_runtime_mapping": {"const": true},
+            "persistence_call_phase": {"const": "after_send_action_before_next_tick"},
+            "dataset_timestamp": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["feature_key", "clock_domain", "computation", "semantics", "freshness_eligible"],
+              "properties": {
+                "feature_key": {"const": "timestamp"},
+                "clock_domain": {"const": "episode_relative_fixed_grid"},
+                "computation": {"const": "frame_index_div_dataset_fps"},
+                "semantics": {"type": "string", "minLength": 1},
+                "freshness_eligible": {"const": false}
+              }
             },
-            "observation_phase": {
-              "const": "pre_decision_t"
+            "source_timing": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["storage", "required_fields", "field_types", "feature_sets", "required_feature_sets_by_source_class", "cross_modal_skew_feature_key", "timestamp_requirement"],
+              "properties": {
+                "storage": {"const": "lerobot_additional_frame_features"},
+                "required_fields": {
+                  "const": ["sequence", "source_timestamp", "clock_domain", "age_ms"]
+                },
+                "field_types": {
+                  "const": {
+                    "sequence": "int64",
+                    "source_timestamp": "float64",
+                    "clock_domain": "string",
+                    "age_ms": "float64",
+                    "cross_modal_skew_ms": "float64"
+                  }
+                },
+                "feature_sets": {
+                  "type": "object",
+                  "minProperties": 1,
+                  "additionalProperties": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["sequence", "source_timestamp", "clock_domain", "age_ms"],
+                    "properties": {
+                      "sequence": {"type": "string", "minLength": 1},
+                      "source_timestamp": {"type": "string", "minLength": 1},
+                      "clock_domain": {"type": "string", "minLength": 1},
+                      "age_ms": {"type": "string", "minLength": 1}
+                    }
+                  }
+                },
+                "required_feature_sets_by_source_class": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["human_vr", "automated"],
+                  "properties": {
+                    "human_vr": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
+                    "automated": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true}
+                  }
+                },
+                "cross_modal_skew_feature_key": {"type": "string", "minLength": 1},
+                "timestamp_requirement": {"type": "string", "minLength": 1}
+              }
             },
-            "action_phase": {
-              "const": "decision_t"
+            "freshness": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["age_reference", "cross_modal_skew_reference", "enforcement_phase", "invalid_tick_behavior"],
+              "properties": {
+                "age_reference": {"const": "recording_selection_time_minus_source_timestamp_in_a_common_monotonic_domain"},
+                "cross_modal_skew_reference": {"const": "max_minus_min_source_timestamp_for_all_source_inputs_contributing_to_obs_t_and_source_action_t"},
+                "enforcement_phase": {"const": "after_source_selection_before_lerobot_dataset_add_frame"},
+                "invalid_tick_behavior": {"type": "string", "minLength": 1}
+              }
             },
-            "source_action_phase": {
-              "const": "controller_output_for_obs_t"
-            },
-            "dataset_action_phase": {
-              "const": "deterministic_label_output_t"
-            },
-            "native_actuation_phase": {
-              "const": "after_dataset_action_t"
-            },
-            "runtime_command_phase": {
-              "const": "after_dataset_action_t_before_transition_t"
-            },
-            "device_accepted_command_phase": {
-              "const": "runtime_or_device_residual_after_runtime_command_t"
-            },
-            "next_observation_phase": {
-              "const": "post_transition_t"
-            },
-            "outcome_phase": {
-              "const": "transition_t"
-            },
-            "outcome_definition": {
-              "type": "string",
-              "minLength": 1
-            },
-            "label_fixed_before_runtime_mapping": {
-              "const": true
-            },
-            "persistence_call_phase": {
-              "const": "after_send_action_before_next_tick"
-            },
-            "dataset_timestamp_clock": {
-              "const": "episode_relative_fixed_grid_frame_index_div_dataset_fps"
-            },
-            "pacing_clock": {
-              "const": "host_monotonic_time_perf_counter"
-            },
-            "causality_test_evidence_id": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
+            "causality_test_evidence_id": {"type": ["string", "null"]},
             "converters": {
               "type": "object",
               "additionalProperties": false,
-              "required": [
-                "isaac_human",
-                "isaac_automated",
-                "real_human"
-              ],
+              "required": ["isaac_human", "isaac_automated", "real_human"],
               "properties": {
-                "isaac_human": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "obs_t_field",
-                    "action_t_field",
-                    "outcome_field",
-                    "termination_field"
-                  ],
-                  "properties": {
-                    "obs_t_field": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "action_t_field": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "outcome_field": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "termination_field": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    }
-                  }
-                },
-                "isaac_automated": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "obs_t_field",
-                    "action_t_field",
-                    "outcome_field",
-                    "termination_field"
-                  ],
-                  "properties": {
-                    "obs_t_field": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "action_t_field": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "outcome_field": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "termination_field": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    }
-                  }
-                },
-                "real_human": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "obs_t_field",
-                    "action_t_field",
-                    "outcome_field",
-                    "termination_field"
-                  ],
-                  "properties": {
-                    "obs_t_field": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "action_t_field": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "outcome_field": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "termination_field": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    }
-                  }
-                }
+                "isaac_human": {"$ref": "#/$defs/temporal_converter"},
+                "isaac_automated": {"$ref": "#/$defs/temporal_converter"},
+                "real_human": {"$ref": "#/$defs/temporal_converter"}
               }
             }
           }
@@ -3122,9 +3015,20 @@
             "exact_rate_behavior": {"type": "string", "minLength": 1},
             "faster_source_behavior": {"type": "string", "minLength": 1},
             "slower_source_behavior": {"type": "string", "minLength": 1},
-            "duplicate_policy": {"const": "forbidden"},
+            "duplicate_policy": {"type": "string", "minLength": 1},
             "drop_policy": {"type": "string", "minLength": 1},
-            "interpolation_policy": {"const": "none"},
+            "interpolation_policy": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["camera", "joint_state", "xr_pose", "dataset_action", "command"],
+              "properties": {
+                "camera": {"const": "none"},
+                "joint_state": {"const": "source_path_declared_causal"},
+                "xr_pose": {"const": "source_path_declared_causal"},
+                "dataset_action": {"const": "none"},
+                "command": {"const": "lerobot_action_interpolator_when_configured"}
+              }
+            },
             "causality_rule": {"type": "string", "minLength": 1},
             "recording_command_relationship": {"type": "string", "minLength": 1}
           }

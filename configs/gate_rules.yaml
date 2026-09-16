@@ -61,8 +61,9 @@ B:
   - teleop.real.left_source
   - teleop.real.right_source
   - execution_profiles.quest_xr_real.command
-  - timing.clock_domain
-  - timing.teleop_sample_fps
+  - timing.clock_domains.pacing
+  - timing.clock_domains.source_requirement
+  - timing.xr_fps.real
   - timing.stale_behavior
   required_nonempty_paths:
   - teleop.real.evidence_ids
@@ -110,8 +111,17 @@ D0:
   - dataset.temporal_semantics.dataset_action_phase
   - dataset.temporal_semantics.runtime_command_phase
   - dataset.temporal_semantics.device_accepted_command_phase
-  - dataset.temporal_semantics.dataset_timestamp_clock
-  - dataset.temporal_semantics.pacing_clock
+  - dataset.temporal_semantics.dataset_timestamp.feature_key
+  - dataset.temporal_semantics.dataset_timestamp.clock_domain
+  - dataset.temporal_semantics.dataset_timestamp.computation
+  - dataset.temporal_semantics.source_timing.storage
+  - dataset.temporal_semantics.source_timing.required_fields
+  - dataset.temporal_semantics.source_timing.field_types
+  - dataset.temporal_semantics.source_timing.required_feature_sets_by_source_class
+  - dataset.temporal_semantics.source_timing.cross_modal_skew_feature_key
+  - dataset.temporal_semantics.freshness.age_reference
+  - dataset.temporal_semantics.freshness.cross_modal_skew_reference
+  - dataset.temporal_semantics.freshness.enforcement_phase
   - dataset.temporal_semantics.causality_test_evidence_id
   - dataset.observation_contract.state.feature_key
   - dataset.action_label_pipeline.label_processor.pipeline
@@ -215,6 +225,7 @@ S2:
   - teleop.isaac.right_source
   - teleop.isaac.processor_revision
   - execution_profiles.isaac_vr_record.command
+  - timing.xr_fps.isaac
   required_nonempty_paths:
   - teleop.isaac.evidence_ids
   required_evidence_kinds:
@@ -237,6 +248,10 @@ D1:
   - simulation.isaac.recorder.backend
   - simulation.isaac.recorder.native_format
   - simulation.isaac.recorder.conversion_revision
+  - timing.max_camera_age_ms
+  - timing.max_joint_age_ms
+  - timing.max_xr_age_ms
+  - timing.max_cross_modal_skew_ms
   required_nonempty_paths: []
   required_evidence_kinds:
   - artifact_validation
@@ -266,6 +281,9 @@ G1:
   - simulation.isaac.generator.report_summary.attempted
   - simulation.isaac.generator.report_summary.successful
   - simulation.isaac.generator.report_summary.rejected
+  - timing.max_camera_age_ms
+  - timing.max_joint_age_ms
+  - timing.max_cross_modal_skew_ms
   required_nonempty_paths: []
   required_evidence_kinds:
   - run
@@ -404,7 +422,7 @@ R1:
   - safety.low_level_fail_safe.trigger
   - safety.low_level_fail_safe.deadline_ms
   - safety.low_level_fail_safe.effect
-  - timing.max_joint_state_age_ms
+  - timing.max_joint_age_ms
   - execution_profiles.piper_motion.command
   - model.calibration.revision
   - model.calibration.artifact_id
@@ -451,7 +469,10 @@ R2:
   - dataset.temporal_semantics.converters.real_human.outcome_field
   - dataset.temporal_semantics.converters.real_human.termination_field
   - execution_profiles.real_dataset_record.command
-  - timing.max_xr_pose_age_ms
+  - timing.max_camera_age_ms
+  - timing.max_joint_age_ms
+  - timing.max_xr_age_ms
+  - timing.max_cross_modal_skew_ms
   required_nonempty_paths: []
   required_evidence_kinds:
   - human_gate
@@ -538,7 +559,10 @@ HIL:
   - safety.takeover_jump_tolerance.value
   - safety.takeover_jump_tolerance.units
   - execution_profiles.hil.command
-  - timing.max_xr_pose_age_ms
+  - timing.max_camera_age_ms
+  - timing.max_joint_age_ms
+  - timing.max_xr_age_ms
+  - timing.max_cross_modal_skew_ms
   required_nonempty_paths:
   - hil.evidence_ids
   required_evidence_kinds:
@@ -568,8 +592,8 @@ R3:
   - real_rollout.accepted_command_log_artifact_id
   - real_rollout.result_artifact_id
   - execution_profiles.real_rollout.command
-  - timing.policy_inference_fps
-  - timing.robot_command_fps
+  - timing.policy_fps
+  - timing.command_fps
   - timing.max_policy_action_age_ms
   - timing.inference.mode
   required_nonempty_paths: []

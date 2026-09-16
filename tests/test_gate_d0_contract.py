@@ -9,7 +9,11 @@ import pytest
 import yaml
 from lerobot.processor.factory import make_default_processors
 from lerobot.utils.constants import ACTION, OBS_STR
-from lerobot.utils.feature_utils import build_dataset_frame, combine_feature_dicts, hw_to_dataset_features
+from lerobot.utils.feature_utils import (
+    build_dataset_frame,
+    combine_feature_dicts,
+    hw_to_dataset_features,
+)
 
 from tools.validate_resolved_contract import canonical_training_schema_fingerprint
 
@@ -84,3 +88,57 @@ def test_d0_contract_matches_upstream_processors_and_fingerprint() -> None:
     assert contract["dataset"]["common_training_view"]["schema_fingerprint_sha256"] == (
         canonical_training_schema_fingerprint(contract)
     )
+
+
+def temporal_bundle_is_admissible(
+    selection_timestamp: float,
+    sources: dict[str, dict],
+    max_age_ms: dict[str, float],
+    max_cross_modal_skew_ms: float,
+) -> bool:
+    """Small D0 oracle: logical dataset time is intentionally not an input."""
+    domains = {sample["clock_domain"] for sample in sources.values()}
+    if len(domains) != 1:
+        return False
+    source_timestamps = [sample["source_timestamp"] for sample in sources.values()]
+    ages_ms = {
+        name: (selection_timestamp - sample["source_timestamp"]) * 1000
+        for name, sample in sources.items()
+    }
+    if any(age < 0 or age > max_age_ms[name] for name, age in ages_ms.items()):
+        return False
+    skew_ms = (max(source_timestamps) - min(source_timestamps)) * 1000
+    return skew_ms <= max_cross_modal_skew_ms
+
+
+def test_source_freshness_is_independent_of_logical_dataset_timestamp() -> None:
+    contract = yaml.safe_load((ROOT / "configs/resolved_contract.yaml").read_text(encoding="utf-8"))
+    temporal = contract["dataset"]["temporal_semantics"]
+    dataset_timestamp = 105 / contract["timing"]["dataset_fps"]
+    assert dataset_timestamp == 3.5
+    assert temporal["dataset_timestamp"]["freshness_eligible"] is False
+
+    sources = {
+        "joint": {"sequence": 205, "source_timestamp": 1003.480, "clock_domain": "host_monotonic"},
+        "camera": {"sequence": 91, "source_timestamp": 1003.420, "clock_domain": "host_monotonic"},
+        "xr": {"sequence": 104, "source_timestamp": 1003.470, "clock_domain": "host_monotonic"},
+    }
+    limits = {"joint": 40.0, "camera": 100.0, "xr": 40.0}
+    assert temporal_bundle_is_admissible(1003.500, sources, limits, 70.0)
+
+    stale_camera = {name: dict(sample) for name, sample in sources.items()}
+    stale_camera["camera"]["source_timestamp"] = 1003.379
+    assert not temporal_bundle_is_admissible(1003.500, stale_camera, limits, 130.0)
+
+
+def test_cross_modal_skew_and_clock_domain_are_fail_closed() -> None:
+    sources = {
+        "joint": {"sequence": 10, "source_timestamp": 50.000, "clock_domain": "host_monotonic"},
+        "camera": {"sequence": 7, "source_timestamp": 49.940, "clock_domain": "host_monotonic"},
+    }
+    limits = {"joint": 100.0, "camera": 100.0}
+    assert not temporal_bundle_is_admissible(50.010, sources, limits, 50.0)
+
+    sources["camera"]["source_timestamp"] = 50.000
+    sources["camera"]["clock_domain"] = "device_unsynchronized"
+    assert not temporal_bundle_is_admissible(50.010, sources, limits, 50.0)
