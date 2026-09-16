@@ -61,6 +61,18 @@ def main() -> int:
     )
     parser.add_argument("--scene-preview", type=Path, help="Optional scene-camera PNG output.")
     parser.add_argument("--max-control-steps", type=int, default=18000)
+    parser.add_argument(
+        "--performance-window-steps",
+        type=int,
+        default=30,
+        help="Control steps per live summary; JSONL retains every control step.",
+    )
+    parser.add_argument(
+        "--performance-warmup-steps",
+        type=int,
+        default=30,
+        help="Initial control steps excluded from aggregate performance statistics.",
+    )
     args = parser.parse_args()
     if args.smoke and args.xr_smoke:
         parser.error("--smoke and --xr-smoke are mutually exclusive")
@@ -107,6 +119,12 @@ def main() -> int:
         str(output_dir / "result.json"),
         "--s2-max-control-steps",
         str(max_steps),
+        "--s2-performance-log",
+        str(output_dir / "performance.jsonl"),
+        "--s2-performance-window-steps",
+        str(args.performance_window_steps),
+        "--s2-performance-warmup-steps",
+        str(args.performance_warmup_steps),
     ]
     if args.hud_on_start:
         command.append("--demo-hud-on-start")
