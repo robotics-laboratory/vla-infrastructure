@@ -319,7 +319,7 @@ class BimanualPiperXIsaacEnvironment:
             velocity = torch.zeros_like(position)
             robot.write_joint_position_to_sim_index(position=position, joint_ids=ids)
             robot.write_joint_velocity_to_sim_index(velocity=velocity, joint_ids=ids)
-            robot.set_joint_position_target_index(target=position, joint_ids=ids)
+            robot.actuators.target_command.set_position_index(value=position, joint_ids=ids)
             robot.write_data_to_sim()
 
     def _apply(self, targets: NativeBimanualTargets) -> None:
@@ -332,7 +332,7 @@ class BimanualPiperXIsaacEnvironment:
             target = torch.as_tensor(
                 self._with_mimics(values), device=self.sim.device, dtype=torch.float32
             ).unsqueeze(0)
-            robot.set_joint_position_target_index(target=target, joint_ids=ids)
+            robot.actuators.target_command.set_position_index(value=target, joint_ids=ids)
 
     def expected_camera_poses(self) -> list[tuple[torch.Tensor, torch.Tensor]]:
         result = []
