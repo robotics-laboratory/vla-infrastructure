@@ -24,6 +24,22 @@ model source
 
 Generic Piper is not accepted as PIPER-X without evidence.
 
+## Fail-closed adapter boundary [[gate:A]]
+
+The selected real-robot adapter must enforce all of the following before later hardware gates can use it:
+
+```text
+missing required joint/gripper telemetry -> reject observation
+partial six-joint arm command -> reject the entire action before any SDK command
+motion command -> allowed only when connected + configured + enabled + motion_ready
+enable acknowledgement timeout -> fail connect and roll back
+bimanual second-arm connect failure -> roll back the first arm
+disconnect failure on one arm -> still attempt cleanup of the other arm
+bimanual action validation failure -> no command reaches either arm
+```
+
+A synthetic zero is not a valid substitute for absent telemetry. Offline fake-SDK tests prove adapter behavior only; they do not satisfy R0/R1/R1B hardware evidence.
+
 ## Hardware runtime contract [[gate:R0]] / [[gate:R1]]
 
 For each arm resolve independently:

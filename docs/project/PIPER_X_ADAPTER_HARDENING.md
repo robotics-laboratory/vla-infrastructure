@@ -28,7 +28,7 @@ Only the existing `PiperXFollower` and `BiPiperXFollower` adapter classes requir
 
 None. The core environment, Python version, LeRobot pin, SDK pin, lockfile, and execution-profile boundaries are unchanged. Verification is offline with the existing fake SDK; no CAN device or physical robot is accessed.
 
-The concurrent contract-edit worktree is intentionally not copied into this branch. Before the hardened adapter becomes the selected Gate A implementation, contract integration must repin `implementation.robot_plugin.revision`, bump the robot/processor contract revision for the new rejection and readiness semantics, and replace or supplement the old offline plugin evidence. This implementation commit by itself does not reopen or accept a hardware gate.
+The hardened adapter is selected by the v5.2.3 resolved contract through its exact implementation commit and `adapter_fail_closed` semantics. Gate A is reopened for the confirmed safety defect and re-accepted with the audit plus focused fake-SDK regression evidence. This does not reopen or accept a hardware gate.
 
 ## Why no project framework is needed
 

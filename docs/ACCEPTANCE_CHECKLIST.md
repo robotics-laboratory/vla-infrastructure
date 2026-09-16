@@ -39,6 +39,9 @@ This checklist is explanatory. Machine acceptance is `../configs/gate_rules.yaml
 ## PIPER-X
 
 - [ ] static driver/API semantics pinned;
+- [ ] missing required telemetry rejects the observation without synthetic zeros;
+- [ ] partial arm actions and not-motion-ready commands fail before SDK motion;
+- [ ] enable timeout and bimanual lifecycle rollback/cleanup pass offline tests;
 - [ ] firmware/profile/API pinned per arm;
 - [ ] home/limits/sign tests pass;
 - [ ] Isaac FK/TCP parity accepted;
