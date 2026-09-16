@@ -5,6 +5,7 @@ from __future__ import annotations
 import ctypes
 import hashlib
 import json
+import os
 import time
 from pathlib import Path
 from types import SimpleNamespace
@@ -88,6 +89,58 @@ class _CpuRgbaPanel:
             self._closed = True
 
 
+class _CameraFeedFrameDiagnostics:
+    """Persist bounded source/upload samples without changing feed ownership."""
+
+    _SCHEDULE = frozenset((1, 30, 120, 300, 600, 1200))
+
+    def __init__(self, output_dir: Path | None) -> None:
+        self._output_dir = output_dir
+        self._records: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _rgba_bytes(image: torch.Tensor) -> tuple[torch.Tensor, bytes]:
+        cpu = image.detach().to(device="cpu").contiguous()
+        return cpu, cpu.numpy().tobytes()
+
+    @staticmethod
+    def _write_ppm(path: Path, image: torch.Tensor) -> None:
+        height, width = int(image.shape[0]), int(image.shape[1])
+        rgb = image[..., :3].contiguous().numpy().tobytes()
+        path.write_bytes(f"P6\n{width} {height}\n255\n".encode("ascii") + rgb)
+
+    def capture(self, feed: Any, publication: int, reason: str) -> None:
+        if self._output_dir is None:
+            return
+        if publication not in self._SCHEDULE and reason == "scheduled":
+            return
+        self._output_dir.mkdir(parents=True, exist_ok=True)
+        source, source_bytes = self._rgba_bytes(feed.image)
+        upload, upload_bytes = self._rgba_bytes(feed.upload_image)
+        stem = f"{publication:04d}-{feed.cfg.camera_name}-{reason}"
+        source_path = self._output_dir / f"{stem}-source.ppm"
+        upload_path = self._output_dir / f"{stem}-upload.ppm"
+        self._write_ppm(source_path, source)
+        self._write_ppm(upload_path, upload)
+        self._records.append(
+            {
+                "camera": feed.cfg.camera_name,
+                "publication": publication,
+                "reason": reason,
+                "source": source_path.name,
+                "source_rgba_sha256": hashlib.sha256(source_bytes).hexdigest(),
+                "upload": upload_path.name,
+                "upload_rgba_sha256": hashlib.sha256(upload_bytes).hexdigest(),
+                "source_upload_identical": source_bytes == upload_bytes,
+                "shape": list(source.shape),
+            }
+        )
+        manifest = self._output_dir / "manifest.json"
+        pending = manifest.with_suffix(".json.tmp")
+        pending.write_text(json.dumps(self._records, indent=2, sort_keys=True) + "\n")
+        pending.replace(manifest)
+
+
 class _FreshVisibleFeedUpdates:
     """Filter preview callbacks before upstream acquisition, staging and upload.
 
@@ -96,10 +149,19 @@ class _FreshVisibleFeedUpdates:
     Upstream _publish_feed and refresh still own cameras and image lifetime.
     """
 
-    def __init__(self, manager: Any, is_visible: Callable[[], bool]) -> None:
+    def __init__(
+        self,
+        manager: Any,
+        is_visible: Callable[[], bool],
+        diagnostics: _CameraFeedFrameDiagnostics | None = None,
+    ) -> None:
         self._manager = manager
         self._is_visible = is_visible
+        self._diagnostics = diagnostics
         self._last_frames: dict[str, tuple[int, int]] = {}
+        self._publications: dict[str, int] = {}
+        self._snapshot_reason: str | None = None
+        self._snapshot_remaining: set[str] = set()
         self.counters = dict(
             callbacks=0,
             hidden_callbacks=0,
@@ -111,12 +173,17 @@ class _FreshVisibleFeedUpdates:
     def invalidate(self) -> None:
         self._last_frames.clear()
 
+    def request_snapshot(self, reason: str) -> None:
+        self._snapshot_reason = reason
+        self._snapshot_remaining = {feed.cfg.camera_name for feed in self._manager._feeds}
+
     def update(self) -> None:
         self.counters["callbacks"] += 1
         if not self._is_visible():
             self.counters["hidden_callbacks"] += 1
             return
         now = time.monotonic()
+        snapshot_reason = self._snapshot_reason
         for feed in self._manager._feeds:
             name = feed.cfg.camera_name
             frame = (id(feed.camera), int(_tensor(feed.camera.frame).reshape(-1)[0].item()))
@@ -127,10 +194,24 @@ class _FreshVisibleFeedUpdates:
                 self.counters["throttled_frames"] += 1
                 continue
             self._manager._publish_feed(feed)
+            publication = self._publications.get(name, 0) + 1
+            self._publications[name] = publication
+            capture_reason = (
+                snapshot_reason if name in self._snapshot_remaining else "scheduled"
+            )
+            if self._diagnostics is not None:
+                self._diagnostics.capture(
+                    feed,
+                    publication,
+                    capture_reason or "scheduled",
+                )
+            self._snapshot_remaining.discard(name)
             period = 0.0 if feed.cfg.max_update_hz == 0.0 else 1.0 / feed.cfg.max_update_hz
             feed.next_update_time = now + period
             self._last_frames[name] = frame
             self.counters["published_frames"] += 1
+        if snapshot_reason is not None and not self._snapshot_remaining:
+            self._snapshot_reason = None
 
 
 class _CpuStagedFeedPresenter:
@@ -293,6 +374,10 @@ class DemoRuntime:
         self._feed_bound_ever = False
         self._feed_updates: _FreshVisibleFeedUpdates | None = None
         self._feed_update_report: dict[str, int] = {}
+        diagnostic_root = os.environ.get("ROBOSYN_VR_CAMERA_DIAGNOSTICS_DIR")
+        self._camera_diagnostics = _CameraFeedFrameDiagnostics(
+            None if diagnostic_root is None else Path(diagnostic_root)
+        )
         self._display_button_pressed = False
         self._display_toggle_count = 0
         self._backdrop_visible = True
@@ -416,7 +501,11 @@ class DemoRuntime:
             manager = self._feed_session._manager
             if manager is None:
                 raise RuntimeError("upstream XR camera feed manager is unavailable")
-            self._feed_updates = _FreshVisibleFeedUpdates(manager, lambda: self._display_visible)
+            self._feed_updates = _FreshVisibleFeedUpdates(
+                manager,
+                lambda: self._display_visible,
+                getattr(self, "_camera_diagnostics", None),
+            )
             manager.update = self._feed_updates.update
             # One initial publication validates the compatibility buffer.
             # Subsequent hidden callbacks return before any feed acquisition.
@@ -618,6 +707,10 @@ class DemoRuntime:
             if not self._feed_bound:
                 raise RuntimeError("upstream XR camera panels were not bound before the XR session")
             self._set_upstream_panel_visibility(True)
+            if self._feed_updates is not None:
+                self._feed_updates.request_snapshot(
+                    f"display-visible-{self._display_toggle_count + 1}"
+                )
         else:
             # Closing here detaches the pinned Replicator RGB annotator shared
             # with Isaac Lab Camera and makes the next Camera.update() fail.

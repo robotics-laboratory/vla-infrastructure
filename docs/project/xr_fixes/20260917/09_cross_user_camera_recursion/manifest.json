@@ -1,0 +1,10 @@
+{
+  "classification": "EXPERIMENTAL_S2_DIAGNOSTIC_NOT_GATE_EVIDENCE",
+  "date": "2026-09-17",
+  "diagnostic_output": "<run>/camera_feed_diagnostics/manifest.json",
+  "good_run": "/data/vla-infrastructure/cache/robosyn-vr-demo/runs/20260916T181126505688Z-dual_cube_to_matching_plates-hud-on/stdout.log",
+  "investigated_head": "d8f2021da7224c7de1c85c7301bd3f917934c424",
+  "physical_retest_required": true,
+  "problem_run": "/data/vla-infrastructure/cache/robosyn-vr-demo/runs/20260916T204052251704Z-dual_cube_to_matching_plates-hud-on/stdout.log",
+  "root_cause_status": "POST_XR_SOURCE_VS_COMPOSITOR_BOUNDARY_PENDING"
+}

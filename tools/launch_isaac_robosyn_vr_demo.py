@@ -90,6 +90,9 @@ def main() -> int:
     hud_name = "hud-on" if args.hud_on_start else "hud-off"
     output_dir = RUNTIME_ROOT / "runs" / f"{stamp}-{args.profile}-{hud_name}"
     output_dir.mkdir(parents=True, exist_ok=False)
+    environment["ROBOSYN_VR_CAMERA_DIAGNOSTICS_DIR"] = str(
+        output_dir / "camera_feed_diagnostics"
+    )
     bounded = args.smoke or args.xr_smoke
     max_steps = 60 if bounded else args.max_control_steps
     command = [
