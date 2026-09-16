@@ -1,14 +1,23 @@
-Gate D0 focused causality regression
-Timestamp: 2026-08-30T22:50:16+03:00
-Command: uv run pytest -q tests/test_gate_d0_contract.py
+Gate D0 causality and production temporal-recorder regression
+Timestamp: 2026-09-16T22:45:00+03:00
+Command: uv run pytest -q tests/test_gate_d0_contract.py tests/test_d0_temporal_runtime.py
 
-...                                                                      [100%]
-3 passed in 6.19s
+...........                                                              [100%]
+11 passed in 2.79s
 
-The executable seam is the pinned LeRobot identity observation/action processors plus
-build_dataset_frame, exactly corresponding to lerobot_record.record_loop lines 289-338.
+The executable frame seam remains the pinned LeRobot identity observation/action
+processors plus build_dataset_frame, corresponding to lerobot_record.record_loop.
 It proves pairs (obs_t=t, action_t=1000+t), explicitly rejects both t-1 and t+1
 action shifts, and proves that a deliberately different send_action return is not the
-dataset action source. The optional LeRobot `datasets` extra is not installed in the
-accepted core profile, so the policy-authorized narrow frame-construction fallback was
-used without changing dependencies.
+dataset action source.
+
+The production TemporalFrameRecorder additionally proves that LeRobot logical timestamp
+(frame_index / dataset_fps) is ineligible for freshness decisions; source age uses
+source_timestamp in a common monotonic clock domain. Stale/future input, excessive
+cross-modal skew, incomparable clock domains, sequence regression, and sequence identity
+changes fail closed before DatasetWriter.add_frame. An identical repeated/slower source
+sequence remains admissible while its age and skew are within limits.
+
+The final test creates a real LeRobotDataset v3, records two frames through the adapter,
+saves and reopens the episode, and proves that upstream owns dense logical timestamps
+while physical source timestamps and sequences survive persistence.

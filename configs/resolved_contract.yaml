@@ -1,4 +1,4 @@
-contract_version: 5.2.0
+contract_version: 5.2.3
 schema_version: '5.2'
 project:
   name: PIPER-X Quest multi-runtime robot-learning platform
@@ -83,6 +83,12 @@ migration:
     evidence_ids:
     - gate_s0_candidate_b_teleop_dependency_audit
     - gate_s0_teleop_dependency_scope_review
+  - gate: D0
+    reason: contradiction
+    summary: 'TEMPORAL CONTRACT V2 — Reopened D0 because logical LeRobot frame-grid time did not prove physical source freshness, nominal source rate was incorrectly coupled to dataset rate, and source age/cross-modal skew were not persisted. The v2 contract retains upstream recording, adds source-time metadata and independent rates, and re-accepts D0 with updated audit and regression evidence.'
+    evidence_ids:
+    - gate_d0_pinned_lerobot_audit
+    - gate_d0_causality_regression
 taxonomy:
   runtime_names:
   - real
@@ -260,7 +266,9 @@ execution_profiles:
     command: null
     prerequisites:
     - Multi-process profile with a core LeRobot evaluator and isolated isaac native environment process
-    - EVAL transport/codec, endpoint, proxy, and runnable command are deferred to E1
+    - Local Unix-domain socket shared by the core evaluator and isolated Isaac endpoint
+    - Per-run JSON handshake manifest supplied to tools/launch_isaac_s1.py --eval-run-manifest
+    - Checkpoint, policy processors, run manifest, and result destinations remain run-owned E1 inputs
   mujoco_env:
     environment: core
     working_directory: .
@@ -287,13 +295,13 @@ execution_profiles:
     command: null
     prerequisites: []
 process_architecture:
-  revision: piper_x_process_boundaries_v1
+  revision: piper_x_process_boundaries_v4
   same_process_lerobot_isaac_required: false
   generic_simulator_api_exists: false
-  rpc_implementation_selected: false
+  rpc_implementation_selected: true
   shared_semantic_boundary:
     gate: D0
-    contract_revision: piper_x_d0_policy_data_v1
+    contract_revision: piper_x_d0_policy_data_v2
     schema_fingerprint_sha256: eb7e4613e5f8d0ff59039874555e6f2d73b728973e64cc01da8414e010d8d33d
   processes:
     core_lerobot:
@@ -340,32 +348,69 @@ process_architecture:
       execution_mode: single_process
       environments: [core]
   eval_boundary:
-    protocol_revision: piper_x_eval_boundary_v1
+    protocol_revision: piper_x_eval_boundary_v2
     semantics: synchronous_episode_sensitive
-    transport_selection: deferred
+    transport_selection: unix_domain_socket_json_lines_v1
     handshake_fields:
     - protocol_revision
+    - run_id
     - D0_contract_fingerprint
     - environment_revision
     - PIPER_X_asset_model_revision
     - task_id
     - task_revision
     - processor_revision
+    - n_episodes
     - horizon
+    handshake_response_fields: [run_id, endpoint_instance_id, accepted]
     reset:
-      request_fields: [run_id, episode_id, seed, task_id, task_revision]
-      response_fields: [canonical_D0_obs_0, effective_seed]
+      request_fields: [run_id, request_id, episode_id, seed, task_id, task_revision]
+      response_fields: [request_id, canonical_D0_obs_0, effective_seed]
     step:
-      request_fields: [episode_id, step_index, canonical_D0_action_t]
-      response_fields: [canonical_D0_obs_t_plus_1, reward_t, terminated_t, truncated_t, success_t, termination_reason]
+      request_fields: [run_id, request_id, episode_id, step_index, canonical_D0_action_t]
+      response_fields: [request_id, canonical_D0_obs_t_plus_1, reward_t, terminated_t, truncated_t, success_t, termination_reason]
+    request_identity:
+      field: request_id
+      generation_owner: eval_client
+      format: opaque_nonempty_string_unique_within_run
+      required_operations: [reset, step, abort, close]
+      scope_fields: [run_id, request_id]
+      response_echo_required: true
+      reuse_with_different_operation_or_payload: protocol_error_no_execution
+    deduplication:
+      owner: eval_runtime_endpoint
+      key_fields: [run_id, request_id]
+      request_fingerprint: operation_plus_canonical_payload
+      duplicate_same_fingerprint: return_cached_response_without_reexecution
+      duplicate_different_fingerprint: protocol_error_no_execution
+      survives_transport_reconnect: true
+      survives_endpoint_restart: false
+      endpoint_restart_behavior: invalidate_run_and_classify_infrastructure_failure
+      retention: through_run_close_response
+      capacity_bound: declared_n_episodes_times_horizon_plus_reset_abort_and_close_requests
+      implementation_state: implemented
+    lifecycle:
+      abort:
+        request_fields: [run_id, request_id, episode_id, reason]
+        response_fields: [request_id, abort_state]
+      close:
+        request_fields: [run_id, request_id]
+        response_fields: [request_id, close_state]
     lifecycle_operations: [abort, close]
     health_state: minimal
     max_step_requests_in_flight: 1
     automatic_retry_after_ambiguous_timeout: false
+    explicit_retry_after_ambiguous_timeout: same_request_id_only
     transport_failure_classification: infrastructure_failure
     transport_failure_is_task_truncation: false
     native_dictionaries_cross_boundary: false
     python_pickle_allowed: false
+    implementation:
+      endpoint: tools.isaac_eval_rpc.IsaacEvalEndpoint
+      client: tools.isaac_eval_rpc.UnixEvalClient
+      server: tools.isaac_eval_rpc.serve_unix_socket
+      codec: utf8_json_lines_allow_nan_false
+      isaac_entrypoint: tools/run_isaac_s1.py --eval-socket --eval-run-manifest
   control_boundary:
     implementation_state: deferred
     semantics: asynchronous_freshness_sensitive
@@ -375,11 +420,14 @@ process_architecture:
     - canonical_PIPER_X_command_semantics
     - sequence
     - source_timestamp
+    - clock_domain
     - source_control_state
     observation_fields:
     - measured_canonical_observation_where_required
-    - sim_timestamp
     - sequence
+    - source_timestamp
+    - clock_domain
+    - age_ms
     - health_state
     stale_commands_dropped: true
     stale_commands_replayed: false
@@ -680,18 +728,32 @@ model:
     zero_position: 2.0e-05
     joint_limit: 2.0e-05
 timing:
-  clock_domain: Recording pacing uses host monotonic time.perf_counter; stored LeRobotDataset timestamps use the episode-relative fixed grid frame_index / dataset_fps.
-  dataset_fps: 30
-  teleop_sample_fps: 30
+  clock_domains:
+    pacing: host_monotonic_time_perf_counter
+    dataset: episode_relative_fixed_grid
+    source_requirement: host_monotonic_or_explicitly_synchronized_to_host_monotonic
+  physics_fps:
+    isaac: 120
+    mujoco: null
+  xr_fps:
+    real: 30
+    isaac: 30
   camera_fps:
     left_wrist: 30
     right_wrist: 30
-  policy_inference_fps: null
-  robot_command_fps: null
-  max_xr_pose_age_ms: null
-  max_joint_state_age_ms: null
+  control_fps:
+    real: null
+    isaac: 30
+    mujoco: null
+  dataset_fps: 30
+  policy_fps: null
+  command_fps: null
+  max_camera_age_ms: null
+  max_joint_age_ms: null
+  max_xr_age_ms: null
   max_policy_action_age_ms: null
-  stale_behavior: An unavailable, inactive, invalid, or malformed XR controller sample is not a valid/fresh pose and must not be used; resume pose use only after a newly valid tracked sample is available.
+  max_cross_modal_skew_ms: null
+  stale_behavior: A dataset tick is admissible only when every required source sample is valid, its source age is within the selected modality limit, and all source inputs contributing to obs_t/source_action_t satisfy the cross-modal skew limit. Reject the tick before LeRobotDataset.add_frame and classify repeated or terminal violations in episode QA; never relabel a stale sample with the logical dataset timestamp.
   inference:
     mode: null
     chunk_horizon: null
@@ -699,6 +761,7 @@ timing:
     interpolation_multiplier: null
     stale_chunk_rule: null
     action_age_reference: null
+    command_rate_relationship: command_fps_equals_policy_fps_times_interpolation_multiplier
 safety:
   max_joint_step_or_slew:
     mode: null
@@ -801,7 +864,7 @@ teleop:
     - gate_s2_physical_run1_failed
 dataset:
   format: LeRobotDataset_v3
-  policy_data_contract_revision: piper_x_d0_policy_data_v1
+  policy_data_contract_revision: piper_x_d0_policy_data_v2
   temporal_semantics:
     pairing: obs_t_action_t
     observation_phase: pre_decision_t
@@ -816,8 +879,65 @@ dataset:
     outcome_definition: Runtime transition, success, termination, failure, or device response caused by runtime_command_t; it is not part of obs_t.
     label_fixed_before_runtime_mapping: true
     persistence_call_phase: after_send_action_before_next_tick
-    dataset_timestamp_clock: episode_relative_fixed_grid_frame_index_div_dataset_fps
-    pacing_clock: host_monotonic_time_perf_counter
+    dataset_timestamp:
+      feature_key: timestamp
+      clock_domain: episode_relative_fixed_grid
+      computation: frame_index_div_dataset_fps
+      semantics: Logical LeRobot sample-grid time used for indexing and video lookup; it is not an acquisition or freshness timestamp.
+      freshness_eligible: false
+    source_timing:
+      storage: lerobot_additional_frame_features
+      recorder_adapter: tools.d0_temporal.TemporalFrameRecorder
+      feature_spec_factory: tools.d0_temporal.temporal_feature_specs
+      qa_summary_method: tools.d0_temporal.TemporalFrameRecorder.qa_summary
+      required_fields: [sequence, source_timestamp, clock_domain, age_ms]
+      field_types:
+        sequence: int64
+        source_timestamp: float64
+        clock_domain: string
+        age_ms: float64
+        cross_modal_skew_ms: float64
+      feature_sets:
+        observation.state:
+          sequence: temporal.observation.state.sequence
+          source_timestamp: temporal.observation.state.source_timestamp
+          clock_domain: temporal.observation.state.clock_domain
+          age_ms: temporal.observation.state.age_ms
+        observation.images.left_wrist:
+          sequence: temporal.observation.images.left_wrist.sequence
+          source_timestamp: temporal.observation.images.left_wrist.source_timestamp
+          clock_domain: temporal.observation.images.left_wrist.clock_domain
+          age_ms: temporal.observation.images.left_wrist.age_ms
+        observation.images.right_wrist:
+          sequence: temporal.observation.images.right_wrist.sequence
+          source_timestamp: temporal.observation.images.right_wrist.source_timestamp
+          clock_domain: temporal.observation.images.right_wrist.clock_domain
+          age_ms: temporal.observation.images.right_wrist.age_ms
+        xr.left_pose:
+          sequence: temporal.xr.left_pose.sequence
+          source_timestamp: temporal.xr.left_pose.source_timestamp
+          clock_domain: temporal.xr.left_pose.clock_domain
+          age_ms: temporal.xr.left_pose.age_ms
+        xr.right_pose:
+          sequence: temporal.xr.right_pose.sequence
+          source_timestamp: temporal.xr.right_pose.source_timestamp
+          clock_domain: temporal.xr.right_pose.clock_domain
+          age_ms: temporal.xr.right_pose.age_ms
+        source_action:
+          sequence: temporal.source_action.sequence
+          source_timestamp: temporal.source_action.source_timestamp
+          clock_domain: temporal.source_action.clock_domain
+          age_ms: temporal.source_action.age_ms
+      required_feature_sets_by_source_class:
+        human_vr: [observation.state, observation.images.left_wrist, observation.images.right_wrist, xr.left_pose, xr.right_pose, source_action]
+        automated: [observation.state, observation.images.left_wrist, observation.images.right_wrist, source_action]
+      cross_modal_skew_feature_key: temporal.cross_modal_skew_ms
+      timestamp_requirement: Acquisition time in host monotonic time or an explicitly synchronized domain with a recorded conversion; receipt time may be retained separately but must not masquerade as acquisition time.
+    freshness:
+      age_reference: recording_selection_time_minus_source_timestamp_in_a_common_monotonic_domain
+      cross_modal_skew_reference: max_minus_min_source_timestamp_for_all_source_inputs_contributing_to_obs_t_and_source_action_t
+      enforcement_phase: after_source_selection_before_lerobot_dataset_add_frame
+      invalid_tick_behavior: reject_tick_and_record_reason_abort_episode_when_the_source_specific_budget_is_exhausted
     causality_test_evidence_id: gate_d0_causality_regression
     converters:
       isaac_human:
@@ -959,14 +1079,19 @@ dataset:
   resampling:
     canonical_fps: 30
     grid: episode_relative_frame_index_div_fps
-    exact_rate_behavior: One obs_t/source_action_t/dataset_action_t sample is accepted for each canonical tick.
-    faster_source_behavior: Causally select the latest complete sample at or before each target tick and drop intervening samples.
-    slower_source_behavior: Reject or abort the source episode/projection; do not synthesize missing canonical ticks.
-    duplicate_policy: forbidden
-    drop_policy: Only faster-source samples not selected by causal decimation may be dropped; canonical output ticks are never dropped silently.
-    interpolation_policy: none
+    exact_rate_behavior: One causally aligned obs_t/source_action_t/dataset_action_t bundle may be accepted for each canonical dataset tick after source age and cross-modal skew validation at that tick selection time.
+    faster_source_behavior: In the common source clock, causally select the latest complete sample at or before the physical selection time for each target dataset tick and drop intervening samples.
+    slower_source_behavior: Nominal source rate alone never rejects an episode. Reuse the latest causal sample only while its sequence, age, and cross-modal skew remain admissible; otherwise reject the tick and apply the declared source-path abort budget.
+    duplicate_policy: A repeated source sequence is allowed only when explicitly represented in temporal metadata and still within freshness and skew limits; duplicate logical dataset timestamps remain forbidden.
+    drop_policy: Unselected source samples and inadmissible canonical ticks may be dropped only with temporal QA accounting; accepted output ticks remain a dense LeRobot frame-index grid.
+    interpolation_policy:
+      camera: none
+      joint_state: source_path_declared_causal
+      xr_pose: source_path_declared_causal
+      dataset_action: none
+      command: lerobot_action_interpolator_when_configured
     causality_rule: No future sample may contribute to tick t; obs_t and dataset_action_t must retain the same source tick identity.
-    recording_command_relationship: Pinned record_loop makes one send_action attempt per accepted dataset tick but this is not a separately guaranteed hardware command FPS; overrunning sources are rejected by the slower-source rule.
+    recording_command_relationship: Pinned record_loop makes one send_action attempt per accepted dataset tick. Policy rollout command cadence is independent of dataset FPS and, when interpolation is configured, equals policy_fps multiplied by interpolation_multiplier.
   common_training_view:
     input_features:
     - observation.state
@@ -1006,6 +1131,31 @@ dataset:
     - provenance.source_demonstration_lineage
     - provenance.randomization_seed
     - provenance.policy_checkpoint
+    - temporal.observation.state.sequence
+    - temporal.observation.state.source_timestamp
+    - temporal.observation.state.clock_domain
+    - temporal.observation.state.age_ms
+    - temporal.observation.images.left_wrist.sequence
+    - temporal.observation.images.left_wrist.source_timestamp
+    - temporal.observation.images.left_wrist.clock_domain
+    - temporal.observation.images.left_wrist.age_ms
+    - temporal.observation.images.right_wrist.sequence
+    - temporal.observation.images.right_wrist.source_timestamp
+    - temporal.observation.images.right_wrist.clock_domain
+    - temporal.observation.images.right_wrist.age_ms
+    - temporal.xr.left_pose.sequence
+    - temporal.xr.left_pose.source_timestamp
+    - temporal.xr.left_pose.clock_domain
+    - temporal.xr.left_pose.age_ms
+    - temporal.xr.right_pose.sequence
+    - temporal.xr.right_pose.source_timestamp
+    - temporal.xr.right_pose.clock_domain
+    - temporal.xr.right_pose.age_ms
+    - temporal.source_action.sequence
+    - temporal.source_action.source_timestamp
+    - temporal.source_action.clock_domain
+    - temporal.source_action.age_ms
+    - temporal.cross_modal_skew_ms
     privileged_debug: []
   provenance_schema:
     storage: hybrid
@@ -1031,10 +1181,10 @@ dataset:
       color_space: RGB
       resolution: [640, 480]
       nominal_fps: 30
-      timestamp_source: Shared dataset tick timestamp; LeRobot video frame lookup uses the episode-relative timestamp.
-      freshness_source: Camera.async_read returns the latest unconsumed frame and waits for a new frame up to its configured timeout.
+      timestamp_source: temporal.observation.images.left_wrist.source_timestamp is the physical acquisition time; LeRobot timestamp remains the separate logical lookup grid.
+      freshness_source: sequence/source_timestamp/clock_domain/age_ms are persisted with each accepted frame and validated before add_frame; Camera.async_read freshness alone is insufficient.
       crop_resize_revision: null
-      missing_frame_behavior: Abort/reject the episode tick path; no stale-frame duplication.
+      missing_frame_behavior: Reject the tick when no admissible sample exists; a repeated source sequence is allowed only while explicitly recorded and within age/skew limits.
       intrinsics_artifact_id: null
       extrinsics_artifact_id: null
       acquisition_owner: Left-arm runtime camera provider configured under key wrist; BiPiperXFollower exposes left_wrist.
@@ -1052,10 +1202,10 @@ dataset:
       color_space: RGB
       resolution: [640, 480]
       nominal_fps: 30
-      timestamp_source: Shared dataset tick timestamp; LeRobot video frame lookup uses the episode-relative timestamp.
-      freshness_source: Camera.async_read returns the latest unconsumed frame and waits for a new frame up to its configured timeout.
+      timestamp_source: temporal.observation.images.right_wrist.source_timestamp is the physical acquisition time; LeRobot timestamp remains the separate logical lookup grid.
+      freshness_source: sequence/source_timestamp/clock_domain/age_ms are persisted with each accepted frame and validated before add_frame; Camera.async_read freshness alone is insufficient.
       crop_resize_revision: null
-      missing_frame_behavior: Abort/reject the episode tick path; no stale-frame duplication.
+      missing_frame_behavior: Reject the tick when no admissible sample exists; a repeated source sequence is allowed only while explicitly recorded and within age/skew limits.
       intrinsics_artifact_id: null
       extrinsics_artifact_id: null
       acquisition_owner: Right-arm runtime camera provider configured under key wrist; BiPiperXFollower exposes right_wrist.
@@ -1257,7 +1407,7 @@ artifacts:
     description: Existing PIPER-X and host-XR offline test output plus uv lock check
   core_uv_lock:
     kind: environment_spec
-    sha256: ef20dd821a6b64299f3e2ed75a320edad29d0584cd60ed9693d05ed614c36a4b
+    sha256: 5886c415cf98ff81a073cdccae7a8d36cbc7afc7779b89a5234b464b59bfc180
     path: uv.lock
     uri: null
     description: Core uv lock including LeRobot 0.6.1 kinematics plus the Gate S0 MuJoCo 3.9.0 and Gymnasium 1.3.0 pins; pyproject.toml is the paired project specification
@@ -1317,10 +1467,10 @@ artifacts:
     description: Audited physical Quest Q1 observations, CloudXR runtime facts, and pinned timing behavior
   gate_d0_upstream_audit:
     kind: report
-    sha256: 6ab451233c4d3233635d36b98e823dad0e0adbaf45f125c084e5b418d578e3b8
+    sha256: 23eb5e025fff1b2db56cae6a0c866207072cca8aacc6a02a008e67f6cdfccd8a
     path: docs/project/GATE_D0_UPSTREAM_AUDIT.md
     uri: null
-    description: Pinned LeRobot Robot, recording, processor, dataset v3, timestamp, episode, and video semantic audit with byte-identical source hashes
+    description: Pinned LeRobot Robot, recording, processor, dataset v3, logical/source timing, action interpolation, episode, and video semantic audit with byte-identical source hashes
   gate_d0_processor_snapshot:
     kind: processor_config
     sha256: 42a9543d5289d73a768a708be195afba6cabebc36ba27e8afa8cf798289ffb64
@@ -1329,10 +1479,22 @@ artifacts:
     description: Serialized output of pinned LeRobot default recording processor get_config plus reset/state semantics
   gate_d0_causality_test_output:
     kind: test_output
-    sha256: 35546bc9f20b63f7005aa1b2e212a24d68ae694713ea3baf714044b67843f0a0
+    sha256: 8165e70c4f636f1ff9ce35296a7f09aef828c6bb4ed17e3936f709211480dcc5
     path: docs/project/GATE_D0_CAUSALITY_TEST.txt
     uri: null
-    description: Focused same-tick obs_t/action_t frame-construction regression and explicit t-1/t+1 rejection
+    description: Same-tick causality plus production TemporalFrameRecorder and real LeRobotDataset v3 persistence regression
+  gate_d0_e1_runtime_audit:
+    kind: report
+    sha256: db8fd0144f2526e6b61bf5c626d88c9a87a139ade603584a91a9569beb15c59b
+    path: docs/project/GATE_D0_E1_RUNTIME_AUDIT.md
+    uri: null
+    description: Upstream ownership and minimum-adapter audit for source-time recording and the concrete isolated-Isaac EVAL boundary
+  gate_e1_rpc_test_output:
+    kind: test_output
+    sha256: 78616f6c9ed1b8854410a3f426f1cfcb6c3f03679218dd0a0706ec1d016693ab
+    path: docs/project/GATE_E1_RPC_TESTS.txt
+    uri: null
+    description: Unix-socket request identity, deduplication, ambiguous-timeout, reconnect, and restart-detection integration tests
   gate_s0_upstream_audit:
     kind: report
     sha256: 700907806ed6267051cdf24592000b251957975795fb0b3098f688258e78c960
@@ -1356,13 +1518,13 @@ artifacts:
     sha256: bc93f1ea3b7708438ced4da77b85ffbd8e83caecea51aae7ded74adc004ce626
     path: docs/project/GATE_S0_PROCESS_BOUNDARY_DECISION.md
     uri: null
-    description: Repin confirmation preserving isolated Isaac, separate EVAL/CONTROL boundaries, deferred transports, and no generic RPC/backend
+    description: Historical S0 repin decision preserving isolated Isaac and deferring EVAL transport selection to E1; CONTROL remains separate and deferred
   isaac_environment_selection:
     kind: environment_spec
-    sha256: 87a150cdc4115bfd2c6c914242cadc6755c92660ff9d3d6b41aed3b4fd827a80
+    sha256: 0ca7416152928e898c1815c454364c8035dd7b05218c398685aa3f889c21052c
     path: configs/environments/isaac_release_3_0_0.yaml
     uri: null
-    description: Exact Candidate B isolated frozen workspace, scoped S2 teleop dependency pins, override/conflict list, driver observation, and expansion recheck policy
+    description: Exact Candidate B isolated frozen workspace, scoped S2 pins, driver observation, and the E1-only Unix-domain transport selection
   gate_s0_teleop_dependency_amendment:
     kind: report
     sha256: a9ee6384a3c13cb019847d869d8985eef4ea36f13ca19f17327a8935c77ad1d3
@@ -1821,7 +1983,7 @@ evidence:
     revision: 7e241bd630a3719a56157a497ce5d08f244784f1
     path: examples/isaac_teleop_to_so101/common.py; examples/isaac_teleop_to_so101/teleoperate.py; examples/isaac_teleop_to_so101/record.py; examples/isaac_teleop_to_so101/isaac_teleop/teleop_xr_controller.py
     symbol: FPS; teleoperate; DatasetRecordConfig; XRController.get_action; ControllersSource; ControllerSnapshotTrackedT
-    notes: The 30 Hz value is an upstream default, while max_xr_pose_age_ms remains an unselected project safety limit. Installed Isaac Teleop 1.3.131 source identities are recorded in the artifact.
+    notes: The 30 Hz XR value is an upstream default, while the v2 max_xr_age_ms limit remains an unselected project safety value. The evidence artifact retains the historical v1 field name; installed Isaac Teleop 1.3.131 source identities are recorded there.
   gate_c_lerobot_kinematics_audit:
     kind: upstream_source
     status: pass
@@ -1853,32 +2015,48 @@ evidence:
   gate_d0_pinned_lerobot_audit:
     kind: upstream_source
     status: pass
-    summary: Pinned LeRobot Robot, record_loop, processor, feature, DatasetWriter, LeRobotDataset v3, and video semantics were audited at the accepted commit and match installed 0.6.1 byte-for-byte.
-    timestamp: '2026-08-30T22:50:16+03:00'
-    command: Fetch seven official raw files at the pinned commit and compare SHA-256 with installed 0.6.1.
+    summary: Pinned LeRobot Robot, record_loop, processor, feature, DatasetWriter, LeRobotDataset v3, video, and rollout interpolation semantics were audited at the accepted commit and match installed 0.6.1 byte-for-byte.
+    timestamp: '2026-09-16T21:50:33+03:00'
+    command: Fetch ten official raw files at the pinned commit and compare SHA-256 with installed 0.6.1.
     artifact_ids:
     - gate_d0_upstream_audit
     repository: https://github.com/huggingface/lerobot
     revision_type: commit
     revision: 7e241bd630a3719a56157a497ce5d08f244784f1
-    path: src/lerobot/robots/robot.py; src/lerobot/scripts/lerobot_record.py; src/lerobot/processor/pipeline.py; src/lerobot/processor/factory.py; src/lerobot/datasets/lerobot_dataset.py; src/lerobot/datasets/dataset_writer.py; src/lerobot/utils/feature_utils.py
-    symbol: Robot.action_features; Robot.observation_features; Robot.send_action; record_loop; DataProcessorPipeline; make_default_processors; LeRobotDataset; DatasetWriter.add_frame; build_dataset_frame
-    notes: Executable code stores teleop_action_processor output as dataset.action; robot_action_processor output and send_action return remain runtime/device-side values.
+    path: src/lerobot/robots/robot.py; src/lerobot/scripts/lerobot_record.py; src/lerobot/processor/pipeline.py; src/lerobot/processor/factory.py; src/lerobot/datasets/lerobot_dataset.py; src/lerobot/datasets/dataset_writer.py; src/lerobot/utils/feature_utils.py; src/lerobot/utils/action_interpolator.py; src/lerobot/rollout/configs.py; src/lerobot/rollout/strategies/core.py
+    symbol: Robot.action_features; Robot.observation_features; Robot.send_action; record_loop; DataProcessorPipeline; make_default_processors; LeRobotDataset; DatasetWriter.add_frame; build_dataset_frame; ActionInterpolator; RolloutConfig.interpolation_multiplier; RolloutStrategy._process_observation_and_notify
+    notes: Executable code stores teleop_action_processor output as dataset.action; LeRobot owns the logical timestamp and accepts separately declared temporal frame features; rollout command cadence is fps multiplied by interpolation_multiplier.
   gate_d0_causality_regression:
     kind: command_test
     status: pass
-    summary: Synthetic obs_t=t and action_t=1000+t remained exactly same-tick through the pinned processor/build_dataset_frame seam; both off-by-one directions were rejected.
-    timestamp: '2026-08-30T22:50:16+03:00'
-    command: uv run pytest -q tests/test_gate_d0_contract.py
+    summary: Same-tick obs/action pairing and the production temporal adapter passed against a real LeRobotDataset; logical time remained separate while invalid source age, skew, clock, and sequence states failed before add_frame.
+    timestamp: '2026-09-16T22:45:00+03:00'
+    command: uv run pytest -q tests/test_gate_d0_contract.py tests/test_d0_temporal_runtime.py
     artifact_ids:
     - gate_d0_causality_test_output
     - gate_d0_processor_snapshot
+    - gate_d0_e1_runtime_audit
     repository: null
     revision_type: null
     revision: null
-    path: tests/test_gate_d0_contract.py
-    symbol: test_record_loop_frame_seam_preserves_obs_t_action_t; test_causality_oracle_rejects_both_off_by_one_directions; test_d0_contract_matches_upstream_processors_and_fingerprint
-    notes: The core profile lacks LeRobot's optional datasets extra, so the approved exact frame-construction seam fallback was used with no dependency change.
+    path: tools/d0_temporal.py; tests/test_gate_d0_contract.py; tests/test_d0_temporal_runtime.py
+    symbol: TemporalFrameRecorder; test_record_loop_frame_seam_preserves_obs_t_action_t; test_real_lerobot_writer_owns_dense_timestamp_and_persists_source_time
+    notes: The core profile now enables the pinned LeRobot dataset extra. The adapter delegates accepted frames to the unmodified upstream writer and records provenance-only timing fields.
+  gate_e1_rpc_implementation_tests:
+    kind: command_test
+    status: pass
+    summary: The concrete Isaac endpoint/client passed at-most-once execution, payload-bound deduplication, reconnect, explicit same-ID retry after ambiguous timeout, and endpoint-restart invalidation tests.
+    timestamp: '2026-09-16T22:45:00+03:00'
+    command: uv run pytest -q tests/test_isaac_eval_rpc.py
+    artifact_ids:
+    - gate_e1_rpc_test_output
+    - gate_d0_e1_runtime_audit
+    repository: null
+    revision_type: null
+    revision: null
+    path: tools/isaac_eval_rpc.py; tools/run_isaac_s1.py; tools/launch_isaac_s1.py; tests/test_isaac_eval_rpc.py
+    symbol: IsaacEvalEndpoint; UnixEvalClient; serve_unix_socket
+    notes: Offline tests use a stateful concrete-environment double. A checkpoint-backed Candidate B run remains required before E1 can be accepted.
   gate_s0_isaac_upstream_audit:
     kind: upstream_source
     status: pass
@@ -1996,7 +2174,7 @@ evidence:
     revision: null
     path: null
     symbol: null
-    notes: The current runtime does not change process semantics. EVAL and CONTROL transport selection remain deferred; no RPC or host change was performed.
+    notes: At S0 acceptance no RPC or host change was performed and both transports were deferred. E1 later selected the narrow local Unix-domain EVAL boundary without changing the accepted isolated-process architecture; CONTROL remains deferred.
   gate_s1_candidate_b_runtime:
     kind: command_test
     status: pass
@@ -2161,7 +2339,7 @@ gates:
     artifact_ids:
     - pre_contract_offline_runtime_tests
     - gate_b_q1_evidence_log
-    notes: Physical Q1 is PASS and all Gate B XR identity/session/behavior requirements are satisfied. The unresolved max_xr_pose_age_ms safety limit is owned by the later real teleop-to-robot-control boundary gates R2 and HIL.
+    notes: Physical Q1 is PASS and all Gate B XR identity/session/behavior requirements are satisfied. D0 v2 supersedes the historical field name with max_xr_age_ms and adds camera/joint/cross-modal limits; their numeric values remain owned by D1, R2, and HIL rather than Gate B.
   C:
     state: accepted
     evidence_ids:
@@ -2185,7 +2363,8 @@ gates:
     - gate_d0_upstream_audit
     - gate_d0_processor_snapshot
     - gate_d0_causality_test_output
-    notes: Canonical PIPER-X policy/data, same-tick causality, 30 FPS fixed-grid timing, wrist-camera roles, provenance isolation, identity label processing, and runtime/device command separation are accepted offline with no runtime implementation.
+    - gate_d0_e1_runtime_audit
+    notes: D0 v2 accepts canonical PIPER-X policy/data, same-tick causality, a 30 FPS logical dataset grid, separate physical source timing with sequence/clock/age/skew metadata, independent rates, wrist-camera roles, provenance isolation, identity label processing, and runtime/device command separation. The thin TemporalFrameRecorder now enforces and persists source timing immediately before the upstream LeRobot writer without replacing it. Numeric source-age/skew limits remain gate-owned runtime decisions.
   S0:
     state: accepted
     evidence_ids:
@@ -2203,7 +2382,7 @@ gates:
     - gate_s0_process_boundary_decision
     - isaac_environment_selection
     - gate_s0_teleop_dependency_amendment
-    notes: Candidate B release/3.0.0 at 913ac53f is selected in its exact isolated frozen workspace. Gate B/core owns isaacteleop 1.3.131 at 7002ed63 while Candidate B/Isaac owns frozen isaacteleop 1.4.98rc1 and in-tree isaaclab_teleop 0.8.0; there is no global teleop pin. Its upstream overrides and 11 pip metadata conflicts are explicit; the expanded S1/S2 automated surfaces reproduce the same 11 with zero new conflict and no exercised required-path failure. Driver 580.159.03 satisfies the documented 580.95.05+ baseline and passed empirically. The narrow S0 reopen is resolved; Gate B, S1, D0, Gate C, MuJoCo, separate EVAL/CONTROL boundaries, deferred transports, and no-generic-backend decisions are unchanged.
+    notes: Candidate B release/3.0.0 at 913ac53f is selected in its exact isolated frozen workspace. Gate B/core owns isaacteleop 1.3.131 at 7002ed63 while Candidate B/Isaac owns frozen isaacteleop 1.4.98rc1 and in-tree isaaclab_teleop 0.8.0; there is no global teleop pin. Its upstream overrides and 11 pip metadata conflicts are explicit; the expanded S1/S2 automated surfaces reproduce the same 11 with zero new conflict and no exercised required-path failure. Driver 580.159.03 satisfies the documented 580.95.05+ baseline and passed empirically. The S0 isolated-process and no-generic-backend decisions remain accepted; E1 has since selected the narrow local Unix-domain EVAL transport, while CONTROL transport remains deferred.
   S1:
     state: accepted
     evidence_ids:
@@ -2267,9 +2446,12 @@ gates:
     notes: No MuJoCo environment implementation was performed.
   E1:
     state: unresolved
-    evidence_ids: []
-    artifact_ids: []
-    notes: No Isaac policy evaluation run exists. The core evaluator plus isolated Isaac endpoint semantics are selected, but protocol/codec, endpoint, proxy, tests, manifests, and transport remain E1 work.
+    evidence_ids:
+    - gate_e1_rpc_implementation_tests
+    artifact_ids:
+    - gate_e1_rpc_test_output
+    - gate_d0_e1_runtime_audit
+    notes: No Isaac policy evaluation run exists. The Unix-domain JSON-Lines transport, request identity, bounded reconnect-safe dedup cache, restart detection, concrete Isaac endpoint/client, and integration tests are implemented. E1 remains unresolved until a real checkpoint run supplies its run manifest and eval result artifacts.
   E2:
     state: unresolved
     evidence_ids: []

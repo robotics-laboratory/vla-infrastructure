@@ -46,6 +46,26 @@ obs_t
 
 The stored BC pair is `(obs_t, dataset_action_t)` unless a later contract revision explicitly changes the learning target.
 
+Logical dataset time and physical source time are different contracts:
+
+```text
+dataset_timestamp = frame_index / dataset_fps
+source_timestamp  = physical acquisition time in a declared clock_domain
+age_ms            = selection_time - source_timestamp
+```
+
+The LeRobot `timestamp` remains the dense episode-relative grid used for indexing and
+video lookup. It is never evidence that a camera, joint state, or XR pose was acquired
+at that logical instant. Every asynchronous input that contributes to an accepted frame
+records `sequence`, `source_timestamp`, `clock_domain`, and `age_ms`; the frame also
+records cross-modal skew. Freshness and skew are checked before `add_frame`.
+
+`tools.d0_temporal.TemporalFrameRecorder` is the required thin edge adapter for this
+check. It enriches accepted frames with the declared LeRobot features and delegates to
+the upstream writer; a stale, future, clock-incomparable, skewed, or sequence-regressing
+bundle never reaches `LeRobotDataset.add_frame`. LeRobot remains the owner of logical
+`timestamp` and `frame_index`.
+
 For every native recorder/converter, resolve:
 
 ```text
@@ -65,7 +85,9 @@ action_t = 1000 + t
 
 After recording/conversion, verify exact pairs `(obs_0, action_0)`, `(obs_1, action_1)`, etc.
 
-Timestamp monotonicity alone does not prove causal pairing.
+Timestamp monotonicity alone does not prove causal pairing. A temporal regression
+must also prove that stale source samples and excessive cross-modal skew are rejected,
+and that the logical dataset timestamp is never substituted for source acquisition time.
 
 ## Common training view
 
