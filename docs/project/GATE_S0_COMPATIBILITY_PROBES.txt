@@ -10,7 +10,7 @@ REOPEN SCOPE
 
 QUALIFICATION ARTIFACT INTEGRITY
 Command:
-  cd /data/ebulochkin/isaaclab_candidate_qualification/20260907
+  cd /data/vla-infrastructure/isaaclab_candidate_qualification/20260907
   sha256sum -c MANIFEST.sha256
 Result:
   all 25 listed files OK

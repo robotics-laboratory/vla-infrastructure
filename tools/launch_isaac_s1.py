@@ -11,7 +11,7 @@ import subprocess
 
 
 ROOT = Path(__file__).resolve().parents[1]
-STORAGE = Path("/data/ebulochkin")
+STORAGE = Path("/data/vla-infrastructure")
 QUALIFICATION = STORAGE / "isaaclab_candidate_qualification/20260907"
 LAB = QUALIFICATION / "candidate_b_exact"
 ENVIRONMENT = STORAGE / "envs/isaac-s1-candidate-b"

@@ -1,4 +1,4 @@
-All commands ran from /home/ebulochkin/vla_infrastructure on branch migration/v5.2.
+All commands ran from the repository root on branch migration/v5.2.
 Environment/profile: core / offline_tests.
 
 COMMAND: uv lock --check

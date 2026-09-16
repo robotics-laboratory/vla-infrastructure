@@ -100,12 +100,12 @@ SOURCE IDENTITIES AT AUDIT TIME
 
 - Repository revision: 9e94c9b867f9b11bdd70b49e7db8f897c9bf84ce
 - CloudXR server log source:
-  /home/ebulochkin/.cloudxr/logs/cxr_server.2026-08-30T134730Z.log
+  $HOME/.cloudxr/logs/cxr_server.2026-08-30T134730Z.log
   SHA-256: 28f5406a44aa30e1efcd2a5b4c2752f549519fc81001257540badf07194bb415
 - CloudXR WSS log source:
-  /home/ebulochkin/.cloudxr/logs/wss.2026-08-30T134735Z.log
+  $HOME/.cloudxr/logs/wss.2026-08-30T134735Z.log
   SHA-256: 7d216d137a3cf52ec61aa2803d7b117dd5c2abc847d86d70720ba7763daa2f53
-- CloudXR environment source: /home/ebulochkin/.cloudxr/run/cloudxr.env
+- CloudXR environment source: $HOME/.cloudxr/run/cloudxr.env
   SHA-256: a41c9e5d504f4cca827eda98af5a5ef90756de6457021131b32f4db407fdb08b
 - Diagnostic source SHA-256:
   03198e741e62cb7e0bda2b649d65dc1073ddc9259e5c5446339c6ae50834e1ae

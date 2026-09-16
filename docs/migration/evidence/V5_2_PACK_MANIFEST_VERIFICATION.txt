@@ -1,5 +1,5 @@
 Archive:
-/home/ebulochkin/.codex/attachments/3255b88c-09d5-4011-9924-84d621bb6152/piper_x_codex_instruction_pack_v5_2_hardened.zip
+piper_x_codex_instruction_pack_v5_2_hardened.zip (source attachment basename)
 
 Archive SHA-256:
 e46212c9188d5c9a49a7c4f176e1a7d8c0edec5b1d568d937818ba51c71251b3

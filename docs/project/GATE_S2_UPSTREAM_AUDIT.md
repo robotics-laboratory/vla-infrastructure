@@ -11,7 +11,7 @@ Date: 2026-09-08
 | What upstream already owns | XR Kit experiences; CloudXR launch; OpenXR handle acquisition; one `TeleopSessionLifecycle`; controller tracking; controller-to-Isaac anchor transform; relative SE(3) filtering/deadband; recovery/rebase seams; `DifferentialIKController`; articulation and camera lifecycles. |
 | Exact remaining gap | Bind one coherent left/right controller source to the accepted two PIPER-X articulations; define PIPER-X-specific clutch, tracking-recovery, gripper, scale, and reset semantics; pack the two upstream source streams into that processor; retain human evidence. |
 | Processor / config / adapter required | One concrete pure bimanual processor, one fixed upstream pipeline composition, one narrow subclass that suppresses Candidate B's redundant anchor-hotkey controller source, and one S1-loop integration branch. |
-| Environment impact | Activate only Candidate B's exact frozen `teleop` extra inside `/data/ebulochkin/envs/isaac-s1-candidate-b`. No core change, global repin, out-of-lock package, or upstream-checkout mutation. |
+| Environment impact | Activate only Candidate B's exact frozen `teleop` extra inside `/data/vla-infrastructure/envs/isaac-s1-candidate-b`. No core change, global repin, out-of-lock package, or upstream-checkout mutation. |
 | Why no project framework is needed | Candidate B owns application, session, XR, retargeting, IK, articulation, and camera behavior. The project code is a PIPER-X edge mapping, not a simulator/robot/camera backend or generic teleop layer. |
 
 ## Selected upstream seams

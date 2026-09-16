@@ -6,12 +6,12 @@ Command:
   OMNI_KIT_ACCEPT_EULA=Y python3 tools/launch_isaac_s1.py
 
 Authoritative result:
-  path: /data/ebulochkin/cache/isaac-s1/runs/20260908T065807Z/result.json
+  path: /data/vla-infrastructure/cache/isaac-s1/runs/20260908T065807Z/result.json
   sha256: 2f2db5e95275c841ce2478cffd8952b04135087e3f1e290b31ae557054090ad5
   passed: true
 
 Authoritative stdout:
-  path: /data/ebulochkin/cache/isaac-s1/runs/20260908T065807Z/stdout.log
+  path: /data/vla-infrastructure/cache/isaac-s1/runs/20260908T065807Z/stdout.log
   sha256: fcd1e4e1db87a2441777fd4ac890b017562e7ae39709c3d140bb7600564bb8f8
   child exit code: 0
   clean shutdown observed by launcher: true

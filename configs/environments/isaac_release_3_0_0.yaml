@@ -7,7 +7,7 @@ acceptance_owner:
 environment_id: isaac
 purpose: Isolated NVIDIA Isaac application/runtime for PIPER-X simulation, rendering, teleoperation, native recording, generation, and the Isaac side of E1.
 manager: uv
-canonical_launch_prefix: uv run --project /data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact --frozen --no-sync
+canonical_launch_prefix: uv run --project /data/vla-infrastructure/isaaclab_candidate_qualification/20260907/candidate_b_exact --frozen --no-sync
 python:
   implementation: CPython
   version: 3.12.13
@@ -17,7 +17,7 @@ upstream:
     release_branch: release/3.0.0
     commit: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
     source_version: 16.4.0
-    checkout: /data/ebulochkin/isaaclab_candidate_qualification/20260907/candidate_b_exact
+    checkout: /data/vla-infrastructure/isaaclab_candidate_qualification/20260907/candidate_b_exact
     checkout_state: exact detached clean checkout
     install_strategy: Exact upstream frozen workspace using uv sync --frozen --extra isaacsim --active for S1 and --extra teleop --active for S2; no project-local dependency patch.
   isaac_sim:
@@ -42,7 +42,7 @@ upstream:
 frozen_workspace:
   pyproject_sha256: b691862409ab8ad58b074ac32ce7f071e3895ec10975444b9e62995741ace159
   uv_lock_sha256: 80eb2c4e1155dd9e9736506d41cdbe327df74ee2b005bdecc0fb7c87c8b8bb84
-  materialized_environment: /data/ebulochkin/envs/isaac-s1-candidate-b
+  materialized_environment: /data/vla-infrastructure/envs/isaac-s1-candidate-b
   materialization_command: VIRTUAL_ENV=<materialized_environment> UV_CACHE_DIR=<qualification_root>/uv_cache UV_LINK_MODE=copy uv sync --frozen --extra teleop --active
   override_mechanism: Candidate B upstream pyproject.toml [tool.uv].override-dependencies replaces requirements for every requester; these are upstream-owned overrides, not project-local edits.
   override_dependencies:
@@ -98,7 +98,7 @@ host_observation_at_acceptance:
   driver_change_required: false
   gpu: NVIDIA GeForce RTX 4090
 qualification:
-  root: /data/ebulochkin/isaaclab_candidate_qualification/20260907
+  root: /data/vla-infrastructure/isaaclab_candidate_qualification/20260907
   manifest_sha256: b18012f517e40f11a51a5af102b9355c5fe0086b2b6ddb83f7b63e8e3bce7d1b
   report_sha256: 1983c241727e5726971aaab8d4a1b806df798384bbea0cedd6e0e14ecc72d918
   one_camera_result_sha256: 3c25ce92a72d6db52cceb2e76c5a6fc770313cd3bda9eefd4b2955f8c68e8d86

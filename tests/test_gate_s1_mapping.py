@@ -70,7 +70,7 @@ def test_s1_config_keeps_process_boundary_and_30_hz_decimation() -> None:
     assert config["environment"]["upstream_frozen_workspace"] is True
     assert config["environment"]["upstream_override_conflicts"] == 11
     assert config["environment"]["materialized_path"] == (
-        "/data/ebulochkin/envs/isaac-s1-candidate-b"
+        "/data/vla-infrastructure/envs/isaac-s1-candidate-b"
     )
     assert config["execution"]["action_repeat"] == 4
     assert config["execution"]["physics_dt_s"] * 4 == config["execution"]["control_dt_s"]

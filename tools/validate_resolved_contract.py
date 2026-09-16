@@ -146,7 +146,7 @@ def validate_artifacts(d, root):
         if not path and not uri:
             out.append(f"artifact {aid}: path or uri required")
         if path:
-            p = Path(path)
+            p = Path(path).expanduser()
             p = p if p.is_absolute() else root / p
             if not p.exists():
                 out.append(f"artifact {aid}: local path missing: {p}")
