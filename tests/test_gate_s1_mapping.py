@@ -97,6 +97,25 @@ def test_s1_runtime_uses_only_upstream_camera_path() -> None:
     assert "regex-batched FrameView over parented wrist prims" in source
 
 
+@pytest.mark.parametrize(
+    ("launcher", "profile"),
+    (
+        ("launch_isaac_s1.py", "isaac-s1"),
+        ("launch_isaac_s2.py", "isaac-s2"),
+        ("launch_isaac_robosyn_vr_demo.py", "robosyn-vr-demo"),
+    ),
+)
+def test_isaac_launchers_use_explicit_kit_portable_roots(
+    launcher: str, profile: str
+) -> None:
+    source = (ROOT / "tools" / launcher).read_text(encoding="utf-8")
+    assert f'RUNTIME_ROOT = STORAGE / "cache/{profile}"' in source
+    assert 'USER_CACHE_ROOT = RUNTIME_ROOT / "users" / f"uid-{os.getuid()}"' in source
+    assert 'KIT_PORTABLE_ROOT = USER_CACHE_ROOT / "kit"' in source
+    assert '"XDG_CACHE_HOME": str(USER_CACHE_ROOT / "xdg")' in source
+    assert 'f"--portable-root {KIT_PORTABLE_ROOT}"' in source
+
+
 def test_materialized_urdf_keeps_gate_c_frames_and_meshes(tmp_path: Path) -> None:
     # Exact source is already checked into Gate C; reconstruct its upstream CRLF bytes.
     source = tmp_path / "source"
