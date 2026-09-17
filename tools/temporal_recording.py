@@ -8,12 +8,13 @@ existing dataset boundary and delegates accepted frames to ``LeRobotDataset``.
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
+from dataclasses import dataclass
 import time
 from typing import Any, Protocol
 
 from lerobot.teleoperators.teleoperator import Teleoperator
 
-from tools.d0_temporal import SourceTiming, TemporalFrameRecorder
+from tools.d0_temporal import PreparedTemporalFrame, SourceTiming, TemporalFrameRecorder
 
 
 class ObservationTimingSource(Protocol):
@@ -28,7 +29,15 @@ class FrameTimingProvider(Protocol):
     def reset_episode(self) -> None: ...
 
 
-PoseTimingReader = Callable[[], Mapping[str, SourceTiming]]
+@dataclass(frozen=True)
+class TimedTeleopAction:
+    """An action and the exact XR pose identities used to produce it."""
+
+    action: Mapping[str, Any]
+    pose_timing: Mapping[str, SourceTiming]
+
+
+TimedActionReader = Callable[[], TimedTeleopAction]
 
 
 class TimestampedTeleoperator(Teleoperator):
@@ -44,21 +53,22 @@ class TimestampedTeleoperator(Teleoperator):
         self,
         teleop: Teleoperator,
         *,
-        pose_timing_reader: PoseTimingReader | None,
+        timed_action_reader: TimedActionReader | None,
         require_xr: bool,
         monotonic: Callable[[], float] = time.perf_counter,
     ) -> None:
-        if require_xr and pose_timing_reader is None:
+        if require_xr and timed_action_reader is None:
             raise ValueError(
-                "human_vr recording requires an XR acquisition-timing provider; "
-                "host receipt time is not accepted"
+                "human_vr recording requires an atomic action/XR acquisition reader; "
+                "a separate host receipt-time callback is not accepted"
             )
         self.teleop = teleop
-        self.pose_timing_reader = pose_timing_reader
+        self.timed_action_reader = timed_action_reader
         self.require_xr = require_xr
         self.monotonic = monotonic
         self._action_sequence = 0
         self._latest_timing: dict[str, SourceTiming] | None = None
+        self._before_action_return: Callable[[], None] | None = None
 
     @property
     def action_features(self) -> dict:
@@ -86,7 +96,16 @@ class TimestampedTeleoperator(Teleoperator):
         self.teleop.configure()
 
     def get_action(self) -> dict[str, Any]:
-        action = self.teleop.get_action()
+        if self.require_xr:
+            assert self.timed_action_reader is not None
+            timed_action = self.timed_action_reader()
+            if not isinstance(timed_action, TimedTeleopAction):
+                raise ValueError("timed action reader must return TimedTeleopAction")
+            action = dict(timed_action.action)
+            pose_timing = dict(timed_action.pose_timing)
+        else:
+            action = self.teleop.get_action()
+            pose_timing = {}
         action_timestamp = self.monotonic()
         self._action_sequence += 1
         timing: dict[str, SourceTiming] = {
@@ -96,8 +115,7 @@ class TimestampedTeleoperator(Teleoperator):
                 "host_monotonic",
             )
         }
-        if self.pose_timing_reader is not None:
-            pose_timing = dict(self.pose_timing_reader())
+        if self.require_xr:
             expected = {"xr.left_pose", "xr.right_pose"}
             if set(pose_timing) != expected:
                 raise ValueError(
@@ -107,7 +125,14 @@ class TimestampedTeleoperator(Teleoperator):
                 raise ValueError("XR timing provider returned incomplete timing metadata")
             timing.update(pose_timing)
         self._latest_timing = timing
+        if self._before_action_return is not None:
+            self._before_action_return()
         return action
+
+    def set_before_action_return(self, callback: Callable[[], None]) -> None:
+        if self._before_action_return is not None:
+            raise RuntimeError("pre-actuation temporal callback is already configured")
+        self._before_action_return = callback
 
     def send_feedback(self, feedback: dict[str, Any]) -> None:
         self.teleop.send_feedback(feedback)
@@ -178,6 +203,7 @@ class TemporalLeRobotDatasetAdapter:
         self.recorder = recorder
         self.timing_provider = timing_provider
         self.monotonic = monotonic
+        self._pending: PreparedTemporalFrame | None = None
 
     @property
     def features(self) -> Mapping[str, Mapping[str, Any]]:
@@ -188,15 +214,28 @@ class TemporalLeRobotDatasetAdapter:
         return self.dataset.fps
 
     def add_frame(self, frame: dict[str, Any]) -> None:
+        if self._pending is None:
+            raise RuntimeError(
+                "dataset frame has no pre-actuation temporal validation; "
+                "use the paired TimestampedTeleoperator"
+            )
+        self.recorder.commit_frame(frame, self._pending)
+        self._pending = None
+
+    def prepare_for_actuation(self) -> None:
+        """Validate the current observation/action bundle before record_loop can send it."""
+
+        if self._pending is not None:
+            raise RuntimeError("previous temporal frame was not committed")
         timing = self.timing_provider.current_frame_timing()
-        selection_timestamp = self.monotonic()
-        self.recorder.add_frame(
-            frame,
+        self._pending = self.recorder.prepare_frame(
             timing,
-            selection_timestamp=selection_timestamp,
+            selection_timestamp=self.monotonic(),
         )
 
     def save_episode(self, *args: Any, **kwargs: Any) -> Any:
+        if self._pending is not None:
+            raise RuntimeError("cannot save an episode with an uncommitted temporal frame")
         result = self.dataset.save_episode(*args, **kwargs)
         self._reset_episode_state()
         return result
@@ -207,11 +246,43 @@ class TemporalLeRobotDatasetAdapter:
         return result
 
     def _reset_episode_state(self) -> None:
+        self._pending = None
         self.recorder.reset_episode()
         self.timing_provider.reset_episode()
 
     def __getattr__(self, name: str) -> Any:
         return getattr(self.dataset, name)
+
+
+def _validate_recording_camera_rates(
+    dataset: Any,
+    robot: ObservationTimingSource,
+    required_sources: tuple[str, ...],
+) -> None:
+    """Prevent a dense logical grid from overstating a slower physical camera cadence."""
+
+    cameras = getattr(robot, "cameras", None)
+    if not isinstance(cameras, Mapping):
+        return
+    dataset_fps = float(dataset.fps)
+    for source in required_sources:
+        prefix = "observation.images."
+        if not source.startswith(prefix):
+            continue
+        name = source.removeprefix(prefix)
+        camera = cameras.get(name)
+        if camera is None:
+            raise ValueError(f"required temporal camera {name!r} is not configured")
+        camera_fps = getattr(camera, "fps", None)
+        if (
+            isinstance(camera_fps, bool)
+            or not isinstance(camera_fps, (int, float))
+            or camera_fps < dataset_fps
+        ):
+            raise ValueError(
+                f"camera {name!r} fps={camera_fps!r} cannot supply a duplicate-free "
+                f"dataset grid at {dataset_fps:g} fps"
+            )
 
 
 def wrap_lerobot_dataset_for_temporal_recording(
@@ -221,14 +292,14 @@ def wrap_lerobot_dataset_for_temporal_recording(
     robot: ObservationTimingSource,
     teleop: Teleoperator,
     source_class: str,
-    pose_timing_reader: PoseTimingReader | None = None,
+    timed_action_reader: TimedActionReader | None = None,
     monotonic: Callable[[], float] = time.perf_counter,
 ) -> tuple[TemporalLeRobotDatasetAdapter, TimestampedTeleoperator]:
     """Build the only project-owned layer needed by upstream ``record_loop``."""
 
     timed_teleop = TimestampedTeleoperator(
         teleop,
-        pose_timing_reader=pose_timing_reader,
+        timed_action_reader=timed_action_reader,
         require_xr=source_class == "human_vr",
         monotonic=monotonic,
     )
@@ -238,13 +309,13 @@ def wrap_lerobot_dataset_for_temporal_recording(
         source_class=source_class,
         accepted_clock_domains=("host_monotonic",),
     )
+    _validate_recording_camera_rates(dataset, robot, recorder.required_sources)
     provider = LeRobotFrameTimingProvider(robot, timed_teleop, recorder.required_sources)
-    return (
-        TemporalLeRobotDatasetAdapter(
-            dataset,
-            recorder,
-            provider,
-            monotonic=monotonic,
-        ),
-        timed_teleop,
+    adapter = TemporalLeRobotDatasetAdapter(
+        dataset,
+        recorder,
+        provider,
+        monotonic=monotonic,
     )
+    timed_teleop.set_before_action_return(adapter.prepare_for_actuation)
+    return adapter, timed_teleop

@@ -46,10 +46,23 @@ class SourceTiming:
             or self.sequence < 0
         ):
             raise ValueError("sequence must be a non-negative integer")
-        if not math.isfinite(self.source_timestamp):
+        if (
+            isinstance(self.source_timestamp, bool)
+            or not isinstance(self.source_timestamp, (int, float))
+            or not math.isfinite(self.source_timestamp)
+        ):
             raise ValueError("source_timestamp must be finite")
         if not self.clock_domain:
             raise ValueError("clock_domain must be non-empty")
+
+
+@dataclass(frozen=True)
+class PreparedTemporalFrame:
+    """Validated temporal enrichment awaiting the matching dataset frame."""
+
+    enrichment: Mapping[str, Any]
+    accepted: Mapping[str, SourceTiming]
+    previous: Mapping[str, SourceTiming]
 
 
 @dataclass(frozen=True)
@@ -172,6 +185,11 @@ class TemporalFrameRecorder:
         accepted_clock_domains: tuple[str, ...] = ("host_monotonic",),
     ) -> "TemporalFrameRecorder":
         timing = contract["dataset"]["temporal_semantics"]["source_timing"]
+        source_classes = tuple(contract["taxonomy"]["source_classes"])
+        if source_class not in source_classes:
+            raise ValueError(
+                f"unknown source_class {source_class!r}; expected one of {source_classes}"
+            )
         group = "human_vr" if source_class == "human_vr" else "automated"
         required_sources = tuple(timing["required_feature_sets_by_source_class"][group])
         return cls(
@@ -192,15 +210,58 @@ class TemporalFrameRecorder:
     ) -> None:
         """Add one accepted frame, or reject it without calling upstream."""
 
+        prepared = self.prepare_frame(source_timing, selection_timestamp=selection_timestamp)
+        self.commit_frame(frame, prepared)
+
+    def prepare_frame(
+        self,
+        source_timing: Mapping[str, SourceTiming],
+        *,
+        selection_timestamp: float,
+    ) -> PreparedTemporalFrame:
+        """Validate source timing before actuation and retain its exact enrichment."""
+
         try:
-            enriched, accepted = self._validated_frame(
-                frame, source_timing, selection_timestamp=selection_timestamp
+            enrichment, accepted = self._validated_frame(
+                {}, source_timing, selection_timestamp=selection_timestamp
             )
+        except TemporalContractViolation as exc:
+            self.rejected_frames[exc.reason] += 1
+            raise
+        return PreparedTemporalFrame(
+            enrichment=enrichment,
+            accepted=accepted,
+            previous=dict(self._last_accepted),
+        )
+
+    def commit_frame(
+        self,
+        frame: Mapping[str, Any],
+        prepared: PreparedTemporalFrame,
+    ) -> None:
+        """Persist the dataset frame only if it matches the pre-actuation validation."""
+
+        try:
+            if dict(self._last_accepted) != dict(prepared.previous):
+                self._reject(
+                    "prepared_frame_order",
+                    "another temporal frame was committed after this bundle was prepared",
+                )
+            forbidden = {"timestamp", "frame_index"} & set(frame)
+            if forbidden:
+                self._reject("logical_time_override", f"LeRobot owns {sorted(forbidden)}")
+            overlap = set(frame) & set(prepared.enrichment)
+            if overlap:
+                self._reject(
+                    "temporal_metadata_override",
+                    f"frame must not provide recorder-owned fields {sorted(overlap)}",
+                )
+            enriched = {**dict(frame), **dict(prepared.enrichment)}
             self.dataset.add_frame(enriched)
         except TemporalContractViolation as exc:
             self.rejected_frames[exc.reason] += 1
             raise
-        self._last_accepted = accepted
+        self._last_accepted = dict(prepared.accepted)
         self.accepted_frames += 1
 
     def reset_episode(self) -> None:

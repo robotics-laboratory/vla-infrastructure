@@ -15,12 +15,14 @@ from lerobot.robots.utils import make_robot_from_config
 from lerobot_robot_piperx.piperx import (
     BiPiperXFollower,
     BiPiperXFollowerConfig,
+    CameraAcquisitionSample,
     PIPER_ACTION_KEYS,
     PIPER_JOINT_ACTION_KEYS,
     PiperXFollower,
     PiperXFollowerConfig,
     PiperXFollowerConfigBase,
 )
+from lerobot_robot_piperx.sdk import _timestamped_piper_interface
 
 
 EXPECTED_BIMANUAL_KEYS = tuple(f"left_{key}" for key in PIPER_ACTION_KEYS) + tuple(
@@ -43,12 +45,22 @@ class FakeCamera:
         self.disconnect_calls = 0
         self.latest_frame = value
         self.latest_timestamp = time.perf_counter()
+        self.acquisition_sequence = 0
         self.frame_lock = threading.Lock()
         self.new_frame_event = threading.Event()
         self.new_frame_event.set()
 
     def async_read(self) -> object:
         return self.value
+
+    def async_read_with_acquisition_timing(self, timeout_ms: float = 200) -> CameraAcquisitionSample:
+        del timeout_ms
+        self.acquisition_sequence += 1
+        return CameraAcquisitionSample(
+            frame=self.value,
+            sequence=self.acquisition_sequence,
+            source_timestamp=time.perf_counter(),
+        )
 
     def connect(self) -> None:
         self.is_connected = True
@@ -94,6 +106,8 @@ class FakePiper:
         self.joint_hz = 30.0
         self.gripper_time_stamp = self.joint_time_stamp
         self.gripper_hz = 30.0
+        self.joint_pair_timestamps = (self.joint_time_stamp,) * 3
+        self.component_identity = (1, 1, 1, 1)
         FakePiper.instances.append(self)
 
     def ConnectPort(self) -> None:
@@ -137,6 +151,19 @@ class FakePiper:
             time_stamp=self.gripper_time_stamp,
             Hz=self.gripper_hz,
             gripper_state=self.gripper_feedback,
+        )
+
+    def GetTemporalObservationSnapshot(self) -> SimpleNamespace:
+        return SimpleNamespace(
+            joint_values=tuple(
+                getattr(self.joint_feedback, f"joint_{index}") for index in range(1, 7)
+            ),
+            joint_timestamps=self.joint_pair_timestamps,
+            joint_hz=self.joint_hz,
+            gripper_value=self.gripper_feedback.grippers_angle,
+            gripper_timestamp=self.gripper_time_stamp,
+            gripper_hz=self.gripper_hz,
+            identity=self.component_identity,
         )
 
 
@@ -193,7 +220,7 @@ import importlib.metadata as metadata
 from lerobot.robots.config import RobotConfig
 from lerobot.utils.import_utils import register_third_party_plugins
 assert any(d.metadata['Name'] == 'lerobot_robot_piperx' for d in metadata.distributions())
-assert metadata.version('lerobot_robot_piperx') == '0.2.1'
+assert metadata.version('lerobot_robot_piperx') == '0.2.2'
 register_third_party_plugins()
 from lerobot_robot_piperx import BiPiperXFollowerConfig, PiperXFollowerConfig
 assert PiperXFollowerConfig(port='offline').type == 'piperx_follower'
@@ -212,6 +239,40 @@ assert BiPiperXFollowerConfig(
         self.assertIsInstance(robot, PiperXFollower)
         self.assertEqual(robot.robot_type, "piperx_follower")
         self.assertEqual(FakePiper.instances[0].kwargs["can_name"], "fake-can")
+
+    def test_sdk_temporal_extension_captures_each_can_component_atomically(self) -> None:
+        class Base:
+            def __init__(self) -> None:
+                self.joint = SimpleNamespace(**{f"joint_{index}": 0 for index in range(1, 7)})
+                self.gripper = SimpleNamespace(grippers_angle=0)
+
+            def ParseCANFrame(self, message: SimpleNamespace) -> None:
+                if message.arbitration_id in (0x2A5, 0x2A6, 0x2A7):
+                    offset = {0x2A5: 1, 0x2A6: 3, 0x2A7: 5}[message.arbitration_id]
+                    setattr(self.joint, f"joint_{offset}", message.values[0])
+                    setattr(self.joint, f"joint_{offset + 1}", message.values[1])
+                elif message.arbitration_id == 0x2A8:
+                    self.gripper.grippers_angle = message.values[0]
+
+            def GetArmJointMsgs(self) -> SimpleNamespace:
+                return SimpleNamespace(joint_state=self.joint, Hz=30.0)
+
+            def GetArmGripperMsgs(self) -> SimpleNamespace:
+                return SimpleNamespace(gripper_state=self.gripper, Hz=30.0)
+
+        interface = _timestamped_piper_interface(Base)()
+        interface.ParseCANFrame(SimpleNamespace(arbitration_id=0x2A5, timestamp=10.01, values=(1, 2)))
+        interface.ParseCANFrame(SimpleNamespace(arbitration_id=0x2A6, timestamp=10.02, values=(3, 4)))
+        interface.ParseCANFrame(SimpleNamespace(arbitration_id=0x2A7, timestamp=10.03, values=(5, 6)))
+        interface.ParseCANFrame(SimpleNamespace(arbitration_id=0x2A8, timestamp=10.04, values=(7,)))
+
+        snapshot = interface.GetTemporalObservationSnapshot()
+
+        self.assertEqual(snapshot.joint_values, (1, 2, 3, 4, 5, 6))
+        self.assertEqual(snapshot.joint_timestamps, (10.01, 10.02, 10.03))
+        self.assertEqual(snapshot.gripper_value, 7)
+        self.assertEqual(snapshot.gripper_timestamp, 10.04)
+        self.assertEqual(snapshot.identity, (1, 1, 1, 1))
 
     def test_factory_constructs_the_bimanual_robot_without_hardware(self) -> None:
         config = BiPiperXFollowerConfig(
@@ -306,13 +367,60 @@ assert BiPiperXFollowerConfig(
         self.assertTrue(all(sample.sequence == 1 for sample in timing.values()))
         self.assertTrue(all(sample.clock_domain == "host_monotonic" for sample in timing.values()))
 
+    def test_temporal_state_timestamp_uses_oldest_can_component(self) -> None:
+        robot = PiperXFollower(PiperXFollowerConfig(port="left", temporal_metadata=True))
+        self.mark_connected(robot)
+        robot._calibrate_wall_to_monotonic()
+        arm = FakePiper.instances[0]
+        now = time.time()
+        arm.joint_pair_timestamps = (now - 0.040, now - 0.010, now - 0.005)
+        arm.gripper_time_stamp = now - 0.002
+
+        robot.get_observation()
+        state_timing = robot.latest_observation_timing()["observation.state"]
+
+        self.assertAlmostEqual(
+            state_timing.source_timestamp,
+            robot._to_host_monotonic(now - 0.040),
+            places=6,
+        )
+
+    def test_temporal_recording_rejects_receipt_only_camera_timestamp(self) -> None:
+        robot = PiperXFollower(
+            PiperXFollowerConfig(
+                port="left",
+                temporal_metadata=True,
+                cameras={"wrist": FakeCameraConfig(height=2, width=2)},
+            )
+        )
+        self.mark_connected(robot)
+        robot._calibrate_wall_to_monotonic()
+        robot.cameras["wrist"].async_read_with_acquisition_timing = None
+
+        with self.assertRaisesRegex(RuntimeError, "receipt/postprocess timestamps"):
+            robot.get_observation()
+
+    def test_camera_acquisition_sample_rejects_invalid_source_timestamp(self) -> None:
+        for invalid in (True, "100.0", float("nan"), float("inf")):
+            with self.subTest(invalid=invalid):
+                with self.assertRaisesRegex(ValueError, "source_timestamp must be finite"):
+                    CameraAcquisitionSample(  # type: ignore[arg-type]
+                        frame=object(),
+                        sequence=1,
+                        source_timestamp=invalid,
+                    )
+
     def test_temporal_recording_rejects_missing_sdk_timestamp(self) -> None:
         robot = PiperXFollower(PiperXFollowerConfig(port="left", temporal_metadata=True))
         self.mark_connected(robot)
         robot._calibrate_wall_to_monotonic()
-        FakePiper.instances[0].joint_time_stamp = 0.0
+        FakePiper.instances[0].joint_pair_timestamps = (
+            0.0,
+            FakePiper.instances[0].joint_time_stamp,
+            FakePiper.instances[0].joint_time_stamp,
+        )
 
-        with self.assertRaisesRegex(RuntimeError, "joint telemetry"):
+        with self.assertRaisesRegex(RuntimeError, "component timestamps"):
             robot.get_observation()
 
     def test_missing_joint_telemetry_rejects_the_observation(self) -> None:

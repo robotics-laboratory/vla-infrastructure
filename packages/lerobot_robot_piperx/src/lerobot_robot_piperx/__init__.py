@@ -3,6 +3,7 @@
 from .piperx import (
     BiPiperXFollower,
     BiPiperXFollowerConfig,
+    CameraAcquisitionSample,
     PiperXFollower,
     PiperXFollowerConfig,
 )
@@ -10,6 +11,7 @@ from .piperx import (
 __all__ = [
     "BiPiperXFollower",
     "BiPiperXFollowerConfig",
+    "CameraAcquisitionSample",
     "PiperXFollower",
     "PiperXFollowerConfig",
 ]

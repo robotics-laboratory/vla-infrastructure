@@ -71,6 +71,28 @@ class PiperXSampleTiming:
     clock_domain: str = "host_monotonic"
 
 
+@dataclass(frozen=True)
+class CameraAcquisitionSample:
+    """One camera frame paired atomically with source-owned acquisition identity."""
+
+    frame: Any
+    sequence: int
+    source_timestamp: float
+    clock_domain: str = "host_monotonic"
+
+    def __post_init__(self) -> None:
+        if isinstance(self.sequence, bool) or not isinstance(self.sequence, int) or self.sequence < 0:
+            raise ValueError("camera sequence must be a non-negative integer")
+        if (
+            isinstance(self.source_timestamp, bool)
+            or not isinstance(self.source_timestamp, (int, float))
+            or not math.isfinite(self.source_timestamp)
+        ):
+            raise ValueError("camera source_timestamp must be finite")
+        if self.clock_domain != "host_monotonic":
+            raise ValueError("camera acquisition time must already use host_monotonic")
+
+
 class PiperXFollower(Robot):
     """A PIPER-X follower using the pinned SDK's J-position command path."""
 
@@ -254,6 +276,8 @@ class PiperXFollower(Robot):
 
     @check_if_not_connected
     def get_observation(self) -> RobotObservation:
+        if self.config.temporal_metadata:
+            return self._get_temporal_observation()
         joint_envelope = self.arm.GetArmJointMsgs()
         gripper_envelope = self.arm.GetArmGripperMsgs()
         joint_state = self._telemetry_payload(joint_envelope, "joint_state", "joint")
@@ -265,29 +289,78 @@ class PiperXFollower(Robot):
         observation["gripper.pos"] = abs(
             milli_to_unit(self._telemetry_value(gripper_state, "grippers_angle", "gripper"))
         )
-        timing: dict[str, PiperXSampleTiming] = {}
-        if self.config.temporal_metadata:
-            joint_wall = float(joint_envelope.time_stamp)
-            gripper_wall = float(gripper_envelope.time_stamp)
-            state_identity = (joint_wall, gripper_wall)
-            state_timestamp = min(
-                self._to_host_monotonic(joint_wall),
-                self._to_host_monotonic(gripper_wall),
-            )
-            timing["observation.state"] = self._sample_timing(
-                "observation.state", state_identity, state_timestamp
-            )
         for key, camera in self.cameras.items():
-            if self.config.temporal_metadata:
-                image, camera_timestamp = self._read_camera_with_timing(camera)
-                source = f"observation.images.{key}"
-                timing[source] = self._sample_timing(source, camera_timestamp, camera_timestamp)
-                observation[key] = image
-            else:
-                observation[key] = camera.async_read()
-        if self.config.temporal_metadata:
-            self._latest_observation_timing = timing
+            observation[key] = camera.async_read()
         return observation
+
+    def _get_temporal_observation(self) -> RobotObservation:
+        snapshot_reader = getattr(self.arm, "GetTemporalObservationSnapshot", None)
+        if not callable(snapshot_reader):
+            raise RuntimeError(
+                "PIPER-X SDK adapter does not expose atomic per-component temporal feedback"
+            )
+        snapshot = snapshot_reader()
+        self._validate_temporal_snapshot(snapshot)
+        observation: RobotObservation = {
+            f"{joint}.pos": milli_to_unit(value)
+            for joint, value in zip(PIPER_JOINT_NAMES, snapshot.joint_values, strict=True)
+        }
+        observation["gripper.pos"] = abs(milli_to_unit(snapshot.gripper_value))
+
+        component_wall_timestamps = (
+            *snapshot.joint_timestamps,
+            snapshot.gripper_timestamp,
+        )
+        state_timestamp = min(
+            self._to_host_monotonic(float(timestamp))
+            for timestamp in component_wall_timestamps
+        )
+        timing: dict[str, PiperXSampleTiming] = {
+            "observation.state": self._sample_timing(
+                "observation.state", tuple(snapshot.identity), state_timestamp
+            )
+        }
+        for key, camera in self.cameras.items():
+            sample = self._read_camera_with_acquisition_timing(camera)
+            source = f"observation.images.{key}"
+            observation[key] = sample.frame
+            timing[source] = PiperXSampleTiming(
+                sequence=sample.sequence,
+                source_timestamp=sample.source_timestamp,
+                clock_domain=sample.clock_domain,
+            )
+        self._latest_observation_timing = timing
+        return observation
+
+    @staticmethod
+    def _validate_temporal_snapshot(snapshot: Any) -> None:
+        try:
+            joint_values = tuple(snapshot.joint_values)
+            joint_timestamps = tuple(snapshot.joint_timestamps)
+            identity = tuple(snapshot.identity)
+            gripper_value = snapshot.gripper_value
+            gripper_timestamp = snapshot.gripper_timestamp
+            joint_hz = snapshot.joint_hz
+            gripper_hz = snapshot.gripper_hz
+        except (AttributeError, TypeError) as exc:
+            raise RuntimeError("PIPER-X temporal feedback snapshot is incomplete") from exc
+        if len(joint_values) != 6 or len(joint_timestamps) != 3 or len(identity) != 4:
+            raise RuntimeError("PIPER-X temporal feedback snapshot has invalid dimensions")
+        numeric_values = (*joint_values, gripper_value)
+        if any(
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(float(value))
+            for value in numeric_values
+        ):
+            raise RuntimeError("PIPER-X temporal feedback contains invalid numeric payload")
+        if any(
+            not math.isfinite(float(value)) or float(value) <= 0
+            for value in (*joint_timestamps, gripper_timestamp, joint_hz, gripper_hz)
+        ):
+            raise RuntimeError(
+                "PIPER-X temporal feedback requires positive finite component timestamps and rates"
+            )
 
     def latest_observation_timing(self) -> dict[str, PiperXSampleTiming]:
         if not self.config.temporal_metadata:
@@ -324,22 +397,19 @@ class PiperXFollower(Robot):
         return PiperXSampleTiming(self._source_sequences.get(source, 0), source_timestamp)
 
     @staticmethod
-    def _read_camera_with_timing(camera: Any) -> tuple[Any, float]:
-        event = getattr(camera, "new_frame_event", None)
-        lock = getattr(camera, "frame_lock", None)
-        if event is None or lock is None or not hasattr(camera, "latest_timestamp"):
+    def _read_camera_with_acquisition_timing(camera: Any) -> CameraAcquisitionSample:
+        reader = getattr(camera, "async_read_with_acquisition_timing", None)
+        if not callable(reader):
             raise RuntimeError(
-                "camera backend does not expose atomic frame/acquisition timing required for recording"
+                "camera backend does not expose source-owned acquisition timing; "
+                "host receipt/postprocess timestamps are not accepted for recording"
             )
-        if not event.wait(timeout=0.2):
-            raise TimeoutError("timed out waiting for a timestamped camera frame")
-        with lock:
-            frame = getattr(camera, "latest_frame", None)
-            timestamp = getattr(camera, "latest_timestamp", None)
-            event.clear()
-        if frame is None or not isinstance(timestamp, (int, float)):
-            raise RuntimeError("camera returned a frame without acquisition timing")
-        return frame, float(timestamp)
+        sample = reader(timeout_ms=200)
+        if not isinstance(sample, CameraAcquisitionSample):
+            raise RuntimeError(
+                "camera backend must return CameraAcquisitionSample atomically with the frame"
+            )
+        return sample
 
     def _validate_action(self, action: RobotAction) -> None:
         if not self.is_motion_ready:

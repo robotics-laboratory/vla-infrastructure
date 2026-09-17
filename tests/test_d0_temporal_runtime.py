@@ -66,6 +66,12 @@ def _samples(sequence: int = 1) -> dict[str, SourceTiming]:
     }
 
 
+@pytest.mark.parametrize("invalid", [True, "100.0", float("nan"), float("inf")])
+def test_source_timing_rejects_non_numeric_or_non_finite_timestamp(invalid: object) -> None:
+    with pytest.raises(ValueError, match="source_timestamp must be finite"):
+        SourceTiming(1, invalid, "host_monotonic")  # type: ignore[arg-type]
+
+
 def test_recorder_persists_source_time_without_overriding_logical_time() -> None:
     contract = _contract()
     timing = contract["dataset"]["temporal_semantics"]["source_timing"]
