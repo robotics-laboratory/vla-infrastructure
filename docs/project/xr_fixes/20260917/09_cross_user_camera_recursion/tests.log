@@ -1,0 +1,11 @@
+Candidate-stack unit + launcher mapping tests:
+35 passed, 35 upstream torch.jit deprecation warnings in 1.47s
+
+Ruff:
+All checks passed!
+
+git diff --check:
+PASS
+
+Fresh UID-1006 XR smoke:
+INCONCLUSIVE — reached Isaac RTX cameras and FrameView initialization, then emitted no progress before manual interruption. The demo feed was not bound, so no camera diagnostic artifact was expected or produced.

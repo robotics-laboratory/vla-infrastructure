@@ -1,0 +1,7 @@
+git rev-parse HEAD
+git rev-parse origin/experiment/robosyn-vr-demo
+git -C /data/vla-infrastructure/isaaclab_candidate_qualification/20260907/candidate_b_exact merge-base --is-ancestor 6f35c455 HEAD
+PYTHONPATH=/data/vla-infrastructure/envs/isaac-s1-candidate-b/lib/python3.12/site-packages:/data/vla-infrastructure/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab:/data/vla-infrastructure/isaaclab_candidate_qualification/20260907/candidate_b_exact/source/isaaclab_teleop:. /home/ebulochkin/vla_infrastructure/.venv/bin/python -m pytest -q tests/test_isaac_s2_upstream.py
+/home/ebulochkin/vla_infrastructure/.venv/bin/python -m ruff check tools/isaac_robosyn_vr_demo.py tools/launch_isaac_robosyn_vr_demo.py tests/test_isaac_s2_upstream.py
+OMNI_KIT_ACCEPT_EULA=Y /home/ebulochkin/vla_infrastructure/.venv/bin/python tools/launch_isaac_robosyn_vr_demo.py --xr-smoke --hud-on-start
+

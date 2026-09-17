@@ -1,0 +1,10 @@
+{
+  "docs/project/ISAAC_XR_BACKLOG_20260915.md": "4f8da422a8c532d6afab714af17ed6a474ee69472aaf7bed3f9ae617811e7d81",
+  "docs/project/xr_fixes/20260917/09_cross_user_camera_recursion/analysis.md": "5197365f60e817e81bdb0fc1df29160186b1360715084b2b66b8e9a1d0df3920",
+  "docs/project/xr_fixes/20260917/09_cross_user_camera_recursion/commands.txt": "fadc57febabb009e14c9be926e54e32af816bbf239f7b2774fc82e034fa2334b",
+  "docs/project/xr_fixes/20260917/09_cross_user_camera_recursion/manifest.json": "9e514bca4595d615a57c8115219686e2488e36946bbf959db87ffb1fa63fdbc4",
+  "docs/project/xr_fixes/20260917/09_cross_user_camera_recursion/tests.log": "37d12ed00281e7f4c4896cc5ff5e01fc636d93af7382f8cd1e03f816cba4ae04",
+  "tests/test_isaac_s2_upstream.py": "11f0aab514987ff5c33d1157a7d8708f753ff415dc76a5f5fd4e59472c6454d5",
+  "tools/isaac_robosyn_vr_demo.py": "41c4cc328a5e3f643434047e24d24b95316367b763b59429724664e1b116d33a",
+  "tools/launch_isaac_robosyn_vr_demo.py": "5c706981ed11a232edf6769b75337eb93f745d367d880705c1d2f4266baab5f0"
+}

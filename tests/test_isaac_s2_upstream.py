@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import importlib.metadata
+import json
+from pathlib import Path
+import tempfile
 import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -40,6 +43,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
             )
             from tools.isaac_robosyn_vr_demo import (
                 DemoRuntime,
+                _CameraFeedFrameDiagnostics,
                 _CpuRgbaPanel,
                 _CpuStagedFeedPresenter,
                 _FreshVisibleFeedUpdates,
@@ -55,6 +59,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         cls.ControllerStateRetargeter = ControllerStateRetargeter
         cls.PiperXIsaacTeleopDevice = PiperXIsaacTeleopDevice
         cls.DemoRuntime = DemoRuntime
+        cls.CameraFeedFrameDiagnostics = _CameraFeedFrameDiagnostics
         cls.CpuStagedFeedPresenter = _CpuStagedFeedPresenter
         cls.CpuRgbaPanel = _CpuRgbaPanel
         cls.FreshVisibleFeedUpdates = _FreshVisibleFeedUpdates
@@ -634,6 +639,29 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         )
         presenter = self.CpuStagedFeedPresenter(upstream)
         self.assertIsNone(presenter.create_image_source("left_wrist", object(), object()))
+
+    def test_camera_feed_diagnostics_preserve_source_and_upload_boundary(self) -> None:
+        import torch
+
+        source = torch.zeros((3, 4, 4), dtype=torch.uint8)
+        source[..., 0] = 17
+        source[..., 3] = 255
+        feed = SimpleNamespace(
+            cfg=SimpleNamespace(camera_name="left_wrist"),
+            image=source,
+            upload_image=source.clone(),
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            diagnostics = self.CameraFeedFrameDiagnostics(Path(directory))
+            diagnostics.capture(feed, 1, "display-visible-1")
+            manifest = json.loads(Path(directory, "manifest.json").read_text())
+            self.assertEqual(len(manifest), 1)
+            self.assertTrue(manifest[0]["source_upload_identical"])
+            self.assertEqual(manifest[0]["shape"], [3, 4, 4])
+            self.assertEqual(
+                Path(directory, manifest[0]["source"]).read_bytes(),
+                b"P6\n4 3\n255\n" + source[..., :3].numpy().tobytes(),
+            )
 
     def test_demo_panel_uses_pixels_for_layout_without_changing_physical_size(self) -> None:
         for meters_per_unit in (1.0, 0.01):
