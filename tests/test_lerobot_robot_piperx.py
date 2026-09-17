@@ -53,7 +53,9 @@ class FakeCamera:
     def async_read(self) -> object:
         return self.value
 
-    def async_read_with_acquisition_timing(self, timeout_ms: float = 200) -> CameraAcquisitionSample:
+    def async_read_with_acquisition_timing(
+        self, timeout_ms: float = 200
+    ) -> CameraAcquisitionSample:
         del timeout_ms
         self.acquisition_sequence += 1
         return CameraAcquisitionSample(
@@ -261,9 +263,15 @@ assert BiPiperXFollowerConfig(
                 return SimpleNamespace(gripper_state=self.gripper, Hz=30.0)
 
         interface = _timestamped_piper_interface(Base)()
-        interface.ParseCANFrame(SimpleNamespace(arbitration_id=0x2A5, timestamp=10.01, values=(1, 2)))
-        interface.ParseCANFrame(SimpleNamespace(arbitration_id=0x2A6, timestamp=10.02, values=(3, 4)))
-        interface.ParseCANFrame(SimpleNamespace(arbitration_id=0x2A7, timestamp=10.03, values=(5, 6)))
+        interface.ParseCANFrame(
+            SimpleNamespace(arbitration_id=0x2A5, timestamp=10.01, values=(1, 2))
+        )
+        interface.ParseCANFrame(
+            SimpleNamespace(arbitration_id=0x2A6, timestamp=10.02, values=(3, 4))
+        )
+        interface.ParseCANFrame(
+            SimpleNamespace(arbitration_id=0x2A7, timestamp=10.03, values=(5, 6))
+        )
         interface.ParseCANFrame(SimpleNamespace(arbitration_id=0x2A8, timestamp=10.04, values=(7,)))
 
         snapshot = interface.GetTemporalObservationSnapshot()

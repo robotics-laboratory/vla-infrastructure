@@ -81,7 +81,11 @@ class CameraAcquisitionSample:
     clock_domain: str = "host_monotonic"
 
     def __post_init__(self) -> None:
-        if isinstance(self.sequence, bool) or not isinstance(self.sequence, int) or self.sequence < 0:
+        if (
+            isinstance(self.sequence, bool)
+            or not isinstance(self.sequence, int)
+            or self.sequence < 0
+        ):
             raise ValueError("camera sequence must be a non-negative integer")
         if (
             isinstance(self.source_timestamp, bool)
@@ -313,8 +317,7 @@ class PiperXFollower(Robot):
             snapshot.gripper_timestamp,
         )
         state_timestamp = min(
-            self._to_host_monotonic(float(timestamp))
-            for timestamp in component_wall_timestamps
+            self._to_host_monotonic(float(timestamp)) for timestamp in component_wall_timestamps
         )
         timing: dict[str, PiperXSampleTiming] = {
             "observation.state": self._sample_timing(
@@ -400,8 +403,7 @@ class PiperXFollower(Robot):
         drift_ms = abs(current_offset_s - self._wall_to_monotonic_offset_s) * 1000.0
         if drift_ms > self.config.max_clock_calibration_error_ms:
             raise RuntimeError(
-                "wall-to-monotonic clock offset changed during recording: "
-                f"{drift_ms:.3f} ms"
+                f"wall-to-monotonic clock offset changed during recording: {drift_ms:.3f} ms"
             )
 
     def _to_host_monotonic(self, wall_timestamp: float) -> float:
