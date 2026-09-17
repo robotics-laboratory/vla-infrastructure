@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import time
 from dataclasses import dataclass, field
 from functools import cached_property
@@ -12,6 +13,7 @@ from lerobot.lerobot_types import RobotAction, RobotObservation
 from lerobot.robots.config import RobotConfig
 from lerobot.robots.robot import Robot
 from lerobot.utils.decorators import check_if_already_connected, check_if_not_connected
+from lerobot.utils.errors import DeviceNotConnectedError
 
 from .sdk import (
     PIPER_ACTION_KEYS,
@@ -162,8 +164,8 @@ class PiperXFollower(Robot):
                 enable_attempted = True
                 self.enable()
             for camera in self.cameras.values():
-                camera.connect()
                 connected_cameras.append(camera)
+                camera.connect()
         except Exception as exc:
             cleanup_errors = self._cleanup_connection(
                 connected_cameras, force_disable=enable_attempted
@@ -207,14 +209,44 @@ class PiperXFollower(Robot):
             )
         return value
 
+    @staticmethod
+    def _telemetry_payload(envelope: Any, field_name: str, source_name: str) -> Any:
+        timestamp = getattr(envelope, "time_stamp", None)
+        rate_hz = getattr(envelope, "Hz", None)
+        if timestamp is None or rate_hz is None:
+            valid_envelope = False
+        else:
+            try:
+                valid_envelope = (
+                    math.isfinite(float(timestamp))
+                    and float(timestamp) > 0
+                    and math.isfinite(float(rate_hz))
+                    and float(rate_hz) > 0
+                )
+            except (TypeError, ValueError, OverflowError):
+                valid_envelope = False
+        if not valid_envelope:
+            raise RuntimeError(
+                f"Missing or incomplete PIPER-X {source_name} telemetry; "
+                "the SDK envelope requires positive finite time_stamp and Hz values."
+            )
+        payload = getattr(envelope, field_name, None)
+        if payload is None:
+            raise RuntimeError(
+                f"Missing required PIPER-X {source_name} telemetry payload '{field_name}'."
+            )
+        return payload
+
     @check_if_not_connected
     def get_observation(self) -> RobotObservation:
-        joint_state = getattr(self.arm.GetArmJointMsgs(), "joint_state", None)
+        joint_state = self._telemetry_payload(self.arm.GetArmJointMsgs(), "joint_state", "joint")
         observation: RobotObservation = {
             f"{joint}.pos": milli_to_unit(self._telemetry_value(joint_state, joint, "joint"))
             for joint in PIPER_JOINT_NAMES
         }
-        gripper_state = getattr(self.arm.GetArmGripperMsgs(), "gripper_state", None)
+        gripper_state = self._telemetry_payload(
+            self.arm.GetArmGripperMsgs(), "gripper_state", "gripper"
+        )
         observation["gripper.pos"] = abs(
             milli_to_unit(self._telemetry_value(gripper_state, "grippers_angle", "gripper"))
         )
@@ -234,34 +266,66 @@ class PiperXFollower(Robot):
                 f"Missing: {missing}"
             )
 
-    @check_if_not_connected
-    def send_action(self, action: RobotAction) -> RobotAction:
+    def _prepare_action(self, action: RobotAction) -> tuple[tuple[int, ...] | None, int | None]:
+        """Validate and convert every command before any SDK motion call."""
         self._validate_action(action)
+        try:
+            joint_commands = (
+                tuple(unit_to_milli(action[key]) for key in PIPER_JOINT_ACTION_KEYS)
+                if all(key in action for key in PIPER_JOINT_ACTION_KEYS)
+                else None
+            )
+            gripper_command = (
+                unit_to_milli(action["gripper.pos"])
+                if self.config.sync_gripper and "gripper.pos" in action
+                else None
+            )
+        except (TypeError, ValueError, OverflowError) as exc:
+            raise ValueError("PIPER-X action values must be finite numeric values.") from exc
+        return joint_commands, gripper_command
+
+    def _send_prepared_action(
+        self, joint_commands: tuple[int, ...] | None, gripper_command: int | None
+    ) -> RobotAction:
         sent_action: RobotAction = {}
-        if all(key in action for key in PIPER_JOINT_ACTION_KEYS):
-            commands = [unit_to_milli(action[key]) for key in PIPER_JOINT_ACTION_KEYS]
-            self.arm.JointCtrl(*commands)
+        if joint_commands is not None:
+            self.arm.JointCtrl(*joint_commands)
             sent_action.update(
                 {
                     key: milli_to_unit(raw)
-                    for key, raw in zip(PIPER_JOINT_ACTION_KEYS, commands, strict=True)
+                    for key, raw in zip(PIPER_JOINT_ACTION_KEYS, joint_commands, strict=True)
                 }
             )
-        if self.config.sync_gripper and "gripper.pos" in action:
-            command = unit_to_milli(action["gripper.pos"])
+        if gripper_command is not None:
             self.arm.GripperCtrl(
-                command,
+                gripper_command,
                 self.config.gripper_effort_default,
                 self.config.gripper_status_code,
                 0x00,
             )
-            sent_action["gripper.pos"] = milli_to_unit(command)
+            sent_action["gripper.pos"] = milli_to_unit(gripper_command)
         return sent_action
 
     @check_if_not_connected
+    def send_action(self, action: RobotAction) -> RobotAction:
+        return self._send_prepared_action(*self._prepare_action(action))
+
     def disconnect(self) -> None:
+        if not self._has_connection_resources:
+            raise DeviceNotConnectedError(
+                f"{self.__class__.__name__} is not connected. Run `.connect()` first."
+            )
         errors = self._cleanup_connection(list(self.cameras.values()), force_disable=False)
         self._raise_cleanup_errors(errors)
+
+    @property
+    def _has_connection_resources(self) -> bool:
+        return (
+            self._is_connected
+            or self._is_configured
+            or self._is_enabled
+            or any(camera.is_connected for camera in self.cameras.values())
+        )
 
 
 class BiPiperXFollower(Robot):
@@ -374,23 +438,28 @@ class BiPiperXFollower(Robot):
             for key, value in action.items()
             if key.startswith("right_")
         }
-        self.left_arm._validate_action(left_action)
-        self.right_arm._validate_action(right_action)
+        left_prepared = self.left_arm._prepare_action(left_action)
+        right_prepared = self.right_arm._prepare_action(right_action)
         return {
             **{
                 f"left_{key}": value
-                for key, value in self.left_arm.send_action(left_action).items()
+                for key, value in self.left_arm._send_prepared_action(*left_prepared).items()
             },
             **{
                 f"right_{key}": value
-                for key, value in self.right_arm.send_action(right_action).items()
+                for key, value in self.right_arm._send_prepared_action(*right_prepared).items()
             },
         }
 
-    @check_if_not_connected
     def disconnect(self) -> None:
+        if not any(arm._has_connection_resources for arm in (self.left_arm, self.right_arm)):
+            raise DeviceNotConnectedError(
+                f"{self.__class__.__name__} is not connected. Run `.connect()` first."
+            )
         errors: list[Exception] = []
         for arm in (self.left_arm, self.right_arm):
+            if not arm._has_connection_resources:
+                continue
             try:
                 arm.disconnect()
             except Exception as exc:
