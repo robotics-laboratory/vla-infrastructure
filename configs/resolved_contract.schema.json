@@ -1015,7 +1015,7 @@
   ],
   "properties": {
     "contract_version": {
-      "const": "5.2.3"
+      "const": "5.2.4"
     },
     "schema_version": {
       "const": "5.2"
@@ -1911,6 +1911,7 @@
         "action_features",
         "observation_features",
         "processor_contract_revision",
+        "adapter_fail_closed",
         "gripper"
       ],
       "properties": {
@@ -1949,6 +1950,63 @@
             "string",
             "null"
           ]
+        },
+        "adapter_fail_closed": {
+          "const": {
+            "telemetry": {
+              "required_sdk_envelope_fields": [
+                "time_stamp",
+                "Hz"
+              ],
+              "envelope_validity": "positive_finite_time_stamp_and_rate",
+              "required_sdk_fields": [
+                "joint_1",
+                "joint_2",
+                "joint_3",
+                "joint_4",
+                "joint_5",
+                "joint_6",
+                "grippers_angle"
+              ],
+              "missing_behavior": "reject_observation",
+              "synthetic_default_allowed": false
+            },
+            "action": {
+              "required_arm_keys": [
+                "joint_1.pos",
+                "joint_2.pos",
+                "joint_3.pos",
+                "joint_4.pos",
+                "joint_5.pos",
+                "joint_6.pos"
+              ],
+              "partial_arm_behavior": "reject_entire_action_before_any_sdk_command",
+              "invalid_numeric_behavior": "reject_entire_action_before_any_sdk_command",
+              "gripper_only_allowed": true
+            },
+            "readiness": {
+              "states": [
+                "connected",
+                "configured",
+                "enabled",
+                "motion_ready"
+              ],
+              "motion_ready_requires": [
+                "connected",
+                "configured",
+                "enabled"
+              ],
+              "enable_timeout_behavior": "fail_connect_disable_and_rollback",
+              "send_action_requirement": "motion_ready"
+            },
+            "bimanual_lifecycle": {
+              "connect_failure_behavior": "rollback_connected_peer",
+              "disconnect_failure_behavior": "attempt_cleanup_both_raise_first_error",
+              "partial_disconnect_behavior": "cleanup_all_acquired_resources",
+              "attempted_camera_connect_failure_behavior": "rollback_camera_and_arm",
+              "pre_send_validation": "validate_and_convert_both_sides_before_any_sdk_command"
+            }
+          }
         },
         "gripper": {
           "type": "object",

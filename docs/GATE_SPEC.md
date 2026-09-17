@@ -12,7 +12,7 @@ Resolve reproducible `core`, lock/spec, launch procedure and test/lint/type-chec
 
 ## [[gate:A]] PIPER-X static/driver contract
 
-Pin LeRobot, PIPER-X plugin, AgileX driver, exact command API/control mode and structured action/observation semantics. No hardware motion.
+Pin LeRobot, PIPER-X plugin, AgileX driver, exact command API/control mode and structured action/observation semantics. Prove fail-closed telemetry, complete arm-action, readiness, enable-timeout, and bimanual lifecycle behavior offline. No hardware motion.
 
 ## [[gate:B]] Real Quest/XR contract
 

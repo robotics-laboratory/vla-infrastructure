@@ -33,6 +33,9 @@ A:
   - implementation.lerobot.revision
   - implementation.robot_plugin.package
   - implementation.robot_plugin.version
+  - implementation.robot_plugin.revision
+  - implementation.robot_plugin.single_arm_type
+  - implementation.robot_plugin.bimanual_type
   - implementation.driver.backend
   - implementation.driver.version
   - implementation.driver.command_api
@@ -40,6 +43,20 @@ A:
   - robot_contract.action_representation
   - robot_contract.observation_representation
   - robot_contract.processor_contract_revision
+  - robot_contract.adapter_fail_closed.telemetry.required_sdk_envelope_fields
+  - robot_contract.adapter_fail_closed.telemetry.envelope_validity
+  - robot_contract.adapter_fail_closed.telemetry.missing_behavior
+  - robot_contract.adapter_fail_closed.telemetry.synthetic_default_allowed
+  - robot_contract.adapter_fail_closed.action.partial_arm_behavior
+  - robot_contract.adapter_fail_closed.action.invalid_numeric_behavior
+  - robot_contract.adapter_fail_closed.readiness.motion_ready_requires
+  - robot_contract.adapter_fail_closed.readiness.enable_timeout_behavior
+  - robot_contract.adapter_fail_closed.readiness.send_action_requirement
+  - robot_contract.adapter_fail_closed.bimanual_lifecycle.connect_failure_behavior
+  - robot_contract.adapter_fail_closed.bimanual_lifecycle.disconnect_failure_behavior
+  - robot_contract.adapter_fail_closed.bimanual_lifecycle.partial_disconnect_behavior
+  - robot_contract.adapter_fail_closed.bimanual_lifecycle.attempted_camera_connect_failure_behavior
+  - robot_contract.adapter_fail_closed.bimanual_lifecycle.pre_send_validation
   - robot_contract.gripper.policy_meaning
   - robot_contract.gripper.units
   required_nonempty_paths:
@@ -48,8 +65,10 @@ A:
   required_evidence_kinds:
   - upstream_source
   - command_test
+  - document_review
   required_artifact_kinds:
   - test_output
+  - report
   mandatory: true
 B:
   prerequisites:
