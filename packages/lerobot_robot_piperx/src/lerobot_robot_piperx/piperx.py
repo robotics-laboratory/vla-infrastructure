@@ -261,9 +261,7 @@ class PiperXFollower(Robot):
             f"{joint}.pos": milli_to_unit(self._telemetry_value(joint_state, joint, "joint"))
             for joint in PIPER_JOINT_NAMES
         }
-        gripper_state = self._telemetry_payload(
-            gripper_envelope, "gripper_state", "gripper"
-        )
+        gripper_state = self._telemetry_payload(gripper_envelope, "gripper_state", "gripper")
         observation["gripper.pos"] = abs(
             milli_to_unit(self._telemetry_value(gripper_state, "grippers_angle", "gripper"))
         )
@@ -309,8 +307,8 @@ class PiperXFollower(Robot):
                 f"{calibration_error_ms:.3f} ms"
             )
         self._wall_to_monotonic_offset_s = (
-            (monotonic_before + monotonic_after) / 2.0 - wall_timestamp
-        )
+            monotonic_before + monotonic_after
+        ) / 2.0 - wall_timestamp
 
     def _to_host_monotonic(self, wall_timestamp: float) -> float:
         if self._wall_to_monotonic_offset_s is None:

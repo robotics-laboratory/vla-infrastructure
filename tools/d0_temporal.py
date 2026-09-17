@@ -94,7 +94,9 @@ class TemporalLimits:
             max_age_ms[source] = float(value)
         skew = timing.get("max_cross_modal_skew_ms")
         if skew is None:
-            raise ValueError("timing.max_cross_modal_skew_ms must be resolved before recording starts")
+            raise ValueError(
+                "timing.max_cross_modal_skew_ms must be resolved before recording starts"
+            )
         return cls(max_age_ms=max_age_ms, max_cross_modal_skew_ms=float(skew))
 
 

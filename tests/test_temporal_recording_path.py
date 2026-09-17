@@ -42,9 +42,7 @@ class TimedRobot:
     def latest_observation_timing(self) -> dict[str, SourceTiming]:
         return {
             "observation.state": SourceTiming(self.sequence, 100.030, "host_monotonic"),
-            "observation.images.left_wrist": SourceTiming(
-                self.sequence, 100.000, "host_monotonic"
-            ),
+            "observation.images.left_wrist": SourceTiming(self.sequence, 100.000, "host_monotonic"),
             "observation.images.right_wrist": SourceTiming(
                 self.sequence, 100.010, "host_monotonic"
             ),
