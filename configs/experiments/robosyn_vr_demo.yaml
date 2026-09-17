@@ -11,6 +11,12 @@ environment:
   isaaclab_teleop_version: 0.8.0
   cloudxr_runtime_version: 6.2.1
 
+cloudxr_web_client:
+  url: https://nvidia.github.io/IsaacTeleop/client/release-1.4.x/
+  release_series: 1.4.x
+  operator_setup: Open the exact URL in the headset, select Isaac Lab, press Reset to defaults, then select the Quest 3 device profile before connecting.
+  delivery: Operator-facing only; the browser client and its localStorage are not configured by the host launcher.
+
 demo_physics:
   gripper_contact:
     status: DEMO_ONLY_CONTACT_STABILITY_TUNING

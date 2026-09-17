@@ -318,9 +318,13 @@ accepted.
 
 1. From the experiment worktree, start exactly:
    `OMNI_KIT_ACCEPT_EULA=Y python tools/launch_isaac_robosyn_vr_demo.py`.
-2. Connect Quest 3 through the same working S2 CloudXR flow; wait for both
-   controllers to track. Confirm the table is slightly below eye level, ahead,
-   and at 1:1 scale.
+2. In Quest, open exactly
+   `https://nvidia.github.io/IsaacTeleop/client/release-1.4.x/`. Select
+   `Isaac Lab`, press `Reset to defaults`, select the `Quest 3` device profile,
+   and connect through the working S2 CloudXR flow. Do not use the unversioned
+   `/client` URL: it currently redirects to the older stable 1.3 client. Wait
+   for both controllers to track. Confirm the table is slightly below eye
+   level, ahead, and at 1:1 scale.
 3. Before R3, with squeeze released, move each controller forward/right/up;
    confirm its robot follows the same visible directions. Then hold squeeze
    clutch so the robots stay still, face the desired workspace direction,

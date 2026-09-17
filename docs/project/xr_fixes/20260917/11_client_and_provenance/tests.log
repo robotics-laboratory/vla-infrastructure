@@ -1,0 +1,8 @@
+PASS /home/ebulochkin/vla_infrastructure/.venv/bin/python -m ruff check tools/launch_isaac_robosyn_vr_demo.py tools/quest_xr_diagnostics.py tests/test_gate_s1_mapping.py
+PASS /home/ebulochkin/vla_infrastructure/.venv/bin/python -m py_compile tools/launch_isaac_robosyn_vr_demo.py tools/quest_xr_diagnostics.py
+PASS launch_manifest.json offline probe: schema, max steps, CloudXR home, client delivery flag, and five source hashes
+PASS tests/test_gate_s1_mapping.py: 13 passed in 0.17s
+PASS tests/test_isaac_s2_upstream.py: 23 passed in 1.17s (35 upstream torch.jit deprecation warnings)
+PASS git diff --check
+
+No Isaac, teleop, CloudXR, Docker, or root process was started by these checks.

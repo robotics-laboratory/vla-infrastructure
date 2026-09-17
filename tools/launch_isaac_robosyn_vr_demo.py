@@ -22,9 +22,16 @@ ASSET_MANIFEST = ROOT / "configs/experiments/robosyn_test_assets.yaml"
 RUNTIME_ROOT = STORAGE / "cache/robosyn-vr-demo"
 USER_CACHE_ROOT = RUNTIME_ROOT / "users" / f"uid-{os.getuid()}"
 KIT_PORTABLE_ROOT = USER_CACHE_ROOT / "kit"
+PROVENANCE_INPUTS = (
+    DEMO_CONFIG,
+    ROOT / "tools/launch_isaac_robosyn_vr_demo.py",
+    ROOT / "tools/isaac_robosyn_vr_demo.py",
+    ROOT / "tools/isaac_s2_runtime.py",
+    ROOT / "tools/isaac_s2_upstream.py",
+)
 
 
-def _verify_demo_inputs() -> None:
+def _verify_demo_inputs() -> dict:
     _verify()
     config = yaml.safe_load(DEMO_CONFIG.read_text(encoding="utf-8"))
     manifest = yaml.safe_load(ASSET_MANIFEST.read_text(encoding="utf-8"))
@@ -44,6 +51,61 @@ def _verify_demo_inputs() -> None:
             raise RuntimeError(f"RoboSyn test asset hash mismatch: {path}")
     if config["status"] != "EXPERIMENTAL_TEST_ONLY_NOT_A_GATE":
         raise RuntimeError("demo config lost its experimental classification")
+    return config
+
+
+def _git_output(*args: str) -> str:
+    return subprocess.check_output(["git", "-C", str(ROOT), *args], text=True).strip()
+
+
+def _write_launch_manifest(
+    output_dir: Path,
+    *,
+    args: argparse.Namespace,
+    command: list[str],
+    environment: dict[str, str],
+    config: dict,
+) -> None:
+    """Persist the host-controlled launch inputs before the long-running child starts."""
+    home = environment.get("HOME", str(Path.home()))
+    source_hashes = {
+        str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in PROVENANCE_INPUTS
+    }
+    manifest = {
+        "schema": "piper_x_robosyn_vr_launch_provenance_v1",
+        "repository": {
+            "root": str(ROOT),
+            "branch": _git_output("rev-parse", "--abbrev-ref", "HEAD"),
+            "commit": _git_output("rev-parse", "HEAD"),
+            "tracked_status": _git_output("status", "--porcelain", "--untracked-files=no"),
+            "source_sha256": source_hashes,
+        },
+        "launch": {
+            "command": command,
+            "profile": args.profile,
+            "hud_on_start": bool(args.hud_on_start),
+            "smoke": bool(args.smoke),
+            "xr_smoke": bool(args.xr_smoke),
+            "max_control_steps": int(command[command.index("--s2-max-control-steps") + 1]),
+        },
+        "host_paths": {
+            "uid": os.getuid(),
+            "home": home,
+            "kit_portable_root": str(KIT_PORTABLE_ROOT),
+            "xdg_cache_home": environment["XDG_CACHE_HOME"],
+            "cloudxr_install_root": str(Path(home) / ".cloudxr"),
+            "uv_project_environment": environment["UV_PROJECT_ENVIRONMENT"],
+        },
+        "cloudxr_web_client": {
+            **config["cloudxr_web_client"],
+            "passed_to_host_process": False,
+            "state_location": "headset browser cache/localStorage",
+        },
+    }
+    (output_dir / "launch_manifest.json").write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
 
 
 def main() -> int:
@@ -69,7 +131,7 @@ def main() -> int:
         parser.error("--smoke and --xr-smoke are mutually exclusive")
     if args.hud_on_start and args.smoke:
         parser.error("HUD measurement requires --xr-smoke or the default physical XR run")
-    _verify_demo_inputs()
+    config = _verify_demo_inputs()
     if os.environ.get("OMNI_KIT_ACCEPT_EULA", "").upper() not in {"Y", "YES", "1"}:
         raise RuntimeError("NVIDIA EULA acceptance is required: set OMNI_KIT_ACCEPT_EULA=Y")
 
@@ -151,7 +213,16 @@ def main() -> int:
                 "--s2-require-tracking",
             ]
         )
+    _write_launch_manifest(
+        output_dir,
+        args=args,
+        command=command,
+        environment=environment,
+        config=config,
+    )
     print(f"Demo output: {output_dir}", flush=True)
+    print(f"Quest WebXR client: {config['cloudxr_web_client']['url']}", flush=True)
+    print(f"Quest client setup: {config['cloudxr_web_client']['operator_setup']}", flush=True)
     print(f"Demo command: {' '.join(command)}", flush=True)
     with (output_dir / "stdout.log").open("w", encoding="utf-8") as log:
         with subprocess.Popen(

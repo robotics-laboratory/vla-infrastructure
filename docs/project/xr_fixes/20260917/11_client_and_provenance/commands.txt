@@ -1,0 +1,10 @@
+git status --short --branch
+git rev-parse HEAD
+git ls-remote origin refs/heads/experiment/robosyn-vr-demo
+git diff --exit-code origin/experiment/robosyn-vr-demo -- tools/quest_xr_diagnostics.py tools/launch_isaac_robosyn_vr_demo.py tools/isaac_robosyn_vr_demo.py configs/experiments/robosyn_vr_demo.yaml
+sha256sum tools/quest_xr_diagnostics.py tools/launch_isaac_robosyn_vr_demo.py tools/isaac_robosyn_vr_demo.py configs/experiments/robosyn_vr_demo.yaml
+git log --all -Sscene_view_attachment --oneline -- tools
+rg -n scene_view_attachment tools configs docs
+rg -n 'client:|protocol:|packed stream size' /home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-16T181142Z.log /home/ebulochkin/.cloudxr/logs/cxr_server.2026-09-17T162309Z.log
+python -m py_compile tools/launch_isaac_robosyn_vr_demo.py tools/quest_xr_diagnostics.py
+python -m ruff check tools/launch_isaac_robosyn_vr_demo.py tools/quest_xr_diagnostics.py

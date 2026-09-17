@@ -1,0 +1,12 @@
+{
+  "configs/experiments/robosyn_vr_demo.yaml": "3f759d212546a9b3a3a5029b36582beab03788aedd9e06734623cb981730c404",
+  "docs/project/ISAAC_XR_BACKLOG_20260915.md": "a9d760afd468b8be74f816b0a9b31d2ab35f6a2ac4e2a571ebb0a5062a160bb2",
+  "docs/project/ROBOSYN_VR_DEMO_REPORT.md": "e426d790cc6fa9f861d65b230880af3538152fc13d81c48d4d6f125fef911353",
+  "docs/project/xr_fixes/20260917/10_cross_user_cache_swap/analysis.md": "389b634761df2c7d36432f1e22024363d86c29e6f4fa2d7f9ce16374245f85d2",
+  "docs/project/xr_fixes/20260917/11_client_and_provenance/analysis.md": "8cd6847a5e6472dd6fd7e99f3c81c18906ae7eb281c804a4226a88f61e21f007",
+  "docs/project/xr_fixes/20260917/11_client_and_provenance/commands.txt": "58b0b282f67f975ce17ebbd8f98b89e31f6b643845e50f01cd16e3511114f33e",
+  "tests/test_gate_s1_mapping.py": "53c10d682ab7aa8294f2af7f035b083f99e135f5824012a6d0c3152cd942957a",
+  "tools/isaac_robosyn_vr_demo.py": "41c4cc328a5e3f643434047e24d24b95316367b763b59429724664e1b116d33a",
+  "tools/launch_isaac_robosyn_vr_demo.py": "b768e294981ed02a16be1a78263f62707d2e3f179c79e10f6eed27ac7b7b36a0",
+  "tools/quest_xr_diagnostics.py": "0520850ca2517c1f622440cd83e2fea8a044b1c1b7a85ff339ade2c6801c31c2"
+}
