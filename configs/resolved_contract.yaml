@@ -1115,7 +1115,7 @@ dataset:
     exact_rate_behavior: One causally aligned obs_t/source_action_t/dataset_action_t bundle may be accepted for each canonical dataset tick after source age and cross-modal skew validation at that tick selection time.
     faster_source_behavior: In the common source clock, causally select the latest complete sample at or before the physical selection time for each target dataset tick and drop intervening samples.
     slower_source_behavior: Nominal source rate alone never rejects an episode. Reuse the latest causal sample only while its sequence, age, and cross-modal skew remain admissible; otherwise reject the tick and apply the declared source-path abort budget.
-    duplicate_policy: A repeated source sequence is allowed only when explicitly represented in temporal metadata and still within freshness and skew limits; duplicate logical dataset timestamps remain forbidden.
+    duplicate_policy: Repeated or non-monotonic source sequences are rejected before LeRobotDataset.add_frame; duplicate logical dataset timestamps remain forbidden.
     drop_policy: Unselected source samples and inadmissible canonical ticks may be dropped only with temporal QA accounting; accepted output ticks remain a dense LeRobot frame-index grid.
     interpolation_policy:
       camera: none
@@ -1217,7 +1217,7 @@ dataset:
       timestamp_source: temporal.observation.images.left_wrist.source_timestamp is the physical acquisition time; LeRobot timestamp remains the separate logical lookup grid.
       freshness_source: sequence/source_timestamp/clock_domain/age_ms are persisted with each accepted frame and validated before add_frame; Camera.async_read freshness alone is insufficient.
       crop_resize_revision: null
-      missing_frame_behavior: Reject the tick when no admissible sample exists; a repeated source sequence is allowed only while explicitly recorded and within age/skew limits.
+      missing_frame_behavior: Reject the tick when no admissible sample exists; repeated or non-monotonic source sequences are inadmissible.
       intrinsics_artifact_id: null
       extrinsics_artifact_id: null
       acquisition_owner: Left-arm runtime camera provider configured under key wrist; BiPiperXFollower exposes left_wrist.
@@ -1238,7 +1238,7 @@ dataset:
       timestamp_source: temporal.observation.images.right_wrist.source_timestamp is the physical acquisition time; LeRobot timestamp remains the separate logical lookup grid.
       freshness_source: sequence/source_timestamp/clock_domain/age_ms are persisted with each accepted frame and validated before add_frame; Camera.async_read freshness alone is insufficient.
       crop_resize_revision: null
-      missing_frame_behavior: Reject the tick when no admissible sample exists; a repeated source sequence is allowed only while explicitly recorded and within age/skew limits.
+      missing_frame_behavior: Reject the tick when no admissible sample exists; repeated or non-monotonic source sequences are inadmissible.
       intrinsics_artifact_id: null
       extrinsics_artifact_id: null
       acquisition_owner: Right-arm runtime camera provider configured under key wrist; BiPiperXFollower exposes right_wrist.
@@ -1530,7 +1530,7 @@ artifacts:
     description: Serialized output of pinned LeRobot default recording processor get_config plus reset/state semantics
   gate_d0_causality_test_output:
     kind: test_output
-    sha256: 444dc52fb1f82bcd65cee994edc499325476573ac73a12b57738f0b1e38bd154
+    sha256: 363ac1a8bcf63db175e279c811d10c3d80ccb2fdb5ae07ac8407087e53b32237
     path: docs/project/GATE_D0_CAUSALITY_TEST.txt
     uri: null
     description: Same-tick causality plus upstream record_loop, production temporal adapter, PIPER-X timing side-channel, and real LeRobotDataset v3 persistence regression
@@ -2448,7 +2448,7 @@ gates:
     - gate_d0_processor_snapshot
     - gate_d0_causality_test_output
     - gate_d0_e1_runtime_audit
-    notes: D0 v2 accepts canonical PIPER-X policy/data, same-tick causality, a 30 FPS logical dataset grid, separate physical source timing with sequence/clock/age/skew metadata, independent rates, wrist-camera roles, provenance isolation, identity label processing, and runtime/device command separation. The thin TemporalFrameRecorder now enforces and persists source timing immediately before the upstream LeRobot writer without replacing it. Numeric source-age/skew limits remain gate-owned runtime decisions.
+    notes: D0 v2 accepts canonical PIPER-X policy/data, same-tick causality, a 30 FPS logical dataset grid, separate physical source timing with sequence/clock/age/skew metadata, independent rates, wrist-camera roles, provenance isolation, identity label processing, and runtime/device command separation. The thin TemporalFrameRecorder now enforces and persists source timing immediately before the upstream LeRobot writer without replacing it. The bounded production profile selects 75 ms camera/XR/skew limits and 45 ms joint/source-action limits.
   S0:
     state: accepted
     evidence_ids:

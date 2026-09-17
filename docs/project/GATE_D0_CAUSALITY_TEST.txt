@@ -3,7 +3,7 @@ Timestamp: 2026-09-17T18:00:00+03:00
 Command: uv run pytest -q tests/test_gate_d0_contract.py tests/test_d0_temporal_runtime.py tests/test_temporal_recording_path.py tests/test_lerobot_robot_piperx.py
 
 ................................                                         [100%]
-32 passed in 6.66s
+46 passed in 5.87s
 
 The executable frame seam remains the pinned LeRobot identity observation/action
 processors plus build_dataset_frame, corresponding to lerobot_record.record_loop.
