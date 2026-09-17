@@ -2300,11 +2300,11 @@
         "dataset_fps": {"type": ["number", "null"], "exclusiveMinimum": 0},
         "policy_fps": {"type": ["number", "null"], "exclusiveMinimum": 0},
         "command_fps": {"type": ["number", "null"], "exclusiveMinimum": 0},
-        "max_camera_age_ms": {"type": ["number", "null"], "minimum": 0},
-        "max_joint_age_ms": {"type": ["number", "null"], "minimum": 0},
-        "max_xr_age_ms": {"type": ["number", "null"], "minimum": 0},
-        "max_policy_action_age_ms": {"type": ["number", "null"], "minimum": 0},
-        "max_cross_modal_skew_ms": {"type": ["number", "null"], "minimum": 0},
+        "max_camera_age_ms": {"type": "number", "exclusiveMinimum": 0},
+        "max_joint_age_ms": {"type": "number", "exclusiveMinimum": 0},
+        "max_xr_age_ms": {"type": "number", "exclusiveMinimum": 0},
+        "max_policy_action_age_ms": {"type": "number", "exclusiveMinimum": 0},
+        "max_cross_modal_skew_ms": {"type": "number", "exclusiveMinimum": 0},
         "stale_behavior": {"type": ["string", "null"]},
         "inference": {
           "type": "object",
@@ -2881,11 +2881,13 @@
             "source_timing": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["storage", "recorder_adapter", "feature_spec_factory", "qa_summary_method", "required_fields", "field_types", "feature_sets", "required_feature_sets_by_source_class", "cross_modal_skew_feature_key", "timestamp_requirement"],
+                  "required": ["storage", "recorder_adapter", "production_dataset_adapter", "record_loop_factory", "feature_spec_factory", "qa_summary_method", "required_fields", "field_types", "feature_sets", "required_feature_sets_by_source_class", "cross_modal_skew_feature_key", "timestamp_requirement"],
               "properties": {
-                "storage": {"const": "lerobot_additional_frame_features"},
-                "recorder_adapter": {"const": "tools.d0_temporal.TemporalFrameRecorder"},
-                "feature_spec_factory": {"const": "tools.d0_temporal.temporal_feature_specs"},
+                    "storage": {"const": "lerobot_additional_frame_features"},
+                    "recorder_adapter": {"const": "tools.d0_temporal.TemporalFrameRecorder"},
+                    "production_dataset_adapter": {"const": "tools.temporal_recording.TemporalLeRobotDatasetAdapter"},
+                    "record_loop_factory": {"const": "tools.temporal_recording.wrap_lerobot_dataset_for_temporal_recording"},
+                    "feature_spec_factory": {"const": "tools.d0_temporal.temporal_feature_specs"},
                 "qa_summary_method": {"const": "tools.d0_temporal.TemporalFrameRecorder.qa_summary"},
                 "required_fields": {
                   "const": ["sequence", "source_timestamp", "clock_domain", "age_ms"]

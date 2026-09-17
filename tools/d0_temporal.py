@@ -66,6 +66,37 @@ class TemporalLimits:
             if not source or not math.isfinite(value) or value < 0:
                 raise ValueError(f"invalid max age for {source!r}: {value!r}")
 
+    @classmethod
+    def from_resolved_contract(
+        cls,
+        contract: Mapping[str, Any],
+        required_sources: tuple[str, ...],
+    ) -> "TemporalLimits":
+        """Resolve non-null modality budgets from the canonical contract."""
+
+        timing = contract["timing"]
+        source_limit_keys = {
+            "observation.state": "max_joint_age_ms",
+            "observation.images.left_wrist": "max_camera_age_ms",
+            "observation.images.right_wrist": "max_camera_age_ms",
+            "xr.left_pose": "max_xr_age_ms",
+            "xr.right_pose": "max_xr_age_ms",
+            "source_action": "max_policy_action_age_ms",
+        }
+        max_age_ms: dict[str, float] = {}
+        for source in required_sources:
+            key = source_limit_keys.get(source)
+            if key is None:
+                raise ValueError(f"no temporal limit mapping for required source {source!r}")
+            value = timing.get(key)
+            if value is None:
+                raise ValueError(f"timing.{key} must be resolved before recording starts")
+            max_age_ms[source] = float(value)
+        skew = timing.get("max_cross_modal_skew_ms")
+        if skew is None:
+            raise ValueError("timing.max_cross_modal_skew_ms must be resolved before recording starts")
+        return cls(max_age_ms=max_age_ms, max_cross_modal_skew_ms=float(skew))
+
 
 def temporal_feature_specs(
     feature_sets: Mapping[str, Mapping[str, str]],
@@ -135,16 +166,17 @@ class TemporalFrameRecorder:
         contract: Mapping[str, Any],
         *,
         source_class: str,
-        limits: TemporalLimits,
-        accepted_clock_domains: tuple[str, ...],
+        limits: TemporalLimits | None = None,
+        accepted_clock_domains: tuple[str, ...] = ("host_monotonic",),
     ) -> "TemporalFrameRecorder":
         timing = contract["dataset"]["temporal_semantics"]["source_timing"]
         group = "human_vr" if source_class == "human_vr" else "automated"
+        required_sources = tuple(timing["required_feature_sets_by_source_class"][group])
         return cls(
             dataset,
             feature_sets=timing["feature_sets"],
-            required_sources=tuple(timing["required_feature_sets_by_source_class"][group]),
-            limits=limits,
+            required_sources=required_sources,
+            limits=limits or TemporalLimits.from_resolved_contract(contract, required_sources),
             accepted_clock_domains=accepted_clock_domains,
             cross_modal_skew_key=timing["cross_modal_skew_feature_key"],
         )
@@ -168,6 +200,11 @@ class TemporalFrameRecorder:
             raise
         self._last_accepted = accepted
         self.accepted_frames += 1
+
+    def reset_episode(self) -> None:
+        """Reset episode-local sequence/time history without erasing QA counters."""
+
+        self._last_accepted.clear()
 
     def qa_summary(self) -> dict[str, Any]:
         return {
@@ -195,9 +232,17 @@ class TemporalFrameRecorder:
         extra = set(source_timing) - set(self.required_sources)
         if missing or extra:
             self._reject(
-                "source_set_mismatch",
+                "missing_timing_metadata" if missing else "source_set_mismatch",
                 f"missing={sorted(missing)} extra={sorted(extra)}",
             )
+
+        for source in self.required_sources:
+            sample = source_timing[source]
+            if not isinstance(sample, SourceTiming):
+                self._reject(
+                    "missing_timing_metadata",
+                    f"{source} must provide a complete SourceTiming value",
+                )
 
         domains = {sample.clock_domain for sample in source_timing.values()}
         if len(domains) != 1:
@@ -221,20 +266,14 @@ class TemporalFrameRecorder:
                 )
             previous = self._last_accepted.get(source)
             if previous is not None:
-                if sample.sequence < previous.sequence:
+                if sample.sequence <= previous.sequence:
                     self._reject(
-                        "sequence_regression",
+                        "repeated_sequence"
+                        if sample.sequence == previous.sequence
+                        else "sequence_regression",
                         f"{source} sequence={sample.sequence} previous={previous.sequence}",
                     )
-                if sample.sequence == previous.sequence and sample != previous:
-                    self._reject(
-                        "sequence_identity_changed",
-                        f"{source} reused sequence {sample.sequence} with different timing",
-                    )
-                if (
-                    sample.sequence > previous.sequence
-                    and sample.source_timestamp < previous.source_timestamp
-                ):
+                if sample.source_timestamp <= previous.source_timestamp:
                     self._reject(
                         "source_time_regression",
                         f"{source} timestamp={sample.source_timestamp} previous={previous.source_timestamp}",

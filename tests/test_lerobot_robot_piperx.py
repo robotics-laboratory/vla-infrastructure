@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import subprocess
 import sys
+import threading
+import time
 import unittest
 from dataclasses import dataclass
 from types import SimpleNamespace
@@ -38,12 +40,18 @@ class FakeCamera:
 
     def __init__(self, value: object):
         self.value = value
+        self.latest_frame = value
+        self.latest_timestamp = time.perf_counter()
+        self.frame_lock = threading.Lock()
+        self.new_frame_event = threading.Event()
+        self.new_frame_event.set()
 
     def async_read(self) -> object:
         return self.value
 
     def connect(self) -> None:
         self.is_connected = True
+        self.new_frame_event.set()
 
     def disconnect(self) -> None:
         self.is_connected = False
@@ -69,6 +77,7 @@ class FakePiper:
             joint_6=-6006,
         )
         self.gripper_feedback = SimpleNamespace(grippers_angle=-12345)
+        self.feedback_timestamp = time.time()
         FakePiper.instances.append(self)
 
     def JointCtrl(self, *commands: int) -> None:
@@ -78,10 +87,16 @@ class FakePiper:
         self.gripper_calls.append(commands)
 
     def GetArmJointMsgs(self) -> SimpleNamespace:
-        return SimpleNamespace(joint_state=self.joint_feedback)
+        return SimpleNamespace(
+            joint_state=self.joint_feedback,
+            time_stamp=self.feedback_timestamp,
+        )
 
     def GetArmGripperMsgs(self) -> SimpleNamespace:
-        return SimpleNamespace(gripper_state=self.gripper_feedback)
+        return SimpleNamespace(
+            gripper_state=self.gripper_feedback,
+            time_stamp=self.feedback_timestamp,
+        )
 
 
 class PiperXPluginTests(unittest.TestCase):
@@ -200,6 +215,50 @@ assert BiPiperXFollowerConfig(
         self.assertAlmostEqual(observation["joint_1.pos"], 1.001)
         self.assertAlmostEqual(observation["joint_2.pos"], -2.002)
         self.assertAlmostEqual(observation["gripper.pos"], 12.345)
+
+    def test_bimanual_recording_observation_exposes_common_monotonic_timing(self) -> None:
+        robot = BiPiperXFollower(
+            BiPiperXFollowerConfig(
+                left_arm_config=PiperXFollowerConfigBase(
+                    port="left",
+                    cameras={"wrist": FakeCameraConfig(height=2, width=2)},
+                    temporal_metadata=True,
+                ),
+                right_arm_config=PiperXFollowerConfigBase(
+                    port="right",
+                    cameras={"wrist": FakeCameraConfig(height=2, width=2)},
+                    temporal_metadata=True,
+                ),
+            )
+        )
+        self.mark_connected(robot)
+        robot.left_arm._calibrate_wall_to_monotonic()
+        robot.right_arm._calibrate_wall_to_monotonic()
+
+        robot.get_observation()
+        timing = robot.latest_observation_timing()
+
+        self.assertEqual(
+            set(timing),
+            {
+                "observation.state",
+                "observation.images.left_wrist",
+                "observation.images.right_wrist",
+            },
+        )
+        self.assertTrue(all(sample.sequence == 1 for sample in timing.values()))
+        self.assertTrue(all(sample.clock_domain == "host_monotonic" for sample in timing.values()))
+
+    def test_temporal_recording_rejects_missing_sdk_timestamp(self) -> None:
+        robot = PiperXFollower(
+            PiperXFollowerConfig(port="left", temporal_metadata=True)
+        )
+        self.mark_connected(robot)
+        robot._calibrate_wall_to_monotonic()
+        FakePiper.instances[0].feedback_timestamp = 0.0
+
+        with self.assertRaisesRegex(RuntimeError, "missing its SDK acquisition timestamp"):
+            robot.get_observation()
 
     def test_joint_and_gripper_commands_round_to_sdk_integers_and_return_sent_values(self) -> None:
         robot = PiperXFollower(self.follower_config())

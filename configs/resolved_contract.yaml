@@ -742,23 +742,23 @@ timing:
     left_wrist: 30
     right_wrist: 30
   control_fps:
-    real: null
+    real: 30
     isaac: 30
     mujoco: null
   dataset_fps: 30
-  policy_fps: null
-  command_fps: null
-  max_camera_age_ms: null
-  max_joint_age_ms: null
-  max_xr_age_ms: null
-  max_policy_action_age_ms: null
-  max_cross_modal_skew_ms: null
+  policy_fps: 30
+  command_fps: 30
+  max_camera_age_ms: 75.0
+  max_joint_age_ms: 45.0
+  max_xr_age_ms: 75.0
+  max_policy_action_age_ms: 45.0
+  max_cross_modal_skew_ms: 75.0
   stale_behavior: A dataset tick is admissible only when every required source sample is valid, its source age is within the selected modality limit, and all source inputs contributing to obs_t/source_action_t satisfy the cross-modal skew limit. Reject the tick before LeRobotDataset.add_frame and classify repeated or terminal violations in episode QA; never relabel a stale sample with the logical dataset timestamp.
   inference:
     mode: null
     chunk_horizon: null
     execution_horizon: null
-    interpolation_multiplier: null
+    interpolation_multiplier: 1
     stale_chunk_rule: null
     action_age_reference: null
     command_rate_relationship: command_fps_equals_policy_fps_times_interpolation_multiplier
@@ -888,6 +888,8 @@ dataset:
     source_timing:
       storage: lerobot_additional_frame_features
       recorder_adapter: tools.d0_temporal.TemporalFrameRecorder
+      production_dataset_adapter: tools.temporal_recording.TemporalLeRobotDatasetAdapter
+      record_loop_factory: tools.temporal_recording.wrap_lerobot_dataset_for_temporal_recording
       feature_spec_factory: tools.d0_temporal.temporal_feature_specs
       qa_summary_method: tools.d0_temporal.TemporalFrameRecorder.qa_summary
       required_fields: [sequence, source_timestamp, clock_domain, age_ms]
@@ -1467,10 +1469,16 @@ artifacts:
     description: Audited physical Quest Q1 observations, CloudXR runtime facts, and pinned timing behavior
   gate_d0_upstream_audit:
     kind: report
-    sha256: 23eb5e025fff1b2db56cae6a0c866207072cca8aacc6a02a008e67f6cdfccd8a
+    sha256: a58ea24b7c8859816774d0774b456cca0b735a512d04312a579f35ddedcfbd44
     path: docs/project/GATE_D0_UPSTREAM_AUDIT.md
     uri: null
     description: Pinned LeRobot Robot, recording, processor, dataset v3, logical/source timing, action interpolation, episode, and video semantic audit with byte-identical source hashes
+  gate_d0_temporal_recording_report:
+    kind: report
+    sha256: 4be1cb458ad6fc067e72447e7e57d4efedc8968050d17c830f07f59d6e11116b
+    path: docs/project/D0_TEMPORAL_RECORDING_INTEGRATION_20260917.md
+    uri: null
+    description: Production record-loop integration, entrypoint audit, bounded limit basis, clock conversion, and physical Quest follow-up
   gate_d0_processor_snapshot:
     kind: processor_config
     sha256: 42a9543d5289d73a768a708be195afba6cabebc36ba27e8afa8cf798289ffb64
@@ -1479,10 +1487,10 @@ artifacts:
     description: Serialized output of pinned LeRobot default recording processor get_config plus reset/state semantics
   gate_d0_causality_test_output:
     kind: test_output
-    sha256: 8165e70c4f636f1ff9ce35296a7f09aef828c6bb4ed17e3936f709211480dcc5
+    sha256: 444dc52fb1f82bcd65cee994edc499325476573ac73a12b57738f0b1e38bd154
     path: docs/project/GATE_D0_CAUSALITY_TEST.txt
     uri: null
-    description: Same-tick causality plus production TemporalFrameRecorder and real LeRobotDataset v3 persistence regression
+    description: Same-tick causality plus upstream record_loop, production temporal adapter, PIPER-X timing side-channel, and real LeRobotDataset v3 persistence regression
   gate_d0_e1_runtime_audit:
     kind: report
     sha256: db8fd0144f2526e6b61bf5c626d88c9a87a139ade603584a91a9569beb15c59b
@@ -2029,19 +2037,20 @@ evidence:
   gate_d0_causality_regression:
     kind: command_test
     status: pass
-    summary: Same-tick obs/action pairing and the production temporal adapter passed against a real LeRobotDataset; logical time remained separate while invalid source age, skew, clock, and sequence states failed before add_frame.
-    timestamp: '2026-09-16T22:45:00+03:00'
-    command: uv run pytest -q tests/test_gate_d0_contract.py tests/test_d0_temporal_runtime.py
+    summary: Same-tick obs/action pairing and the production temporal adapter passed through the real upstream record_loop and real LeRobotDataset; logical time remained separate while invalid source age, skew, clock, metadata, and sequence states failed before add_frame.
+    timestamp: '2026-09-17T18:00:00+03:00'
+    command: uv run pytest -q tests/test_gate_d0_contract.py tests/test_d0_temporal_runtime.py tests/test_temporal_recording_path.py tests/test_lerobot_robot_piperx.py
     artifact_ids:
     - gate_d0_causality_test_output
     - gate_d0_processor_snapshot
     - gate_d0_e1_runtime_audit
+    - gate_d0_temporal_recording_report
     repository: null
     revision_type: null
     revision: null
-    path: tools/d0_temporal.py; tests/test_gate_d0_contract.py; tests/test_d0_temporal_runtime.py
-    symbol: TemporalFrameRecorder; test_record_loop_frame_seam_preserves_obs_t_action_t; test_real_lerobot_writer_owns_dense_timestamp_and_persists_source_time
-    notes: The core profile now enables the pinned LeRobot dataset extra. The adapter delegates accepted frames to the unmodified upstream writer and records provenance-only timing fields.
+    path: tools/d0_temporal.py; tools/temporal_recording.py; packages/lerobot_robot_piperx/src/lerobot_robot_piperx/piperx.py; tests/test_gate_d0_contract.py; tests/test_d0_temporal_runtime.py; tests/test_temporal_recording_path.py
+    symbol: TemporalFrameRecorder; TemporalLeRobotDatasetAdapter; TimestampedTeleoperator; PiperXFollower.latest_observation_timing; test_upstream_record_loop_writes_temporal_features_before_add_frame
+    notes: The adapter is passed to the unmodified upstream record_loop and delegates accepted frames to the real writer. Human-VR startup rejects missing XR acquisition timing; physical Quest timing remains an R2/D1 follow-up.
   gate_e1_rpc_implementation_tests:
     kind: command_test
     status: pass

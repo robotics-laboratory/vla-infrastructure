@@ -60,11 +60,28 @@ at that logical instant. Every asynchronous input that contributes to an accepte
 records `sequence`, `source_timestamp`, `clock_domain`, and `age_ms`; the frame also
 records cross-modal skew. Freshness and skew are checked before `add_frame`.
 
-`tools.d0_temporal.TemporalFrameRecorder` is the required thin edge adapter for this
-check. It enriches accepted frames with the declared LeRobot features and delegates to
-the upstream writer; a stale, future, clock-incomparable, skewed, or sequence-regressing
-bundle never reaches `LeRobotDataset.add_frame`. LeRobot remains the owner of logical
-`timestamp` and `frame_index`.
+`tools.d0_temporal.TemporalFrameRecorder` performs the validation and
+`tools.temporal_recording.TemporalLeRobotDatasetAdapter` is the dataset-compatible
+proxy passed to the unmodified upstream `record_loop`. It enriches accepted frames and
+delegates to the real `LeRobotDataset`; a stale, future, clock-incomparable, skewed,
+missing, repeated, or regressing bundle never reaches `LeRobotDataset.add_frame`.
+LeRobot remains the owner of logical `timestamp`, `frame_index`, pacing, processors,
+actuation, and episode persistence. Saving or clearing an episode resets the adapter's
+episode-local sequence history before the next episode.
+
+The bounded recording profile uses 75 ms camera/XR age and cross-modal-skew limits,
+and 45 ms joint/source-action age limits. The source rates remain independent: Isaac
+physics is 120 Hz while XR, cameras, control, dataset, policy, and non-interpolated
+command selection are each separately configured at 30 Hz. Equality is not a schema
+constraint; the 30 Hz values are the selected profile. A repeated source sequence is
+not silently reused even if its age is still below the limit.
+
+PIPER-X CAN timestamps originate in the SDK's wall-clock domain. Recording mode
+performs a bounded wall-to-`perf_counter` calibration and stores only the converted
+host-monotonic value. Camera frame and capture timestamp are selected atomically from
+the pinned LeRobot camera buffer. Human-VR startup additionally requires the XR source
+to provide acquisition timing for both poses. The existing Quest diagnostic's host
+receipt timestamp is not accepted as XR acquisition time.
 
 For every native recorder/converter, resolve:
 

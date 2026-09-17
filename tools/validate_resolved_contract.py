@@ -669,6 +669,12 @@ def validate_dataset_contract(d):
     source_timing = temporal["source_timing"]
     expected_source_timing_implementation = {
         "recorder_adapter": "tools.d0_temporal.TemporalFrameRecorder",
+        "production_dataset_adapter": (
+            "tools.temporal_recording.TemporalLeRobotDatasetAdapter"
+        ),
+        "record_loop_factory": (
+            "tools.temporal_recording.wrap_lerobot_dataset_for_temporal_recording"
+        ),
         "feature_spec_factory": "tools.d0_temporal.temporal_feature_specs",
         "qa_summary_method": "tools.d0_temporal.TemporalFrameRecorder.qa_summary",
     }

@@ -116,6 +116,8 @@ D0:
   - dataset.temporal_semantics.dataset_timestamp.computation
   - dataset.temporal_semantics.source_timing.storage
   - dataset.temporal_semantics.source_timing.recorder_adapter
+  - dataset.temporal_semantics.source_timing.production_dataset_adapter
+  - dataset.temporal_semantics.source_timing.record_loop_factory
   - dataset.temporal_semantics.source_timing.feature_spec_factory
   - dataset.temporal_semantics.source_timing.qa_summary_method
   - dataset.temporal_semantics.source_timing.required_fields
@@ -142,6 +144,11 @@ D0:
   - dataset.common_training_view.schema_fingerprint_sha256
   - dataset.provenance_schema.storage
   - timing.dataset_fps
+  - timing.max_camera_age_ms
+  - timing.max_joint_age_ms
+  - timing.max_xr_age_ms
+  - timing.max_policy_action_age_ms
+  - timing.max_cross_modal_skew_ms
   required_nonempty_paths:
   - dataset.common_training_view.input_features
   - dataset.feature_classification.training_input

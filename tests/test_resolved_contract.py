@@ -79,16 +79,14 @@ class ResolvedContractTests(unittest.TestCase):
             "timing.max_cross_modal_skew_ms",
         }
         self.assertTrue(freshness_limits.isdisjoint(rules["B"]["required_paths"]))
+        for path in freshness_limits:
+            self.assertGreater(data["timing"][path.removeprefix("timing.")], 0)
         for gate_id in ("D1", "R2", "HIL"):
             self.assertTrue(freshness_limits.issubset(rules[gate_id]["required_paths"]))
             probe = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
             probe["gates"][gate_id]["state"] = "accepted"
             errors = validate_gates(probe, rules)
-            for path in freshness_limits:
-                self.assertIn(
-                    f"gate {gate_id}: unresolved required path {path}",
-                    errors,
-                )
+            self.assertTrue(errors)
 
     def test_temporal_contract_separates_logical_and_source_time(self) -> None:
         data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
@@ -114,6 +112,14 @@ class ResolvedContractTests(unittest.TestCase):
             temporal["source_timing"]["recorder_adapter"],
             "tools.d0_temporal.TemporalFrameRecorder",
         )
+        self.assertEqual(
+            temporal["source_timing"]["production_dataset_adapter"],
+            "tools.temporal_recording.TemporalLeRobotDatasetAdapter",
+        )
+        self.assertEqual(
+            temporal["source_timing"]["record_loop_factory"],
+            "tools.temporal_recording.wrap_lerobot_dataset_for_temporal_recording",
+        )
         by_source = temporal["source_timing"]["required_feature_sets_by_source_class"]
         self.assertIn("xr.left_pose", by_source["human_vr"])
         self.assertIn("xr.right_pose", by_source["human_vr"])
@@ -137,6 +143,20 @@ class ResolvedContractTests(unittest.TestCase):
         self.assertEqual(timing["control_fps"]["isaac"], 30)
         self.assertEqual(timing["dataset_fps"], 30)
         self.assertEqual(timing["xr_fps"]["real"], 30)
+        self.assertEqual(timing["camera_fps"]["left_wrist"], 30)
+        self.assertEqual(timing["policy_fps"], 30)
+        self.assertEqual(timing["command_fps"], 30)
+        self.assertEqual(timing["inference"]["interpolation_multiplier"], 1)
+        self.assertNotEqual(timing["physics_fps"]["isaac"], timing["dataset_fps"])
+
+        for key in (
+            "max_camera_age_ms",
+            "max_joint_age_ms",
+            "max_xr_age_ms",
+            "max_policy_action_age_ms",
+            "max_cross_modal_skew_ms",
+        ):
+            self.assertGreater(timing[key], 0)
 
         probe = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
         probe["timing"]["policy_fps"] = 10
@@ -154,6 +174,20 @@ class ResolvedContractTests(unittest.TestCase):
         data["timing"]["camera_fps"]["left_wrist"] = 15
         data["dataset"]["cameras"]["left_wrist"]["nominal_fps"] = 15
 
+        self.assertEqual(validate_dataset_contract(data), [])
+
+    def test_distinct_source_control_dataset_policy_and_command_rates_are_allowed(self) -> None:
+        data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+        data["timing"]["xr_fps"]["real"] = 72
+        data["timing"]["camera_fps"] = {"left_wrist": 24, "right_wrist": 25}
+        data["dataset"]["cameras"]["left_wrist"]["nominal_fps"] = 24
+        data["dataset"]["cameras"]["right_wrist"]["nominal_fps"] = 25
+        data["timing"]["control_fps"]["real"] = 50
+        data["timing"]["policy_fps"] = 10
+        data["timing"]["command_fps"] = 20
+        data["timing"]["inference"]["interpolation_multiplier"] = 2
+
+        self.assertEqual(validate_timing(data), [])
         self.assertEqual(validate_dataset_contract(data), [])
 
     def test_gate_a_rejects_an_unresolved_plugin_boundary(self) -> None:

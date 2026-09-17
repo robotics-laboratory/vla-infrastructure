@@ -105,6 +105,13 @@ def test_recorder_persists_source_time_without_overriding_logical_time() -> None
         ),
         (
             lambda samples: samples.__setitem__(
+                "observation.state",
+                SourceTiming(1, 99.900, "host_monotonic"),
+            ),
+            "stale_source_sample",
+        ),
+        (
+            lambda samples: samples.__setitem__(
                 "observation.images.left_wrist",
                 SourceTiming(1, 100.000, "camera_device_clock"),
             ),
@@ -117,6 +124,14 @@ def test_recorder_persists_source_time_without_overriding_logical_time() -> None
             ),
             "future_source_sample",
         ),
+        (
+            lambda samples: samples.__setitem__(
+                "observation.images.left_wrist",
+                SourceTiming(1, 99.960, "host_monotonic"),
+            ),
+            "cross_modal_skew",
+        ),
+        (lambda samples: samples.pop("observation.state"), "missing_timing_metadata"),
     ],
 )
 def test_invalid_bundle_never_reaches_add_frame(mutation, reason: str) -> None:
@@ -135,19 +150,74 @@ def test_invalid_bundle_never_reaches_add_frame(mutation, reason: str) -> None:
     assert recorder.qa_summary()["rejected_by_reason"] == {reason: 1}
 
 
-def test_sequence_regression_is_rejected_but_identical_reuse_is_explicit() -> None:
+def test_repeated_and_regressing_sequences_are_rejected() -> None:
     contract = _contract()
     timing = contract["dataset"]["temporal_semantics"]["source_timing"]
     required = tuple(timing["required_feature_sets_by_source_class"]["automated"])
     dataset = CapturingDataset(temporal_feature_specs(timing["feature_sets"], required))
     recorder = _automated_recorder(dataset)
     recorder.add_frame({"task": "move"}, _samples(2), selection_timestamp=100.050)
-    recorder.add_frame({"task": "move"}, _samples(2), selection_timestamp=100.055)
+
+    with pytest.raises(TemporalContractViolation, match="repeated_sequence"):
+        recorder.add_frame({"task": "move"}, _samples(2), selection_timestamp=100.055)
 
     with pytest.raises(TemporalContractViolation, match="sequence_regression"):
         recorder.add_frame({"task": "move"}, _samples(1), selection_timestamp=100.060)
 
+    assert len(dataset.frames) == 1
+
+
+def test_timestamp_regression_is_rejected() -> None:
+    contract = _contract()
+    timing = contract["dataset"]["temporal_semantics"]["source_timing"]
+    required = tuple(timing["required_feature_sets_by_source_class"]["automated"])
+    dataset = CapturingDataset(temporal_feature_specs(timing["feature_sets"], required))
+    recorder = _automated_recorder(dataset)
+    recorder.add_frame({"task": "move"}, _samples(2), selection_timestamp=100.050)
+    regressed = _samples(3)
+    regressed["observation.state"] = SourceTiming(3, 100.020, "host_monotonic")
+
+    with pytest.raises(TemporalContractViolation, match="source_time_regression"):
+        recorder.add_frame({"task": "move"}, regressed, selection_timestamp=100.055)
+
+    assert len(dataset.frames) == 1
+
+
+def test_episode_reset_clears_sequence_history() -> None:
+    contract = _contract()
+    timing = contract["dataset"]["temporal_semantics"]["source_timing"]
+    required = tuple(timing["required_feature_sets_by_source_class"]["automated"])
+    dataset = CapturingDataset(temporal_feature_specs(timing["feature_sets"], required))
+    recorder = _automated_recorder(dataset)
+    recorder.add_frame({"task": "move"}, _samples(2), selection_timestamp=100.050)
+    recorder.reset_episode()
+    recorder.add_frame({"task": "move"}, _samples(1), selection_timestamp=100.050)
+
     assert len(dataset.frames) == 2
+
+
+def test_stale_xr_pose_is_rejected_for_human_vr() -> None:
+    contract = _contract()
+    timing = contract["dataset"]["temporal_semantics"]["source_timing"]
+    required = tuple(timing["required_feature_sets_by_source_class"]["human_vr"])
+    dataset = CapturingDataset(temporal_feature_specs(timing["feature_sets"], required))
+    recorder = TemporalFrameRecorder.from_resolved_contract(
+        dataset,
+        contract,
+        source_class="human_vr",
+        limits=TemporalLimits(
+            max_age_ms={source: 100.0 for source in required},
+            max_cross_modal_skew_ms=100.0,
+        ),
+    )
+    samples = _samples()
+    samples["xr.left_pose"] = SourceTiming(1, 99.800, "host_monotonic")
+    samples["xr.right_pose"] = SourceTiming(1, 100.020, "host_monotonic")
+
+    with pytest.raises(TemporalContractViolation, match="stale_source_sample"):
+        recorder.add_frame({"task": "move"}, samples, selection_timestamp=100.050)
+
+    assert dataset.frames == []
 
 
 def test_real_lerobot_writer_owns_dense_timestamp_and_persists_source_time(tmp_path: Path) -> None:
