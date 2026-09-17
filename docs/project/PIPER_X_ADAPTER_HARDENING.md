@@ -16,13 +16,13 @@ These are the existing Gate A pins; this task does not select or repin an upstre
 
 LeRobot owns the `Robot` lifecycle and feature/action interfaces, processors, recorder loop, and dataset writer. `piper-sdk` owns CAN transport, PIPER enable/disable, telemetry messages, J-position `JointCtrl`, and `GripperCtrl`. The donor establishes the thin single-arm and process-local bimanual composition used by the project plugin.
 
-## Exact remaining gap
+## Exact fail-open gaps closed
 
-The local adapter previously substituted zero for absent joint or gripper telemetry, ignored partial six-joint commands while continuing with a gripper command, treated an enable timeout as a warning, exposed no configured/enabled/motion-ready distinction, left the first arm connected after a second-arm connect failure, and stopped bimanual disconnect after the first cleanup error.
+The local adapter previously accepted the SDK's uninitialized zero-valued telemetry envelopes, substituted zero for absent joint or gripper fields, ignored partial six-joint commands while continuing with a gripper command, and could send the left arm before discovering an invalid numeric value on the right. It also treated an enable timeout as a warning, exposed no configured/enabled/motion-ready distinction, left resources acquired by partial camera or bimanual connection attempts, and could refuse or stop cleanup in partial/disconnect-error states.
 
 ## Processor / config / adapter required
 
-Only the existing `PiperXFollower` and `BiPiperXFollower` adapter classes require changes. The adapter rejects incomplete telemetry and partial arm actions, tracks connected/configured/enabled/motion-ready state, fails and rolls back an enable timeout, prevalidates both bimanual actions before either is sent, rolls back bimanual connect, and attempts cleanup of both arms on disconnect. No label processor, dataset schema, command units, joint ordering, or configuration key changes are required.
+Only the existing `PiperXFollower` and `BiPiperXFollower` adapter classes require changes. The adapter requires positive finite SDK envelope timestamps and rates before accepting telemetry, rejects incomplete telemetry and partial/invalid arm actions, tracks connected/configured/enabled/motion-ready state, fails and rolls back an enable timeout, converts both bimanual actions before either is sent, rolls back attempted camera and bimanual connects, and cleans every acquired resource on partial or failing disconnect. No label processor, dataset schema, command units, joint ordering, or configuration key changes are required.
 
 ## Environment impact
 

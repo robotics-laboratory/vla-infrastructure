@@ -1954,6 +1954,11 @@
         "adapter_fail_closed": {
           "const": {
             "telemetry": {
+              "required_sdk_envelope_fields": [
+                "time_stamp",
+                "Hz"
+              ],
+              "envelope_validity": "positive_finite_time_stamp_and_rate",
               "required_sdk_fields": [
                 "joint_1",
                 "joint_2",
@@ -1976,6 +1981,7 @@
                 "joint_6.pos"
               ],
               "partial_arm_behavior": "reject_entire_action_before_any_sdk_command",
+              "invalid_numeric_behavior": "reject_entire_action_before_any_sdk_command",
               "gripper_only_allowed": true
             },
             "readiness": {
@@ -1996,7 +2002,9 @@
             "bimanual_lifecycle": {
               "connect_failure_behavior": "rollback_connected_peer",
               "disconnect_failure_behavior": "attempt_cleanup_both_raise_first_error",
-              "pre_send_validation": "validate_both_sides_before_any_sdk_command"
+              "partial_disconnect_behavior": "cleanup_all_acquired_resources",
+              "attempted_camera_connect_failure_behavior": "rollback_camera_and_arm",
+              "pre_send_validation": "validate_and_convert_both_sides_before_any_sdk_command"
             }
           }
         },

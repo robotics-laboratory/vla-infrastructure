@@ -43,14 +43,19 @@ A:
   - robot_contract.action_representation
   - robot_contract.observation_representation
   - robot_contract.processor_contract_revision
+  - robot_contract.adapter_fail_closed.telemetry.required_sdk_envelope_fields
+  - robot_contract.adapter_fail_closed.telemetry.envelope_validity
   - robot_contract.adapter_fail_closed.telemetry.missing_behavior
   - robot_contract.adapter_fail_closed.telemetry.synthetic_default_allowed
   - robot_contract.adapter_fail_closed.action.partial_arm_behavior
+  - robot_contract.adapter_fail_closed.action.invalid_numeric_behavior
   - robot_contract.adapter_fail_closed.readiness.motion_ready_requires
   - robot_contract.adapter_fail_closed.readiness.enable_timeout_behavior
   - robot_contract.adapter_fail_closed.readiness.send_action_requirement
   - robot_contract.adapter_fail_closed.bimanual_lifecycle.connect_failure_behavior
   - robot_contract.adapter_fail_closed.bimanual_lifecycle.disconnect_failure_behavior
+  - robot_contract.adapter_fail_closed.bimanual_lifecycle.partial_disconnect_behavior
+  - robot_contract.adapter_fail_closed.bimanual_lifecycle.attempted_camera_connect_failure_behavior
   - robot_contract.adapter_fail_closed.bimanual_lifecycle.pre_send_validation
   - robot_contract.gripper.policy_meaning
   - robot_contract.gripper.units

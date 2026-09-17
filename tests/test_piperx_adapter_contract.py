@@ -30,8 +30,8 @@ def test_gate_a_selects_the_hardened_plugin_and_evidence() -> None:
 
     assert plugin == {
         "package": "lerobot_robot_piperx",
-        "version": "0.2.0",
-        "revision": "470bc514ed0ed2183683c7e95eb4d9494f39b522",
+        "version": "0.2.1",
+        "revision": "e3a96b29ef7960e0b50dbdd59b7929e3eea60e90",
         "single_arm_type": "piperx_follower",
         "bimanual_type": "bi_piperx_follower",
         "evidence_ids": [
@@ -60,6 +60,8 @@ def test_fail_closed_semantics_are_exact_and_schema_required() -> None:
     semantics = contract["robot_contract"]["adapter_fail_closed"]
 
     assert semantics["telemetry"] == {
+        "required_sdk_envelope_fields": ["time_stamp", "Hz"],
+        "envelope_validity": "positive_finite_time_stamp_and_rate",
         "required_sdk_fields": [
             "joint_1",
             "joint_2",
@@ -75,6 +77,9 @@ def test_fail_closed_semantics_are_exact_and_schema_required() -> None:
     assert semantics["action"]["partial_arm_behavior"] == (
         "reject_entire_action_before_any_sdk_command"
     )
+    assert semantics["action"]["invalid_numeric_behavior"] == (
+        "reject_entire_action_before_any_sdk_command"
+    )
     assert semantics["readiness"] == {
         "states": ["connected", "configured", "enabled", "motion_ready"],
         "motion_ready_requires": ["connected", "configured", "enabled"],
@@ -84,9 +89,17 @@ def test_fail_closed_semantics_are_exact_and_schema_required() -> None:
     assert semantics["bimanual_lifecycle"] == {
         "connect_failure_behavior": "rollback_connected_peer",
         "disconnect_failure_behavior": "attempt_cleanup_both_raise_first_error",
-        "pre_send_validation": "validate_both_sides_before_any_sdk_command",
+        "partial_disconnect_behavior": "cleanup_all_acquired_resources",
+        "attempted_camera_connect_failure_behavior": "rollback_camera_and_arm",
+        "pre_send_validation": "validate_and_convert_both_sides_before_any_sdk_command",
     }
     assert validate_schema(contract, SCHEMA_PATH) == []
+
+    invalid = load_contract()
+    invalid["robot_contract"]["adapter_fail_closed"]["telemetry"]["envelope_validity"] = (
+        "fields_present_only"
+    )
+    assert validate_schema(invalid, SCHEMA_PATH)
 
     invalid = load_contract()
     invalid["robot_contract"]["adapter_fail_closed"]["telemetry"]["synthetic_default_allowed"] = (
@@ -113,14 +126,19 @@ def test_gate_a_rules_require_every_fail_closed_boundary() -> None:
 
     assert {
         "implementation.robot_plugin.revision",
+        "robot_contract.adapter_fail_closed.telemetry.required_sdk_envelope_fields",
+        "robot_contract.adapter_fail_closed.telemetry.envelope_validity",
         "robot_contract.adapter_fail_closed.telemetry.missing_behavior",
         "robot_contract.adapter_fail_closed.telemetry.synthetic_default_allowed",
         "robot_contract.adapter_fail_closed.action.partial_arm_behavior",
+        "robot_contract.adapter_fail_closed.action.invalid_numeric_behavior",
         "robot_contract.adapter_fail_closed.readiness.motion_ready_requires",
         "robot_contract.adapter_fail_closed.readiness.enable_timeout_behavior",
         "robot_contract.adapter_fail_closed.readiness.send_action_requirement",
         "robot_contract.adapter_fail_closed.bimanual_lifecycle.connect_failure_behavior",
         "robot_contract.adapter_fail_closed.bimanual_lifecycle.disconnect_failure_behavior",
+        "robot_contract.adapter_fail_closed.bimanual_lifecycle.partial_disconnect_behavior",
+        "robot_contract.adapter_fail_closed.bimanual_lifecycle.attempted_camera_connect_failure_behavior",
         "robot_contract.adapter_fail_closed.bimanual_lifecycle.pre_send_validation",
     }.issubset(required)
     assert rules["required_evidence_kinds"] == [
@@ -136,9 +154,9 @@ def test_package_lock_and_gate_a_artifact_hashes_match() -> None:
     package = tomllib.loads(
         (ROOT / "packages/lerobot_robot_piperx/pyproject.toml").read_text(encoding="utf-8")
     )
-    assert package["project"]["version"] == "0.2.0"
+    assert package["project"]["version"] == "0.2.1"
     lock = (ROOT / "uv.lock").read_text(encoding="utf-8")
-    assert 'name = "lerobot-robot-piperx"\nversion = "0.2.0"' in lock
+    assert 'name = "lerobot-robot-piperx"\nversion = "0.2.1"' in lock
 
     for artifact_id in (
         "gate_a_piperx_adapter_hardening_audit",

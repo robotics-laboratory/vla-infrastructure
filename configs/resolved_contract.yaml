@@ -91,7 +91,7 @@ migration:
     - gate_d0_causality_regression
   - gate: A
     reason: safety_change
-    summary: 'PIPER-X ADAPTER FAIL-CLOSED V2 — Reopened Gate A because the selected real adapter synthesized zero for missing telemetry, ignored partial arm commands, tolerated enable timeout, and had non-transactional bimanual lifecycle behavior. Version 0.2.0 rejects these states and is re-accepted with an updated audit and focused fake-SDK regression evidence; no hardware gate is implied.'
+    summary: 'PIPER-X ADAPTER FAIL-CLOSED V3 — Reopened Gate A because the selected real adapter accepted SDK-initialized zero telemetry, ignored partial arm commands, tolerated enable timeout, and had non-transactional partial lifecycle behavior. Version 0.2.1 rejects these states and is re-accepted with an updated audit and focused fake-SDK regression evidence; no hardware gate is implied.'
     evidence_ids:
     - gate_a_piperx_adapter_hardening_review
     - gate_a_piperx_adapter_hardening_tests
@@ -116,8 +116,8 @@ implementation:
     - v43_selected_plugin_seam
   robot_plugin:
     package: lerobot_robot_piperx
-    version: 0.2.0
-    revision: 470bc514ed0ed2183683c7e95eb4d9494f39b522
+    version: 0.2.1
+    revision: e3a96b29ef7960e0b50dbdd59b7929e3eea60e90
     single_arm_type: piperx_follower
     bimanual_type: bi_piperx_follower
     evidence_ids:
@@ -442,7 +442,7 @@ process_architecture:
     native_fail_safe_owner: runtime_specific
     excluded_ownership: [reset, seeds, episode_metrics, recording, generation, asset_management]
 robot_contract:
-  revision: piperx_plugin_0.2.0_contract_v2
+  revision: piperx_plugin_0.2.1_contract_v3
   action_representation: ordered left-then-right absolute joint degrees and signed gripper travel
   observation_representation: ordered left-then-right measured joint degrees and absolute gripper travel
   action_features:
@@ -699,15 +699,18 @@ robot_contract:
     side: right
     frame: null
     range: null
-  processor_contract_revision: lerobot_robot_piperx_0.2.0_fail_closed_runtime_contract_v2
+  processor_contract_revision: lerobot_robot_piperx_0.2.1_fail_closed_runtime_contract_v3
   adapter_fail_closed:
     telemetry:
+      required_sdk_envelope_fields: [time_stamp, Hz]
+      envelope_validity: positive_finite_time_stamp_and_rate
       required_sdk_fields: [joint_1, joint_2, joint_3, joint_4, joint_5, joint_6, grippers_angle]
       missing_behavior: reject_observation
       synthetic_default_allowed: false
     action:
       required_arm_keys: [joint_1.pos, joint_2.pos, joint_3.pos, joint_4.pos, joint_5.pos, joint_6.pos]
       partial_arm_behavior: reject_entire_action_before_any_sdk_command
+      invalid_numeric_behavior: reject_entire_action_before_any_sdk_command
       gripper_only_allowed: true
     readiness:
       states: [connected, configured, enabled, motion_ready]
@@ -717,7 +720,9 @@ robot_contract:
     bimanual_lifecycle:
       connect_failure_behavior: rollback_connected_peer
       disconnect_failure_behavior: attempt_cleanup_both_raise_first_error
-      pre_send_validation: validate_both_sides_before_any_sdk_command
+      partial_disconnect_behavior: cleanup_all_acquired_resources
+      attempted_camera_connect_failure_behavior: rollback_camera_and_arm
+      pre_send_validation: validate_and_convert_both_sides_before_any_sdk_command
   gripper:
     policy_meaning: piper_sdk gripper travel relative to device-configured zero
     units: millimeter
@@ -1004,7 +1009,7 @@ dataset:
       units: [degree, degree, degree, degree, degree, degree, millimeter, degree, degree, degree, degree, degree, degree, millimeter]
       semantics: [measured_joint_position, measured_joint_position, measured_joint_position, measured_joint_position, measured_joint_position, measured_joint_position, absolute_measured_gripper_travel, measured_joint_position, measured_joint_position, measured_joint_position, measured_joint_position, measured_joint_position, measured_joint_position, absolute_measured_gripper_travel]
       policy_role: training_input
-      source_owner: Runtime observation provider; real path is BiPiperXFollower.get_observation composed from both PiperXFollower instances and rejects the sample if any required joint or gripper telemetry field is absent.
+      source_owner: Runtime observation provider; real path is BiPiperXFollower.get_observation composed from both PiperXFollower instances and rejects the sample unless each joint/gripper SDK envelope has positive finite time_stamp and Hz and every required payload field is present.
       processor_chain:
       - lerobot.robot_observation_processor.IdentityProcessorStep
       - lerobot.aggregate_pipeline_dataset_features
@@ -1081,7 +1086,7 @@ dataset:
       - lerobot_robot_piperx.BiPiperXFollower.send_action_for_real_runtime
       - source_runtime_native_mapping_for_simulators_selected_later
       stored_label_mutation_allowed: false
-      send_action_return_semantics: LeRobot returns the action actually sent to motors, potentially clipped or modified; the PIPER-X plugin first rejects partial arm actions and any command before motion_ready, prevalidates both bimanual sides, then returns the SDK command after integer milli-unit round-trip, not hardware acceptance feedback. record_loop does not store this return as dataset.action.
+      send_action_return_semantics: LeRobot returns the action actually sent to motors, potentially clipped or modified; the PIPER-X plugin first rejects partial/invalid arm actions and any command before motion_ready, validates and converts both bimanual sides before either SDK call, then returns the SDK command after integer milli-unit round-trip, not hardware acceptance feedback. record_loop does not store this return as dataset.action.
     device_accepted_command:
       observable_at_d0: false
       observation_source: null
@@ -1433,19 +1438,19 @@ artifacts:
     description: Existing PIPER-X and host-XR offline test output plus uv lock check
   gate_a_piperx_adapter_hardening_audit:
     kind: report
-    sha256: e851744f0e7807133cc97ffc1e5c4c4f705e46f68140acd840f4f5fa52a2954f
+    sha256: 3424b64617c79062aa0b046e5cb813999322edf3e4cc403a0c49c8aa3bd83c2c
     path: docs/project/PIPER_X_ADAPTER_HARDENING.md
     uri: null
     description: Mandatory upstream audit and exact fail-closed gap analysis for the real PIPER-X adapter
   gate_a_piperx_adapter_hardening_test_output:
     kind: test_output
-    sha256: 998017de2dc9939f2e1d2deb188aee39119ff47bb04831cedf33fe3b6eec4d02
+    sha256: 531c78ef960c17fe40a6634d3e524d606d911777d32bff53de6a7fe342700e1a
     path: docs/project/GATE_A_PIPERX_ADAPTER_HARDENING_TESTS.txt
     uri: null
     description: Offline fake-SDK adapter, contract, format, lint, type, lock, and manifest verification output
   core_uv_lock:
     kind: environment_spec
-    sha256: 0bd860dfa37d7e82860ab1349050a9a3a78dd5f24c806cbf4c4e512de60ccab8
+    sha256: 840aee91712cc7652e36ac8a11912c890bd67d3dde187d88c56984082f8f3c3a
     path: uv.lock
     uri: null
     description: Core uv lock including LeRobot 0.6.1 kinematics plus the Gate S0 MuJoCo 3.9.0 and Gymnasium 1.3.0 pins; pyproject.toml is the paired project specification
@@ -1955,8 +1960,8 @@ evidence:
   gate_a_piperx_adapter_hardening_review:
     kind: document_review
     status: pass
-    summary: The accepted Gate A adapter boundary was re-audited and narrowed to explicit fail-closed telemetry, action, readiness, and bimanual lifecycle semantics.
-    timestamp: '2026-09-16T22:26:00+03:00'
+    summary: The accepted Gate A adapter boundary was re-audited against real piper-sdk 0.6.1 envelope initialization and narrowed to explicit fail-closed telemetry, action, readiness, and partial-lifecycle semantics.
+    timestamp: '2026-09-17T17:44:11+03:00'
     command: Review pinned Gate A sources, current v5.2.4 contract, LeRobot Robot lifecycle, and the concrete PIPER-X adapter gap.
     artifact_ids:
     - gate_a_piperx_adapter_hardening_audit
@@ -1969,8 +1974,8 @@ evidence:
   gate_a_piperx_adapter_hardening_tests:
     kind: command_test
     status: pass
-    summary: Focused fake-SDK tests prove missing-telemetry rejection, partial-action rejection before any SDK command, readiness gating, enable-timeout rollback, bimanual prevalidation, transactional connect, and best-effort two-sided disconnect.
-    timestamp: '2026-09-16T22:26:00+03:00'
+    summary: Focused SDK-shaped fake tests prove uninitialized/incomplete telemetry rejection, partial/invalid-action rejection before any SDK command, readiness gating, enable-timeout rollback, bimanual preconversion, transactional connect, and partial-state/two-sided disconnect cleanup.
+    timestamp: '2026-09-17T17:44:11+03:00'
     command: uv run pytest -q tests/test_lerobot_robot_piperx.py tests/test_piperx_adapter_contract.py; uv run mypy packages/lerobot_robot_piperx/src/lerobot_robot_piperx; uv run ruff check and format --check on changed Python; uv lock --check; sha256sum -c MANIFEST.sha256
     artifact_ids:
     - gate_a_piperx_adapter_hardening_test_output
@@ -2398,7 +2403,7 @@ gates:
     - pre_contract_offline_runtime_tests
     - gate_a_piperx_adapter_hardening_audit
     - gate_a_piperx_adapter_hardening_test_output
-    notes: Gate A was reopened for confirmed fail-open adapter defects and re-accepted on plugin 0.2.0 with machine-required telemetry/action/readiness/bimanual lifecycle semantics plus focused offline evidence. No hardware behavior is claimed.
+    notes: Gate A was reopened for confirmed fail-open adapter defects and re-accepted on plugin 0.2.1 with machine-required telemetry-envelope/action/readiness/bimanual lifecycle semantics plus focused offline evidence. No hardware behavior is claimed.
   B:
     state: accepted
     evidence_ids:

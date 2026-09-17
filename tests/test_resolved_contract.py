@@ -45,9 +45,9 @@ class ResolvedContractTests(unittest.TestCase):
         self.assertEqual(data["gates"]["A"]["state"], "accepted")
         plugin = data["implementation"]["robot_plugin"]
         self.assertEqual(plugin["package"], "lerobot_robot_piperx")
-        self.assertEqual(plugin["version"], "0.2.0")
-        self.assertEqual(plugin["revision"], "470bc514ed0ed2183683c7e95eb4d9494f39b522")
-        self.assertEqual(data["robot_contract"]["revision"], "piperx_plugin_0.2.0_contract_v2")
+        self.assertEqual(plugin["version"], "0.2.1")
+        self.assertEqual(plugin["revision"], "e3a96b29ef7960e0b50dbdd59b7929e3eea60e90")
+        self.assertEqual(data["robot_contract"]["revision"], "piperx_plugin_0.2.1_contract_v3")
         self.assertEqual(
             data["robot_contract"]["adapter_fail_closed"]["telemetry"]["missing_behavior"],
             "reject_observation",
