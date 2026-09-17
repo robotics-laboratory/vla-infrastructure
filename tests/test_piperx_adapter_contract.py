@@ -30,8 +30,8 @@ def test_gate_a_selects_the_hardened_plugin_and_evidence() -> None:
 
     assert plugin == {
         "package": "lerobot_robot_piperx",
-        "version": "0.2.1",
-        "revision": "e3a96b29ef7960e0b50dbdd59b7929e3eea60e90",
+        "version": "0.2.2",
+        "revision": "90b37c2d72376f544f4fbda3b0138badc83bc856",
         "single_arm_type": "piperx_follower",
         "bimanual_type": "bi_piperx_follower",
         "evidence_ids": [
@@ -71,6 +71,9 @@ def test_fail_closed_semantics_are_exact_and_schema_required() -> None:
             "joint_6",
             "grippers_angle",
         ],
+        "temporal_component_frames": ["joint_1_2", "joint_3_4", "joint_5_6", "gripper"],
+        "temporal_snapshot_behavior": "require_complete_atomic_copy",
+        "state_source_timestamp_behavior": "oldest_required_can_receive_timestamp_with_fail_closed_wall_to_monotonic_drift_check",
         "missing_behavior": "reject_observation",
         "synthetic_default_allowed": False,
     }
@@ -154,9 +157,9 @@ def test_package_lock_and_gate_a_artifact_hashes_match() -> None:
     package = tomllib.loads(
         (ROOT / "packages/lerobot_robot_piperx/pyproject.toml").read_text(encoding="utf-8")
     )
-    assert package["project"]["version"] == "0.2.1"
+    assert package["project"]["version"] == "0.2.2"
     lock = (ROOT / "uv.lock").read_text(encoding="utf-8")
-    assert 'name = "lerobot-robot-piperx"\nversion = "0.2.1"' in lock
+    assert 'name = "lerobot-robot-piperx"\nversion = "0.2.2"' in lock
 
     for artifact_id in (
         "gate_a_piperx_adapter_hardening_audit",

@@ -1,9 +1,10 @@
 Gate D0 causality and production temporal-recording regression
-Timestamp: 2026-09-17T18:00:00+03:00
-Command: uv run pytest -q tests/test_gate_d0_contract.py tests/test_d0_temporal_runtime.py tests/test_temporal_recording_path.py tests/test_lerobot_robot_piperx.py
+Timestamp: 2026-09-17T22:45:00+03:00
+Command: uv run --frozen pytest -q tests/test_gate_d0_contract.py tests/test_d0_temporal_runtime.py tests/test_temporal_recording_path.py tests/test_lerobot_robot_piperx.py
 
-................................                                         [100%]
-46 passed in 5.87s
+..........................................................           [100%]
+...........................................................          [100%]
+59 passed, 4 subtests passed in 5.45s
 
 The executable frame seam remains the pinned LeRobot identity observation/action
 processors plus build_dataset_frame, corresponding to lerobot_record.record_loop.
@@ -11,19 +12,25 @@ It proves pairs (obs_t=t, action_t=1000+t), explicitly rejects both t-1 and t+1
 action shifts, and proves that a deliberately different send_action return is not the
 dataset action source.
 
-TemporalLeRobotDatasetAdapter is passed to the unmodified upstream record_loop and
-delegates accepted frames to a real LeRobotDataset v3 writer. Logical timestamp remains
-frame_index / dataset_fps; joint, left/right wrist-camera, XR-pose, and source-action
-timing uses source-owned sequence/source_timestamp/clock_domain metadata. Persisted
-left/right camera acquisition timestamps differ on the same logical dataset frame.
+TemporalLeRobotDatasetAdapter is passed to the unmodified upstream record_loop. Its
+paired teleoperator validates and freezes the exact bundle before returning the action,
+so a stale sample fails before Robot.send_action; add_frame only commits the prepared
+metadata to a real LeRobotDataset v3 writer. Logical timestamp remains frame_index /
+dataset_fps; source timing uses source-owned sequence/source_timestamp/clock_domain
+metadata. Persisted left/right camera acquisition timestamps differ on the same logical
+dataset frame.
 
 Stale camera, joint, and XR samples; future samples; missing timing metadata; excessive
 cross-modal skew; incomparable clock domains; repeated/regressing sequences; and
-source-timestamp regression all fail before DatasetWriter.add_frame. Episode reset
-clears sequence validation state. Human-VR construction fails fast without a physical
-XR acquisition-timing provider and never substitutes the existing host receipt time.
+source-timestamp regression all fail before actuation and DatasetWriter.add_frame.
+Invalid scalar timestamp types, NaN, and infinity are rejected. Episode reset clears
+sequence validation state. Human-VR construction fails fast without one atomic
+action/XR acquisition provider and never substitutes the existing host receipt time.
 
-The PIPER-X regression proves the recording-only side-channel for bimanual joint state
-and both wrist cameras, explicit SDK wall-clock to host-monotonic conversion, and
-fail-closed behavior for missing SDK timestamps. The pre-existing action feature schema
-is unchanged.
+The PIPER-X regression proves the recording-only side-channel for bimanual state,
+per-component joint/gripper SocketCAN receive timestamps and identities, use of the
+oldest required component time, explicit wall-clock to host-monotonic conversion,
+fail-closed detection of clock-offset drift, and fail-closed behavior for missing SDK
+or source-owned camera acquisition timing. The
+pre-existing action feature schema is unchanged. Physical camera/XR providers remain a
+connected R2/D1 prerequisite and are not claimed by this offline run.

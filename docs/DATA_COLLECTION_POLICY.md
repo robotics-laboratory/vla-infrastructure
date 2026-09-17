@@ -58,30 +58,50 @@ The LeRobot `timestamp` remains the dense episode-relative grid used for indexin
 video lookup. It is never evidence that a camera, joint state, or XR pose was acquired
 at that logical instant. Every asynchronous input that contributes to an accepted frame
 records `sequence`, `source_timestamp`, `clock_domain`, and `age_ms`; the frame also
-records cross-modal skew. Freshness and skew are checked before `add_frame`.
+records cross-modal skew. Freshness and skew are checked against the exact selected
+bundle before both `Robot.send_action` and `LeRobotDataset.add_frame`.
 
 `tools.d0_temporal.TemporalFrameRecorder` performs the validation and
 `tools.temporal_recording.TemporalLeRobotDatasetAdapter` is the dataset-compatible
-proxy passed to the unmodified upstream `record_loop`. It enriches accepted frames and
-delegates to the real `LeRobotDataset`; a stale, future, clock-incomparable, skewed,
-missing, repeated, or regressing bundle never reaches `LeRobotDataset.add_frame`.
-LeRobot remains the owner of logical `timestamp`, `frame_index`, pacing, processors,
-actuation, and episode persistence. Saving or clearing an episode resets the adapter's
-episode-local sequence history before the next episode.
+proxy passed to the unmodified upstream `record_loop`. The paired
+`TimestampedTeleoperator` triggers validation before returning its action to that loop,
+which is the last project-owned seam before upstream actuation. `add_frame` may only
+commit that already validated bundle. A stale, future, clock-incomparable, skewed,
+missing, repeated, or regressing bundle therefore reaches neither `Robot.send_action`
+nor `LeRobotDataset.add_frame`. The violation aborts the current loop; the caller must
+clear or discard the partial episode before continuing. LeRobot remains the owner of
+logical `timestamp`, `frame_index`, pacing, processors, actuation, and episode
+persistence. Saving or clearing an episode resets the adapter's episode-local sequence
+history before the next episode.
 
 The bounded recording profile uses 75 ms camera/XR age and cross-modal-skew limits,
 and 45 ms joint/source-action age limits. The source rates remain independent: Isaac
 physics is 120 Hz while XR, cameras, control, dataset, policy, and non-interpolated
 command selection are each separately configured at 30 Hz. Equality is not a schema
-constraint; the 30 Hz values are the selected profile. A repeated source sequence is
-not silently reused even if its age is still below the limit.
+constraint; the 30 Hz values are the selected profile. In the duplicate-free live
+recording path, each required camera must nevertheless be configured at no less than
+the dataset rate. Faster cameras are allowed and their intervening frames may be
+dropped. No required source sample is silently reused, even if its age is still below
+the limit.
 
-PIPER-X CAN timestamps originate in the SDK's wall-clock domain. Recording mode
-performs a bounded wall-to-`perf_counter` calibration and stores only the converted
-host-monotonic value. Camera frame and capture timestamp are selected atomically from
-the pinned LeRobot camera buffer. Human-VR startup additionally requires the XR source
-to provide acquisition timing for both poses. The existing Quest diagnostic's host
-receipt timestamp is not accepted as XR acquisition time.
+PIPER-X CAN payloads contain no device acquisition clock. The timestamped SDK adapter
+therefore captures the kernel SocketCAN receive timestamp separately for joint pairs
+1/2, 3/4, 5/6 and the gripper, copies values and component identities atomically, and
+uses the oldest required component time for the assembled state. This is an explicitly
+declared lower-bound acquisition proxy, not the later observation-read time. Recording
+mode performs a bounded wall-to-`perf_counter` calibration and stores the converted
+host-monotonic value. Every temporal observation rechecks that conversion; a wall-clock
+step or drift beyond the 5 ms calibration budget aborts recording instead of corrupting
+source age.
+
+A camera is stricter: its backend must implement
+`async_read_with_acquisition_timing()` and atomically return a
+`CameraAcquisitionSample` containing the selected frame, sequence, physical capture
+timestamp, and clock domain. Standard `Camera.async_read()` state or a timestamp taken
+after read, decode, or post-processing is rejected. Human-VR likewise requires one
+atomic reader to return the action and the exact left/right XR pose identities used to
+produce it. The existing Quest diagnostic's host receipt timestamp is not accepted as
+XR acquisition time.
 
 For every native recorder/converter, resolve:
 

@@ -45,9 +45,9 @@ class ResolvedContractTests(unittest.TestCase):
         self.assertEqual(data["gates"]["A"]["state"], "accepted")
         plugin = data["implementation"]["robot_plugin"]
         self.assertEqual(plugin["package"], "lerobot_robot_piperx")
-        self.assertEqual(plugin["version"], "0.2.1")
-        self.assertEqual(plugin["revision"], "e3a96b29ef7960e0b50dbdd59b7929e3eea60e90")
-        self.assertEqual(data["robot_contract"]["revision"], "piperx_plugin_0.2.1_contract_v3")
+        self.assertEqual(plugin["version"], "0.2.2")
+        self.assertEqual(plugin["revision"], "90b37c2d72376f544f4fbda3b0138badc83bc856")
+        self.assertEqual(data["robot_contract"]["revision"], "piperx_plugin_0.2.2_contract_v4")
         self.assertEqual(
             data["robot_contract"]["adapter_fail_closed"]["telemetry"]["missing_behavior"],
             "reject_observation",
@@ -111,7 +111,15 @@ class ResolvedContractTests(unittest.TestCase):
         )
         self.assertEqual(
             temporal["freshness"]["enforcement_phase"],
-            "after_source_selection_before_lerobot_dataset_add_frame",
+            "after_exact_source_selection_before_robot_send_action_and_lerobot_dataset_add_frame",
+        )
+        self.assertIn(
+            "abort_current_record_loop_before_actuation",
+            temporal["freshness"]["invalid_tick_behavior"],
+        )
+        self.assertIn(
+            "Cameras must report capture time atomically",
+            temporal["source_timing"]["timestamp_requirement"],
         )
         self.assertEqual(
             temporal["source_timing"]["recorder_adapter"],
@@ -174,19 +182,19 @@ class ResolvedContractTests(unittest.TestCase):
             validate_timing(probe),
         )
 
-    def test_camera_rate_is_not_forced_to_dataset_rate(self) -> None:
+    def test_camera_rate_is_not_forced_equal_to_dataset_rate(self) -> None:
         data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
-        data["timing"]["camera_fps"]["left_wrist"] = 15
-        data["dataset"]["cameras"]["left_wrist"]["nominal_fps"] = 15
+        data["timing"]["camera_fps"]["left_wrist"] = 60
+        data["dataset"]["cameras"]["left_wrist"]["nominal_fps"] = 60
 
         self.assertEqual(validate_dataset_contract(data), [])
 
     def test_distinct_source_control_dataset_policy_and_command_rates_are_allowed(self) -> None:
         data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
         data["timing"]["xr_fps"]["real"] = 72
-        data["timing"]["camera_fps"] = {"left_wrist": 24, "right_wrist": 25}
-        data["dataset"]["cameras"]["left_wrist"]["nominal_fps"] = 24
-        data["dataset"]["cameras"]["right_wrist"]["nominal_fps"] = 25
+        data["timing"]["camera_fps"] = {"left_wrist": 60, "right_wrist": 45}
+        data["dataset"]["cameras"]["left_wrist"]["nominal_fps"] = 60
+        data["dataset"]["cameras"]["right_wrist"]["nominal_fps"] = 45
         data["timing"]["control_fps"]["real"] = 50
         data["timing"]["policy_fps"] = 10
         data["timing"]["command_fps"] = 20

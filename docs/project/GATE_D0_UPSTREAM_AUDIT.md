@@ -75,7 +75,7 @@ UPSTREAM FACT: record-loop pacing uses `time.perf_counter`, while stored dataset
 
 CURRENT PROJECT ASSUMPTION: a schema-correct dense 30 Hz dataset does not prove that its physical observations were fresh or mutually aligned.
 
-MINIMUM RESOLUTION: D0 v2 retains the upstream LeRobot logical timestamp and adds per-source `sequence`, `source_timestamp`, `clock_domain`, and `age_ms` plus per-frame cross-modal skew as declared provenance-only features; human-VR paths retain separate left/right XR-pose timing while automated paths do not synthesize XR metadata. Freshness is enforced before `add_frame`; repeated sequences are rejected, so a lower-rate source must drive accepted selection rather than be silently relabelled on multiple dataset ticks. Physics, XR, camera, control, dataset, policy, and command rates are independently declared. No replacement recorder, timestamp framework, or dataset format is introduced.
+MINIMUM RESOLUTION: D0 v3 retains the upstream LeRobot logical timestamp and adds per-source `sequence`, `source_timestamp`, `clock_domain`, and `age_ms` plus per-frame cross-modal skew as declared provenance-only features; human-VR paths retain separate left/right XR-pose timing while automated paths do not synthesize XR metadata. The exact bundle is validated before `Robot.send_action` and `add_frame`; repeated sequences are rejected rather than reused. Physics, XR, camera, control, dataset, policy, and command rates are independently declared, while the duplicate-free live recorder rejects a required camera configured below dataset FPS. No replacement recorder, timestamp framework, or dataset format is introduced.
 
 ## Reuse accounting
 
@@ -93,6 +93,7 @@ THIN VERIFICATION CODE REQUIRED:
 
 NEW RUNTIME IMPLEMENTATION REQUIRED:
 
-- `TemporalLeRobotDatasetAdapter`, a dataset-compatible proxy that validates and enriches one frame before delegating to the real writer. It does not own pacing, processors, actuation, episode lifecycle, or storage.
-- PIPER-X recording-only timing side-channel: SDK CAN wall timestamps are explicitly converted to host monotonic time, and the pinned camera buffer yields an atomic frame/capture-timestamp pair.
-- `TimestampedTeleoperator`, which stamps the newly produced source action and requires source-owned XR pose acquisition timing. It fails at startup when human-VR timing is absent; host receipt time is not substituted.
+- `TemporalLeRobotDatasetAdapter`, a dataset-compatible proxy that prepares and validates one exact temporal bundle before actuation and only later enriches/delegates the matching frame to the real writer. It does not own pacing, processors, actuation, episode lifecycle, or storage.
+- PIPER-X recording-only timing side-channel: the pinned parser is extended to atomically copy the three joint-pair CAN messages and gripper message with their individual kernel receive times; the oldest required component is converted to host monotonic time for assembled-state freshness.
+- Source-owned camera acquisition API: the selected backend must atomically return `CameraAcquisitionSample`; a standard buffered frame plus host receipt/postprocess timestamp is rejected.
+- `TimestampedTeleoperator`, which stamps the newly produced source action and requires an atomic source-owned action/XR-pose sample. It fails at startup when human-VR timing is absent; host receipt time is not substituted.

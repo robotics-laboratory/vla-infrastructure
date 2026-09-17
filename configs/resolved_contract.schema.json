@@ -1015,7 +1015,7 @@
   ],
   "properties": {
     "contract_version": {
-      "const": "5.2.4"
+      "const": "5.2.5"
     },
     "schema_version": {
       "const": "5.2"
@@ -1968,6 +1968,14 @@
                 "joint_6",
                 "grippers_angle"
               ],
+              "temporal_component_frames": [
+                "joint_1_2",
+                "joint_3_4",
+                "joint_5_6",
+                "gripper"
+              ],
+              "temporal_snapshot_behavior": "require_complete_atomic_copy",
+              "state_source_timestamp_behavior": "oldest_required_can_receive_timestamp_with_fail_closed_wall_to_monotonic_drift_check",
               "missing_behavior": "reject_observation",
               "synthetic_default_allowed": false
             },
@@ -2994,7 +3002,7 @@
               "properties": {
                 "age_reference": {"const": "recording_selection_time_minus_source_timestamp_in_a_common_monotonic_domain"},
                 "cross_modal_skew_reference": {"const": "max_minus_min_source_timestamp_for_all_source_inputs_contributing_to_obs_t_and_source_action_t"},
-                "enforcement_phase": {"const": "after_source_selection_before_lerobot_dataset_add_frame"},
+                "enforcement_phase": {"const": "after_exact_source_selection_before_robot_send_action_and_lerobot_dataset_add_frame"},
                 "invalid_tick_behavior": {"type": "string", "minLength": 1}
               }
             },

@@ -22,13 +22,17 @@ The local adapter previously accepted the SDK's uninitialized zero-valued teleme
 
 ## Processor / config / adapter required
 
-Only the existing `PiperXFollower` and `BiPiperXFollower` adapter classes require changes. The adapter requires positive finite SDK envelope timestamps and rates before accepting telemetry, rejects incomplete telemetry and partial/invalid arm actions, tracks connected/configured/enabled/motion-ready state, fails and rolls back an enable timeout, converts both bimanual actions before either is sent, rolls back attempted camera and bimanual connects, and cleans every acquired resource on partial or failing disconnect. No label processor, dataset schema, command units, joint ordering, or configuration key changes are required.
+Only the existing `PiperXFollower` and `BiPiperXFollower` adapter classes require changes. The adapter requires positive finite SDK envelope timestamps and rates before accepting telemetry, rejects incomplete telemetry and partial/invalid arm actions, tracks connected/configured/enabled/motion-ready state, fails and rolls back an enable timeout, converts both bimanual actions before either is sent, rolls back attempted camera and bimanual connects, and cleans every acquired resource on partial or failing disconnect. Version 0.2.2 also extends the pinned SDK parser without replacing it, atomically copying all required joint-pair/gripper values, per-component SocketCAN receive timestamps, and identities for temporal recording. No label processor, dataset action schema, command units, joint ordering, or configuration key changes are required.
+
+Version 0.2.2 also checks the wall-to-monotonic offset on every temporal observation;
+a realtime clock step or excessive drift fails closed rather than making CAN feedback
+appear artificially fresh or future-dated.
 
 ## Environment impact
 
-None. The core environment, Python version, LeRobot pin, SDK pin, lockfile, and execution-profile boundaries are unchanged. Verification is offline with the existing fake SDK; no CAN device or physical robot is accessed.
+No external dependency changes. The core environment, Python version, LeRobot pin, SDK pin, and execution-profile boundaries are unchanged; the editable package and lock entry advance to 0.2.2. Verification is offline with the existing fake SDK plus construction of the actual pinned SDK subclass; no CAN device or physical robot is accessed.
 
-The hardened adapter is selected by the v5.2.4 resolved contract through its exact implementation commit and `adapter_fail_closed` semantics. Gate A is reopened for the confirmed safety defect and re-accepted with the audit plus focused fake-SDK regression evidence. This does not reopen or accept a hardware gate.
+The hardened adapter is selected by the v5.2.5 resolved contract through its exact implementation commit and `adapter_fail_closed` semantics. Gate A is reopened for the confirmed safety defect and re-accepted with the audit plus focused fake-SDK regression evidence. This does not reopen or accept a hardware gate.
 
 ## Why no project framework is needed
 
