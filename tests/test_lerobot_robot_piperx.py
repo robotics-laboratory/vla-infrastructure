@@ -385,6 +385,21 @@ assert BiPiperXFollowerConfig(
             places=6,
         )
 
+    def test_temporal_observation_rejects_wall_clock_offset_change(self) -> None:
+        robot = PiperXFollower(PiperXFollowerConfig(port="left", temporal_metadata=True))
+        self.mark_connected(robot)
+        robot._wall_to_monotonic_offset_s = -900.0
+
+        with (
+            patch(
+                "lerobot_robot_piperx.piperx.time.perf_counter",
+                side_effect=(100.0, 100.0),
+            ),
+            patch("lerobot_robot_piperx.piperx.time.time", return_value=1001.0),
+            self.assertRaisesRegex(RuntimeError, "clock offset changed"),
+        ):
+            robot.get_observation()
+
     def test_temporal_recording_rejects_receipt_only_camera_timestamp(self) -> None:
         robot = PiperXFollower(
             PiperXFollowerConfig(

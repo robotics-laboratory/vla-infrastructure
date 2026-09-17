@@ -301,6 +301,7 @@ class PiperXFollower(Robot):
             )
         snapshot = snapshot_reader()
         self._validate_temporal_snapshot(snapshot)
+        self._validate_wall_to_monotonic_calibration()
         observation: RobotObservation = {
             f"{joint}.pos": milli_to_unit(value)
             for joint, value in zip(PIPER_JOINT_NAMES, snapshot.joint_values, strict=True)
@@ -370,18 +371,38 @@ class PiperXFollower(Robot):
         return dict(self._latest_observation_timing)
 
     def _calibrate_wall_to_monotonic(self) -> None:
-        monotonic_before = time.perf_counter()
-        wall_timestamp = time.time()
-        monotonic_after = time.perf_counter()
-        calibration_error_ms = (monotonic_after - monotonic_before) * 500.0
+        offset_s, calibration_error_ms = self._measure_wall_to_monotonic_offset()
         if calibration_error_ms > self.config.max_clock_calibration_error_ms:
             raise RuntimeError(
                 "wall-to-monotonic clock calibration exceeded error budget: "
                 f"{calibration_error_ms:.3f} ms"
             )
-        self._wall_to_monotonic_offset_s = (
-            monotonic_before + monotonic_after
-        ) / 2.0 - wall_timestamp
+        self._wall_to_monotonic_offset_s = offset_s
+
+    @staticmethod
+    def _measure_wall_to_monotonic_offset() -> tuple[float, float]:
+        monotonic_before = time.perf_counter()
+        wall_timestamp = time.time()
+        monotonic_after = time.perf_counter()
+        calibration_error_ms = (monotonic_after - monotonic_before) * 500.0
+        offset_s = (monotonic_before + monotonic_after) / 2.0 - wall_timestamp
+        return offset_s, calibration_error_ms
+
+    def _validate_wall_to_monotonic_calibration(self) -> None:
+        if self._wall_to_monotonic_offset_s is None:
+            raise RuntimeError("wall-to-monotonic clock conversion is not calibrated")
+        current_offset_s, calibration_error_ms = self._measure_wall_to_monotonic_offset()
+        if calibration_error_ms > self.config.max_clock_calibration_error_ms:
+            raise RuntimeError(
+                "wall-to-monotonic clock calibration exceeded error budget: "
+                f"{calibration_error_ms:.3f} ms"
+            )
+        drift_ms = abs(current_offset_s - self._wall_to_monotonic_offset_s) * 1000.0
+        if drift_ms > self.config.max_clock_calibration_error_ms:
+            raise RuntimeError(
+                "wall-to-monotonic clock offset changed during recording: "
+                f"{drift_ms:.3f} ms"
+            )
 
     def _to_host_monotonic(self, wall_timestamp: float) -> float:
         if self._wall_to_monotonic_offset_s is None:
