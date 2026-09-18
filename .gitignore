@@ -4,3 +4,6 @@
 __pycache__/
 *.py[cod]
 
+
+# A worktree may link its environment to large-data storage.
+/.venv

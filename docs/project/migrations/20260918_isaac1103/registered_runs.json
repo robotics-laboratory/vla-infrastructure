@@ -1,0 +1,9 @@
+{
+  "s1": "/data/vla-infrastructure/evidence/isaac1103-cutover-20260918/s1-20260918T200208268551Z",
+  "combined": "/data/vla-infrastructure/evidence/isaac1103-cutover-20260918/combined-20260918T200400756418Z",
+  "control": "/data/vla-infrastructure/evidence/isaac1103-cutover-20260918/control-20260918T200138919453Z",
+  "s2": "/data/vla-infrastructure/evidence/isaac1103-cutover-20260918/s2-20260918T200245613243Z",
+  "s2_standalone": "/data/vla-infrastructure/evidence/isaac1103-cutover-20260918/s2_standalone-20260918T200312775201Z",
+  "legacy": "/data/vla-infrastructure/evidence/isaac1103-cutover-20260918/legacy-20260918T195605533086Z",
+  "demo": "/data/vla-infrastructure/evidence/isaac1103-cutover-20260918/demo-20260918T200335026648Z-dual_cube_to_matching_plates-hud-off"
+}

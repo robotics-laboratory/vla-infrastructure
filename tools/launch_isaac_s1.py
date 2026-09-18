@@ -1,117 +1,108 @@
 #!/usr/bin/env python3
-"""Launch the accepted Candidate B Gate S1 runtime and retain process evidence."""
-
+"""Canonical Isaac launcher: pinned final runtime, explicit legacy rollback."""
 from __future__ import annotations
 
+import argparse
 import datetime
+import hashlib
 import json
 import os
 from pathlib import Path
+import shlex
 import subprocess
 
+from isaac_demo_launch import configure_cloudxr, git, user_environment, verify_stack, write_runtime_config
 
 ROOT = Path(__file__).resolve().parents[1]
-STORAGE = Path("/data/vla-infrastructure")
-QUALIFICATION = STORAGE / "isaaclab_candidate_qualification/20260907"
-LAB = QUALIFICATION / "candidate_b_exact"
-ENVIRONMENT = STORAGE / "envs/isaac-s1-candidate-b"
-RUNTIME_ROOT = STORAGE / "cache/isaac-s1"
-USER_CACHE_ROOT = RUNTIME_ROOT / "users" / f"uid-{os.getuid()}"
-KIT_PORTABLE_ROOT = USER_CACHE_ROOT / "kit"
-LAB_COMMIT = "913ac53f51b2f8d02c9e121caa4cbdd06262948e"
-ASSET_COMMIT = "f6642ce0d7872c686f29c99e9e10cd23d1d49313"
-LAB_PYPROJECT_SHA256 = "b691862409ab8ad58b074ac32ce7f071e3895ec10975444b9e62995741ace159"
-LAB_LOCK_SHA256 = "80eb2c4e1155dd9e9736506d41cdbe327df74ee2b005bdecc0fb7c87c8b8bb84"
 
 
-def _sha256(path: Path) -> str:
-    import hashlib
-
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def main() -> int:
-    for checkout, expected in ((LAB, LAB_COMMIT), (STORAGE / "assets/agx_arm_urdf", ASSET_COMMIT)):
-        actual = subprocess.check_output(
-            ["git", "-C", str(checkout), "rev-parse", "HEAD"], text=True
-        ).strip()
-        dirty = subprocess.check_output(
-            ["git", "-C", str(checkout), "status", "--porcelain"], text=True
-        )
-        if actual != expected or dirty:
-            raise RuntimeError(f"expected clean pinned checkout {expected}: {checkout}")
-    for path, expected in (
-        (LAB / "pyproject.toml", LAB_PYPROJECT_SHA256),
-        (LAB / "uv.lock", LAB_LOCK_SHA256),
-    ):
-        if _sha256(path) != expected:
-            raise RuntimeError(f"Candidate B frozen workspace hash mismatch: {path}")
-    if os.environ.get("OMNI_KIT_ACCEPT_EULA", "").upper() not in {"Y", "YES", "1"}:
-        raise RuntimeError(
-            "NVIDIA EULA acceptance is required: set OMNI_KIT_ACCEPT_EULA=Y after acceptance"
-        )
-    if not (ENVIRONMENT / "bin/python").exists():
-        raise RuntimeError(f"materialize the checked-in S1 uv project at {ENVIRONMENT} first")
-    KIT_PORTABLE_ROOT.mkdir(parents=True, exist_ok=True)
-    environment = os.environ.copy()
-    environment.update(
-        {
-            "UV_CACHE_DIR": str(QUALIFICATION / "uv_cache"),
-            "UV_PROJECT_ENVIRONMENT": str(ENVIRONMENT),
-            "XDG_CACHE_HOME": str(USER_CACHE_ROOT / "xdg"),
-            "PYTHONPATH": str(LAB / "source/isaaclab"),
-            "PYTHONNOUSERSITE": "1",
-        }
-    )
-    environment.pop("PYTHONHOME", None)
-    environment.pop("VIRTUAL_ENV", None)
-    stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    output_dir = RUNTIME_ROOT / "runs" / stamp
-    output_dir.mkdir(parents=True, exist_ok=False)
-    command = [
-        "uv",
-        "run",
-        "--project",
-        str(LAB),
-        "--frozen",
-        "--no-sync",
-        "python",
-        str(ROOT / "tools/run_isaac_s1.py"),
-        "--device",
-        "cuda:0",
-        "--kit_args",
-        f"--portable-root {KIT_PORTABLE_ROOT}",
-        "--report",
-        str(output_dir / "result.json"),
-    ]
-    print(f"S1 evidence output: {output_dir}", flush=True)
-    with (output_dir / "stdout.log").open("w", encoding="utf-8") as log:
-        with subprocess.Popen(
-            command,
-            cwd=ROOT,
-            env=environment,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-        ) as process:
-            assert process.stdout is not None
+def main(argv=None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--stack', choices=('isaac61', 'legacy'), default='isaac61')
+    parser.add_argument('--teleop', action='store_true')
+    parser.add_argument('--smoke', action='store_true')
+    parser.add_argument('--xr-smoke', action='store_true')
+    parser.add_argument('--max-control-steps', type=int, default=18000)
+    parser.add_argument('--combined-preview-test', type=int, default=0, metavar='FRAMES')
+    parser.add_argument('--preview-control', action='store_true', help='Diagnostic positive control, isolation disabled.')
+    parser.add_argument('--cloudxr-mode', choices=('auto', 'existing'), default='auto')
+    parser.add_argument('--state-root', type=Path)
+    parser.add_argument('--dry-run', action='store_true')
+    args = parser.parse_args(argv)
+    if args.smoke and args.xr_smoke:
+        parser.error('Choose --smoke or --xr-smoke')
+    if args.combined_preview_test and (args.stack != 'isaac61' or args.teleop):
+        parser.error('Combined validation uses final isaac_env, separate from physical S2')
+    if args.preview_control and not args.combined_preview_test:
+        parser.error('--preview-control is diagnostic-only')
+    stack = verify_stack(args.stack)
+    if not args.dry_run and os.environ.get('OMNI_KIT_ACCEPT_EULA', '').upper() not in ('Y', 'YES', '1'):
+        raise RuntimeError('Set OMNI_KIT_ACCEPT_EULA=Y after accepting NVIDIA EULA')
+    environment, state = user_environment(stack, args.stack, state_root=args.state_root)
+    environment.update({'UV_PROJECT_ENVIRONMENT': str(stack['environment']),
+                        'UV_CACHE_DIR': str(state / 'cache/uv')})
+    xr = bool(args.combined_preview_test or (args.teleop and not args.smoke))
+    if xr or args.teleop:
+        environment['VLA_CLOUDXR_INSTALL_DIR'] = str(state / 'cloudxr')
+        configure_cloudxr(environment, mode=args.cloudxr_mode, dry_run=args.dry_run)
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+    output = state / 'runs' / stamp
+    output.mkdir(parents=True, exist_ok=False)
+    config = write_runtime_config(ROOT, stack, state, output)
+    kit_args = ['--portable-root', str(state / 'kit')]
+    if xr:
+        kit_args += ['--enable', 'omni.kit.scene_view.xr', '--enable', 'omni.kit.scene_view.xr_utils']
+        if args.stack == 'isaac61':
+            kit_args += ['--/renderer/scenePartitioning/enabled=true',
+                         '--/rtx/scenePartitioning/showAllPartitionsByDefault=true']
+    command = ['uv', 'run', '--project', str(stack['lab']), '--frozen', '--no-sync',
+               '--no-managed-python', 'python', str(ROOT / 'tools/run_isaac_s1.py'),
+               '--device', 'cuda:0', '--config', str(config), '--kit_args', shlex.join(kit_args),
+               '--report', str(output / 'result.json')]
+    if args.stack == 'isaac61':
+        command += ['--viz', 'kit']
+    if xr:
+        command += ['--xr']
+    if args.teleop:
+        command += ['--s2-teleop', '--s2-config', str(ROOT / 'configs' / stack['s2']),
+                    '--s2-max-control-steps', str(60 if args.smoke or args.xr_smoke else args.max_control_steps),
+                    '--s2-cloudxr-profile', 'standalone' if args.smoke else 'cloudxrjs']
+        if args.smoke or args.xr_smoke:
+            command += ['--no-s2-require-session', '--s2-reset-step', '30']
+        else:
+            command += ['--s2-require-tracking', '--s2-reset-step', '0']
+        if xr and args.stack == 'isaac61':
+            command += ['--production-preview']
+    if args.combined_preview_test:
+        command += ['--production-preview', '--combined-preview-test', str(args.combined_preview_test)]
+        if args.preview_control:
+            command += ['--preview-control']
+    source = sorted((ROOT / 'tools').glob('isaac*.py')) + [ROOT / 'tools/run_isaac_s1.py', ROOT / 'tools/check_isaac_s1_preview.py', Path(__file__)]
+    manifest = {'profile': 'isaac_vr_record' if args.teleop else 'isaac_env',
+                'stack': args.stack, 'environment_id': 'isaac' if args.stack == 'isaac61' else 'isaac_legacy',
+                'project_sha': git(ROOT, 'rev-parse', 'HEAD'), 'cwd': str(ROOT),
+                'command': command, 'lab_commit': stack['commit'], 'sdk': str(stack['environment']),
+                'pyproject_sha256': stack['pyproject'], 'lock_sha256': stack['lock'],
+                'source_sha256': {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in source},
+                'config_sha256': hashlib.sha256(config.read_bytes()).hexdigest(), 'dry_run': args.dry_run}
+    (output / 'launch_manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
+    print(f'Isaac evidence output: {output}', flush=True)
+    if args.dry_run:
+        print(shlex.join(command)); return 0
+    with (output / 'stdout.log').open('w') as log:
+        with subprocess.Popen(command, cwd=ROOT, env=environment, stdout=subprocess.PIPE,
+                              stderr=subprocess.STDOUT, text=True) as process:
             for line in process.stdout:
-                log.write(line)
-                log.flush()
-                print(line, end="", flush=True)
-            result = process.wait()
-    report_path = output_dir / "result.json"
-    if not report_path.is_file():
-        return result or 1
-    report = json.loads(report_path.read_text(encoding="utf-8"))
-    report["process"] = {
-        "exit_code": result,
-        "clean_shutdown": result == 0,
-        "stdout_log": str(output_dir / "stdout.log"),
-    }
-    report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    return result
+                log.write(line); log.flush(); print(line, end='', flush=True)
+            code = process.wait()
+    result = output / 'result.json'
+    if not result.exists():
+        return code or 1
+    report = json.loads(result.read_text())
+    report['process'] = {'exit_code': code, 'clean_shutdown': code == 0, 'stdout_log': str(output/'stdout.log')}
+    result.write_text(json.dumps(report, indent=2, sort_keys=True)+'\n')
+    return code if code else (0 if report.get('passed') else 1)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     raise SystemExit(main())

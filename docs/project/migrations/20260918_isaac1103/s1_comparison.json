@@ -1,0 +1,1313 @@
+{
+  "old_runtime": "/data/vla-infrastructure/cache/isaac-s1/runs/20260908T065807Z/result.json",
+  "candidate_runtime": "/data/vla-infrastructure/evidence/isaac1103-cutover-20260918/s1-20260918T200208268551Z/result.json",
+  "semantic_config": {
+    "execution": {
+      "classification": "SAME",
+      "old_accepted": {
+        "device": "cuda:0",
+        "use_fabric": true,
+        "arm_gravity_enabled": false,
+        "scene_gravity_m_s2": [
+          0.0,
+          0.0,
+          -9.81
+        ],
+        "solver_iterations": {
+          "position": 8,
+          "velocity": 2
+        },
+        "physics_dt_s": 0.008333333333333333,
+        "control_dt_s": 0.03333333333333333,
+        "action_repeat": 4,
+        "render_interval_physics_steps": 1,
+        "control_mode": "absolute joint position",
+        "actuator_type": "Isaac Lab implicit PhysX force PD drive",
+        "stiffness": {
+          "arm_nm_per_rad": 400.0,
+          "gripper_n_per_m": 2000.0
+        },
+        "damping": {
+          "arm_nm_s_per_rad": 40.0,
+          "gripper_n_s_per_m": 100.0
+        },
+        "effort_limits": {
+          "arm_nm": 100.0,
+          "gripper_n": 10.0
+        },
+        "velocity_limits": {
+          "arm_rad_s": 5.0,
+          "gripper_m_s": 3.0
+        },
+        "saturation": "Preserve D0 action; separately convert degrees to radians and millimeters to meters, then clip the native target to the accepted URDF limits.",
+        "hold": "Zero-order hold of one native position target for four physics steps; no interpolation.",
+        "seed_protocol": "Set Python random, NumPy, and torch seeds before deterministic fixed reset; S1 default seed is 0."
+      },
+      "new_candidate": {
+        "device": "cuda:0",
+        "use_fabric": true,
+        "arm_gravity_enabled": false,
+        "scene_gravity_m_s2": [
+          0.0,
+          0.0,
+          -9.81
+        ],
+        "solver_iterations": {
+          "position": 8,
+          "velocity": 2
+        },
+        "physics_dt_s": 0.008333333333333333,
+        "control_dt_s": 0.03333333333333333,
+        "action_repeat": 4,
+        "render_interval_physics_steps": 1,
+        "control_mode": "absolute joint position",
+        "actuator_type": "Isaac Lab implicit PhysX force PD drive",
+        "stiffness": {
+          "arm_nm_per_rad": 400.0,
+          "gripper_n_per_m": 2000.0
+        },
+        "damping": {
+          "arm_nm_s_per_rad": 40.0,
+          "gripper_n_s_per_m": 100.0
+        },
+        "effort_limits": {
+          "arm_nm": 100.0,
+          "gripper_n": 10.0
+        },
+        "velocity_limits": {
+          "arm_rad_s": 5.0,
+          "gripper_m_s": 3.0
+        },
+        "saturation": "Preserve D0 action; separately convert degrees to radians and millimeters to meters, then clip the native target to the accepted URDF limits.",
+        "hold": "Zero-order hold of one native position target for four physics steps; no interpolation.",
+        "seed_protocol": "Set Python random, NumPy, and torch seeds before deterministic fixed reset; S1 default seed is 0."
+      }
+    },
+    "task": {
+      "classification": "SAME",
+      "old_accepted": {
+        "id": "PiperX-Isaac-Bimanual-JointReach-S1-v0",
+        "revision": "piper_x_isaac_bimanual_joint_reach_s1_v1",
+        "instruction": "Move both PIPER-X arms to the named joint/aperture target.",
+        "workspace_frame": "each arm-local base_link",
+        "success": {
+          "joint_max_abs_error_deg": 2.0,
+          "gripper_max_abs_error_mm": 2.0
+        },
+        "termination": "Success terminates the episode; no S1 failure termination is defined.",
+        "truncation": "At 120 control steps without success.",
+        "horizon_control_steps": 120
+      },
+      "new_candidate": {
+        "id": "PiperX-Isaac-Bimanual-JointReach-S1-v0",
+        "revision": "piper_x_isaac_bimanual_joint_reach_s1_v1",
+        "instruction": "Move both PIPER-X arms to the named joint/aperture target.",
+        "workspace_frame": "each arm-local base_link",
+        "success": {
+          "joint_max_abs_error_deg": 2.0,
+          "gripper_max_abs_error_mm": 2.0
+        },
+        "termination": "Success terminates the episode; no S1 failure termination is defined.",
+        "truncation": "At 120 control steps without success.",
+        "horizon_control_steps": 120
+      }
+    },
+    "cameras": {
+      "classification": "SAME",
+      "old_accepted": {
+        "left_wrist": {
+          "d0_key": "observation.images.left_wrist",
+          "prim_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+          "pose_source": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+        },
+        "right_wrist": {
+          "d0_key": "observation.images.right_wrist",
+          "prim_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+          "pose_source": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+        },
+        "sensor_layout": "One upstream Isaac Lab Camera with a regex-batched FrameView over the two independently parented camera prims.",
+        "sensor_prim_expression": "/World/[^/]*Piper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+        "offset_xyz_m": [
+          0.1,
+          0.0,
+          0.05
+        ],
+        "offset_quat_xyzw": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "offset_convention": "world",
+        "pose_update": "Upstream parent hierarchy and Candidate B Camera/FrameView propagate the configured fixed local offset.",
+        "width": 640,
+        "height": 480,
+        "fps": 30,
+        "data_type": "rgb",
+        "d0_dtype_layout": "uint8 HWC RGB",
+        "native_to_d0": "Select the first three native RGB/RGBA channels without normalization.",
+        "focal_length_mm": 18.0,
+        "horizontal_aperture_mm": 20.955,
+        "clipping_range_m": [
+          0.02,
+          10.0
+        ],
+        "validation": {
+          "fixed_scene_target_size_m": [
+            0.07,
+            0.07,
+            0.07
+          ],
+          "fixed_scene_target_colors_rgb": {
+            "left": [
+              0.95,
+              0.01,
+              0.01
+            ],
+            "right": [
+              0.95,
+              0.01,
+              0.01
+            ]
+          },
+          "unilateral_joint_1_perturbations_deg": {
+            "left": 15.0,
+            "right": -15.0
+          },
+          "continuous_frames_per_sequence_per_camera": 110,
+          "sequences": [
+            "before_reset",
+            "after_reset"
+          ],
+          "no_stale_rule": "Every counted moving frame is valid and changes hash from its predecessor; camera frame indices strictly advance.",
+          "reset_rule": "Each camera returns to its baseline parented pose and fixed-target centroid; the pre-reset frame is not reused."
+        }
+      },
+      "new_candidate": {
+        "left_wrist": {
+          "d0_key": "observation.images.left_wrist",
+          "prim_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+          "pose_source": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+        },
+        "right_wrist": {
+          "d0_key": "observation.images.right_wrist",
+          "prim_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+          "pose_source": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+        },
+        "sensor_layout": "One upstream Isaac Lab Camera with a regex-batched FrameView over the two independently parented camera prims.",
+        "sensor_prim_expression": "/World/[^/]*Piper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+        "offset_xyz_m": [
+          0.1,
+          0.0,
+          0.05
+        ],
+        "offset_quat_xyzw": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "offset_convention": "world",
+        "pose_update": "Upstream parent hierarchy and Candidate B Camera/FrameView propagate the configured fixed local offset.",
+        "width": 640,
+        "height": 480,
+        "fps": 30,
+        "data_type": "rgb",
+        "d0_dtype_layout": "uint8 HWC RGB",
+        "native_to_d0": "Select the first three native RGB/RGBA channels without normalization.",
+        "focal_length_mm": 18.0,
+        "horizontal_aperture_mm": 20.955,
+        "clipping_range_m": [
+          0.02,
+          10.0
+        ],
+        "validation": {
+          "fixed_scene_target_size_m": [
+            0.07,
+            0.07,
+            0.07
+          ],
+          "fixed_scene_target_colors_rgb": {
+            "left": [
+              0.95,
+              0.01,
+              0.01
+            ],
+            "right": [
+              0.95,
+              0.01,
+              0.01
+            ]
+          },
+          "unilateral_joint_1_perturbations_deg": {
+            "left": 15.0,
+            "right": -15.0
+          },
+          "continuous_frames_per_sequence_per_camera": 110,
+          "sequences": [
+            "before_reset",
+            "after_reset"
+          ],
+          "no_stale_rule": "Every counted moving frame is valid and changes hash from its predecessor; camera frame indices strictly advance.",
+          "reset_rule": "Each camera returns to its baseline parented pose and fixed-target centroid; the pre-reset frame is not reused."
+        }
+      }
+    },
+    "d0_boundary": {
+      "classification": "SAME",
+      "old_accepted": {
+        "revision": "piper_x_d0_isaac_edge_mapping_v1",
+        "state_shape": [
+          14
+        ],
+        "state_dtype": "float32",
+        "order_source": "configs/resolved_contract.yaml#dataset.observation_contract.state.names",
+        "joint_boundary_unit": "degree",
+        "native_joint_unit": "radian",
+        "gripper_boundary_unit": "millimeter",
+        "native_gripper_unit": "meter",
+        "observation_gripper": "absolute measured model aperture",
+        "action_gripper": "signed D0 travel label; the separate S1 native aperture target is clipped to [0, 100] mm, without changing the D0 label",
+        "camera_roles": [
+          "left_wrist",
+          "right_wrist"
+        ],
+        "process_boundary": "LeRobot remains in the isolated core process and is not imported by this environment."
+      },
+      "new_candidate": {
+        "revision": "piper_x_d0_isaac_edge_mapping_v1",
+        "state_shape": [
+          14
+        ],
+        "state_dtype": "float32",
+        "order_source": "configs/resolved_contract.yaml#dataset.observation_contract.state.names",
+        "joint_boundary_unit": "degree",
+        "native_joint_unit": "radian",
+        "gripper_boundary_unit": "millimeter",
+        "native_gripper_unit": "meter",
+        "observation_gripper": "absolute measured model aperture",
+        "action_gripper": "signed D0 travel label; the separate S1 native aperture target is clipped to [0, 100] mm, without changing the D0 label",
+        "camera_roles": [
+          "left_wrist",
+          "right_wrist"
+        ],
+        "process_boundary": "LeRobot remains in the isolated core process and is not imported by this environment."
+      }
+    },
+    "revision": {
+      "classification": "SAME",
+      "old_accepted": "piper_x_isaac_s1_runtime_v1",
+      "new_candidate": "piper_x_isaac_s1_runtime_v1"
+    },
+    "reset": {
+      "classification": "SAME",
+      "old_accepted": {
+        "semantics": "Write fixed namespaced root/joint pose, zero root/joint velocities, set the same position target, clear asset/sensor buffers, use Candidate B's qualified 24 non-evidence renderer-settling physics ticks, then capture on the next normal physics tick before returning fresh reset RGB.",
+        "home_d0_per_arm": [
+          0.0,
+          30.0,
+          -60.0,
+          0.0,
+          20.0,
+          0.0,
+          50.0
+        ],
+        "base_positions_m": {
+          "left": [
+            -0.35,
+            0.0,
+            0.0
+          ],
+          "right": [
+            0.35,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "new_candidate": {
+        "semantics": "Write fixed namespaced root/joint pose, zero root/joint velocities, set the same position target, clear asset/sensor buffers, use Candidate B's qualified 24 non-evidence renderer-settling physics ticks, then capture on the next normal physics tick before returning fresh reset RGB.",
+        "home_d0_per_arm": [
+          0.0,
+          30.0,
+          -60.0,
+          0.0,
+          20.0,
+          0.0,
+          50.0
+        ],
+        "base_positions_m": {
+          "left": [
+            -0.35,
+            0.0,
+            0.0
+          ],
+          "right": [
+            0.35,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    }
+  },
+  "runtime": {
+    "physics_dt_s": {
+      "classification": "SAME",
+      "old_accepted": 0.008333333333333333,
+      "new_candidate": 0.008333333333333333
+    },
+    "control_dt_s": {
+      "classification": "SAME",
+      "old_accepted": 0.03333333333333333,
+      "new_candidate": 0.03333333333333333
+    },
+    "action_repeat": {
+      "classification": "SAME",
+      "old_accepted": 4,
+      "new_candidate": 4
+    },
+    "control_mode": {
+      "classification": "SAME",
+      "old_accepted": "absolute joint position",
+      "new_candidate": "absolute joint position"
+    },
+    "actuator_type": {
+      "classification": "SAME",
+      "old_accepted": "Isaac Lab implicit PhysX force PD drive",
+      "new_candidate": "Isaac Lab implicit PhysX force PD drive"
+    },
+    "action_hold": {
+      "classification": "SAME",
+      "old_accepted": "zero-order hold for four physics steps",
+      "new_candidate": "zero-order hold for four physics steps"
+    },
+    "saturation": {
+      "classification": "SAME",
+      "old_accepted": "D0 label preserved; native target clipped to accepted URDF limits",
+      "new_candidate": "D0 label preserved; native target clipped to accepted URDF limits"
+    },
+    "reset_seed_protocol": {
+      "classification": "SAME",
+      "old_accepted": "seed Python, NumPy, and torch before deterministic fixed reset",
+      "new_candidate": "seed Python, NumPy, and torch before deterministic fixed reset"
+    },
+    "task": {
+      "old_accepted": {
+        "revision": "piper_x_isaac_bimanual_joint_reach_s1_v1",
+        "success_episode": {
+          "maximum_gripper_error_mm": 0.00017547607421875,
+          "maximum_joint_error_deg": 0.000667572021484375,
+          "native_saturated": false,
+          "reward": -1.8455743789672852,
+          "steps": 3,
+          "terminated": true,
+          "truncated": false
+        },
+        "task_id": "PiperX-Isaac-Bimanual-JointReach-S1-v0",
+        "timeout_episode": {
+          "native_saturated": true,
+          "reward": -850.0012054443359,
+          "steps": 120,
+          "terminated": false,
+          "truncated": true
+        }
+      },
+      "new_candidate": {
+        "revision": "piper_x_isaac_bimanual_joint_reach_s1_v1",
+        "success_episode": {
+          "maximum_gripper_error_mm": 0.000125885009765625,
+          "maximum_joint_error_deg": 0.000301361083984375,
+          "native_saturated": false,
+          "reward": -1.8532307147979736,
+          "steps": 3,
+          "terminated": true,
+          "truncated": false
+        },
+        "task_id": "PiperX-Isaac-Bimanual-JointReach-S1-v0",
+        "timeout_episode": {
+          "native_saturated": true,
+          "reward": -850.0005035400391,
+          "steps": 120,
+          "terminated": false,
+          "truncated": true
+        }
+      }
+    }
+  },
+  "classification": {
+    "SDK/pins": "EXPECTED REPIN",
+    "mutable storage": "BENIGN",
+    "S1 semantics": "SAME, NEW RUNTIME EVIDENCE",
+    "SceneUI manager churn": "REGRESSION in unsupported destructive lifecycle; supported retention validated",
+    "S2 physical tracking": "UNKNOWN / HUMAN GATE PENDING"
+  },
+  "asset_sha256": "103af50b99b17e4ff962b7f563459672ad89556661de79cbd30c1792fea92a6f",
+  "new_camera_results": {
+    "dtype_layout_color": "uint8 HWC RGB",
+    "identity": {
+      "camera_prim_expression": "/World/[^/]*Piper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+      "left": {
+        "camera_prim_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+        "d0_key": "observation.images.left_wrist",
+        "role": "left_wrist",
+        "wrist_parent_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+      },
+      "passed": true,
+      "right": {
+        "camera_prim_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+        "d0_key": "observation.images.right_wrist",
+        "role": "right_wrist",
+        "wrist_parent_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+      },
+      "unilateral_perturbations": [
+        {
+          "joint_1_delta_deg": 15.0,
+          "moved_role": "left_wrist",
+          "passed": true,
+          "pose_changes": [
+            {
+              "orientation_rad": 0.26179936890760686,
+              "position_m": 0.045849123605146355,
+              "role": "left_wrist"
+            },
+            {
+              "orientation_rad": 0.0,
+              "position_m": 0.0,
+              "role": "right_wrist"
+            }
+          ],
+          "target_centroid_shifts_px": [
+            181.5005555760563,
+            0.012676581705893357
+          ]
+        },
+        {
+          "joint_1_delta_deg": -15.0,
+          "moved_role": "right_wrist",
+          "passed": true,
+          "pose_changes": [
+            {
+              "orientation_rad": 0.0,
+              "position_m": 1.862645149230957e-09,
+              "role": "left_wrist"
+            },
+            {
+              "orientation_rad": 0.2617992939345954,
+              "position_m": 0.045849020972944174,
+              "role": "right_wrist"
+            }
+          ],
+          "target_centroid_shifts_px": [
+            2.0492125766921077,
+            176.76940392516855
+          ]
+        }
+      ]
+    },
+    "initial_renderer_warmup_physics_steps": 24,
+    "native_upstream_path": "Isaac Lab Camera with regex-batched FrameView over parented wrist prims",
+    "passed": true,
+    "reset": {
+      "checks": [
+        {
+          "frame_changed_across_reset": true,
+          "passed": true,
+          "post_reset_frame_sha256": "8f4f7f6ac5e9cf523ad2b88ff0c270ff143ca606715249f8c82440e5c12744a1",
+          "post_reset_frame_valid": true,
+          "post_to_baseline_pose_error_m": 3.725290298461914e-09,
+          "pre_reset_frame_sha256": "727d08e76a5d880e1cb9ee4fc0d1c0a153fa9ae3465de856272e4e23b2ab6ab9",
+          "pre_to_post_pose_change_m": 0.07183730651412315,
+          "role": "left_wrist",
+          "target_centroid_return_error_px": 0.016355403458224657
+        },
+        {
+          "frame_changed_across_reset": true,
+          "passed": true,
+          "post_reset_frame_sha256": "63d6c3dac6fd8cdc7914493e0b8ea83242001fa7872a96876cf8b0060e6f56f2",
+          "post_reset_frame_valid": true,
+          "post_to_baseline_pose_error_m": 0.0,
+          "pre_reset_frame_sha256": "b6cef4243225ad96c14c5aafbc2036e88a0fcc33b8229985c10fdc0a22715cd9",
+          "pre_to_post_pose_change_m": 0.08463838533085144,
+          "role": "right_wrist",
+          "target_centroid_return_error_px": 0.029639439831243505
+        }
+      ],
+      "passed": true
+    },
+    "resolution": [
+      640,
+      480
+    ],
+    "sequences": [
+      {
+        "cameras": [
+          {
+            "camera_prim_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+            "camera_rotation_rad": 0.3807744223822676,
+            "camera_translation_m": 0.07183730193487951,
+            "d0_key": "observation.images.left_wrist",
+            "exact_consecutive_changes": 109,
+            "final": {
+              "actual_orientation_world_xyzw": [
+                0.07204782962799072,
+                0.536329984664917,
+                0.06654762476682663,
+                0.8382903337478638
+              ],
+              "actual_position_world_m": [
+                -0.17977502942085266,
+                0.035945743322372437,
+                0.45429763197898865
+              ],
+              "camera_prim_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+              "d0_key": "observation.images.left_wrist",
+              "dtype": "uint8",
+              "expected_orientation_world_xyzw": [
+                0.07204777002334595,
+                0.5363300442695618,
+                0.06654763221740723,
+                0.8382904529571533
+              ],
+              "expected_position_world_m": [
+                -0.17977502942085266,
+                0.035945743322372437,
+                0.45429763197898865
+              ],
+              "frame_index": 465,
+              "maximum": 243,
+              "mean": 76.78356336805555,
+              "minimum": 1,
+              "orientation_error_rad": 0.0006905339694324072,
+              "position_error_m": 0.0,
+              "role": "left_wrist",
+              "sha256": "727d08e76a5d880e1cb9ee4fc0d1c0a153fa9ae3465de856272e4e23b2ab6ab9",
+              "shape": [
+                480,
+                640,
+                3
+              ],
+              "standard_deviation": 39.518219468256625,
+              "target": {
+                "center_offset_px": [
+                  239.6382046619276,
+                  -145.61988758472475
+                ],
+                "centroid_xy_px": [
+                  559.1382046619276,
+                  93.88011241527525
+                ],
+                "pixel_count": 30245
+              },
+              "valid": true,
+              "wrist_parent_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+            },
+            "first": {
+              "actual_orientation_world_xyzw": [
+                0.15402057766914368,
+                0.45481008291244507,
+                -0.08019538223743439,
+                0.8734954595565796
+              ],
+              "actual_position_world_m": [
+                -0.17705653607845306,
+                -0.030610855668783188,
+                0.48119422793388367
+              ],
+              "camera_prim_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+              "d0_key": "observation.images.left_wrist",
+              "dtype": "uint8",
+              "expected_orientation_world_xyzw": [
+                0.1540204882621765,
+                0.45481008291244507,
+                -0.08019530773162842,
+                0.8734953999519348
+              ],
+              "expected_position_world_m": [
+                -0.17705652117729187,
+                -0.030610855668783188,
+                0.48119422793388367
+              ],
+              "frame_index": 29,
+              "maximum": 243,
+              "mean": 78.15179904513889,
+              "minimum": 0,
+              "orientation_error_rad": 0.0,
+              "position_error_m": 1.4901161193847656e-08,
+              "role": "left_wrist",
+              "sha256": "a193074812e3d2d0f589606f931b3859300845eaee4fccae1a8a38c8fc3f95c9",
+              "shape": [
+                480,
+                640,
+                3
+              ],
+              "standard_deviation": 37.47736130334819,
+              "target": {
+                "center_offset_px": [
+                  -0.4556761822939279,
+                  -2.553032373960235
+                ],
+                "centroid_xy_px": [
+                  319.0443238177061,
+                  236.94696762603976
+                ],
+                "pixel_count": 25607
+              },
+              "valid": true,
+              "wrist_parent_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+            },
+            "frames": 110,
+            "maximum_orientation_error_rad": 0.0006905339694324072,
+            "maximum_position_error_m": 3.332000986233652e-08,
+            "maximum_target_centroid_shift_px": 279.4873819669452,
+            "passed": true,
+            "role": "left_wrist",
+            "strictly_increasing_frame_indices": true,
+            "target_visible_frames": 110,
+            "unique_frame_hashes": 110,
+            "valid_frames": 110,
+            "wrist_parent_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+          },
+          {
+            "camera_prim_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+            "camera_rotation_rad": 0.5136803417940792,
+            "camera_translation_m": 0.08463838533085144,
+            "d0_key": "observation.images.right_wrist",
+            "exact_consecutive_changes": 109,
+            "final": {
+              "actual_orientation_world_xyzw": [
+                -0.27565884590148926,
+                -0.3403022885322571,
+                0.2735952138900757,
+                -0.8563599586486816
+              ],
+              "actual_position_world_m": [
+                0.48723387718200684,
+                -0.10368664562702179,
+                0.504612147808075
+              ],
+              "camera_prim_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+              "d0_key": "observation.images.right_wrist",
+              "dtype": "uint8",
+              "expected_orientation_world_xyzw": [
+                0.2756587862968445,
+                0.3403022885322571,
+                -0.2735952138900757,
+                0.8563598990440369
+              ],
+              "expected_position_world_m": [
+                0.48723387718200684,
+                -0.10368664562702179,
+                0.504612147808075
+              ],
+              "frame_index": 465,
+              "maximum": 243,
+              "mean": 97.62295572916666,
+              "minimum": 16,
+              "orientation_error_rad": 0.0,
+              "position_error_m": 0.0,
+              "role": "right_wrist",
+              "sha256": "b6cef4243225ad96c14c5aafbc2036e88a0fcc33b8229985c10fdc0a22715cd9",
+              "shape": [
+                480,
+                640,
+                3
+              ],
+              "standard_deviation": 31.842498700141704,
+              "target": {
+                "center_offset_px": [
+                  -208.7180066603235,
+                  194.91858943862985
+                ],
+                "centroid_xy_px": [
+                  110.7819933396765,
+                  434.41858943862985
+                ],
+                "pixel_count": 16816
+              },
+              "valid": true,
+              "wrist_parent_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+            },
+            "first": {
+              "actual_orientation_world_xyzw": [
+                0.15402066707611084,
+                0.4548102617263794,
+                -0.0801953673362732,
+                0.87349534034729
+              ],
+              "actual_position_world_m": [
+                0.5229435563087463,
+                -0.030610859394073486,
+                0.4811941087245941
+              ],
+              "camera_prim_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+              "d0_key": "observation.images.right_wrist",
+              "dtype": "uint8",
+              "expected_orientation_world_xyzw": [
+                0.15402066707611084,
+                0.4548102021217346,
+                -0.08019530773162842,
+                0.8734952211380005
+              ],
+              "expected_position_world_m": [
+                0.5229435563087463,
+                -0.030610861256718636,
+                0.4811941385269165
+              ],
+              "frame_index": 29,
+              "maximum": 243,
+              "mean": 89.05172200520833,
+              "minimum": 16,
+              "orientation_error_rad": 0.0,
+              "position_error_m": 2.986047320518992e-08,
+              "role": "right_wrist",
+              "sha256": "8e1f66f65f851451cb37899b2c265d9eb6746a7dde23984a09bf959f110e48b0",
+              "shape": [
+                480,
+                640,
+                3
+              ],
+              "standard_deviation": 35.097862897890344,
+              "target": {
+                "center_offset_px": [
+                  -0.46334608478412065,
+                  -2.5748692325708475
+                ],
+                "centroid_xy_px": [
+                  319.0366539152159,
+                  236.92513076742915
+                ],
+                "pixel_count": 25618
+              },
+              "valid": true,
+              "wrist_parent_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+            },
+            "frames": 110,
+            "maximum_orientation_error_rad": 0.0006905339694324072,
+            "maximum_position_error_m": 6.664001972467304e-08,
+            "maximum_target_centroid_shift_px": 287.0081355455737,
+            "passed": true,
+            "role": "right_wrist",
+            "strictly_increasing_frame_indices": true,
+            "target_visible_frames": 110,
+            "unique_frame_hashes": 110,
+            "valid_frames": 110,
+            "wrist_parent_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+          }
+        ],
+        "label": "before_reset",
+        "passed": true
+      },
+      {
+        "cameras": [
+          {
+            "camera_prim_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+            "camera_rotation_rad": 0.38077165065628105,
+            "camera_translation_m": 0.07183696886527106,
+            "d0_key": "observation.images.left_wrist",
+            "exact_consecutive_changes": 109,
+            "final": {
+              "actual_orientation_world_xyzw": [
+                0.07204821705818176,
+                0.5363301038742065,
+                0.0665459856390953,
+                0.8382903337478638
+              ],
+              "actual_position_world_m": [
+                -0.17977486550807953,
+                0.03594524413347244,
+                0.45429727435112
+              ],
+              "camera_prim_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+              "d0_key": "observation.images.left_wrist",
+              "dtype": "uint8",
+              "expected_orientation_world_xyzw": [
+                0.07204818725585938,
+                0.5363301038742065,
+                0.06654602289199829,
+                0.8382903337478638
+              ],
+              "expected_position_world_m": [
+                -0.17977486550807953,
+                0.03594524413347244,
+                0.45429727435112
+              ],
+              "frame_index": 465,
+              "maximum": 242,
+              "mean": 76.82537217881945,
+              "minimum": 2,
+              "orientation_error_rad": 0.0,
+              "position_error_m": 0.0,
+              "role": "left_wrist",
+              "sha256": "7ccbfa0479ceedb16a636f84443f3a3e09e1d82752898f389e557aa844068220",
+              "shape": [
+                480,
+                640,
+                3
+              ],
+              "standard_deviation": 39.53019293330802,
+              "target": {
+                "center_offset_px": [
+                  239.582140614154,
+                  -145.64464681188642
+                ],
+                "centroid_xy_px": [
+                  559.082140614154,
+                  93.85535318811358
+                ],
+                "pixel_count": 30253
+              },
+              "valid": true,
+              "wrist_parent_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+            },
+            "first": {
+              "actual_orientation_world_xyzw": [
+                0.15402057766914368,
+                0.45481008291244507,
+                -0.08019538223743439,
+                0.8734954595565796
+              ],
+              "actual_position_world_m": [
+                -0.17705653607845306,
+                -0.030610857531428337,
+                0.48119422793388367
+              ],
+              "camera_prim_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+              "d0_key": "observation.images.left_wrist",
+              "dtype": "uint8",
+              "expected_orientation_world_xyzw": [
+                0.1540204882621765,
+                0.45481008291244507,
+                -0.08019530773162842,
+                0.8734953999519348
+              ],
+              "expected_position_world_m": [
+                -0.17705652117729187,
+                -0.030610859394073486,
+                0.48119422793388367
+              ],
+              "frame_index": 29,
+              "maximum": 242,
+              "mean": 78.11165473090277,
+              "minimum": 0,
+              "orientation_error_rad": 0.0,
+              "position_error_m": 1.5017125321037383e-08,
+              "role": "left_wrist",
+              "sha256": "4748a818a3fdb3f022d7aa80cb07d9396315d6c0c97114606ae1a61c8764d805",
+              "shape": [
+                480,
+                640,
+                3
+              ],
+              "standard_deviation": 37.55582039912422,
+              "target": {
+                "center_offset_px": [
+                  -0.4572008747266523,
+                  -2.5355357700718457
+                ],
+                "centroid_xy_px": [
+                  319.04279912527335,
+                  236.96446422992815
+                ],
+                "pixel_count": 25608
+              },
+              "valid": true,
+              "wrist_parent_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+            },
+            "frames": 110,
+            "maximum_orientation_error_rad": 0.000976562509701277,
+            "maximum_position_error_m": 3.3333023452541966e-08,
+            "maximum_target_centroid_shift_px": 279.46216761056206,
+            "passed": true,
+            "role": "left_wrist",
+            "strictly_increasing_frame_indices": true,
+            "target_visible_frames": 110,
+            "unique_frame_hashes": 110,
+            "valid_frames": 110,
+            "wrist_parent_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+          },
+          {
+            "camera_prim_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+            "camera_rotation_rad": 0.5136803417940792,
+            "camera_translation_m": 0.08463838533085144,
+            "d0_key": "observation.images.right_wrist",
+            "exact_consecutive_changes": 109,
+            "final": {
+              "actual_orientation_world_xyzw": [
+                -0.27565884590148926,
+                -0.3403022885322571,
+                0.2735952138900757,
+                -0.8563599586486816
+              ],
+              "actual_position_world_m": [
+                0.48723387718200684,
+                -0.10368664562702179,
+                0.504612147808075
+              ],
+              "camera_prim_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+              "d0_key": "observation.images.right_wrist",
+              "dtype": "uint8",
+              "expected_orientation_world_xyzw": [
+                0.2756587862968445,
+                0.3403022885322571,
+                -0.2735952138900757,
+                0.8563598990440369
+              ],
+              "expected_position_world_m": [
+                0.48723387718200684,
+                -0.10368664562702179,
+                0.504612147808075
+              ],
+              "frame_index": 465,
+              "maximum": 243,
+              "mean": 97.61417534722223,
+              "minimum": 16,
+              "orientation_error_rad": 0.0,
+              "position_error_m": 0.0,
+              "role": "right_wrist",
+              "sha256": "8436b139d59bc9ab116d79fe427d01eac80fb7ba42e783eb42c64f95168342b4",
+              "shape": [
+                480,
+                640,
+                3
+              ],
+              "standard_deviation": 31.86951253168846,
+              "target": {
+                "center_offset_px": [
+                  -208.69950035688794,
+                  194.93058529621698
+                ],
+                "centroid_xy_px": [
+                  110.80049964311206,
+                  434.430585296217
+                ],
+                "pixel_count": 16812
+              },
+              "valid": true,
+              "wrist_parent_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+            },
+            "first": {
+              "actual_orientation_world_xyzw": [
+                0.15402066707611084,
+                0.4548102617263794,
+                -0.0801953673362732,
+                0.87349534034729
+              ],
+              "actual_position_world_m": [
+                0.5229435563087463,
+                -0.030610859394073486,
+                0.4811941087245941
+              ],
+              "camera_prim_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+              "d0_key": "observation.images.right_wrist",
+              "dtype": "uint8",
+              "expected_orientation_world_xyzw": [
+                0.15402066707611084,
+                0.4548102021217346,
+                -0.08019530773162842,
+                0.8734952211380005
+              ],
+              "expected_position_world_m": [
+                0.5229435563087463,
+                -0.030610861256718636,
+                0.4811941385269165
+              ],
+              "frame_index": 29,
+              "maximum": 243,
+              "mean": 89.15061306423611,
+              "minimum": 15,
+              "orientation_error_rad": 0.0,
+              "position_error_m": 2.986047320518992e-08,
+              "role": "right_wrist",
+              "sha256": "87d24660af841e7cb42da35231a10269b2faa5afb5967d6113d169e794bfd3e7",
+              "shape": [
+                480,
+                640,
+                3
+              ],
+              "standard_deviation": 35.08746532033802,
+              "target": {
+                "center_offset_px": [
+                  -0.43945663205556684,
+                  -2.564954328987426
+                ],
+                "centroid_xy_px": [
+                  319.06054336794443,
+                  236.93504567101257
+                ],
+                "pixel_count": 25618
+              },
+              "valid": true,
+              "wrist_parent_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+            },
+            "frames": 110,
+            "maximum_orientation_error_rad": 0.0006905339694324072,
+            "maximum_position_error_m": 6.664001972467304e-08,
+            "maximum_target_centroid_shift_px": 287.01347352366537,
+            "passed": true,
+            "role": "right_wrist",
+            "strictly_increasing_frame_indices": true,
+            "target_visible_frames": 110,
+            "unique_frame_hashes": 110,
+            "valid_frames": 110,
+            "wrist_parent_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+          }
+        ],
+        "label": "after_reset",
+        "passed": true
+      }
+    ]
+  },
+  "new_parity": {
+    "fk": {
+      "left_sample": {
+        "orientation_error_rad": 8.915826858074717e-07,
+        "position_error_m": 2.240318910941577e-07
+      },
+      "left_zero": {
+        "orientation_error_rad": 1.586536366249032e-06,
+        "position_error_m": 1.871324794280796e-07
+      },
+      "right_sample": {
+        "orientation_error_rad": 8.915826858074717e-07,
+        "position_error_m": 2.071116818363759e-07
+      },
+      "right_zero": {
+        "orientation_error_rad": 1.586536366249032e-06,
+        "position_error_m": 1.9756590189010605e-07
+      }
+    },
+    "frames": [
+      "base_link",
+      "flange_link",
+      "gripper_base"
+    ],
+    "gripper": {
+      "expected_each_m": 0.05,
+      "finger_displacements_m": [
+        0.049999985843896866,
+        0.049999989569187164
+      ],
+      "model_aperture_endpoints_m": [
+        0.0,
+        0.1
+      ]
+    },
+    "joint_limit_error_rad_or_m": 1.1611619044060717e-07,
+    "joint_names": [
+      "joint1",
+      "joint2",
+      "joint3",
+      "joint4",
+      "joint5",
+      "joint6",
+      "gripper"
+    ],
+    "maximum_orientation_error_rad": 1.586536366249032e-06,
+    "maximum_position_error_m": 3.069380873814319e-07,
+    "namespaces": [
+      "/World/LeftPiper",
+      "/World/RightPiper"
+    ],
+    "passed": true,
+    "positive_direction": {
+      "joint_1": {
+        "orientation_error_rad": 1.1259994201251005e-06,
+        "position_error_m": 1.8506554175930027e-07
+      },
+      "joint_2": {
+        "orientation_error_rad": 1.103088588912647e-06,
+        "position_error_m": 2.2645009829449994e-07
+      },
+      "joint_3": {
+        "orientation_error_rad": 1.1702867696328749e-06,
+        "position_error_m": 3.069380873814319e-07
+      },
+      "joint_4": {
+        "orientation_error_rad": 1.1445799094243388e-06,
+        "position_error_m": 2.3339195072728918e-07
+      },
+      "joint_5": {
+        "orientation_error_rad": 1.3757573232155683e-06,
+        "position_error_m": 2.510730155818909e-07
+      },
+      "joint_6": {
+        "orientation_error_rad": 1.1350342716302313e-06,
+        "position_error_m": 3.0604341766251996e-07
+      }
+    },
+    "tolerances": {
+      "joint_limit": 2e-05,
+      "orientation_rad": 0.0005,
+      "position_m": 0.0005,
+      "zero_position": 2e-05
+    },
+    "zero_position_error_rad_or_m": 0.0
+  },
+  "new_observed_intrinsics": {
+    "data_types": [
+      "rgb"
+    ],
+    "height": 480,
+    "update_period_s": 0.0,
+    "usd": [
+      {
+        "clippingRange": [
+          0.019999999552965164,
+          10.0
+        ],
+        "focalLength": 18.0,
+        "focusDistance": 1.0,
+        "horizontalAperture": 20.954999923706055,
+        "parent": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base",
+        "prim_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+        "verticalAperture": 15.7162504196167
+      },
+      {
+        "clippingRange": [
+          0.019999999552965164,
+          10.0
+        ],
+        "focalLength": 18.0,
+        "focusDistance": 1.0,
+        "horizontalAperture": 20.954999923706055,
+        "parent": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base",
+        "prim_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+        "verticalAperture": 15.7162504196167
+      }
+    ],
+    "width": 640
+  },
+  "new_observed_actuator_parameters": {
+    "left": {
+      "joint_damping": [
+        [
+          40.0,
+          40.0,
+          40.0,
+          40.0,
+          40.0,
+          40.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      ],
+      "joint_effort_limits": [
+        [
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          10.0,
+          10.0,
+          10.0
+        ]
+      ],
+      "joint_names": [
+        "joint1",
+        "joint2",
+        "joint3",
+        "joint4",
+        "joint5",
+        "joint6",
+        "gripper",
+        "gripper_joint1",
+        "gripper_joint2"
+      ],
+      "joint_stiffness": [
+        [
+          400.0,
+          400.0,
+          400.0,
+          400.0,
+          400.0,
+          400.0,
+          2000.0,
+          2000.0,
+          2000.0
+        ]
+      ],
+      "joint_velocity_limits": [
+        [
+          5.0,
+          5.0,
+          5.0,
+          5.0,
+          5.0,
+          5.0,
+          3.0,
+          3.0,
+          3.0
+        ]
+      ]
+    },
+    "right": {
+      "joint_damping": [
+        [
+          40.0,
+          40.0,
+          40.0,
+          40.0,
+          40.0,
+          40.0,
+          100.0,
+          100.0,
+          100.0
+        ]
+      ],
+      "joint_effort_limits": [
+        [
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          100.0,
+          10.0,
+          10.0,
+          10.0
+        ]
+      ],
+      "joint_names": [
+        "joint1",
+        "joint2",
+        "joint3",
+        "joint4",
+        "joint5",
+        "joint6",
+        "gripper",
+        "gripper_joint1",
+        "gripper_joint2"
+      ],
+      "joint_stiffness": [
+        [
+          400.0,
+          400.0,
+          400.0,
+          400.0,
+          400.0,
+          400.0,
+          2000.0,
+          2000.0,
+          2000.0
+        ]
+      ],
+      "joint_velocity_limits": [
+        [
+          5.0,
+          5.0,
+          5.0,
+          5.0,
+          5.0,
+          5.0,
+          3.0,
+          3.0,
+          3.0
+        ]
+      ]
+    }
+  }
+}

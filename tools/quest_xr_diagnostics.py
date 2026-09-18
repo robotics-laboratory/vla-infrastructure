@@ -26,7 +26,7 @@ from isaacteleop.teleop_session_manager import TeleopSession, TeleopSessionConfi
 
 Hand = Literal["left", "right"]
 
-_CLOUDXR_WEB_CLIENT_URL = "https://nvidia.github.io/IsaacTeleop/client"
+_CLOUDXR_WEB_CLIENT_URL = "https://nvidia.github.io/IsaacTeleop/client/release-1.4.x/"
 _CLOUDXR_WSS_PORT = 48322
 
 

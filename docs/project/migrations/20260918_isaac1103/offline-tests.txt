@@ -1,0 +1,9 @@
+..................................sssssssssssssssssssssss............... [ 68%]
+.................................                                        [100%]
+=============================== warnings summary ===============================
+../isaac1103-cutover/.venv/lib/python3.12/site-packages/cmeel.prefix/lib/python3.12/site-packages/hppfcl/__init__.py:3
+  /home/ebulochkin/vla_infrastructure/.worktrees/isaac1103-cutover/.venv/lib/python3.12/site-packages/cmeel.prefix/lib/python3.12/site-packages/hppfcl/__init__.py:3: DeprecationWarning: Please update your 'hppfcl' imports to 'coal'
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+82 passed, 23 skipped, 1 warning in 7.27s

@@ -1,5 +1,5 @@
-revision: piper_x_isaac_s2_runtime_v1
-status: implemented_awaiting_physical_quest_acceptance
+revision: piper_x_isaac_s2_runtime_v2
+status: remediated_awaiting_second_physical_quest_acceptance
 extends: configs/isaac_s1_runtime.yaml
 environment:
   isaac_lab_commit: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
@@ -17,11 +17,17 @@ session:
   controller_source_count: 1
   source_outputs: [controller_left, controller_right]
   physical_gate_b_runtime_reused_semantically: one coherent session owns independent physical left and right streams
+xr_presentation:
+  anchor_pos_m: [0.0, -0.6, -1.05]
+  anchor_rot_xyzw: [0.0, 0.0, 0.0, 1.0]
+  near_plane_m: 0.15
+  semantics: Static XR presentation only. The simulation point at this anchor appears at the XR local origin, placing the world origin 0.6 m forward and 1.05 m above it under the upstream OpenXR-to-Isaac basis.
+  geometry_impact: none; Gate C embodiment and accepted S1 world geometry are unchanged
 processor:
-  revision: piper_x_isaac_s2_bimanual_relative_v1
+  revision: piper_x_isaac_s2_bimanual_relative_v3
   input_per_arm:
     pose_delta: [dx, dy, dz, rotation_vector_x, rotation_vector_y, rotation_vector_z]
-    state: [controller_available, grip_pose_valid, squeeze_value, trigger_value]
+    state: [controller_available, effective_grip_pose_valid, squeeze_value, trigger_value, sensitivity_button_value]
   controller_pose: grip_pose
   frames:
     openxr: Y-up; +X right, +Y up, +Z back
@@ -34,9 +40,17 @@ processor:
     handedness: right-handed
     relative_delta: R_current * inverse(R_previous)
     target_composition: left-multiply spatial delta onto the current TCP orientation
-  translation_scale: 10.0
-  rotation_scale: 10.0
-  scale_source: NVIDIA Se3RetargeterConfig relative-mode defaults; exposed here for physical S2 confirmation
+  sensitivity:
+    initial_mode: normal
+    toggle_control: thumbstick_click
+    toggle_threshold: 0.5
+    scope: independent per arm
+    modes:
+      normal: {translation_scale: 2.0, rotation_scale: 2.0}
+      precise: {translation_scale: 0.5, rotation_scale: 0.5}
+    switch_behavior: Rising edge toggles the corresponding arm and emits zero Cartesian delta on the switching frame; holding does not retrigger.
+    control_conflicts: none; squeeze remains clutch, trigger remains gripper, the client message channel owns start/stop/reset, and right primary remains the upstream anchor-rotation control
+    selection_status: remediation values require confirmation in the second physical Quest run
   upstream_smoothing: {alpha_position: 0.5, alpha_rotation: 0.5}
   upstream_deadband: {position_m_before_scale: 0.001, rotation_rad_before_scale: 0.01}
   clutch:
@@ -46,17 +60,18 @@ processor:
     active_behavior: zero Cartesian delta while upstream continues updating its relative reference
     release_behavior: discard the first released delta and rebase; no target jump
   gripper:
-    control: trigger_value greater than 0.5
-    threshold: 0.5
-    mode: binary
+    control: trigger_value
+    trigger_input_range: [0.0, 1.0]
+    mode: analog_linear
     open_aperture_m: 0.1
     closed_aperture_m: 0.0
     reset_aperture_m: 0.05
-    mapping: trigger pressed closes; trigger released opens; independent per arm
+    mapping: aperture = open + normalized_trigger * (closed - open); trigger 0 is fully open and trigger 1 is fully closed; independent per arm
   tracking:
     valid: controller present and grip_pose_valid with finite values
-    invalid: emit zero delta, hold simulated target, and require a new reference
-    recovery: discard the first newly valid delta per arm, then resume
+    invalid: emit zero delta, hold simulated target, reject invalid/default or non-finite poses, invalidate that arm's relative reference and smoothing state, and leave the opposite valid arm usable
+    root_cause_remediation: TrackingSafeSe3RelRetargeter closes the pinned upstream Se3RelRetargeter is_none branch gap, which emitted zero but retained the stale previous wrist pose and smoothing accumulator
+    recovery: first newly valid pose becomes the new per-arm baseline and emits zero delta; subsequent samples resume without manual clutch
     source_timestamp_threshold: null
   disconnect: hold simulated targets, mark both streams inactive, and require per-arm rebase on reconnect; never replay stale intent
   reset: reset S1 environment and upstream execution state, then require one newly valid rebase frame per arm

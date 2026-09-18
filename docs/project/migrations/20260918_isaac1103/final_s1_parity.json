@@ -1,0 +1,86 @@
+{
+  "fk": {
+    "left_sample": {
+      "orientation_error_rad": 8.915826858074717e-07,
+      "position_error_m": 2.240318910941577e-07
+    },
+    "left_zero": {
+      "orientation_error_rad": 1.586536366249032e-06,
+      "position_error_m": 1.871324794280796e-07
+    },
+    "right_sample": {
+      "orientation_error_rad": 8.915826858074717e-07,
+      "position_error_m": 2.071116818363759e-07
+    },
+    "right_zero": {
+      "orientation_error_rad": 1.586536366249032e-06,
+      "position_error_m": 1.9756590189010605e-07
+    }
+  },
+  "frames": [
+    "base_link",
+    "flange_link",
+    "gripper_base"
+  ],
+  "gripper": {
+    "expected_each_m": 0.05,
+    "finger_displacements_m": [
+      0.049999985843896866,
+      0.049999989569187164
+    ],
+    "model_aperture_endpoints_m": [
+      0.0,
+      0.1
+    ]
+  },
+  "joint_limit_error_rad_or_m": 1.1611619044060717e-07,
+  "joint_names": [
+    "joint1",
+    "joint2",
+    "joint3",
+    "joint4",
+    "joint5",
+    "joint6",
+    "gripper"
+  ],
+  "maximum_orientation_error_rad": 1.586536366249032e-06,
+  "maximum_position_error_m": 3.069380873814319e-07,
+  "namespaces": [
+    "/World/LeftPiper",
+    "/World/RightPiper"
+  ],
+  "passed": true,
+  "positive_direction": {
+    "joint_1": {
+      "orientation_error_rad": 1.1259994201251005e-06,
+      "position_error_m": 1.8506554175930027e-07
+    },
+    "joint_2": {
+      "orientation_error_rad": 1.103088588912647e-06,
+      "position_error_m": 2.2645009829449994e-07
+    },
+    "joint_3": {
+      "orientation_error_rad": 1.1702867696328749e-06,
+      "position_error_m": 3.069380873814319e-07
+    },
+    "joint_4": {
+      "orientation_error_rad": 1.1445799094243388e-06,
+      "position_error_m": 2.3339195072728918e-07
+    },
+    "joint_5": {
+      "orientation_error_rad": 1.3757573232155683e-06,
+      "position_error_m": 2.510730155818909e-07
+    },
+    "joint_6": {
+      "orientation_error_rad": 1.1350342716302313e-06,
+      "position_error_m": 3.0604341766251996e-07
+    }
+  },
+  "tolerances": {
+    "joint_limit": 2e-05,
+    "orientation_rad": 0.0005,
+    "position_m": 0.0005,
+    "zero_position": 2e-05
+  },
+  "zero_position_error_rad_or_m": 0.0
+}

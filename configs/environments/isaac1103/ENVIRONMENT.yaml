@@ -1,0 +1,37 @@
+id: isaac
+purpose: Native Isaac simulation and XR teleop; LeRobot stays in core.
+manager: uv
+python: CPython 3.12.13
+python_executable: /data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12
+isaac_sim: 6.1.0.0
+kit: 110.3.0+feature.371399.00c488ae.gl
+isaac_lab_source_revision: ae37b028ea415c91ea2bc32609efcd759ed2b974
+materialization_revision: 0c2e2c64e51922d088b695d72ffe03faa5c6b95d
+amendment: Only uv.lock editable isaaclab17.0.1->17.0.2 and isaaclab-rl0.16.2->0.16.3; zero source/dependency changes.
+isaaclab: 17.0.2
+isaaclab_rl: 0.16.3
+isaaclab_teleop: 0.9.0
+isaacteleop: 1.4.98rc1
+cloudxr: 6.2.1
+torch: 2.11.0+cu128
+cuda_runtime: 12.8
+nvidia_driver_tested: 580.159.03
+checkout: /data/vla-infrastructure/isaac61_production/IsaacLab
+environment: /data/vla-infrastructure/isaac61_production/env
+materialize: python3 tools/materialize_isaac1103.py
+verify: python3 tools/materialize_isaac1103.py --check
+canonical_launch_prefix: UV_PROJECT_ENVIRONMENT=/data/vla-infrastructure/isaac61_production/env uv run --project /data/vla-infrastructure/isaac61_production/IsaacLab --frozen --no-sync --no-managed-python
+project_launch:
+  s1: python3 tools/launch_isaac_s1.py
+  s2: python3 tools/launch_isaac_s2.py
+  rollback_s1: python3 tools/launch_isaac_s1.py --stack legacy
+  rollback_s2: python3 tools/launch_isaac_s2.py --stack legacy
+state: /data/<Linux username>/vla-runtime/isaac-<stack>; owned0700 user-specific state, no use of another user's home.
+legacy_environment: /data/vla-infrastructure/envs/isaac-s1-candidate-b
+legacy_checkout: /data/vla-infrastructure/isaaclab_candidate_qualification/20260907/candidate_b_exact
+legacy_revision: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
+system_requirements:
+  - Ubuntu22.04/24.04 x86_64; Python3.12
+  - RTX4080+ with16GB VRAM,32GB RAM; tested RTX4090 and driver580.159.03
+  - Writable private /data/<username> runtime state; readable shared SDK/assets
+  - Physical Quest and operator required for S2 human acceptance; automated no-client tests are not human evidence

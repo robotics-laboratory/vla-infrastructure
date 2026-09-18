@@ -1,0 +1,16 @@
+{
+  "gate_M0": true,
+  "gate_E0": true,
+  "gate_A": true,
+  "gate_B": true,
+  "gate_C": true,
+  "gate_D0": true,
+  "model": true,
+  "dataset": true,
+  "robot_contract": true,
+  "timing": true,
+  "process_architecture": true,
+  "core": true,
+  "mujoco": true,
+  "real_teleop": true
+}

@@ -1,0 +1,17 @@
+#!/bin/sh
+# Both releases are shared read-only SDKs; launch state belongs to the caller.
+set -eu
+stack=isaac61
+previous=
+for argument do
+    if [ "$previous" = --stack ]; then stack=$argument; fi
+    case "$argument" in --stack=*) stack=${argument#--stack=} ;; esac
+    previous=$argument
+done
+case "$stack" in
+    isaac61) runtime=/data/vla-infrastructure/isaac61_production/env ;;
+    legacy) runtime=/data/vla-infrastructure/envs/isaac-s1-candidate-b ;;
+    *) echo 'Expected --stack isaac61 or --stack legacy' >&2; exit 2 ;;
+esac
+project=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec "$runtime/bin/python" "$project/tools/launch_isaac_robosyn_vr_demo.py" "$@"

@@ -20,8 +20,10 @@ but that machine check does not replace the observations below.
 - Runtime result SHA-256:
 - Runtime log path:
 - Runtime log SHA-256:
-- Selected translation scale: `10.0`
-- Selected rotation scale: `10.0`
+- Normal translation/rotation scale: `2.0 / 2.0`
+- Precise translation/rotation scale: `0.5 / 0.5`
+- Per-arm mode toggle: controller thumbstick click
+- XR presentation anchor: `(0.0, -0.6, -1.05)` m
 - Confirm no CAN or physical PIPER interface was opened:
 
 ## Required observations
@@ -60,8 +62,12 @@ Write `PASS` or `FAIL` plus a short observation for every line.
 
 ### Scale
 
-- Translation gain is usable and consistent between arms:
-- Rotation behavior is usable and consistent between arms:
+- Normal mode is usable for coarse/navigation motion on both arms:
+- Click only the left thumbstick; left enters precise while right stays normal:
+- Click only the right thumbstick; right enters precise independently:
+- Neither arm jumps on a mode switch; holding the click does not retrigger:
+- Precise mode permits controlled gripper alignment on both arms:
+- Click each thumbstick again; that arm returns to normal without a jump:
 
 ### Independent clutch and rebase
 
@@ -72,15 +78,19 @@ Write `PASS` or `FAIL` plus a short observation for every line.
 
 ### Independent grippers
 
-- Left trigger closes left; release opens left; right does not cross-route:
-- Right trigger closes right; release opens right; left does not cross-route:
+- Left trigger moves left continuously and monotonically from fully open at
+  `0` through intermediate apertures to fully closed at `1`; no right cross-route:
+- Right trigger does the same independently; no left cross-route:
+- Confirm visibly distinct aperture at approximately `0`, `.25`, `.5`, `.75`, `1`:
 
 ### Tracking loss and recovery
 
 - Lose left tracking; left holds and valid right remains coherent:
-- Recover left; no uncontrolled jump and motion resumes after rebase:
+- Recover left at a deliberately different physical pose; the first recovered
+  frame has no jump and subsequent relative motion resumes without clutch:
 - Lose right tracking; right holds and valid left remains coherent:
-- Recover right; no uncontrolled jump and motion resumes after rebase:
+- Recover right at a deliberately different physical pose; the first recovered
+  frame has no jump and subsequent relative motion resumes without clutch:
 
 ### Disconnect and reconnect
 
@@ -92,6 +102,11 @@ Write `PASS` or `FAIL` plus a short observation for every line.
 - Reset while physically connected; no immediate large arm jump:
 - Post-reset controller references recover coherently:
 - Post-reset left/right identity remains correct:
+
+### XR presentation
+
+- Workspace is comfortably in front and slightly below eye level:
+- Gate C/S1 robot/ground geometry itself is unchanged:
 
 ## Acceptance rule
 

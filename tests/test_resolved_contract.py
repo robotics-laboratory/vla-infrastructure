@@ -64,7 +64,7 @@ class ResolvedContractTests(unittest.TestCase):
             "7002ed63d69454ae4f15c0ee19f803fd2846592b",
         )
         self.assertEqual(isaac_dependencies["isaacteleop"]["version"], "1.4.98rc1")
-        self.assertEqual(isaac_dependencies["isaaclab_teleop"]["version"], "0.8.0")
+        self.assertEqual(isaac_dependencies["isaaclab_teleop"]["version"], "0.9.0")
         self.assertNotIn("isaac_teleop", data["implementation"])
         self.assertIn(
             "teleop.real.runtime_dependencies.isaacteleop.version",
@@ -156,7 +156,7 @@ class ResolvedContractTests(unittest.TestCase):
         ] = "core_uv_lock"
         self.assertIn(
             "teleop.isaac.runtime_dependencies.isaacteleop: source artifact must be "
-            "isaac_environment_selection for isaac",
+            "isaac1103_environment for isaac",
             validate_teleop_dependencies(wrong_spec),
         )
 
@@ -180,7 +180,7 @@ class ResolvedContractTests(unittest.TestCase):
         )
         self.assertEqual(
             data["teleop"]["isaac"]["processor_revision"],
-            "piper_x_isaac_s2_bimanual_relative_v1",
+            "piper_x_isaac_s2_bimanual_relative_v3",
         )
         probe = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
         probe["gates"]["S2"]["state"] = "accepted"

@@ -1,27 +1,43 @@
 GATE S2 PROCESSOR TEST OUTPUT
 
-Date: 2026-09-08
+Date: 2026-09-09
+Processor revision: piper_x_isaac_s2_bimanual_relative_v2
+
+PURE PROCESSOR
+
 Command: .venv/bin/python -m unittest discover -s tests -p 'test_isaac_s2_processor.py' -v
+Result: PASS - 12 tests
 
 PASS test_all_translation_axes_and_signs_are_preserved_for_each_arm
 PASS test_clutch_freezes_and_release_rebases_independently
 PASS test_fixed_upstream_action_layout
+PASS test_independent_loss_does_not_disable_opposite_controller
 PASS test_left_and_right_routes_are_independent
-PASS test_reset_clears_clutch_tracking_and_gripper_state
-PASS test_scale_is_one_concrete_symmetric_configuration
-PASS test_tracking_invalid_holds_and_recovery_discards_first_delta
-PASS test_trigger_binary_gripper_mapping_is_independent
+PASS test_normal_and_precise_gains_are_concrete_and_symmetric
+PASS test_reset_clears_clutch_tracking_gripper_and_sensitivity
+PASS test_sensitivity_switch_is_independent_debounced_and_has_no_jump
+PASS test_tracking_loss_invalid_poses_and_far_recovery_emit_no_jump
+PASS test_trigger_is_analog_at_required_points_and_independent
 PASS test_unavailable_disconnect_and_reconnect_do_not_replay
 PASS test_xyzw_spatial_rotation_axes_and_scale
 
-Ran 10 tests in 0.032s
-OK
+CANDIDATE B UPSTREAM SEAM
+
+Command: PYTHONPATH=. /data/vla-infrastructure/envs/isaac-s1-candidate-b/bin/python -m unittest discover -s tests -p 'test_isaac_s2_upstream.py' -v
+Result: PASS - 3 tests
+
+PASS test_absence_clears_pose_baseline_and_smoothing_before_far_recovery
+PASS test_invalid_and_default_pose_are_ignored_and_recovery_is_zero
+PASS test_state_uses_thumbstick_click_and_effective_pose_validity
 
 Coverage: independent left/right routing; signed +/- X/Y/Z translation; XYZW
-quaternion roll/pitch/yaw convention; translation/rotation gains; independent
-clutch and release rebase; gripper polarity and routing; invalid tracking and
-first-frame recovery; disconnect/reconnect no-replay; reset cleanup; exact 20-D
-upstream action layout.
+quaternion roll/pitch/yaw convention; normal/precise configured gains; independent
+thumbstick-click sensitivity switching with zero switch-frame delta and debounce;
+independent clutch and release rebase; analog gripper values at 0, .25, .5, .75,
+and 1; arbitrary invalid/default poses; upstream baseline and smoothing invalidation;
+far-pose recovery with zero first valid delta; independent controller loss;
+disconnect/reconnect no-replay; reset cleanup; exact 22-D upstream action layout.
 
-These are synthetic pure-processor checks. They do not replace physical Quest
-human acceptance.
+These synthetic checks exercise the pure processor and the exact Candidate B
+isaacteleop 1.4.98rc1 retargeter seam. They do not replace the second physical
+Quest human acceptance run.

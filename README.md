@@ -1,3 +1,7 @@
+> Isaac runtime migration and rollback: [operations](docs/project/migrations/20260918_isaac1103/OPERATIONS.md).
+> Project commands run from your own `~/vla_infrastructure`; SDKs and large runtime data live in `/data`.
+> Physical Quest S2 acceptance remains pending.
+
 # PIPER-X + Quest 3 Codex Instruction Pack — v5.2 Hardened
 
 v5.2 is a consolidation/hardening release.

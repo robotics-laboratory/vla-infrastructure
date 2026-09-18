@@ -97,19 +97,52 @@ def test_s1_runtime_uses_only_upstream_camera_path() -> None:
     assert "regex-batched FrameView over parented wrist prims" in source
 
 
-@pytest.mark.parametrize(
-    ("launcher", "profile"),
-    (("launch_isaac_s1.py", "isaac-s1"), ("launch_isaac_s2.py", "isaac-s2")),
-)
-def test_isaac_launchers_use_explicit_kit_portable_roots(
-    launcher: str, profile: str
-) -> None:
-    source = (ROOT / "tools" / launcher).read_text(encoding="utf-8")
-    assert f'RUNTIME_ROOT = STORAGE / "cache/{profile}"' in source
-    assert 'USER_CACHE_ROOT = RUNTIME_ROOT / "users" / f"uid-{os.getuid()}"' in source
-    assert 'KIT_PORTABLE_ROOT = USER_CACHE_ROOT / "kit"' in source
-    assert '"XDG_CACHE_HOME": str(USER_CACHE_ROOT / "xdg")' in source
-    assert 'f"--portable-root {KIT_PORTABLE_ROOT}"' in source
+def test_isaac_launchers_keep_sdk_and_mutable_state_separate(tmp_path, monkeypatch) -> None:
+    import sys
+    monkeypatch.syspath_prepend(str(ROOT / "tools"))
+    from isaac_demo_launch import STACKS, user_environment
+    monkeypatch.setenv("XR_RUNTIME_JSON", "/another-user/runtime.json")
+    monkeypatch.setenv("PYTHONPATH", "/old/checkout")
+    monkeypatch.setenv("UV_PYTHON_PREFERENCE", "only-managed")
+    for name in ("isaac61", "legacy"):
+        environment, state = user_environment(STACKS[name], name, state_root=tmp_path / name)
+        assert state.stat().st_mode & 0o777 == 0o700
+        assert environment["PYTHONPATH"] == str(STACKS[name]["lab"] / "source/isaaclab")
+        assert environment["PYTHONNOUSERSITE"] == "1"
+        assert "XR_RUNTIME_JSON" not in environment
+        assert "UV_PYTHON_PREFERENCE" not in environment
+        for key in ("XDG_CACHE_HOME", "XDG_CONFIG_HOME", "XDG_RUNTIME_DIR", "WARP_CACHE_PATH", "TMPDIR"):
+            assert Path(environment[key]).is_relative_to(state)
+    with pytest.raises(RuntimeError, match="outside the repository"):
+        user_environment(STACKS["isaac61"], "isaac61", state_root=ROOT / "generated")
+
+
+def test_final_and_rollback_configs_preserve_s1_semantics() -> None:
+    old = yaml.safe_load((ROOT / "configs/isaac_s1_runtime.yaml").read_text())
+    new = yaml.safe_load((ROOT / "configs/isaac61_s1_runtime.yaml").read_text())
+    for key in old.keys() - {"environment", "status", "asset", "evidence"}:
+        assert new[key] == old[key], key
+    for key in old["asset"].keys() - {"composed_urdf", "converted_usd_dir"}:
+        assert new["asset"][key] == old["asset"][key], key
+    from tools.isaac_s2_processor import PROCESSOR_REVISION
+    for path in ("isaac_s2_runtime.yaml", "isaac61_s2_runtime.yaml"):
+        config = yaml.safe_load((ROOT / "configs" / path).read_text())
+        assert config["processor"]["revision"] == PROCESSOR_REVISION
+
+
+def test_robosyn_demo_pins_matching_webxr_client_and_records_provenance() -> None:
+    config = yaml.safe_load(
+        (ROOT / "configs/experiments/robosyn_vr_demo.yaml").read_text(encoding="utf-8")
+    )
+    client_url = config["cloudxr_web_client"]["url"]
+    assert client_url == "https://nvidia.github.io/IsaacTeleop/client/release-1.4.x/"
+
+    diagnostic = (ROOT / "tools/quest_xr_diagnostics.py").read_text(encoding="utf-8")
+    launcher = (ROOT / "tools/launch_isaac_robosyn_vr_demo.py").read_text(encoding="utf-8")
+    assert f'_CLOUDXR_WEB_CLIENT_URL = "{client_url}"' in diagnostic
+    assert '"schema": "piper_x_robosyn_vr_launch_provenance_v1"' in launcher
+    assert '"tracked_status": _git_output(' in launcher
+    assert '"passed_to_host_process": False' in launcher
 
 
 def test_materialized_urdf_keeps_gate_c_frames_and_meshes(tmp_path: Path) -> None:

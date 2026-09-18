@@ -1,0 +1,108 @@
+{
+  "project_baseline": "404d859cbc189e7dc661f2125d59e838ceee69fd",
+  "integration_baseline": "60eb2605909557dbefd1e5c02db18bfa80c1217d",
+  "scope": "Historical exact Isaac facts only; not a second live contract",
+  "environment": {
+    "id": "isaac",
+    "purpose": "Isolated Isaac application/runtime for PIPER-X simulation, teleoperation, native recording, generation, and the Isaac endpoint side of E1; LeRobot is excluded",
+    "manager": "uv",
+    "python_version": "CPython 3.12.13",
+    "spec_artifact_id": "isaac_environment_selection",
+    "torch_version": "2.11.0+cu128",
+    "cuda_runtime": "PyTorch bundled CUDA 12.8",
+    "vendor_runtime": "Isaac Sim 6.0.1.0 with Isaac Lab release/3.0.0 at 913ac53f51b2f8d02c9e121caa4cbdd06262948e; exact upstream frozen workspace with documented overrides and the frozen S2 teleop extra activated",
+    "system_requirements": [
+      "Ubuntu 22.04 or 24.04 x86_64",
+      "NVIDIA RTX 4080 or newer with at least 16 GB VRAM",
+      "at least 32 GB RAM and 50 GB SSD storage",
+      "Candidate B recommends Linux NVIDIA driver 580.95.05 or later; actual unchanged 580.159.03 satisfies the baseline and passed the qualified runtime",
+      "Candidate B upstream override-dependencies produce 11 retained uv/pip metadata conflicts; the expanded S1/S2 surfaces pass their automated required paths with no new conflict"
+    ],
+    "canonical_launch_prefix": "uv run --project /data/vla-infrastructure/isaaclab_candidate_qualification/20260907/candidate_b_exact --frozen --no-sync"
+  },
+  "implementation": {
+    "version": "release/3.0.0",
+    "revision": "913ac53f51b2f8d02c9e121caa4cbdd06262948e",
+    "evidence_ids": [
+      "gate_s0_isaac_upstream_audit",
+      "gate_s0_process_boundary_decision"
+    ]
+  },
+  "teleop": {
+    "execution_profile": "isaac_vr_record",
+    "runtime_dependencies": {
+      "isaacteleop": {
+        "package": "isaacteleop",
+        "version": "1.4.98rc1",
+        "revision_type": "version",
+        "revision": "1.4.98rc1",
+        "source_artifact_id": "isaac_environment_selection",
+        "source_detail": "Exact Candidate B frozen uv.lock teleop-extra resolution; NVIDIA wheel SHA-256 d2b36e21c0c690d1e6624d022d9bf5c661f7f7bf71e7f5c9b22a41b3640ea53f; bundled CloudXR runtime reports 6.2.1. Gate B/core's separate CloudXR 6.2.0 fact is unchanged.",
+        "evidence_ids": [
+          "gate_s0_candidate_b_teleop_dependency_audit"
+        ]
+      },
+      "isaaclab_teleop": {
+        "package": "isaaclab_teleop",
+        "version": "0.8.0",
+        "revision_type": "commit",
+        "revision": "913ac53f51b2f8d02c9e121caa4cbdd06262948e",
+        "source_artifact_id": "isaac_environment_selection",
+        "source_detail": "Candidate B source/isaaclab_teleop editable package selected by the exact frozen teleop extra.",
+        "evidence_ids": [
+          "gate_s0_candidate_b_teleop_dependency_audit"
+        ]
+      }
+    },
+    "resolved_implementation": "tools/launch_isaac_s2.py extends the sole accepted S1 Candidate B process with isaaclab_teleop.IsaacTeleopDevice/IsaacTeleopCfg, one TeleopSessionLifecycle, one bimanual ControllersSource, a narrow tracking-safe subclass of upstream Se3RelRetargeter, the concrete PIPER-X S2 processor, and upstream Isaac Lab DifferentialIKController",
+    "left_source": "isaacteleop ControllersSource.LEFT controller_left OptionalTensorGroup from the one shared piper_x_s2_controllers source and lifecycle",
+    "right_source": "isaacteleop ControllersSource.RIGHT controller_right OptionalTensorGroup from the one shared piper_x_s2_controllers source and lifecycle",
+    "processor_revision": "piper_x_isaac_s2_bimanual_relative_v2",
+    "evidence_ids": [
+      "gate_s0_isaac_upstream_audit",
+      "gate_s0_isaac_teleop_upstream_audit",
+      "gate_s2_upstream_reuse_audit",
+      "gate_s2_automated_runtime",
+      "gate_s2_s1_non_xr_regression",
+      "gate_s2_physical_run1_failed"
+    ]
+  },
+  "S0": {
+    "state": "accepted",
+    "evidence_ids": [
+      "gate_s0_isaac_upstream_audit",
+      "gate_s0_candidate_b_teleop_dependency_audit",
+      "gate_s0_teleop_dependency_scope_review",
+      "gate_s0_mujoco_upstream_audit",
+      "gate_s0_live_policy_review",
+      "gate_s0_compatibility_probes",
+      "gate_s0_process_boundary_decision"
+    ],
+    "artifact_ids": [
+      "gate_s0_upstream_audit",
+      "gate_s0_compatibility_probes_output",
+      "gate_s0_isaac_compatibility_remediation",
+      "gate_s0_process_boundary_decision",
+      "isaac_environment_selection",
+      "gate_s0_teleop_dependency_amendment"
+    ],
+    "notes": "Candidate B release/3.0.0 at 913ac53f is selected in its exact isolated frozen workspace. Gate B/core owns isaacteleop 1.3.131 at 7002ed63 while Candidate B/Isaac owns frozen isaacteleop 1.4.98rc1 and in-tree isaaclab_teleop 0.8.0; there is no global teleop pin. Its upstream overrides and 11 pip metadata conflicts are explicit; the expanded S1/S2 automated surfaces reproduce the same 11 with zero new conflict and no exercised required-path failure. Driver 580.159.03 satisfies the documented 580.95.05+ baseline and passed empirically. The narrow S0 reopen is resolved; Gate B, S1, D0, Gate C, MuJoCo, separate EVAL/CONTROL boundaries, deferred transports, and no-generic-backend decisions are unchanged."
+  },
+  "S1": {
+    "state": "accepted",
+    "evidence_ids": [
+      "gate_s1_candidate_b_runtime",
+      "gate_s1_native_camera_regression",
+      "gate_s1_embodiment_parity"
+    ],
+    "artifact_ids": [
+      "isaac_s1_gate_c_composed_urdf",
+      "isaac_s1_runtime_config",
+      "gate_s1_runtime_result",
+      "gate_s1_runtime_stdout",
+      "gate_s1_runtime_evidence_summary",
+      "gate_s1_parity_report"
+    ],
+    "notes": "Accepted on exact Candidate B with the sole S1 runtime path and one upstream regex-batched Camera over two independently parented wrist prims. Final evidence proves 440/440 valid continuously changing RGB frames, correct left/right identity and wrist follow, reset within 0.026 px with no stale frame, bounded task/control/physics behavior, Gate C parity, and clean shutdown. S2 was not started."
+  }
+}

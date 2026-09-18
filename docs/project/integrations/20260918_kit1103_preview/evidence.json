@@ -1,0 +1,1457 @@
+{
+  "schema": "integration_evidence_v1",
+  "gate": "NONE_EXPERIMENTAL",
+  "physical_quest_pass": false,
+  "records": {
+    "control": {
+      "path": "/data/vla-infrastructure/isaac61_qualification/integration-users/uid-1006/regressions/1789725111654730041-control/result.json",
+      "sha256": "7fa7ee3745f731a58e7141dd8c7b01509339eb7eb2f718390ffc60c30eb5507e",
+      "data": {
+        "frames": 100,
+        "cameras": 3,
+        "mode": "control",
+        "first_sensor_marker": {
+          "frame": 4,
+          "camera": 0,
+          "counts": {
+            "sensor_raw": 23028,
+            "camera_rgba": 23028,
+            "preview_input": 11424,
+            "witness": 23023
+          }
+        },
+        "witness_positive_frames": [
+          96,
+          96,
+          96
+        ],
+        "world_positive_frames": [
+          96,
+          96,
+          98
+        ],
+        "physical_quest_pass": false,
+        "fail_closed_assertions": {},
+        "render_iteration_ms_p50_p95_p99": [
+          27.6190275,
+          30.4349606,
+          77.01628454000424
+        ],
+        "performance_note": "six RPs and synchronous evidence IO; not production FPS qualification",
+        "integration_topology": null,
+        "passed": true
+      }
+    },
+    "stress_first": {
+      "path": "/data/vla-infrastructure/isaac61_qualification/integration-users/uid-1006/regressions/1789724489593237098-partition/result.json",
+      "sha256": "d60fcb023a7e68a4777eabd59e18d6d7c35fe703b67f10027055fc29c3f4d87f",
+      "data": {
+        "frames": 3000,
+        "cameras": 3,
+        "mode": "partition",
+        "first_sensor_marker": null,
+        "witness_positive_frames": [
+          2828,
+          2831,
+          2836
+        ],
+        "world_positive_frames": [
+          3000,
+          3000,
+          3000
+        ],
+        "physical_quest_pass": false,
+        "render_iteration_ms_p50_p95_p99": [
+          28.095470499999998,
+          47.525581599999995,
+          58.988959779999945
+        ],
+        "performance_note": "six RPs and synchronous evidence IO; not production FPS qualification",
+        "integration_topology": {
+          "enabled": true,
+          "ui_base": "/ui",
+          "panel_roots": [
+            "/ui/draw_system_11",
+            "/ui/draw_system_12",
+            "/ui/draw_system_13"
+          ],
+          "preview_token": "vla_xr_preview",
+          "sensor_token": "vla_sensor_world",
+          "sensor_paths": [
+            "/World/Sensor0",
+            "/World/Sensor1",
+            "/World/Sensor2"
+          ],
+          "world": "unpartitioned/shared",
+          "xr": "unassigned spectator, showAllPartitionsByDefault=true"
+        },
+        "passed": true
+      }
+    },
+    "stress_final": {
+      "path": "/data/vla-infrastructure/isaac61_qualification/integration-users/uid-1006/regressions/1789725240749949366-partition/result.json",
+      "sha256": "ad2838e2211ac3171743071ea4d30a09bc2c035d948adc782081902feb47bfa0",
+      "data": {
+        "frames": 3000,
+        "cameras": 3,
+        "mode": "partition",
+        "first_sensor_marker": null,
+        "witness_positive_frames": [
+          2826,
+          2830,
+          2834
+        ],
+        "world_positive_frames": [
+          3000,
+          3000,
+          3000
+        ],
+        "physical_quest_pass": false,
+        "fail_closed_assertions": {
+          "sensor_token": true,
+          "panel_token": true,
+          "global_setting": true
+        },
+        "render_iteration_ms_p50_p95_p99": [
+          27.588801,
+          33.32603004999999,
+          51.3350120599999
+        ],
+        "performance_note": "six RPs and synchronous evidence IO; not production FPS qualification",
+        "integration_topology": {
+          "enabled": true,
+          "ui_base": "/ui",
+          "panel_roots": [
+            "/ui/draw_system_0",
+            "/ui/draw_system_1",
+            "/ui/draw_system_10",
+            "/ui/draw_system_11",
+            "/ui/draw_system_12",
+            "/ui/draw_system_13",
+            "/ui/draw_system_2",
+            "/ui/draw_system_3",
+            "/ui/draw_system_4",
+            "/ui/draw_system_5",
+            "/ui/draw_system_6",
+            "/ui/draw_system_7",
+            "/ui/draw_system_8",
+            "/ui/draw_system_9"
+          ],
+          "active_panel_roots": [
+            "/ui/draw_system_11",
+            "/ui/draw_system_12",
+            "/ui/draw_system_13"
+          ],
+          "preview_token": "vla_xr_preview",
+          "sensor_token": "vla_sensor_world",
+          "sensor_paths": [
+            "/World/Sensor0",
+            "/World/Sensor1",
+            "/World/Sensor2"
+          ],
+          "world": "unpartitioned/shared",
+          "xr": "unassigned spectator, showAllPartitionsByDefault=true"
+        },
+        "passed": true
+      }
+    },
+    "target_demo": {
+      "path": "/data/vla-infrastructure/isaac61_qualification/integration-users/uid-1006/runs/20260918T095043168715Z-dual_cube_to_matching_plates-hud-on/result.json",
+      "sha256": "b0bf1f044f3d82e6977d3f3f547e1017514dfc2888df5cfcbf1f2552cc501240",
+      "data": {
+        "cameras": {
+          "left_wrist": "640x480 uint8 RGB HWC",
+          "right_wrist": "640x480 uint8 RGB HWC",
+          "strictly_advanced_bimanual_frames": 300,
+          "valid_bimanual_frames": 300
+        },
+        "canonical_d0_changed": false,
+        "environment": {
+          "cloudxr": "6.2.1",
+          "cloudxr_profile": "standalone",
+          "isaac_lab_commit": "ae37b028ea415c91ea2bc32609efcd759ed2b974",
+          "isaac_lab_package": "17.0.2",
+          "isaac_lab_release": "release/3.0.0",
+          "isaac_sim": "6.1.0.0",
+          "isaaclab_teleop": "0.9.0",
+          "isaacteleop": "1.4.98rc1",
+          "kit_xr_bridge": true,
+          "python": "3.12.13"
+        },
+        "execution": {
+          "control_hz": 6.120581738733467,
+          "control_steps": 300,
+          "maximum_rebase_or_clutch_tcp_motion_m": {
+            "left": 0.0,
+            "right": 0.0
+          },
+          "motion_scale_observed": {
+            "left": {
+              "rotation_max": 4.0,
+              "rotation_min": 4.0,
+              "translation_max": 4.0,
+              "translation_min": 4.0
+            },
+            "right": {
+              "rotation_max": 4.0,
+              "rotation_min": 4.0,
+              "translation_max": 4.0,
+              "translation_min": 4.0
+            }
+          },
+          "physics_hz": 24.482326954933868,
+          "saturated_frames": 0,
+          "sensitivity_mode_frames": {
+            "left": {
+              "slider": 300
+            },
+            "right": {
+              "slider": 300
+            }
+          },
+          "tracking_valid_frames": {
+            "left": 0,
+            "right": 0
+          },
+          "transitions": {
+            "left:session_inactive": 300,
+            "right:session_inactive": 300
+          },
+          "wall_seconds": 49.014948710100725
+        },
+        "experiment": {
+          "backdrop_visibility": {
+            "control": "right_secondary_click",
+            "final": true,
+            "initial": true,
+            "quest_button": "B",
+            "toggle_count": 4,
+            "visual_only": true
+          },
+          "camera_capture_cycles_including_reset": 312,
+          "camera_configured_simulation_hz": {
+            "demo_scene": 30.0,
+            "left_wrist": 30.0,
+            "right_wrist": 30.0
+          },
+          "camera_effective_hz": {
+            "demo_scene": 6.120581738733467,
+            "left_wrist": 6.120581738733467,
+            "right_wrist": 6.120581738733467
+          },
+          "camera_feed_updates": {
+            "callbacks": 1252,
+            "duplicate_frames": 2613,
+            "hidden_callbacks": 80,
+            "published_frames": 903,
+            "throttled_frames": 0
+          },
+          "camera_frames_end": {
+            "demo_scene": 278,
+            "left_wrist": 278,
+            "right_wrist": 278
+          },
+          "camera_frames_start": {
+            "demo_scene": 6,
+            "left_wrist": 6,
+            "right_wrist": 6
+          },
+          "optional_demo_performance_mode": "preview_uploads_optimized_renderer_unchanged",
+          "preview_feed_count": 3,
+          "preview_partition_topology": {
+            "active_panel_roots": [],
+            "enabled": true,
+            "panel_roots": [
+              "/ui/draw_system_0",
+              "/ui/draw_system_1",
+              "/ui/draw_system_2"
+            ],
+            "preview_token": "vla_xr_preview",
+            "sensor_paths": [
+              "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+              "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+              "/World/RobosynDemo/SceneCamera"
+            ],
+            "sensor_token": "vla_sensor_world",
+            "ui_base": "/ui",
+            "world": "unpartitioned/shared",
+            "xr": "unassigned spectator, showAllPartitionsByDefault=true"
+          },
+          "profile": "dual_cube_to_matching_plates",
+          "validation": {
+            "candidate_home_used": true,
+            "collision_free_at_home": true,
+            "finite_state": true,
+            "home_tcp_separation_m": 0.3481847047805837,
+            "home_tcp_world_m": {
+              "left": [
+                0.5789287686347961,
+                0.1740923523902893,
+                1.0264804363250732
+              ],
+              "right": [
+                0.5789287090301514,
+                -0.1740923523902893,
+                1.0264804363250732
+              ]
+            },
+            "imported_prim_valid": {},
+            "maximum_arm_contact_force_n": {
+              "left": 0.0,
+              "right": 0.0
+            },
+            "maximum_home_error_deg_or_mm": 8.281654473307754e-09,
+            "maximum_profile_reset_position_error_m": 0.002000272274017334,
+            "passed": true,
+            "required_prim_valid": {
+              "/World/LeftPiper": true,
+              "/World/RightPiper": true,
+              "/World/RobosynDemo/Backdrop": true,
+              "/World/RobosynDemo/LeftCube": true,
+              "/World/RobosynDemo/LeftPlate": true,
+              "/World/RobosynDemo/RightCube": true,
+              "/World/RobosynDemo/RightPlate": true,
+              "/World/RobosynDemo/SceneCamera": true,
+              "/World/RobosynDemo/Table": true
+            },
+            "scene_camera": {
+              "dtype": "uint8",
+              "frame": 30,
+              "rgb_stddev": 46.08254623413086,
+              "shape": [
+                480,
+                640,
+                3
+              ]
+            },
+            "table_collision_api": true,
+            "wrist_shapes": {
+              "left_wrist": [
+                480,
+                640,
+                3
+              ],
+              "right_wrist": [
+                480,
+                640,
+                3
+              ]
+            }
+          },
+          "vr_feed_visibility": {
+            "capture_continues_when_hidden": true,
+            "control": "left_primary_click",
+            "feed_bound_ever": true,
+            "final": true,
+            "initial": true,
+            "preview_policy": "visible fresh camera frames; on-demand UI texture capture",
+            "provider_api": "ByteImageProvider.set_raw_bytes_data CPU RGBA8_UNORM",
+            "quest_button": "X",
+            "toggle_count": 4,
+            "upload_path": "cpu_staged",
+            "upstream_session_prepared_enabled": true
+          },
+          "xr_recenter": {
+            "authoritative_scene_geometry_changed": false,
+            "control": "right_thumbstick_click",
+            "controller_transform_source": "XRCore.get_physical_to_virtual_world_transform",
+            "quest_button": "R3",
+            "request_count": 2,
+            "scheduled_count": 2,
+            "upstream_mechanism": "XRCore.schedule_teleport_to_view",
+            "view_prim_path": "/World/RobosynDemo/SceneCamera"
+          }
+        },
+        "gate": "NONE_EXPERIMENTAL",
+        "gpu": {
+          "end": {
+            "gpu_utilization_percent": 70,
+            "vram_total_mib": 24564,
+            "vram_used_mib": 9652
+          },
+          "samples": [
+            {
+              "gpu_utilization_percent": 65,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 8101
+            },
+            {
+              "gpu_utilization_percent": 66,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9824
+            },
+            {
+              "gpu_utilization_percent": 63,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9824
+            },
+            {
+              "gpu_utilization_percent": 77,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9824
+            },
+            {
+              "gpu_utilization_percent": 61,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 72,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 71,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 77,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 62,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 70,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 78,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 75,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 71,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 74,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 70,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 68,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 67,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 75,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 59,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 70,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 70,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            },
+            {
+              "gpu_utilization_percent": 70,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9652
+            }
+          ],
+          "start": {
+            "gpu_utilization_percent": 65,
+            "vram_total_mib": 24564,
+            "vram_used_mib": 8101
+          }
+        },
+        "passed": true,
+        "physical_human_gate": "required_not_implied_by_runtime_smoke",
+        "process": {
+          "clean_shutdown": true,
+          "exit_code": 0,
+          "launcher": "/data/vla-infrastructure/robosyn-kit1103/tools/launch_isaac_robosyn_vr_demo.py",
+          "stdout_log": "/data/vla-infrastructure/isaac61_qualification/integration-users/uid-1006/runs/20260918T095043168715Z-dual_cube_to_matching_plates-hud-on/stdout.log"
+        },
+        "processor": {
+          "clutch": "independent squeeze > 0.5; release discards one delta",
+          "gripper": "independent analog trigger [0,1] maps linearly and monotonically from 0.1 m open to 0.0 m closed",
+          "revision": "piper_x_isaac_s2_bimanual_relative_v3",
+          "sensitivity": {
+            "center": {
+              "rotation_scale": 4.0,
+              "translation_scale": 4.0
+            },
+            "control_mode": "slider",
+            "input_control": "thumbstick_x",
+            "input_range": [
+              -1.0,
+              1.0
+            ],
+            "mapping": "Piecewise linear and clamped; left is slower, center keeps the previous normal speed, right is faster.",
+            "maximum": {
+              "rotation_scale": 6.0,
+              "translation_scale": 6.0
+            },
+            "minimum": {
+              "rotation_scale": 2.0,
+              "translation_scale": 2.0
+            },
+            "quest_control": "each controller's own horizontal thumbstick axis",
+            "scope": "independent per arm"
+          },
+          "source_timestamp_threshold": null,
+          "tracking_recovery": "unusable pose invalidates upstream SE(3) baseline and smoothing; first recovered frame emits zero delta"
+        },
+        "production_gate_status_changed": false,
+        "runtime_path": "Quest -> CloudXR/isaacteleop -> isaaclab_teleop -> one ControllersSource -> S2 processor -> DifferentialIKController -> accepted S1 native actuation",
+        "session": {
+          "action_frames": 299,
+          "demo_backdrop_toggle_smoke_met": true,
+          "demo_display_toggle_smoke_met": true,
+          "demo_recenter_smoke_met": true,
+          "require_physical_tracking": false,
+          "require_session": true,
+          "single_controller_source": true,
+          "started_ever": true
+        },
+        "status": "experimental_runtime_smoke_passed_physical_demo_required",
+        "xr_presentation": {
+          "anchor_pos_m": [
+            -0.05,
+            0.0,
+            -0.1
+          ],
+          "anchor_rot_xyzw": [
+            0.0,
+            0.0,
+            -0.7071067811865475,
+            0.7071067811865476
+          ],
+          "authoritative_scene_geometry_changed": false,
+          "controller_transform_source": "XRCore.get_physical_to_virtual_world_transform",
+          "experimental_scene_geometry_applied": true,
+          "near_plane_m": 0.1
+        }
+      }
+    },
+    "legacy_rollback": {
+      "path": "/data/vla-infrastructure/isaac61_qualification/integration-users/uid-1006-legacy/runs/20260918T094526638569Z-dual_cube_to_matching_plates-hud-on/result.json",
+      "sha256": "14ab23f479070db750eba24d9f11e03a7f42114229437c5b2f654ca4b2044f66",
+      "data": {
+        "cameras": {
+          "left_wrist": "640x480 uint8 RGB HWC",
+          "right_wrist": "640x480 uint8 RGB HWC",
+          "strictly_advanced_bimanual_frames": 300,
+          "valid_bimanual_frames": 300
+        },
+        "canonical_d0_changed": false,
+        "environment": {
+          "cloudxr": "6.2.1",
+          "cloudxr_profile": "standalone",
+          "isaac_lab_commit": "913ac53f51b2f8d02c9e121caa4cbdd06262948e",
+          "isaac_lab_package": "16.4.0",
+          "isaac_lab_release": "release/3.0.0",
+          "isaac_sim": "6.0.1.0",
+          "isaaclab_teleop": "0.8.0",
+          "isaacteleop": "1.4.98rc1",
+          "kit_xr_bridge": true,
+          "python": "3.12.13"
+        },
+        "execution": {
+          "control_hz": 5.336105117877624,
+          "control_steps": 300,
+          "maximum_rebase_or_clutch_tcp_motion_m": {
+            "left": 0.0,
+            "right": 0.0
+          },
+          "motion_scale_observed": {
+            "left": {
+              "rotation_max": 4.0,
+              "rotation_min": 4.0,
+              "translation_max": 4.0,
+              "translation_min": 4.0
+            },
+            "right": {
+              "rotation_max": 4.0,
+              "rotation_min": 4.0,
+              "translation_max": 4.0,
+              "translation_min": 4.0
+            }
+          },
+          "physics_hz": 21.344420471510496,
+          "saturated_frames": 0,
+          "sensitivity_mode_frames": {
+            "left": {
+              "slider": 300
+            },
+            "right": {
+              "slider": 300
+            }
+          },
+          "tracking_valid_frames": {
+            "left": 0,
+            "right": 0
+          },
+          "transitions": {
+            "left:session_inactive": 300,
+            "right:session_inactive": 300
+          },
+          "wall_seconds": 56.22078152000904
+        },
+        "experiment": {
+          "backdrop_visibility": {
+            "control": "right_secondary_click",
+            "final": true,
+            "initial": true,
+            "quest_button": "B",
+            "toggle_count": 4,
+            "visual_only": true
+          },
+          "camera_capture_cycles_including_reset": 312,
+          "camera_configured_simulation_hz": {
+            "demo_scene": 30.0,
+            "left_wrist": 30.0,
+            "right_wrist": 30.0
+          },
+          "camera_effective_hz": {
+            "demo_scene": 5.336105117877624,
+            "left_wrist": 5.336105117877624,
+            "right_wrist": 5.336105117877624
+          },
+          "camera_feed_updates": {
+            "callbacks": 1252,
+            "duplicate_frames": 1742,
+            "hidden_callbacks": 80,
+            "published_frames": 602,
+            "throttled_frames": 0
+          },
+          "camera_frames_end": {
+            "demo_scene": 276,
+            "left_wrist": 278,
+            "right_wrist": 278
+          },
+          "camera_frames_start": {
+            "demo_scene": 6,
+            "left_wrist": 6,
+            "right_wrist": 6
+          },
+          "optional_demo_performance_mode": "preview_uploads_optimized_renderer_unchanged",
+          "preview_feed_count": 2,
+          "preview_partition_topology": {
+            "enabled": false
+          },
+          "profile": "dual_cube_to_matching_plates",
+          "validation": {
+            "candidate_home_used": true,
+            "collision_free_at_home": true,
+            "finite_state": true,
+            "home_tcp_separation_m": 0.34818468987951945,
+            "home_tcp_world_m": {
+              "left": [
+                0.5789288878440857,
+                0.1740923970937729,
+                1.0264804363250732
+              ],
+              "right": [
+                0.5789286494255066,
+                -0.17409229278564453,
+                1.0264805555343628
+              ]
+            },
+            "imported_prim_valid": {},
+            "maximum_arm_contact_force_n": {
+              "left": 0.0,
+              "right": 0.0
+            },
+            "maximum_home_error_deg_or_mm": 0.0,
+            "maximum_profile_reset_position_error_m": 0.002000272274017334,
+            "passed": true,
+            "required_prim_valid": {
+              "/World/LeftPiper": true,
+              "/World/RightPiper": true,
+              "/World/RobosynDemo/Backdrop": true,
+              "/World/RobosynDemo/LeftCube": true,
+              "/World/RobosynDemo/LeftPlate": true,
+              "/World/RobosynDemo/RightCube": true,
+              "/World/RobosynDemo/RightPlate": true,
+              "/World/RobosynDemo/SceneCamera": true,
+              "/World/RobosynDemo/Table": true
+            },
+            "scene_camera": {
+              "dtype": "uint8",
+              "frame": 30,
+              "rgb_stddev": 44.83407974243164,
+              "shape": [
+                480,
+                640,
+                3
+              ]
+            },
+            "table_collision_api": true,
+            "wrist_shapes": {
+              "left_wrist": [
+                480,
+                640,
+                3
+              ],
+              "right_wrist": [
+                480,
+                640,
+                3
+              ]
+            }
+          },
+          "vr_feed_visibility": {
+            "capture_continues_when_hidden": true,
+            "control": "left_primary_click",
+            "feed_bound_ever": true,
+            "final": true,
+            "initial": true,
+            "preview_policy": "visible fresh camera frames; on-demand UI texture capture",
+            "provider_api": "ByteImageProvider.set_raw_bytes_data CPU RGBA8_UNORM",
+            "quest_button": "X",
+            "toggle_count": 4,
+            "upload_path": "cpu_staged",
+            "upstream_session_prepared_enabled": true
+          },
+          "xr_recenter": {
+            "authoritative_scene_geometry_changed": false,
+            "control": "right_thumbstick_click",
+            "controller_transform_source": "XRCore.get_physical_to_virtual_world_transform",
+            "quest_button": "R3",
+            "request_count": 2,
+            "scheduled_count": 2,
+            "upstream_mechanism": "XRCore.schedule_teleport_to_view",
+            "view_prim_path": "/World/RobosynDemo/SceneCamera"
+          }
+        },
+        "gate": "NONE_EXPERIMENTAL",
+        "gpu": {
+          "end": {
+            "gpu_utilization_percent": 66,
+            "vram_total_mib": 24564,
+            "vram_used_mib": 9455
+          },
+          "samples": [
+            {
+              "gpu_utilization_percent": 64,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 8074
+            },
+            {
+              "gpu_utilization_percent": 26,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9612
+            },
+            {
+              "gpu_utilization_percent": 58,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9612
+            },
+            {
+              "gpu_utilization_percent": 62,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 63,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 68,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 66,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 67,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 74,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 63,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 64,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 66,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 63,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 61,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 70,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 68,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 63,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 74,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 69,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 66,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 66,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            },
+            {
+              "gpu_utilization_percent": 66,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 9455
+            }
+          ],
+          "start": {
+            "gpu_utilization_percent": 64,
+            "vram_total_mib": 24564,
+            "vram_used_mib": 8074
+          }
+        },
+        "passed": true,
+        "physical_human_gate": "required_not_implied_by_runtime_smoke",
+        "process": {
+          "clean_shutdown": true,
+          "exit_code": 0,
+          "launcher": "/data/vla-infrastructure/robosyn-kit1103/tools/launch_isaac_robosyn_vr_demo.py",
+          "stdout_log": "/data/vla-infrastructure/isaac61_qualification/integration-users/uid-1006-legacy/runs/20260918T094526638569Z-dual_cube_to_matching_plates-hud-on/stdout.log"
+        },
+        "processor": {
+          "clutch": "independent squeeze > 0.5; release discards one delta",
+          "gripper": "independent analog trigger [0,1] maps linearly and monotonically from 0.1 m open to 0.0 m closed",
+          "revision": "piper_x_isaac_s2_bimanual_relative_v3",
+          "sensitivity": {
+            "center": {
+              "rotation_scale": 4.0,
+              "translation_scale": 4.0
+            },
+            "control_mode": "slider",
+            "input_control": "thumbstick_x",
+            "input_range": [
+              -1.0,
+              1.0
+            ],
+            "mapping": "Piecewise linear and clamped; left is slower, center keeps the previous normal speed, right is faster.",
+            "maximum": {
+              "rotation_scale": 6.0,
+              "translation_scale": 6.0
+            },
+            "minimum": {
+              "rotation_scale": 2.0,
+              "translation_scale": 2.0
+            },
+            "quest_control": "each controller's own horizontal thumbstick axis",
+            "scope": "independent per arm"
+          },
+          "source_timestamp_threshold": null,
+          "tracking_recovery": "unusable pose invalidates upstream SE(3) baseline and smoothing; first recovered frame emits zero delta"
+        },
+        "production_gate_status_changed": false,
+        "runtime_path": "Quest -> CloudXR/isaacteleop -> isaaclab_teleop -> one ControllersSource -> S2 processor -> DifferentialIKController -> accepted S1 native actuation",
+        "session": {
+          "action_frames": 299,
+          "demo_backdrop_toggle_smoke_met": true,
+          "demo_display_toggle_smoke_met": true,
+          "demo_recenter_smoke_met": true,
+          "require_physical_tracking": false,
+          "require_session": true,
+          "single_controller_source": true,
+          "started_ever": true
+        },
+        "status": "experimental_runtime_smoke_passed_physical_demo_required",
+        "xr_presentation": {
+          "anchor_pos_m": [
+            -0.05,
+            0.0,
+            -0.1
+          ],
+          "anchor_rot_xyzw": [
+            0.0,
+            0.0,
+            -0.7071067811865475,
+            0.7071067811865476
+          ],
+          "authoritative_scene_geometry_changed": false,
+          "controller_transform_source": "XRCore.get_physical_to_virtual_world_transform",
+          "experimental_scene_geometry_applied": true,
+          "near_plane_m": 0.1
+        }
+      }
+    },
+    "independent_uid": {
+      "path": "/data/vla-infrastructure/isaac61_qualification/integration-users/test-60961/evidence.json",
+      "sha256": "0b107766d0d09892834a23babca825c371c7ae350248f6dee89d34033e624cf0",
+      "data": {
+        "test_uid": 60961,
+        "test_account": "qualification",
+        "home": "/home/qualification",
+        "owner_home_mounted": false,
+        "sdk_mount": "read-only",
+        "physical_quest": false,
+        "profile": "upstream cloudxr-standalone.env (emulated Quest3, no physical input)",
+        "result": {
+          "cameras": {
+            "left_wrist": "640x480 uint8 RGB HWC",
+            "right_wrist": "640x480 uint8 RGB HWC",
+            "strictly_advanced_bimanual_frames": 60,
+            "valid_bimanual_frames": 60
+          },
+          "canonical_d0_changed": false,
+          "environment": {
+            "cloudxr": "6.2.1",
+            "cloudxr_profile": "standalone",
+            "isaac_lab_commit": "ae37b028ea415c91ea2bc32609efcd759ed2b974",
+            "isaac_lab_package": "17.0.2",
+            "isaac_lab_release": "release/3.0.0",
+            "isaac_sim": "6.1.0.0",
+            "isaaclab_teleop": "0.9.0",
+            "isaacteleop": "1.4.98rc1",
+            "kit_xr_bridge": true,
+            "python": "3.12.13"
+          },
+          "execution": {
+            "control_hz": 2.6281175297296677,
+            "control_steps": 60,
+            "maximum_rebase_or_clutch_tcp_motion_m": {
+              "left": 0.0,
+              "right": 0.0
+            },
+            "motion_scale_observed": {
+              "left": {
+                "rotation_max": 4.0,
+                "rotation_min": 4.0,
+                "translation_max": 4.0,
+                "translation_min": 4.0
+              },
+              "right": {
+                "rotation_max": 4.0,
+                "rotation_min": 4.0,
+                "translation_max": 4.0,
+                "translation_min": 4.0
+              }
+            },
+            "physics_hz": 10.512470118918671,
+            "saturated_frames": 0,
+            "sensitivity_mode_frames": {
+              "left": {
+                "slider": 60
+              },
+              "right": {
+                "slider": 60
+              }
+            },
+            "tracking_valid_frames": {
+              "left": 0,
+              "right": 0
+            },
+            "transitions": {
+              "left:session_inactive": 60,
+              "right:session_inactive": 60
+            },
+            "wall_seconds": 22.830029221018776
+          },
+          "experiment": {
+            "backdrop_visibility": {
+              "control": "right_secondary_click",
+              "final": true,
+              "initial": true,
+              "quest_button": "B",
+              "toggle_count": 4,
+              "visual_only": true
+            },
+            "camera_capture_cycles_including_reset": 72,
+            "camera_configured_simulation_hz": {
+              "demo_scene": 30.0,
+              "left_wrist": 30.0,
+              "right_wrist": 30.0
+            },
+            "camera_effective_hz": {
+              "demo_scene": 2.6281175297296677,
+              "left_wrist": 2.6281175297296677,
+              "right_wrist": 2.6281175297296677
+            },
+            "camera_feed_updates": {
+              "callbacks": 292,
+              "duplicate_frames": 453,
+              "hidden_callbacks": 80,
+              "published_frames": 183,
+              "throttled_frames": 0
+            },
+            "camera_frames_end": {
+              "demo_scene": 38,
+              "left_wrist": 38,
+              "right_wrist": 38
+            },
+            "camera_frames_start": {
+              "demo_scene": 6,
+              "left_wrist": 6,
+              "right_wrist": 6
+            },
+            "optional_demo_performance_mode": "preview_uploads_optimized_renderer_unchanged",
+            "preview_feed_count": 3,
+            "preview_partition_topology": {
+              "enabled": true,
+              "panel_roots": [],
+              "preview_token": "vla_xr_preview",
+              "sensor_paths": [
+                "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+                "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+                "/World/RobosynDemo/SceneCamera"
+              ],
+              "sensor_token": "vla_sensor_world",
+              "ui_base": "/ui",
+              "world": "unpartitioned/shared",
+              "xr": "unassigned spectator, showAllPartitionsByDefault=true"
+            },
+            "profile": "dual_cube_to_matching_plates",
+            "validation": {
+              "candidate_home_used": true,
+              "collision_free_at_home": true,
+              "finite_state": true,
+              "home_tcp_separation_m": 0.3481847047805837,
+              "home_tcp_world_m": {
+                "left": [
+                  0.5789287686347961,
+                  0.1740923523902893,
+                  1.0264804363250732
+                ],
+                "right": [
+                  0.5789287090301514,
+                  -0.1740923523902893,
+                  1.0264804363250732
+                ]
+              },
+              "imported_prim_valid": {},
+              "maximum_arm_contact_force_n": {
+                "left": 0.0,
+                "right": 0.0
+              },
+              "maximum_home_error_deg_or_mm": 8.281654473307754e-09,
+              "maximum_profile_reset_position_error_m": 0.002000272274017334,
+              "passed": true,
+              "required_prim_valid": {
+                "/World/LeftPiper": true,
+                "/World/RightPiper": true,
+                "/World/RobosynDemo/Backdrop": true,
+                "/World/RobosynDemo/LeftCube": true,
+                "/World/RobosynDemo/LeftPlate": true,
+                "/World/RobosynDemo/RightCube": true,
+                "/World/RobosynDemo/RightPlate": true,
+                "/World/RobosynDemo/SceneCamera": true,
+                "/World/RobosynDemo/Table": true
+              },
+              "scene_camera": {
+                "dtype": "uint8",
+                "frame": 30,
+                "rgb_stddev": 46.09140396118164,
+                "shape": [
+                  480,
+                  640,
+                  3
+                ]
+              },
+              "table_collision_api": true,
+              "wrist_shapes": {
+                "left_wrist": [
+                  480,
+                  640,
+                  3
+                ],
+                "right_wrist": [
+                  480,
+                  640,
+                  3
+                ]
+              }
+            },
+            "vr_feed_visibility": {
+              "capture_continues_when_hidden": true,
+              "control": "left_primary_click",
+              "feed_bound_ever": true,
+              "final": true,
+              "initial": true,
+              "preview_policy": "visible fresh camera frames; on-demand UI texture capture",
+              "provider_api": "ByteImageProvider.set_raw_bytes_data CPU RGBA8_UNORM",
+              "quest_button": "X",
+              "toggle_count": 4,
+              "upload_path": "cpu_staged",
+              "upstream_session_prepared_enabled": true
+            },
+            "xr_recenter": {
+              "authoritative_scene_geometry_changed": false,
+              "control": "right_thumbstick_click",
+              "controller_transform_source": "XRCore.get_physical_to_virtual_world_transform",
+              "quest_button": "R3",
+              "request_count": 2,
+              "scheduled_count": 2,
+              "upstream_mechanism": "XRCore.schedule_teleport_to_view",
+              "view_prim_path": "/World/RobosynDemo/SceneCamera"
+            }
+          },
+          "gate": "NONE_EXPERIMENTAL",
+          "gpu": {
+            "end": {
+              "gpu_utilization_percent": 80,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 17845
+            },
+            "samples": [
+              {
+                "gpu_utilization_percent": 71,
+                "vram_total_mib": 24564,
+                "vram_used_mib": 16127
+              },
+              {
+                "gpu_utilization_percent": 79,
+                "vram_total_mib": 24564,
+                "vram_used_mib": 19510
+              },
+              {
+                "gpu_utilization_percent": 68,
+                "vram_total_mib": 24564,
+                "vram_used_mib": 19493
+              },
+              {
+                "gpu_utilization_percent": 83,
+                "vram_total_mib": 24564,
+                "vram_used_mib": 19321
+              },
+              {
+                "gpu_utilization_percent": 80,
+                "vram_total_mib": 24564,
+                "vram_used_mib": 19321
+              },
+              {
+                "gpu_utilization_percent": 80,
+                "vram_total_mib": 24564,
+                "vram_used_mib": 17845
+              }
+            ],
+            "start": {
+              "gpu_utilization_percent": 71,
+              "vram_total_mib": 24564,
+              "vram_used_mib": 16127
+            }
+          },
+          "passed": true,
+          "physical_human_gate": "required_not_implied_by_runtime_smoke",
+          "process": {
+            "clean_shutdown": true,
+            "exit_code": 0,
+            "launcher": "/data/vla-infrastructure/robosyn-kit1103/tools/launch_isaac_robosyn_vr_demo.py",
+            "stdout_log": "/qualification/state/runs/20260918T094357473849Z-dual_cube_to_matching_plates-hud-on/stdout.log"
+          },
+          "processor": {
+            "clutch": "independent squeeze > 0.5; release discards one delta",
+            "gripper": "independent analog trigger [0,1] maps linearly and monotonically from 0.1 m open to 0.0 m closed",
+            "revision": "piper_x_isaac_s2_bimanual_relative_v3",
+            "sensitivity": {
+              "center": {
+                "rotation_scale": 4.0,
+                "translation_scale": 4.0
+              },
+              "control_mode": "slider",
+              "input_control": "thumbstick_x",
+              "input_range": [
+                -1.0,
+                1.0
+              ],
+              "mapping": "Piecewise linear and clamped; left is slower, center keeps the previous normal speed, right is faster.",
+              "maximum": {
+                "rotation_scale": 6.0,
+                "translation_scale": 6.0
+              },
+              "minimum": {
+                "rotation_scale": 2.0,
+                "translation_scale": 2.0
+              },
+              "quest_control": "each controller's own horizontal thumbstick axis",
+              "scope": "independent per arm"
+            },
+            "source_timestamp_threshold": null,
+            "tracking_recovery": "unusable pose invalidates upstream SE(3) baseline and smoothing; first recovered frame emits zero delta"
+          },
+          "production_gate_status_changed": false,
+          "runtime_path": "Quest -> CloudXR/isaacteleop -> isaaclab_teleop -> one ControllersSource -> S2 processor -> DifferentialIKController -> accepted S1 native actuation",
+          "session": {
+            "action_frames": 59,
+            "demo_backdrop_toggle_smoke_met": true,
+            "demo_display_toggle_smoke_met": true,
+            "demo_recenter_smoke_met": true,
+            "require_physical_tracking": false,
+            "require_session": true,
+            "single_controller_source": true,
+            "started_ever": true
+          },
+          "status": "experimental_runtime_smoke_passed_physical_demo_required",
+          "xr_presentation": {
+            "anchor_pos_m": [
+              -0.05,
+              0.0,
+              -0.1
+            ],
+            "anchor_rot_xyzw": [
+              0.0,
+              0.0,
+              -0.7071067811865475,
+              0.7071067811865476
+            ],
+            "authoritative_scene_geometry_changed": false,
+            "controller_transform_source": "XRCore.get_physical_to_virtual_world_transform",
+            "experimental_scene_geometry_applied": true,
+            "near_plane_m": 0.1
+          }
+        },
+        "launch": {
+          "cloudxr_web_client": {
+            "delivery": "Operator-facing only; the browser client and its localStorage are not configured by the host launcher.",
+            "operator_setup": "Open the exact URL in the headset, select Isaac Lab, press Reset to defaults, then select the Quest 3 device profile before connecting.",
+            "passed_to_host_process": false,
+            "release_series": "1.4.x",
+            "state_location": "headset browser cache/localStorage",
+            "url": "https://nvidia.github.io/IsaacTeleop/client/release-1.4.x/"
+          },
+          "host_paths": {
+            "cloudxr_install_root": "/home/qualification/.cloudxr",
+            "home": "/home/qualification",
+            "kit_portable_root": "/qualification/state/kit",
+            "python_environment": "/data/vla-infrastructure/isaac61_qualification/env",
+            "uid": 60961,
+            "xdg_cache_home": "/qualification/state/cache"
+          },
+          "launch": {
+            "cloudxr_mode": "auto",
+            "command": [
+              "/data/vla-infrastructure/isaac61_qualification/env/bin/python",
+              "/data/vla-infrastructure/robosyn-kit1103/tools/run_isaac_s1.py",
+              "--config",
+              "/qualification/state/runs/20260918T094357473849Z-dual_cube_to_matching_plates-hud-on/runtime.yaml",
+              "--s2-config",
+              "/data/vla-infrastructure/robosyn-kit1103/configs/isaac61_s2_runtime.yaml",
+              "--robosyn-vr-demo",
+              "--s2-teleop",
+              "--demo-profile",
+              "dual_cube_to_matching_plates",
+              "--device",
+              "cuda:0",
+              "--kit_args",
+              "--portable-root /qualification/state/kit --enable omni.kit.scene_view.xr --enable omni.kit.scene_view.xr_utils --/renderer/scenePartitioning/enabled=true --/rtx/scenePartitioning/showAllPartitionsByDefault=true",
+              "--demo-preview-isolation",
+              "scene-partitions",
+              "--report",
+              "/qualification/state/runs/20260918T094357473849Z-dual_cube_to_matching_plates-hud-on/result.json",
+              "--s2-max-control-steps",
+              "60",
+              "--viz",
+              "kit",
+              "--experience",
+              "/data/vla-infrastructure/isaac61_qualification/IsaacLab/apps/isaaclab.python.xr.openxr.kit",
+              "--demo-preview-scene",
+              "--demo-hud-on-start",
+              "--s2-cloudxr-profile",
+              "standalone",
+              "--s2-require-session",
+              "--s2-reset-step",
+              "30",
+              "--xr",
+              "--demo-display-toggle-smoke",
+              "--demo-backdrop-toggle-smoke",
+              "--demo-recenter-smoke"
+            ],
+            "dry_run": false,
+            "hud_on_start": true,
+            "lab_commit": "ae37b028ea415c91ea2bc32609efcd759ed2b974",
+            "max_control_steps": 60,
+            "pinned_packages": {
+              "isaaclab": "17.0.2",
+              "isaaclab-teleop": "0.9.0",
+              "isaacsim": "6.1.0.0",
+              "isaacteleop": "1.4.98rc1"
+            },
+            "preview_cameras": 3,
+            "preview_isolation": "scene-partitions",
+            "profile": "dual_cube_to_matching_plates",
+            "smoke": false,
+            "stack": "isaac61",
+            "xr_smoke": true
+          },
+          "repository": {
+            "branch": "integration/kit1103-preview",
+            "commit": "60a278622a1e2831ce987ae30cf60217068a0bb9",
+            "root": "/data/vla-infrastructure/robosyn-kit1103",
+            "source_sha256": {
+              "configs/experiments/robosyn_vr_demo.yaml": "378b1da72c6f059fa0e5b85dd16a908fe9307c9783e21c34afc1b237e26f031e",
+              "tools/isaac_demo_launch.py": "14a33de141482c077e860ceb25aeb50cbc4a710a37eb0430ae7ae87e81e96231",
+              "tools/isaac_preview_partitions.py": "41c92cf04dea2cb63931856314590016feca0fe2ddb09f8debae9c32367c4c01",
+              "tools/isaac_robosyn_vr_demo.py": "36c5b3f9c158f9076897a88e348ad91c539ff33156d5a7e6d290798891a0f8ba",
+              "tools/isaac_s2_runtime.py": "e5144a28fff5d25eb58cdf270f0d3599c569258ca4e4d94e97741ecca9d3b095",
+              "tools/isaac_s2_upstream.py": "fd194502bbc53ec5f209568824a0665438944d6dc59bf27c0b703c30997efbce",
+              "tools/launch_isaac_robosyn_vr_demo.py": "8467def358c29e8ea0219c27e05719c019020c977949b22b55e741041425ba2b",
+              "tools/run_isaac_s1.py": "53275906cb4aad71dcdf27eea727acb82638dba23bb3864d30b75bced75b36fa"
+            },
+            "tracked_status": "M configs/experiments/robosyn_vr_demo.yaml\n M tests/test_gate_s1_mapping.py\n M tests/test_isaac_s2_upstream.py\n M tools/isaac_robosyn_vr_demo.py\n M tools/isaac_s2_runtime.py\n M tools/launch_isaac_robosyn_vr_demo.py\n M tools/run_isaac_s1.py"
+          },
+          "schema": "piper_x_robosyn_vr_launch_provenance_v1"
+        },
+        "result_sha256": "767d552a803b762a1df12c4377f559b297f3ce1b9650bbe291fcc0199b5a3d3c",
+        "host_artifact_root": "/data/vla-infrastructure/isaac61_qualification/integration-users/test-60961"
+      }
+    },
+    "rejected_ui_ancestor": {
+      "path": "/data/vla-infrastructure/isaac61_qualification/integration-users/uid-1006/regressions/1789723980520914063-partition/result.json",
+      "sha256": "cbfd641c0a75ae56d5c9937e83507b8c8cd078295fa85c918b9f2f75e2456b98",
+      "data": {
+        "frames": 3000,
+        "cameras": 3,
+        "mode": "partition",
+        "first_sensor_marker": {
+          "frame": 4,
+          "camera": 0,
+          "counts": {
+            "sensor_raw": 22919,
+            "camera_rgba": 22919,
+            "preview_input": 11424,
+            "witness": 23023
+          }
+        },
+        "witness_positive_frames": [
+          2826,
+          2830,
+          2834
+        ],
+        "world_positive_frames": [
+          2886,
+          2889,
+          2902
+        ],
+        "physical_quest_pass": false,
+        "render_iteration_ms_p50_p95_p99": [
+          27.685342,
+          33.12426479999999,
+          55.319449659999094
+        ],
+        "performance_note": "six RPs and synchronous evidence IO; not production FPS qualification",
+        "ui_ancestor_topology": {
+          "enabled": true,
+          "ui_ancestor": "/ui",
+          "preview_token": "vla_xr_preview",
+          "sensor_token": "vla_sensor_world",
+          "sensor_paths": [
+            "/World/Sensor0",
+            "/World/Sensor1",
+            "/World/Sensor2"
+          ],
+          "world": "unpartitioned/shared",
+          "xr": "unassigned spectator, showAllPartitionsByDefault=true"
+        },
+        "passed": false
+      }
+    },
+    "final_runtime": {
+      "path": "/data/vla-infrastructure/isaac61_qualification/integration-users/uid-1006/regressions/1789725240749949366-partition/runtime.json",
+      "sha256": "1789c2f9cc9c86a709d15e44b4f37c92cef6ecdd30de4ea703495802db894d54",
+      "source_sha256": {
+        "tools/check_isaac_preview_partitions.py": "26d8c8a0db9689c4ede31832d2212a5662cdb208d8b1f641d15d7a43ab634507",
+        "tools/isaac_preview_partitions.py": "b5c738ff02799e61691521f019a06b373d52961937e50c4d08c10f30547afcac",
+        "tools/isaac_robosyn_vr_demo.py": "36c5b3f9c158f9076897a88e348ad91c539ff33156d5a7e6d290798891a0f8ba"
+      },
+      "kit": "110.3.0+feature.371399.00c488ae.gl"
+    },
+    "independent_frame_analysis": {
+      "counts": {
+        "iterations": 3000,
+        "sensor_samples": 9000,
+        "leaked_samples": 0,
+        "world_missing_samples": 0,
+        "events": {
+          "teleport_parent_0": 51,
+          "teleport_parent_1": 51,
+          "teleport_parent_2": 51,
+          "recreate_panel_0": 4,
+          "preview_hide": 7,
+          "preview_show": 7,
+          "recreate_panel_1": 4,
+          "simulation_reset": 4,
+          "recreate_panel_2": 3
+        }
+      },
+      "path": "/data/vla-infrastructure/isaac61_qualification/integration-users/uid-1006/regressions/1789725240749949366-partition/frames.jsonl",
+      "sha256": "3516068bc7884801c2d3a060b8bb992acd051a471a92fcba9f852247f143f048"
+    },
+    "core_tests": {
+      "path": "core_tests.txt",
+      "sha256": "582ef576730bbf8683d558da0f4a722e2a8ce5b65e831f11fd9bd9df36b10ce5",
+      "result": "82 passed,23 skipped; target teleop separately23 passed"
+    },
+    "representative_images": {
+      "evidence/partition_witness_frame2999.png": "4588035d7fa64f9425f0c638d1e2f21c5a41c6abf5aabeed7cf485a619828e1d",
+      "evidence/partition_sensor_frame2999.png": "4fe3223fbbf1f924c1d19b2e5bc541af60a739a44b9dceab8fc724febfb9eb54",
+      "evidence/control_sensor_frame4.png": "b0e6ff3401e880a02711f184fe8e385f4cef2713ac01e0aeb5a18f3898f6f38b"
+    }
+  }
+}

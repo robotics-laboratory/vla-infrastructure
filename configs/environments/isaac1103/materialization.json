@@ -1,0 +1,14 @@
+{
+  "commit": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d",
+  "parent": "ae37b028ea415c91ea2bc32609efcd759ed2b974",
+  "author_name": "ebulochkin",
+  "author_email": "ebulochkin@icloud.com",
+  "author_date": "2026-09-18T22:13:36+03:00",
+  "committer_name": "ebulochkin",
+  "committer_email": "ebulochkin@icloud.com",
+  "committer_date": "2026-09-18T22:13:36+03:00",
+  "message": "Align frozen editable versions with pinned Lab source metadata (REP-01)",
+  "patch_sha256": "0000c7261f44701c99bf83606fbcc344c8416b160378276804d4e2075dbaca07",
+  "lock_sha256": "f633120f145944672d9ba3d6a7bda9a145a01b6295e9fc08f0997e60dc6a40e7",
+  "pyproject_sha256": "2780d507882950e64ca8f972fcad4c19e74b9681af1d830e0b34fa09e79e116b"
+}

@@ -9,6 +9,7 @@ import importlib.metadata
 import importlib.util
 import json
 import math
+import os
 import platform
 import subprocess
 import traceback
@@ -41,6 +42,13 @@ MODEL_PATH = ROOT / "configs/piper_x_model_contract.yaml"
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--report", type=Path)
+parser.add_argument("--config", type=Path, default=CONFIG_PATH)
+parser.add_argument("--s2-config", type=Path)
+parser.add_argument("--production-preview", action="store_true")
+parser.add_argument("--combined-preview-test", type=int, default=0)
+parser.add_argument("--preview-control", action="store_true")
+parser.add_argument("--demo-preview-isolation", choices=("off", "scene-partitions"), default="off")
+parser.add_argument("--demo-preview-scene", action="store_true")
 parser.add_argument(
     "--s2-teleop",
     action="store_true",
@@ -63,9 +71,56 @@ parser.add_argument(
     action="store_true",
     help="Require at least one valid physical sample from each controller.",
 )
+parser.add_argument(
+    "--robosyn-vr-demo",
+    action="store_true",
+    help="Run the isolated RoboSyn-inspired experiment instead of the S1 scene.",
+)
+parser.add_argument(
+    "--demo-profile",
+    choices=("dual_cube_to_matching_plates", "robosyn_asset_lab"),
+    default="dual_cube_to_matching_plates",
+)
+parser.add_argument(
+    "--demo-hud-on-start",
+    action="store_true",
+    help="Start the upstream wrist-camera XR panels visible (measurement/debug only).",
+)
+parser.add_argument(
+    "--demo-scene-preview",
+    type=Path,
+    help="Optional PNG destination for the non-D0 demo scene camera.",
+)
+parser.add_argument(
+    "--demo-display-toggle-smoke",
+    action="store_true",
+    help=argparse.SUPPRESS,
+)
+parser.add_argument(
+    "--demo-backdrop-toggle-smoke",
+    action="store_true",
+    help=argparse.SUPPRESS,
+)
+parser.add_argument(
+    "--demo-recenter-smoke",
+    action="store_true",
+    help=argparse.SUPPRESS,
+)
 AppLauncher.add_app_launcher_args(parser)
 parser.set_defaults(headless=True, enable_cameras=True)
 args_cli = parser.parse_args()
+
+# Public upstream lifecycle composition keeps large CloudXR state in /data.
+# The same runtime is consumed by Kit and IsaacTeleop; shutdown stops XR first.
+owned_cloudxr = None
+if (args_cli.xr or args_cli.s2_teleop) and os.environ.get("VLA_CLOUDXR_INSTALL_DIR") and os.environ.get("ISAACLAB_CXR_SKIP_AUTOLAUNCH") != "1":
+    from isaacteleop.cloudxr import CloudXRLauncher
+    from isaaclab_teleop import CLOUDXR_JS_ENV, CLOUDXR_STANDALONE_ENV
+    owned_cloudxr = CloudXRLauncher(
+        install_dir=os.environ["VLA_CLOUDXR_INSTALL_DIR"],
+        env_config=CLOUDXR_STANDALONE_ENV if args_cli.combined_preview_test or args_cli.s2_cloudxr_profile == "standalone" else CLOUDXR_JS_ENV,
+        accept_eula=os.environ.get("ISAACLAB_CXR_ACCEPT_EULA", "").upper() in ("1", "Y", "YES", "TRUE"))
+    os.environ["ISAACLAB_CXR_SKIP_AUTOLAUNCH"] = "1"
 
 app_launcher = AppLauncher(args_cli)
 simulation_app = app_launcher.app
@@ -107,18 +162,28 @@ def _cpu(proxy) -> np.ndarray:
 
 
 def _robot_cfg(
-    prim_path: str, position: tuple[float, float, float], usd_path: str
+    prim_path: str,
+    position: tuple[float, float, float],
+    usd_path: str,
+    *,
+    home_per_arm: np.ndarray = HOME_PER_ARM,
+    enable_self_collisions: bool = False,
+    activate_contact_sensors: bool = False,
 ) -> ArticulationCfg:
+    home = np.asarray(home_per_arm, dtype=np.float64)
+    if home.shape != (7,):
+        raise ValueError(f"home_per_arm must have shape (7,), got {home.shape}")
     return ArticulationCfg(
         prim_path=prim_path,
         spawn=sim_utils.UsdFileCfg(
             usd_path=usd_path,
+            activate_contact_sensors=activate_contact_sensors,
             rigid_props=sim_utils.RigidBodyPropertiesCfg(
                 disable_gravity=True,
                 max_depenetration_velocity=1.0,
             ),
             articulation_props=sim_utils.ArticulationRootPropertiesCfg(
-                enabled_self_collisions=False,
+                enabled_self_collisions=enable_self_collisions,
                 solver_position_iteration_count=8,
                 solver_velocity_iteration_count=2,
             ),
@@ -126,15 +191,15 @@ def _robot_cfg(
         init_state=ArticulationCfg.InitialStateCfg(
             pos=position,
             joint_pos={
-                "joint1": 0.0,
-                "joint2": math.radians(30.0),
-                "joint3": math.radians(-60.0),
-                "joint4": 0.0,
-                "joint5": math.radians(20.0),
-                "joint6": 0.0,
-                "gripper": 0.05,
-                "gripper_joint1": 0.025,
-                "gripper_joint2": -0.025,
+                "joint1": math.radians(float(home[0])),
+                "joint2": math.radians(float(home[1])),
+                "joint3": math.radians(float(home[2])),
+                "joint4": math.radians(float(home[3])),
+                "joint5": math.radians(float(home[4])),
+                "joint6": math.radians(float(home[5])),
+                "gripper": float(home[6]) / 1000.0,
+                "gripper_joint1": float(home[6]) / 2000.0,
+                "gripper_joint2": -float(home[6]) / 2000.0,
             },
             joint_vel={".*": 0.0},
         ),
@@ -171,9 +236,7 @@ def _wrist_path(sim, arm_path: str) -> str:
 
 
 def _camera(sim, arm_paths: tuple[str, str]) -> tuple[Camera, tuple[str, str], str]:
-    wrist_paths = cast(
-        tuple[str, str], tuple(_wrist_path(sim, arm_path) for arm_path in arm_paths)
-    )
+    wrist_paths = cast(tuple[str, str], tuple(_wrist_path(sim, arm_path) for arm_path in arm_paths))
     left_suffix = wrist_paths[0].split(arm_paths[0], maxsplit=1)[1]
     right_suffix = wrist_paths[1].split(arm_paths[1], maxsplit=1)[1]
     if left_suffix != right_suffix:
@@ -187,6 +250,8 @@ def _camera(sim, arm_paths: tuple[str, str]) -> tuple[Camera, tuple[str, str], s
                 height=480,
                 width=640,
                 data_types=["rgb"],
+                renderer_cfg=(__import__("isaaclab_physx.renderers", fromlist=["IsaacRtxRendererCfg"]).IsaacRtxRendererCfg(enable_scene_partitioning=False)
+                              if args_cli.production_preview else CameraCfg().renderer_cfg),
                 update_latest_camera_pose=True,
                 spawn=sim_utils.PinholeCameraCfg(
                     focal_length=18.0,
@@ -210,7 +275,17 @@ class BimanualPiperXIsaacEnvironment:
     """The S1 environment itself; intentionally concrete rather than a simulator API."""
 
     def __init__(
-        self, sim, left, right, camera, wrist_paths, camera_prim_expression, physics_probe
+        self,
+        sim,
+        left,
+        right,
+        camera,
+        wrist_paths,
+        camera_prim_expression,
+        physics_probe,
+        *,
+        home_d0: np.ndarray | None = None,
+        experiment_runtime=None,
     ):
         self.sim = sim
         self.robots = (left, right)
@@ -219,6 +294,14 @@ class BimanualPiperXIsaacEnvironment:
         self.camera_prim_expression = camera_prim_expression
         self.camera_prim_paths = tuple(f"{path}/S1WristCamera" for path in wrist_paths)
         self.physics_probe = physics_probe
+        self.home_d0 = (
+            np.tile(HOME_PER_ARM, 2)
+            if home_d0 is None
+            else np.asarray(home_d0, dtype=np.float64).copy()
+        )
+        if self.home_d0.shape != (14,):
+            raise ValueError(f"home_d0 must have shape (14,), got {self.home_d0.shape}")
+        self.experiment_runtime = experiment_runtime
         self.joint_ids: list[list[int]] = []
         self.actuated_joint_ids: list[list[int]] = []
         self.wrist_ids: list[int] = []
@@ -258,7 +341,7 @@ class BimanualPiperXIsaacEnvironment:
             velocity = torch.zeros_like(position)
             robot.write_joint_position_to_sim_index(position=position, joint_ids=ids)
             robot.write_joint_velocity_to_sim_index(velocity=velocity, joint_ids=ids)
-            robot.set_joint_position_target_index(target=position, joint_ids=ids)
+            robot.actuators.target_command.set_position_index(value=position, joint_ids=ids)
             robot.write_data_to_sim()
 
     def _apply(self, targets: NativeBimanualTargets) -> None:
@@ -271,7 +354,7 @@ class BimanualPiperXIsaacEnvironment:
             target = torch.as_tensor(
                 self._with_mimics(values), device=self.sim.device, dtype=torch.float32
             ).unsqueeze(0)
-            robot.set_joint_position_target_index(target=target, joint_ids=ids)
+            robot.actuators.target_command.set_position_index(value=target, joint_ids=ids)
 
     def expected_camera_poses(self) -> list[tuple[torch.Tensor, torch.Tensor]]:
         result = []
@@ -290,11 +373,19 @@ class BimanualPiperXIsaacEnvironment:
         for _ in range(repeat):
             for robot in self.robots:
                 robot.write_data_to_sim()
+            if self.experiment_runtime is not None:
+                self.experiment_runtime.before_render()
+            if getattr(self, "preview", None) is not None:
+                self.preview.assert_valid()
             self.sim.step()
             for robot in self.robots:
                 robot.update(PHYSICS_DT)
             self.camera.update(PHYSICS_DT, force_recompute=True)
             self.physics_probe.update(PHYSICS_DT)
+            if getattr(self, "preview", None) is not None:
+                self.preview.update(PHYSICS_DT)
+            if self.experiment_runtime is not None:
+                self.experiment_runtime.update(PHYSICS_DT)
 
     def reset(self, seed: int = 0) -> dict[str, np.ndarray]:
         seed_reset(seed)
@@ -310,7 +401,9 @@ class BimanualPiperXIsaacEnvironment:
             root_velocity=self.physics_probe.data.default_root_vel.torch.clone()
         )
         self.physics_probe.reset()
-        self._set_state(d0_action_to_native(np.tile(HOME_PER_ARM, 2)))
+        if self.experiment_runtime is not None:
+            self.experiment_runtime.reset_scene()
+        self._set_state(d0_action_to_native(self.home_d0))
         for robot in self.robots:
             robot.reset()
         self.camera.reset()
@@ -318,6 +411,8 @@ class BimanualPiperXIsaacEnvironment:
         # Candidate B's qualified native reset lifecycle uses 24 non-evidence
         # renderer-settling ticks followed by one captured physics tick.
         self._advance(25)
+        if getattr(self, "preview", None) is not None:
+            self.preview.refresh()
         return self.observation()
 
     def observation(self) -> dict[str, np.ndarray]:
@@ -699,9 +794,7 @@ def _camera_identity_regression(env: BimanualPiperXIsaacEnvironment, seed: int) 
     }
 
 
-def _camera_regression(
-    env: BimanualPiperXIsaacEnvironment, seed: int
-) -> dict:
+def _camera_regression(env: BimanualPiperXIsaacEnvironment, seed: int) -> dict:
     env.reset(seed)
     baseline = _camera_sample(env)
     first_sequence, pre_reset = _camera_sequence(env, "before_reset")
@@ -762,10 +855,23 @@ def _camera_regression(
 
 def main() -> int:
     print("[S1] loading checked configuration", flush=True)
-    config = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+    config = yaml.safe_load(args_cli.config.read_text(encoding="utf-8"))
     model = yaml.safe_load(MODEL_PATH.read_text(encoding="utf-8"))
     urdf_path = Path(config["asset"]["composed_urdf"])
     urdf_sha = materialize_gate_c_urdf(Path(config["asset"]["source_checkout"]), urdf_path)
+
+    if args_cli.robosyn_vr_demo:
+        from isaac_robosyn_vr_demo import run_robosyn_vr_demo
+
+        return run_robosyn_vr_demo(
+            args_cli,
+            simulation_app,
+            urdf_path=urdf_path,
+            urdf_sha=urdf_sha,
+            robot_cfg_factory=_robot_cfg,
+            wrist_path_resolver=_wrist_path,
+            environment_type=BimanualPiperXIsaacEnvironment,
+        )
 
     print("[S1] creating 120 Hz PhysX context", flush=True)
     sim = sim_utils.SimulationContext(
@@ -809,7 +915,7 @@ def main() -> int:
     converter = sim_utils.UrdfConverter(
         sim_utils.UrdfConverterCfg(
             asset_path=str(urdf_path),
-            usd_dir=f"/data/vla-infrastructure/assets/isaac_s1/converted/{urdf_sha}",
+            usd_dir=str(urdf_path.parent / "converted" / urdf_sha),
             fix_base=True,
             merge_fixed_joints=False,
             self_collision=False,
@@ -837,11 +943,22 @@ def main() -> int:
         sim, left, right, camera, wrist_paths, camera_prim_expression, physics_probe
     )
 
+    if args_cli.combined_preview_test:
+        from check_isaac_s1_preview import validate_combined
+        return validate_combined(env, args_cli, simulation_app, urdf_sha)
+    if args_cli.production_preview:
+        from isaac_s1_preview import S1Preview
+        env.preview = S1Preview(env)
+
     if args_cli.s2_teleop:
         print("[S2] extending the accepted S1 environment", flush=True)
         from isaac_s2_runtime import run_s2
 
-        return run_s2(env, args_cli, simulation_app)
+        try:
+            return run_s2(env, args_cli, simulation_app)
+        finally:
+            if getattr(env, "preview", None) is not None:
+                env.preview.close()
 
     print("[S1] running native camera continuous/reset/identity regression", flush=True)
     camera_validation = _camera_regression(env, 0)
@@ -895,6 +1012,7 @@ def main() -> int:
         "environment": {
             "python": platform.python_version(),
             "isaac_sim": importlib.metadata.version("isaacsim"),
+            "kit": __import__("omni.kit.app", fromlist=["get_app"]).get_app().get_kit_version(),
             "isaac_lab_source_version": importlib.metadata.version("isaaclab"),
             "isaac_lab_source_file": str(Path(isaaclab.__file__).resolve()),
             "isaac_lab_expected_commit": config["environment"]["isaac_lab_commit"],
@@ -907,6 +1025,11 @@ def main() -> int:
             "cuda_available": torch.cuda.is_available(),
             "gpu": torch.cuda.get_device_name(0),
             "lerobot_present": importlib.util.find_spec("lerobot") is not None,
+            "isaaclab_rl": importlib.metadata.version("isaaclab-rl"),
+            "isaacteleop": importlib.metadata.version("isaacteleop"),
+            "isaaclab_teleop": importlib.metadata.version("isaaclab-teleop"),
+            "module_files": {name: str(Path(__import__(name, fromlist=["__file__"]).__file__).resolve())
+                             for name in ("isaaclab", "isaaclab_rl", "isaaclab_teleop", "isaacteleop", "torch", "isaacsim")},
             "headless": args_cli.headless,
             "upstream_override_conflicts": config["environment"]["upstream_override_conflicts"],
         },
@@ -956,12 +1079,40 @@ def main() -> int:
             },
         },
         "cameras": camera_validation,
+        "observed_camera_settings": {
+            "update_period_s": camera.cfg.update_period,
+            "width": camera.cfg.width, "height": camera.cfg.height,
+            "data_types": list(camera.cfg.data_types),
+            "usd": [{"prim_path": path, "parent": str(sim.stage.GetPrimAtPath(path).GetParent().GetPath()),
+                     **{name: (list(sim.stage.GetPrimAtPath(path).GetAttribute(name).Get())
+                               if name == "clippingRange" else sim.stage.GetPrimAtPath(path).GetAttribute(name).Get())
+                        for name in ("focalLength", "focusDistance", "horizontalAperture",
+                                     "verticalAperture", "clippingRange")}}
+                    for path in env.camera_prim_paths],
+        },
+        "observed_physx_joint_parameters": {
+            side: {
+                "joint_names": list(robot.joint_names),
+                **{name: _cpu(getattr(robot.data, name)).tolist()
+                   for name in ("joint_stiffness", "joint_damping", "joint_effort_limits",
+                                "joint_velocity_limits")},
+            }
+            for side, robot in zip(("left", "right"), env.robots, strict=True)
+        },
+        "observed_drive_attributes": {
+            str(prim.GetPath()): {attr.GetName(): attr.Get() for attr in prim.GetAttributes()
+                                 if attr.GetName().startswith("drive:")}
+            for prim in sim.stage.Traverse()
+            if any(attr.GetName().startswith("drive:") for attr in prim.GetAttributes())
+        },
         "parity": parity,
     }
     report["passed"] = bool(
         report["environment"]["python"] == "3.12.13"
-        and report["environment"]["isaac_sim"] == "6.0.1.0"
-        and report["environment"]["isaac_lab_source_version"] == "16.4.0"
+        and report["environment"]["isaac_sim"] == config["environment"]["isaac_sim_version"]
+        and report["environment"]["isaac_lab_source_version"] == config["environment"]["isaac_lab_source_version"]
+        and ("kit_version" not in config["environment"]
+             or report["environment"]["kit"] == config["environment"]["kit_version"])
         and report["environment"]["isaac_lab_runtime_commit"]
         == report["environment"]["isaac_lab_expected_commit"]
         and Path(report["environment"]["isaac_lab_source_file"]).is_relative_to(
@@ -1002,5 +1153,20 @@ if __name__ == "__main__":
     except BaseException:
         traceback.print_exc()
     finally:
+        # SimulationApp fast shutdown exits the process without Python atexit.
+        # Stop frame submission first, then the runtime we own, before Kit close.
+        if owned_cloudxr is not None:
+            if args_cli.xr:
+                from omni.kit.xr.core import XRCore
+                xr_core = XRCore.get_singleton()
+                xr_core.request_disable_profile()
+                for _ in range(120):
+                    simulation_app.update()
+                    if not xr_core.is_xr_enabled():
+                        break
+                else:
+                    raise RuntimeError("XR profile did not stop before owned CloudXR shutdown")
+            owned_cloudxr.stop()
+            print("[S2] owned CloudXR stopped before Kit fast shutdown", flush=True)
         simulation_app.close(exit_code=return_code)
     raise SystemExit(return_code)
