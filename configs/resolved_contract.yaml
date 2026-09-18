@@ -1823,6 +1823,66 @@ artifacts:
     path: /data/vla-infrastructure/evidence/isaac1103-cutover-20260918/failed_churn-20260918T194002116860Z/result.json
     uri: null
     description: 'Historical failed combined validation: zero leakage but insufficient witness visibility under destructive SceneView churn.'
+  isaac1103_postcutover_s1_result:
+    kind: test_output
+    sha256: 8efeb2d03db9e36c54ddc0620357d2fb7b37b6ebae9a2f3d584b6a8ac903b149
+    path: /data/vla-infrastructure/evidence/isaac1103-cutover-20260918/postcutover-s1-20260918T201756312679Z/result.json
+    uri: null
+    description: Post-cutover canonical s1 from home checkout on migration commit 2b2923ff0bde24358c93109fea8423c851a12f76.
+  isaac1103_postcutover_s1_launch_manifest:
+    kind: report
+    sha256: 26310e4f8ba8ed12478174ba3c510d5f54d93a99f68f97747f645e14fb6d2e3a
+    path: /data/vla-infrastructure/evidence/isaac1103-cutover-20260918/postcutover-s1-20260918T201756312679Z/launch_manifest.json
+    uri: null
+    description: Post-cutover canonical s1 from home checkout on migration commit 2b2923ff0bde24358c93109fea8423c851a12f76.
+  isaac1103_postcutover_s1_stdout:
+    kind: log
+    sha256: 5f3443c439e8fba454c853364e6f1899ce8e3661258ef9a180f55171ccc2ead3
+    path: /data/vla-infrastructure/evidence/isaac1103-cutover-20260918/postcutover-s1-20260918T201756312679Z/stdout.log
+    uri: null
+    description: Post-cutover canonical s1 from home checkout on migration commit 2b2923ff0bde24358c93109fea8423c851a12f76.
+  isaac1103_postcutover_s1_runtime:
+    kind: processor_config
+    sha256: abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30
+    path: /data/vla-infrastructure/evidence/isaac1103-cutover-20260918/postcutover-s1-20260918T201756312679Z/runtime.yaml
+    uri: null
+    description: Post-cutover canonical s1 from home checkout on migration commit 2b2923ff0bde24358c93109fea8423c851a12f76.
+  isaac1103_postcutover_s2_result:
+    kind: test_output
+    sha256: d255841dd38fe641cb7427b8c84eed887e8e2fb03b5c0df5b13bfe81b1831a68
+    path: /data/vla-infrastructure/evidence/isaac1103-cutover-20260918/postcutover-s2-20260918T201832393778Z/result.json
+    uri: null
+    description: Post-cutover canonical s2 from home checkout on migration commit 2b2923ff0bde24358c93109fea8423c851a12f76.
+  isaac1103_postcutover_s2_launch_manifest:
+    kind: report
+    sha256: a5100492366ff2a3f5835ff95c32b2d27625d7986ad2ce7cefe9409eed5d84fc
+    path: /data/vla-infrastructure/evidence/isaac1103-cutover-20260918/postcutover-s2-20260918T201832393778Z/launch_manifest.json
+    uri: null
+    description: Post-cutover canonical s2 from home checkout on migration commit 2b2923ff0bde24358c93109fea8423c851a12f76.
+  isaac1103_postcutover_s2_stdout:
+    kind: log
+    sha256: d0856557a8a9f82f56e1d41da7bfe20ab89a58808b9e25cc3d3cd642d60eb77c
+    path: /data/vla-infrastructure/evidence/isaac1103-cutover-20260918/postcutover-s2-20260918T201832393778Z/stdout.log
+    uri: null
+    description: Post-cutover canonical s2 from home checkout on migration commit 2b2923ff0bde24358c93109fea8423c851a12f76.
+  isaac1103_postcutover_s2_runtime:
+    kind: processor_config
+    sha256: abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30
+    path: /data/vla-infrastructure/evidence/isaac1103-cutover-20260918/postcutover-s2-20260918T201832393778Z/runtime.yaml
+    uri: null
+    description: Post-cutover canonical s2 from home checkout on migration commit 2b2923ff0bde24358c93109fea8423c851a12f76.
+  isaac1103_postcutover:
+    kind: report
+    sha256: f5e99ea9ed8fa15048ce1cc87e5f0541480d492176b2c118004b9bce3434af36
+    path: docs/project/migrations/20260918_isaac1103/postcutover.json
+    uri: null
+    description: Post-cutover exact home checkout run and owned-process cleanup evidence.
+  isaac1103_postcutover_process_check:
+    kind: test_output
+    sha256: a133a2a8b44d9f1ae4371984d42d7818bb02548d63883bb302174c42adf9e569
+    path: docs/project/migrations/20260918_isaac1103/postcutover-process-check.json
+    uri: null
+    description: Post-cutover exact home checkout run and owned-process cleanup evidence.
 evidence:
   v52_pack_manifest_check:
     kind: command_test
@@ -2653,6 +2713,55 @@ evidence:
     path: /data/vla-infrastructure/evidence/isaac1103-cutover-20260918/failed_churn-20260918T194002116860Z/result.json
     symbol: null
     notes: Original failed bytes retained.
+  isaac1103_postcutover_s1:
+    kind: command_test
+    status: pass
+    summary: Post-cutover canonical s1 PASS from ~/vla_infrastructure; exact frozen final SDK. Physical Quest not claimed.
+    timestamp: '2026-09-18T20:19:22.663061+00:00'
+    command: python3 tools/launch_isaac_s1.py
+    artifact_ids:
+    - isaac1103_postcutover_s1_result
+    - isaac1103_postcutover_s1_launch_manifest
+    - isaac1103_postcutover_s1_stdout
+    - isaac1103_postcutover_s1_runtime
+    repository: null
+    revision_type: commit
+    revision: 2b2923ff0bde24358c93109fea8423c851a12f76
+    path: docs/project/migrations/20260918_isaac1103
+    symbol: null
+    notes: Migration commit is the actual tested home HEAD; inputs bound by source hashes. S2 remains unresolved.
+  isaac1103_postcutover_s2:
+    kind: command_test
+    status: pass
+    summary: Post-cutover canonical s2 PASS from ~/vla_infrastructure; exact frozen final SDK. Physical Quest not claimed.
+    timestamp: '2026-09-18T20:19:22.664266+00:00'
+    command: python3 tools/launch_isaac_s2.py --xr-smoke
+    artifact_ids:
+    - isaac1103_postcutover_s2_result
+    - isaac1103_postcutover_s2_launch_manifest
+    - isaac1103_postcutover_s2_stdout
+    - isaac1103_postcutover_s2_runtime
+    repository: null
+    revision_type: commit
+    revision: 2b2923ff0bde24358c93109fea8423c851a12f76
+    path: docs/project/migrations/20260918_isaac1103
+    symbol: null
+    notes: Migration commit is the actual tested home HEAD; inputs bound by source hashes. S2 remains unresolved.
+  isaac1103_postcutover_cleanup:
+    kind: command_test
+    status: pass
+    summary: No owned Isaac/CloudXR processes or GPU compute processes remain after home-checkout validation.
+    timestamp: '2026-09-18T20:20:23.544203+00:00'
+    command: Current-UID /proc command inventory and nvidia-smi --query-compute-apps=pid,process_name --format=csv,noheader
+    artifact_ids:
+    - isaac1103_postcutover
+    - isaac1103_postcutover_process_check
+    repository: null
+    revision_type: commit
+    revision: 2b2923ff0bde24358c93109fea8423c851a12f76
+    path: docs/project/migrations/20260918_isaac1103
+    symbol: null
+    notes: Only automated cleanup; no physical S2 claim.
 gates:
   M0:
     state: accepted

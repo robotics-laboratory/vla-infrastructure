@@ -211,3 +211,18 @@ HUMAN EVIDENCE:none added; physical Quest remains mandatory.
 BLOCKERS / REOPEN REASONS:no remaining machine cutover blocker; physical S2 and
 standalone-fixture teardown diagnostic remain disclosed. No A/B/C/D0 reopen.
 NEXT GATE:physical Quest S2 acceptance with rollback available.
+
+## Production cutover completed
+
+Home master was fast-forwarded to migration commit `2b2923ff0bde24358c93109fea8423c851a12f76`. Full canonical S1
+and canonical S2 cloudxrjs no-client smoke both PASS from `/home/ebulochkin/vla_infrastructure`.
+Exact commands/manifests/public evidence paths are in `postcutover.json` and
+registered `isaac1103_postcutover_*` evidence. Source hashes match the qualified
+production sources; SDK remains under `/data`. S2 physical acceptance is unchanged
+and unresolved. No rollback was triggered; the validated `--stack legacy` path
+remains available. A follow-up documentation/evidence commit records this result.
+
+Post-cutover owned Isaac/CloudXR process inventory and GPU compute process list
+are empty. Validator/linter remain PASS; declared offline tests repeat82 PASS,
+23 skips after evidence registration. Release bundle under `/data/vla-infrastructure/releases/isaac1103-production.bundle`
+is the distribution for colleagues using their own home checkouts and per-user data.
