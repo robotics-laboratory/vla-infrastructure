@@ -1,3 +1,7 @@
+> Общий VR launcher с Kit 110.3 / тремя preview и откатом: [инструкция](docs/project/integrations/20260918_kit1103_preview/README.md).
+> Запускать из `/data/vla-infrastructure/robosyn-kit1103` под своим Linux-пользователем.
+> Physical Quest acceptance новой интеграции ещё не выполнен.
+
 # PIPER-X + Quest 3 Codex Instruction Pack — v5.2 Hardened
 
 v5.2 is a consolidation/hardening release.

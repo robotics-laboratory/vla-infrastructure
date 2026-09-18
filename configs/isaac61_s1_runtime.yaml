@@ -1,0 +1,126 @@
+revision: piper_x_isaac_s1_runtime_v1
+status: integration_opt_in_HUMAN_ACCEPTANCE_PENDING
+environment:
+  selection_artifact: configs/environments/isaac61_preview_integration.yaml
+  project: /data/vla-infrastructure/isaac61_qualification/IsaacLab
+  materialized_path: /data/vla-infrastructure/isaac61_qualification/env
+  isaac_lab_path: /data/vla-infrastructure/isaac61_qualification/IsaacLab
+  isaac_lab_release: release/3.0.0
+  isaac_lab_commit: ae37b028ea415c91ea2bc32609efcd759ed2b974
+  isaac_lab_source_version: 17.0.2
+  isaac_sim_version: 6.1.0.0
+  python_version: 3.12.13
+  torch_version: 2.11.0+cu128
+  torchvision_version: 0.26.0+cu128
+  torchaudio_version: 2.11.0+cu128
+  cuda_wheels: cu128
+  lerobot_allowed: false
+  upstream_frozen_workspace: true
+  upstream_override_conflicts: 6
+asset:
+  source_checkout: /data/vla-infrastructure/assets/agx_arm_urdf
+  source_commit: f6642ce0d7872c686f29c99e9e10cd23d1d49313
+  source_xacro: piper_x/urdf/piper_x_with_gripper_description.xacro
+  source_xacro_sha256: 0ee3f52f9acf3060a7f3e439c6e5e46b6a53d4fa509dd495045548be6b7f90cd
+  source_base_urdf: piper_x/urdf/piper_x_description.urdf
+  source_base_urdf_sha256: 34126caac7d5b37bc2409f337ac246afbe0bb8cd47fc9f16df5038f19bd21e3a
+  composed_urdf: /data/vla-infrastructure/isaac61_qualification/cache/assets/isaac_s1/piper_x_gate_c.urdf
+  converted_usd_dir: /data/vla-infrastructure/isaac61_qualification/cache/assets/isaac_s1/converted/<composed_urdf_sha256>
+  conversion:
+    importer: Isaac Lab UrdfConverter once, then two UsdFileCfg references to the same result
+    fix_base: true
+    merge_fixed_joints: false
+    make_instanceable: true
+    self_collision: false
+    robot_type: Manipulator
+    run_multi_physics_conversion: false
+    aperture_carrier: geometry-free gripper_link gets mass 0.001 kg and diagonal inertia 1e-7 kg m^2; no joint/frame/mesh changes
+    mimic_handling: Imported PhysX fingers receive derived targets +0.5 and -0.5 times the aperture coordinate; they are not additional D0 action dimensions.
+task:
+  id: PiperX-Isaac-Bimanual-JointReach-S1-v0
+  revision: piper_x_isaac_bimanual_joint_reach_s1_v1
+  instruction: Move both PIPER-X arms to the named joint/aperture target.
+  workspace_frame: each arm-local base_link
+  success:
+    joint_max_abs_error_deg: 2.0
+    gripper_max_abs_error_mm: 2.0
+  termination: Success terminates the episode; no S1 failure termination is defined.
+  truncation: At 120 control steps without success.
+  horizon_control_steps: 120
+execution:
+  device: cuda:0
+  use_fabric: true
+  arm_gravity_enabled: false
+  scene_gravity_m_s2: [0.0, 0.0, -9.81]
+  solver_iterations: {position: 8, velocity: 2}
+  physics_dt_s: 0.008333333333333333
+  control_dt_s: 0.03333333333333333
+  action_repeat: 4
+  render_interval_physics_steps: 1
+  control_mode: absolute joint position
+  actuator_type: Isaac Lab implicit PhysX force PD drive
+  stiffness:
+    arm_nm_per_rad: 400.0
+    gripper_n_per_m: 2000.0
+  damping:
+    arm_nm_s_per_rad: 40.0
+    gripper_n_s_per_m: 100.0
+  effort_limits:
+    arm_nm: 100.0
+    gripper_n: 10.0
+  velocity_limits: {arm_rad_s: 5.0, gripper_m_s: 3.0}
+  saturation: Preserve D0 action; separately convert degrees to radians and millimeters to meters, then clip the native target to the accepted URDF limits.
+  hold: Zero-order hold of one native position target for four physics steps; no interpolation.
+  seed_protocol: Set Python random, NumPy, and torch seeds before deterministic fixed reset; S1 default seed is 0.
+reset:
+  semantics: Write fixed namespaced root/joint pose, zero root/joint velocities, set the same position target, clear asset/sensor buffers, use Candidate B's qualified 24 non-evidence renderer-settling physics ticks, then capture on the next normal physics tick before returning fresh reset RGB.
+  home_d0_per_arm: [0.0, 30.0, -60.0, 0.0, 20.0, 0.0, 50.0]
+  base_positions_m:
+    left: [-0.35, 0.0, 0.0]
+    right: [0.35, 0.0, 0.0]
+cameras:
+  left_wrist:
+    d0_key: observation.images.left_wrist
+    prim_path: /World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera
+    pose_source: /World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base
+  right_wrist:
+    d0_key: observation.images.right_wrist
+    prim_path: /World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera
+    pose_source: /World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base
+  sensor_layout: One upstream Isaac Lab Camera with a regex-batched FrameView over the two independently parented camera prims.
+  sensor_prim_expression: /World/[^/]*Piper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera
+  offset_xyz_m: [0.10, 0.0, 0.05]
+  offset_quat_xyzw: [0.0, 0.0, 0.0, 1.0]
+  offset_convention: world
+  pose_update: Upstream parent hierarchy and Candidate B Camera/FrameView propagate the configured fixed local offset.
+  width: 640
+  height: 480
+  fps: 30
+  data_type: rgb
+  d0_dtype_layout: uint8 HWC RGB
+  native_to_d0: Select the first three native RGB/RGBA channels without normalization.
+  focal_length_mm: 18.0
+  horizontal_aperture_mm: 20.955
+  clipping_range_m: [0.02, 10.0]
+  validation:
+    fixed_scene_target_size_m: [0.07, 0.07, 0.07]
+    fixed_scene_target_colors_rgb: {left: [0.95, 0.01, 0.01], right: [0.95, 0.01, 0.01]}
+    unilateral_joint_1_perturbations_deg: {left: 15.0, right: -15.0}
+    continuous_frames_per_sequence_per_camera: 110
+    sequences: [before_reset, after_reset]
+    no_stale_rule: Every counted moving frame is valid and changes hash from its predecessor; camera frame indices strictly advance.
+    reset_rule: Each camera returns to its baseline parented pose and fixed-target centroid; the pre-reset frame is not reused.
+d0_boundary:
+  revision: piper_x_d0_isaac_edge_mapping_v1
+  state_shape: [14]
+  state_dtype: float32
+  order_source: configs/resolved_contract.yaml#dataset.observation_contract.state.names
+  joint_boundary_unit: degree
+  native_joint_unit: radian
+  gripper_boundary_unit: millimeter
+  native_gripper_unit: meter
+  observation_gripper: absolute measured model aperture
+  action_gripper: signed D0 travel label; the separate S1 native aperture target is clipped to [0, 100] mm, without changing the D0 label
+  camera_roles: [left_wrist, right_wrist]
+  process_boundary: LeRobot remains in the isolated core process and is not imported by this environment.
+# Accepted S1 evidence remains in isaac_s1_runtime.yaml; it does not qualify this release.

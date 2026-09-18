@@ -172,7 +172,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
     )
     from isaaclab_teleop.xr_cfg import XrCfg  # type: ignore[import-not-found]
 
-    config = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+    config_path = getattr(args_cli, "s2_config", None) or CONFIG_PATH
+    config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     experiment = getattr(env, "experiment_runtime", None)
     expected = config["environment"]
     actual_versions = {

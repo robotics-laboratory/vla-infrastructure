@@ -102,7 +102,6 @@ def test_s1_runtime_uses_only_upstream_camera_path() -> None:
     (
         ("launch_isaac_s1.py", "isaac-s1"),
         ("launch_isaac_s2.py", "isaac-s2"),
-        ("launch_isaac_robosyn_vr_demo.py", "robosyn-vr-demo"),
     ),
 )
 def test_isaac_launchers_use_explicit_kit_portable_roots(

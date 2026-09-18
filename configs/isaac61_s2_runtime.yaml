@@ -1,0 +1,88 @@
+revision: piper_x_isaac_s2_runtime_v2
+status: integration_opt_in_HUMAN_ACCEPTANCE_PENDING
+extends: configs/isaac61_s1_runtime.yaml
+environment:
+  isaac_lab_commit: ae37b028ea415c91ea2bc32609efcd759ed2b974
+  isaac_lab_release: release/3.0.0
+  isaac_lab_package_version: 17.0.2
+  isaac_sim_version: 6.1.0.0
+  isaacteleop_version: 1.4.98rc1
+  isaaclab_teleop_version: 0.9.0
+  cloudxr_runtime_version: 6.2.1
+  dependency_source: v3.0.0-EA frozen uv.lock teleop extra
+session:
+  implementation: isaaclab_teleop IsaacTeleopDevice lifecycle with one S2 motion ControllersSource and no redundant anchor-hotkey ControllersSource
+  cloudxr_profile: cloudxrjs
+  use_kit_xr_bridge: true
+  controller_source_count: 1
+  source_outputs: [controller_left, controller_right]
+  physical_gate_b_runtime_reused_semantically: one coherent session owns independent physical left and right streams
+xr_presentation:
+  anchor_pos_m: [0.0, -0.6, -1.05]
+  anchor_rot_xyzw: [0.0, 0.0, 0.0, 1.0]
+  near_plane_m: 0.15
+  semantics: Static XR presentation only. The simulation point at this anchor appears at the XR local origin, placing the world origin 0.6 m forward and 1.05 m above it under the upstream OpenXR-to-Isaac basis.
+  geometry_impact: none; Gate C embodiment and accepted S1 world geometry are unchanged
+processor:
+  revision: piper_x_isaac_s2_bimanual_relative_v2
+  input_per_arm:
+    pose_delta: [dx, dy, dz, rotation_vector_x, rotation_vector_y, rotation_vector_z]
+    state: [controller_available, effective_grip_pose_valid, squeeze_value, trigger_value, sensitivity_button_value]
+  controller_pose: grip_pose
+  frames:
+    openxr: Y-up; +X right, +Y up, +Z back
+    upstream_transform: world_T_anchor uses [x, y, z]_isaac = [x, -z, y]_openxr before the configured anchor pose
+    output: Isaac world, Z-up, +X forward, +Y left
+    arm_target: each Gate C base_link; both S1 base rotations are identity, so world spatial deltas have the same axes in each base
+    tcp: Gate C gripper_base
+  rotation:
+    quaternion_order: xyzw
+    handedness: right-handed
+    relative_delta: R_current * inverse(R_previous)
+    target_composition: left-multiply spatial delta onto the current TCP orientation
+  sensitivity:
+    initial_mode: normal
+    toggle_control: thumbstick_click
+    toggle_threshold: 0.5
+    scope: independent per arm
+    modes:
+      normal: {translation_scale: 2.0, rotation_scale: 2.0}
+      precise: {translation_scale: 0.5, rotation_scale: 0.5}
+    switch_behavior: Rising edge toggles the corresponding arm and emits zero Cartesian delta on the switching frame; holding does not retrigger.
+    control_conflicts: none; squeeze remains clutch, trigger remains gripper, the client message channel owns start/stop/reset, and right primary remains the upstream anchor-rotation control
+    selection_status: remediation values require confirmation in the second physical Quest run
+  upstream_smoothing: {alpha_position: 0.5, alpha_rotation: 0.5}
+  upstream_deadband: {position_m_before_scale: 0.001, rotation_rad_before_scale: 0.01}
+  clutch:
+    control: squeeze_value greater than 0.5
+    threshold: 0.5
+    scope: independent per arm
+    active_behavior: zero Cartesian delta while upstream continues updating its relative reference
+    release_behavior: discard the first released delta and rebase; no target jump
+  gripper:
+    control: trigger_value
+    trigger_input_range: [0.0, 1.0]
+    mode: analog_linear
+    open_aperture_m: 0.1
+    closed_aperture_m: 0.0
+    reset_aperture_m: 0.05
+    mapping: aperture = open + normalized_trigger * (closed - open); trigger 0 is fully open and trigger 1 is fully closed; independent per arm
+  tracking:
+    valid: controller present and grip_pose_valid with finite values
+    invalid: emit zero delta, hold simulated target, reject invalid/default or non-finite poses, invalidate that arm's relative reference and smoothing state, and leave the opposite valid arm usable
+    root_cause_remediation: TrackingSafeSe3RelRetargeter closes the pinned upstream Se3RelRetargeter is_none branch gap, which emitted zero but retained the stale previous wrist pose and smoothing accumulator
+    recovery: first newly valid pose becomes the new per-arm baseline and emits zero delta; subsequent samples resume without manual clutch
+    source_timestamp_threshold: null
+  disconnect: hold simulated targets, mark both streams inactive, and require per-arm rebase on reconnect; never replay stale intent
+  reset: reset S1 environment and upstream execution state, then require one newly valid rebase frame per arm
+retargeting_ik:
+  pose_delta: upstream isaacteleop Se3RelRetargeter
+  ik: upstream Isaac Lab DifferentialIKController
+  mode: relative pose
+  method: damped least squares
+  native_output: six Gate C arm joint position targets plus one Gate C aperture target per arm
+  actuation: accepted S1 NativeBimanualTargets and articulation position-target path
+cameras:
+  implementation: unchanged accepted S1 upstream regex-batched Camera
+  left_wrist: {width: 640, height: 480, dtype_layout: uint8 RGB HWC}
+  right_wrist: {width: 640, height: 480, dtype_layout: uint8 RGB HWC}

@@ -10,20 +10,22 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import shlex
 
 import yaml
 
-from launch_isaac_s2 import ENVIRONMENT, LAB, QUALIFICATION, STORAGE, _verify
+from isaac_demo_launch import (STACKS, configure_cloudxr, git, user_environment,
+                               verify_stack, write_runtime_config)
 
 
 ROOT = Path(__file__).resolve().parents[1]
 DEMO_CONFIG = ROOT / "configs/experiments/robosyn_vr_demo.yaml"
 ASSET_MANIFEST = ROOT / "configs/experiments/robosyn_test_assets.yaml"
-RUNTIME_ROOT = STORAGE / "cache/robosyn-vr-demo"
-USER_CACHE_ROOT = RUNTIME_ROOT / "users" / f"uid-{os.getuid()}"
-KIT_PORTABLE_ROOT = USER_CACHE_ROOT / "kit"
 PROVENANCE_INPUTS = (
     DEMO_CONFIG,
+    ROOT / "tools/isaac_demo_launch.py",
+    ROOT / "tools/run_isaac_s1.py",
+    ROOT / "tools/isaac_preview_partitions.py",
     ROOT / "tools/launch_isaac_robosyn_vr_demo.py",
     ROOT / "tools/isaac_robosyn_vr_demo.py",
     ROOT / "tools/isaac_s2_runtime.py",
@@ -32,16 +34,11 @@ PROVENANCE_INPUTS = (
 
 
 def _verify_demo_inputs() -> dict:
-    _verify()
     config = yaml.safe_load(DEMO_CONFIG.read_text(encoding="utf-8"))
     manifest = yaml.safe_load(ASSET_MANIFEST.read_text(encoding="utf-8"))
     checkout = Path(manifest["source_checkout"])
-    commit = subprocess.check_output(
-        ["git", "-C", str(checkout), "rev-parse", "HEAD"], text=True
-    ).strip()
-    dirty = subprocess.check_output(
-        ["git", "-C", str(checkout), "status", "--porcelain"], text=True
-    )
+    commit = git(checkout, "rev-parse", "HEAD")
+    dirty = git(checkout, "status", "--porcelain")
     if commit != manifest["source_commit"] or dirty:
         raise RuntimeError(f"RoboSyn test checkout is not clean/pinned: {checkout}")
     for item in manifest["assets"]:
@@ -55,7 +52,7 @@ def _verify_demo_inputs() -> dict:
 
 
 def _git_output(*args: str) -> str:
-    return subprocess.check_output(["git", "-C", str(ROOT), *args], text=True).strip()
+    return git(ROOT, *args)
 
 
 def _write_launch_manifest(
@@ -65,6 +62,8 @@ def _write_launch_manifest(
     command: list[str],
     environment: dict[str, str],
     config: dict,
+    state: Path,
+    stack: dict,
 ) -> None:
     """Persist the host-controlled launch inputs before the long-running child starts."""
     home = environment.get("HOME", str(Path.home()))
@@ -84,6 +83,13 @@ def _write_launch_manifest(
         "launch": {
             "command": command,
             "profile": args.profile,
+            "stack": args.stack,
+            "preview_isolation": args.preview_isolation,
+            "preview_cameras": args.preview_cameras,
+            "cloudxr_mode": args.cloudxr_mode,
+            "dry_run": args.dry_run,
+            "pinned_packages": stack["packages"],
+            "lab_commit": stack["commit"],
             "hud_on_start": bool(args.hud_on_start),
             "smoke": bool(args.smoke),
             "xr_smoke": bool(args.xr_smoke),
@@ -92,10 +98,10 @@ def _write_launch_manifest(
         "host_paths": {
             "uid": os.getuid(),
             "home": home,
-            "kit_portable_root": str(KIT_PORTABLE_ROOT),
+            "kit_portable_root": str(state / "kit"),
             "xdg_cache_home": environment["XDG_CACHE_HOME"],
             "cloudxr_install_root": str(Path(home) / ".cloudxr"),
-            "uv_project_environment": environment["UV_PROJECT_ENVIRONMENT"],
+            "python_environment": str(stack["environment"]),
         },
         "cloudxr_web_client": {
             **config["cloudxr_web_client"],
@@ -115,6 +121,14 @@ def main() -> int:
         choices=("dual_cube_to_matching_plates", "robosyn_asset_lab"),
         default="dual_cube_to_matching_plates",
     )
+    parser.add_argument("--stack", choices=tuple(STACKS), default="isaac61")
+    parser.add_argument("--preview-isolation", choices=("off", "scene-partitions"))
+    parser.add_argument("--preview-cameras", choices=(2, 3), type=int)
+    parser.add_argument("--cloudxr-mode", choices=("auto", "existing"), default="auto")
+    parser.add_argument("--state-root", type=Path, help="Private directory owned by the current UID.")
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--capture-preview-evidence", action="store_true",
+                        help="Opt in to bounded preview PPM diagnostics outside the repository.")
     parser.add_argument("--smoke", action="store_true", help="Bounded standalone no-client run.")
     parser.add_argument(
         "--xr-smoke", action="store_true", help="Bounded no-client run with XR Kit enabled."
@@ -125,60 +139,61 @@ def main() -> int:
         help="Start the upstream left/right wrist PiP visible for measurement.",
     )
     parser.add_argument("--scene-preview", type=Path, help="Optional scene-camera PNG output.")
-    parser.add_argument("--max-control-steps", type=int, default=18000)
+    parser.add_argument("--max-control-steps", type=int, help="Default:60 for smoke,18000 otherwise.")
     args = parser.parse_args()
+    if args.max_control_steps is not None and args.max_control_steps <= 0:
+        parser.error("--max-control-steps must be positive")
     if args.smoke and args.xr_smoke:
         parser.error("--smoke and --xr-smoke are mutually exclusive")
     if args.hud_on_start and args.smoke:
         parser.error("HUD measurement requires --xr-smoke or the default physical XR run")
+    if args.preview_isolation is None:
+        args.preview_isolation = "scene-partitions" if args.stack == "isaac61" else "off"
+    if args.preview_cameras is None:
+        args.preview_cameras = 3 if args.stack == "isaac61" else 2
+    if args.stack == "legacy" and args.preview_isolation != "off":
+        parser.error("legacy Kit is not qualified for Scene Partitions; use --preview-isolation off")
+    stack = verify_stack(args.stack)
     config = _verify_demo_inputs()
-    if os.environ.get("OMNI_KIT_ACCEPT_EULA", "").upper() not in {"Y", "YES", "1"}:
+    if not args.dry_run and os.environ.get("OMNI_KIT_ACCEPT_EULA", "").upper() not in {"Y", "YES", "1"}:
         raise RuntimeError("NVIDIA EULA acceptance is required: set OMNI_KIT_ACCEPT_EULA=Y")
 
-    KIT_PORTABLE_ROOT.mkdir(parents=True, exist_ok=True)
-    environment = os.environ.copy()
-    environment.update(
-        {
-            "UV_CACHE_DIR": str(QUALIFICATION / "uv_cache"),
-            "UV_PROJECT_ENVIRONMENT": str(ENVIRONMENT),
-            "XDG_CACHE_HOME": str(USER_CACHE_ROOT / "xdg"),
-            "PYTHONPATH": str(LAB / "source/isaaclab"),
-            "PYTHONNOUSERSITE": "1",
-        }
-    )
-    environment.pop("PYTHONHOME", None)
-    environment.pop("VIRTUAL_ENV", None)
+    environment, state = user_environment(stack, args.stack, state_root=args.state_root)
+    configure_cloudxr(environment, mode=args.cloudxr_mode, dry_run=args.dry_run)
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     hud_name = "hud-on" if args.hud_on_start else "hud-off"
-    output_dir = RUNTIME_ROOT / "runs" / f"{stamp}-{args.profile}-{hud_name}"
+    output_dir = state / "runs" / f"{stamp}-{args.profile}-{hud_name}"
     output_dir.mkdir(parents=True, exist_ok=False)
-    environment["ROBOSYN_VR_CAMERA_DIAGNOSTICS_DIR"] = str(
-        output_dir / "camera_feed_diagnostics"
-    )
+    if args.capture_preview_evidence:
+        environment["ROBOSYN_VR_CAMERA_DIAGNOSTICS_DIR"] = str(output_dir / "camera_feed_diagnostics")
+    runtime_config = write_runtime_config(ROOT, stack, state, output_dir)
     bounded = args.smoke or args.xr_smoke
-    max_steps = 60 if bounded else args.max_control_steps
+    max_steps = args.max_control_steps or (60 if bounded else 18000)
+    kit_args = ["--portable-root", str(state / "kit")]
+    if not args.smoke:
+        kit_args += ["--enable", "omni.kit.scene_view.xr", "--enable", "omni.kit.scene_view.xr_utils"]
+    if args.preview_isolation == "scene-partitions":
+        # Initialize the topology before the first frame. Cached personal Kit settings cannot override it.
+        kit_args += ["--/renderer/scenePartitioning/enabled=true",
+                     "--/rtx/scenePartitioning/showAllPartitionsByDefault=true"]
+        if args.smoke:
+            kit_args += ["--enable", "omni.kit.scene_view.xr"]
     command = [
-        "uv",
-        "run",
-        "--project",
-        str(LAB),
-        "--frozen",
-        "--no-sync",
-        "python",
+        str(stack["environment"] / "bin/python"),
         str(ROOT / "tools/run_isaac_s1.py"),
-        "--robosyn-vr-demo",
-        "--s2-teleop",
-        "--demo-profile",
-        args.profile,
-        "--device",
-        "cuda:0",
-        "--kit_args",
-        f"--portable-root {KIT_PORTABLE_ROOT}",
-        "--report",
-        str(output_dir / "result.json"),
-        "--s2-max-control-steps",
-        str(max_steps),
+        "--config", str(runtime_config), "--s2-config", str(ROOT / "configs" / stack["s2"]),
+        "--robosyn-vr-demo", "--s2-teleop", "--demo-profile", args.profile,
+        "--device", "cuda:0", "--kit_args", shlex.join(kit_args),
+        "--demo-preview-isolation", args.preview_isolation,
+        "--report", str(output_dir / "result.json"),
+        "--s2-max-control-steps", str(max_steps),
     ]
+    if args.stack == "isaac61":
+        command += ["--viz", "kit"]
+    if not args.smoke:
+        command += ["--experience", str(stack["lab"] / "apps/isaaclab.python.xr.openxr.kit")]
+    if args.preview_cameras == 3:
+        command.append("--demo-preview-scene")
     if args.hud_on_start:
         command.append("--demo-hud-on-start")
     if args.scene_preview is not None:
@@ -187,8 +202,8 @@ def main() -> int:
         command.extend(
             [
                 "--s2-cloudxr-profile",
-                "cloudxrjs" if args.xr_smoke else "standalone",
-                "--no-s2-require-session",
+                "standalone",
+                "--s2-require-session" if args.xr_smoke else "--no-s2-require-session",
                 "--s2-reset-step",
                 "30",
             ]
@@ -219,11 +234,15 @@ def main() -> int:
         command=command,
         environment=environment,
         config=config,
+        state=state,
+        stack=stack,
     )
     print(f"Demo output: {output_dir}", flush=True)
     print(f"Quest WebXR client: {config['cloudxr_web_client']['url']}", flush=True)
     print(f"Quest client setup: {config['cloudxr_web_client']['operator_setup']}", flush=True)
     print(f"Demo command: {' '.join(command)}", flush=True)
+    if args.dry_run:
+        return 0
     with (output_dir / "stdout.log").open("w", encoding="utf-8") as log:
         with subprocess.Popen(
             command,

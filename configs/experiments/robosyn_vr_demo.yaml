@@ -142,7 +142,7 @@ teleop_tuning:
 
 vr_camera_feeds:
   implementation: upstream isaaclab_teleop XrCameraFeedSession and Kit SceneUI presenter
-  image_source: Isaac Lab Camera RGBA buffer; do not attach the optional Kit post-update Replicator annotator because it can resample the XR panel composition and create recursive preview feedback.
+  image_source: Isaac Lab Camera RGBA buffer reused for presentation; sensor exclusion is owned by the optional RTX Scene Partition integration, not buffer selection.
   upload_path: cpu_staged
   panel_layout: Camera-resolution pixel layout; preserve upstream physical dimensions, labels and placement. Texture supersampling is 1.0.
   initial_visibility: false

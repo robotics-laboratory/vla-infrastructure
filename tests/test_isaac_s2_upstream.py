@@ -322,6 +322,8 @@ class IsaacS2UpstreamTests(unittest.TestCase):
                 self.close_count += 1
 
         runtime = self.DemoRuntime.__new__(self.DemoRuntime)
+        runtime.preview_scene = False
+        runtime.preview_isolation = None
         runtime.config = {
             "vr_camera_feeds": {
                 "quest_button": "X",

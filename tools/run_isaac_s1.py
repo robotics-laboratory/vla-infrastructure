@@ -41,6 +41,10 @@ MODEL_PATH = ROOT / "configs/piper_x_model_contract.yaml"
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--report", type=Path)
+parser.add_argument("--config", type=Path, default=CONFIG_PATH)
+parser.add_argument("--s2-config", type=Path)
+parser.add_argument("--demo-preview-isolation", choices=("off", "scene-partitions"), default="off")
+parser.add_argument("--demo-preview-scene", action="store_true")
 parser.add_argument(
     "--s2-teleop",
     action="store_true",
@@ -351,6 +355,8 @@ class BimanualPiperXIsaacEnvironment:
         for _ in range(repeat):
             for robot in self.robots:
                 robot.write_data_to_sim()
+            if self.experiment_runtime is not None:
+                self.experiment_runtime.before_render()
             self.sim.step()
             for robot in self.robots:
                 robot.update(PHYSICS_DT)
@@ -825,7 +831,7 @@ def _camera_regression(env: BimanualPiperXIsaacEnvironment, seed: int) -> dict:
 
 def main() -> int:
     print("[S1] loading checked configuration", flush=True)
-    config = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+    config = yaml.safe_load(args_cli.config.read_text(encoding="utf-8"))
     model = yaml.safe_load(MODEL_PATH.read_text(encoding="utf-8"))
     urdf_path = Path(config["asset"]["composed_urdf"])
     urdf_sha = materialize_gate_c_urdf(Path(config["asset"]["source_checkout"]), urdf_path)
@@ -885,7 +891,7 @@ def main() -> int:
     converter = sim_utils.UrdfConverter(
         sim_utils.UrdfConverterCfg(
             asset_path=str(urdf_path),
-            usd_dir=f"/data/vla-infrastructure/assets/isaac_s1/converted/{urdf_sha}",
+            usd_dir=str(urdf_path.parent / "converted" / urdf_sha),
             fix_base=True,
             merge_fixed_joints=False,
             self_collision=False,

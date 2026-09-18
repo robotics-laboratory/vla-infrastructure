@@ -56,6 +56,13 @@ def test_physical_retest_values_are_demo_only_and_geometry_is_unchanged() -> Non
     assert presentation["anchor_pos_m"] == [-0.05, 0.0, -0.1]
     assert presentation["scale"] == 1.0
     assert presentation["recenter"] == {
+        "execution_mode": "sync",
+        "motion_barrier": (
+            "Hold the request frame; on the next control frame accept XRCore's current "
+            "physical-to-world transform as the new reference and emit a zero-motion "
+            "rebase. Any later transform change rebases again. Missing active XR "
+            "transforms still hold motion."
+        ),
         "toggle_control": "right_thumbstick_click",
         "quest_button": "R3",
         "view_prim_path": "/World/RobosynDemo/SceneCamera",

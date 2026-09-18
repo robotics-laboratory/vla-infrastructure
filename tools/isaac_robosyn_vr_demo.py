@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "configs/experiments/robosyn_vr_demo.yaml"
 ASSET_MANIFEST_PATH = ROOT / "configs/experiments/robosyn_test_assets.yaml"
 ROBOSYN_ROOT = Path("/data/vla-infrastructure/assets/robosyn_vr_demo/RoboSynChallenge")
-CONVERTED_ROOT = Path("/data/vla-infrastructure/assets/robosyn_vr_demo/converted")
+CONVERTED_ROOT = Path(os.environ.get("ROBOSYN_VR_ASSET_CACHE", "/data/vla-infrastructure/assets/robosyn_vr_demo/converted"))
 PHYSICS_DT = 1.0 / 120.0
 CAMERA_PERIOD = 1.0 / 30.0
 
@@ -42,8 +42,9 @@ def _cpu(value) -> np.ndarray:
 class _CpuRgbaPanel:
     """Use Kit's raw CPU buffer upload while upstream owns the panel lifetime."""
 
-    def __init__(self, upstream_panel: Any) -> None:
+    def __init__(self, upstream_panel: Any, isolation=None) -> None:
         self._upstream = upstream_panel
+        self._isolation = isolation
         self._closed = False
         self._retained_image: torch.Tensor | None = None
         # An isolated signature avoids changing ctypes.pythonapi's shared
@@ -84,6 +85,8 @@ class _CpuRgbaPanel:
 
     def close(self) -> None:
         if not self._closed:
+            if self._isolation is not None:
+                self._isolation.release_panel(self._upstream)
             self._upstream.close()
             self._retained_image = None
             self._closed = True
@@ -223,16 +226,14 @@ class _CpuStagedFeedPresenter:
     uploads it through ``ByteImageProvider``'s raw buffer API.
     """
 
-    def __init__(self, upstream_presenter: Any) -> None:
+    def __init__(self, upstream_presenter: Any, isolation=None) -> None:
         self._upstream = upstream_presenter
+        self._isolation = isolation
 
     def create_image_source(self, camera_name: str, camera: Any, cfg: Any = None) -> Any:
         del camera_name, camera, cfg
-        # Keep the preview downstream of Isaac Lab Camera's RGBA buffer. The
-        # optional feed-owned Replicator annotator runs on Kit post-update and
-        # can sample the XR composition that already contains this SceneUI
-        # panel, creating panel-within-panel feedback in a physical headset.
-        # The manager's supported fallback reads camera.data.output["rgba"].
+        # Reuse the sensor cache for presentation. This is a buffer/lifecycle
+        # choice, not an anti-recursion boundary; RTX partitions own isolation.
         return None
 
     def create_panel(self, descriptor: Any, width: int, height: int) -> Any:
@@ -242,13 +243,15 @@ class _CpuStagedFeedPresenter:
             # Candidate B uses meters for UI layout, so the 22-pixel label and
             # 1-pixel border overflow a 0.36-unit panel. Keep its physical size
             # and placement, but lay out children at camera pixel resolution.
+            if self._isolation is not None:
+                self._isolation.check_panel(panel)
             component = panel._component
             component.resolution_scale = 1.0
             component.unit_to_pixel_scale = float(width) / component.width
         except Exception:
             panel.close()
             raise
-        return _CpuRgbaPanel(panel)
+        return _CpuRgbaPanel(panel, self._isolation)
 
     def subscribe_to_frame_updates(self, callback: Callable[[Any], None]) -> Any:
         return self._upstream.subscribe_to_frame_updates(callback)
@@ -300,6 +303,11 @@ class _BimanualCameraData:
         return torch.cat(
             tuple(_tensor(camera.data.quat_w_world) for camera in self._cameras), dim=0
         )
+
+
+def _scene_rgb(camera):
+    output = camera.data.output
+    return _cpu(output["rgba" if "rgba" in output else "rgb"])[0, ..., :3]
 
 
 class DemoCameraRig:
@@ -358,6 +366,8 @@ class DemoRuntime:
         self.config = config
         self.profile = profile
         self.camera_rig = camera_rig
+        self.preview_isolation = getattr(camera_rig, "preview_isolation", None)
+        self.preview_scene = bool(config["vr_camera_feeds"].get("include_scene_camera", False))
         self.dynamic_assets = dynamic_assets
         self.contact_sensors = contact_sensors
         self.imported_prims = imported_prims
@@ -397,7 +407,8 @@ class DemoRuntime:
                 max_update_hz=float(layout["max_update_hz"]),
                 label=label,
             )
-            for name, label in (("left_wrist", "LEFT WRIST"), ("right_wrist", "RIGHT WRIST"))
+            for name, label in ([("left_wrist", "LEFT WRIST"), ("right_wrist", "RIGHT WRIST")]
+                                + ([("demo_scene", "SCENE")] if self.preview_scene else []))
         ]
         layout_cfg = XrCameraFeedLayoutCfg(
             mode=str(layout["mode"]),
@@ -410,6 +421,7 @@ class DemoRuntime:
             num_envs=1,
             left_wrist=camera_cfgs[0],
             right_wrist=camera_cfgs[1],
+            demo_scene=camera_rig.scene_camera.cfg,
         )
         env_cfg = SimpleNamespace(
             scene=scene_cfg,
@@ -429,7 +441,7 @@ class DemoRuntime:
             presenter = self._feed_session._presenter
             if presenter is None:
                 raise RuntimeError("upstream XR camera feed presenter is unavailable")
-            self._feed_session._presenter = _CpuStagedFeedPresenter(presenter)
+            self._feed_session._presenter = _CpuStagedFeedPresenter(presenter, self.preview_isolation)
 
     @property
     def xr_presentation(self) -> dict[str, Any]:
@@ -478,6 +490,10 @@ class DemoRuntime:
         # Replicator binding.
         if self._feed_bound and not self._display_visible:
             self._set_upstream_panel_visibility(False)
+
+    def before_render(self) -> None:
+        if self.preview_isolation is not None:
+            self.preview_isolation.assert_valid()
 
     def open(self, env) -> None:
         self._env = env
@@ -683,15 +699,21 @@ class DemoRuntime:
         if manager is None:
             raise RuntimeError("upstream XR camera feed manager is not bound")
         feeds = tuple(manager._feeds)
-        if len(feeds) != 2:
-            raise RuntimeError(f"expected two upstream wrist feed panels, got {len(feeds)}")
+        expected = 3 if self.preview_scene else 2
+        if len(feeds) != expected:
+            raise RuntimeError(f"expected {expected} upstream feed panels, got {len(feeds)}")
+        self.before_render()
         for feed in feeds:
             container = feed.panel._container
             if container is None:
                 raise RuntimeError("upstream XR camera feed panel has no UiContainer")
             if visible:
                 container.show()
+                if self.preview_isolation is not None:
+                    self.preview_isolation.check_panel(feed.panel)
             else:
+                if self.preview_isolation is not None:
+                    self.preview_isolation.release_panel(feed.panel)
                 container.hide()
 
     def _set_display(self, visible: bool) -> None:
@@ -735,6 +757,8 @@ class DemoRuntime:
         rates = {name: camera_observation_frames / elapsed for name in final}
         return {
             "profile": self.profile,
+            "preview_partition_topology": self.preview_isolation.report() if self.preview_isolation else {"enabled": False},
+            "preview_feed_count": 3 if self.preview_scene else 2,
             "camera_frames_start": self._runtime_frames,
             "camera_frames_end": final,
             "camera_capture_cycles_including_reset": cycles,
@@ -795,7 +819,7 @@ class DemoRuntime:
                 for sensor in sensors
             ]
             forces[side] = max(magnitudes, default=0.0)
-        scene_image = _cpu(self.camera_rig.scene_camera.data.output["rgb"])[0]
+        scene_image = _scene_rgb(self.camera_rig.scene_camera)
         wrist_shapes = {
             role: list(observation[f"observation.images.{role}"].shape)
             for role in ("left_wrist", "right_wrist")
@@ -915,6 +939,8 @@ def _spawn_static_scene(config: dict[str, Any]) -> None:
     scene = config["scene"]
     floor = scene["floor"]
     ground = sim_utils.GroundPlaneCfg(size=tuple(floor["size_m"]), color=tuple(floor["color_rgb"]))
+    if os.environ.get("ROBOSYN_VR_GROUND_USD"):
+        ground.usd_path = os.environ["ROBOSYN_VR_GROUND_USD"]
     ground.func("/World/Ground", ground)
     table = scene["table"]
     table_cfg = sim_utils.CuboidCfg(
@@ -1174,6 +1200,11 @@ def run_robosyn_vr_demo(
             dt=PHYSICS_DT, render_interval=1, device=args_cli.device, use_fabric=True
         )
     )
+    isolation = None
+    if args_cli.demo_preview_isolation == "scene-partitions":
+        from isaac_preview_partitions import PreviewPartitions
+        isolation = PreviewPartitions(sim.stage)
+    config["vr_camera_feeds"]["include_scene_camera"] = bool(args_cli.demo_preview_scene)
     _spawn_static_scene(config)
     dynamic_assets, imported_prims = (
         _spawn_task_profile(config)
@@ -1184,7 +1215,7 @@ def run_robosyn_vr_demo(
     converter = sim_utils.UrdfConverter(
         sim_utils.UrdfConverterCfg(
             asset_path=str(urdf_path),
-            usd_dir=f"/data/vla-infrastructure/assets/isaac_s1/converted/{urdf_sha}",
+            usd_dir=str(urdf_path.parent / "converted" / urdf_sha),
             fix_base=True,
             merge_fixed_joints=False,
             self_collision=False,
@@ -1231,12 +1262,20 @@ def run_robosyn_vr_demo(
     wrist_camera_cfgs = tuple(
         _camera_cfg(f"{path}/S1WristCamera", wrist_cfg, rgba=True) for path in wrist_paths
     )
+    if isolation:
+        for cfg in wrist_camera_cfgs:
+            cfg.renderer_cfg.enable_scene_partitioning = False
     wrist_cameras = tuple(Camera(cfg) for cfg in wrist_camera_cfgs)
     scene_cfg = _camera_cfg(
-        "/World/RobosynDemo/SceneCamera", config["cameras"]["scene"], rgba=False
+        "/World/RobosynDemo/SceneCamera", config["cameras"]["scene"], rgba=bool(args_cli.demo_preview_scene)
     )
+    if isolation:
+        scene_cfg.renderer_cfg.enable_scene_partitioning = False
     scene_camera = Camera(scene_cfg)
     camera_rig = DemoCameraRig(wrist_cameras, scene_camera)
+    camera_rig.preview_isolation = isolation
+    if isolation:
+        isolation.bind_sensors((*wrist_cameras, scene_camera))
     contacts = {
         side.lower(): _arm_contact_sensors(sim, f"/World/{side.title()}Piper")
         for side in ("left", "right")
@@ -1268,7 +1307,7 @@ def run_robosyn_vr_demo(
         experiment_runtime=runtime,
     )
     env.scene = SimpleNamespace(
-        sensors={"left_wrist": wrist_cameras[0], "right_wrist": wrist_cameras[1]}
+        sensors={"left_wrist": wrist_cameras[0], "right_wrist": wrist_cameras[1], "demo_scene": scene_camera}
     )
     env.reset(0)
     env._advance(int(config["validation"]["settle_physics_steps"]) - 25)
@@ -1279,7 +1318,7 @@ def run_robosyn_vr_demo(
     if args_cli.demo_scene_preview is not None:
         from PIL import Image
 
-        preview = _cpu(scene_camera.data.output["rgb"])[0]
+        preview = _scene_rgb(scene_camera)
         args_cli.demo_scene_preview.parent.mkdir(parents=True, exist_ok=True)
         Image.fromarray(preview).save(args_cli.demo_scene_preview)
         print(f"[DEMO] scene preview={args_cli.demo_scene_preview}", flush=True)
