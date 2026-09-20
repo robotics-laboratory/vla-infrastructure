@@ -1,16 +1,14 @@
-revision: piper_x_robosyn_vr_demo_v1
-status: EXPERIMENTAL_TEST_ONLY_NOT_A_GATE
+revision: piper_x_isaac_vr_runtime_v1
+status: SELECTED_HUMAN_ACCEPTANCE_PENDING
 extends_runtime: configs/isaac61_s2_runtime.yaml
-base_checkpoint: 031143d576d923d6029d0226d963cbedaec1f6d4
-
-environment:
-  # Default isaac61 stack; --stack legacy selects the separate pinned rollback in STACKS.
-  isaac_lab_commit: 0c2e2c64e51922d088b695d72ffe03faa5c6b95d
-  isaac_lab_package_version: 17.0.2
-  isaac_sim_version: 6.1.0.0
-  isaacteleop_version: 1.4.98rc1
-  isaaclab_teleop_version: 0.9.0
-  cloudxr_runtime_version: 6.2.1
+operator:
+  stack: isaac61
+  mode: run
+  max_control_steps: 18000
+  smoke_control_steps: 60
+  stacks:
+    isaac61: {preview_isolation: scene-partitions, preview_cameras: 3}
+    legacy: {preview_isolation: "off", preview_cameras: 2}
 
 cloudxr_web_client:
   url: https://nvidia.github.io/IsaacTeleop/client/release-1.4.x/
@@ -20,7 +18,7 @@ cloudxr_web_client:
 
 demo_physics:
   gripper_contact:
-    status: DEMO_ONLY_CONTACT_STABILITY_TUNING
+    status: SELECTED_HUMAN_ACCEPTANCE_PENDING
     canonical_geometry_change: none
     leader_joint: gripper
     leader_drive:
@@ -63,19 +61,16 @@ scene:
   candidate_home_d0_per_arm:
     left: [-20.0, 90.0, -50.0, 0.0, 0.0, 0.0, 50.0]
     right: [20.0, 90.0, -50.0, 0.0, 0.0, 0.0, 50.0]
-  home_policy: Candidate homes are demo-only and may be replaced only after the bounded collision/reachability smoke.
+  home_policy: Selected VR homes require bounded collision/reachability smoke and physical qualification for changes.
 
 profiles:
   default: dual_cube_to_matching_plates
-  available: [dual_cube_to_matching_plates, robosyn_asset_lab]
+  available: [dual_cube_to_matching_plates]
   dual_cube_to_matching_plates:
     left_cube: {position_m: [0.52, 0.17, 0.847], edge_m: 0.04, color_rgb: [0.10, 0.42, 0.92]}
     right_cube: {position_m: [0.52, -0.17, 0.847], edge_m: 0.04, color_rgb: [0.96, 0.36, 0.10]}
     left_plate: {position_m: [0.72, 0.17, 0.831], diameter_m: 0.14, thickness_m: 0.008, color_rgb: [0.10, 0.42, 0.92]}
     right_plate: {position_m: [0.72, -0.17, 0.831], diameter_m: 0.14, thickness_m: 0.008, color_rgb: [0.96, 0.36, 0.10]}
-  robosyn_asset_lab:
-    manifest: configs/experiments/robosyn_test_assets.yaml
-    placement_note: Sparse tabletop inspection profile; no per-asset environment and no production asset bank.
 
 cameras:
   wrist:
@@ -139,7 +134,7 @@ teleop_tuning:
       center: {translation_scale: 4.0, rotation_scale: 4.0}
       maximum: {translation_scale: 6.0, rotation_scale: 6.0}
     mapping: Piecewise linear and clamped; left is slower, center keeps the previous normal speed, right is faster.
-    status: DEMO_ONLY_CANDIDATE_REQUIRES_PHYSICAL_RETEST
+    status: SELECTED_HUMAN_ACCEPTANCE_PENDING
 
 vr_camera_feeds:
   implementation: upstream isaaclab_teleop XrCameraFeedSession and Kit SceneUI presenter
@@ -162,7 +157,13 @@ vr_camera_feeds:
     panel_gap_m: 0.035
     max_update_hz: 30.0
 
+diagnostics:
+  camera_capture_limit_per_feed: 12
+
 validation:
+  camera_max_stale_control_steps: 2
+  camera_progression: Source-owned Camera.frame must advance within the bounded control-step tolerance; resets start a new epoch. No image-content-change requirement for static scenes.
+  scene_partitions: Required on isaac61; sensor render products exclude XR panels, checked before rendering.
   settle_physics_steps: 120
   maximum_home_drift_deg: 1.0
   minimum_scene_rgb_stddev: 5.0

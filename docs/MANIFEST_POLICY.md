@@ -26,7 +26,10 @@ then the 16 additional contracts-line selections in their existing order, then
 The last group protects the selected Kit1103 specs, runtime/preview implementation
 and manifest maintenance files. On 2026-09-21 the authoritative current operator
 guide `docs/project/RUN_VR_OPERATIONS.md` was explicitly added at the user's
-request, bringing the set to 91 paths. No other tracked file is implicitly included.
+request, bringing the set to 91 paths. Step 1 replaces the removed generic S2 launcher entry with the canonical VR
+launcher and explicitly adds the entrypoint, canonical/experimental composition
+configs, composition/guard sources, their regression tests and physical worksheet:
+plus the original registered environment snapshot: 101 selected paths. No other tracked file is implicitly included.
 Add/remove individual paths in this list through review; never derive membership
 from globs or `git ls-files`. Comments start with `#`.
 

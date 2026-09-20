@@ -12,7 +12,7 @@ from isaaclab_teleop.camera_feed_kit_scene_ui import _KitSceneUiCameraFeedPresen
 from isaaclab_teleop import XrCameraFeedCfg, XrCameraFeedLayoutCfg
 import isaaclab.sim as sim_utils
 from isaac_preview_partitions import PreviewPartitions
-from isaac_robosyn_vr_demo import _CpuStagedFeedPresenter
+from isaac_vr_runtime import _CpuStagedFeedPresenter
 
 
 class _BatchedFeedManager(_XrCameraFeedManager):
@@ -87,7 +87,7 @@ class S1Preview:
             def stamped(image, upload):
                 stage_upload(image, upload)
                 self.validation_stamp(upload)
-            self.presenter.stage_upload_image = stamped
+            self.presenter.stage_upload_image = stamped  # type: ignore[method-assign]
         self.validation_callback = None
         self.scene_paths = ['/World/S1PreviewSceneCamera0/Camera', '/World/S1PreviewSceneCamera1/Camera']
         self.paths = list(env.camera_prim_paths) + self.scene_paths[:1]

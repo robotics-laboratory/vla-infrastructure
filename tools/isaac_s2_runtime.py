@@ -17,6 +17,7 @@ import yaml
 
 from isaac_s1_runtime import NativeBimanualTargets, jsonable
 from isaac_s2_performance import S2PerformanceLogger
+from isaac_vr_camera_guard import CameraGuard
 from isaac_s2_processor import (
     BimanualS2TeleopProcessor,
     PROCESSOR_REVISION,
@@ -126,6 +127,8 @@ class _BimanualDifferentialIk:
             ).unsqueeze(0)
             controller.set_command(delta, ee_pos=ee_pos, ee_quat=ee_quat)
             desired = controller.compute(ee_pos, ee_quat, jacobian, joint_pos)[0]
+            if not bool(self.torch.isfinite(desired).all()):
+                raise RuntimeError("Non-finite IK target")
             limits = robot.data.joint_limits.torch[0, ids[:6], :]
             clipped = desired.clamp(limits[:, 0], limits[:, 1])
             saturated |= not bool(self.torch.equal(desired, clipped))
@@ -177,7 +180,22 @@ def run_s2(env, args_cli, simulation_app) -> int:
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     if config["processor"]["revision"] != PROCESSOR_REVISION:
         raise RuntimeError("S2 processor config/code revision mismatch")
-    experiment = getattr(env, "experiment_runtime", None)
+    diagnostic = getattr(args_cli, "s2_mode", "diagnostic") == "diagnostic"
+    if not diagnostic and any(getattr(args_cli, name, False) for name in (
+        "s2_performance_log", "demo_display_toggle_smoke", "demo_backdrop_toggle_smoke",
+        "demo_recenter_smoke", "demo_scene_preview",
+    )):
+        raise ValueError("Diagnostic-only flags require ./run-vr diag ...")
+    experiment = getattr(env, "vr_runtime", None)
+    experimental = experiment is not None and experiment.profile == "robosyn_asset_lab"
+    if experimental and not diagnostic:
+        raise ValueError("robosyn_asset_lab requires ./run-vr diag ...")
+    camera_guard = CameraGuard(
+        0 if diagnostic else (
+            experiment.config["validation"]["camera_max_stale_control_steps"]
+            if experiment is not None else 2
+        )
+    )
     expected = config["environment"]
     actual_versions = {
         "isaac_sim": importlib.metadata.version("isaacsim"),
@@ -289,7 +307,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     processor.reset()
     ik.reset()
     started = time.perf_counter()
-    gpu_start = _gpu_observation()
+    gpu_start = _gpu_observation() if diagnostic else None
     gpu_samples = [gpu_start]
     previous_camera_indices: np.ndarray | None = None
     camera_valid_frames = 0
@@ -303,7 +321,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     sensitivity_mode_frames = {
         side: {mode: 0 for mode in sensitivity_modes} for side in ("left", "right")
     }
-    motion_scale_observed = {
+    motion_scale_observed: dict[str, dict[str, float | None]] = {
         side: {
             "translation_min": None,
             "translation_max": None,
@@ -324,7 +342,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
             warmup_steps=args_cli.s2_performance_warmup_steps,
             target_hz=30.0,
         )
-        if args_cli.s2_performance_log is not None
+        if diagnostic and args_cli.s2_performance_log is not None
         else None
     )
     performance_summary: dict[str, Any] | None = None
@@ -350,12 +368,15 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 if performance is not None:
                     performance.begin_step()
                     stage_started_ns = time.perf_counter_ns()
-                before_pose = ik.tcp_poses_base()
+                before_pose = ik.tcp_poses_base() if diagnostic else ()
                 if performance is not None:
                     performance.add_stage(
                         "tcp_pose_before", time.perf_counter_ns() - stage_started_ns
                     )
                     stage_started_ns = time.perf_counter_ns()
+                # Future recording consumer: latch obs_t before this decision,
+                # preserve its processed action label before IK/native actuation,
+                # then pair the outcome after _advance. No writer is installed here.
                 action = device.advance()
                 if performance is not None:
                     performance.add_stage(
@@ -399,8 +420,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     # first post-reset index with the prior epoch would report a
                     # false stale frame even when both RGB observations are valid.
                     previous_camera_indices = None
+                    camera_guard.reset()
                     device.reset(pause=False)
-                    before_pose = ik.tcp_poses_base()
+                    before_pose = ik.tcp_poses_base() if diagnostic else ()
 
                 session_started_ever |= device.session_running
                 display_button_value = 0.0
@@ -415,6 +437,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         )
                     action_frames += 1
                     action_numpy = action.detach().cpu().numpy()
+                    if not np.isfinite(action_numpy[PIPELINE_ACTION_DIM:]).all():
+                        raise RuntimeError("Non-finite presentation controls")
                     if experiment is not None:
                         display_button_value = float(action_numpy[DEMO_DISPLAY_BUTTON_INDEX])
                         backdrop_button_value = float(action_numpy[DEMO_BACKDROP_BUTTON_INDEX])
@@ -508,21 +532,22 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         "simulation_advance", time.perf_counter_ns() - stage_started_ns
                     )
                     stage_started_ns = time.perf_counter_ns()
-                after_pose = ik.tcp_poses_base()
+                after_pose = ik.tcp_poses_base() if diagnostic else ()
                 if performance is not None:
                     performance.add_stage(
                         "tcp_pose_after", time.perf_counter_ns() - stage_started_ns
                     )
                     bookkeeping_started_ns = time.perf_counter_ns()
 
+                for side, arm in zip(("left", "right"), (command.left, command.right), strict=True):
+                    tracking_valid_frames[side] += int(arm.tracking_valid)
                 for side, arm, before, after in zip(
-                    ("left", "right"),
-                    (command.left, command.right),
+                    ("left", "right") if diagnostic else (),
+                    (command.left, command.right) if diagnostic else (),
                     before_pose,
                     after_pose,
                     strict=True,
                 ):
-                    tracking_valid_frames[side] += int(arm.tracking_valid)
                     sensitivity_mode_frames[side][arm.sensitivity_mode] += 1
                     observed = motion_scale_observed[side]
                     for channel, scale in (
@@ -551,21 +576,25 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         "runtime_bookkeeping", time.perf_counter_ns() - bookkeeping_started_ns
                     )
                     stage_started_ns = time.perf_counter_ns()
-                camera = _camera_sample(env, previous_camera_indices)
+                camera = camera_guard.sample(env)
+                if diagnostic:
+                    camera = _camera_sample(env, previous_camera_indices)
+                    previous_camera_indices = camera.pop("frame_indices")
+                    if not camera["valid"] or not camera["strictly_advanced"]:
+                        raise RuntimeError(f"Strict diagnostic camera validation failed: {camera}")
                 if performance is not None:
                     performance.add_stage(
                         "camera_observation", time.perf_counter_ns() - stage_started_ns
                     )
                     stage_started_ns = time.perf_counter_ns()
-                previous_camera_indices = camera.pop("frame_indices")
                 camera_valid_frames += int(camera["valid"])
                 camera_advanced_frames += int(camera["strictly_advanced"])
-                if experiment is not None and control_steps % 15 == 0:
+                if diagnostic and control_steps % 15 == 0:
                     gpu_samples.append(_gpu_observation())
                 if performance is not None:
                     performance.add_stage("gpu_probe", time.perf_counter_ns() - stage_started_ns)
                     stage_started_ns = time.perf_counter_ns()
-                if control_steps % 30 == 0:
+                if diagnostic and control_steps % 30 == 0:
                     print(
                         json.dumps(
                             {
@@ -595,6 +624,13 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         right_tracking_valid=bool(command.right.tracking_valid),
                         camera_valid=bool(camera["valid"]),
                         camera_advanced=bool(camera["strictly_advanced"]),
+                        camera_diagnostics=camera,
+                        left_transition=command.left.transition,
+                        right_transition=command.right.transition,
+                        left_scale=command.left.translation_scale,
+                        right_scale=command.right.translation_scale,
+                        environment_reset=bool(host_reset or (events.should_reset and not recenter_execution_reset)),
+                        navigation_rebased=recenter_execution_reset,
                         hud_visible=(
                             experiment.display_visible if experiment is not None else None
                         ),
@@ -626,7 +662,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 performance_summary = performance.close()
 
     elapsed = time.perf_counter() - started
-    gpu_end = _gpu_observation()
+    gpu_end = _gpu_observation() if diagnostic else None
     gpu_samples.append(gpu_end)
     session_requirement_met = session_started_ever or not args_cli.s2_require_session
     tracking_requirement_met = (
@@ -648,7 +684,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     passed = bool(
         control_steps == args_cli.s2_max_control_steps
         and camera_valid_frames == control_steps
-        and camera_advanced_frames == control_steps
+        and (not diagnostic or camera_advanced_frames == control_steps)
         and session_requirement_met
         and tracking_requirement_met
         and display_toggle_requirement_met
@@ -688,11 +724,12 @@ def run_s2(env, args_cli, simulation_app) -> int:
             },
             "switch_behavior": "rising edge changes mode and emits zero Cartesian delta",
         }
-    report = {
-        "gate": "NONE_EXPERIMENTAL" if experiment is not None else "S2",
+    report: dict[str, Any] = {
+        "gate": "NONE_EXPERIMENTAL" if experimental else "S2",
+        "mode": "diagnostic" if diagnostic else "run",
         "status": (
             "experimental_runtime_smoke_passed_physical_demo_required"
-            if experiment is not None and passed
+            if experimental and passed
             else "runtime_smoke_passed_physical_human_gate_required"
             if passed
             else "failed"
@@ -732,7 +769,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 else "XrAnchorManager.get_world_matrix"
             ),
             "authoritative_scene_geometry_changed": False,
-            **({"experimental_scene_geometry_applied": True} if experiment is not None else {}),
+            **({"selected_vr_scene_geometry_applied": True} if experiment is not None else {}),
         },
         "session": {
             "single_controller_source": True,
@@ -776,11 +813,16 @@ def run_s2(env, args_cli, simulation_app) -> int:
         "physical_human_gate": "required_not_implied_by_runtime_smoke",
         "passed": passed and not interrupted,
     }
-    if experiment is not None:
+    if experiment is not None and diagnostic:
         report["gpu"]["samples"] = gpu_samples
-        report["experiment"] = experiment.performance_report(elapsed, camera_advanced_frames)
+        report["composition"] = experiment.performance_report(elapsed, camera_advanced_frames)
         report["canonical_d0_changed"] = False
         report["production_gate_status_changed"] = False
+    if not diagnostic:
+        report.pop("gpu")
+        for key in ("sensitivity_mode_frames", "motion_scale_observed", "transitions",
+                    "maximum_rebase_or_clutch_tcp_motion_m"):
+            report["execution"].pop(key)
     if args_cli.report is not None:
         args_cli.report.write_text(
             json.dumps(jsonable(report), indent=2, sort_keys=True) + "\n",

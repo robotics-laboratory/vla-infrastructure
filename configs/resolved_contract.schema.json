@@ -1498,7 +1498,7 @@
         "piper_readonly",
         "piper_motion",
         "isaac_env",
-        "isaac_vr_record",
+        "isaac_vr",
         "isaac_generate",
         "isaac_dataset_convert",
         "isaac_eval",
@@ -1533,7 +1533,7 @@
         "isaac_env": {
           "$ref": "#/$defs/profile"
         },
-        "isaac_vr_record": {
+        "isaac_vr": {
           "$ref": "#/$defs/profile"
         },
         "isaac_generate": {
@@ -1637,7 +1637,7 @@
           "required": [
             "offline_tests",
             "isaac_env",
-            "isaac_vr_record",
+            "isaac_vr",
             "isaac_generate",
             "isaac_dataset_convert",
             "isaac_eval",
@@ -1651,7 +1651,7 @@
             "isaac_env": {
               "$ref": "#/$defs/profile_ownership"
             },
-            "isaac_vr_record": {
+            "isaac_vr": {
               "$ref": "#/$defs/profile_ownership"
             },
             "isaac_generate": {
@@ -3716,7 +3716,7 @@
                   ]
                 },
                 "execution_profile": {
-                  "const": "isaac_vr_record"
+                  "type": ["string", "null"]
                 }
               }
             },

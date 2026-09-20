@@ -164,7 +164,7 @@ environments:
     purpose: Isolated Isaac application/runtime for PIPER-X simulation, teleoperation, native recording, generation, and the Isaac endpoint side of E1; LeRobot is excluded
     manager: uv
     python_version: CPython 3.12.13
-    spec_artifact_id: isaac1103_environment
+    spec_artifact_id: isaac1103_vr_environment
     torch_version: 2.11.0+cu128
     cuda_runtime: PyTorch bundled CUDA 12.8
     vendor_runtime: Isaac Sim6.1.0.0 / Kit110.3.0+feature.371399.00c488ae.gl / Lab sourceae37b028ea415c91ea2bc32609efcd759ed2b974; reproducible lock-only commit0c2e2c64e51922d088b695d72ffe03faa5c6b95d; teleop extra frozen.
@@ -262,12 +262,11 @@ execution_profiles:
     prerequisites:
     - OMNI_KIT_ACCEPT_EULA=Y after accepting the NVIDIA EULA
     - Final frozen isaac1103_environment SDK materialized under /data; execute from your ~/vla_infrastructure checkout; private /data/<username> state.
-  isaac_vr_record:
+  isaac_vr:
     environment: isaac
     working_directory: .
     command:
-    - python3
-    - tools/launch_isaac_s2.py
+    - ./run-vr
     prerequisites:
     - OMNI_KIT_ACCEPT_EULA=Y after accepting the NVIDIA EULA
     - Physical Meta Quest 3 CloudXR client is available for S2 human acceptance
@@ -355,7 +354,7 @@ process_architecture:
       execution_mode: single_process
       environments:
       - isaac
-    isaac_vr_record:
+    isaac_vr:
       execution_mode: single_process
       environments:
       - isaac
@@ -994,14 +993,14 @@ teleop:
     - v43_quest_host_tests
     - gate_b_q1_physical_check
   isaac:
-    execution_profile: isaac_vr_record
+    execution_profile: isaac_vr
     runtime_dependencies:
       isaacteleop:
         package: isaacteleop
         version: 1.4.98rc1
         revision_type: version
         revision: 1.4.98rc1
-        source_artifact_id: isaac1103_environment
+        source_artifact_id: isaac1103_vr_environment
         source_detail: Exact final frozen teleop extra; source parentae37b028, lock-only materialization0c2e2c64; CloudXR6.2.1. Independent Gate B/core pin unchanged.
         evidence_ids:
         - isaac1103_s0_source
@@ -1010,11 +1009,11 @@ teleop:
         version: 0.9.0
         revision_type: commit
         revision: 0c2e2c64e51922d088b695d72ffe03faa5c6b95d
-        source_artifact_id: isaac1103_environment
+        source_artifact_id: isaac1103_vr_environment
         source_detail: Exact final frozen teleop extra; source parentae37b028, lock-only materialization0c2e2c64; CloudXR6.2.1. Independent Gate B/core pin unchanged.
         evidence_ids:
         - isaac1103_s0_source
-    resolved_implementation: tools/launch_isaac_s2.py extends the canonical S1 process on final Kit110.3 SDK with isaaclab_teleop.IsaacTeleopDevice/IsaacTeleopCfg, one TeleopSessionLifecycle, one bimanual ControllersSource, a narrow tracking-safe subclass of upstream Se3RelRetargeter, the concrete PIPER-X S2 processor, and upstream Isaac Lab DifferentialIKController
+    resolved_implementation: ./run-vr (mode run; ./run-vr diag adds observers) selects configs/isaac61_vr_runtime.yaml over shared configs/isaac61_s2_runtime.yaml through tools/launch_isaac_vr.py and one tools/isaac_s2_runtime.py loop on final Kit110.3 SDK with isaaclab_teleop.IsaacTeleopDevice/IsaacTeleopCfg, one TeleopSessionLifecycle, one bimanual ControllersSource, a narrow tracking-safe subclass of upstream Se3RelRetargeter, the concrete PIPER-X S2 processor, and upstream Isaac Lab DifferentialIKController
     left_source: isaacteleop ControllersSource.LEFT controller_left OptionalTensorGroup from the one shared piper_x_s2_controllers source and lifecycle
     right_source: isaacteleop ControllersSource.RIGHT controller_right OptionalTensorGroup from the one shared piper_x_s2_controllers source and lifecycle
     processor_revision: piper_x_isaac_s2_bimanual_relative_v3
@@ -1593,7 +1592,7 @@ simulation:
       backend: Conditional Isaac Lab RecorderManager with ActionStateRecorderManagerCfg and minimal D0 recorder terms
       native_format: Isaac Lab HDF5DatasetFileHandler format_version 1; deterministic D1 conversion to LeRobotDataset v3 required
       conversion_revision: null
-      execution_profile: isaac_vr_record
+      execution_profile: null
     generator:
       source_class: scripted_expert
       backend: Conditional task-local state machine composed with Isaac Lab ManagerBasedRLEnv and RecorderManager
@@ -1696,6 +1695,18 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  vr_step1_validation:
+    kind: test_output
+    sha256: 1ab3835bcc678dfa5559a89bbf7e87ceefb8effe0b7268455e0faa1f322bd765
+    path: docs/project/vr_step1/validation.json
+    uri: null
+    description: Canonical RUN/DIAG tests and hashed no-client smoke artifacts; no physical acceptance.
+  isaac1103_vr_environment:
+    kind: environment_spec
+    sha256: fe997db42e9d91e64c4820b5f073cd3ff69625a89ef299cb7db28b58d82ac0c6
+    path: configs/environments/isaac1103/ENVIRONMENT.yaml
+    uri: null
+    description: Same pinned Isaac environment; project launch references aligned with canonical run-vr. Original spec bytes retained under isaac1103_environment.
   v43_source_contract:
     kind: source_bundle
     sha256: bb3d4dc71b0a9b2aa1a9ce402d1bf1f70e9a18e9157caa506a737f8851028fad
@@ -1987,7 +1998,7 @@ artifacts:
   isaac1103_environment:
     kind: environment_spec
     sha256: 9eef0c7b5199bf046f18a1f14916291f8f2281addf12893f78876b235f36ff41
-    path: configs/environments/isaac1103/ENVIRONMENT.yaml
+    path: docs/project/vr_step1/isaac1103_environment_before_vr.yaml
     uri: null
     description: Scoped reproducible final Isaac environment; preserves core/B pins.
   isaac1103_lock_amendment:
@@ -2405,6 +2416,20 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  vr_step1_automated:
+    kind: command_test
+    status: pass
+    summary: One canonical VR runtime, mode parity and bounded no-client RUN/DIAG/XR checks pass; S2 human gate remains required.
+    timestamp: '2026-09-20T23:43:58.456339+00:00'
+    command: ./run-vr --smoke; ./run-vr diag --smoke; no-client XR checks; core and pinned upstream tests; see validation.json
+    artifact_ids:
+    - vr_step1_validation
+    repository: null
+    revision_type: commit
+    revision: 2e80d23826650f6fdf061ab537275fd1c620cf2a
+    path: docs/project/vr_step1/validation.json
+    symbol: null
+    notes: Development worktree over parent commit; exact tested source hashes and full dirty status are retained in run manifests. No human_gate evidence or dataset.
   v52_pack_manifest_check__base_682ee936:
     kind: command_test
     status: pass
@@ -3594,12 +3619,14 @@ gates:
   S2:
     state: unresolved
     evidence_ids:
+    - vr_step1_automated
     - gate_s2_upstream_reuse_audit__base_682ee936
     - gate_s2_automated_runtime__base_682ee936
     - gate_s2_s1_non_xr_regression
     - gate_s2_physical_run1_failed
     - isaac1103_s2_automated
     artifact_ids:
+    - vr_step1_validation
     - isaac_s2_runtime_config__base_682ee936
     - gate_s2_upstream_audit
     - gate_s2_dependency_recheck

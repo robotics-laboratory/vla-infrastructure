@@ -1,4 +1,4 @@
-"""Concrete, test-only RoboSyn-inspired scene layered on the S2 runtime."""
+"""Canonical VR scene and presentation composed with the single S2 loop."""
 
 from __future__ import annotations
 
@@ -9,11 +9,10 @@ import os
 import time
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
 
 import numpy as np
 import torch
-import yaml
 
 import isaaclab.sim as sim_utils  # type: ignore[import-not-found]
 from isaaclab.actuators import ImplicitActuatorCfg  # type: ignore[import-not-found]
@@ -23,9 +22,10 @@ from isaaclab.sensors.camera import Camera, CameraCfg  # type: ignore[import-not
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIG_PATH = ROOT / "configs/experiments/robosyn_vr_demo.yaml"
-ASSET_MANIFEST_PATH = ROOT / "configs/experiments/robosyn_test_assets.yaml"
-ROBOSYN_ROOT = Path("/data/vla-infrastructure/assets/robosyn_vr_demo/RoboSynChallenge")
+if TYPE_CHECKING or __package__:
+    from .isaac_vr_config import load_composition
+else:
+    from isaac_vr_config import load_composition
 CONVERTED_ROOT = Path(os.environ.get("ROBOSYN_VR_ASSET_CACHE", "/data/vla-infrastructure/assets/robosyn_vr_demo/converted"))
 PHYSICS_DT = 1.0 / 120.0
 CAMERA_PERIOD = 1.0 / 30.0
@@ -49,9 +49,11 @@ class _CpuRgbaPanel:
         self._retained_image: torch.Tensor | None = None
         # An isolated signature avoids changing ctypes.pythonapi's shared
         # PyCapsule_New binding, which other Kit extensions also use.
+        capsule_address = ctypes.cast(ctypes.pythonapi.PyCapsule_New, ctypes.c_void_p).value
+        assert capsule_address is not None
         self._capsule_new = ctypes.PYFUNCTYPE(
             ctypes.py_object, ctypes.c_void_p, ctypes.c_char_p, ctypes.c_void_p
-        )(ctypes.cast(ctypes.pythonapi.PyCapsule_New, ctypes.c_void_p).value)
+        )(capsule_address)
 
     @property
     def _component(self):
@@ -97,8 +99,10 @@ class _CameraFeedFrameDiagnostics:
 
     _SCHEDULE = frozenset((1, 30, 120, 300, 600, 1200))
 
-    def __init__(self, output_dir: Path | None) -> None:
+    def __init__(self, output_dir: Path | None, *, max_per_feed: int = 12) -> None:
         self._output_dir = output_dir
+        self._max_per_feed = max_per_feed
+        self._counts: dict[str, int] = {}
         self._records: list[dict[str, Any]] = []
 
     @staticmethod
@@ -117,6 +121,10 @@ class _CameraFeedFrameDiagnostics:
             return
         if publication not in self._SCHEDULE and reason == "scheduled":
             return
+        name = feed.cfg.camera_name
+        if self._counts.get(name, 0) >= self._max_per_feed:
+            return
+        self._counts[name] = self._counts.get(name, 0) + 1
         self._output_dir.mkdir(parents=True, exist_ok=True)
         source, source_bytes = self._rgba_bytes(feed.image)
         upload, upload_bytes = self._rgba_bytes(feed.upload_image)
@@ -310,12 +318,13 @@ def _scene_rgb(camera):
     return _cpu(output["rgba" if "rgba" in output else "rgb"])[0, ..., :3]
 
 
-class DemoCameraRig:
+class VRCameraRig:
     """Present two named upstream cameras through the unchanged batched D0 edge."""
 
     def __init__(self, wrists: tuple[Camera, Camera], scene: Camera) -> None:
         self.wrists = wrists
         self.scene_camera = scene
+        self.preview_isolation: Any = None
         self.data = _BimanualCameraData(wrists)
         self.num_instances = 2
         self._elapsed = 0.0
@@ -342,20 +351,21 @@ class DemoCameraRig:
             camera.update(elapsed, force_recompute=True)
 
 
-class DemoRuntime:
-    """Own only experiment reset, validation, metrics, and upstream PiP binding."""
+class VRRuntime:
+    """Own VR scene reset, validation, and upstream PiP binding for every mode."""
 
     def __init__(
         self,
         *,
         config: dict[str, Any],
         profile: str,
-        camera_rig: DemoCameraRig,
+        camera_rig: VRCameraRig,
         camera_cfgs: tuple[CameraCfg, CameraCfg],
         dynamic_assets: list[Any],
         contact_sensors: dict[str, list[ContactSensor]],
         imported_prims: dict[str, str],
         hud_on_start: bool,
+        diagnostic: bool = False,
     ) -> None:
         from isaaclab_teleop.camera_feed import XrCameraFeedSession  # type: ignore[import-not-found]
         from isaaclab_teleop.isaac_teleop_cfg import (  # type: ignore[import-not-found]
@@ -363,6 +373,7 @@ class DemoRuntime:
             XrCameraFeedLayoutCfg,
         )
 
+        self.diagnostic = diagnostic
         self.config = config
         self.profile = profile
         self.camera_rig = camera_rig
@@ -385,8 +396,12 @@ class DemoRuntime:
         self._feed_updates: _FreshVisibleFeedUpdates | None = None
         self._feed_update_report: dict[str, int] = {}
         diagnostic_root = os.environ.get("ROBOSYN_VR_CAMERA_DIAGNOSTICS_DIR")
-        self._camera_diagnostics = _CameraFeedFrameDiagnostics(
-            None if diagnostic_root is None else Path(diagnostic_root)
+        self._camera_diagnostics = (
+            _CameraFeedFrameDiagnostics(
+                Path(diagnostic_root),
+                max_per_feed=int(config["diagnostics"]["camera_capture_limit_per_feed"]),
+            )
+            if diagnostic and diagnostic_root is not None else None
         )
         self._display_button_pressed = False
         self._display_toggle_count = 0
@@ -537,49 +552,50 @@ class DemoRuntime:
             self._set_upstream_panel_visibility(False)
             manager = self._feed_session._manager
             feeds = tuple(manager._feeds) if manager is not None else ()
-            diagnostics = []
-            for feed in feeds:
-                source_image = feed.image
-                upload_image = feed.upload_image
-                diagnostics.append(
-                    {
-                        "camera": feed.cfg.camera_name,
-                        "rgb_stddev": float(upload_image[..., :3].float().std().item()),
-                        "source_alpha_range": [
-                            int(source_image[..., 3].min().item()),
-                            int(source_image[..., 3].max().item()),
-                        ],
-                        "source_device": source_image.device.type,
-                        "source": (
-                            "isaac_lab_camera_rgba"
-                            if feed.image_source is None
-                            else "feed_owned_replicator_annotator"
-                        ),
-                        "upload_alpha_range": [
-                            int(upload_image[..., 3].min().item()),
-                            int(upload_image[..., 3].max().item()),
-                        ],
-                        "upload_device": upload_image.device.type,
-                        "panel_layout_pixels": [
-                            feed.panel._component.width * feed.panel._component.unit_to_pixel_scale,
-                            feed.panel._component.height
-                            * feed.panel._component.unit_to_pixel_scale,
-                        ],
-                        "panel_resolution_scale": feed.panel._component.resolution_scale,
-                    }
+            if getattr(self, "diagnostic", False):
+                diagnostics = []
+                for feed in feeds:
+                    source_image = feed.image
+                    upload_image = feed.upload_image
+                    diagnostics.append(
+                        {
+                            "camera": feed.cfg.camera_name,
+                            "rgb_stddev": float(upload_image[..., :3].float().std().item()),
+                            "source_alpha_range": [
+                                int(source_image[..., 3].min().item()),
+                                int(source_image[..., 3].max().item()),
+                            ],
+                            "source_device": source_image.device.type,
+                            "source": (
+                                "isaac_lab_camera_rgba"
+                                if feed.image_source is None
+                                else "feed_owned_replicator_annotator"
+                            ),
+                            "upload_alpha_range": [
+                                int(upload_image[..., 3].min().item()),
+                                int(upload_image[..., 3].max().item()),
+                            ],
+                            "upload_device": upload_image.device.type,
+                            "panel_layout_pixels": [
+                                feed.panel._component.width * feed.panel._component.unit_to_pixel_scale,
+                                feed.panel._component.height
+                                * feed.panel._component.unit_to_pixel_scale,
+                            ],
+                            "panel_resolution_scale": feed.panel._component.resolution_scale,
+                        }
+                    )
+                print(
+                    json.dumps(
+                        {
+                            "event": "demo_vr_camera_feed_bound",
+                            "feeds": diagnostics,
+                            "layout": self.config["vr_camera_feeds"]["layout"]["placement"],
+                            "upload_path": self.feed_upload_path,
+                        },
+                        sort_keys=True,
+                    ),
+                    flush=True,
                 )
-            print(
-                json.dumps(
-                    {
-                        "event": "demo_vr_camera_feed_bound",
-                        "feeds": diagnostics,
-                        "layout": self.config["vr_camera_feeds"]["layout"]["placement"],
-                        "upload_path": self.feed_upload_path,
-                    },
-                    sort_keys=True,
-                ),
-                flush=True,
-            )
             print("[DEMO] wrist camera panels prebound hidden before XR session", flush=True)
 
     def close(self) -> None:
@@ -597,6 +613,7 @@ class DemoRuntime:
         self._set_backdrop_visibility(self._backdrop_visible)
         if self._feed_bound:
             # Refresh/reset may recycle a frame number or replace its camera.
+            assert self._feed_updates is not None
             self._feed_updates.invalidate()
             self._feed_session._manager.refresh(publish=False)
             self._feed_updates.update()
@@ -874,7 +891,7 @@ class DemoRuntime:
             for robot, wrist_id in zip(env.robots, env.wrist_ids, strict=True)
         ]
         contact_free = all(value <= 1.0e-3 for value in forces.values())
-        report = {
+        report: dict[str, Any] = {
             "candidate_home_used": True,
             "maximum_home_error_deg_or_mm": float(home_error.max()),
             "finite_state": bool(np.isfinite(state).all()),
@@ -1036,8 +1053,9 @@ def _spawn_task_profile(config: dict[str, Any]) -> tuple[list[Any], dict[str, st
     return objects, {}
 
 
-def _spawn_asset_profile() -> tuple[list[Any], dict[str, str]]:
-    button_source = ROBOSYN_ROOT / "assets/button/button.urdf"
+def _spawn_asset_profile(config: dict) -> tuple[list[Any], dict[str, str]]:
+    asset_root = Path(config["asset_lab"]["source_checkout"])
+    button_source = asset_root / "assets/button/button.urdf"
     button_hash = hashlib.sha256(button_source.read_bytes()).hexdigest()
     button_converter = sim_utils.UrdfConverter(
         sim_utils.UrdfConverterCfg(
@@ -1074,7 +1092,7 @@ def _spawn_asset_profile() -> tuple[list[Any], dict[str, str]]:
             },
         )
     )
-    pen_source = ROBOSYN_ROOT / "assets/Pen/the_pen.obj"
+    pen_source = asset_root / "assets/Pen/the_pen.obj"
     pen_hash = hashlib.sha256(pen_source.read_bytes()).hexdigest()
     pen_converter = sim_utils.MeshConverter(
         sim_utils.MeshConverterCfg(
@@ -1099,7 +1117,7 @@ def _spawn_asset_profile() -> tuple[list[Any], dict[str, str]]:
     )
     beaker_path = "/World/RobosynDemo/TestAssets/Beaker"
     beaker_cfg = sim_utils.UsdFileCfg(
-        usd_path=str(ROBOSYN_ROOT / "assets/Beaker/Beaker.usd"), scale=(0.014, 0.014, 0.015)
+        usd_path=str(asset_root / "assets/Beaker/Beaker.usd"), scale=(0.014, 0.014, 0.015)
     )
     beaker_cfg.func(beaker_path, beaker_cfg, translation=(1.02, 0.0, 0.825))
     return [button, pen], {
@@ -1189,7 +1207,7 @@ def _arm_contact_sensors(sim, arm_path: str) -> list[ContactSensor]:
     ]
 
 
-def run_robosyn_vr_demo(
+def run_vr(
     args_cli,
     simulation_app,
     *,
@@ -1201,8 +1219,8 @@ def run_robosyn_vr_demo(
 ) -> int:
     """Build the fixed experiment scene, validate it, then enter the existing S2 loop."""
 
-    config = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
-    print(f"[DEMO] profile={args_cli.demo_profile} TEST_ONLY / NOT_APPROVED_FOR_PRODUCTION")
+    config = load_composition(args_cli.demo_profile)
+    print(f"[VR] profile={args_cli.demo_profile} physical_human_gate=required")
     sim = sim_utils.SimulationContext(
         sim_utils.SimulationCfg(
             dt=PHYSICS_DT, render_interval=1, device=args_cli.device, use_fabric=True
@@ -1217,7 +1235,7 @@ def run_robosyn_vr_demo(
     dynamic_assets, imported_prims = (
         _spawn_task_profile(config)
         if args_cli.demo_profile == "dual_cube_to_matching_plates"
-        else _spawn_asset_profile()
+        else _spawn_asset_profile(config)
     )
     probe = _physics_probe()
     converter = sim_utils.UrdfConverter(
@@ -1280,7 +1298,7 @@ def run_robosyn_vr_demo(
     if isolation:
         scene_cfg.renderer_cfg.enable_scene_partitioning = False
     scene_camera = Camera(scene_cfg)
-    camera_rig = DemoCameraRig(wrist_cameras, scene_camera)
+    camera_rig = VRCameraRig(wrist_cameras, scene_camera)
     camera_rig.preview_isolation = isolation
     if isolation:
         isolation.bind_sensors((*wrist_cameras, scene_camera))
@@ -1288,7 +1306,7 @@ def run_robosyn_vr_demo(
         side.lower(): _arm_contact_sensors(sim, f"/World/{side.title()}Piper")
         for side in ("left", "right")
     }
-    runtime = DemoRuntime(
+    runtime = VRRuntime(
         config=config,
         profile=args_cli.demo_profile,
         camera_rig=camera_rig,
@@ -1297,6 +1315,7 @@ def run_robosyn_vr_demo(
         contact_sensors=contacts,
         imported_prims=imported_prims,
         hud_on_start=bool(args_cli.demo_hud_on_start),
+        diagnostic=args_cli.s2_mode == "diagnostic",
     )
     sim.reset()
     scene_camera.set_world_poses_from_view(
@@ -1312,7 +1331,7 @@ def run_robosyn_vr_demo(
         "two_named_demo_wrist_cameras",
         probe,
         home_d0=np.concatenate((home_left, home_right)),
-        experiment_runtime=runtime,
+        vr_runtime=runtime,
     )
     env.scene = SimpleNamespace(
         sensors={"left_wrist": wrist_cameras[0], "right_wrist": wrist_cameras[1], "demo_scene": scene_camera}

@@ -23,9 +23,9 @@ verify: python3 tools/materialize_isaac1103.py --check
 canonical_launch_prefix: UV_PROJECT_ENVIRONMENT=/data/vla-infrastructure/isaac61_production/env uv run --project /data/vla-infrastructure/isaac61_production/IsaacLab --frozen --no-sync --no-managed-python
 project_launch:
   s1: python3 tools/launch_isaac_s1.py
-  s2: ./run-vr
+  s2: python3 tools/launch_isaac_s2.py
   rollback_s1: python3 tools/launch_isaac_s1.py --stack legacy
-  rollback_s2: ./run-vr --stack legacy
+  rollback_s2: python3 tools/launch_isaac_s2.py --stack legacy
 state: /data/<Linux username>/vla-runtime/isaac-<stack>; owned0700 user-specific state, no use of another user's home.
 legacy_environment: /data/vla-infrastructure/envs/isaac-s1-candidate-b
 legacy_checkout: /data/vla-infrastructure/isaaclab_candidate_qualification/20260907/candidate_b_exact

@@ -253,7 +253,7 @@ S2:
   - teleop.isaac.left_source
   - teleop.isaac.right_source
   - teleop.isaac.processor_revision
-  - execution_profiles.isaac_vr_record.command
+  - execution_profiles.isaac_vr.command
   - timing.xr_fps.isaac
   required_nonempty_paths:
   - teleop.isaac.evidence_ids
@@ -276,6 +276,7 @@ D1:
   - dataset.temporal_semantics.converters.isaac_human.termination_field
   - simulation.isaac.recorder.backend
   - simulation.isaac.recorder.native_format
+  - simulation.isaac.recorder.execution_profile
   - simulation.isaac.recorder.conversion_revision
   - timing.max_camera_age_ms
   - timing.max_joint_age_ms

@@ -41,8 +41,8 @@ class IsaacS2UpstreamTests(unittest.TestCase):
                 _NavigationAwareXrAnchorManager,
                 build_piper_x_bimanual_pipeline,
             )
-            from tools.isaac_robosyn_vr_demo import (
-                DemoRuntime,
+            from tools.isaac_vr_runtime import (
+                VRRuntime,
                 _CameraFeedFrameDiagnostics,
                 _CpuRgbaPanel,
                 _CpuStagedFeedPresenter,
@@ -58,7 +58,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         cls.ControllerButtonRetargeter = ControllerButtonRetargeter
         cls.ControllerStateRetargeter = ControllerStateRetargeter
         cls.PiperXIsaacTeleopDevice = PiperXIsaacTeleopDevice
-        cls.DemoRuntime = DemoRuntime
+        cls.VRRuntime = VRRuntime
         cls.CameraFeedFrameDiagnostics = _CameraFeedFrameDiagnostics
         cls.CpuStagedFeedPresenter = _CpuStagedFeedPresenter
         cls.CpuRgbaPanel = _CpuRgbaPanel
@@ -321,7 +321,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
             def close(self):
                 self.close_count += 1
 
-        runtime = self.DemoRuntime.__new__(self.DemoRuntime)
+        runtime = self.VRRuntime.__new__(self.VRRuntime)
         runtime.preview_scene = False
         runtime.preview_isolation = None
         runtime.config = {
@@ -371,7 +371,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         self.assertEqual(runtime._feed_session.close_count, 1)
 
     def test_demo_recenter_is_edge_triggered_and_uses_upstream_xr_teleport(self) -> None:
-        runtime = self.DemoRuntime.__new__(self.DemoRuntime)
+        runtime = self.VRRuntime.__new__(self.VRRuntime)
         runtime.config = {
             "xr_presentation": {"recenter": {"quest_button": "R3"}},
         }
@@ -654,8 +654,9 @@ class IsaacS2UpstreamTests(unittest.TestCase):
             upload_image=source.clone(),
         )
         with tempfile.TemporaryDirectory() as directory:
-            diagnostics = self.CameraFeedFrameDiagnostics(Path(directory))
+            diagnostics = self.CameraFeedFrameDiagnostics(Path(directory), max_per_feed=1)
             diagnostics.capture(feed, 1, "display-visible-1")
+            diagnostics.capture(feed, 2, "display-visible-2")
             manifest = json.loads(Path(directory, "manifest.json").read_text())
             self.assertEqual(len(manifest), 1)
             self.assertTrue(manifest[0]["source_upload_identical"])
@@ -753,13 +754,13 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         visible = [False]
         updates = self.FreshVisibleFeedUpdates(manager, lambda: visible[0])
         manager.update = updates.update
-        with patch("tools.isaac_robosyn_vr_demo.time.monotonic", return_value=1.0):
+        with patch("tools.isaac_vr_runtime.time.monotonic", return_value=1.0):
             _XrCameraFeedManager._on_frame(manager, None)
             self.assertEqual(acquired, [])
             visible[0] = True
             _XrCameraFeedManager._on_frame(manager, None)
             self.assertEqual(acquired, ["left", "right"])
-        with patch("tools.isaac_robosyn_vr_demo.time.monotonic", return_value=1.1):
+        with patch("tools.isaac_vr_runtime.time.monotonic", return_value=1.1):
             manager.update()
             self.assertEqual(acquired, ["left", "right"])
             feeds[1].camera.frame += 1
@@ -790,21 +791,21 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         updates = self.FreshVisibleFeedUpdates(manager, lambda: True)
         for now, frame in ((1.0, 7), (1.01, 8), (1.02, 9), (1.04, 10)):
             feed.camera.frame[0] = frame
-            with patch("tools.isaac_robosyn_vr_demo.time.monotonic", return_value=now):
+            with patch("tools.isaac_vr_runtime.time.monotonic", return_value=now):
                 updates.update()
         self.assertEqual(acquired, [7, 10])
         # A reset can reuse the same numeric frame. A replacement camera can too.
         updates.invalidate()
-        with patch("tools.isaac_robosyn_vr_demo.time.monotonic", return_value=1.1):
+        with patch("tools.isaac_vr_runtime.time.monotonic", return_value=1.1):
             updates.update()
         feed.camera = SimpleNamespace(frame=torch.tensor([10]))
-        with patch("tools.isaac_robosyn_vr_demo.time.monotonic", return_value=1.2):
+        with patch("tools.isaac_vr_runtime.time.monotonic", return_value=1.2):
             updates.update()
         self.assertEqual(acquired, [7, 10, 10, 10])
         self.assertEqual(updates.counters["throttled_frames"], 2)
 
     def test_demo_backdrop_toggle_is_rising_edge_only(self) -> None:
-        runtime = self.DemoRuntime.__new__(self.DemoRuntime)
+        runtime = self.VRRuntime.__new__(self.VRRuntime)
         runtime.config = {
             "scene": {"backdrop": {"quest_button": "B"}},
         }

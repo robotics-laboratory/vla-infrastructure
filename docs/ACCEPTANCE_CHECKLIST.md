@@ -50,23 +50,18 @@ This checklist is explanatory. Machine acceptance is `../configs/gate_rules.yaml
 
 ## Current physical S2 acceptance
 
-- [ ] exact default `./run-vr` isaac61 composition tested using the
-  [current worksheet](project/GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md) and
-  [operator guide](project/RUN_VR_OPERATIONS.md);
-- [ ] Git commit, exact operator command, generated `runtime.yaml`,
-  `launch_manifest.json`, `isaac61_s2_runtime.yaml`, `robosyn_vr_demo.yaml`,
-  processor revision/source and exact environment/package pins retained;
-- [ ] independent left/right sliders: min 2x, center 4x, max 6x, continuous
-  interpolation and no target jump from slider changes physically checked;
+- [ ] canonical `./run-vr` in run mode tested using the
+  [current worksheet](project/GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md);
+- [ ] `run_manifest.json`, generated config, tracked/untracked status, exact invocation,
+  processor/source/config hashes and selected environment pins retained;
+- [ ] controls, scene/cameras and presentation verified against the canonical VR
+  config and shared S2 config, including independent sliders and stationary-pose continuity;
 - [ ] axes, rotation, clutch, grippers, tracking recovery, reconnect, reset,
-  R3 recenter, X/B presentation, three previews and shutdown checked;
-- [ ] final human evidence registered with required machine evidence under
-  `configs/gate_rules.yaml`; no blank/old worksheet or no-client smoke promoted;
-- [ ] PRIMARY OPERATOR PATH distinguished from ALREADY ACCEPTED GATE CONFIG:
-  the selected RoboSyn overlay and slider remain experimental pending acceptance.
-
-`tools/launch_isaac_s2.py` remains the BASE / GENERIC S2 LAUNCHER; its toggle
-configuration and base checks do not replace this operator acceptance target.
+  recenter, preview/backdrop controls and shutdown checked;
+- [ ] required camera guards and Scene Partitions remain active in run mode;
+- [ ] diagnostics qualify the same control semantics without a second runtime;
+- [ ] human evidence registered under `configs/gate_rules.yaml`; smoke PASS and
+  experimental asset-lab runs are not accepted physical S2 evidence.
 
 ## Evaluation
 

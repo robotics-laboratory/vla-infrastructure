@@ -34,6 +34,13 @@ HIL_EXTENSION.md
 
 `../configs/resolved_contract.yaml` is the sole machine-readable store of project-specific resolved values. It does not override the static specification.
 
+For current VR, shared S2 processor/runtime semantics live in
+`../configs/isaac61_s2_runtime.yaml`; selected operator composition lives in
+`../configs/isaac61_vr_runtime.yaml`. Environment pins stay in the environment/S2
+records. Markdown links to these machine sources instead of maintaining another
+list of current numeric controls/settings. Historical evidence retains its original
+inputs and scope. A selected composition is not an accepted gate.
+
 ### Evidence
 
 The contract's `evidence` registry points to proof such as upstream source inspection, tests, human gates, hardware observations and run results.

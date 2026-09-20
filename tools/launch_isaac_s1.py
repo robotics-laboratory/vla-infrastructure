@@ -93,7 +93,7 @@ def main(argv=None) -> int:
         if args.preview_control:
             command += ['--preview-control']
     source = sorted((ROOT / 'tools').glob('isaac*.py')) + [ROOT / 'tools/run_isaac_s1.py', ROOT / 'tools/check_isaac_s1_preview.py', Path(__file__)]
-    manifest = {'profile': 'isaac_vr_record' if args.teleop else 'isaac_env',
+    manifest = {'profile': 'internal_s2_compatibility' if args.teleop else 'isaac_env',
                 'stack': args.stack, 'environment_id': 'isaac' if args.stack == 'isaac61' else 'isaac_legacy',
                 'project_sha': git(ROOT, 'rev-parse', 'HEAD'), 'cwd': str(ROOT),
                 'command': command, 'lab_commit': stack['commit'], 'sdk': str(stack['environment']),
@@ -103,7 +103,8 @@ def main(argv=None) -> int:
     (output / 'launch_manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
     print(f'Isaac evidence output: {output}', flush=True)
     if args.dry_run:
-        print(shlex.join(command)); return 0
+        print(shlex.join(command))
+        return 0
     stop_requested = False
     process = None
 

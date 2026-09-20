@@ -1,24 +1,10 @@
-spec_revision: isaac61_preview_integration_v1
-status: integrated_opt_in_physical_acceptance_pending
-execution_profile: isaac_vr_demo
-upstream:
-  isaac_sim: 6.1.0.0
-  kit: 110.3.0+feature.371399.00c488ae.gl
-  isaac_lab_tag: v3.0.0-EA
-  isaac_lab_commit: ae37b028ea415c91ea2bc32609efcd759ed2b974
-  isaac_lab_package: 17.0.2
-  isaaclab_teleop: 0.9.0
-  isaacteleop: 1.4.98rc1
-  cloudxr: 6.2.1
-  python: 3.12.13
-  torch: 2.11.0+cu128
-  checkout: /data/vla-infrastructure/isaac61_qualification/IsaacLab
-  environment: /data/vla-infrastructure/isaac61_qualification/env
-  install: upstream frozen uv.lock with teleop extra; no in-place SDK migration
-  pyproject_sha256: 2780d507882950e64ca8f972fcad4c19e74b9681af1d830e0b34fa09e79e116b
-  uv_lock_sha256: 98570361a2f86abcfdebfda35f853da0945a8ccbe422f51d5fffaf1936d478a4
-launcher: tools/launch_isaac_robosyn_vr_demo.py
-rollback: --stack legacy
-legacy_selection: configs/environments/isaac_release_3_0_0.yaml
-contract_changes: none
-human_evidence: pending physical Quest test, including launch from a colleague Linux account
+spec_revision: isaac61_preview_integration_v2
+status: SELECTED_HUMAN_ACCEPTANCE_PENDING
+execution_profile: isaac_vr
+environment_spec: configs/environments/isaac1103/ENVIRONMENT.yaml
+composition_config: configs/isaac61_vr_runtime.yaml
+launcher: ./run-vr
+diagnostic_launcher: ./run-vr diag
+rollback: ./run-vr --stack legacy
+historical_qualification: docs/project/vr_step1/isaac61_preview_integration_before_vr.yaml
+human_evidence: pending physical Quest acceptance of the canonical composition

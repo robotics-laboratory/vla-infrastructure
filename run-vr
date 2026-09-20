@@ -14,4 +14,6 @@ case "$stack" in
     *) echo 'Expected --stack isaac61 or --stack legacy' >&2; exit 2 ;;
 esac
 project=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-exec "$runtime/bin/python" "$project/tools/launch_isaac_robosyn_vr_demo.py" "$@"
+VLA_VR_ENTRYPOINT="$0"
+export VLA_VR_ENTRYPOINT
+exec "$runtime/bin/python" "$project/tools/launch_isaac_vr.py" "$@"

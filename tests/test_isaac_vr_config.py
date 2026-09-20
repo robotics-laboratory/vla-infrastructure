@@ -1,4 +1,4 @@
-"""Isolation checks for physical-demo tuning candidates."""
+"""Selected VR tuning, camera and shared-config ownership regressions."""
 
 from pathlib import Path
 import math
@@ -28,11 +28,11 @@ def _rotate_vector_xyzw(
     )
 
 
-def test_physical_retest_values_are_demo_only_and_geometry_is_unchanged() -> None:
+def test_selected_vr_tuning_requires_human_acceptance_and_preserves_geometry() -> None:
     config = yaml.safe_load(
-        (ROOT / "configs/experiments/robosyn_vr_demo.yaml").read_text(encoding="utf-8")
+        (ROOT / "configs/isaac61_vr_runtime.yaml").read_text(encoding="utf-8")
     )
-    assert config["status"] == "EXPERIMENTAL_TEST_ONLY_NOT_A_GATE"
+    assert config["status"] == "SELECTED_HUMAN_ACCEPTANCE_PENDING"
     gripper = config["demo_physics"]["gripper_contact"]
     assert gripper["canonical_geometry_change"] == "none"
     assert gripper["leader_joint"] == "gripper"
@@ -100,7 +100,7 @@ def test_physical_retest_values_are_demo_only_and_geometry_is_unchanged() -> Non
 
 def test_wrist_camera_uses_user_selected_visual_pose() -> None:
     config = yaml.safe_load(
-        (ROOT / "configs/experiments/robosyn_vr_demo.yaml").read_text(encoding="utf-8")
+        (ROOT / "configs/isaac61_vr_runtime.yaml").read_text(encoding="utf-8")
     )
     camera = config["cameras"]["wrist"]
 
@@ -126,9 +126,8 @@ def test_wrist_camera_uses_user_selected_visual_pose() -> None:
     assert camera["output_roll_deg"] == 180.0
 
 
-def test_demo_default_environment_matches_selected_isaac61_config() -> None:
-    demo = yaml.safe_load((ROOT / "configs/experiments/robosyn_vr_demo.yaml").read_text())
+def test_vr_composition_uses_shared_environment_pins() -> None:
+    demo = yaml.safe_load((ROOT / "configs/isaac61_vr_runtime.yaml").read_text())
     runtime = yaml.safe_load((ROOT / demo["extends_runtime"]).read_text())
-    for key in ("isaac_lab_commit", "isaac_lab_package_version", "isaac_sim_version",
-                "isaacteleop_version", "isaaclab_teleop_version", "cloudxr_runtime_version"):
-        assert demo["environment"][key] == runtime["environment"][key], key
+    assert "environment" not in demo
+    assert runtime["environment"]["isaac_sim_version"] == "6.1.0.0"

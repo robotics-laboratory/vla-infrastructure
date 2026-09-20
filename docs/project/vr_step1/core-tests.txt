@@ -1,0 +1,35 @@
+........................................................................ [ 31%]
+.........sssssssssssssssssssssss.................................... [ 61%]
+........................................................................ [ 92%]
+.................                                                        [100%]
+=============================== warnings summary ===============================
+../../../../../data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/cmeel.prefix/lib/python3.12/site-packages/hppfcl/__init__.py:3
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/cmeel.prefix/lib/python3.12/site-packages/hppfcl/__init__.py:3: DeprecationWarning: Please update your 'hppfcl' imports to 'coal'
+    warnings.warn(
+
+tests/test_lerobot_robot_piperx.py::PiperXPluginTests::test_bimanual_connect_rolls_back_left_when_right_connect_fails
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/piper_sdk/piper_msgs/msg_v2/transmit/arm_joint_config.py:19: SyntaxWarning: invalid escape sequence '\['
+    max_joint_acc: 最大关节加速度,单位0.01rad/s^2(0x7FFF为设定无效数值),输入范围\[0, 500\]-->[0 rad/s^2, 5.0 rad/s^2]
+
+tests/test_lerobot_robot_piperx.py::PiperXPluginTests::test_bimanual_connect_rolls_back_left_when_right_connect_fails
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/piper_sdk/piper_msgs/msg_v2/transmit/arm_joint_config.py:49: SyntaxWarning: invalid escape sequence '\['
+    max_joint_acc: Maximum joint acceleration, unit: 0.01rad/s^2, 0x7FFF is defined as the invalid value.Range is \[0, 500\]-->[0 rad/s^2, 5.0 rad/s^2]
+
+tests/test_lerobot_robot_piperx.py::PiperXPluginTests::test_bimanual_connect_rolls_back_left_when_right_connect_fails
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/piper_sdk/interface/piper_interface.py:3268: SyntaxWarning: invalid escape sequence '\['
+    输入范围\[0, 500\]-->[0 rad/s^2, 5.0 rad/s^2]
+
+tests/test_lerobot_robot_piperx.py::PiperXPluginTests::test_bimanual_connect_rolls_back_left_when_right_connect_fails
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/piper_sdk/interface/piper_interface.py:3284: SyntaxWarning: invalid escape sequence '\['
+    Range is \[0, 500\]-->[0 rad/s^2, 5.0 rad/s^2]
+
+tests/test_lerobot_robot_piperx.py::PiperXPluginTests::test_bimanual_connect_rolls_back_left_when_right_connect_fails
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/piper_sdk/interface/piper_interface_v2.py:3268: SyntaxWarning: invalid escape sequence '\['
+    输入范围\[0, 500\]-->[0 rad/s^2, 5.0 rad/s^2]
+
+tests/test_lerobot_robot_piperx.py::PiperXPluginTests::test_bimanual_connect_rolls_back_left_when_right_connect_fails
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/piper_sdk/interface/piper_interface_v2.py:3284: SyntaxWarning: invalid escape sequence '\['
+    Range is \[0, 500\]-->[0 rad/s^2, 5.0 rad/s^2]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+206 passed, 23 skipped, 7 warnings, 4 subtests passed in 18.16s

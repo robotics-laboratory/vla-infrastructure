@@ -1,15 +1,12 @@
 # Gate S2 physical Quest acceptance worksheet
 
-**Current final-master physical S2 procedure: `./run-vr`.** The target is the
-exact default isaac61 composition: run-vr + RoboSyn demo overlay + final Isaac61
-stack, with Scene Partitions and three previews. Follow
+**Current physical S2 procedure: `./run-vr` in run mode.** Test the exact canonical
+composition selected by [the VR config](../../configs/isaac61_vr_runtime.yaml) and
+[shared S2 config](../../configs/isaac61_s2_runtime.yaml). Follow
 [RUN_VR_OPERATIONS.md](RUN_VR_OPERATIONS.md) for prerequisites and client setup.
 
-This worksheet is intentionally **not evidence** while any item is blank. A new
-completed copy must describe the actual run; old blank/completed worksheets and
-historical base-S2 results are not evidence for this composition. The overlay is
-still `EXPERIMENTAL_TEST_ONLY_NOT_A_GATE`, and its slider is
-`DEMO_ONLY_CANDIDATE_REQUIRES_PHYSICAL_RETEST`.
+This blank worksheet is not evidence. Complete a new copy for the actual run;
+configuration selection and diagnostic smoke do not establish human acceptance.
 
 After accepting both NVIDIA EULAs, start from your project checkout with a
 physical Meta Quest 3 and no real robot interface:
@@ -23,38 +20,29 @@ export ISAACLAB_CXR_ACCEPT_EULA=1
 Retain the run directory printed by the launcher. Its expanded command includes
 `--xr --s2-cloudxr-profile cloudxrjs --s2-require-tracking`. The runtime requires
 valid tracked frames from both physical controllers; that check does not replace
-the observations below. Use the configured release-1.4.x Quest client, select
-Isaac Lab, Reset to defaults, then Quest 3 before connecting.
+the observations below. Use the exact client URL and setup in the canonical VR config.
 
 ## Session metadata
 
 - Observer:
 - Local start/end time:
 - Quest device:
-- Exact project Git commit and clean tracked status:
+- Exact project Git commit and full tracked/untracked status:
 - Exact operator command (`./run-vr`) and EULA prerequisites:
 - Run directory:
 - Generated `runtime.yaml` path / SHA-256:
-- `launch_manifest.json` path / SHA-256 (expanded command and source hashes):
+- `run_manifest.json` path / SHA-256 (expanded command and source hashes):
 - `configs/isaac61_s1_runtime.yaml` copy / SHA-256 (generated config source):
 - `configs/isaac61_s2_runtime.yaml` copy / SHA-256 (base S2 semantics):
-- `configs/experiments/robosyn_vr_demo.yaml` copy / SHA-256 (operator overlay):
-- Processor revision: `piper_x_isaac_s2_bimanual_relative_v3`; processor source SHA-256:
-- Environment path: `/data/vla-infrastructure/isaac61_production/env`:
+- `configs/isaac61_vr_runtime.yaml` copy / SHA-256 (canonical operator composition):
+- Processor revision / source SHA-256 from manifest:
+- Selected environment / package pins / SDK commit from manifest:
 - Environment specification / lock / materialization record hashes:
-- Exact observed package pins (Sim 6.1.0.0, Kit 110.3, Lab 17.0.2,
-  isaacteleop 1.4.98rc1, isaaclab_teleop 0.9.0, CloudXR 6.2.1):
-- Lab checkout: `0c2e2c64e51922d088b695d72ffe03faa5c6b95d`:
-- `performance.jsonl` path / SHA-256 and optional diagnostics:
-- Runtime result path:
-- Runtime result SHA-256:
-- Runtime log path:
-- Runtime log SHA-256:
-- Effective sensitivity: `slider`, per-controller `thumbstick_x`, per-arm independent:
-- Min / center / max translation AND rotation scale: `2x / 4x / 6x`:
-- Preview isolation / cameras: `scene-partitions / 3`:
-- XR presentation anchor: `(-0.05, 0.0, -0.10)` m; rotation XYZW
-  `(0, 0, -0.7071067811865475, 0.7071067811865476)`; scale `1.0`:
+- Runtime result path / SHA-256 / observed shutdown:
+- Optional diagnostic qualification run id / logs (same config and controls):
+- Effective sensitivity mode, input and per-arm scales from manifest:
+- Preview isolation/count and XR presentation from manifest:
+- Confirm these match the exact configs retained for this run:
 - Confirm no CAN or physical PIPER interface was opened:
 
 ## Required observations
@@ -93,16 +81,15 @@ Write `PASS` or `FAIL` plus a short observation for every line.
 
 ### Independent continuous sensitivity sliders
 
-- Left horizontal thumbstick at -1 / 0 / +1 selects 2x / 4x / 6x for
-  translation and rotation; the right arm's sensitivity is unchanged:
-- Right horizontal thumbstick selects the same endpoints/center independently;
-  the left arm's sensitivity is unchanged:
-- Sweep each thumbstick through intermediate positions; gain changes continuously
-  (piecewise linear, e.g. -0.5 -> 3x, +0.5 -> 5x), without discrete toggling:
-- Change either slider with its controller pose stationary; no target jump:
-- Return each thumbstick to center; only that arm returns to 4x without a jump:
-- Slow alignment at 2x, centered motion at 4x and faster motion at 6x are usable
-  on both arms; note any drift, jitter, saturation or loss of control:
+Use endpoints, center and interpolation defined in canonical `teleop_tuning.sensitivity`.
+
+- Left horizontal thumbstick selects minimum/center/maximum for translation and
+  rotation; right sensitivity is unchanged:
+- Right thumbstick does the same independently:
+- Sweep intermediate positions; gain changes continuously according to config:
+- Change either slider with controller pose stationary; no target jump:
+- Release either thumbstick; only that arm returns to configured center:
+- Both arms remain usable across the configured range; note drift, jitter or saturation:
 
 ### Independent clutch and rebase
 
@@ -142,7 +129,7 @@ Write `PASS` or `FAIL` plus a short observation for every line.
 ### XR presentation
 
 - Workspace is comfortably in front and slightly below eye level:
-- Demo table/robot placement and 1:1 scale match the selected overlay:
+- Table/robot placement and scale match the canonical config:
 - R3 recenters once per press; no scene reset, target jump or session restart:
 - Recheck both hands' forward/right/up and rotation axes after repeated R3:
 - X shows/hides three distinct live feeds: left wrist, right wrist, scene preview:
@@ -151,15 +138,6 @@ Write `PASS` or `FAIL` plus a short observation for every line.
   appears in sensor feeds, with Scene Partitions active:
 - B toggles only backdrop visibility; repeat X/B, hold buttons, and reset while
   connected to check debounce and retained presentation state:
-
-## Historical / base-S2 note
-
-`tools/launch_isaac_s2.py` is the BASE / GENERIC S2 LAUNCHER. Without the demo
-overlay it selects per-arm thumbstick-click toggle normal 2x / precise 0.5x.
-Those checks belong to base-S2 qualification, not the current procedure above.
-In the operator composition R3 is recenter, and sensitivity uses the horizontal
-axis. Existing historical physical reports retain their original commands and
-results; this updated blank template creates no new human evidence.
 
 ## Acceptance rule
 
@@ -172,4 +150,4 @@ is supported by the retained log, and this completed worksheet is registered as 
 evidence and satisfy all prerequisites in `configs/gate_rules.yaml`; reconcile
 the selected configuration/provenance through the contract before promotion.
 A verbal “looks good”, interrupted run, or existing Gate B identity evidence is
-insufficient. No gate state or overlay status is changed by this template.
+insufficient. No gate state is changed by this template.

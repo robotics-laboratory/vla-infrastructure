@@ -83,7 +83,7 @@ configs/isaac_s2_runtime.yaml
 tools/materialize_isaac1103.py
 tools/isaac_preview_partitions.py
 tools/isaac_s1_preview.py
-tools/launch_isaac_s2.py
+tools/launch_isaac_vr.py
 tools/isaac_s2_runtime.py
 tools/isaac_s2_processor.py
 configs/manifest_paths.txt
@@ -92,3 +92,15 @@ tests/test_manifest.py
 docs/MANIFEST_POLICY.md
 # 2026-09-21: explicitly selected authoritative current operator guide.
 docs/project/RUN_VR_OPERATIONS.md
+# Step 1 canonical VR runtime/config and regression sources (explicit selection).
+run-vr
+configs/isaac61_vr_runtime.yaml
+configs/experiments/robosyn_asset_lab.yaml
+tools/isaac_vr_config.py
+tools/isaac_vr_camera_guard.py
+tools/isaac_vr_runtime.py
+tests/test_run_vr.py
+tests/test_isaac_vr_config.py
+docs/project/GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md
+# Original environment bytes retained for historical evidence references.
+docs/project/vr_step1/isaac1103_environment_before_vr.yaml

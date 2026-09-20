@@ -140,3 +140,18 @@ HUMAN EVIDENCE
 BLOCKERS / REOPEN REASONS
 NEXT GATE
 ```
+
+## Canonical VR development flow
+
+Current operator commands: `./run-vr` and `./run-vr diag`, one shared implementation.
+Read `configs/isaac61_s2_runtime.yaml`, `configs/isaac61_vr_runtime.yaml` and
+[operator operations](docs/project/RUN_VR_OPERATIONS.md) for VR changes.
+
+Experimental implementation -> diagnostic mode -> automated + physical qualification
+-> promote selected configuration/status -> run mode inherits it -> future record
+consumer inherits the same base semantics. Never copy the scene, control loop,
+processor, camera/XR setup or reset logic between modes. Diagnostic observers must
+not mutate action output or control state. Recording is not implemented yet.
+
+Keep implementation worktrees in `.worktrees/`, not `/tmp`. Current implementation
+branch `docs/run-vr-primary` uses `.worktrees/run-vr-primary`.

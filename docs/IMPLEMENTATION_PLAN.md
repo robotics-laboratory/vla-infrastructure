@@ -75,17 +75,16 @@ Benchmark branch:
 
 Codex may prepare commands and analyze logs. It must not infer unobserved physical success. Motion requires explicit human authorization for the exact action.
 
-## Current physical S2 target
+## Current physical S2 target and feature flow
 
-The next [[gate:S2]] human acceptance tests the exact default `./run-vr` composition:
-run-vr + RoboSyn demo overlay + final Isaac61 stack. Start with the
-[operator guide](project/RUN_VR_OPERATIONS.md) and
-[current worksheet](project/GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md). Retain the exact
-Git commit, `./run-vr` command, generated `runtime.yaml`, `launch_manifest.json`,
-`configs/isaac61_s2_runtime.yaml`, `configs/experiments/robosyn_vr_demo.yaml`,
-processor revision/source and exact environment/package pins.
+[[gate:S2]] human acceptance tests the canonical `./run-vr` composition in run mode.
+Use the [operator guide](project/RUN_VR_OPERATIONS.md) and
+[current worksheet](project/GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md).
+Retain `run_manifest.json`, generated config and exact source/config hashes.
 
-`tools/launch_isaac_s2.py` remains the BASE / GENERIC S2 LAUNCHER for base checks;
-it is not the primary physical operator command. Primary operator status does not
-promote the experimental RoboSyn overlay or its independent 2x–4x–6x sliders to an
-accepted gate configuration. Historical worksheets/smokes do not qualify this target.
+Experimental implementation -> `./run-vr diag` -> automated and physical
+qualification -> promote selected config/status -> `./run-vr` inherits the feature
+-> future record consumer inherits the same base semantics.
+Promotion changes config/status, never copies Python implementation. There is one
+scene builder and control loop with mode-specific observers/side effects.
+Recording remains a later D1 task; no record command or dataset is created here.

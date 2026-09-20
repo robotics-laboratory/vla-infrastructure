@@ -1,0 +1,233 @@
+{
+  "schema": "piper_x_vr_step1_validation_v1",
+  "timestamp": "2026-09-20T23:43:58.456339+00:00",
+  "worktree": "/home/ebulochkin/vla_infrastructure/.worktrees/run-vr-primary",
+  "branch": "docs/run-vr-primary",
+  "parent_commit": "2e80d23826650f6fdf061ab537275fd1c620cf2a",
+  "physical_human_gate": "required_not_implied_by_runtime_smoke",
+  "gate_states": {
+    "S2": "unresolved",
+    "D1": "unresolved"
+  },
+  "core_suite": "206 passed, 23 skipped, 4 subtests passed; skipped upstream tests run separately in Isaac61",
+  "isaac_upstream_suite": "23 tests OK",
+  "affected_contract_manifest_suite": "75 passed",
+  "final_parity_config_suite": "10 passed",
+  "checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "tests/test_gate_s1_mapping.py",
+        "tests/test_isaac_s2_upstream.py",
+        "tests/test_isaac_vr_config.py",
+        "tests/test_resolved_contract.py",
+        "tests/test_run_vr.py",
+        "tools/check_isaac_preview_partitions.py",
+        "tools/isaac_s1_preview.py",
+        "tools/isaac_s2_runtime.py",
+        "tools/isaac_vr_camera_guard.py",
+        "tools/isaac_vr_config.py",
+        "tools/isaac_vr_runtime.py",
+        "tools/launch_isaac_s1.py",
+        "tools/launch_isaac_vr.py",
+        "tools/run_isaac_s1.py",
+        "tools/validate_resolved_contract.py"
+      ],
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-m",
+        "mypy",
+        "--explicit-package-bases",
+        "--follow-imports=silent",
+        "--ignore-missing-imports",
+        "tools/check_isaac_preview_partitions.py",
+        "tools/isaac_s1_preview.py",
+        "tools/isaac_s2_runtime.py",
+        "tools/isaac_vr_camera_guard.py",
+        "tools/isaac_vr_config.py",
+        "tools/isaac_vr_runtime.py",
+        "tools/launch_isaac_s1.py",
+        "tools/launch_isaac_vr.py",
+        "tools/run_isaac_s1.py",
+        "tools/validate_resolved_contract.py"
+      ],
+      "exit_code": 0,
+      "output": "Success: no issues found in 10 source files\n"
+    }
+  ],
+  "run_diag_comparison": {
+    "same_effective_controls": true,
+    "same_generated_runtime_sha256": true,
+    "same_runtime_source_hashes": true,
+    "diagnostic_artifacts_only_in_diag": true
+  },
+  "dry_runs": {
+    "run": "passed",
+    "diag": "passed",
+    "explicit_legacy": "passed",
+    "experimental_asset_lab": "passed with asset verification"
+  },
+  "smokes": {
+    "run": {
+      "directory": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T234152965570Z-run-dual_cube_to_matching_plates-hud-off",
+      "mode": "run",
+      "invocation": [
+        "./run-vr",
+        "--smoke",
+        "--max-control-steps",
+        "60"
+      ],
+      "passed": true,
+      "gate": "S2",
+      "control_steps": 60,
+      "clean_shutdown": true,
+      "files": [
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T234152965570Z-run-dual_cube_to_matching_plates-hud-off/result.json",
+          "sha256": "2dd8a204b083d28e22e2a8d969328ed09e7b1d01c8bd601bf5ea7c6659fc16ef"
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T234152965570Z-run-dual_cube_to_matching_plates-hud-off/run_manifest.json",
+          "sha256": "726a0c2302c82f163e2394979c1032dee74634469a8b6c3430a349661c787f30"
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T234152965570Z-run-dual_cube_to_matching_plates-hud-off/runtime.yaml",
+          "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30"
+        }
+      ],
+      "camera_diagnostic_ppm_count": 0
+    },
+    "diag": {
+      "directory": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T234217243724Z-diagnostic-dual_cube_to_matching_plates-hud-off",
+      "mode": "diagnostic",
+      "invocation": [
+        "./run-vr",
+        "diag",
+        "--smoke",
+        "--max-control-steps",
+        "60"
+      ],
+      "passed": true,
+      "gate": "S2",
+      "control_steps": 60,
+      "clean_shutdown": true,
+      "files": [
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T234217243724Z-diagnostic-dual_cube_to_matching_plates-hud-off/performance.jsonl",
+          "sha256": "a8ba31741645ba582c408db343f413fff7646718334d4a56d9ba6631b1d59f00"
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T234217243724Z-diagnostic-dual_cube_to_matching_plates-hud-off/result.json",
+          "sha256": "bc06b92414bcab872021295b6971b5298c59e0b542b18bd4172c892776bbfacd"
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T234217243724Z-diagnostic-dual_cube_to_matching_plates-hud-off/run_manifest.json",
+          "sha256": "25e0268fb7cf5897f7aaaff25cea4117b0cd29160be9e03a636225f191222a93"
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T234217243724Z-diagnostic-dual_cube_to_matching_plates-hud-off/runtime.yaml",
+          "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30"
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T234217243724Z-diagnostic-dual_cube_to_matching_plates-hud-off/stdout.log",
+          "sha256": "81e13ca57d7ff8abc497c3d6b24280d557f453d16df26af4f734465fe139b14f"
+        }
+      ],
+      "camera_diagnostic_ppm_count": 0
+    },
+    "run-xr": {
+      "directory": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T233555153070Z-run-dual_cube_to_matching_plates-hud-on",
+      "mode": "run",
+      "invocation": [
+        "./run-vr",
+        "--xr-smoke",
+        "--hud-on-start",
+        "--max-control-steps",
+        "60"
+      ],
+      "passed": true,
+      "gate": "S2",
+      "control_steps": 60,
+      "clean_shutdown": true,
+      "files": [
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T233555153070Z-run-dual_cube_to_matching_plates-hud-on/result.json",
+          "sha256": "c62cc9e74e2ff9f0525f0da823c8758c276a26b00aebebd19ee3b5f3d21185bd"
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T233555153070Z-run-dual_cube_to_matching_plates-hud-on/run_manifest.json",
+          "sha256": "1cbdf9779881ab028d8217d958175a04f05a7bc7ea2937f04f134afafedfc5c9"
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T233555153070Z-run-dual_cube_to_matching_plates-hud-on/runtime.yaml",
+          "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30"
+        }
+      ],
+      "camera_diagnostic_ppm_count": 0
+    },
+    "diag-xr": {
+      "directory": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T233836997971Z-diagnostic-dual_cube_to_matching_plates-hud-off",
+      "mode": "diagnostic",
+      "invocation": [
+        "./run-vr",
+        "diag",
+        "--xr-smoke",
+        "--capture-preview-evidence",
+        "--max-control-steps",
+        "60"
+      ],
+      "passed": true,
+      "gate": "S2",
+      "control_steps": 60,
+      "clean_shutdown": true,
+      "files": [
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T233836997971Z-diagnostic-dual_cube_to_matching_plates-hud-off/performance.jsonl",
+          "sha256": "27070bb044abb49dda030a7a7a1aebfa3e715cf2d9141cbd19949e692bc17e32"
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T233836997971Z-diagnostic-dual_cube_to_matching_plates-hud-off/result.json",
+          "sha256": "08dd04903c73939b8530feab327d2a179e36792801065dfc051ed8fb234b06e4"
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T233836997971Z-diagnostic-dual_cube_to_matching_plates-hud-off/run_manifest.json",
+          "sha256": "a6ac3fd34e1ed84cfa4b33f3a28dd893012d113dd1c962a2ac41b9b917b7f15b"
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T233836997971Z-diagnostic-dual_cube_to_matching_plates-hud-off/runtime.yaml",
+          "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30"
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260920T233836997971Z-diagnostic-dual_cube_to_matching_plates-hud-off/stdout.log",
+          "sha256": "f614f821305f5f928b0e338792f6902af913647a97a59de17803c23de10a397a"
+        }
+      ],
+      "camera_diagnostic_ppm_count": 12
+    }
+  },
+  "test_outputs": [
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/.worktrees/run-vr-primary/docs/project/vr_step1/affected-tests.txt",
+      "sha256": "9363e74bd2928925598d2f65478ee7107963f4cd0b2f57f70f832015ff09da5e"
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/.worktrees/run-vr-primary/docs/project/vr_step1/core-tests.txt",
+      "sha256": "cd898ad52f3e223d5a9618a06d264405e04fa3bbe13ad96905e428b91b739479"
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/.worktrees/run-vr-primary/docs/project/vr_step1/parity-tests.txt",
+      "sha256": "6d97c2d09fd6e45e041267688c17323e17d7cc29a69c4f02b3ff00b18f29486c"
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/.worktrees/run-vr-primary/docs/project/vr_step1/upstream-tests.txt",
+      "sha256": "878e8c4746be847bbd0d7f084bba5e046a1023ff8140702fd45a967317d49875"
+    }
+  ]
+}

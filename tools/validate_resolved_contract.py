@@ -35,7 +35,7 @@ REQUIRED_PROVENANCE = {
 EXPECTED_PROCESS_PROFILE_OWNERSHIP = {
     "offline_tests": ("single_process", ["core"]),
     "isaac_env": ("single_process", ["isaac"]),
-    "isaac_vr_record": ("single_process", ["isaac"]),
+    "isaac_vr": ("single_process", ["isaac"]),
     "isaac_generate": ("single_process", ["isaac"]),
     "isaac_dataset_convert": ("single_process", ["core"]),
     "isaac_eval": ("multi_process", ["core", "isaac"]),
@@ -300,6 +300,13 @@ def validate_profiles(d):
             and d["artifacts"][aid]["kind"] != "environment_spec"
         ):
             out.append(f"environment {name}: spec artifact {aid} must be environment_spec")
+    recorder_profile = d["simulation"]["isaac"]["recorder"]["execution_profile"]
+    if recorder_profile is not None:
+        recorder = d["execution_profiles"].get(recorder_profile)
+        if recorder is None or not recorder["command"]:
+            out.append("Isaac recorder: execution_profile must reference a runnable profile")
+        if recorder_profile == "isaac_vr":
+            out.append("Isaac recorder: isaac_vr does not implement recording")
     return out
 
 

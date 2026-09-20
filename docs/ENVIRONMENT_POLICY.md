@@ -48,18 +48,13 @@ Unknown environment references are invalid.
 
 ## Current Quest -> Isaac operator launch
 
-The PRIMARY OPERATOR ENTRYPOINT is `./run-vr`: run-vr + RoboSyn demo overlay +
-final Isaac61 stack, using `/data/vla-infrastructure/isaac61_production/env`.
-See [the operator guide](project/RUN_VR_OPERATIONS.md) for exact pins, EULAs,
-per-user state, generated config, provenance and explicit `--stack legacy` rollback.
-
-The contract's [[profile:isaac_vr_record]] command and
-`teleop.isaac.resolved_implementation` retain `tools/launch_isaac_s2.py` as the
-BASE / GENERIC S2 LAUNCHER. That profile is not a claim that its base config is
-the current operator selection. Both compositions use environment `isaac` by
-default; selecting the RoboSyn overlay changes effective sensitivity to independent
-2x–4x–6x sliders. No new environment/profile or contract semantics are introduced.
-The overlay still requires final physical S2 re-acceptance before gate promotion.
+[[profile:isaac_vr]] launches `./run-vr`; `./run-vr diag` uses the same profile and
+environment with diagnostic observers. Modes do not create environment identities.
+Pins remain in the selected environment and shared S2 config; the canonical VR
+composition carries operator semantics only. See
+[operator operations](project/RUN_VR_OPERATIONS.md) for ownership and rollback.
+Physical S2 acceptance is required. The unresolved D1 recorder has no execution
+profile or working record command.
 
 ## No hidden mutation
 
@@ -94,7 +89,7 @@ do not invent RPC automatically
 [[profile:piper_readonly]]
 [[profile:piper_motion]]
 [[profile:isaac_env]]
-[[profile:isaac_vr_record]]
+[[profile:isaac_vr]]
 [[profile:isaac_generate]]
 [[profile:isaac_dataset_convert]]
 [[profile:isaac_eval]]

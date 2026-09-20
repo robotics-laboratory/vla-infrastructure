@@ -87,3 +87,14 @@ horizon
 ```
 
 Embodiment parity additionally includes home/zero, joint limits, positive direction, FK/TCP and gripper endpoints.
+
+## Canonical VR composition
+
+`./run-vr` and `./run-vr diag` share one scene, controller pipeline, processor,
+IK, camera/XR setup and lifecycle. Modes select observers/side effects only.
+The shared S2 config owns processor/clutch/gripper/tracking semantics; the canonical
+VR config owns selected operator scene, presentation, controls and validation.
+The optional external asset lab is experimental and loads its own manifest only
+when selected. A composition object does not imply experimental gate scope.
+Future recording must consume the same base runtime and preserve D0 temporal and
+action-label boundaries. No D1 recorder or recording execution profile is selected.

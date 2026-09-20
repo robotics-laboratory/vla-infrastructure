@@ -1,0 +1,49 @@
+[
+  {
+    "command": [
+      "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "tests/test_gate_s1_mapping.py",
+      "tests/test_isaac_s2_upstream.py",
+      "tests/test_isaac_vr_config.py",
+      "tests/test_resolved_contract.py",
+      "tests/test_run_vr.py",
+      "tools/check_isaac_preview_partitions.py",
+      "tools/isaac_s1_preview.py",
+      "tools/isaac_s2_runtime.py",
+      "tools/isaac_vr_camera_guard.py",
+      "tools/isaac_vr_config.py",
+      "tools/isaac_vr_runtime.py",
+      "tools/launch_isaac_s1.py",
+      "tools/launch_isaac_vr.py",
+      "tools/run_isaac_s1.py",
+      "tools/validate_resolved_contract.py"
+    ],
+    "exit_code": 0,
+    "output": "All checks passed!\n"
+  },
+  {
+    "command": [
+      "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+      "-m",
+      "mypy",
+      "--explicit-package-bases",
+      "--follow-imports=silent",
+      "--ignore-missing-imports",
+      "tools/check_isaac_preview_partitions.py",
+      "tools/isaac_s1_preview.py",
+      "tools/isaac_s2_runtime.py",
+      "tools/isaac_vr_camera_guard.py",
+      "tools/isaac_vr_config.py",
+      "tools/isaac_vr_runtime.py",
+      "tools/launch_isaac_s1.py",
+      "tools/launch_isaac_vr.py",
+      "tools/run_isaac_s1.py",
+      "tools/validate_resolved_contract.py"
+    ],
+    "exit_code": 0,
+    "output": "Success: no issues found in 10 source files\n"
+  }
+]

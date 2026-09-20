@@ -6,23 +6,14 @@
 
 ## Current VR operator entrypoint
 
-**PRIMARY OPERATOR ENTRYPOINT: `./run-vr`.** After accepting the NVIDIA EULAs
-and setting the prerequisites in [RUN_VR_OPERATIONS.md](docs/project/RUN_VR_OPERATIONS.md):
+`./run-vr` selects the canonical VR composition; `./run-vr diag` adds diagnostic
+observers to the same runtime. Start with [RUN_VR_OPERATIONS.md](docs/project/RUN_VR_OPERATIONS.md)
+for prerequisites, controls/config ownership and troubleshooting.
 
-```sh
-./run-vr
-```
-
-This selects **run-vr + RoboSyn demo overlay + final Isaac61 stack**, with three
-previews, Scene Partitions and independent per-controller 2x–4x–6x sliders.
-The overlay is still experimental and requires final physical S2 re-acceptance;
-PRIMARY OPERATOR PATH does not mean ALREADY ACCEPTED GATE CONFIG.
-
-`tools/launch_isaac_s2.py` is the **BASE / GENERIC S2 LAUNCHER**, retained for base
-S2 and automated `--smoke` / `--xr-smoke` checks. These no-client checks and
-`./run-vr --smoke` / `--xr-smoke` do not establish physical acceptance. See
-[runtime maintenance operations](docs/project/migrations/20260918_isaac1103/OPERATIONS.md)
-for base checks and rollback.
+Selected facts live in `configs/resolved_contract.yaml`; shared processor semantics
+in `configs/isaac61_s2_runtime.yaml`; operator composition in
+`configs/isaac61_vr_runtime.yaml`. Physical S2 acceptance remains pending.
+Dataset recording is not implemented; D1 remains unresolved.
 
 ## Instruction pack
 

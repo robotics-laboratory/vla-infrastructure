@@ -98,7 +98,6 @@ def test_s1_runtime_uses_only_upstream_camera_path() -> None:
 
 
 def test_isaac_launchers_keep_sdk_and_mutable_state_separate(tmp_path, monkeypatch) -> None:
-    import sys
     monkeypatch.syspath_prepend(str(ROOT / "tools"))
     from isaac_demo_launch import STACKS, user_environment
     monkeypatch.setenv("XR_RUNTIME_JSON", "/another-user/runtime.json")
@@ -132,13 +131,13 @@ def test_final_and_rollback_configs_preserve_s1_semantics() -> None:
 
 def test_robosyn_demo_pins_matching_webxr_client_and_records_provenance() -> None:
     config = yaml.safe_load(
-        (ROOT / "configs/experiments/robosyn_vr_demo.yaml").read_text(encoding="utf-8")
+        (ROOT / "configs/isaac61_vr_runtime.yaml").read_text(encoding="utf-8")
     )
     client_url = config["cloudxr_web_client"]["url"]
     assert client_url == "https://nvidia.github.io/IsaacTeleop/client/release-1.4.x/"
 
-    launcher = (ROOT / "tools/launch_isaac_robosyn_vr_demo.py").read_text(encoding="utf-8")
-    assert '"schema": "piper_x_robosyn_vr_launch_provenance_v1"' in launcher
+    launcher = (ROOT / "tools/launch_isaac_vr.py").read_text(encoding="utf-8")
+    assert '"schema": "piper_x_isaac_vr_run_manifest_v1"' in launcher
     assert '"tracked_status": _git_output(' in launcher
     assert '"passed_to_host_process": False' in launcher
 

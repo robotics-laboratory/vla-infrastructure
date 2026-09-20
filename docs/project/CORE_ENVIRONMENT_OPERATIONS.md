@@ -33,8 +33,8 @@ This command does not establish physical Quest acceptance by itself. The v5.2 Ga
 
 For the current **Quest -> Isaac** operator workflow use `./run-vr` and
 [RUN_VR_OPERATIONS.md](RUN_VR_OPERATIONS.md). It selects the final Isaac61
-environment and experimental RoboSyn overlay; final physical S2 re-acceptance is
-pending. `tools/launch_isaac_s2.py` remains the base/generic S2 path, separate from
-this core host diagnostic.
+environment and canonical VR composition. `./run-vr diag` adds observers to the
+same runtime; final physical S2 acceptance remains pending. This core host
+diagnostic is a separate real-XR profile.
 
 Canonical offline checks are defined by the `offline_tests` execution profile in the live contract. No hardware-motion command belongs in this document.

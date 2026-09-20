@@ -1,0 +1,7 @@
+revision: piper_x_robosyn_asset_lab_v1
+status: EXPERIMENTAL_TEST_ONLY_NOT_A_GATE
+extends_runtime: configs/isaac61_vr_runtime.yaml
+profile: robosyn_asset_lab
+asset_manifest: configs/experiments/robosyn_test_assets.yaml
+runtime_scope: NONE_EXPERIMENTAL
+required_mode: diagnostic

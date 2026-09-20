@@ -47,6 +47,7 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--report", type=Path)
 parser.add_argument("--config", type=Path, default=CONFIG_PATH)
 parser.add_argument("--s2-config", type=Path)
+parser.add_argument("--s2-mode", choices=("run", "diagnostic"), default="diagnostic")
 parser.add_argument("--production-preview", action="store_true")
 parser.add_argument("--combined-preview-test", type=int, default=0)
 parser.add_argument("--preview-control", action="store_true")
@@ -92,9 +93,9 @@ parser.add_argument(
     help="Require at least one valid physical sample from each controller.",
 )
 parser.add_argument(
-    "--robosyn-vr-demo",
+    "--vr-runtime",
     action="store_true",
-    help="Run the isolated RoboSyn-inspired experiment instead of the S1 scene.",
+    help="Build the canonical VR composition on the S1 environment.",
 )
 parser.add_argument(
     "--demo-profile",
@@ -132,7 +133,7 @@ args_cli = parser.parse_args()
 if (args_cli.eval_socket is None) != (args_cli.eval_run_manifest is None):
     parser.error("--eval-socket and --eval-run-manifest must be provided together")
 if args_cli.eval_socket is not None and (
-    args_cli.s2_teleop or args_cli.robosyn_vr_demo or args_cli.combined_preview_test
+    args_cli.s2_teleop or args_cli.vr_runtime or args_cli.combined_preview_test
     or args_cli.production_preview or args_cli.xr
 ):
     parser.error("EVAL endpoint cannot share a teleop/demo/preview/XR execution mode")
@@ -316,7 +317,7 @@ class BimanualPiperXIsaacEnvironment:
         physics_probe,
         *,
         home_d0: np.ndarray | None = None,
-        experiment_runtime=None,
+        vr_runtime=None,
     ):
         self.sim = sim
         self.robots = (left, right)
@@ -332,7 +333,8 @@ class BimanualPiperXIsaacEnvironment:
         )
         if self.home_d0.shape != (14,):
             raise ValueError(f"home_d0 must have shape (14,), got {self.home_d0.shape}")
-        self.experiment_runtime = experiment_runtime
+        self.vr_runtime = vr_runtime
+        self.preview: Any = None
         self.joint_ids: list[list[int]] = []
         self.actuated_joint_ids: list[list[int]] = []
         self.wrist_ids: list[int] = []
@@ -411,8 +413,8 @@ class BimanualPiperXIsaacEnvironment:
                     "physics_target_write", time.perf_counter_ns() - started_ns
                 )
                 started_ns = time.perf_counter_ns()
-            if self.experiment_runtime is not None:
-                self.experiment_runtime.before_render()
+            if self.vr_runtime is not None:
+                self.vr_runtime.before_render()
             if getattr(self, "preview", None) is not None:
                 self.preview.assert_valid()
             self.sim.step()
@@ -433,9 +435,9 @@ class BimanualPiperXIsaacEnvironment:
                 performance.add_nested("physics_probe_update", time.perf_counter_ns() - started_ns)
             if getattr(self, "preview", None) is not None:
                 self.preview.update(PHYSICS_DT)
-            if self.experiment_runtime is not None:
+            if self.vr_runtime is not None:
                 started_ns = time.perf_counter_ns() if performance is not None else 0
-                self.experiment_runtime.update(PHYSICS_DT)
+                self.vr_runtime.update(PHYSICS_DT)
                 if performance is not None:
                     performance.add_nested(
                         "experiment_update", time.perf_counter_ns() - started_ns
@@ -455,8 +457,8 @@ class BimanualPiperXIsaacEnvironment:
             root_velocity=self.physics_probe.data.default_root_vel.torch.clone()
         )
         self.physics_probe.reset()
-        if self.experiment_runtime is not None:
-            self.experiment_runtime.reset_scene()
+        if self.vr_runtime is not None:
+            self.vr_runtime.reset_scene()
         self._set_state(d0_action_to_native(self.home_d0))
         for robot in self.robots:
             robot.reset()
@@ -914,10 +916,10 @@ def main() -> int:
     urdf_path = Path(config["asset"]["composed_urdf"])
     urdf_sha = materialize_gate_c_urdf(Path(config["asset"]["source_checkout"]), urdf_path)
 
-    if args_cli.robosyn_vr_demo:
-        from isaac_robosyn_vr_demo import run_robosyn_vr_demo
+    if args_cli.vr_runtime:
+        from isaac_vr_runtime import run_vr
 
-        return run_robosyn_vr_demo(
+        return run_vr(
             args_cli,
             simulation_app,
             urdf_path=urdf_path,
@@ -1002,7 +1004,7 @@ def main() -> int:
         from validate_resolved_contract import canonical_training_schema_fingerprint
 
         contract = yaml.safe_load((ROOT / "configs/resolved_contract.yaml").read_text())
-        loaded_lab = Path(isaaclab.__file__).resolve().parents[3]
+        loaded_lab = Path(cast(str, isaaclab.__file__)).resolve().parents[3]
         loaded_revision = subprocess.check_output(
             ["git", "-C", str(loaded_lab), "rev-parse", "HEAD"], text=True
         ).strip()
@@ -1029,8 +1031,8 @@ def main() -> int:
         provenance = {
             "runtime_identity": identity, "asset_sha256": urdf_sha,
             "loaded_usd": converter.usd_path,
-            "module_files": {"isaaclab": str(Path(isaaclab.__file__).resolve()),
-                             "processor": str(Path(__import__("isaac_s1_runtime").__file__).resolve())},
+            "module_files": {"isaaclab": str(Path(cast(str, isaaclab.__file__)).resolve()),
+                             "processor": str(Path(cast(str, __import__("isaac_s1_runtime").__file__)).resolve())},
             "source_sha256": {name: hashlib.sha256((ROOT / "tools" / name).read_bytes()).hexdigest()
                               for name in ("run_isaac_s1.py", "isaac_s1_runtime.py", "isaac_eval_rpc.py")},
             "acceptance_claim": False,
@@ -1120,7 +1122,7 @@ def main() -> int:
             "isaac_sim": importlib.metadata.version("isaacsim"),
             "kit": __import__("omni.kit.app", fromlist=["get_app"]).get_app().get_kit_version(),
             "isaac_lab_source_version": importlib.metadata.version("isaaclab"),
-            "isaac_lab_source_file": str(Path(isaaclab.__file__).resolve()),
+            "isaac_lab_source_file": str(Path(cast(str, isaaclab.__file__)).resolve()),
             "isaac_lab_expected_commit": config["environment"]["isaac_lab_commit"],
             "isaac_lab_runtime_commit": runtime_commit,
             "torch": torch.__version__,
@@ -1134,7 +1136,7 @@ def main() -> int:
             "isaaclab_rl": importlib.metadata.version("isaaclab-rl"),
             "isaacteleop": importlib.metadata.version("isaacteleop"),
             "isaaclab_teleop": importlib.metadata.version("isaaclab-teleop"),
-            "module_files": {name: str(Path(__import__(name, fromlist=["__file__"]).__file__).resolve())
+            "module_files": {name: str(Path(cast(str, __import__(name, fromlist=["__file__"]).__file__)).resolve())
                              for name in ("isaaclab", "isaaclab_rl", "isaaclab_teleop", "isaacteleop", "torch", "isaacsim")},
             "headless": args_cli.headless,
             "upstream_override_conflicts": config["environment"]["upstream_override_conflicts"],

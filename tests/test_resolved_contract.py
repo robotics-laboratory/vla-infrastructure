@@ -268,12 +268,12 @@ class ResolvedContractTests(unittest.TestCase):
         ] = "core_uv_lock"
         self.assertIn(
             "teleop.isaac.runtime_dependencies.isaacteleop: source artifact must be "
-            "isaac1103_environment for isaac",
+            "isaac1103_vr_environment for isaac",
             validate_teleop_dependencies(wrong_spec),
         )
 
         wrong_profile = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
-        wrong_profile["teleop"]["real"]["execution_profile"] = "isaac_vr_record"
+        wrong_profile["teleop"]["real"]["execution_profile"] = "isaac_vr"
         self.assertIn(
             "teleop.real: execution profile must use core environment",
             validate_teleop_dependencies(wrong_profile),
@@ -287,8 +287,8 @@ class ResolvedContractTests(unittest.TestCase):
 
         self.assertEqual(data["gates"]["S2"]["state"], "unresolved")
         self.assertEqual(
-            data["execution_profiles"]["isaac_vr_record"]["command"],
-            ["python3", "tools/launch_isaac_s2.py"],
+            data["execution_profiles"]["isaac_vr"]["command"],
+            ["./run-vr"],
         )
         self.assertEqual(
             data["teleop"]["isaac"]["processor_revision"],

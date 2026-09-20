@@ -1,3 +1,5 @@
+# Kit imports require a running AppLauncher.
+# ruff: noqa: E402
 """RTX regression for the integrated draw-system policy; bounded image retention.
 
 Diagnostic-only scene. Witness cameras verify visibility; no physical Quest claim.
@@ -54,7 +56,7 @@ from isaaclab_teleop.camera_feed_kit_scene_ui import _KitSceneUiCameraFeedPresen
 
 project = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(project / 'tools'))
-from isaac_robosyn_vr_demo import _CpuStagedFeedPresenter
+from isaac_vr_runtime import _CpuStagedFeedPresenter
 from isaac_preview_partitions import PreviewPartitions, PREVIEW, SENSOR
 from pxr import Sdf
 
@@ -158,7 +160,7 @@ def main():
         'kit': app_api.get_kit_version(), 'argv': sys.argv,
         'source_sha256': {str(path.relative_to(project)): hashlib.sha256(path.read_bytes()).hexdigest()
                           for path in (Path(__file__).resolve(), project/'tools/isaac_preview_partitions.py',
-                                       project/'tools/isaac_robosyn_vr_demo.py')},
+                                       project/'tools/isaac_vr_runtime.py')},
         'extensions': [e for e in ext_manager.get_extensions() if e.get('enabled')],
         'topology': {'world': 'unpartitioned/shared', 'sensors': SENSOR, 'panels': PREVIEW,
                      'witnesses': PREVIEW, 'xr': 'unassigned spectator; actual state recorded'},
@@ -187,7 +189,7 @@ def main():
             if recreate_due:
                 old_path = sensors[0].cfg.prim_path
                 sensors[0] = None
-                del sensor  # Drop the previous capture loop's reference too (one-camera epoch).
+                sensor = None  # Drop the previous capture loop's reference (one-camera epoch).
                 gc.collect()  # Camera.__del__ owns render-product/annotator cleanup.
                 stage.RemovePrim(old_path)
                 parent = f'/World/RecreatedParent{frame}'
