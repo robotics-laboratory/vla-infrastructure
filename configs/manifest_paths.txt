@@ -90,3 +90,5 @@ configs/manifest_paths.txt
 tools/generate_manifest.py
 tests/test_manifest.py
 docs/MANIFEST_POLICY.md
+# 2026-09-21: explicitly selected authoritative current operator guide.
+docs/project/RUN_VR_OPERATIONS.md

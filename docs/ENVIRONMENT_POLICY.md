@@ -46,6 +46,21 @@ prerequisites
 
 Unknown environment references are invalid.
 
+## Current Quest -> Isaac operator launch
+
+The PRIMARY OPERATOR ENTRYPOINT is `./run-vr`: run-vr + RoboSyn demo overlay +
+final Isaac61 stack, using `/data/vla-infrastructure/isaac61_production/env`.
+See [the operator guide](project/RUN_VR_OPERATIONS.md) for exact pins, EULAs,
+per-user state, generated config, provenance and explicit `--stack legacy` rollback.
+
+The contract's [[profile:isaac_vr_record]] command and
+`teleop.isaac.resolved_implementation` retain `tools/launch_isaac_s2.py` as the
+BASE / GENERIC S2 LAUNCHER. That profile is not a claim that its base config is
+the current operator selection. Both compositions use environment `isaac` by
+default; selecting the RoboSyn overlay changes effective sensitivity to independent
+2x–4x–6x sliders. No new environment/profile or contract semantics are introduced.
+The overlay still requires final physical S2 re-acceptance before gate promotion.
+
 ## No hidden mutation
 
 No accepted manual `pip install` may exist outside the reproducible spec.

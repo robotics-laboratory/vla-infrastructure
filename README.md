@@ -1,8 +1,30 @@
-> Isaac runtime migration and rollback: [operations](docs/project/migrations/20260918_isaac1103/OPERATIONS.md).
+> Current Quest -> Isaac VR: [operator guide](docs/project/RUN_VR_OPERATIONS.md).
 > Project commands run from your own `~/vla_infrastructure`; SDKs and large runtime data live in `/data`.
 > Physical Quest S2 acceptance remains pending.
 
 # PIPER-X + Quest 3 Codex Instruction Pack — v5.2 Hardened
+
+## Current VR operator entrypoint
+
+**PRIMARY OPERATOR ENTRYPOINT: `./run-vr`.** After accepting the NVIDIA EULAs
+and setting the prerequisites in [RUN_VR_OPERATIONS.md](docs/project/RUN_VR_OPERATIONS.md):
+
+```sh
+./run-vr
+```
+
+This selects **run-vr + RoboSyn demo overlay + final Isaac61 stack**, with three
+previews, Scene Partitions and independent per-controller 2x–4x–6x sliders.
+The overlay is still experimental and requires final physical S2 re-acceptance;
+PRIMARY OPERATOR PATH does not mean ALREADY ACCEPTED GATE CONFIG.
+
+`tools/launch_isaac_s2.py` is the **BASE / GENERIC S2 LAUNCHER**, retained for base
+S2 and automated `--smoke` / `--xr-smoke` checks. These no-client checks and
+`./run-vr --smoke` / `--xr-smoke` do not establish physical acceptance. See
+[runtime maintenance operations](docs/project/migrations/20260918_isaac1103/OPERATIONS.md)
+for base checks and rollback.
+
+## Instruction pack
 
 v5.2 is a consolidation/hardening release.
 

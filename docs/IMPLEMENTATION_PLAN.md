@@ -74,3 +74,18 @@ Benchmark branch:
 ## Physical boundary
 
 Codex may prepare commands and analyze logs. It must not infer unobserved physical success. Motion requires explicit human authorization for the exact action.
+
+## Current physical S2 target
+
+The next [[gate:S2]] human acceptance tests the exact default `./run-vr` composition:
+run-vr + RoboSyn demo overlay + final Isaac61 stack. Start with the
+[operator guide](project/RUN_VR_OPERATIONS.md) and
+[current worksheet](project/GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md). Retain the exact
+Git commit, `./run-vr` command, generated `runtime.yaml`, `launch_manifest.json`,
+`configs/isaac61_s2_runtime.yaml`, `configs/experiments/robosyn_vr_demo.yaml`,
+processor revision/source and exact environment/package pins.
+
+`tools/launch_isaac_s2.py` remains the BASE / GENERIC S2 LAUNCHER for base checks;
+it is not the primary physical operator command. Primary operator status does not
+promote the experimental RoboSyn overlay or its independent 2x–4x–6x sliders to an
+accepted gate configuration. Historical worksheets/smokes do not qualify this target.

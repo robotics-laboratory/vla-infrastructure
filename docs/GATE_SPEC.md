@@ -38,6 +38,15 @@ Headless reset/step, asset, cameras, control semantics, processors, task success
 
 Physical Quest controls simulated bimanual PIPER-X. Validate axes, rotation, scale, clutch/rebase, gripper and tracking behavior, not merely left/right identity.
 
+The current physical acceptance target is the exact default `./run-vr` isaac61
+composition, including the RoboSyn operator overlay and independent 2x–4x–6x
+sliders. See the [operator guide](project/RUN_VR_OPERATIONS.md) and
+[current human worksheet](project/GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md).
+`tools/launch_isaac_s2.py` is the BASE / GENERIC S2 LAUNCHER. Selecting the primary
+operator path does not accept the experimental overlay: registered human evidence,
+exact run/config/processor/environment provenance and all machine requirements
+remain mandatory. Historical base-S2 tests do not constitute its re-acceptance.
+
 ## [[gate:D1]] Isaac human-VR dataset
 
 Record successful Isaac human-VR episode, explicitly map native fields to `obs_t`, `action_t`, outcome/termination, and finalize a LeRobotDataset v3 source dataset.

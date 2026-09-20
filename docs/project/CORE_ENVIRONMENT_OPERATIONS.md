@@ -31,4 +31,10 @@ uv run python tools/quest_xr_diagnostics.py --help
 
 This command does not establish physical Quest acceptance by itself. The v5.2 Gate B human evidence requirements still apply.
 
+For the current **Quest -> Isaac** operator workflow use `./run-vr` and
+[RUN_VR_OPERATIONS.md](RUN_VR_OPERATIONS.md). It selects the final Isaac61
+environment and experimental RoboSyn overlay; final physical S2 re-acceptance is
+pending. `tools/launch_isaac_s2.py` remains the base/generic S2 path, separate from
+this core host diagnostic.
+
 Canonical offline checks are defined by the `offline_tests` execution profile in the live contract. No hardware-motion command belongs in this document.

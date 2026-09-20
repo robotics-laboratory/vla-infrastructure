@@ -1,5 +1,10 @@
 # Isaac runtime operations
 
+For current physical Quest operation, the **PRIMARY OPERATOR ENTRYPOINT** is
+`./run-vr`; follow [RUN_VR_OPERATIONS.md](../../RUN_VR_OPERATIONS.md).
+This maintenance note also covers the **BASE / GENERIC S2 LAUNCHER**,
+`tools/launch_isaac_s2.py`, which remains supported for base S2 and smokes.
+
 Run project commands from your own `~/vla_infrastructure` checkout. Shared SDKs,
 assets, converted USD, CloudXR, shader caches, logs, PNG and per-frame metadata
 live under `/data`; `/data/vla-infrastructure/robosyn-kit1103` is not the production
@@ -21,7 +26,7 @@ project entry point. Do not run under another person's HOME or reuse their XR IP
   fails before launch; it is never taken over. `--cloudxr-mode existing` means
   the **current account's** server in its selected `/data` state root.
 
-## Canonical commands
+## Current operator command
 
 After accepting the NVIDIA EULAs:
 
@@ -29,18 +34,28 @@ After accepting the NVIDIA EULAs:
 cd ~/vla_infrastructure
 export OMNI_KIT_ACCEPT_EULA=Y
 export ISAACLAB_CXR_ACCEPT_EULA=1
+./run-vr
+```
+
+This selects run-vr + RoboSyn demo overlay + final Isaac61 stack. The overlay
+selects independent 2x–4x–6x sliders, Scene Partitions and three previews. It
+remains experimental and requires physical S2 re-acceptance; use the
+[current worksheet](../../GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md). Operator status
+does not make demo logs evidence for the complete S1 contract.
+
+## Base S1/S2 and automated checks
+
+```sh
 python3 tools/launch_isaac_s1.py
 python3 tools/launch_isaac_s2.py
 ```
 
-S1 runs the bounded complete contract validation. S2 runs the canonical S1 robot
+S1 runs the bounded complete contract validation. The base/generic S2 launcher
+runs the canonical S1 robot
 scene with the existing processor/IK and three previews (two policy wrist roles
 plus a presentation-only scene feed); it is simulation-only and does not record D1.
-Physical S2 acceptance remains unresolved. Use the pinned Quest web client and
-human acceptance procedure in `docs/project/GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md`.
-
-`./run-vr` remains the separate RoboSyn-inspired demo. It is not the canonical S1
-contract task and its logs are not evidence for the complete S1 contract.
+Its selected sensitivity remains toggle normal 2x / precise 0.5x. This base path
+is not the primary operator workflow or the next physical acceptance target.
 
 Temporary checks also use the project launchers:
 
@@ -77,6 +92,13 @@ normally, then use the same project checkout and explicit legacy selection:
 
 ```sh
 cd ~/vla_infrastructure
+./run-vr --stack legacy
+```
+
+This is the operator rollback/debug path, not the current acceptance target.
+Base S1/S2 rollback checks remain available separately:
+
+```sh
 python3 tools/launch_isaac_s1.py --stack legacy
 python3 tools/launch_isaac_s2.py --stack legacy --smoke
 python3 tools/launch_isaac_s2.py --stack legacy
@@ -88,7 +110,11 @@ Partitions presentation is not enabled for legacy. Rollback retains the preexist
 processor v3 code; it is a **runtime rollback**, not a return to historical processor
 v1 behavior. Do not advertise the old SDK as providing the new anti-recursion guarantee.
 
-## Colleagues' own Linux checkouts
+## Historical migration bundle distribution
+
+The following records the migration release branch/bundle distribution. For a
+current operator run use your current master checkout and the operator guide;
+this historical bundle is not the final-master acceptance target.
 
 After the migration commit is published as the local release bundle, an existing
 clean project checkout can obtain the exact tested branch without accessing another

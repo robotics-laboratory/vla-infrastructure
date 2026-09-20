@@ -24,7 +24,9 @@ The reviewed set was explicitly approved on 2026-09-20: the 58 paths of `682ee93
 then the 16 additional contracts-line selections in their existing order, then
 16 current authoritative/integrity paths in the approved order: exactly 90 paths.
 The last group protects the selected Kit1103 specs, runtime/preview implementation
-and manifest maintenance files. No other tracked file is implicitly included.
+and manifest maintenance files. On 2026-09-21 the authoritative current operator
+guide `docs/project/RUN_VR_OPERATIONS.md` was explicitly added at the user's
+request, bringing the set to 91 paths. No other tracked file is implicitly included.
 Add/remove individual paths in this list through review; never derive membership
 from globs or `git ls-files`. Comments start with `#`.
 
