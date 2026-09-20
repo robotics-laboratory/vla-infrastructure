@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from importlib.metadata import version
 import socket
 import time
 from dataclasses import asdict, dataclass
@@ -19,6 +20,7 @@ from typing import Any, Callable, Literal
 import numpy as np
 
 from isaacteleop.cloudxr import CloudXRLauncher
+from isaacteleop.cloudxr.oob_teleop_env import versioned_web_client_url
 from isaacteleop.retargeting_engine.deviceio_source_nodes import ControllersSource
 from isaacteleop.retargeting_engine.interface import ExecutionEvents, ExecutionState, OutputCombiner
 from isaacteleop.retargeting_engine.tensor_types.indices import ControllerInputIndex
@@ -26,7 +28,6 @@ from isaacteleop.teleop_session_manager import TeleopSession, TeleopSessionConfi
 
 Hand = Literal["left", "right"]
 
-_CLOUDXR_WEB_CLIENT_URL = "https://nvidia.github.io/IsaacTeleop/client/release-1.4.x/"
 _CLOUDXR_WSS_PORT = 48322
 
 
@@ -247,7 +248,7 @@ def _host_connection_hint() -> dict[str, Any]:
         except OSError:
             host_ipv4 = None
     return {
-        "cloudxr_web_client_url": _CLOUDXR_WEB_CLIENT_URL,
+        "cloudxr_web_client_url": versioned_web_client_url(version("isaacteleop")),
         "host_ipv4": host_ipv4,
         "self_signed_certificate_url": (
             f"https://{host_ipv4}:{_CLOUDXR_WSS_PORT}/" if host_ipv4 is not None else None

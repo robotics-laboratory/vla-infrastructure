@@ -124,3 +124,11 @@ def test_wrist_camera_uses_user_selected_visual_pose() -> None:
     assert camera["optical_axis_parent"] == "+Z"
     assert camera["up_axis_parent"] == "-X"
     assert camera["output_roll_deg"] == 180.0
+
+
+def test_demo_default_environment_matches_selected_isaac61_config() -> None:
+    demo = yaml.safe_load((ROOT / "configs/experiments/robosyn_vr_demo.yaml").read_text())
+    runtime = yaml.safe_load((ROOT / demo["extends_runtime"]).read_text())
+    for key in ("isaac_lab_commit", "isaac_lab_package_version", "isaac_sim_version",
+                "isaacteleop_version", "isaaclab_teleop_version", "cloudxr_runtime_version"):
+        assert demo["environment"][key] == runtime["environment"][key], key

@@ -1,0 +1,67 @@
+$HOME/.cloudxr/logs/cxr_server.2026-09-12T135010Z.log
+155:  INFO [verifyAndLogPackedFrameStreamSize] Client connected, packed stream size: 4096x4032
+775:                GpuEndToEncodeEnd        12.208ms        11.108ms        14.380ms
+784:          PredictEndToNextPredict       105.119ms        60.499ms       164.210ms
+785:               PredictEndToGpuEnd        51.330ms        27.504ms        77.555ms
+786:             PoseInterarrivalTime        14.243ms         6.333ms        26.594ms
+787:                GpuEndToEncodeEnd        12.368ms        11.098ms        14.226ms
+821:          PredictEndToNextPredict        99.995ms        58.842ms       159.877ms
+822:               PredictEndToGpuEnd        47.842ms        22.206ms        83.645ms
+823:             PoseInterarrivalTime        14.114ms        11.719ms        23.061ms
+824:                GpuEndToEncodeEnd        12.430ms        11.083ms        14.021ms
+833:          PredictEndToNextPredict       103.474ms        61.832ms       165.601ms
+834:               PredictEndToGpuEnd        54.026ms        28.131ms        75.882ms
+835:             PoseInterarrivalTime        14.114ms        11.719ms        23.061ms
+836:                GpuEndToEncodeEnd        12.430ms        11.083ms        14.021ms
+845:          PredictEndToNextPredict       103.171ms        61.832ms       209.577ms
+846:               PredictEndToGpuEnd        52.475ms        27.104ms        75.882ms
+847:             PoseInterarrivalTime        14.114ms        11.719ms        23.061ms
+848:                GpuEndToEncodeEnd        12.430ms        11.083ms        14.021ms
+857:          PredictEndToNextPredict       102.088ms        56.122ms       206.832ms
+858:               PredictEndToGpuEnd        50.832ms        27.071ms        75.913ms
+859:             PoseInterarrivalTime        14.114ms        11.719ms        23.061ms
+860:                GpuEndToEncodeEnd        12.430ms        11.083ms        14.021ms
+869:          PredictEndToNextPredict       106.254ms        54.427ms       206.832ms
+870:               PredictEndToGpuEnd        51.287ms        27.071ms        75.548ms
+871:             PoseInterarrivalTime        14.114ms        11.719ms        23.061ms
+872:                GpuEndToEncodeEnd        12.430ms        11.083ms        14.021ms
+881:          PredictEndToNextPredict       105.022ms        56.964ms       203.108ms
+882:               PredictEndToGpuEnd        52.632ms        27.601ms        76.537ms
+883:             PoseInterarrivalTime        14.114ms        11.719ms        23.061ms
+884:                GpuEndToEncodeEnd        12.430ms        11.083ms        14.021ms
+893:          PredictEndToNextPredict       104.456ms        56.964ms       202.699ms
+894:               PredictEndToGpuEnd        53.044ms        27.601ms        76.537ms
+895:             PoseInterarrivalTime        14.114ms        11.719ms        23.061ms
+896:                GpuEndToEncodeEnd        12.430ms        11.083ms        14.021ms
+905:          PredictEndToNextPredict       109.381ms        54.630ms       208.791ms
+906:               PredictEndToGpuEnd        51.473ms        26.840ms        75.678ms
+907:             PoseInterarrivalTime        14.114ms        11.719ms        23.061ms
+908:                GpuEndToEncodeEnd        12.430ms        11.083ms        14.021ms
+917:          PredictEndToNextPredict       108.346ms        56.695ms       208.791ms
+918:               PredictEndToGpuEnd        51.704ms        26.840ms        75.875ms
+919:             PoseInterarrivalTime        14.114ms        11.719ms        23.061ms
+920:                GpuEndToEncodeEnd        12.430ms        11.083ms        14.021ms
+929:          PredictEndToNextPredict       105.863ms        60.517ms       207.573ms
+930:               PredictEndToGpuEnd        51.969ms        27.139ms        75.840ms
+931:             PoseInterarrivalTime        14.114ms        11.719ms        23.061ms
+932:                GpuEndToEncodeEnd        12.430ms        11.083ms        14.021ms
+941:          PredictEndToNextPredict       106.095ms        55.953ms       207.573ms
+942:               PredictEndToGpuEnd        53.388ms        28.055ms        75.387ms
+943:             PoseInterarrivalTime        14.114ms        11.719ms        23.061ms
+944:                GpuEndToEncodeEnd        12.430ms        11.083ms        14.021ms
+$HOME/.cloudxr/logs/cxr_streamsdk.2026-09-12T135010Z.000.log
+88: (W)[2026-09-12 13:50:37,370]=16:50:37=*00000*{6162161448675235317}^0001^<VideoSender>      Client requested an unknown streaming format 4096x4032@90hz!  Results may be unpredictable.
+115: (M)[2026-09-12 13:50:38,256]=16:50:38=*00312*{15157685043473073624}^0001^<NvEnc12VideoEnco> Changing encoder resolution to 4096 x 4032.
+123: (W)[2026-09-12 13:51:12,050]=16:51:12=*33780*{2695837759108362443}^0001^<BandwidthEstimat> BWE [325]: timing reset: FrameRxTime=1, frameInterval=151, avgFrameInterval=106, cumOwd=197
+125: (W)[2026-09-12 13:51:15,624]=16:51:15=*03573*{2695837759108362443}^0001^<BandwidthEstimat> BWE [361]: timing reset: FrameRxTime=1, frameInterval=151, avgFrameInterval=103, cumOwd=161
+126: (W)[2026-09-12 13:51:16,736]=16:51:16=*01112*{2695837759108362443}^0001^<BandwidthEstimat> BWE [373]: timing reset: FrameRxTime=1, frameInterval=57, avgFrameInterval=95, cumOwd=199
+140: (W)[2026-09-12 13:52:21,824]=16:52:21=*65088*{2695837759108362443}^0001^<BandwidthEstimat> BWE [999]: timing reset: FrameRxTime=1, frameInterval=149, avgFrameInterval=103, cumOwd=204
+142: (W)[2026-09-12 13:52:25,571]=16:52:25=*03746*{2695837759108362443}^0001^<BandwidthEstimat> BWE [1036]: timing reset: FrameRxTime=1, frameInterval=89, avgFrameInterval=100, cumOwd=207
+156: (W)[2026-09-12 13:53:31,729]=16:53:31=*66157*{2695837759108362443}^0001^<BandwidthEstimat> BWE [1680]: timing reset: FrameRxTime=2, frameInterval=149, avgFrameInterval=104, cumOwd=189
+158: (W)[2026-09-12 13:53:36,622]=16:53:36=*04892*{2695837759108362443}^0001^<BandwidthEstimat> BWE [1726]: timing reset: FrameRxTime=1, frameInterval=155, avgFrameInterval=111, cumOwd=145
+/data/vla-infrastructure/cache/robosyn-vr-demo/runs/20260912T134947898064Z-dual_cube_to_matching_plates-hud-off/stdout.log
+349: {"event": "demo_vr_camera_feed_bound", "feeds": [{"camera": "left_wrist", "rgb_stddev": 30.32493019104004, "source_alpha_range": [255, 255], "source_device": "cuda", "upload_alpha_range": [255, 255], "upload_device": "cpu"}, {"camera": "right_wrist", "rgb_stddev": 32.056766510009766, "source_alpha_range": [255, 255], "source_device": "cuda", "upload_alpha_range": [255, 255], "upload_device": "cpu"}], "layout": "head_locked", "upload_path": "cpu_staged"}
+476: [DEMO] wrist camera display ON
+477: {"capture_continues": true, "control": "left_primary_click", "display_visible": true, "event": "demo_vr_camera_feed_visibility_changed", "event_origin": "controller_pipeline", "feed_bound": true, "quest_button": "X"}
+481: [DEMO] wrist camera display OFF
+482: {"capture_continues": true, "control": "left_primary_click", "display_visible": false, "event": "demo_vr_camera_feed_visibility_changed", "event_origin": "controller_pipeline", "feed_bound": true, "quest_button": "X"}

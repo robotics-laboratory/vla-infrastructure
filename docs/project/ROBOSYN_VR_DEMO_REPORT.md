@@ -1,5 +1,37 @@
 # RoboSyn-inspired VR demo report
 
+## Current reconciliation state — 2026-09-19
+
+The active launcher retains Isaac Sim 6.1.0.0 / Kit 110.3, the frozen final Isaac Lab
+SDK, Scene Partitions isolation, explicit `--stack legacy` rollback, and private
+`/data/<username>` runtime state. Launch from the project checkout. The demo remains
+experimental; its third scene feed is preview-only and is not a D0 policy camera.
+
+Processor v3 and per-hand sliders remain unchanged. Blackfire's per-step performance
+JSONL, warmup/window statistics and controlled SIGINT forwarding are ported onto this
+launcher; interruption preserves result/performance output and exits130 without a
+PASS claim. The existing XR-disable → owned CloudXR-stop → Kit-close ordering remains.
+These reconciled paths require the next validation step; historical results below do
+not qualify the new merged sources.
+
+Preview isolation is owned by the RTX Scene Partitions topology, not by returning
+None, selecting an annotator or changing frame timing. Historical explanations below
+about XR compositor capture are superseded and must not guide current implementation.
+For the final SDK and rollback operations see
+[migration operations](migrations/20260918_isaac1103/OPERATIONS.md).
+
+The temporal recording adapters and EVAL RPC are preserved independently of demo
+presentation. Configured candidate limits are camera75ms, joint45ms, XR75ms,
+source-action45ms and cross-modal skew75ms. They are not physically qualified limits.
+Source-owned camera acquisition and atomic XR acquisition timing remain required;
+receipt timestamps must not substitute for them. Physical S2 remains unresolved.
+
+## Historical demo results and operator instructions
+
+The following dated record is retained as historical context. Its old SDK/runtime and
+physical-test statements keep their original scope; they are not new Kit1103 evidence.
+
+
 This is an isolated `EXPERIMENTAL_TEST_ONLY` result. It accepts no gate,
 reopens no S0/S1/S2/D0 decision, changes no canonical D0 schema, and does not
 start D1/G1.

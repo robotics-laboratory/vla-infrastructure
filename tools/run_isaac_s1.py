@@ -11,7 +11,9 @@ import json
 import math
 import os
 import platform
+import signal
 import subprocess
+import time
 import traceback
 from pathlib import Path
 from typing import Any, cast
@@ -20,6 +22,7 @@ import numpy as np
 import yaml
 
 from isaac_s1_runtime import (
+    D0_PROCESSOR_REVISION,
     ISAAC_ARM_JOINT_NAMES,
     JOINT_LIMITS_DEG,
     NativeBimanualTargets,
@@ -50,6 +53,16 @@ parser.add_argument("--preview-control", action="store_true")
 parser.add_argument("--demo-preview-isolation", choices=("off", "scene-partitions"), default="off")
 parser.add_argument("--demo-preview-scene", action="store_true")
 parser.add_argument(
+    "--eval-socket",
+    type=Path,
+    help="Serve the concrete EVAL v2 boundary on this Unix-domain socket.",
+)
+parser.add_argument(
+    "--eval-run-manifest",
+    type=Path,
+    help="JSON handshake manifest for --eval-socket.",
+)
+parser.add_argument(
     "--s2-teleop",
     action="store_true",
     help="Run the S2 Quest-to-simulation loop on this exact S1 environment.",
@@ -61,6 +74,13 @@ parser.add_argument(
 )
 parser.add_argument("--s2-max-control-steps", type=int, default=300)
 parser.add_argument("--s2-reset-step", type=int, default=120)
+parser.add_argument(
+    "--s2-performance-log",
+    type=Path,
+    help="Optional per-control-step JSONL timing log for the concrete S2 loop.",
+)
+parser.add_argument("--s2-performance-window-steps", type=int, default=30)
+parser.add_argument("--s2-performance-warmup-steps", type=int, default=30)
 parser.add_argument(
     "--s2-require-session",
     action=argparse.BooleanOptionalAction,
@@ -109,6 +129,13 @@ parser.add_argument(
 AppLauncher.add_app_launcher_args(parser)
 parser.set_defaults(headless=True, enable_cameras=True)
 args_cli = parser.parse_args()
+if (args_cli.eval_socket is None) != (args_cli.eval_run_manifest is None):
+    parser.error("--eval-socket and --eval-run-manifest must be provided together")
+if args_cli.eval_socket is not None and (
+    args_cli.s2_teleop or args_cli.robosyn_vr_demo or args_cli.combined_preview_test
+    or args_cli.production_preview or args_cli.xr
+):
+    parser.error("EVAL endpoint cannot share a teleop/demo/preview/XR execution mode")
 
 # Public upstream lifecycle composition keeps large CloudXR state in /data.
 # The same runtime is consumed by Kit and IsaacTeleop; shutdown stops XR first.
@@ -138,6 +165,10 @@ from isaaclab.assets import (  # type: ignore[import-not-found]  # noqa: E402
 from isaaclab.sensors.camera import Camera, CameraCfg  # type: ignore[import-not-found]  # noqa: E402
 from isaaclab.utils.math import combine_frame_transforms  # type: ignore[import-not-found]  # noqa: E402
 
+
+TASK_ID = "PiperX-Isaac-Bimanual-JointReach-S1-v0"
+TASK_REVISION = "piper_x_isaac_bimanual_joint_reach_s1_v1"
+TASK_HORIZON = 120
 
 PHYSICS_DT = 1.0 / 120.0
 CONTROL_DT = 1.0 / 30.0
@@ -370,22 +401,45 @@ class BimanualPiperXIsaacEnvironment:
         return result
 
     def _advance(self, repeat: int) -> None:
+        performance = getattr(self, "performance_logger", None)
         for _ in range(repeat):
+            started_ns = time.perf_counter_ns() if performance is not None else 0
             for robot in self.robots:
                 robot.write_data_to_sim()
+            if performance is not None:
+                performance.add_nested(
+                    "physics_target_write", time.perf_counter_ns() - started_ns
+                )
+                started_ns = time.perf_counter_ns()
             if self.experiment_runtime is not None:
                 self.experiment_runtime.before_render()
             if getattr(self, "preview", None) is not None:
                 self.preview.assert_valid()
             self.sim.step()
+            if performance is not None:
+                performance.add_nested("sim_step", time.perf_counter_ns() - started_ns)
+                started_ns = time.perf_counter_ns()
             for robot in self.robots:
                 robot.update(PHYSICS_DT)
+            if performance is not None:
+                performance.add_nested("robot_update", time.perf_counter_ns() - started_ns)
+                started_ns = time.perf_counter_ns()
             self.camera.update(PHYSICS_DT, force_recompute=True)
+            if performance is not None:
+                performance.add_nested("camera_update", time.perf_counter_ns() - started_ns)
+                started_ns = time.perf_counter_ns()
             self.physics_probe.update(PHYSICS_DT)
+            if performance is not None:
+                performance.add_nested("physics_probe_update", time.perf_counter_ns() - started_ns)
             if getattr(self, "preview", None) is not None:
                 self.preview.update(PHYSICS_DT)
             if self.experiment_runtime is not None:
+                started_ns = time.perf_counter_ns() if performance is not None else 0
                 self.experiment_runtime.update(PHYSICS_DT)
+                if performance is not None:
+                    performance.add_nested(
+                        "experiment_update", time.perf_counter_ns() - started_ns
+                    )
 
     def reset(self, seed: int = 0) -> dict[str, np.ndarray]:
         seed_reset(seed)
@@ -435,7 +489,7 @@ class BimanualPiperXIsaacEnvironment:
             np.max(error[[*range(6), *range(7, 13)]]) <= 2.0 and max(error[6], error[13]) <= 2.0
         )
         reward = -float(np.max(error))
-        truncated = self.step_count >= 120 and not success
+        truncated = self.step_count >= TASK_HORIZON and not success
         return observation, reward, success, truncated, {"native_saturated": targets.saturated}
 
 
@@ -943,6 +997,58 @@ def main() -> int:
         sim, left, right, camera, wrist_paths, camera_prim_expression, physics_probe
     )
 
+    if args_cli.eval_socket is not None:
+        from isaac_eval_rpc import IsaacEvalEndpoint, bind_runtime_handshake, serve_unix_socket
+        from validate_resolved_contract import canonical_training_schema_fingerprint
+
+        contract = yaml.safe_load((ROOT / "configs/resolved_contract.yaml").read_text())
+        loaded_lab = Path(isaaclab.__file__).resolve().parents[3]
+        loaded_revision = subprocess.check_output(
+            ["git", "-C", str(loaded_lab), "rev-parse", "HEAD"], text=True
+        ).strip()
+        if (loaded_lab != Path(config["environment"]["isaac_lab_path"]).resolve()
+                or loaded_revision != config["environment"]["isaac_lab_commit"]
+                or importlib.metadata.version("isaacsim") != config["environment"]["isaac_sim_version"]
+                or importlib.metadata.version("isaaclab") != config["environment"]["isaac_lab_source_version"]
+                or __import__("omni.kit.app", fromlist=["get_app"]).get_app().get_kit_version() != config["environment"]["kit_version"]):
+            raise RuntimeError("loaded EVAL SDK differs from the selected runtime")
+        if (urdf_sha != contract["simulation"]["isaac"]["robot_asset"]["sha256"]
+                or model["model"]["commit"] != config["asset"]["source_commit"]
+                or config["d0_boundary"]["revision"] != D0_PROCESSOR_REVISION
+                or config["task"]["id"] != TASK_ID
+                or config["task"]["revision"] != TASK_REVISION
+                or config["task"]["horizon_control_steps"] != TASK_HORIZON):
+            raise RuntimeError("loaded EVAL asset/task/processor differs from the declared contract")
+        identity = {
+            "environment_revision": loaded_revision,
+            "PIPER_X_asset_model_revision": model["model"]["commit"],
+            "processor_revision": D0_PROCESSOR_REVISION,
+            "D0_contract_fingerprint": canonical_training_schema_fingerprint(contract),
+            "task_id": TASK_ID, "task_revision": TASK_REVISION, "horizon": TASK_HORIZON,
+        }
+        provenance = {
+            "runtime_identity": identity, "asset_sha256": urdf_sha,
+            "loaded_usd": converter.usd_path,
+            "module_files": {"isaaclab": str(Path(isaaclab.__file__).resolve()),
+                             "processor": str(Path(__import__("isaac_s1_runtime").__file__).resolve())},
+            "source_sha256": {name: hashlib.sha256((ROOT / "tools" / name).read_bytes()).hexdigest()
+                              for name in ("run_isaac_s1.py", "isaac_s1_runtime.py", "isaac_eval_rpc.py")},
+            "acceptance_claim": False,
+        }
+        (args_cli.report.parent / "eval-runtime-provenance.json").write_text(
+            json.dumps(provenance, indent=2) + "\n"
+        )
+        handshake = bind_runtime_handshake(
+            json.loads(args_cli.eval_run_manifest.read_text(encoding="utf-8")), identity
+        )
+        endpoint = IsaacEvalEndpoint(env, handshake)
+        print(
+            f"[E1] serving {endpoint.handshake['run_id']} on {args_cli.eval_socket}",
+            flush=True,
+        )
+        serve_unix_socket(endpoint, args_cli.eval_socket)
+        return 0
+
     if args_cli.combined_preview_test:
         from check_isaac_s1_preview import validate_combined
         return validate_combined(env, args_cli, simulation_app, urdf_sha)
@@ -1153,6 +1259,10 @@ if __name__ == "__main__":
     except BaseException:
         traceback.print_exc()
     finally:
+        # The launcher signals the uv process group; uv may also forward SIGINT.
+        # Once shutdown starts, a second delivery must not interrupt XR/CloudXR
+        # teardown or replace the already selected exit code (130 for Ctrl-C).
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
         # SimulationApp fast shutdown exits the process without Python atexit.
         # Stop frame submission first, then the runtime we own, before Kit close.
         if owned_cloudxr is not None:

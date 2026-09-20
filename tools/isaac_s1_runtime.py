@@ -18,6 +18,8 @@ from typing import Any, Sequence
 import numpy as np
 
 
+D0_PROCESSOR_REVISION = "piper_x_d0_isaac_edge_mapping_v1"
+
 ISAAC_ARM_JOINT_NAMES = ("joint1", "joint2", "joint3", "joint4", "joint5", "joint6", "gripper")
 JOINT_LIMITS_DEG = np.asarray(
     [[-150.0, 150.0], [0.0, 180.0], [-170.0, 0.0], [-89.0, 89.0], [-89.0, 89.0], [-120.0, 120.0]],

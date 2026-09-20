@@ -1,0 +1,12 @@
+{
+  "selection": "F_forward10",
+  "selected_by": "user_visual_review",
+  "offset_xyz_m": [-0.06, 0.0, 0.01],
+  "offset_quat_xyzw": [0.0, -0.688354575693754, 0.0, 0.7253743710122876],
+  "output_roll_deg": 180.0,
+  "pitch_toward_gripper_deg": 3.0,
+  "forward_along_gripper_m": 0.01,
+  "left_image": "F_forward10_left.png",
+  "right_image": "F_forward10_right.png",
+  "physical_quest_retest": "pending"
+}

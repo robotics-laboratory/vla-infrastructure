@@ -1,0 +1,14 @@
+[
+  {
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-12T135010Z.log",
+    "sha256": "d8764b860b3232b7241be8af3b3188d4336c5fc46b120e33b6aeb0eed4a7c883"
+  },
+  {
+    "path": "$HOME/.cloudxr/logs/cxr_streamsdk.2026-09-12T135010Z.000.log",
+    "sha256": "ab05f72059e36d30b49dedbbbfe607cc9de37278e63b9d496eec96ce0a3296dc"
+  },
+  {
+    "path": "/data/vla-infrastructure/cache/robosyn-vr-demo/runs/20260912T134947898064Z-dual_cube_to_matching_plates-hud-off/stdout.log",
+    "sha256": "a01ef0afbe995e2cf713856f50a2c03bded6197f3aa836be1f21ddd037c5a0a3"
+  }
+]

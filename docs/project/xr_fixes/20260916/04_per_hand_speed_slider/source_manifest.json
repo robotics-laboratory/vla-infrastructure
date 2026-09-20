@@ -1,0 +1,12 @@
+{
+  "configs/experiments/robosyn_vr_demo.yaml": "b4e9fc9f4ce9301153de950146b3166c8460c44cb703ba0d7036c8022b9b43b0",
+  "tools/isaac_s2_processor.py": "b75f86884e0b2a80886425229aae901ba3aad5fa6d4de2ec86bff8cd41fc053c",
+  "tools/isaac_s2_runtime.py": "fa1e45cb9aff122957020376c19a2f448431aa70ea6e8efaf970f064f42b6347",
+  "tools/isaac_s2_upstream.py": "fd194502bbc53ec5f209568824a0665438944d6dc59bf27c0b703c30997efbce",
+  "tests/test_isaac_s2_processor.py": "39e8d7d0e03d91aa8a48a602aca83f0910f97b0cfa367740d567c78696dfc9a9",
+  "tests/test_isaac_s2_upstream.py": "a3df2fe4307ca309e75472a211dd5ab996c35603f5935952e3daa19769225729",
+  "tests/test_robosyn_vr_demo_config.py": "862bf12caff9c81430e217195fe02e8344c9824dc763a77bc7e9383086782057",
+  "docs/project/ISAAC_XR_PHYSICAL_FOLLOWUP_20260916.md": "96c22b32f743886501a690eb6ca79aee1ce526b363490b8ee10984e9e11075bd",
+  "docs/project/ISAAC_XR_BACKLOG_20260915.md": "790c7f1171ef33cb544e5eb25cb52035e40b83189c722555dbe347d093d2786e",
+  "docs/project/ROBOSYN_VR_DEMO_REPORT.md": "3c8401131b04247d21bf135019b1a827cf6ff9ad81ba0ccdbde9d64b32687a4d"
+}

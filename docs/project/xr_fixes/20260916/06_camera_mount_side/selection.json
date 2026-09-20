@@ -1,0 +1,10 @@
+{
+  "physical_finding": "orientation acceptable, camera origin was below the gripper",
+  "selected_variant": "above_xn055_z00",
+  "offset_parent_m": [-0.055, 0.0, 0.0],
+  "rotation_world_convention_xyzw": [0.7071067811865476, 0.0, 0.7071067811865476, 0.0],
+  "gripper_parent_plus_x_world_z_at_home": [-0.8190510272979736, -0.8190510272979736],
+  "world_z_raise_from_previous_m": [0.09419083595275879, 0.09419083595275879],
+  "selection_basis": "upper gripper side with accepted optical orientation and a small claw edge visible",
+  "physical_quest_retest": "pending"
+}

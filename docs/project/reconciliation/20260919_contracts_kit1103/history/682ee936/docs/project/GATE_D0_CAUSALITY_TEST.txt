@@ -1,0 +1,14 @@
+Gate D0 focused causality regression
+Timestamp: 2026-08-30T22:50:16+03:00
+Command: uv run pytest -q tests/test_gate_d0_contract.py
+
+...                                                                      [100%]
+3 passed in 6.19s
+
+The executable seam is the pinned LeRobot identity observation/action processors plus
+build_dataset_frame, exactly corresponding to lerobot_record.record_loop lines 289-338.
+It proves pairs (obs_t=t, action_t=1000+t), explicitly rejects both t-1 and t+1
+action shifts, and proves that a deliberately different send_action return is not the
+dataset action source. The optional LeRobot `datasets` extra is not installed in the
+accepted core profile, so the policy-authorized narrow frame-construction fallback was
+used without changing dependencies.

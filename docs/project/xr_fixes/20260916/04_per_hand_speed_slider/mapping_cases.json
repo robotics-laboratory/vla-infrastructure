@@ -1,0 +1,13 @@
+{
+  "input_control": "per-controller THUMBSTICK_X",
+  "mapping": [
+    {"input": -1.0, "translation_scale": 2.0, "rotation_scale": 2.0},
+    {"input": -0.5, "translation_scale": 3.0, "rotation_scale": 3.0},
+    {"input": 0.0, "translation_scale": 4.0, "rotation_scale": 4.0},
+    {"input": 0.5, "translation_scale": 5.0, "rotation_scale": 5.0},
+    {"input": 1.0, "translation_scale": 6.0, "rotation_scale": 6.0}
+  ],
+  "outside_input_range": "clamped",
+  "cross_hand_coupling": false,
+  "physical_quest_retest": "pending"
+}

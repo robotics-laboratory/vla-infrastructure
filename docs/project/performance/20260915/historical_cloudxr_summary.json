@@ -1,0 +1,1452 @@
+[
+  {
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-08T140447Z.log",
+    "metrics": {
+      "DevicePoseInterval": {
+        "samples": 75,
+        "median_average_ms": 13.89,
+        "range_average_ms": [
+          13.845,
+          14.363
+        ],
+        "last": {
+          "line": 1142,
+          "average_ms": 14.363,
+          "min_ms": 11.1,
+          "max_ms": 42.0
+        }
+      },
+      "PoseInterarrivalTime": {
+        "samples": 74,
+        "median_average_ms": 13.8875,
+        "range_average_ms": [
+          13.597,
+          14.283
+        ],
+        "last": {
+          "line": 1134,
+          "average_ms": 13.908,
+          "min_ms": 9.19,
+          "max_ms": 21.337
+        }
+      },
+      "PredictDuration": {
+        "samples": 74,
+        "median_average_ms": 0.002,
+        "range_average_ms": [
+          0.001,
+          0.019
+        ],
+        "last": {
+          "line": 1138,
+          "average_ms": 0.002,
+          "min_ms": 0.001,
+          "max_ms": 0.003
+        }
+      },
+      "WaitWakeToSubmitEnd": {
+        "samples": 74,
+        "median_average_ms": 5.668,
+        "range_average_ms": [
+          5.283,
+          6.342
+        ],
+        "last": {
+          "line": 1139,
+          "average_ms": 5.481,
+          "min_ms": 4.643,
+          "max_ms": 8.189
+        }
+      },
+      "LayerCommitToGpuEnd": {
+        "samples": 74,
+        "median_average_ms": 13.4025,
+        "range_average_ms": [
+          8.65,
+          14.177
+        ],
+        "last": {
+          "line": 1140,
+          "average_ms": 11.347,
+          "min_ms": 9.07,
+          "max_ms": 13.786
+        }
+      },
+      "WaitWakeToNextPredict": {
+        "samples": 74,
+        "median_average_ms": 27.826,
+        "range_average_ms": [
+          22.617,
+          29.145
+        ],
+        "last": {
+          "line": 1141,
+          "average_ms": 24.997,
+          "min_ms": 20.715,
+          "max_ms": 32.082
+        }
+      },
+      "PredictEndToWaitWake": {
+        "samples": 74,
+        "median_average_ms": 1.066,
+        "range_average_ms": [
+          1.047,
+          1.129
+        ],
+        "last": {
+          "line": 1143,
+          "average_ms": 1.067,
+          "min_ms": 1.034,
+          "max_ms": 1.138
+        }
+      },
+      "PredictEndToNextPredict": {
+        "samples": 74,
+        "median_average_ms": 28.889,
+        "range_average_ms": [
+          23.683,
+          30.21
+        ],
+        "last": {
+          "line": 1144,
+          "average_ms": 26.064,
+          "min_ms": 21.777,
+          "max_ms": 33.155
+        }
+      },
+      "PredictEndToGpuEnd": {
+        "samples": 73,
+        "median_average_ms": 20.194,
+        "range_average_ms": [
+          15.519,
+          20.872
+        ],
+        "last": {
+          "line": 1133,
+          "average_ms": 18.545,
+          "min_ms": 15.286,
+          "max_ms": 21.643
+        }
+      },
+      "GpuEndToEncodeEnd": {
+        "samples": 73,
+        "median_average_ms": 11.02,
+        "range_average_ms": [
+          10.992,
+          11.043
+        ],
+        "last": {
+          "line": 1135,
+          "average_ms": 11.022,
+          "min_ms": 10.959,
+          "max_ms": 11.185
+        }
+      }
+    }
+  },
+  {
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-08T141504Z.log",
+    "metrics": {
+      "DevicePoseInterval": {
+        "samples": 94,
+        "median_average_ms": 13.8905,
+        "range_average_ms": [
+          12.811,
+          14.331
+        ],
+        "last": {
+          "line": 1370,
+          "average_ms": 13.921,
+          "min_ms": 11.2,
+          "max_ms": 16.2
+        }
+      },
+      "PoseInterarrivalTime": {
+        "samples": 94,
+        "median_average_ms": 13.886,
+        "range_average_ms": [
+          12.818,
+          14.322
+        ],
+        "last": {
+          "line": 1374,
+          "average_ms": 13.934,
+          "min_ms": 9.351,
+          "max_ms": 19.271
+        }
+      },
+      "PredictDuration": {
+        "samples": 94,
+        "median_average_ms": 0.002,
+        "range_average_ms": [
+          0.001,
+          0.002
+        ],
+        "last": {
+          "line": 1378,
+          "average_ms": 0.002,
+          "min_ms": 0.001,
+          "max_ms": 0.003
+        }
+      },
+      "WaitWakeToSubmitEnd": {
+        "samples": 94,
+        "median_average_ms": 5.638,
+        "range_average_ms": [
+          5.164,
+          6.359
+        ],
+        "last": {
+          "line": 1379,
+          "average_ms": 5.38,
+          "min_ms": 4.538,
+          "max_ms": 7.199
+        }
+      },
+      "LayerCommitToGpuEnd": {
+        "samples": 94,
+        "median_average_ms": 13.6675,
+        "range_average_ms": [
+          8.998,
+          14.371
+        ],
+        "last": {
+          "line": 1380,
+          "average_ms": 13.75,
+          "min_ms": 12.621,
+          "max_ms": 14.638
+        }
+      },
+      "WaitWakeToNextPredict": {
+        "samples": 94,
+        "median_average_ms": 27.976,
+        "range_average_ms": [
+          22.903,
+          29.204
+        ],
+        "last": {
+          "line": 1381,
+          "average_ms": 27.788,
+          "min_ms": 25.169,
+          "max_ms": 34.253
+        }
+      },
+      "PredictEndToWaitWake": {
+        "samples": 94,
+        "median_average_ms": 1.065,
+        "range_average_ms": [
+          1.051,
+          1.108
+        ],
+        "last": {
+          "line": 1383,
+          "average_ms": 1.061,
+          "min_ms": 0.984,
+          "max_ms": 1.079
+        }
+      },
+      "PredictEndToNextPredict": {
+        "samples": 94,
+        "median_average_ms": 29.045499999999997,
+        "range_average_ms": [
+          23.967,
+          30.269
+        ],
+        "last": {
+          "line": 1384,
+          "average_ms": 28.85,
+          "min_ms": 26.232,
+          "max_ms": 35.328
+        }
+      },
+      "PredictEndToGpuEnd": {
+        "samples": 94,
+        "median_average_ms": 20.428,
+        "range_average_ms": [
+          15.566,
+          21.11
+        ],
+        "last": {
+          "line": 1385,
+          "average_ms": 20.155,
+          "min_ms": 19.569,
+          "max_ms": 21.561
+        }
+      },
+      "GpuEndToEncodeEnd": {
+        "samples": 94,
+        "median_average_ms": 11.090499999999999,
+        "range_average_ms": [
+          11.001,
+          11.153
+        ],
+        "last": {
+          "line": 1387,
+          "average_ms": 11.097,
+          "min_ms": 11.048,
+          "max_ms": 11.299
+        }
+      }
+    }
+  },
+  {
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-08T142321Z.log",
+    "metrics": {
+      "DevicePoseInterval": {
+        "samples": 81,
+        "median_average_ms": 13.888,
+        "range_average_ms": [
+          13.816,
+          14.805
+        ],
+        "last": {
+          "line": 1214,
+          "average_ms": 13.888,
+          "min_ms": 11.2,
+          "max_ms": 16.4
+        }
+      },
+      "PoseInterarrivalTime": {
+        "samples": 81,
+        "median_average_ms": 13.886,
+        "range_average_ms": [
+          13.748,
+          14.798
+        ],
+        "last": {
+          "line": 1218,
+          "average_ms": 13.819,
+          "min_ms": 9.929,
+          "max_ms": 18.22
+        }
+      },
+      "PredictDuration": {
+        "samples": 80,
+        "median_average_ms": 0.002,
+        "range_average_ms": [
+          0.001,
+          0.002
+        ],
+        "last": {
+          "line": 1210,
+          "average_ms": 0.002,
+          "min_ms": 0.001,
+          "max_ms": 0.004
+        }
+      },
+      "WaitWakeToSubmitEnd": {
+        "samples": 80,
+        "median_average_ms": 5.6355,
+        "range_average_ms": [
+          5.248,
+          6.456
+        ],
+        "last": {
+          "line": 1211,
+          "average_ms": 6.378,
+          "min_ms": 4.896,
+          "max_ms": 8.769
+        }
+      },
+      "LayerCommitToGpuEnd": {
+        "samples": 80,
+        "median_average_ms": 12.374500000000001,
+        "range_average_ms": [
+          9.46,
+          14.476
+        ],
+        "last": {
+          "line": 1212,
+          "average_ms": 9.891,
+          "min_ms": 7.593,
+          "max_ms": 11.759
+        }
+      },
+      "WaitWakeToNextPredict": {
+        "samples": 80,
+        "median_average_ms": 26.613,
+        "range_average_ms": [
+          23.394,
+          27.997
+        ],
+        "last": {
+          "line": 1213,
+          "average_ms": 25.876,
+          "min_ms": 21.962,
+          "max_ms": 44.611
+        }
+      },
+      "PredictEndToWaitWake": {
+        "samples": 80,
+        "median_average_ms": 1.064,
+        "range_average_ms": [
+          1.05,
+          1.094
+        ],
+        "last": {
+          "line": 1215,
+          "average_ms": 1.07,
+          "min_ms": 0.996,
+          "max_ms": 1.238
+        }
+      },
+      "PredictEndToNextPredict": {
+        "samples": 80,
+        "median_average_ms": 27.68,
+        "range_average_ms": [
+          24.46,
+          29.058
+        ],
+        "last": {
+          "line": 1216,
+          "average_ms": 26.947,
+          "min_ms": 23.02,
+          "max_ms": 45.68
+        }
+      },
+      "PredictEndToGpuEnd": {
+        "samples": 80,
+        "median_average_ms": 19.116,
+        "range_average_ms": [
+          16.08,
+          20.747
+        ],
+        "last": {
+          "line": 1217,
+          "average_ms": 17.295,
+          "min_ms": 16.353,
+          "max_ms": 18.748
+        }
+      },
+      "GpuEndToEncodeEnd": {
+        "samples": 80,
+        "median_average_ms": 11.092500000000001,
+        "range_average_ms": [
+          11.011,
+          11.182
+        ],
+        "last": {
+          "line": 1219,
+          "average_ms": 11.12,
+          "min_ms": 11.056,
+          "max_ms": 11.276
+        }
+      }
+    }
+  },
+  {
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-11T120821Z.log",
+    "metrics": {
+      "DevicePoseInterval": {
+        "samples": 32,
+        "median_average_ms": 13.895,
+        "range_average_ms": [
+          13.853,
+          14.656
+        ],
+        "last": {
+          "line": 639,
+          "average_ms": 13.901,
+          "min_ms": 11.6,
+          "max_ms": 16.4
+        }
+      },
+      "PoseInterarrivalTime": {
+        "samples": 32,
+        "median_average_ms": 13.894,
+        "range_average_ms": [
+          13.678,
+          14.653
+        ],
+        "last": {
+          "line": 643,
+          "average_ms": 13.889,
+          "min_ms": 11.143,
+          "max_ms": 17.257
+        }
+      },
+      "PredictDuration": {
+        "samples": 31,
+        "median_average_ms": 0.002,
+        "range_average_ms": [
+          0.002,
+          51.497
+        ],
+        "last": {
+          "line": 635,
+          "average_ms": 0.002,
+          "min_ms": 0.002,
+          "max_ms": 0.003
+        }
+      },
+      "WaitWakeToSubmitEnd": {
+        "samples": 29,
+        "median_average_ms": 8.084,
+        "range_average_ms": [
+          7.509,
+          8.871
+        ],
+        "last": {
+          "line": 636,
+          "average_ms": 8.0,
+          "min_ms": 6.459,
+          "max_ms": 10.649
+        }
+      },
+      "LayerCommitToGpuEnd": {
+        "samples": 31,
+        "median_average_ms": 16.589,
+        "range_average_ms": [
+          12.701,
+          17.925
+        ],
+        "last": {
+          "line": 637,
+          "average_ms": 16.784,
+          "min_ms": 14.943,
+          "max_ms": 17.948
+        }
+      },
+      "WaitWakeToNextPredict": {
+        "samples": 30,
+        "median_average_ms": 33.852000000000004,
+        "range_average_ms": [
+          30.092,
+          36.097
+        ],
+        "last": {
+          "line": 638,
+          "average_ms": 34.239,
+          "min_ms": 31.697,
+          "max_ms": 55.064
+        }
+      },
+      "PredictEndToWaitWake": {
+        "samples": 31,
+        "median_average_ms": 1.067,
+        "range_average_ms": [
+          0.683,
+          1.088
+        ],
+        "last": {
+          "line": 640,
+          "average_ms": 1.065,
+          "min_ms": 0.96,
+          "max_ms": 1.251
+        }
+      },
+      "PredictEndToNextPredict": {
+        "samples": 30,
+        "median_average_ms": 34.9295,
+        "range_average_ms": [
+          31.16,
+          37.164
+        ],
+        "last": {
+          "line": 641,
+          "average_ms": 35.305,
+          "min_ms": 32.756,
+          "max_ms": 56.122
+        }
+      },
+      "PredictEndToGpuEnd": {
+        "samples": 29,
+        "median_average_ms": 25.851,
+        "range_average_ms": [
+          21.684,
+          26.341
+        ],
+        "last": {
+          "line": 642,
+          "average_ms": 25.812,
+          "min_ms": 24.122,
+          "max_ms": 28.004
+        }
+      },
+      "GpuEndToEncodeEnd": {
+        "samples": 31,
+        "median_average_ms": 11.018,
+        "range_average_ms": [
+          11.0,
+          11.656
+        ],
+        "last": {
+          "line": 644,
+          "average_ms": 11.016,
+          "min_ms": 10.96,
+          "max_ms": 11.145
+        }
+      }
+    }
+  },
+  {
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-11T121203Z.log",
+    "metrics": {
+      "DevicePoseInterval": {
+        "samples": 35,
+        "median_average_ms": 14.926,
+        "range_average_ms": [
+          12.89,
+          14.926
+        ],
+        "last": {
+          "line": 674,
+          "average_ms": 13.863,
+          "min_ms": 11.9,
+          "max_ms": 15.9
+        }
+      },
+      "PoseInterarrivalTime": {
+        "samples": 35,
+        "median_average_ms": 14.81,
+        "range_average_ms": [
+          12.975,
+          14.81
+        ],
+        "last": {
+          "line": 678,
+          "average_ms": 13.868,
+          "min_ms": 8.957,
+          "max_ms": 21.608
+        }
+      },
+      "PredictDuration": {
+        "samples": 34,
+        "median_average_ms": 0.002,
+        "range_average_ms": [
+          0.001,
+          0.003
+        ],
+        "last": {
+          "line": 670,
+          "average_ms": 0.002,
+          "min_ms": 0.001,
+          "max_ms": 0.004
+        }
+      },
+      "WaitWakeToSubmitEnd": {
+        "samples": 34,
+        "median_average_ms": 7.9165,
+        "range_average_ms": [
+          7.259,
+          8.954
+        ],
+        "last": {
+          "line": 671,
+          "average_ms": 8.093,
+          "min_ms": 6.303,
+          "max_ms": 11.101
+        }
+      },
+      "LayerCommitToGpuEnd": {
+        "samples": 34,
+        "median_average_ms": 15.9255,
+        "range_average_ms": [
+          13.526,
+          19.001
+        ],
+        "last": {
+          "line": 672,
+          "average_ms": 15.619,
+          "min_ms": 11.529,
+          "max_ms": 19.639
+        }
+      },
+      "WaitWakeToNextPredict": {
+        "samples": 34,
+        "median_average_ms": 32.6915,
+        "range_average_ms": [
+          31.09,
+          36.379
+        ],
+        "last": {
+          "line": 673,
+          "average_ms": 32.802,
+          "min_ms": 27.962,
+          "max_ms": 54.093
+        }
+      },
+      "PredictEndToWaitWake": {
+        "samples": 34,
+        "median_average_ms": 1.0715,
+        "range_average_ms": [
+          1.061,
+          1.153
+        ],
+        "last": {
+          "line": 675,
+          "average_ms": 1.063,
+          "min_ms": 0.987,
+          "max_ms": 1.143
+        }
+      },
+      "PredictEndToNextPredict": {
+        "samples": 34,
+        "median_average_ms": 33.761,
+        "range_average_ms": [
+          32.163,
+          37.442
+        ],
+        "last": {
+          "line": 676,
+          "average_ms": 33.865,
+          "min_ms": 29.023,
+          "max_ms": 55.149
+        }
+      },
+      "PredictEndToGpuEnd": {
+        "samples": 34,
+        "median_average_ms": 24.7055,
+        "range_average_ms": [
+          22.892,
+          27.721
+        ],
+        "last": {
+          "line": 677,
+          "average_ms": 24.735,
+          "min_ms": 21.183,
+          "max_ms": 28.871
+        }
+      },
+      "GpuEndToEncodeEnd": {
+        "samples": 34,
+        "median_average_ms": 11.0365,
+        "range_average_ms": [
+          11.01,
+          11.152
+        ],
+        "last": {
+          "line": 679,
+          "average_ms": 11.115,
+          "min_ms": 11.046,
+          "max_ms": 11.279
+        }
+      }
+    }
+  },
+  {
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-11T124900Z.log",
+    "metrics": {
+      "DevicePoseInterval": {
+        "samples": 61,
+        "median_average_ms": 13.891,
+        "range_average_ms": [
+          11.81,
+          14.6
+        ],
+        "last": {
+          "line": 1020,
+          "average_ms": 13.945,
+          "min_ms": 11.6,
+          "max_ms": 16.5
+        }
+      },
+      "PoseInterarrivalTime": {
+        "samples": 61,
+        "median_average_ms": 13.893,
+        "range_average_ms": [
+          11.112,
+          14.618
+        ],
+        "last": {
+          "line": 1024,
+          "average_ms": 13.939,
+          "min_ms": 11.03,
+          "max_ms": 17.757
+        }
+      },
+      "PredictDuration": {
+        "samples": 60,
+        "median_average_ms": 0.002,
+        "range_average_ms": [
+          0.001,
+          0.003
+        ],
+        "last": {
+          "line": 1016,
+          "average_ms": 0.002,
+          "min_ms": 0.001,
+          "max_ms": 0.004
+        }
+      },
+      "WaitWakeToSubmitEnd": {
+        "samples": 60,
+        "median_average_ms": 7.878,
+        "range_average_ms": [
+          7.267,
+          9.071
+        ],
+        "last": {
+          "line": 1017,
+          "average_ms": 8.123,
+          "min_ms": 6.579,
+          "max_ms": 11.22
+        }
+      },
+      "LayerCommitToGpuEnd": {
+        "samples": 60,
+        "median_average_ms": 18.3305,
+        "range_average_ms": [
+          14.029,
+          20.84
+        ],
+        "last": {
+          "line": 1018,
+          "average_ms": 17.984,
+          "min_ms": 15.544,
+          "max_ms": 19.176
+        }
+      },
+      "WaitWakeToNextPredict": {
+        "samples": 60,
+        "median_average_ms": 35.2965,
+        "range_average_ms": [
+          31.242,
+          38.927
+        ],
+        "last": {
+          "line": 1019,
+          "average_ms": 35.267,
+          "min_ms": 32.176,
+          "max_ms": 63.502
+        }
+      },
+      "PredictEndToWaitWake": {
+        "samples": 60,
+        "median_average_ms": 1.067,
+        "range_average_ms": [
+          1.053,
+          1.111
+        ],
+        "last": {
+          "line": 1021,
+          "average_ms": 1.081,
+          "min_ms": 0.976,
+          "max_ms": 1.443
+        }
+      },
+      "PredictEndToNextPredict": {
+        "samples": 60,
+        "median_average_ms": 36.375,
+        "range_average_ms": [
+          32.304,
+          39.999
+        ],
+        "last": {
+          "line": 1022,
+          "average_ms": 36.348,
+          "min_ms": 33.236,
+          "max_ms": 64.577
+        }
+      },
+      "PredictEndToGpuEnd": {
+        "samples": 60,
+        "median_average_ms": 27.1255,
+        "range_average_ms": [
+          22.74,
+          30.059
+        ],
+        "last": {
+          "line": 1023,
+          "average_ms": 27.154,
+          "min_ms": 25.136,
+          "max_ms": 29.153
+        }
+      },
+      "GpuEndToEncodeEnd": {
+        "samples": 60,
+        "median_average_ms": 11.113,
+        "range_average_ms": [
+          11.079,
+          11.191
+        ],
+        "last": {
+          "line": 1025,
+          "average_ms": 11.09,
+          "min_ms": 11.028,
+          "max_ms": 11.243
+        }
+      }
+    }
+  },
+  {
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-11T125443Z.log",
+    "metrics": {
+      "DevicePoseInterval": {
+        "samples": 41,
+        "median_average_ms": 13.903,
+        "range_average_ms": [
+          13.856,
+          14.676
+        ],
+        "last": {
+          "line": 791,
+          "average_ms": 13.885,
+          "min_ms": 11.7,
+          "max_ms": 16.5
+        }
+      },
+      "PoseInterarrivalTime": {
+        "samples": 41,
+        "median_average_ms": 13.903,
+        "range_average_ms": [
+          13.751,
+          14.688
+        ],
+        "last": {
+          "line": 795,
+          "average_ms": 13.888,
+          "min_ms": 11.282,
+          "max_ms": 16.586
+        }
+      },
+      "PredictDuration": {
+        "samples": 40,
+        "median_average_ms": 0.002,
+        "range_average_ms": [
+          0.001,
+          0.003
+        ],
+        "last": {
+          "line": 787,
+          "average_ms": 0.002,
+          "min_ms": 0.001,
+          "max_ms": 0.003
+        }
+      },
+      "WaitWakeToSubmitEnd": {
+        "samples": 40,
+        "median_average_ms": 8.061,
+        "range_average_ms": [
+          7.458,
+          8.499
+        ],
+        "last": {
+          "line": 788,
+          "average_ms": 7.636,
+          "min_ms": 6.564,
+          "max_ms": 9.925
+        }
+      },
+      "LayerCommitToGpuEnd": {
+        "samples": 40,
+        "median_average_ms": 17.906,
+        "range_average_ms": [
+          12.99,
+          18.916
+        ],
+        "last": {
+          "line": 789,
+          "average_ms": 17.971,
+          "min_ms": 15.793,
+          "max_ms": 19.008
+        }
+      },
+      "WaitWakeToNextPredict": {
+        "samples": 40,
+        "median_average_ms": 34.9695,
+        "range_average_ms": [
+          30.068,
+          37.235
+        ],
+        "last": {
+          "line": 790,
+          "average_ms": 34.497,
+          "min_ms": 32.128,
+          "max_ms": 50.877
+        }
+      },
+      "PredictEndToWaitWake": {
+        "samples": 40,
+        "median_average_ms": 1.0685,
+        "range_average_ms": [
+          1.058,
+          1.127
+        ],
+        "last": {
+          "line": 792,
+          "average_ms": 1.063,
+          "min_ms": 0.932,
+          "max_ms": 1.149
+        }
+      },
+      "PredictEndToNextPredict": {
+        "samples": 40,
+        "median_average_ms": 36.036,
+        "range_average_ms": [
+          31.134,
+          38.321
+        ],
+        "last": {
+          "line": 793,
+          "average_ms": 35.559,
+          "min_ms": 33.188,
+          "max_ms": 51.939
+        }
+      },
+      "PredictEndToGpuEnd": {
+        "samples": 40,
+        "median_average_ms": 26.766,
+        "range_average_ms": [
+          21.844,
+          28.086
+        ],
+        "last": {
+          "line": 794,
+          "average_ms": 26.632,
+          "min_ms": 24.91,
+          "max_ms": 29.498
+        }
+      },
+      "GpuEndToEncodeEnd": {
+        "samples": 40,
+        "median_average_ms": 11.087,
+        "range_average_ms": [
+          11.0,
+          11.119
+        ],
+        "last": {
+          "line": 796,
+          "average_ms": 11.087,
+          "min_ms": 11.032,
+          "max_ms": 11.326
+        }
+      }
+    }
+  },
+  {
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-11T131539Z.log",
+    "metrics": {
+      "DevicePoseInterval": {
+        "samples": 114,
+        "median_average_ms": 13.898,
+        "range_average_ms": [
+          13.848,
+          14.484
+        ],
+        "last": {
+          "line": 1735,
+          "average_ms": 13.898,
+          "min_ms": 11.5,
+          "max_ms": 16.2
+        }
+      },
+      "PoseInterarrivalTime": {
+        "samples": 114,
+        "median_average_ms": 13.893,
+        "range_average_ms": [
+          13.756,
+          14.374
+        ],
+        "last": {
+          "line": 1739,
+          "average_ms": 13.893,
+          "min_ms": 9.301,
+          "max_ms": 18.14
+        }
+      },
+      "PredictDuration": {
+        "samples": 114,
+        "median_average_ms": 0.002,
+        "range_average_ms": [
+          0.001,
+          0.016
+        ],
+        "last": {
+          "line": 1731,
+          "average_ms": 0.002,
+          "min_ms": 0.001,
+          "max_ms": 0.005
+        }
+      },
+      "WaitWakeToSubmitEnd": {
+        "samples": 114,
+        "median_average_ms": 7.949999999999999,
+        "range_average_ms": [
+          7.244,
+          10.035
+        ],
+        "last": {
+          "line": 1732,
+          "average_ms": 7.94,
+          "min_ms": 6.434,
+          "max_ms": 10.779
+        }
+      },
+      "LayerCommitToGpuEnd": {
+        "samples": 114,
+        "median_average_ms": 13.2645,
+        "range_average_ms": [
+          12.188,
+          16.254
+        ],
+        "last": {
+          "line": 1733,
+          "average_ms": 13.038,
+          "min_ms": 10.989,
+          "max_ms": 14.06
+        }
+      },
+      "WaitWakeToNextPredict": {
+        "samples": 114,
+        "median_average_ms": 30.814500000000002,
+        "range_average_ms": [
+          29.88,
+          34.728
+        ],
+        "last": {
+          "line": 1734,
+          "average_ms": 30.445,
+          "min_ms": 27.196,
+          "max_ms": 51.046
+        }
+      },
+      "PredictEndToWaitWake": {
+        "samples": 114,
+        "median_average_ms": 1.067,
+        "range_average_ms": [
+          1.05,
+          1.136
+        ],
+        "last": {
+          "line": 1736,
+          "average_ms": 1.069,
+          "min_ms": 1.01,
+          "max_ms": 1.237
+        }
+      },
+      "PredictEndToNextPredict": {
+        "samples": 114,
+        "median_average_ms": 31.8825,
+        "range_average_ms": [
+          30.95,
+          35.793
+        ],
+        "last": {
+          "line": 1737,
+          "average_ms": 31.515,
+          "min_ms": 28.255,
+          "max_ms": 52.116
+        }
+      },
+      "PredictEndToGpuEnd": {
+        "samples": 114,
+        "median_average_ms": 22.076,
+        "range_average_ms": [
+          21.234,
+          25.755
+        ],
+        "last": {
+          "line": 1738,
+          "average_ms": 22.007,
+          "min_ms": 20.658,
+          "max_ms": 23.541
+        }
+      },
+      "GpuEndToEncodeEnd": {
+        "samples": 114,
+        "median_average_ms": 11.021,
+        "range_average_ms": [
+          10.998,
+          11.054
+        ],
+        "last": {
+          "line": 1740,
+          "average_ms": 11.021,
+          "min_ms": 10.958,
+          "max_ms": 11.146
+        }
+      }
+    }
+  },
+  {
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-11T145627Z.log",
+    "metrics": {
+      "DevicePoseInterval": {
+        "samples": 258,
+        "median_average_ms": 13.9,
+        "range_average_ms": [
+          13.8,
+          15.125
+        ],
+        "last": {
+          "line": 3530,
+          "average_ms": 15.03,
+          "min_ms": 10.8,
+          "max_ms": 37.6
+        }
+      },
+      "PoseInterarrivalTime": {
+        "samples": 258,
+        "median_average_ms": 13.900500000000001,
+        "range_average_ms": [
+          13.171,
+          15.105
+        ],
+        "last": {
+          "line": 3534,
+          "average_ms": 15.007,
+          "min_ms": 8.852,
+          "max_ms": 34.595
+        }
+      },
+      "PredictDuration": {
+        "samples": 258,
+        "median_average_ms": 0.002,
+        "range_average_ms": [
+          0.001,
+          0.005
+        ],
+        "last": {
+          "line": 3526,
+          "average_ms": 0.002,
+          "min_ms": 0.001,
+          "max_ms": 0.002
+        }
+      },
+      "WaitWakeToSubmitEnd": {
+        "samples": 258,
+        "median_average_ms": 8.0495,
+        "range_average_ms": [
+          7.207,
+          9.542
+        ],
+        "last": {
+          "line": 3527,
+          "average_ms": 7.899,
+          "min_ms": 6.454,
+          "max_ms": 12.482
+        }
+      },
+      "LayerCommitToGpuEnd": {
+        "samples": 258,
+        "median_average_ms": 15.525,
+        "range_average_ms": [
+          10.765,
+          21.46
+        ],
+        "last": {
+          "line": 3528,
+          "average_ms": 15.896,
+          "min_ms": 12.903,
+          "max_ms": 17.021
+        }
+      },
+      "WaitWakeToNextPredict": {
+        "samples": 258,
+        "median_average_ms": 33.1495,
+        "range_average_ms": [
+          28.975,
+          38.657
+        ],
+        "last": {
+          "line": 3529,
+          "average_ms": 32.86,
+          "min_ms": 30.11,
+          "max_ms": 53.582
+        }
+      },
+      "PredictEndToWaitWake": {
+        "samples": 258,
+        "median_average_ms": 1.067,
+        "range_average_ms": [
+          1.053,
+          1.092
+        ],
+        "last": {
+          "line": 3531,
+          "average_ms": 1.076,
+          "min_ms": 1.023,
+          "max_ms": 1.164
+        }
+      },
+      "PredictEndToNextPredict": {
+        "samples": 258,
+        "median_average_ms": 34.2185,
+        "range_average_ms": [
+          30.045,
+          39.723
+        ],
+        "last": {
+          "line": 3532,
+          "average_ms": 33.936,
+          "min_ms": 31.171,
+          "max_ms": 54.642
+        }
+      },
+      "PredictEndToGpuEnd": {
+        "samples": 258,
+        "median_average_ms": 24.6625,
+        "range_average_ms": [
+          20.345,
+          30.548
+        ],
+        "last": {
+          "line": 3533,
+          "average_ms": 24.829,
+          "min_ms": 23.206,
+          "max_ms": 26.632
+        }
+      },
+      "GpuEndToEncodeEnd": {
+        "samples": 258,
+        "median_average_ms": 11.025,
+        "range_average_ms": [
+          10.991,
+          11.158
+        ],
+        "last": {
+          "line": 3535,
+          "average_ms": 11.101,
+          "min_ms": 11.044,
+          "max_ms": 11.255
+        }
+      }
+    }
+  },
+  {
+    "path": "$HOME/.cloudxr/logs/cxr_server.2026-09-12T135010Z.log",
+    "metrics": {
+      "DevicePoseInterval": {
+        "samples": 55,
+        "median_average_ms": 13.918,
+        "range_average_ms": [
+          13.863,
+          14.528
+        ],
+        "last": {
+          "line": 939,
+          "average_ms": 14.115,
+          "min_ms": 11.9,
+          "max_ms": 23.4
+        }
+      },
+      "PoseInterarrivalTime": {
+        "samples": 55,
+        "median_average_ms": 13.915,
+        "range_average_ms": [
+          13.677,
+          14.529
+        ],
+        "last": {
+          "line": 943,
+          "average_ms": 14.114,
+          "min_ms": 11.719,
+          "max_ms": 23.061
+        }
+      },
+      "PredictDuration": {
+        "samples": 54,
+        "median_average_ms": 0.003,
+        "range_average_ms": [
+          0.002,
+          0.74
+        ],
+        "last": {
+          "line": 935,
+          "average_ms": 0.003,
+          "min_ms": 0.002,
+          "max_ms": 0.007
+        }
+      },
+      "WaitWakeToSubmitEnd": {
+        "samples": 54,
+        "median_average_ms": 8.636,
+        "range_average_ms": [
+          7.833,
+          11.992
+        ],
+        "last": {
+          "line": 936,
+          "average_ms": 8.839,
+          "min_ms": 7.114,
+          "max_ms": 12.895
+        }
+      },
+      "LayerCommitToGpuEnd": {
+        "samples": 54,
+        "median_average_ms": 40.341499999999996,
+        "range_average_ms": [
+          33.97,
+          44.726
+        ],
+        "last": {
+          "line": 937,
+          "average_ms": 43.508,
+          "min_ms": 17.194,
+          "max_ms": 66.218
+        }
+      },
+      "WaitWakeToNextPredict": {
+        "samples": 54,
+        "median_average_ms": 103.53049999999999,
+        "range_average_ms": [
+          97.727,
+          108.754
+        ],
+        "last": {
+          "line": 938,
+          "average_ms": 105.005,
+          "min_ms": 54.882,
+          "max_ms": 206.58
+        }
+      },
+      "PredictEndToWaitWake": {
+        "samples": 54,
+        "median_average_ms": 1.0665,
+        "range_average_ms": [
+          1.038,
+          1.09
+        ],
+        "last": {
+          "line": 940,
+          "average_ms": 1.09,
+          "min_ms": 0.971,
+          "max_ms": 2.162
+        }
+      },
+      "PredictEndToNextPredict": {
+        "samples": 54,
+        "median_average_ms": 104.6095,
+        "range_average_ms": [
+          98.795,
+          109.832
+        ],
+        "last": {
+          "line": 941,
+          "average_ms": 106.095,
+          "min_ms": 55.953,
+          "max_ms": 207.573
+        }
+      },
+      "PredictEndToGpuEnd": {
+        "samples": 54,
+        "median_average_ms": 50.256,
+        "range_average_ms": [
+          43.132,
+          55.418
+        ],
+        "last": {
+          "line": 942,
+          "average_ms": 53.388,
+          "min_ms": 28.055,
+          "max_ms": 75.387
+        }
+      },
+      "GpuEndToEncodeEnd": {
+        "samples": 54,
+        "median_average_ms": 12.3895,
+        "range_average_ms": [
+          11.967,
+          12.594
+        ],
+        "last": {
+          "line": 944,
+          "average_ms": 12.43,
+          "min_ms": 11.083,
+          "max_ms": 14.021
+        }
+      }
+    }
+  }
+]

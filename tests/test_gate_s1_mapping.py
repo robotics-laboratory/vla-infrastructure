@@ -137,9 +137,7 @@ def test_robosyn_demo_pins_matching_webxr_client_and_records_provenance() -> Non
     client_url = config["cloudxr_web_client"]["url"]
     assert client_url == "https://nvidia.github.io/IsaacTeleop/client/release-1.4.x/"
 
-    diagnostic = (ROOT / "tools/quest_xr_diagnostics.py").read_text(encoding="utf-8")
     launcher = (ROOT / "tools/launch_isaac_robosyn_vr_demo.py").read_text(encoding="utf-8")
-    assert f'_CLOUDXR_WEB_CLIENT_URL = "{client_url}"' in diagnostic
     assert '"schema": "piper_x_robosyn_vr_launch_provenance_v1"' in launcher
     assert '"tracked_status": _git_output(' in launcher
     assert '"passed_to_host_process": False' in launcher

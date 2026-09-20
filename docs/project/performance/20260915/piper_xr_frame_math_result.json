@@ -1,0 +1,45 @@
+{
+  "scope": "synthetic transforms evaluated with exact pinned function bodies; not a live R3 reproduction",
+  "gf_row_to_column_roundtrip_passed": true,
+  "full_navigation_transform_right_delta_passed": true,
+  "new_view_right_world": [
+    1.0,
+    0.0,
+    0.0
+  ],
+  "world_delta_m_rad": [
+    0.010000000000000009,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "stale_anchor_delta_m_rad": [
+    0.0,
+    -0.010000000000000009,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "stale_direction_dot_new_view_right": 0.0,
+  "unchanged_controller_across_transform_change_delta_m_rad": [
+    0.4499999999999997,
+    0.40000000000000024,
+    1.4000000000000001,
+    -1.233147733414421e-16,
+    1.233147733414421e-16,
+    1.5707963267948963
+  ],
+  "origin_jump_translation_norm_m": 1.523975065412817,
+  "origin_jump_rotation_norm_rad": 1.5707963267948963,
+  "proper_new_epoch_baseline_delta": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ]
+}

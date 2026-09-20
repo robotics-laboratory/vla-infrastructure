@@ -1,0 +1,9 @@
+{
+  "deprecated_runtime_call_occurrences": 0,
+  "deprecated_warning_occurrences": 0,
+  "new_api_call_occurrences": 2,
+  "smoke_passed": true,
+  "control_steps": 16,
+  "valid_bimanual_frames": 16,
+  "canonical_d0_changed": false
+}

@@ -1,0 +1,109 @@
+{
+  "source": "/tmp/robosyn-vr.log",
+  "sha256": "346414d3334464e76e79067600f56c49b56e2d2eb6dc6b15661c5cdbd886f078",
+  "line_count": 935,
+  "event_counts": {
+    "demo_vr_camera_feed_bound": 1,
+    "s2_status": 96,
+    "demo_xr_navigation_frame_applied": 1,
+    "demo_xr_navigation_retargeters_rebased": 1,
+    "demo_backdrop_visibility_changed": 1,
+    "demo_vr_camera_feed_visibility_changed": 3,
+    "sensitivity_mode_changed": 6,
+    "demo_xr_recenter_requested": 1
+  },
+  "last_recenter": {
+    "line": 875,
+    "authoritative_scene_geometry_changed": false,
+    "control": "right_thumbstick_click",
+    "event": "demo_xr_recenter_requested",
+    "event_origin": "controller_pipeline",
+    "quest_button": "R3",
+    "scheduled": true,
+    "session_restart": false,
+    "view_prim_path": "/World/RobosynDemo/SceneCamera"
+  },
+  "navigation_frame_applied_after_last_recenter": 0,
+  "status_after_last_recenter": [
+    {
+      "line": 878,
+      "step": 2550,
+      "left": "session_inactive",
+      "right": "session_inactive"
+    },
+    {
+      "line": 883,
+      "step": 2580,
+      "left": "session_inactive",
+      "right": "session_inactive"
+    },
+    {
+      "line": 888,
+      "step": 2610,
+      "left": "session_inactive",
+      "right": "session_inactive"
+    },
+    {
+      "line": 893,
+      "step": 2640,
+      "left": "session_inactive",
+      "right": "session_inactive"
+    },
+    {
+      "line": 898,
+      "step": 2670,
+      "left": "session_inactive",
+      "right": "session_inactive"
+    },
+    {
+      "line": 903,
+      "step": 2700,
+      "left": "session_inactive",
+      "right": "session_inactive"
+    },
+    {
+      "line": 908,
+      "step": 2730,
+      "left": "session_inactive",
+      "right": "session_inactive"
+    },
+    {
+      "line": 913,
+      "step": 2760,
+      "left": "session_inactive",
+      "right": "session_inactive"
+    },
+    {
+      "line": 918,
+      "step": 2790,
+      "left": "session_inactive",
+      "right": "session_inactive"
+    },
+    {
+      "line": 923,
+      "step": 2820,
+      "left": "session_inactive",
+      "right": "session_inactive"
+    },
+    {
+      "line": 928,
+      "step": 2850,
+      "left": "session_inactive",
+      "right": "session_inactive"
+    },
+    {
+      "line": 933,
+      "step": 2880,
+      "left": "session_inactive",
+      "right": "session_inactive"
+    }
+  ],
+  "terminated_by_user": true,
+  "human_observations": [
+    "R3 freezes scene/control",
+    "camera preview recurses",
+    "wrist camera position/orientation is wrong and inverted",
+    "binary precise mode is too slow; per-hand thumbstick slider requested",
+    "camera panels are too low and occlude robots"
+  ]
+}

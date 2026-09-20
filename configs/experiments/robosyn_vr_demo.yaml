@@ -1,14 +1,15 @@
 revision: piper_x_robosyn_vr_demo_v1
 status: EXPERIMENTAL_TEST_ONLY_NOT_A_GATE
-extends_runtime: configs/isaac_s2_runtime.yaml
+extends_runtime: configs/isaac61_s2_runtime.yaml
 base_checkpoint: 031143d576d923d6029d0226d963cbedaec1f6d4
 
 environment:
-  isaac_lab_commit: 913ac53f51b2f8d02c9e121caa4cbdd06262948e
-  isaac_lab_package_version: 16.4.0
-  isaac_sim_version: 6.0.1.0
+  # Default isaac61 stack; --stack legacy selects the separate pinned rollback in STACKS.
+  isaac_lab_commit: 0c2e2c64e51922d088b695d72ffe03faa5c6b95d
+  isaac_lab_package_version: 17.0.2
+  isaac_sim_version: 6.1.0.0
   isaacteleop_version: 1.4.98rc1
-  isaaclab_teleop_version: 0.8.0
+  isaaclab_teleop_version: 0.9.0
   cloudxr_runtime_version: 6.2.1
 
 cloudxr_web_client:

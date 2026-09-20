@@ -16,6 +16,7 @@ import numpy as np
 import yaml
 
 from isaac_s1_runtime import NativeBimanualTargets, jsonable
+from isaac_s2_performance import S2PerformanceLogger
 from isaac_s2_processor import (
     BimanualS2TeleopProcessor,
     PROCESSOR_REVISION,
@@ -316,6 +317,20 @@ def run_s2(env, args_cli, simulation_app) -> int:
     saturated_frames = 0
     control_steps = 0
 
+    performance = (
+        S2PerformanceLogger(
+            args_cli.s2_performance_log,
+            window_steps=args_cli.s2_performance_window_steps,
+            warmup_steps=args_cli.s2_performance_warmup_steps,
+            target_hz=30.0,
+        )
+        if args_cli.s2_performance_log is not None
+        else None
+    )
+    performance_summary: dict[str, Any] | None = None
+    env.performance_logger = performance
+    interrupted = False
+
     print(
         f"[S2] CloudXR {actual_versions['cloudxr']} profile={args_cli.s2_cloudxr_profile} "
         f"kit_xr_bridge={bool(args_cli.xr)}",
@@ -332,9 +347,27 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 if not simulation_app.is_running():
                     break
                 control_steps = step
+                if performance is not None:
+                    performance.begin_step()
+                    stage_started_ns = time.perf_counter_ns()
                 before_pose = ik.tcp_poses_base()
+                if performance is not None:
+                    performance.add_stage(
+                        "tcp_pose_before", time.perf_counter_ns() - stage_started_ns
+                    )
+                    stage_started_ns = time.perf_counter_ns()
                 action = device.advance()
+                if performance is not None:
+                    performance.add_stage(
+                        "teleop_advance", time.perf_counter_ns() - stage_started_ns
+                    )
+                    stage_started_ns = time.perf_counter_ns()
                 events = poll_control_events(device)
+                if performance is not None:
+                    performance.add_stage(
+                        "control_events", time.perf_counter_ns() - stage_started_ns
+                    )
+                    command_started_ns = time.perf_counter_ns()
                 recenter_execution_reset = bool(
                     device.navigation_reset_applied and events.should_reset
                 )
@@ -460,9 +493,27 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         ),
                         flush=True,
                     )
+                if performance is not None:
+                    performance.add_stage(
+                        "command_processing", time.perf_counter_ns() - command_started_ns
+                    )
+                    stage_started_ns = time.perf_counter_ns()
                 saturated_frames += int(ik.apply(command))
+                if performance is not None:
+                    performance.add_stage("ik_apply", time.perf_counter_ns() - stage_started_ns)
+                    stage_started_ns = time.perf_counter_ns()
                 env._advance(4)
+                if performance is not None:
+                    performance.add_stage(
+                        "simulation_advance", time.perf_counter_ns() - stage_started_ns
+                    )
+                    stage_started_ns = time.perf_counter_ns()
                 after_pose = ik.tcp_poses_base()
+                if performance is not None:
+                    performance.add_stage(
+                        "tcp_pose_after", time.perf_counter_ns() - stage_started_ns
+                    )
+                    bookkeeping_started_ns = time.perf_counter_ns()
 
                 for side, arm, before, after in zip(
                     ("left", "right"),
@@ -495,17 +546,31 @@ def run_s2(env, args_cli, simulation_app) -> int:
                             float(np.linalg.norm(after[:3] - before[:3])),
                         )
 
+                if performance is not None:
+                    performance.add_stage(
+                        "runtime_bookkeeping", time.perf_counter_ns() - bookkeeping_started_ns
+                    )
+                    stage_started_ns = time.perf_counter_ns()
                 camera = _camera_sample(env, previous_camera_indices)
+                if performance is not None:
+                    performance.add_stage(
+                        "camera_observation", time.perf_counter_ns() - stage_started_ns
+                    )
+                    stage_started_ns = time.perf_counter_ns()
                 previous_camera_indices = camera.pop("frame_indices")
                 camera_valid_frames += int(camera["valid"])
                 camera_advanced_frames += int(camera["strictly_advanced"])
                 if experiment is not None and control_steps % 15 == 0:
                     gpu_samples.append(_gpu_observation())
+                if performance is not None:
+                    performance.add_stage("gpu_probe", time.perf_counter_ns() - stage_started_ns)
+                    stage_started_ns = time.perf_counter_ns()
                 if control_steps % 30 == 0:
                     print(
                         json.dumps(
                             {
                                 "event": "s2_status",
+                                "monotonic_ns": time.monotonic_ns(),
                                 "step": control_steps,
                                 "session_running": device.session_running,
                                 "left": command.left.transition,
@@ -520,9 +585,45 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         ),
                         flush=True,
                     )
+                if performance is not None:
+                    performance.add_stage("status_emit", time.perf_counter_ns() - stage_started_ns)
+                    window = performance.end_step(
+                        control_steps,
+                        session_running=bool(device.session_running),
+                        action_available=action is not None,
+                        left_tracking_valid=bool(command.left.tracking_valid),
+                        right_tracking_valid=bool(command.right.tracking_valid),
+                        camera_valid=bool(camera["valid"]),
+                        camera_advanced=bool(camera["strictly_advanced"]),
+                        hud_visible=(
+                            experiment.display_visible if experiment is not None else None
+                        ),
+                        backdrop_visible=(
+                            experiment.backdrop_visible if experiment is not None else None
+                        ),
+                    )
+                    if window is not None:
+                        print(json.dumps(window, sort_keys=True), flush=True)
+    except KeyboardInterrupt:
+        interrupted = True
+        print(
+            json.dumps(
+                {
+                    "event": "s2_stop_requested",
+                    "reason": "keyboard_interrupt",
+                    "step": control_steps,
+                },
+                sort_keys=True,
+            ),
+            flush=True,
+        )
     finally:
-        if experiment is not None:
-            experiment.close()
+        try:
+            if experiment is not None:
+                experiment.close()
+        finally:
+            if performance is not None:
+                performance_summary = performance.close()
 
     elapsed = time.perf_counter() - started
     gpu_end = _gpu_observation()
@@ -651,6 +752,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
         },
         "execution": {
             "control_steps": control_steps,
+            "stopped_by_user": interrupted,
             "wall_seconds": elapsed,
             "control_hz": control_steps / elapsed,
             "physics_hz": (control_steps * 4) / elapsed,
@@ -660,6 +762,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
             "motion_scale_observed": motion_scale_observed,
             "transitions": transition_counts,
             "maximum_rebase_or_clutch_tcp_motion_m": maximum_rebase_motion_m,
+            **(
+                {"performance": performance_summary} if performance_summary is not None else {}
+            ),
         },
         "cameras": {
             "left_wrist": "640x480 uint8 RGB HWC",
@@ -669,7 +774,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
         },
         "gpu": {"start": gpu_start, "end": gpu_end},
         "physical_human_gate": "required_not_implied_by_runtime_smoke",
-        "passed": passed,
+        "passed": passed and not interrupted,
     }
     if experiment is not None:
         report["gpu"]["samples"] = gpu_samples
@@ -682,4 +787,4 @@ def run_s2(env, args_cli, simulation_app) -> int:
             encoding="utf-8",
         )
     print(json.dumps(jsonable(report), sort_keys=True), flush=True)
-    return 0 if passed else 1
+    return 130 if interrupted else (0 if passed else 1)

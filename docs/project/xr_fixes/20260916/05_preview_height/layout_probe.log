@@ -1,0 +1,35 @@
+{
+  "placement": "head_locked",
+  "center_offset_m": [
+    0.0,
+    0.18
+  ],
+  "resolved": [
+    {
+      "camera": "left_wrist",
+      "offset_m": [
+        -0.1975,
+        0.18
+      ],
+      "distance_m": 0.65,
+      "panel_size_m": [
+        0.36,
+        0.30999999999999994
+      ],
+      "lower_edge_y_m": 0.025000000000000022
+    },
+    {
+      "camera": "right_wrist",
+      "offset_m": [
+        0.1975,
+        0.18
+      ],
+      "distance_m": 0.65,
+      "panel_size_m": [
+        0.36,
+        0.30999999999999994
+      ],
+      "lower_edge_y_m": 0.025000000000000022
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+Warp DeprecationWarning: warp.config.quiet is deprecated; use warp.config.log_level = warp.LOG_WARNING to suppress the init banner.
+/data/vla-infrastructure/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/torch/jit/_script.py:1488: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+test_absence_clears_pose_baseline_and_smoothing_before_far_recovery (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_absence_clears_pose_baseline_and_smoothing_before_far_recovery) ... ok
+test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery) ... ERROR
+test_demo_backdrop_output_uses_free_right_secondary_b_button (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_backdrop_output_uses_free_right_secondary_b_button) ... ok
+test_demo_backdrop_toggle_is_rising_edge_only (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_backdrop_toggle_is_rising_edge_only) ... {"backdrop_visible": false, "control": "right_secondary_click", "event": "demo_backdrop_visibility_changed", "event_origin": "controller_pipeline", "quest_button": "B", "visual_only": true}
+{"backdrop_visible": true, "control": "right_secondary_click", "event": "demo_backdrop_visibility_changed", "event_origin": "controller_pipeline", "quest_button": "B", "visual_only": true}
+ok
+test_demo_camera_feed_cpu_staging_preserves_rgba_and_reuses_buffer (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_camera_feed_cpu_staging_preserves_rgba_and_reuses_buffer) ... ok
+test_demo_controls_append_three_values_without_changing_production_shape (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_controls_append_three_values_without_changing_production_shape) ... ok
+test_demo_display_edges_hide_panels_without_closing_rgb_source (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_display_edges_hide_panels_without_closing_rgb_source) ... {"event": "demo_vr_camera_feed_bound", "feeds": [{"camera": "wrist", "rgb_stddev": 0.0, "source_alpha_range": [255, 255], "source_device": "cpu", "upload_alpha_range": [255, 255], "upload_device": "cpu"}, {"camera": "wrist", "rgb_stddev": 0.0, "source_alpha_range": [255, 255], "source_device": "cpu", "upload_alpha_range": [255, 255], "upload_device": "cpu"}], "layout": "head_locked", "upload_path": "cpu_staged"}
+[DEMO] wrist camera panels prebound hidden before XR session
+[DEMO] wrist camera display ON
+{"capture_continues": true, "control": "left_primary_click", "display_visible": true, "event": "demo_vr_camera_feed_visibility_changed", "event_origin": "controller_pipeline", "feed_bound": true, "quest_button": "X"}
+[DEMO] wrist camera display OFF
+{"capture_continues": true, "control": "left_primary_click", "display_visible": false, "event": "demo_vr_camera_feed_visibility_changed", "event_origin": "controller_pipeline", "feed_bound": true, "quest_button": "X"}
+[DEMO] wrist camera display ON
+{"capture_continues": true, "control": "left_primary_click", "display_visible": true, "event": "demo_vr_camera_feed_visibility_changed", "event_origin": "controller_pipeline", "feed_bound": true, "quest_button": "X"}
+ok
+test_demo_display_output_uses_free_left_primary_x_button (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_display_output_uses_free_left_primary_x_button) ... ok
+test_demo_recenter_controller_transform_tracks_xr_space_origin (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_recenter_controller_transform_tracks_xr_space_origin) ... ok
+test_demo_recenter_is_edge_triggered_and_uses_upstream_xr_teleport (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_recenter_is_edge_triggered_and_uses_upstream_xr_teleport) ... {"authoritative_scene_geometry_changed": false, "control": "right_thumbstick_click", "event": "demo_xr_recenter_requested", "event_origin": "controller_pipeline", "quest_button": "R3", "scheduled": true, "session_restart": false, "view_prim_path": "/World/RobosynDemo/SceneCamera"}
+{"authoritative_scene_geometry_changed": false, "control": "right_thumbstick_click", "event": "demo_xr_recenter_requested", "event_origin": "controller_pipeline", "quest_button": "R3", "scheduled": true, "session_restart": false, "view_prim_path": "/World/RobosynDemo/SceneCamera"}
+ok
+test_demo_recenter_output_uses_free_right_thumbstick_click (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_recenter_output_uses_free_right_thumbstick_click) ... ok
+test_demo_sensitivity_uses_left_y_for_both_arm_state_outputs (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_sensitivity_uses_left_y_for_both_arm_state_outputs) ... ok
+test_invalid_and_default_pose_are_ignored_and_recovery_is_zero (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_invalid_and_default_pose_are_ignored_and_recovery_is_zero) ... ok
+test_recenter_holds_across_delayed_application_then_resets_once (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_recenter_holds_across_delayed_application_then_resets_once) ... {"epoch": 1, "event": "demo_xr_navigation_frame_applied", "monotonic_ns": 1708785988856478, "recenter": true, "world_T_physical": [[1.0, 0.0, 0.0, 0.6000000238418579], [0.0, 1.0, 0.0, 0.10000000149011612], [0.0, 0.0, 1.0, 1.399999976158142], [0.0, 0.0, 0.0, 1.0]]}
+{"epoch": 2, "event": "demo_xr_navigation_frame_applied", "monotonic_ns": 1708785989004198, "recenter": true, "world_T_physical": [[1.0, 0.0, 0.0, 0.6000000238418579], [0.0, 1.0, 0.0, 0.10000000149011612], [0.0, 0.0, 1.0, 1.399999976158142], [0.0, 0.0, 0.0, 1.0]]}
+ok
+test_rightward_relative_motion_preserves_direction_after_navigation_yaw (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_rightward_relative_motion_preserves_direction_after_navigation_yaw) ... ERROR
+test_state_uses_thumbstick_click_and_effective_pose_validity (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_state_uses_thumbstick_click_and_effective_pose_validity) ... ok
+test_all_translation_axes_and_signs_are_preserved_for_each_arm (tests.test_isaac_s2_processor.IsaacS2ProcessorTests.test_all_translation_axes_and_signs_are_preserved_for_each_arm) ... ok
+test_clutch_freezes_and_release_rebases_independently (tests.test_isaac_s2_processor.IsaacS2ProcessorTests.test_clutch_freezes_and_release_rebases_independently) ... ok
+test_demo_candidate_gains_and_shared_y_edges_switch_both_without_jump (tests.test_isaac_s2_processor.IsaacS2ProcessorTests.test_demo_candidate_gains_and_shared_y_edges_switch_both_without_jump) ... ok
+test_fixed_upstream_action_layout (tests.test_isaac_s2_processor.IsaacS2ProcessorTests.test_fixed_upstream_action_layout) ... ok
+test_independent_loss_does_not_disable_opposite_controller (tests.test_isaac_s2_processor.IsaacS2ProcessorTests.test_independent_loss_does_not_disable_opposite_controller) ... ok
+test_left_and_right_routes_are_independent (tests.test_isaac_s2_processor.IsaacS2ProcessorTests.test_left_and_right_routes_are_independent) ... ok
+test_normal_and_precise_gains_are_concrete_and_symmetric (tests.test_isaac_s2_processor.IsaacS2ProcessorTests.test_normal_and_precise_gains_are_concrete_and_symmetric) ... ok
+test_reset_clears_clutch_tracking_gripper_and_sensitivity (tests.test_isaac_s2_processor.IsaacS2ProcessorTests.test_reset_clears_clutch_tracking_gripper_and_sensitivity) ... ok
+test_sensitivity_switch_is_independent_debounced_and_has_no_jump (tests.test_isaac_s2_processor.IsaacS2ProcessorTests.test_sensitivity_switch_is_independent_debounced_and_has_no_jump) ... ok
+test_tracking_loss_invalid_poses_and_far_recovery_emit_no_jump (tests.test_isaac_s2_processor.IsaacS2ProcessorTests.test_tracking_loss_invalid_poses_and_far_recovery_emit_no_jump) ... ok
+test_trigger_is_analog_at_required_points_and_independent (tests.test_isaac_s2_processor.IsaacS2ProcessorTests.test_trigger_is_analog_at_required_points_and_independent) ... ok
+test_unavailable_disconnect_and_reconnect_do_not_replay (tests.test_isaac_s2_processor.IsaacS2ProcessorTests.test_unavailable_disconnect_and_reconnect_do_not_replay) ... ok
+test_xyzw_spatial_rotation_axes_and_scale (tests.test_isaac_s2_processor.IsaacS2ProcessorTests.test_xyzw_spatial_rotation_axes_and_scale) ... ok
+
+======================================================================
+ERROR: test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repository-root>/tests/test_isaac_s2_upstream.py", line 548, in test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery
+    self.assertIsNone(device.advance())
+                      ^^^^^^^^^^^^^^^^
+  File "<repository-root>/tools/isaac_s2_upstream.py", line 459, in advance
+    transform = self._anchor_manager.get_world_matrix()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repository-root>/tools/isaac_s2_upstream.py", line 96, in get_world_matrix
+    return _gf_row_matrix_to_numpy_transform(physical_to_virtual)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repository-root>/tools/isaac_s2_upstream.py", line 70, in _gf_row_matrix_to_numpy_transform
+    raise RuntimeError("XR physical-to-virtual transform contains non-finite values")
+RuntimeError: XR physical-to-virtual transform contains non-finite values
+
+======================================================================
+ERROR: test_rightward_relative_motion_preserves_direction_after_navigation_yaw (tests.test_isaac_s2_upstream.IsaacS2UpstreamTests.test_rightward_relative_motion_preserves_direction_after_navigation_yaw)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repository-root>/tests/test_isaac_s2_upstream.py", line 570, in test_rightward_relative_motion_preserves_direction_after_navigation_yaw
+    np.testing.assert_array_equal(self._delta(retargeter, self._controller(retargeter, p0, side=side)), np.zeros(6))
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repository-root>/tests/test_isaac_s2_upstream.py", line 94, in _delta
+    result = retargeter({self.ControllersSource.LEFT: group})["ee_delta"][0]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/vla-infrastructure/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/isaacteleop/retargeting_engine/interface/base_retargeter.py", line 181, in __call__
+    self.compute(inputs, outputs, context)
+  File "/data/vla-infrastructure/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/isaacteleop/retargeting_engine/interface/base_retargeter.py", line 345, in compute
+    self._validate_inputs(inputs)
+  File "/data/vla-infrastructure/envs/isaac-s1-candidate-b/lib/python3.12/site-packages/isaacteleop/retargeting_engine/interface/base_retargeter.py", line 395, in _validate_inputs
+    raise ValueError(
+ValueError: Unexpected inputs {'controller_left'} (expected {'controller_right'})
+
+----------------------------------------------------------------------
+Ran 29 tests in 1.418s
+
+FAILED (errors=2)

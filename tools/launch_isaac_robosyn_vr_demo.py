@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import subprocess
 import shlex
+import signal
 
 import yaml
 
@@ -140,6 +141,18 @@ def main() -> int:
     )
     parser.add_argument("--scene-preview", type=Path, help="Optional scene-camera PNG output.")
     parser.add_argument("--max-control-steps", type=int, help="Default:60 for smoke,18000 otherwise.")
+    parser.add_argument(
+        "--performance-window-steps",
+        type=int,
+        default=30,
+        help="Control steps per live summary; JSONL retains every control step.",
+    )
+    parser.add_argument(
+        "--performance-warmup-steps",
+        type=int,
+        default=30,
+        help="Initial control steps excluded from aggregate performance statistics.",
+    )
     args = parser.parse_args()
     if args.max_control_steps is not None and args.max_control_steps <= 0:
         parser.error("--max-control-steps must be positive")
@@ -189,6 +202,11 @@ def main() -> int:
         "--report", str(output_dir / "result.json"),
         "--s2-max-control-steps", str(max_steps),
     ]
+    command.extend([
+        "--s2-performance-log", str(output_dir / "performance.jsonl"),
+        "--s2-performance-window-steps", str(args.performance_window_steps),
+        "--s2-performance-warmup-steps", str(args.performance_warmup_steps),
+    ])
     if args.stack == "isaac61":
         command += ["--viz", "kit"]
     if not args.smoke:
@@ -244,28 +262,46 @@ def main() -> int:
     print(f"Demo command: {' '.join(command)}", flush=True)
     if args.dry_run:
         return 0
-    with (output_dir / "stdout.log").open("w", encoding="utf-8") as log:
-        with subprocess.Popen(
-            command,
-            cwd=ROOT,
-            env=environment,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-        ) as process:
-            assert process.stdout is not None
-            for line in process.stdout:
-                log.write(line)
-                log.flush()
-                print(line, end="", flush=True)
-            return_code = process.wait()
+    stop_requested = False
+    process: subprocess.Popen[str] | None = None
+
+    def request_stop(_signum, _frame) -> None:
+        nonlocal stop_requested
+        if stop_requested:
+            return
+        stop_requested = True
+        print("Demo stop requested; waiting for final report...", flush=True)
+        if process is not None and process.poll() is None:
+            os.killpg(process.pid, signal.SIGINT)
+
+    previous_sigint = signal.signal(signal.SIGINT, request_stop)
+    try:
+        with (output_dir / "stdout.log").open("w", encoding="utf-8") as log:
+            with subprocess.Popen(
+                command,
+                cwd=ROOT,
+                env=environment,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                start_new_session=True,
+            ) as process:
+                assert process.stdout is not None
+                for line in process.stdout:
+                    log.write(line)
+                    log.flush()
+                    print(line, end="", flush=True)
+                return_code = process.wait()
+    finally:
+        signal.signal(signal.SIGINT, previous_sigint)
     report_path = output_dir / "result.json"
     if not report_path.is_file():
         return return_code or 1
     report = json.loads(report_path.read_text(encoding="utf-8"))
     report["process"] = {
         "exit_code": return_code,
-        "clean_shutdown": return_code == 0,
+        "clean_shutdown": return_code in (0, 130),
+        "stop_requested": stop_requested,
         "stdout_log": str(output_dir / "stdout.log"),
         "launcher": str(Path(__file__).resolve()),
     }

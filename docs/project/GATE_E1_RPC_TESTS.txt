@@ -1,0 +1,27 @@
+Gate E1 request identity / dedup implementation tests
+Timestamp: 2026-09-16T22:45:00+03:00
+Command: uv run pytest -q tests/test_isaac_eval_rpc.py
+
+.......                                                                  [100%]
+7 passed in 0.20s
+
+The concrete IsaacEvalEndpoint executes reset/step at most once for a given
+(run_id, request_id) and canonical operation/payload fingerprint. A different payload
+with the same identity and a second request ID for an already-consumed step are rejected
+without native execution.
+An ID first seen on a rejected request is still bound to that fingerprint and cannot be
+repaired with a different payload.
+Abort and close use the same identity and cached-response rules as reset and step.
+
+A native step exception is classified as infrastructure failure and cached by request
+identity, so an explicit retry cannot execute the uncertain native operation twice or
+masquerade as task truncation.
+
+The Unix-domain JSON-Lines integration reconnects to the same live endpoint and obtains
+the cached response. A deliberately delayed reset causes an ambiguous client timeout;
+there is no automatic retry, and an explicit reconnect/retry with the same request ID
+returns the cached reset response without a second environment call.
+
+The handshake endpoint_instance_id changes after endpoint restart, which invalidates the
+active client run as infrastructure failure. Native info dictionaries do not cross the
+boundary, and no pickle codec is present.

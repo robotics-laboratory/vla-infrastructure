@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import logging
+import math
 import time
 from dataclasses import dataclass, field
 from functools import cached_property
@@ -13,6 +13,7 @@ from lerobot.lerobot_types import RobotAction, RobotObservation
 from lerobot.robots.config import RobotConfig
 from lerobot.robots.robot import Robot
 from lerobot.utils.decorators import check_if_already_connected, check_if_not_connected
+from lerobot.utils.errors import DeviceNotConnectedError
 
 from .sdk import (
     PIPER_ACTION_KEYS,
@@ -26,8 +27,6 @@ from .sdk import (
     unit_to_milli,
     wait_enable_piper,
 )
-
-logger = logging.getLogger(__name__)
 
 
 @dataclass(kw_only=True)
@@ -48,6 +47,8 @@ class PiperXFollowerConfigBase:
     gripper_status_code: int = 0x01
     cameras: dict[str, CameraConfig] = field(default_factory=dict)
     disable_on_disconnect: bool = False
+    temporal_metadata: bool = False
+    max_clock_calibration_error_ms: float = 5.0
 
 
 @RobotConfig.register_subclass("piperx_follower")
@@ -63,6 +64,39 @@ class BiPiperXFollowerConfig(RobotConfig):
     right_arm_config: PiperXFollowerConfigBase
 
 
+@dataclass(frozen=True)
+class PiperXSampleTiming:
+    sequence: int
+    source_timestamp: float
+    clock_domain: str = "host_monotonic"
+
+
+@dataclass(frozen=True)
+class CameraAcquisitionSample:
+    """One camera frame paired atomically with source-owned acquisition identity."""
+
+    frame: Any
+    sequence: int
+    source_timestamp: float
+    clock_domain: str = "host_monotonic"
+
+    def __post_init__(self) -> None:
+        if (
+            isinstance(self.sequence, bool)
+            or not isinstance(self.sequence, int)
+            or self.sequence < 0
+        ):
+            raise ValueError("camera sequence must be a non-negative integer")
+        if (
+            isinstance(self.source_timestamp, bool)
+            or not isinstance(self.source_timestamp, (int, float))
+            or not math.isfinite(self.source_timestamp)
+        ):
+            raise ValueError("camera source_timestamp must be finite")
+        if self.clock_domain != "host_monotonic":
+            raise ValueError("camera acquisition time must already use host_monotonic")
+
+
 class PiperXFollower(Robot):
     """A PIPER-X follower using the pinned SDK's J-position command path."""
 
@@ -74,6 +108,8 @@ class PiperXFollower(Robot):
         self.id = config.id
         self.config = config
         self._is_connected = False
+        self._is_configured = False
+        self._is_enabled = False
         interface_cls, _ = get_piper_sdk()
         self.arm = interface_cls(
             can_name=resolve_piper_can_interface(config.port),
@@ -82,6 +118,10 @@ class PiperXFollower(Robot):
             logger_level=parse_piper_log_level(config.log_level),
         )
         self.cameras = make_cameras_from_configs(config.cameras)
+        self._wall_to_monotonic_offset_s: float | None = None
+        self._source_sequences: dict[str, int] = {}
+        self._source_identities: dict[str, object] = {}
+        self._latest_observation_timing: dict[str, PiperXSampleTiming] = {}
 
     @property
     def _motors_ft(self) -> dict[str, type[float]]:
@@ -106,26 +146,73 @@ class PiperXFollower(Robot):
     def is_connected(self) -> bool:
         return self._is_connected and all(camera.is_connected for camera in self.cameras.values())
 
+    @property
+    def is_configured(self) -> bool:
+        return self._is_connected and self._is_configured
+
+    @property
+    def is_enabled(self) -> bool:
+        return self.is_configured and self._is_enabled
+
+    @property
+    def is_motion_ready(self) -> bool:
+        return self.is_connected and self.is_configured and self.is_enabled
+
+    def _cleanup_connection(self, cameras: list[Any], *, force_disable: bool) -> list[Exception]:
+        errors: list[Exception] = []
+        if force_disable or self.config.disable_on_disconnect:
+            try:
+                self.arm.DisableArm(7)
+            except Exception as exc:
+                errors.append(exc)
+        try:
+            self.arm.DisconnectPort()
+        except Exception as exc:
+            errors.append(exc)
+        for camera in reversed(cameras):
+            try:
+                camera.disconnect()
+            except Exception as exc:
+                errors.append(exc)
+        self._is_enabled = False
+        self._is_configured = False
+        self._is_connected = False
+        return errors
+
+    @staticmethod
+    def _raise_cleanup_errors(errors: list[Exception]) -> None:
+        if not errors:
+            return
+        first, *remaining = errors
+        for error in remaining:
+            first.add_note(f"Additional cleanup failure: {error!r}")
+        raise first
+
     @check_if_already_connected
     def connect(self, calibrate: bool = True) -> None:
         del calibrate
-        self.arm.ConnectPort()
         connected_cameras: list[Any] = []
+        enable_attempted = False
         try:
+            if self.config.temporal_metadata:
+                self._calibrate_wall_to_monotonic()
+            self.arm.ConnectPort()
+            self._is_connected = True
             if self.config.startup_sleep_s > 0:
                 time.sleep(self.config.startup_sleep_s)
-            self._is_connected = True
             self.configure()
-            if self.config.enable_on_connect and not wait_enable_piper(self.arm, self.config.enable_timeout_s):
-                logger.warning("PIPER-X follower did not report enabled state before timeout.")
+            if self.config.enable_on_connect:
+                enable_attempted = True
+                self.enable()
             for camera in self.cameras.values():
-                camera.connect()
                 connected_cameras.append(camera)
-        except Exception:
-            self.arm.DisconnectPort()
-            for camera in connected_cameras:
-                camera.disconnect()
-            self._is_connected = False
+                camera.connect()
+        except Exception as exc:
+            cleanup_errors = self._cleanup_connection(
+                connected_cameras, force_disable=enable_attempted
+            )
+            for error in cleanup_errors:
+                exc.add_note(f"Connect rollback failure: {error!r}")
             raise
 
     @property
@@ -136,55 +223,290 @@ class PiperXFollower(Robot):
         pass
 
     def configure(self) -> None:
+        if not self._is_connected:
+            raise RuntimeError("Cannot configure PIPER-X before the CAN connection is established.")
+        self._is_configured = False
+        self._is_enabled = False
         self.arm.MasterSlaveConfig(PIPER_ROLE_FOLLOWER, 0x00, 0x00, 0x00)
-        self.arm.MotionCtrl_2(0x01, 0x01, self.config.speed_ratio, 0xAD if self.config.high_follow else 0x00)
+        self.arm.MotionCtrl_2(
+            0x01, 0x01, self.config.speed_ratio, 0xAD if self.config.high_follow else 0x00
+        )
+        self._is_configured = True
+
+    def enable(self) -> None:
+        if not self.is_configured:
+            raise RuntimeError("Cannot enable PIPER-X before it is connected and configured.")
+        self._is_enabled = False
+        if not wait_enable_piper(self.arm, self.config.enable_timeout_s):
+            raise TimeoutError("PIPER-X follower did not report enabled state before timeout.")
+        self._is_enabled = True
+
+    @staticmethod
+    def _telemetry_value(payload: Any, field_name: str, source_name: str) -> float | int:
+        value = getattr(payload, field_name, None)
+        if value is None:
+            raise RuntimeError(
+                f"Missing required PIPER-X {source_name} telemetry field '{field_name}'."
+            )
+        return value
+
+    @staticmethod
+    def _telemetry_payload(envelope: Any, field_name: str, source_name: str) -> Any:
+        timestamp = getattr(envelope, "time_stamp", None)
+        rate_hz = getattr(envelope, "Hz", None)
+        if timestamp is None or rate_hz is None:
+            valid_envelope = False
+        else:
+            try:
+                valid_envelope = (
+                    math.isfinite(float(timestamp))
+                    and float(timestamp) > 0
+                    and math.isfinite(float(rate_hz))
+                    and float(rate_hz) > 0
+                )
+            except (TypeError, ValueError, OverflowError):
+                valid_envelope = False
+        if not valid_envelope:
+            raise RuntimeError(
+                f"Missing or incomplete PIPER-X {source_name} telemetry; "
+                "the SDK envelope requires positive finite time_stamp and Hz values."
+            )
+        payload = getattr(envelope, field_name, None)
+        if payload is None:
+            raise RuntimeError(
+                f"Missing required PIPER-X {source_name} telemetry payload '{field_name}'."
+            )
+        return payload
 
     @check_if_not_connected
     def get_observation(self) -> RobotObservation:
-        joint_state = getattr(self.arm.GetArmJointMsgs(), "joint_state", None)
+        if self.config.temporal_metadata:
+            return self._get_temporal_observation()
+        joint_envelope = self.arm.GetArmJointMsgs()
+        gripper_envelope = self.arm.GetArmGripperMsgs()
+        joint_state = self._telemetry_payload(joint_envelope, "joint_state", "joint")
         observation: RobotObservation = {
-            f"{joint}.pos": milli_to_unit(getattr(joint_state, joint, 0)) for joint in PIPER_JOINT_NAMES
+            f"{joint}.pos": milli_to_unit(self._telemetry_value(joint_state, joint, "joint"))
+            for joint in PIPER_JOINT_NAMES
         }
-        gripper_state = getattr(self.arm.GetArmGripperMsgs(), "gripper_state", None)
-        observation["gripper.pos"] = abs(milli_to_unit(getattr(gripper_state, "grippers_angle", 0)))
-        observation.update({key: camera.async_read() for key, camera in self.cameras.items()})
+        gripper_state = self._telemetry_payload(gripper_envelope, "gripper_state", "gripper")
+        observation["gripper.pos"] = abs(
+            milli_to_unit(self._telemetry_value(gripper_state, "grippers_angle", "gripper"))
+        )
+        for key, camera in self.cameras.items():
+            observation[key] = camera.async_read()
         return observation
 
-    @check_if_not_connected
-    def send_action(self, action: RobotAction) -> RobotAction:
+    def _get_temporal_observation(self) -> RobotObservation:
+        snapshot_reader = getattr(self.arm, "GetTemporalObservationSnapshot", None)
+        if not callable(snapshot_reader):
+            raise RuntimeError(
+                "PIPER-X SDK adapter does not expose atomic per-component temporal feedback"
+            )
+        snapshot = snapshot_reader()
+        self._validate_temporal_snapshot(snapshot)
+        self._validate_wall_to_monotonic_calibration()
+        observation: RobotObservation = {
+            f"{joint}.pos": milli_to_unit(value)
+            for joint, value in zip(PIPER_JOINT_NAMES, snapshot.joint_values, strict=True)
+        }
+        observation["gripper.pos"] = abs(milli_to_unit(snapshot.gripper_value))
+
+        component_wall_timestamps = (
+            *snapshot.joint_timestamps,
+            snapshot.gripper_timestamp,
+        )
+        state_timestamp = min(
+            self._to_host_monotonic(float(timestamp)) for timestamp in component_wall_timestamps
+        )
+        timing: dict[str, PiperXSampleTiming] = {
+            "observation.state": self._sample_timing(
+                "observation.state", tuple(snapshot.identity), state_timestamp
+            )
+        }
+        for key, camera in self.cameras.items():
+            sample = self._read_camera_with_acquisition_timing(camera)
+            source = f"observation.images.{key}"
+            observation[key] = sample.frame
+            timing[source] = PiperXSampleTiming(
+                sequence=sample.sequence,
+                source_timestamp=sample.source_timestamp,
+                clock_domain=sample.clock_domain,
+            )
+        self._latest_observation_timing = timing
+        return observation
+
+    @staticmethod
+    def _validate_temporal_snapshot(snapshot: Any) -> None:
+        try:
+            joint_values = tuple(snapshot.joint_values)
+            joint_timestamps = tuple(snapshot.joint_timestamps)
+            identity = tuple(snapshot.identity)
+            gripper_value = snapshot.gripper_value
+            gripper_timestamp = snapshot.gripper_timestamp
+            joint_hz = snapshot.joint_hz
+            gripper_hz = snapshot.gripper_hz
+        except (AttributeError, TypeError) as exc:
+            raise RuntimeError("PIPER-X temporal feedback snapshot is incomplete") from exc
+        if len(joint_values) != 6 or len(joint_timestamps) != 3 or len(identity) != 4:
+            raise RuntimeError("PIPER-X temporal feedback snapshot has invalid dimensions")
+        numeric_values = (*joint_values, gripper_value)
+        if any(
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(float(value))
+            for value in numeric_values
+        ):
+            raise RuntimeError("PIPER-X temporal feedback contains invalid numeric payload")
+        if any(
+            not math.isfinite(float(value)) or float(value) <= 0
+            for value in (*joint_timestamps, gripper_timestamp, joint_hz, gripper_hz)
+        ):
+            raise RuntimeError(
+                "PIPER-X temporal feedback requires positive finite component timestamps and rates"
+            )
+
+    def latest_observation_timing(self) -> dict[str, PiperXSampleTiming]:
+        if not self.config.temporal_metadata:
+            raise RuntimeError("PIPER-X temporal metadata is disabled in the robot config")
+        if not self._latest_observation_timing:
+            raise RuntimeError("get_observation has not produced source timing")
+        return dict(self._latest_observation_timing)
+
+    def _calibrate_wall_to_monotonic(self) -> None:
+        offset_s, calibration_error_ms = self._measure_wall_to_monotonic_offset()
+        if calibration_error_ms > self.config.max_clock_calibration_error_ms:
+            raise RuntimeError(
+                "wall-to-monotonic clock calibration exceeded error budget: "
+                f"{calibration_error_ms:.3f} ms"
+            )
+        self._wall_to_monotonic_offset_s = offset_s
+
+    @staticmethod
+    def _measure_wall_to_monotonic_offset() -> tuple[float, float]:
+        monotonic_before = time.perf_counter()
+        wall_timestamp = time.time()
+        monotonic_after = time.perf_counter()
+        calibration_error_ms = (monotonic_after - monotonic_before) * 500.0
+        offset_s = (monotonic_before + monotonic_after) / 2.0 - wall_timestamp
+        return offset_s, calibration_error_ms
+
+    def _validate_wall_to_monotonic_calibration(self) -> None:
+        if self._wall_to_monotonic_offset_s is None:
+            raise RuntimeError("wall-to-monotonic clock conversion is not calibrated")
+        current_offset_s, calibration_error_ms = self._measure_wall_to_monotonic_offset()
+        if calibration_error_ms > self.config.max_clock_calibration_error_ms:
+            raise RuntimeError(
+                "wall-to-monotonic clock calibration exceeded error budget: "
+                f"{calibration_error_ms:.3f} ms"
+            )
+        drift_ms = abs(current_offset_s - self._wall_to_monotonic_offset_s) * 1000.0
+        if drift_ms > self.config.max_clock_calibration_error_ms:
+            raise RuntimeError(
+                f"wall-to-monotonic clock offset changed during recording: {drift_ms:.3f} ms"
+            )
+
+    def _to_host_monotonic(self, wall_timestamp: float) -> float:
+        if self._wall_to_monotonic_offset_s is None:
+            raise RuntimeError("wall-to-monotonic clock conversion is not calibrated")
+        return wall_timestamp + self._wall_to_monotonic_offset_s
+
+    def _sample_timing(
+        self, source: str, identity: object, source_timestamp: float
+    ) -> PiperXSampleTiming:
+        if self._source_identities.get(source) != identity:
+            self._source_sequences[source] = self._source_sequences.get(source, 0) + 1
+            self._source_identities[source] = identity
+        return PiperXSampleTiming(self._source_sequences.get(source, 0), source_timestamp)
+
+    @staticmethod
+    def _read_camera_with_acquisition_timing(camera: Any) -> CameraAcquisitionSample:
+        reader = getattr(camera, "async_read_with_acquisition_timing", None)
+        if not callable(reader):
+            raise RuntimeError(
+                "camera backend does not expose source-owned acquisition timing; "
+                "host receipt/postprocess timestamps are not accepted for recording"
+            )
+        sample = reader(timeout_ms=200)
+        if not isinstance(sample, CameraAcquisitionSample):
+            raise RuntimeError(
+                "camera backend must return CameraAcquisitionSample atomically with the frame"
+            )
+        return sample
+
+    def _validate_action(self, action: RobotAction) -> None:
+        if not self.is_motion_ready:
+            raise RuntimeError(
+                "PIPER-X motion is not ready; connected, configured, and enabled states are required."
+            )
+        present_joint_keys = [key for key in PIPER_JOINT_ACTION_KEYS if key in action]
+        if present_joint_keys and len(present_joint_keys) != len(PIPER_JOINT_ACTION_KEYS):
+            missing = [key for key in PIPER_JOINT_ACTION_KEYS if key not in action]
+            raise ValueError(
+                "Partial PIPER-X joint action rejected; all six joint keys are required. "
+                f"Missing: {missing}"
+            )
+
+    def _prepare_action(self, action: RobotAction) -> tuple[tuple[int, ...] | None, int | None]:
+        """Validate and convert every command before any SDK motion call."""
+        self._validate_action(action)
+        try:
+            joint_commands = (
+                tuple(unit_to_milli(action[key]) for key in PIPER_JOINT_ACTION_KEYS)
+                if all(key in action for key in PIPER_JOINT_ACTION_KEYS)
+                else None
+            )
+            gripper_command = (
+                unit_to_milli(action["gripper.pos"])
+                if self.config.sync_gripper and "gripper.pos" in action
+                else None
+            )
+        except (TypeError, ValueError, OverflowError) as exc:
+            raise ValueError("PIPER-X action values must be finite numeric values.") from exc
+        return joint_commands, gripper_command
+
+    def _send_prepared_action(
+        self, joint_commands: tuple[int, ...] | None, gripper_command: int | None
+    ) -> RobotAction:
         sent_action: RobotAction = {}
-        if all(key in action for key in PIPER_JOINT_ACTION_KEYS):
-            commands = [unit_to_milli(action[key]) for key in PIPER_JOINT_ACTION_KEYS]
-            self.arm.JointCtrl(*commands)
+        if joint_commands is not None:
+            self.arm.JointCtrl(*joint_commands)
             sent_action.update(
                 {
                     key: milli_to_unit(raw)
-                    for key, raw in zip(PIPER_JOINT_ACTION_KEYS, commands, strict=True)
+                    for key, raw in zip(PIPER_JOINT_ACTION_KEYS, joint_commands, strict=True)
                 }
             )
-        elif any(key in action for key in PIPER_JOINT_ACTION_KEYS):
-            logger.debug("Ignoring partial PIPER-X joint action; all six joint keys are required.")
-        if self.config.sync_gripper and "gripper.pos" in action:
-            command = unit_to_milli(action["gripper.pos"])
+        if gripper_command is not None:
             self.arm.GripperCtrl(
-                command,
+                gripper_command,
                 self.config.gripper_effort_default,
                 self.config.gripper_status_code,
                 0x00,
             )
-            sent_action["gripper.pos"] = milli_to_unit(command)
+            sent_action["gripper.pos"] = milli_to_unit(gripper_command)
         return sent_action
 
     @check_if_not_connected
+    def send_action(self, action: RobotAction) -> RobotAction:
+        return self._send_prepared_action(*self._prepare_action(action))
+
     def disconnect(self) -> None:
-        try:
-            if self.config.disable_on_disconnect:
-                self.arm.DisableArm(7)
-        finally:
-            self.arm.DisconnectPort()
-            for camera in self.cameras.values():
-                camera.disconnect()
-            self._is_connected = False
+        if not self._has_connection_resources:
+            raise DeviceNotConnectedError(
+                f"{self.__class__.__name__} is not connected. Run `.connect()` first."
+            )
+        errors = self._cleanup_connection(list(self.cameras.values()), force_disable=False)
+        self._raise_cleanup_errors(errors)
+
+    @property
+    def _has_connection_resources(self) -> bool:
+        return (
+            self._is_connected
+            or self._is_configured
+            or self._is_enabled
+            or any(camera.is_connected for camera in self.cameras.values())
+        )
 
 
 class BiPiperXFollower(Robot):
@@ -200,7 +522,15 @@ class BiPiperXFollower(Robot):
         self.config = config
         self.left_arm = PiperXFollower(self._arm_config(config.left_arm_config, "left"))
         self.right_arm = PiperXFollower(self._arm_config(config.right_arm_config, "right"))
-        self.cameras = {**self.left_arm.cameras, **self.right_arm.cameras}
+        # LeRobot uses this mapping to size and manage recording camera writers.
+        # Preserve both arms even when their local camera names are identical.
+        self.cameras = {
+            **{f"left_{key}": camera for key, camera in self.left_arm.cameras.items()},
+            **{f"right_{key}": camera for key, camera in self.right_arm.cameras.items()},
+        }
+        self._state_identity: tuple[int, int] | None = None
+        self._state_sequence = 0
+        self._latest_observation_timing: dict[str, PiperXSampleTiming] = {}
 
     def _arm_config(self, side_config: PiperXFollowerConfigBase, side: str) -> PiperXFollowerConfig:
         kwargs = {name: getattr(side_config, name) for name in self._arm_fields}
@@ -233,11 +563,35 @@ class BiPiperXFollower(Robot):
     def is_connected(self) -> bool:
         return self.left_arm.is_connected and self.right_arm.is_connected
 
+    @property
+    def is_configured(self) -> bool:
+        return self.left_arm.is_configured and self.right_arm.is_configured
+
+    @property
+    def is_enabled(self) -> bool:
+        return self.left_arm.is_enabled and self.right_arm.is_enabled
+
+    @property
+    def is_motion_ready(self) -> bool:
+        return self.left_arm.is_motion_ready and self.right_arm.is_motion_ready
+
     @check_if_already_connected
     def connect(self, calibrate: bool = True) -> None:
         del calibrate
-        self.left_arm.connect()
-        self.right_arm.connect()
+        connected_arms: list[PiperXFollower] = []
+        try:
+            self.left_arm.connect()
+            connected_arms.append(self.left_arm)
+            self.right_arm.connect()
+            connected_arms.append(self.right_arm)
+        except Exception as exc:
+            for arm in reversed(connected_arms):
+                cleanup_errors = arm._cleanup_connection(
+                    list(arm.cameras.values()), force_disable=True
+                )
+                for cleanup_exc in cleanup_errors:
+                    exc.add_note(f"Bimanual connect rollback failure: {cleanup_exc!r}")
+            raise
 
     @property
     def is_calibrated(self) -> bool:
@@ -252,23 +606,83 @@ class BiPiperXFollower(Robot):
 
     @check_if_not_connected
     def get_observation(self) -> RobotObservation:
+        left_observation = self.left_arm.get_observation()
+        right_observation = self.right_arm.get_observation()
+        if self.left_arm.config.temporal_metadata or self.right_arm.config.temporal_metadata:
+            if not (
+                self.left_arm.config.temporal_metadata and self.right_arm.config.temporal_metadata
+            ):
+                raise RuntimeError("both PIPER-X arms must enable temporal metadata")
+            left_timing = self.left_arm.latest_observation_timing()
+            right_timing = self.right_arm.latest_observation_timing()
+            left_state = left_timing["observation.state"]
+            right_state = right_timing["observation.state"]
+            identity = (left_state.sequence, right_state.sequence)
+            if identity != self._state_identity:
+                self._state_sequence += 1
+                self._state_identity = identity
+            combined: dict[str, PiperXSampleTiming] = {
+                "observation.state": PiperXSampleTiming(
+                    self._state_sequence,
+                    min(left_state.source_timestamp, right_state.source_timestamp),
+                )
+            }
+            for side, arm_timing in (("left", left_timing), ("right", right_timing)):
+                for source, sample in arm_timing.items():
+                    if source.startswith("observation.images."):
+                        camera = source.removeprefix("observation.images.")
+                        combined[f"observation.images.{side}_{camera}"] = sample
+            self._latest_observation_timing = combined
         return {
-            **{f"left_{key}": value for key, value in self.left_arm.get_observation().items()},
-            **{f"right_{key}": value for key, value in self.right_arm.get_observation().items()},
+            **{f"left_{key}": value for key, value in left_observation.items()},
+            **{f"right_{key}": value for key, value in right_observation.items()},
         }
+
+    def latest_observation_timing(self) -> dict[str, PiperXSampleTiming]:
+        if not self._latest_observation_timing:
+            raise RuntimeError("get_observation has not produced bimanual source timing")
+        return dict(self._latest_observation_timing)
 
     @check_if_not_connected
     def send_action(self, action: RobotAction) -> RobotAction:
-        left_action = {key.removeprefix("left_"): value for key, value in action.items() if key.startswith("left_")}
-        right_action = {
-            key.removeprefix("right_"): value for key, value in action.items() if key.startswith("right_")
+        if not self.is_motion_ready:
+            raise RuntimeError(
+                "Bimanual PIPER-X motion is not ready; both arms must be connected, configured, and enabled."
+            )
+        left_action = {
+            key.removeprefix("left_"): value
+            for key, value in action.items()
+            if key.startswith("left_")
         }
+        right_action = {
+            key.removeprefix("right_"): value
+            for key, value in action.items()
+            if key.startswith("right_")
+        }
+        left_prepared = self.left_arm._prepare_action(left_action)
+        right_prepared = self.right_arm._prepare_action(right_action)
         return {
-            **{f"left_{key}": value for key, value in self.left_arm.send_action(left_action).items()},
-            **{f"right_{key}": value for key, value in self.right_arm.send_action(right_action).items()},
+            **{
+                f"left_{key}": value
+                for key, value in self.left_arm._send_prepared_action(*left_prepared).items()
+            },
+            **{
+                f"right_{key}": value
+                for key, value in self.right_arm._send_prepared_action(*right_prepared).items()
+            },
         }
 
-    @check_if_not_connected
     def disconnect(self) -> None:
-        self.left_arm.disconnect()
-        self.right_arm.disconnect()
+        if not any(arm._has_connection_resources for arm in (self.left_arm, self.right_arm)):
+            raise DeviceNotConnectedError(
+                f"{self.__class__.__name__} is not connected. Run `.connect()` first."
+            )
+        errors: list[Exception] = []
+        for arm in (self.left_arm, self.right_arm):
+            if not arm._has_connection_resources:
+                continue
+            try:
+                arm.disconnect()
+            except Exception as exc:
+                errors.append(exc)
+        PiperXFollower._raise_cleanup_errors(errors)

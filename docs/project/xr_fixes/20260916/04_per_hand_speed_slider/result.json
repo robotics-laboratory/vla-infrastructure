@@ -1,0 +1,277 @@
+{
+  "cameras": {
+    "left_wrist": "640x480 uint8 RGB HWC",
+    "right_wrist": "640x480 uint8 RGB HWC",
+    "strictly_advanced_bimanual_frames": 16,
+    "valid_bimanual_frames": 16
+  },
+  "canonical_d0_changed": false,
+  "environment": {
+    "cloudxr": "6.2.1",
+    "cloudxr_profile": "cloudxrjs",
+    "isaac_lab_commit": "913ac53f51b2f8d02c9e121caa4cbdd06262948e",
+    "isaac_lab_package": "16.4.0",
+    "isaac_lab_release": "release/3.0.0",
+    "isaac_sim": "6.0.1.0",
+    "isaaclab_teleop": "0.8.0",
+    "isaacteleop": "1.4.98rc1",
+    "kit_xr_bridge": true,
+    "python": "3.12.13"
+  },
+  "execution": {
+    "control_hz": 1.852451758023667,
+    "control_steps": 16,
+    "maximum_rebase_or_clutch_tcp_motion_m": {
+      "left": 0.0,
+      "right": 0.0
+    },
+    "motion_scale_observed": {
+      "left": {
+        "rotation_max": 4.0,
+        "rotation_min": 4.0,
+        "translation_max": 4.0,
+        "translation_min": 4.0
+      },
+      "right": {
+        "rotation_max": 4.0,
+        "rotation_min": 4.0,
+        "translation_max": 4.0,
+        "translation_min": 4.0
+      }
+    },
+    "physics_hz": 7.409807032094668,
+    "saturated_frames": 0,
+    "sensitivity_mode_frames": {
+      "left": {
+        "slider": 16
+      },
+      "right": {
+        "slider": 16
+      }
+    },
+    "tracking_valid_frames": {
+      "left": 0,
+      "right": 0
+    },
+    "transitions": {
+      "left:session_inactive": 16,
+      "right:session_inactive": 16
+    },
+    "wall_seconds": 8.637201984180138
+  },
+  "experiment": {
+    "backdrop_visibility": {
+      "control": "right_secondary_click",
+      "final": true,
+      "initial": true,
+      "quest_button": "B",
+      "toggle_count": 0,
+      "visual_only": true
+    },
+    "camera_capture_cycles_including_reset": 16,
+    "camera_configured_simulation_hz": {
+      "demo_scene": 30.0,
+      "left_wrist": 30.0,
+      "right_wrist": 30.0
+    },
+    "camera_effective_hz": {
+      "demo_scene": 1.852451758023667,
+      "left_wrist": 1.852451758023667,
+      "right_wrist": 1.852451758023667
+    },
+    "camera_feed_updates": {
+      "callbacks": 64,
+      "duplicate_frames": 94,
+      "hidden_callbacks": 0,
+      "published_frames": 34,
+      "throttled_frames": 0
+    },
+    "camera_frames_end": {
+      "demo_scene": 22,
+      "left_wrist": 23,
+      "right_wrist": 23
+    },
+    "camera_frames_start": {
+      "demo_scene": 6,
+      "left_wrist": 6,
+      "right_wrist": 6
+    },
+    "optional_demo_performance_mode": "preview_uploads_optimized_renderer_unchanged",
+    "profile": "dual_cube_to_matching_plates",
+    "validation": {
+      "candidate_home_used": true,
+      "collision_free_at_home": true,
+      "finite_state": true,
+      "home_tcp_separation_m": 0.34818468987951945,
+      "home_tcp_world_m": {
+        "left": [
+          0.5789288878440857,
+          0.1740923970937729,
+          1.0264804363250732
+        ],
+        "right": [
+          0.5789286494255066,
+          -0.17409229278564453,
+          1.0264805555343628
+        ]
+      },
+      "imported_prim_valid": {},
+      "maximum_arm_contact_force_n": {
+        "left": 0.0,
+        "right": 0.0
+      },
+      "maximum_home_error_deg_or_mm": 0.0,
+      "maximum_profile_reset_position_error_m": 0.002000272274017334,
+      "passed": true,
+      "required_prim_valid": {
+        "/World/LeftPiper": true,
+        "/World/RightPiper": true,
+        "/World/RobosynDemo/Backdrop": true,
+        "/World/RobosynDemo/LeftCube": true,
+        "/World/RobosynDemo/LeftPlate": true,
+        "/World/RobosynDemo/RightCube": true,
+        "/World/RobosynDemo/RightPlate": true,
+        "/World/RobosynDemo/SceneCamera": true,
+        "/World/RobosynDemo/Table": true
+      },
+      "scene_camera": {
+        "dtype": "uint8",
+        "frame": 30,
+        "rgb_stddev": 44.84912872314453,
+        "shape": [
+          480,
+          640,
+          3
+        ]
+      },
+      "table_collision_api": true,
+      "wrist_shapes": {
+        "left_wrist": [
+          480,
+          640,
+          3
+        ],
+        "right_wrist": [
+          480,
+          640,
+          3
+        ]
+      }
+    },
+    "vr_feed_visibility": {
+      "capture_continues_when_hidden": true,
+      "control": "left_primary_click",
+      "feed_bound_ever": true,
+      "final": true,
+      "initial": true,
+      "preview_policy": "visible fresh camera frames; on-demand UI texture capture",
+      "provider_api": "ByteImageProvider.set_raw_bytes_data CPU RGBA8_UNORM",
+      "quest_button": "X",
+      "toggle_count": 0,
+      "upload_path": "cpu_staged",
+      "upstream_session_prepared_enabled": true
+    },
+    "xr_recenter": {
+      "authoritative_scene_geometry_changed": false,
+      "control": "right_thumbstick_click",
+      "controller_transform_source": "XRCore.get_physical_to_virtual_world_transform",
+      "quest_button": "R3",
+      "request_count": 0,
+      "scheduled_count": 0,
+      "upstream_mechanism": "XRCore.schedule_teleport_to_view",
+      "view_prim_path": "/World/RobosynDemo/SceneCamera"
+    }
+  },
+  "gate": "NONE_EXPERIMENTAL",
+  "gpu": {
+    "end": {
+      "gpu_utilization_percent": 45,
+      "vram_total_mib": 24564,
+      "vram_used_mib": 11612
+    },
+    "samples": [
+      {
+        "gpu_utilization_percent": 60,
+        "vram_total_mib": 24564,
+        "vram_used_mib": 11432
+      },
+      {
+        "gpu_utilization_percent": 45,
+        "vram_total_mib": 24564,
+        "vram_used_mib": 12047
+      },
+      {
+        "gpu_utilization_percent": 45,
+        "vram_total_mib": 24564,
+        "vram_used_mib": 11612
+      }
+    ],
+    "start": {
+      "gpu_utilization_percent": 60,
+      "vram_total_mib": 24564,
+      "vram_used_mib": 11432
+    }
+  },
+  "passed": true,
+  "physical_human_gate": "required_not_implied_by_runtime_smoke",
+  "processor": {
+    "clutch": "independent squeeze > 0.5; release discards one delta",
+    "gripper": "independent analog trigger [0,1] maps linearly and monotonically from 0.1 m open to 0.0 m closed",
+    "revision": "piper_x_isaac_s2_bimanual_relative_v3",
+    "sensitivity": {
+      "center": {
+        "rotation_scale": 4.0,
+        "translation_scale": 4.0
+      },
+      "control_mode": "slider",
+      "input_control": "thumbstick_x",
+      "input_range": [
+        -1.0,
+        1.0
+      ],
+      "mapping": "Piecewise linear and clamped; left is slower, center keeps the previous normal speed, right is faster.",
+      "maximum": {
+        "rotation_scale": 6.0,
+        "translation_scale": 6.0
+      },
+      "minimum": {
+        "rotation_scale": 2.0,
+        "translation_scale": 2.0
+      },
+      "quest_control": "each controller's own horizontal thumbstick axis",
+      "scope": "independent per arm"
+    },
+    "source_timestamp_threshold": null,
+    "tracking_recovery": "unusable pose invalidates upstream SE(3) baseline and smoothing; first recovered frame emits zero delta"
+  },
+  "production_gate_status_changed": false,
+  "runtime_path": "Quest -> CloudXR/isaacteleop -> isaaclab_teleop -> one ControllersSource -> S2 processor -> DifferentialIKController -> accepted S1 native actuation",
+  "session": {
+    "action_frames": 0,
+    "demo_backdrop_toggle_smoke_met": true,
+    "demo_display_toggle_smoke_met": true,
+    "demo_recenter_smoke_met": true,
+    "require_physical_tracking": false,
+    "require_session": false,
+    "single_controller_source": true,
+    "started_ever": false
+  },
+  "status": "experimental_runtime_smoke_passed_physical_demo_required",
+  "xr_presentation": {
+    "anchor_pos_m": [
+      -0.05,
+      0.0,
+      -0.1
+    ],
+    "anchor_rot_xyzw": [
+      0.0,
+      0.0,
+      -0.7071067811865475,
+      0.7071067811865476
+    ],
+    "authoritative_scene_geometry_changed": false,
+    "controller_transform_source": "XRCore.get_physical_to_virtual_world_transform",
+    "experimental_scene_geometry_applied": true,
+    "near_plane_m": 0.1
+  }
+}

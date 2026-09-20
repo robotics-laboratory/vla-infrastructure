@@ -139,3 +139,29 @@ def test_second_live_session_is_refused(monkeypatch) -> None:
             second.start()
     finally:
         first.close()
+
+
+@pytest.mark.parametrize(
+    ("installed_version", "expected_url"),
+    [
+        ("1.3.131", "https://nvidia.github.io/IsaacTeleop/client/v1.3.131/"),
+        ("1.4.98rc1", "https://nvidia.github.io/IsaacTeleop/client/release-1.4.x/"),
+    ],
+)
+def test_connection_hint_uses_owning_environment_client(monkeypatch, installed_version, expected_url):
+    class OfflineSocket:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_):
+            pass
+
+        def connect(self, _address):
+            raise OSError("offline diagnostic")
+
+    monkeypatch.setattr(diagnostics.socket, "socket", lambda *_: OfflineSocket())
+    monkeypatch.setattr(diagnostics, "version", lambda package: installed_version)
+    hint = diagnostics._host_connection_hint()
+    assert hint["cloudxr_web_client_url"] == expected_url
+    assert hint["host_ipv4"] is None
+    assert hint["self_signed_certificate_url"] is None

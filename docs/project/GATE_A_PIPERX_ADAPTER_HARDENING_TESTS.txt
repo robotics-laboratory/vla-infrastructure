@@ -1,0 +1,28 @@
+GATE: A — PIPER-X adapter fail-closed hardening
+TIMESTAMP: 2026-09-17T17:44:11+03:00
+PROFILE: offline_tests
+ENVIRONMENT: core
+
+COMMAND: uv run pytest -q tests/test_lerobot_robot_piperx.py tests/test_piperx_adapter_contract.py
+RESULT: PASS — 29 passed
+COVERAGE: SDK-shaped uninitialized/incomplete-rate telemetry rejection; required-field rejection; complete arm-action and invalid-numeric rejection before SDK calls; connected/configured/enabled/motion_ready gating; enable-timeout disable/rollback; two-sided conversion before bimanual commands; attempted-camera and second-arm connect rollback; partial-state and two-sided disconnect cleanup; exact schema/gate requirements; package/lock/revision/evidence/artifact identity.
+
+COMMAND: uv run ruff check packages/lerobot_robot_piperx/src/lerobot_robot_piperx/piperx.py tests/test_lerobot_robot_piperx.py tests/test_piperx_adapter_contract.py tests/test_resolved_contract.py
+RESULT: PASS — All checks passed.
+
+COMMAND: uv run ruff format --check packages/lerobot_robot_piperx/src/lerobot_robot_piperx/piperx.py tests/test_lerobot_robot_piperx.py tests/test_piperx_adapter_contract.py tests/test_resolved_contract.py
+RESULT: PASS — 4 files already formatted.
+
+COMMAND: uv run mypy packages/lerobot_robot_piperx/src/lerobot_robot_piperx
+RESULT: PASS — Success: no issues found in 3 source files.
+
+COMMAND: uv lock --check
+RESULT: PASS — lock is current; local lerobot-robot-piperx is 0.2.1.
+
+ADDITIONAL FULL SUITE: uv run pytest -q
+RESULT: 111 passed, 23 skipped, 4 failed. Three failures are caused by historical CloudXR logs absent from /home/blackfire/.cloudxr/logs; one unrelated pre-existing XR recenter-config assertion already fails at the 0240cde contracts base. No Gate A/PIPER-X hardening test failed.
+
+COMMAND: sha256sum -c MANIFEST.sha256
+RESULT: PASS — every registered file matched.
+
+HARDWARE: No CAN interface, SDK hardware transport, camera device, or physical PIPER-X was accessed. This is Gate A offline evidence only and does not satisfy R0, R1, R1B, R2, HIL, or R3.

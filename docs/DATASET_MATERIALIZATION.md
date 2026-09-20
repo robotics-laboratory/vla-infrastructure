@@ -67,8 +67,11 @@ units/order
 success/termination
 camera role mapping
 NaN/Inf
-timestamp monotonicity
-duplicate timestamps
+dataset timestamp monotonicity
+source timestamp/sequence monotonicity by clock domain
+source age limits for camera, joint state, XR, and policy action
+cross-modal skew limits
+duplicate logical timestamps and repeated source sequences
 frozen/empty camera streams
 large joint discontinuities
 stale XR intervals

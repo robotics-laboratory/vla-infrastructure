@@ -1,0 +1,135 @@
+{
+  "physical_client": false,
+  "scope": "same process; 120 Hz physics and 4 renders per control step unchanged",
+  "provider": {
+    "sequence_ms": {
+      "samples": 40,
+      "mean_ms": 14.676849701208994,
+      "median_ms": 14.360234374180436
+    },
+    "raw_cpu_ms": {
+      "samples": 40,
+      "mean_ms": 1.6397742903791368,
+      "median_ms": 1.6068085096776485
+    }
+  },
+  "phases": [
+    {
+      "phase": "baseline_hidden",
+      "measured_control_steps": 16,
+      "advance_ms": 194.58538205071818,
+      "advance_median_ms": 194.23882593400776,
+      "timings": {
+        "source_get_image": {
+          "calls": 128,
+          "seconds": 0.04243925353512168,
+          "ms_per_call": 0.3315566682431381
+        },
+        "panel_upload": {
+          "calls": 128,
+          "seconds": 2.1099704043008387,
+          "ms_per_call": 16.484143783600302
+        },
+        "feed_publish": {
+          "calls": 128,
+          "seconds": 2.1794569853227586,
+          "ms_per_call": 17.02700769783405
+        },
+        "feed_update": {
+          "calls": 64,
+          "seconds": 2.179916137829423,
+          "ms_per_call": 34.061189653584734
+        },
+        "render": {
+          "calls": 64,
+          "seconds": 2.8154060980305076,
+          "ms_per_call": 43.99072028172668
+        }
+      }
+    },
+    {
+      "phase": "optimized_hidden",
+      "measured_control_steps": 16,
+      "advance_ms": 78.16922088386491,
+      "advance_median_ms": 77.78271590359509,
+      "timings": {
+        "feed_update": {
+          "calls": 89,
+          "seconds": 0.00034308782778680325,
+          "ms_per_call": 0.003854919413334868
+        },
+        "render": {
+          "calls": 89,
+          "seconds": 0.8672206695191562,
+          "ms_per_call": 9.744052466507373
+        }
+      }
+    },
+    {
+      "phase": "baseline_visible",
+      "measured_control_steps": 16,
+      "advance_ms": 200.6072757358197,
+      "advance_median_ms": 198.05456011090428,
+      "timings": {
+        "source_get_image": {
+          "calls": 128,
+          "seconds": 0.0417120112106204,
+          "ms_per_call": 0.3258750875829719
+        },
+        "panel_upload": {
+          "calls": 128,
+          "seconds": 2.144425236620009,
+          "ms_per_call": 16.75332216109382
+        },
+        "feed_publish": {
+          "calls": 128,
+          "seconds": 2.21363677829504,
+          "ms_per_call": 17.29403733043
+        },
+        "feed_update": {
+          "calls": 64,
+          "seconds": 2.2141144031193107,
+          "ms_per_call": 34.59553754873923
+        },
+        "render": {
+          "calls": 64,
+          "seconds": 2.9127293929923326,
+          "ms_per_call": 45.5113967655052
+        }
+      }
+    },
+    {
+      "phase": "optimized_visible",
+      "measured_control_steps": 16,
+      "advance_ms": 90.95170526416041,
+      "advance_median_ms": 91.53721947222948,
+      "timings": {
+        "feed_update": {
+          "calls": 64,
+          "seconds": 0.1787228835746646,
+          "ms_per_call": 2.7925450558541343
+        },
+        "render": {
+          "calls": 64,
+          "seconds": 0.8339563561603427,
+          "ms_per_call": 13.030568065005355
+        },
+        "source_get_image": {
+          "calls": 32,
+          "seconds": 0.010884654242545366,
+          "ms_per_call": 0.3401454450795427
+        },
+        "panel_upload": {
+          "calls": 32,
+          "seconds": 0.15389101393520832,
+          "ms_per_call": 4.80909418547526
+        },
+        "feed_publish": {
+          "calls": 32,
+          "seconds": 0.17160728154703975,
+          "ms_per_call": 5.362727548344992
+        }
+      }
+    }
+  ]
+}

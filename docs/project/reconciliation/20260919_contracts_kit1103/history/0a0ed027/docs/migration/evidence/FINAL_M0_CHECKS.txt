@@ -1,0 +1,61 @@
+All commands ran from <primary-worktree> on branch migration/v5.2.
+Environment/profile: core / offline_tests.
+
+COMMAND: uv lock --check
+EXIT: 0
+OUTPUT:
+Resolved 80 packages in 0.74ms
+
+COMMAND: uv run python tools/validate_resolved_contract.py configs/resolved_contract.yaml
+EXIT: 0
+OUTPUT:
+CONTRACT STRUCTURALLY VALID
+CONTRACT SEMANTICALLY VALID
+FINAL RC NOT READY
+BLOCKERS: B, C, D0, S0, S1, S2, D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0
+
+COMMAND: uv run python tools/validate_resolved_contract.py configs/resolved_contract.yaml --require-gate M0
+EXIT: 0
+OUTPUT:
+CONTRACT STRUCTURALLY VALID
+CONTRACT SEMANTICALLY VALID
+FINAL RC NOT READY
+BLOCKERS: B, C, D0, S0, S1, S2, D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0
+
+COMMAND: uv run python tools/lint_spec_references.py
+EXIT: 0
+OUTPUT:
+SPEC REFERENCE LINT OK
+
+COMMAND: uv run pytest -q
+EXIT: 0
+OUTPUT:
+.......................................                                  [100%]
+39 passed in 2.63s
+
+COMMAND: uv run pytest -q tests/test_validator_negative.py
+EXIT: 0
+OUTPUT:
+.....................                                                    [100%]
+21 passed in 0.81s
+
+COMMAND: uv run ruff check .
+EXIT: 0
+OUTPUT:
+All checks passed!
+
+COMMAND: uv run mypy
+EXIT: 0
+OUTPUT:
+Success: no issues found in 6 source files
+
+NEGATIVE COMMAND: uv run python tools/validate_resolved_contract.py configs/resolved_contract.yaml --require-final-rc
+EXPECTED EXIT: 1
+ACTUAL EXIT: 1
+OUTPUT:
+CONTRACT STRUCTURALLY VALID
+CONTRACT SEMANTICALLY VALID
+FINAL RC NOT READY
+BLOCKERS: B, C, D0, S0, S1, S2, D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0
+
+No hardware, CAN, physical Quest, simulator, HIL, dataset, or rollout action was performed.
