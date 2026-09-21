@@ -2556,3 +2556,171 @@ documents:
   owner: vr.performance
   mutable: false
   gates: [S1, S2]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/README.md
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/REPORT.md
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/benchmark.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/capture_summary.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/cpu_comparison.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/launch.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/live_state_cost.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/offline_probe.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/pass_cost.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/phase_findings.md
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/phase_probe.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/render_assay.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/render_cost_summary.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/replay_summary.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/short_results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/sitecustomize.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/source_audit.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/state_probe.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/summarize.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/variants.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/retain.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/full_offline.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/full_replay_summary.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/long_results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/tiled_summary.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/display_proof.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/provenance.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/checks.txt
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]

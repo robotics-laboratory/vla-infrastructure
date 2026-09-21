@@ -1,0 +1,1426 @@
+{
+  "recorded_at": "2026-09-21T21:25:53.264371+00:00",
+  "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+  "branch": "wip/vr-recording",
+  "canonical_runtime": "bd288917ac44a873feef04df9a488c4046927d87",
+  "trusted_base": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+  "core_python": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+  "isaac_python": "/data/vla-infrastructure/isaac61_production/env/bin/python",
+  "isaac_lab_commit": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d",
+  "runtime_configs": {
+    "configs/isaac61_s1_runtime.yaml": "5da72ca0cfba86241d8f834eb8ee9369c002236dba699f0f3a36b35fc8c0e171",
+    "configs/isaac61_s2_runtime.yaml": "8bf47ae99191b9f63317e5f5ff5aa557f533b6a1890df14d8c45e60b15a02977",
+    "configs/isaac61_vr_runtime.yaml": "309697428a2281972ca9780f579cf43377fd247e2e3c73d9886441e8c5f65643"
+  },
+  "experiment_sources": {
+    "benchmark.py": "5656c3bc5830acfbc633eea8fd95d741e01ba1cf019021ed79bf00bedeca2229",
+    "offline_probe.py": "23bf29046965404b1e1964a421ff726c62184a19cd4e7e52feea107df3b48eca",
+    "summarize.py": "9ad925c74e5f0a05e228c49eb6207cbc77cadd51bba276584569483cc49f85e7",
+    "render_assay.py": "eed1003a8f2f7b9a069eaccf597ed528ddc559daa13e482934e67a025deade9f",
+    "retain.py": "795f0ec9b6d269e70665f07565cff68c3fafcc86103a7fe817cac35f15155feb",
+    "phase_probe.py": "c5d0e4c5159422b1e6ed5b9030d444412528cd0b01c3424d3e2f766b5cb4536e",
+    "variants.py": "98dad174ef825553797c69c9c145be4b39cd9db335a72a53177f5605bf01b75d",
+    "live_state_cost.py": "3533cba92cccdb098d14807b481667e55fad871c4952c15fb03c4b7ee52d80cd",
+    "sitecustomize.py": "8eb2380f7e04d2d394733b7291249faf0460f70dc978abb8c9f72ac91a2ad384",
+    "state_probe.py": "0df3abb759bc06e443524cbbbfb68f35451aad8a5a2d06baa50ce471df9ebd89",
+    "launch.py": "db398a0bef5d34e343ef27f60b129a77032c07c3659c495db7564df17f94fa88",
+    "pass_cost.py": "545ef2f7d1e029b831ea680282182ea547a8daf8f8d11031a0b768a9db3d5802",
+    "full_offline.py": "e4301a7e971d4446970ea473a9dd6863c48bdf1d1cb5c264f2b92be932791380"
+  },
+  "launches": [
+    {
+      "path": "/tmp/vr4p5-b1-capture/launch.json",
+      "sha256": "0c0a54c8940d5355cbfb55411dfeb84d6aa6ca049b08faa564c450823016e2f7",
+      "candidate": "B1-capture",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-display-proof-off/launch.json",
+      "sha256": "bf2822ab37d0764f434422de80faf0446e706b1dcc27c9804f4c6ad886ef9c1b",
+      "candidate": "B1-FULL-OFFLINE-D",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p5-runtime",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-display-proof-on/launch.json",
+      "sha256": "6de48372748b1f0364aa85f871d739791ab9332cc8c0ae387b614b8dbce853bf",
+      "candidate": "B1-FULL-OFFLINE",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p5-runtime",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-fixed-A0-smoke/launch.json",
+      "sha256": "ea8b451b3a09afc85ad255d97c299626697c66434053073b20531af26364ea20",
+      "candidate": "A0",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-fixed-A0-xr-smoke/launch.json",
+      "sha256": "fcc52e3892ad65b91f996a7edf65255dc08a091ee1082657eea60c9df7bb4ccb",
+      "candidate": "A0",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-fixed-F-minimal-smoke/launch.json",
+      "sha256": "318588453eab6a464b4988247cfa66727a8b8b41efd7351fe0a326f59b4f6868",
+      "candidate": "F-minimal",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-fixed-F-minimal-xr-smoke/launch.json",
+      "sha256": "5fef80bd3871f55c8ed7fada2e19667a8e05058dba9a729c6c77503475c93d0a",
+      "candidate": "F-minimal",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-fixed-H-cpu-smoke/launch.json",
+      "sha256": "470f48dd6cd277593fb43a9d224cb51d2d77a90c338acfdbf461cb8b7e1120a4",
+      "candidate": "H-cpu",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-fixed-J60-smoke/launch.json",
+      "sha256": "c028475c2f706c0707964c3b1ab0c69066c234bf0c9fce194d4fe7acb9da1ccc",
+      "candidate": "J60",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-full-desktopoff-xr-smoke/launch.json",
+      "sha256": "58ff4aecfb41a28e4c9d3a5e56844abcc8309da94a7cee26e34d0247a04a20b2",
+      "candidate": "B1-FULL-OFFLINE-D",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p5-runtime",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-full-smoke/launch.json",
+      "sha256": "c37f2b5bce0c46cb65cfc7e83dea4f1b1c9219b0f4ffe13477f281aaf18addc7",
+      "candidate": "B1-FULL-OFFLINE",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-full-xr-smoke/launch.json",
+      "sha256": "299419905b5b06f5e25b0456a1749ece3934cce436a2a6b913cb949a553bf788",
+      "candidate": "B1-FULL-OFFLINE",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-isolated-B1-cost-smoke/launch.json",
+      "sha256": "bb7cb29f2538941f6f97c5ce16382cfa551e3f7d61f1033575b5faff035662c3",
+      "candidate": "B1-cost",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 1
+    },
+    {
+      "path": "/tmp/vr4p5-isolated-B1-cost-xr-smoke/launch.json",
+      "sha256": "811696ed5bdaa25b86310875a8ff96d191226d786d9a90c7b8fcd4c1c3241227",
+      "candidate": "B1-cost",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 1
+    },
+    {
+      "path": "/tmp/vr4p5-isolated-C1-320-xr-smoke/launch.json",
+      "sha256": "390721ce10bc3c4e6a236a78e4a5bfde173a9b901ea10e548210b773ba594a40",
+      "candidate": "C1-320",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 1
+    },
+    {
+      "path": "/tmp/vr4p5-isolated-C1-640-xr-smoke/launch.json",
+      "sha256": "69edea5563a72f475317f0d250222fb5328e015c8fad431244ead2ef9847e040",
+      "candidate": "C1-640",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 1
+    },
+    {
+      "path": "/tmp/vr4p5-isolated-C2-256-xr-smoke/launch.json",
+      "sha256": "dfe39ca7f75a702ca204a23c0bb9ab794fced7e48926074ba5c577facfd0e2be",
+      "candidate": "C2-256",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 1
+    },
+    {
+      "path": "/tmp/vr4p5-isolated-C2-320-xr-smoke/launch.json",
+      "sha256": "7e2b5955601c4bcbd6c3b1afcbd315f0c7e743d47524dfbe2ecb01bc408de43e",
+      "candidate": "C2-320",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 1
+    },
+    {
+      "path": "/tmp/vr4p5-isolated-D-desktop-off-xr-smoke/launch.json",
+      "sha256": "2319080ec33294ccaa3e78d7bef94e58ba72774012b4ccf4819c47312da140a0",
+      "candidate": "D-desktop-off",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-isolated-G-tiled640-xr-smoke/launch.json",
+      "sha256": "b1354de395107b1cfee2b2b84901d919b49de5b1fa6d69facef0ad8e3c13cfd4",
+      "candidate": "G-tiled640",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 1
+    },
+    {
+      "path": "/tmp/vr4p5-isolated-H-cpu-capture-smoke/launch.json",
+      "sha256": "fea7c1f3efe0be669c28e11ab630fa94cbc508d4ce3a63203dc68f8fb508f337",
+      "candidate": "H-cpu-capture",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-isolated-H-cpu-xr-smoke/launch.json",
+      "sha256": "0bbfcbd70453914ac881318bef77e451e424aaa7b2d05d900ec23c295123566f",
+      "candidate": "H-cpu",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-long-B1-FULL-OFFLINE/rep1/launch.json",
+      "sha256": "673457b97bbde31cf5d2bb0efa334f7fae06008603a9053e90826024cda7c069",
+      "candidate": "B1-FULL-OFFLINE",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "3300",
+        "--performance-warmup-steps",
+        "300",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-long-B1-FULL-OFFLINE/rep2/launch.json",
+      "sha256": "e15002348f507e02964088fb6fa30b7ff90c1e07a9738ed71a83197d39d74683",
+      "candidate": "B1-FULL-OFFLINE",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "3300",
+        "--performance-warmup-steps",
+        "300",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-long-B1-FULL-OFFLINE/rep3/launch.json",
+      "sha256": "1e94421d991d0cc5b21d42a78e45d5b864f2e4dcc728cdb06f76e6248b38b841",
+      "candidate": "B1-FULL-OFFLINE",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "3300",
+        "--performance-warmup-steps",
+        "300",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-long-B1-cost/rep1/launch.json",
+      "sha256": "d30886fc98414c564724e23511d54af22bfba4f9c359b275da0f54a904a1d9cb",
+      "candidate": "B1-cost",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "3300",
+        "--performance-warmup-steps",
+        "300",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": null
+    },
+    {
+      "path": "/tmp/vr4p5-long-F-minimal/rep1/launch.json",
+      "sha256": "d238c3df3f5268532b76b6e0b3b53c84c818c32699c681caa620652d08047839",
+      "candidate": "F-minimal",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "3300",
+        "--performance-warmup-steps",
+        "300",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-long-F-minimal/rep2/launch.json",
+      "sha256": "872935c407b266ac0be0492f160eb979776a9dbc38ce256ee39096ca03013efd",
+      "candidate": "F-minimal",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "3300",
+        "--performance-warmup-steps",
+        "300",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-long-F-minimal/rep3/launch.json",
+      "sha256": "9b740c1575164c043c8084eb52d500f6a30d99f3ae258a9ba7e4998234a76965",
+      "candidate": "F-minimal",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "3300",
+        "--performance-warmup-steps",
+        "300",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-long-J60/rep1/launch.json",
+      "sha256": "1ec88b5fbe5571f912dabbd7f61051963cbf9bc4e2fa552f3a34916f4a5c3f76",
+      "candidate": "J60",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "3300",
+        "--performance-warmup-steps",
+        "300",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-long-J60/rep2/launch.json",
+      "sha256": "340138b15d0fdbebb74992c7430ce71330979a9228eca5ecea3707c83d3a43b3",
+      "candidate": "J60",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "3300",
+        "--performance-warmup-steps",
+        "300",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-long-J60/rep3/launch.json",
+      "sha256": "870fa4b0e48837302a4de61592929cec92797bc5f18a47ec6c9239e9d148422c",
+      "candidate": "J60",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "3300",
+        "--performance-warmup-steps",
+        "300",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-phase-durable-no-xr/launch.json",
+      "sha256": "3c6172f711c9450b98a153d03fb04cba67d337f3bebf3bc71d0bb35220a6e903",
+      "candidate": "phase",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "100",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-phase-durable-xr/launch.json",
+      "sha256": "13e74f01b01ab4b31d21b9c40538e9bad67b7b5fd4663d1f43d3d4a30754cd3a",
+      "candidate": "phase",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "100",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-phase-reference-xr/launch.json",
+      "sha256": "e2582903672ec6f1857b5411e74b92f4123a2df384a24c5f3afa4b4f5694e44a",
+      "candidate": "phase",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "100",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-phase-retention/durable-no-xr/probe/launch.json",
+      "sha256": "3c6172f711c9450b98a153d03fb04cba67d337f3bebf3bc71d0bb35220a6e903",
+      "candidate": "phase",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "100",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-phase-retention/durable-xr/probe/launch.json",
+      "sha256": "13e74f01b01ab4b31d21b9c40538e9bad67b7b5fd4663d1f43d3d4a30754cd3a",
+      "candidate": "phase",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "100",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-phase-retention/reference-xr/probe/launch.json",
+      "sha256": "e2582903672ec6f1857b5411e74b92f4123a2df384a24c5f3afa4b4f5694e44a",
+      "candidate": "phase",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "100",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-ready-A0-xr-smoke/launch.json",
+      "sha256": "24fb56e6a0660226b73481e40478e8dba77d6c3fbbe8ebcc517c54e49eda8d15",
+      "candidate": "A0",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-ready-B1-cost-smoke/launch.json",
+      "sha256": "931ff45998a3e3fd5734ebf66e8c3aa4a7805eb8fb8ff7d0fec2127c45581cb9",
+      "candidate": "B1-cost",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-ready-B1-cost-xr-smoke/launch.json",
+      "sha256": "f9db02c07ce0cac1915d0d6ac62cb0f191f74ef31593206b0dc81a1ec7cc4843",
+      "candidate": "B1-cost",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-ready-C1-320-xr-smoke/launch.json",
+      "sha256": "e02e929b01538fd1763ca80f87a1faee02392c3293eda741afe865722f7a1874",
+      "candidate": "C1-320",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-ready-C1-640-xr-smoke/launch.json",
+      "sha256": "9cdc610a457592cda4bb6ef73362cea24f22e13bc4fc58bccccdc6707a7ace0a",
+      "candidate": "C1-640",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-ready-C2-256-xr-smoke/launch.json",
+      "sha256": "71e08d1127eb0221febf02ffa88b0529922cf19847470c6087faaaa08b833535",
+      "candidate": "C2-256",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-ready-C2-320-xr-smoke/launch.json",
+      "sha256": "02eb9e2b2734c5ef425f5e03269f3745ab14448f6583b76b1ed2c1f8ba9cf66c",
+      "candidate": "C2-320",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-ready-D-desktop-off-xr-smoke/launch.json",
+      "sha256": "6e1eb42fd5c8542885b7fbd8175ecfc4e48fc56fc5bf45665dac9eaac5ef6804",
+      "candidate": "D-desktop-off",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-ready-E06-xr-smoke/launch.json",
+      "sha256": "6eb4b562c41d47748d93398024d56b61bd5d88a47a69a089ccd12c2653e64abb",
+      "candidate": "E06",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-ready-E08-xr-smoke/launch.json",
+      "sha256": "a154494f12fdc7595e9cb8b897d106d4a1830d28fdd99c5dbf79807d9817e3a3",
+      "candidate": "E08",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-ready-F-minimal-xr-smoke/launch.json",
+      "sha256": "c6185b466e63b6335197818e8667c20e35ea49555536bb5916d70536f96d63f5",
+      "candidate": "F-minimal",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-ready-G-tiled640-xr-smoke/launch.json",
+      "sha256": "8cc91322e4ba59e1c8069bbb124f540031b79bb777661cd77a788218d7711fe7",
+      "candidate": "G-tiled640",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-ready-J60-xr-smoke/launch.json",
+      "sha256": "cd0ff81971c9472fb49dc800d72359cb66e2208e3649e9a083011c23c5fb51c8",
+      "candidate": "J60",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-render-assay-active-xr/launch.json",
+      "sha256": "ca9b8b0cba1e7244ef741c2064b2e7f0fce7f6f6130b985b7e584e1a50c03313",
+      "candidate": "render-assay",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "100",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-render-assay-xr/launch.json",
+      "sha256": "1dad02bcedb831f7168f855d459a6309d27eb0045be6993138db5af7e7b850cf",
+      "candidate": "render-assay",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 1
+    },
+    {
+      "path": "/tmp/vr4p5-resetfixed-B1-cost-smoke/launch.json",
+      "sha256": "c376b6d8d642f90da4917ff1b9340138b421922c40bea46b98b2e8fe49faa590",
+      "candidate": "B1-cost",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-resetfixed-B1-cost-xr-smoke/launch.json",
+      "sha256": "1d92b3eae8d18c0f7c56b83397a8116aeb5c05d0a1b1eaa2b50d37d8e4695623",
+      "candidate": "B1-cost",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-resetfixed-C1-320-xr-smoke/launch.json",
+      "sha256": "43c3a93dd9e96e1878970608620d454a02e5d062e37a480e9ed4c9c417518516",
+      "candidate": "C1-320",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-resetfixed-C1-640-xr-smoke/launch.json",
+      "sha256": "f1388dc25fb2a1f0a7a314e1bccf42478bd117e18d944085076d1f58b1e12884",
+      "candidate": "C1-640",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-resetfixed-C2-256-xr-smoke/launch.json",
+      "sha256": "b94927c9073de313940e90337d76a6be13ea8fafcbd35eef1b36a562591cd851",
+      "candidate": "C2-256",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-resetfixed-C2-320-xr-smoke/launch.json",
+      "sha256": "e1a68d2e48f6e1f2b8e52d38528f6d29f6a613cf017d9a64602e287e8cfce87f",
+      "candidate": "C2-320",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-resetfixed-G-assay-xr-smoke/launch.json",
+      "sha256": "218ffa9d03580bb366ffe59953dc29617884169ff2a5748af155abd5d9c68034",
+      "candidate": "G-assay",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-resetfixed-G-tiled640-xr-smoke/launch.json",
+      "sha256": "0b53acfd315c687cdafff96265f7be511af50eb1ce104e72696d8c2beeb88a64",
+      "candidate": "G-tiled640",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-short-A0-smoke/launch.json",
+      "sha256": "7d517d14e481b64bc88ea93bda7de98c90153c35ecf7d6d0b24d96586a69fc52",
+      "candidate": "A0",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 1
+    },
+    {
+      "path": "/tmp/vr4p5-short-D-desktop-off-xr-smoke/launch.json",
+      "sha256": "2ed42b82d84e4255d30b298f12ba763d27f471cd54477edf25f67db41c02900b",
+      "candidate": "D-desktop-off",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-short-E06-xr-smoke/launch.json",
+      "sha256": "19d8bcd06390951c60f5babfa1f4cf9b5976c4f99ad3d2d5500a6d2a583bf8a3",
+      "candidate": "E06",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-short-E08-xr-smoke/launch.json",
+      "sha256": "8c8875738045978437304f9ca8b044fdfbbb24c0ccf48aa382f9aef62e46971e",
+      "candidate": "E08",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    },
+    {
+      "path": "/tmp/vr4p5-short-F-minimal-smoke/launch.json",
+      "sha256": "22553d4c18db4d530970fab876bb489f8d28c3e6df8be22bff1105395d291be9",
+      "candidate": "F-minimal",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 1
+    },
+    {
+      "path": "/tmp/vr4p5-short-H-cpu-smoke/launch.json",
+      "sha256": "c8c02d67eeabf7ab0097a94f428bf94b7b0f7c5e794e387804ad15d69c3d8d9c",
+      "candidate": "H-cpu",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 1
+    },
+    {
+      "path": "/tmp/vr4p5-short-J60-smoke/launch.json",
+      "sha256": "82fc14008e85f09125a8d0ff89d396632f5cb3b610951144388cbe2d71eb3d32",
+      "candidate": "J60",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--smoke"
+      ],
+      "exit_code": 1
+    },
+    {
+      "path": "/tmp/vr4p5-short-J60-xr-smoke/launch.json",
+      "sha256": "ace020181f5c3ef759cb20c2c205e99c36ae2a7344eabd234297867e2985a98e",
+      "candidate": "J60",
+      "head": "8d854b94c91a3a9e051e742fa7dd6b6a0a0939c4",
+      "command": [
+        "./run-vr",
+        "diag",
+        "--state-root",
+        "/tmp/vr4p-audit",
+        "--max-control-steps",
+        "160",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "100",
+        "--xr-smoke"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "physical_runs": [],
+  "source_identity_policy": "Every launch retains its executed source copy; latest experiment selector hash does not rewrite prior runs.",
+  "raw_archive": "/data/ebulochkin/vla-runtime/evidence/20260921_vr_architecture_bakeoff/architecture-bakeoff.tar.gz",
+  "qualification": "NO ARCHITECTURE QUALIFIED",
+  "gate_changes": false,
+  "recorder_implementation": false,
+  "retention": {
+    "archive": "/data/ebulochkin/vla-runtime/evidence/20260921_vr_architecture_bakeoff/architecture-bakeoff.tar.gz",
+    "sha256": "e1a7d41052e2116e81476c2f344372bdb40ccf6be9d1fe847ed90270938b50ea",
+    "files": 2102,
+    "uncompressed_bytes": 936092860,
+    "compressed_bytes": 376218141,
+    "verified": true
+  }
+}

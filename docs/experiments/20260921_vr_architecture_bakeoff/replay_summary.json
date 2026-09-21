@@ -1,0 +1,279 @@
+{
+  "states": 120,
+  "warmup": 20,
+  "measured": 100,
+  "states_per_s": 10.689195594109252,
+  "frames_per_s": 32.06758678232776,
+  "wall_min_per_sim_min": 2.806572275329381,
+  "max_restore_position_error_m": 2.497889789080651e-07,
+  "exact_matches": 0,
+  "comparisons": 18,
+  "psnr_db_range": [
+    32.014318009004484,
+    35.815372146050976
+  ],
+  "marker_method": "Connected color masks >=100pixels; matched blue/yellow task-object/plate component centroids. Geometry witness only; no formal acceptance threshold.",
+  "marker_max_discrepancy_px": 13.532556171776502,
+  "marker_component_count_mismatches": 1,
+  "markers": [
+    {
+      "tick": 20,
+      "role": "left_wrist",
+      "color": "blue",
+      "n_live": 2,
+      "n_offline": 1,
+      "errors_px": [
+        1.8250016650596994
+      ]
+    },
+    {
+      "tick": 20,
+      "role": "right_wrist",
+      "color": "blue",
+      "n_live": 2,
+      "n_offline": 2,
+      "errors_px": [
+        0.14319148386820318,
+        13.532556171776502
+      ]
+    },
+    {
+      "tick": 20,
+      "role": "right_wrist",
+      "color": "yellow",
+      "n_live": 1,
+      "n_offline": 1,
+      "errors_px": [
+        0.1521611852039176
+      ]
+    },
+    {
+      "tick": 20,
+      "role": "scene",
+      "color": "blue",
+      "n_live": 2,
+      "n_offline": 2,
+      "errors_px": [
+        0.12272347849794632,
+        0.78628604744305
+      ]
+    },
+    {
+      "tick": 20,
+      "role": "scene",
+      "color": "yellow",
+      "n_live": 2,
+      "n_offline": 2,
+      "errors_px": [
+        0.27263172929520535,
+        0.1339641949200448
+      ]
+    },
+    {
+      "tick": 40,
+      "role": "right_wrist",
+      "color": "blue",
+      "n_live": 1,
+      "n_offline": 1,
+      "errors_px": [
+        0.20101247360357277
+      ]
+    },
+    {
+      "tick": 40,
+      "role": "scene",
+      "color": "blue",
+      "n_live": 2,
+      "n_offline": 2,
+      "errors_px": [
+        0.08388029264504684,
+        0.8765552473448288
+      ]
+    },
+    {
+      "tick": 40,
+      "role": "scene",
+      "color": "yellow",
+      "n_live": 2,
+      "n_offline": 2,
+      "errors_px": [
+        0.07165752408328036,
+        0.19549358265338895
+      ]
+    },
+    {
+      "tick": 60,
+      "role": "left_wrist",
+      "color": "blue",
+      "n_live": 1,
+      "n_offline": 1,
+      "errors_px": [
+        0.06091957167168725
+      ]
+    },
+    {
+      "tick": 60,
+      "role": "left_wrist",
+      "color": "yellow",
+      "n_live": 1,
+      "n_offline": 1,
+      "errors_px": [
+        0.021009297053244277
+      ]
+    },
+    {
+      "tick": 60,
+      "role": "right_wrist",
+      "color": "yellow",
+      "n_live": 1,
+      "n_offline": 1,
+      "errors_px": [
+        0.08278259371345659
+      ]
+    },
+    {
+      "tick": 60,
+      "role": "scene",
+      "color": "blue",
+      "n_live": 2,
+      "n_offline": 2,
+      "errors_px": [
+        1.640773818172853,
+        0.9924477658888463
+      ]
+    },
+    {
+      "tick": 60,
+      "role": "scene",
+      "color": "yellow",
+      "n_live": 2,
+      "n_offline": 2,
+      "errors_px": [
+        0.09546153529289673,
+        0.09938652174301148
+      ]
+    },
+    {
+      "tick": 80,
+      "role": "left_wrist",
+      "color": "blue",
+      "n_live": 1,
+      "n_offline": 1,
+      "errors_px": [
+        0.2681735500965351
+      ]
+    },
+    {
+      "tick": 80,
+      "role": "left_wrist",
+      "color": "yellow",
+      "n_live": 1,
+      "n_offline": 1,
+      "errors_px": [
+        0.1166269245260543
+      ]
+    },
+    {
+      "tick": 80,
+      "role": "right_wrist",
+      "color": "yellow",
+      "n_live": 1,
+      "n_offline": 1,
+      "errors_px": [
+        0.17551887081379397
+      ]
+    },
+    {
+      "tick": 80,
+      "role": "scene",
+      "color": "blue",
+      "n_live": 2,
+      "n_offline": 2,
+      "errors_px": [
+        0.27126184318407787,
+        0.39496898323928675
+      ]
+    },
+    {
+      "tick": 80,
+      "role": "scene",
+      "color": "yellow",
+      "n_live": 2,
+      "n_offline": 2,
+      "errors_px": [
+        0.14514964927009505,
+        0.09930370036673042
+      ]
+    },
+    {
+      "tick": 100,
+      "role": "right_wrist",
+      "color": "blue",
+      "n_live": 1,
+      "n_offline": 1,
+      "errors_px": [
+        0.07479769720247137
+      ]
+    },
+    {
+      "tick": 100,
+      "role": "scene",
+      "color": "blue",
+      "n_live": 2,
+      "n_offline": 2,
+      "errors_px": [
+        0.05529289860021705,
+        1.0932975588368032
+      ]
+    },
+    {
+      "tick": 100,
+      "role": "scene",
+      "color": "yellow",
+      "n_live": 2,
+      "n_offline": 2,
+      "errors_px": [
+        0.24657608239088288,
+        0.1297145663408304
+      ]
+    },
+    {
+      "tick": 119,
+      "role": "right_wrist",
+      "color": "blue",
+      "n_live": 1,
+      "n_offline": 1,
+      "errors_px": [
+        0.18392489213108454
+      ]
+    },
+    {
+      "tick": 119,
+      "role": "scene",
+      "color": "blue",
+      "n_live": 2,
+      "n_offline": 2,
+      "errors_px": [
+        0.1514766193022482,
+        0.3441255206553979
+      ]
+    },
+    {
+      "tick": 119,
+      "role": "scene",
+      "color": "yellow",
+      "n_live": 2,
+      "n_offline": 2,
+      "errors_px": [
+        0.13667353966088122,
+        0.25003260716442044
+      ]
+    }
+  ],
+  "memory": {
+    "max_rss_kib": 6286596,
+    "physics_callbacks": 0,
+    "gpu_memory_end": "2918 MiB\n"
+  },
+  "incomplete_fields_rejected": 26
+}

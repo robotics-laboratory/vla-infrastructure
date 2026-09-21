@@ -1,0 +1,63 @@
+{
+  "ticks": 120,
+  "comparison": "Bounded identical sinusoidal native targets; no grasp/contact-task equivalence claim",
+  "files": [
+    "/tmp/vr4p5-b1-capture/states.json",
+    "/tmp/vr4p5-isolated-H-cpu-capture-smoke/states.json"
+  ],
+  "state": {
+    "shape": [
+      120,
+      14
+    ],
+    "max_absolute": 0.04490852355957031,
+    "rms": 0.004724255373212997
+  },
+  "target": {
+    "shape": [
+      120,
+      14
+    ],
+    "max_absolute": 0.0,
+    "rms": 0.0
+  },
+  "joint_positions": {
+    "shape": [
+      120,
+      2,
+      1,
+      9
+    ],
+    "max_absolute": 0.0007838010787963867,
+    "rms": 6.219199082339706e-05
+  },
+  "objects": {
+    "shape": [
+      120,
+      2,
+      1,
+      7
+    ],
+    "max_absolute": 2.01710281544365e-05,
+    "rms": 1.0555548273412688e-05,
+    "max_position_distance_m": 1.1064049470929248e-06,
+    "max_quaternion_sign_invariant_l2": 2.8231670059652045e-05
+  },
+  "body_poses_xyzw": {
+    "shape": [
+      120,
+      2,
+      1,
+      12,
+      7
+    ],
+    "max_absolute": 0.0021936864650342613,
+    "rms": 0.0001612080829873471,
+    "max_position_distance_m": 0.002117286723480052,
+    "max_quaternion_sign_invariant_l2": 0.002204384938371191
+  },
+  "state_units": {
+    "joint_max_deg": 0.04490852355957031,
+    "gripper_max_mm": 0.00937652587890625
+  }
+}

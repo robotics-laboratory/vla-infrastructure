@@ -1,0 +1,35 @@
+{
+  "usd": {
+    "n_links": 2880,
+    "max_position_m": 0.4028350483888569,
+    "max_quaternion_l2_sign_invariant": 0.7998610328239796,
+    "n_objects": 240,
+    "max_object_position_m": 0.002000272364210674
+  },
+  "usdrt": {
+    "n_links": 2880,
+    "max_position_m": 1.862645149230957e-09,
+    "max_quaternion_l2_sign_invariant": 2.950279395762582e-07,
+    "n_objects": 240,
+    "max_object_position_m": 0.0
+  },
+  "fabric": {
+    "n_links": 2880,
+    "max_position_m": 0.0,
+    "max_quaternion_l2_sign_invariant": 3.0919909477233887e-07,
+    "n_objects": 240,
+    "max_object_position_m": 0.0
+  },
+  "storage": {
+    "single_backend_diagnostic_json_bytes": 681672,
+    "bytes_per_tick": 5680.6,
+    "scope": "visual snapshot, state, preceding applied synthetic target/native; excludes XR identities, successor/transaction proof and mutable USD attribute deltas; not complete B1 artifact",
+    "raw_rgb_bytes_per_tick": 2764800,
+    "raw_rgb_bytes_s": 82944000,
+    "estimates_bytes": {
+      "1": 10225080.0,
+      "5": 51125400.0,
+      "30": 306752400.0
+    }
+  }
+}

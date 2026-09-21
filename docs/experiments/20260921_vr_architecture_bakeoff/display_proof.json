@@ -1,0 +1,78 @@
+{
+  "on": {
+    "run": "/tmp/vr4p5-display-proof-on",
+    "candidate": "B1-FULL-OFFLINE",
+    "expected_display_captures": 2,
+    "observed_display_captures": 2,
+    "images": {
+      "xr_display_110.png": "39ee289e87250f482fecc9ff9c0a5b4fdd68923ff9174b06f168d33edc627562",
+      "xr_display_60.png": "2ec7aa3b00ad1a260e667f3df2550c11d4a0dda09c808d26c434dbcc3e21fa63"
+    },
+    "live_camera_guards": {
+      "tick": 100,
+      "frames_start": {
+        "left_wrist": 1,
+        "right_wrist": 1,
+        "scene": 1
+      },
+      "frames_end": {
+        "left_wrist": 1,
+        "right_wrist": 1,
+        "scene": 1
+      },
+      "all_products_disabled": true,
+      "annotators_detached": true,
+      "preview_bound": false,
+      "preview_visible": false,
+      "image_activity_violations": [],
+      "viewport_camera": "/_xr/stage/xrCamera",
+      "viewport_updates": true
+    },
+    "xr_samples": [
+      {
+        "enabled": true,
+        "display": true,
+        "profile": "ar",
+        "resolution": "2 x [2048 x 1792] ",
+        "scale": 1.0
+      }
+    ]
+  },
+  "off": {
+    "run": "/tmp/vr4p5-display-proof-off",
+    "candidate": "B1-FULL-OFFLINE-D",
+    "expected_display_captures": 2,
+    "observed_display_captures": 0,
+    "images": {},
+    "live_camera_guards": {
+      "tick": 100,
+      "frames_start": {
+        "left_wrist": 1,
+        "right_wrist": 1,
+        "scene": 1
+      },
+      "frames_end": {
+        "left_wrist": 1,
+        "right_wrist": 1,
+        "scene": 1
+      },
+      "all_products_disabled": true,
+      "annotators_detached": true,
+      "preview_bound": false,
+      "preview_visible": false,
+      "image_activity_violations": [],
+      "viewport_camera": "/_xr/stage/xrCamera",
+      "viewport_updates": false
+    },
+    "xr_samples": [
+      {
+        "enabled": true,
+        "display": true,
+        "profile": "ar",
+        "resolution": "-",
+        "scale": 1.0
+      }
+    ]
+  },
+  "verdict": "REJECTED active-viewport disable method: matched XR display capture requests complete 2/2 with viewport enabled and 0/2 disabled. Physical presentation not measured; flag-only success is insufficient."
+}

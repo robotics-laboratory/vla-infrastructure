@@ -1902,6 +1902,69 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  vr_architecture_report:
+    kind: report
+    sha256: 70e013944f1d4aa7bfdbb8adcbad831a116347c63b07f811b99a7113df87aa52
+    path: docs/experiments/20260921_vr_architecture_bakeoff/REPORT.md
+    uri: null
+    description: Bounded XR architecture bake-off on 8d854b9 with canonical bd288917 runtime unchanged; no physical
+      qualification, runtime promotion, RecorderManager or dataset admission.
+  vr_architecture_long:
+    kind: test_output
+    sha256: 86c619b85eeba41fab9dfaf120141414cfa380e25a95cd7a07610136c0bee69e
+    path: docs/experiments/20260921_vr_architecture_bakeoff/long_results.json
+    uri: null
+    description: Bounded XR architecture bake-off on 8d854b9 with canonical bd288917 runtime unchanged; no physical
+      qualification, runtime promotion, RecorderManager or dataset admission.
+  vr_architecture_short:
+    kind: test_output
+    sha256: ed5cefb7ef4775e352d7ba78cef3e1a7bfe625abe989db68073baa28b297fe19
+    path: docs/experiments/20260921_vr_architecture_bakeoff/short_results.json
+    uri: null
+    description: Bounded XR architecture bake-off on 8d854b9 with canonical bd288917 runtime unchanged; no physical
+      qualification, runtime promotion, RecorderManager or dataset admission.
+  vr_architecture_replay:
+    kind: test_output
+    sha256: 080dd44fd287ea51d732e0a7c13b182ab34da7762e1b8e88feb2a255c84a86a2
+    path: docs/experiments/20260921_vr_architecture_bakeoff/full_replay_summary.json
+    uri: null
+    description: Bounded XR architecture bake-off on 8d854b9 with canonical bd288917 runtime unchanged; no physical
+      qualification, runtime promotion, RecorderManager or dataset admission.
+  vr_architecture_phase:
+    kind: report
+    sha256: eb3a3c338afcada28bac7089d2b3fbab601f75fff740984f52996ed07bb94a93
+    path: docs/experiments/20260921_vr_architecture_bakeoff/phase_findings.md
+    uri: null
+    description: Bounded XR architecture bake-off on 8d854b9 with canonical bd288917 runtime unchanged; no physical
+      qualification, runtime promotion, RecorderManager or dataset admission.
+  vr_architecture_display:
+    kind: test_output
+    sha256: 3411c9d9d6852042ccd6a1413a62d06d20e3670d5314cdfe9ee60b06ec4252b5
+    path: docs/experiments/20260921_vr_architecture_bakeoff/display_proof.json
+    uri: null
+    description: Bounded XR architecture bake-off on 8d854b9 with canonical bd288917 runtime unchanged; no physical
+      qualification, runtime promotion, RecorderManager or dataset admission.
+  vr_architecture_provenance:
+    kind: run_manifest
+    sha256: e8785bd02b12f318674669aa35d6310b5aa29f4e2bef738ed4bacb4691cdd2b0
+    path: docs/experiments/20260921_vr_architecture_bakeoff/provenance.json
+    uri: null
+    description: Bounded XR architecture bake-off on 8d854b9 with canonical bd288917 runtime unchanged; no physical
+      qualification, runtime promotion, RecorderManager or dataset admission.
+  vr_architecture_tests:
+    kind: test_output
+    sha256: 1b33ba17302c21c476a9642199b59361a54c9119d7fbd0b4a8063224ffd40a89
+    path: docs/experiments/20260921_vr_architecture_bakeoff/checks.txt
+    uri: null
+    description: Bounded XR architecture bake-off on 8d854b9 with canonical bd288917 runtime unchanged; no physical
+      qualification, runtime promotion, RecorderManager or dataset admission.
+  vr_architecture_raw:
+    kind: test_output
+    sha256: e1a7d41052e2116e81476c2f344372bdb40ccf6be9d1fe847ed90270938b50ea
+    path: /data/ebulochkin/vla-runtime/evidence/20260921_vr_architecture_bakeoff/architecture-bakeoff.tar.gz
+    uri: null
+    description: 'Verified 2102-file archive: exact executed source/config versions, raw timing arrays and rolling
+      windows, bounded images/state records, assets, traces and failed attempts; excludes Kit caches.'
   vr_sensor_xr_report:
     kind: report
     sha256: a9d062506d3e7383db3bea2619bd71f6a844c4c1440737420f9da1ed50643c8f
@@ -2878,6 +2941,108 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  vr_architecture_audit:
+    timestamp: '2026-09-21T21:29:21.665273+00:00'
+    artifact_ids:
+    - vr_architecture_report
+    - vr_architecture_long
+    - vr_architecture_short
+    - vr_architecture_replay
+    - vr_architecture_phase
+    - vr_architecture_display
+    - vr_architecture_provenance
+    - vr_architecture_tests
+    - vr_architecture_raw
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/experiments/20260921_vr_architecture_bakeoff
+    symbol: null
+    kind: command_test
+    status: pass
+    summary: Pinned source/API audit, short screening and three independent long repetitions each for J60, B1-FULL-OFFLINE
+      and RTX Minimal; 300 warmup plus 3000 measured controls per repetition. No new physical runs.
+    command: launch.py selectors and benchmark.py --long; exact commands and source hashes in provenance and
+      retained launch manifests.
+    notes: Evidence only; all gate states unchanged. Physical comfort/task testing unavailable. Prototype records
+      dataset_admissible=false; no D1/S2 acceptance or architecture promotion.
+  vr_architecture_phase:
+    timestamp: '2026-09-21T21:29:21.665273+00:00'
+    artifact_ids:
+    - vr_architecture_report
+    - vr_architecture_long
+    - vr_architecture_short
+    - vr_architecture_replay
+    - vr_architecture_phase
+    - vr_architecture_display
+    - vr_architecture_provenance
+    - vr_architecture_tests
+    - vr_architecture_raw
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/experiments/20260921_vr_architecture_bakeoff
+    symbol: null
+    kind: command_test
+    status: fail
+    summary: XR camera pixels lag one physics substep for USD marker, actual PhysX cube and actual robot articulation;
+      bounded no-XR control aligns. Canonical XR image-state qualification remains open.
+    command: launch.py phase --mode xr-smoke plus matched non-XR and held-state robot reference probes; all attempts
+      retained.
+    notes: Evidence only; all gate states unchanged. Physical comfort/task testing unavailable. Prototype records
+      dataset_admissible=false; no D1/S2 acceptance or architecture promotion.
+  vr_architecture_replay:
+    timestamp: '2026-09-21T21:29:21.665273+00:00'
+    artifact_ids:
+    - vr_architecture_report
+    - vr_architecture_long
+    - vr_architecture_short
+    - vr_architecture_replay
+    - vr_architecture_phase
+    - vr_architecture_display
+    - vr_architecture_provenance
+    - vr_architecture_tests
+    - vr_architecture_raw
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/experiments/20260921_vr_architecture_bakeoff
+    symbol: null
+    kind: command_test
+    status: inconclusive
+    summary: Restarted held-state materialization succeeds without physics, including 160 maximal sensors-off
+      states and all 480 images; complete visual closure, pixel/geometry parity and D0 causal snapshot binding
+      remain unqualified.
+    command: offline_probe.py on recorded capture directories; zero physics callbacks, shape/role checks and
+      bounded missing-channel rejection. Exact arguments retained.
+    notes: Evidence only; all gate states unchanged. Physical comfort/task testing unavailable. Prototype records
+      dataset_admissible=false; no D1/S2 acceptance or architecture promotion.
+  vr_architecture_desktop:
+    timestamp: '2026-09-21T21:29:21.665273+00:00'
+    artifact_ids:
+    - vr_architecture_report
+    - vr_architecture_long
+    - vr_architecture_short
+    - vr_architecture_replay
+    - vr_architecture_phase
+    - vr_architecture_display
+    - vr_architecture_provenance
+    - vr_architecture_tests
+    - vr_architecture_raw
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/experiments/20260921_vr_architecture_bakeoff
+    symbol: null
+    kind: command_test
+    status: fail
+    summary: 'Combined full sensors/panels-off plus viewport-updates-off reaches 23.73 Hz but fails XR-display
+      output precondition: 0/2 captures versus 2/2 with viewport enabled. Standalone viewport-off also has render-buffer
+      errors.'
+    command: launch.py B1-FULL-OFFLINE and B1-FULL-OFFLINE-D --mode xr-smoke --verify-xr-display; no extra render
+      pumps or canonical image capture.
+    notes: Evidence only; all gate states unchanged. Physical comfort/task testing unavailable. Prototype records
+      dataset_admissible=false; no D1/S2 acceptance or architecture promotion.
   vr_sensor_xr_audit:
     timestamp: '2026-09-21T19:15:09.103297+00:00'
     artifact_ids:
@@ -4400,6 +4565,10 @@ gates:
   S2:
     state: unresolved
     evidence_ids:
+    - vr_architecture_audit
+    - vr_architecture_phase
+    - vr_architecture_replay
+    - vr_architecture_desktop
     - vr_sensor_xr_audit
     - vr_sensor_xr_cadence_probes
     - vr_sensor_xr_alignment_probe
@@ -4416,6 +4585,15 @@ gates:
     - gate_s2_physical_run1_failed
     - isaac1103_s2_automated
     artifact_ids:
+    - vr_architecture_report
+    - vr_architecture_long
+    - vr_architecture_short
+    - vr_architecture_replay
+    - vr_architecture_phase
+    - vr_architecture_display
+    - vr_architecture_provenance
+    - vr_architecture_tests
+    - vr_architecture_raw
     - vr_sensor_xr_report
     - vr_sensor_xr_summary
     - vr_sensor_xr_provenance

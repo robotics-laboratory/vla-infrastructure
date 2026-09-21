@@ -1,0 +1,37 @@
+{
+  "states": 160,
+  "camera_frames": 480,
+  "warmup_states": 20,
+  "measured_states": 140,
+  "materialize": {
+    "n": 140,
+    "mean_ms": 126.32110815362206,
+    "stddev_ms": 9.575858551951095,
+    "cv": 0.07580568831224682,
+    "p50_ms": 129.47852606885135,
+    "p90_ms": 136.22029130347073,
+    "p95_ms": 138.1016260245815,
+    "p99_ms": 143.46143240574747,
+    "p99_9_ms": 144.34594743140045,
+    "max_ms": 144.48757795616984
+  },
+  "states_per_second": 7.916333339823749,
+  "camera_frames_per_second": 23.749000019471247,
+  "wall_minutes_per_simulated_minute": 3.7896332446086616,
+  "includes": "restore, render, readback, all-three-image NPZ compression and write; excludes process startup",
+  "max_position_error_m": 2.1696418193818683e-07,
+  "output_files": 160,
+  "output_bytes": 53908394,
+  "memory": {
+    "max_rss_kib": 6324736,
+    "physics_callbacks": 0,
+    "gpu_memory_end": "2918 MiB\n"
+  },
+  "native_bytes_per_tick": 8973.8,
+  "native_storage_bytes": {
+    "1": 16152840.0,
+    "5": 80764200.0,
+    "30": 484585200.0
+  },
+  "live_rgb_reference": false
+}
