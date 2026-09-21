@@ -17,6 +17,7 @@ import yaml
 
 from isaac_s1_runtime import NativeBimanualTargets, jsonable
 from isaac_s2_performance import S2PerformanceLogger
+from isaac_s2_acceptance_log import S2AcceptanceLog
 from isaac_s2_processor import (
     BimanualS2TeleopProcessor,
     PROCESSOR_REVISION,
@@ -101,6 +102,10 @@ class _BimanualDifferentialIk:
 
     def apply(self, command) -> bool:
         native = []
+        acceptance = getattr(self, "acceptance_enabled", False)
+        if acceptance:
+            self.acceptance_targets = {}
+            self.acceptance_tcp_world = {}
         saturated = False
         for robot, wrist_id, ids, controller, arm_command in zip(
             self.env.robots,
@@ -125,6 +130,12 @@ class _BimanualDifferentialIk:
                 device=self.env.sim.device,
             ).unsqueeze(0)
             controller.set_command(delta, ee_pos=ee_pos, ee_quat=ee_quat)
+            if acceptance:
+                side = "left" if not native else "right"
+                self.acceptance_tcp_world[side] = tcp_world[0].detach().cpu().numpy().copy()
+                self.acceptance_targets[side] = self.torch.cat(
+                    (controller.ee_pos_des, controller.ee_quat_des), dim=-1
+                )[0].detach().cpu().numpy().copy()
             desired = controller.compute(ee_pos, ee_quat, jacobian, joint_pos)[0]
             limits = robot.data.joint_limits.torch[0, ids[:6], :]
             clipped = desired.clamp(limits[:, 0], limits[:, 1])
@@ -132,6 +143,11 @@ class _BimanualDifferentialIk:
             values = clipped.detach().cpu().numpy()
             native.append(np.concatenate((values, [arm_command.gripper_aperture_m])))
         self.env._apply(NativeBimanualTargets(native[0], native[1], saturated))
+        if acceptance:
+            self.acceptance_native = {"left": native[0], "right": native[1],
+                                      "saturated": saturated,
+                                      "units": "six joint radians + aperture metres",
+                                      "target_pose_frame": "world XYZW"}
         return saturated
 
 
@@ -330,6 +346,10 @@ def run_s2(env, args_cli, simulation_app) -> int:
     performance_summary: dict[str, Any] | None = None
     env.performance_logger = performance
     interrupted = False
+    failed = False
+    journal = S2AcceptanceLog.optional(config=config, processor_config=processor_cfg,
+                                       versions=actual_versions)
+    ik.acceptance_enabled = journal is not None
 
     print(
         f"[S2] CloudXR {actual_versions['cloudxr']} profile={args_cli.s2_cloudxr_profile} "
@@ -347,6 +367,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 if not simulation_app.is_running():
                     break
                 control_steps = step
+                if journal is not None:
+                    journal.begin(step)
                 if performance is not None:
                     performance.begin_step()
                     stage_started_ns = time.perf_counter_ns()
@@ -357,6 +379,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     )
                     stage_started_ns = time.perf_counter_ns()
                 action = device.advance()
+                if journal is not None:
+                    journal.observe(device, action)
                 if performance is not None:
                     performance.add_stage(
                         "teleop_advance", time.perf_counter_ns() - stage_started_ns
@@ -401,6 +425,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     previous_camera_indices = None
                     device.reset(pause=False)
                     before_pose = ik.tcp_poses_base()
+                    if journal is not None:
+                        journal.reset()
 
                 session_started_ever |= device.session_running
                 display_button_value = 0.0
@@ -585,6 +611,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         ),
                         flush=True,
                     )
+                if journal is not None:
+                    journal.end(action=action, command=command, before=before_pose,
+                                after=after_pose, ik=ik, camera=camera, env=env, device=device)
                 if performance is not None:
                     performance.add_stage("status_emit", time.perf_counter_ns() - stage_started_ns)
                     window = performance.end_step(
@@ -606,6 +635,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         print(json.dumps(window, sort_keys=True), flush=True)
     except KeyboardInterrupt:
         interrupted = True
+        if journal is not None:
+            journal.event("shutdown_requested", reason="KeyboardInterrupt/SIGINT")
         print(
             json.dumps(
                 {
@@ -617,6 +648,11 @@ def run_s2(env, args_cli, simulation_app) -> int:
             ),
             flush=True,
         )
+    except Exception as exc:
+        failed = True
+        if journal is not None:
+            journal.event("runtime_error", exception_type=type(exc).__name__, message=str(exc))
+        raise
     finally:
         try:
             if experiment is not None:
@@ -624,6 +660,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
         finally:
             if performance is not None:
                 performance_summary = performance.close()
+            if journal is not None:
+                journal.close(interrupted=interrupted, failed=failed)
 
     elapsed = time.perf_counter() - started
     gpu_end = _gpu_observation()

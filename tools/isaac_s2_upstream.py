@@ -7,6 +7,7 @@ environment. It deliberately builds one ControllersSource carrying both hands.
 from __future__ import annotations
 
 import json
+import os
 import time
 from typing import Any
 
@@ -379,7 +380,14 @@ def build_piper_x_bimanual_pipeline(
     if recenter_control is not None:
         reorder_inputs["demo_recenter"] = connected["demo_recenter"].output("button")
     packed = reorderer.connect(reorder_inputs)
-    return OutputCombiner({"action": packed.output("output")})
+    outputs = {"action": packed.output("output")}
+    if os.environ.get("VLA_S2_ACCEPTANCE_DIR"):
+        # Same graph result as action, including in pipelined mode. No second
+        # source/session and no change to the 22-value action or processor.
+        for side, source in (("left", ControllersSource.LEFT), ("right", ControllersSource.RIGHT)):
+            outputs[f"acceptance_{side}_raw"] = controllers.output(source)
+            outputs[f"acceptance_{side}_world"] = transformed.output(source)
+    return OutputCombiner(outputs)
 
 
 class _SingleControllerSourceLifecycle(TeleopSessionLifecycle):

@@ -1,0 +1,36 @@
+{
+  "HUMAN": "NOT TESTED",
+  "LOGS": "INSUFFICIENT",
+  "S2": "INCOMPLETE",
+  "contradictions": [],
+  "provenance_exact": false,
+  "unclosed_criteria": [
+    "identity",
+    "translation_axes",
+    "rotation_axes",
+    "translation_scale",
+    "rotation_scale",
+    "clutch_rebase",
+    "per_hand_speed",
+    "gripper",
+    "cross_talk",
+    "tracking_valid",
+    "tracking_loss",
+    "tracking_reacquisition",
+    "startup",
+    "reconnect",
+    "headset_preview",
+    "wrist_cameras",
+    "preview_recursion",
+    "reset",
+    "shutdown",
+    "stale_duplicate",
+    "cadence",
+    "runtime_diagnostics"
+  ],
+  "blockers": [
+    "Instrumentation changes runtime: this is master + patch, not exact unmodified requested master",
+    "Requested speed-slider criterion conflicts with canonical toggle config (2.0/0.5)",
+    "exact physical runtime provenance not established"
+  ]
+}

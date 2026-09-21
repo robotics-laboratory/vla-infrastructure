@@ -1,5 +1,11 @@
 # Gate S2 physical Quest acceptance worksheet
 
+For final-master re-acceptance, first use
+[the 2026-09-21 coverage audit and structured procedure](GATE_S2_FINAL_MASTER_COVERAGE_20260921.md).
+It adds separate human/log verdicts, scenario markers and provenance checks.
+The toggle-based worksheet below is retained as the existing procedure; it must
+not be interpreted as evidence for the demo's continuous speed sliders.
+
 This worksheet is intentionally **not evidence** while any item is blank. Run the
 production command below with a physical Meta Quest 3 and no real robot interface:
 

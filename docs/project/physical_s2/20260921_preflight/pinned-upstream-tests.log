@@ -1,0 +1,24 @@
+Warp DeprecationWarning: warp.config.quiet is deprecated; use warp.config.log_level = warp.LOG_WARNING to suppress the init banner.
+Warp CUDA error 100: no CUDA-capable device is detected (in function init_cuda_driver, /builds/omniverse/warp/warp/native/cuda_util.cpp:333)
+/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/torch/jit/_script.py:1488: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+{"epoch": 1, "event": "demo_xr_navigation_frame_applied", "monotonic_ns": 2168362897857064, "recenter": false, "recenter_ack": null, "world_T_physical": [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]}
+{"backdrop_visible": false, "control": "right_secondary_click", "event": "demo_backdrop_visibility_changed", "event_origin": "controller_pipeline", "quest_button": "B", "visual_only": true}
+{"backdrop_visible": true, "control": "right_secondary_click", "event": "demo_backdrop_visibility_changed", "event_origin": "controller_pipeline", "quest_button": "B", "visual_only": true}
+{"event": "demo_vr_camera_feed_bound", "feeds": [{"camera": "wrist", "panel_layout_pixels": [640.0, 551.1111111111111], "panel_resolution_scale": 1.0, "rgb_stddev": 0.0, "source": "isaac_lab_camera_rgba", "source_alpha_range": [255, 255], "source_device": "cpu", "upload_alpha_range": [255, 255], "upload_device": "cpu"}, {"camera": "wrist", "panel_layout_pixels": [640.0, 551.1111111111111], "panel_resolution_scale": 1.0, "rgb_stddev": 0.0, "source": "isaac_lab_camera_rgba", "source_alpha_range": [255, 255], "source_device": "cpu", "upload_alpha_range": [255, 255], "upload_device": "cpu"}], "layout": "head_locked", "upload_path": "cpu_staged"}
+[DEMO] wrist camera panels prebound hidden before XR session
+[DEMO] wrist camera display ON
+{"capture_continues": true, "control": "left_primary_click", "display_visible": true, "event": "demo_vr_camera_feed_visibility_changed", "event_origin": "controller_pipeline", "feed_bound": true, "quest_button": "X"}
+[DEMO] wrist camera display OFF
+{"capture_continues": true, "control": "left_primary_click", "display_visible": false, "event": "demo_vr_camera_feed_visibility_changed", "event_origin": "controller_pipeline", "feed_bound": true, "quest_button": "X"}
+[DEMO] wrist camera display ON
+{"capture_continues": true, "control": "left_primary_click", "display_visible": true, "event": "demo_vr_camera_feed_visibility_changed", "event_origin": "controller_pipeline", "feed_bound": true, "quest_button": "X"}
+{"authoritative_scene_geometry_changed": false, "control": "right_thumbstick_click", "event": "demo_xr_recenter_requested", "event_origin": "controller_pipeline", "quest_button": "R3", "scheduled": true, "session_restart": false, "view_prim_path": "/World/RobosynDemo/SceneCamera"}
+{"authoritative_scene_geometry_changed": false, "control": "right_thumbstick_click", "event": "demo_xr_recenter_requested", "event_origin": "controller_pipeline", "quest_button": "R3", "scheduled": true, "session_restart": false, "view_prim_path": "/World/RobosynDemo/SceneCamera"}
+{"epoch": 1, "event": "demo_xr_navigation_frame_applied", "monotonic_ns": 2168362903539805, "recenter": true, "recenter_ack": "first_control_frame_after_scheduled_app_updates", "world_T_physical": [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]}
+{"epoch": 2, "event": "demo_xr_navigation_frame_applied", "monotonic_ns": 2168362903655426, "recenter": false, "recenter_ack": null, "world_T_physical": [[1.0, 0.0, 0.0, 0.6000000238418579], [0.0, 1.0, 0.0, 0.10000000149011612], [0.0, 0.0, 1.0, 1.399999976158142], [0.0, 0.0, 0.0, 1.0]]}
+{"epoch": 3, "event": "demo_xr_navigation_frame_applied", "monotonic_ns": 2168362903693885, "recenter": true, "recenter_ack": "first_control_frame_after_scheduled_app_updates", "world_T_physical": [[1.0, 0.0, 0.0, 0.6000000238418579], [0.0, 1.0, 0.0, 0.10000000149011612], [0.0, 0.0, 1.0, 1.399999976158142], [0.0, 0.0, 0.0, 1.0]]}
+----------------------------------------------------------------------
+Ran 25 tests in 1.053s
+
+OK

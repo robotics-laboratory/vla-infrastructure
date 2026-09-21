@@ -4,6 +4,8 @@ Two policy camera buffers retain their native batched Camera and RGB semantics.
 The third, presentation-only scene camera is not a policy observation.
 """
 from types import SimpleNamespace
+import os
+import time
 import torch
 from isaaclab.sensors import Camera, CameraCfg
 from isaaclab_physx.renderers import IsaacRtxRendererCfg
@@ -17,6 +19,22 @@ from isaac_robosyn_vr_demo import _CpuStagedFeedPresenter
 
 class _BatchedFeedManager(_XrCameraFeedManager):
     """Only adapt upstream's batch[0]/RGBA assumption at the presentation edge."""
+    def _publish_feed(self, feed):
+        super()._publish_feed(feed)
+        if os.environ.get('VLA_S2_ACCEPTANCE_DIR'):
+            if not hasattr(self, 'acceptance_publications'):
+                self.acceptance_publications = {}
+            name = feed.cfg.camera_name
+            previous = self.acceptance_publications.get(name, {})
+            frames = feed.camera.frame
+            frames = frames if hasattr(frames, 'detach') else frames.torch
+            self.acceptance_publications[name] = {
+                'count': previous.get('count', 0) + 1,
+                'host_publication_timestamp_ns': time.monotonic_ns(),
+                'camera_frame': int(frames[
+                    1 if name == 'right_wrist' else 0].item()),
+            }
+
     def _image_from_output(self, cfg, output):
         key = 'rgba' if 'rgba' in output else 'rgb'
         image = output[key].torch[1 if cfg.camera_name == 'right_wrist' else 0]

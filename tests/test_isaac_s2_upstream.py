@@ -274,6 +274,23 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         self.assertEqual(production.output_types()["action"].types[0].shape, (22,))
         self.assertEqual(demo.output_types()["action"].types[0].shape, (25,))
 
+    def test_acceptance_source_outputs_preserve_action_layout(self) -> None:
+        with patch.dict("os.environ", {"VLA_S2_ACCEPTANCE_DIR": "/tmp/unused-s2-test"}):
+            pipeline = self.build_piper_x_bimanual_pipeline()
+        self.assertEqual(pipeline.output_types()["action"].types[0].shape, (22,))
+        self.assertEqual(set(pipeline.output_types()), {"action", "acceptance_left_raw",
+            "acceptance_right_raw", "acceptance_left_world", "acceptance_right_world"})
+
+    def test_acceptance_controller_snapshot_has_no_invented_acquisition_time(self) -> None:
+        from tools.isaac_s2_acceptance_log import controller_snapshot
+        retargeter = self.ControllerStateRetargeter(
+            self.ControllersSource.LEFT, sensitivity_control="thumbstick_click", name="snapshot")
+        controller = self._controller(retargeter, [.1, .2, .3])
+        snapshot = controller_snapshot(controller)
+        self.assertTrue(snapshot["tracking_valid"])
+        np.testing.assert_allclose(snapshot["pose_xyzw"][:3], [.1, .2, .3])
+        self.assertIsNone(snapshot["source_timestamp"])
+
     def test_demo_display_edges_hide_panels_without_closing_rgb_source(self) -> None:
         import torch
 

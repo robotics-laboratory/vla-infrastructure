@@ -29,11 +29,15 @@ def main(argv=None) -> int:
     parser.add_argument('--cloudxr-mode', choices=('auto', 'existing'), default='auto')
     parser.add_argument('--state-root', type=Path)
     parser.add_argument('--dry-run', action='store_true')
+    parser.add_argument('--output-dir', type=Path)
+    parser.add_argument('--acceptance-dir', type=Path)
     parser.add_argument('--eval-socket', type=Path)
     parser.add_argument('--eval-run-manifest', type=Path)
     parser.add_argument('--performance-window-steps', type=int, default=30)
     parser.add_argument('--performance-warmup-steps', type=int, default=30)
     args = parser.parse_args(argv)
+    if args.acceptance_dir and (not args.teleop or args.stack != 'isaac61'):
+        parser.error('--acceptance-dir requires final-stack S2')
     if (args.eval_socket is None) != (args.eval_run_manifest is None):
         parser.error('--eval-socket and --eval-run-manifest must be provided together')
     if args.eval_socket is not None and (args.teleop or args.combined_preview_test or args.smoke or args.xr_smoke):
@@ -48,6 +52,8 @@ def main(argv=None) -> int:
     if not args.dry_run and os.environ.get('OMNI_KIT_ACCEPT_EULA', '').upper() not in ('Y', 'YES', '1'):
         raise RuntimeError('Set OMNI_KIT_ACCEPT_EULA=Y after accepting NVIDIA EULA')
     environment, state = user_environment(stack, args.stack, state_root=args.state_root)
+    if args.acceptance_dir:
+        environment['VLA_S2_ACCEPTANCE_DIR'] = str(args.acceptance_dir.resolve())
     environment.update({'UV_PROJECT_ENVIRONMENT': str(stack['environment']),
                         'UV_CACHE_DIR': str(state / 'cache/uv')})
     xr = bool(args.combined_preview_test or (args.teleop and not args.smoke))
@@ -55,7 +61,7 @@ def main(argv=None) -> int:
         environment['VLA_CLOUDXR_INSTALL_DIR'] = str(state / 'cloudxr')
         configure_cloudxr(environment, mode=args.cloudxr_mode, dry_run=args.dry_run)
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
-    output = state / 'runs' / stamp
+    output = args.output_dir.resolve() if args.output_dir else state / 'runs' / stamp
     output.mkdir(parents=True, exist_ok=False)
     config = write_runtime_config(ROOT, stack, state, output)
     kit_args = ['--portable-root', str(state / 'kit')]
@@ -103,7 +109,8 @@ def main(argv=None) -> int:
     (output / 'launch_manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
     print(f'Isaac evidence output: {output}', flush=True)
     if args.dry_run:
-        print(shlex.join(command)); return 0
+        print(shlex.join(command))
+        return 0
     stop_requested = False
     process = None
 

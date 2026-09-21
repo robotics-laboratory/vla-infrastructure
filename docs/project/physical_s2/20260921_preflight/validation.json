@@ -1,0 +1,72 @@
+{
+  "kind": "offline_preflight_only",
+  "base_master": "6430dc1a1a4366d87a3f9d1427f5e95dab7153a0",
+  "HUMAN": "NOT TESTED",
+  "LOGS": "INSUFFICIENT",
+  "S2": "INCOMPLETE",
+  "readiness": "BLOCKED",
+  "physical_runtime_launched": false,
+  "contract_changed": false,
+  "checks": [
+    {
+      "command": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python -m pytest -q tests/test_physical_s2_acceptance.py tests/test_isaac_s2_processor.py tests/test_isaac_s2_performance.py tests/test_isaac_demo_launch.py",
+      "exit_code": 0,
+      "passed": 33,
+      "log": "offline-tests.log"
+    },
+    {
+      "command": "PYTHONPATH=tools /data/vla-infrastructure/isaac61_production/env/bin/python -m unittest discover -s tests -p test_isaac_s2_upstream.py -q",
+      "exit_code": 0,
+      "passed": 25,
+      "log": "pinned-upstream-tests.log",
+      "scope": "CPU offline seams; no Kit/Quest. Vendor Warp CUDA warning retained."
+    },
+    {
+      "command": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff check tools/isaac_s2_acceptance_log.py tools/check_physical_s2.py tools/physical_s2_acceptance.py tools/isaac_s2_runtime.py tools/isaac_s2_upstream.py tools/launch_isaac_s1.py tools/isaac_s1_preview.py tests/test_physical_s2_acceptance.py tests/test_isaac_s2_upstream.py",
+      "exit_code": 0,
+      "log": "ruff.log"
+    },
+    {
+      "command": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/mypy --follow-imports=silent --cache-dir /tmp/s2-acceptance-mypy tools/isaac_s2_acceptance_log.py tools/check_physical_s2.py tools/physical_s2_acceptance.py",
+      "exit_code": 0,
+      "log": "mypy.log",
+      "scope": "three new modules; imported baseline modules not type-checked"
+    },
+    {
+      "command": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python tools/validate_resolved_contract.py",
+      "exit_code": 0,
+      "log": "contract-validator.log"
+    },
+    {
+      "command": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python tools/lint_spec_references.py",
+      "exit_code": 0,
+      "log": "spec-lint.log"
+    }
+  ],
+  "source_sha256": {
+    "docs/project/GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md": "4e6215671c67c61da95bd8e52dbe020de8944e553ff3d808c764d3f4c1e6d564",
+    "tests/test_isaac_s2_upstream.py": "4b6da54e361cdd13cd69df7d5df8d0fbe34e605365bd414fc80613f27e8ab3f5",
+    "tools/isaac_s1_preview.py": "ffb292921ef208df42cebd2e6eca33e4ea903c3cb63944b5db097b36d9bdfde6",
+    "tools/isaac_s2_runtime.py": "6a047d2561acc42bfb02eba3377f4040ec9bdd74b388084922b123f08bf1822c",
+    "tools/isaac_s2_upstream.py": "ca607df0fddd614d80869888137917c93caf64622ed229d6e174accf135cf2f5",
+    "tools/launch_isaac_s1.py": "7bcf4bfcad4c8585ebad645917197dd8c3a7dd1230c69bf6208a1ebc356ed5a9",
+    "tools/isaac_s2_acceptance_log.py": "01272cab1a903148d60e4b28e7011480f5e15554c0ca5e273f0c3a710f9a4fb9",
+    "tools/check_physical_s2.py": "6967c708f52c32eb25e443fcb929781ba464b1296f9e88746cb67f3457be23ce",
+    "tools/physical_s2_acceptance.py": "56eee6b7ced87ead9c14e1a1d0410edf690be7ddb819f8b767692ce5dde2de40",
+    "tests/test_physical_s2_acceptance.py": "30f8b78b40eac974048665c4603ebf451558f5b5fc5f13a6be2237fb564cbe56"
+  },
+  "artifact_sha256": {
+    "final-preflight.log": "ae131be8c4b255eb537d5a20ea44dbedeceeb50240663b4ce626b3484f30b2a2",
+    "prepared-provenance.json": "9319065d21c0f00de7f2e8376d5afd4f69d6e51abf0e7291ddde33e2f6bc20be",
+    "ruff.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "mypy.log": "8228fcc5ce46d42d01caf3cd941f4e9c5f2bcc372bb5b147a2f0572d2dd675a8",
+    "offline-tests.log": "2d2d1757929ff1a400d12f1dcb3d79edb8c05561a00dce88d72cdf6c2f9ed855",
+    "prepared-run-manifest.json": "376cc90da14c78ec4206e00f60bb6d868a31685dc99e68b6e6c972b4ca821224",
+    "contract-validator.log": "51eada3fc980940f5d3f219e5740e072e910aa8611b3eba83eb72e0dc0421096",
+    "spec-lint.log": "c3a8ade21ac774af46ef5c1f179b8570a85f158be08ec7b6bc677d5acd1b9820",
+    "preflight.log": "65606eb6cb7b3e23fa03bbe946edd77c0ff050657a97035815fa3ca84a8d40e9",
+    "pinned-upstream-tests.log": "d2b39cf83709535a99e6b95349c4ce8475767a251df5d083fadaa1ce514c1f13",
+    "prepared-result.json": "6a4e6cc14f761011ee6b7aff1320ec7100dd385010b15267a655d29ca219613d"
+  },
+  "prepared_directory": "/tmp/physical-s2-20260921-final-preflight"
+}

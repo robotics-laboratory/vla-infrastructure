@@ -1,0 +1,7 @@
+{
+  "directory": "/tmp/physical-s2-20260921-coverage-preflight",
+  "blockers": [
+    "Instrumentation changes runtime: this is master + patch, not exact unmodified requested master",
+    "Requested speed-slider criterion conflicts with canonical toggle config (2.0/0.5)"
+  ]
+}
