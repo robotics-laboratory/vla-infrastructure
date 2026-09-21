@@ -2,8 +2,8 @@
 
 For current physical Quest operation, the **PRIMARY OPERATOR ENTRYPOINT** is
 `./run-vr`; follow [RUN_VR_OPERATIONS.md](../../RUN_VR_OPERATIONS.md).
-This maintenance note also covers the **BASE / GENERIC S2 LAUNCHER**,
-`tools/launch_isaac_s2.py`, which remains supported for base S2 and smokes.
+This maintained note covers canonical VR operation and separate S1 maintenance.
+The generic S2 launcher was removed in `93d3497`.
 
 Run project commands from your own `~/vla_infrastructure` checkout. Shared SDKs,
 assets, converted USD, CloudXR, shader caches, logs, PNG and per-frame metadata
@@ -37,31 +37,28 @@ export ISAACLAB_CXR_ACCEPT_EULA=1
 ./run-vr
 ```
 
-This selects run-vr + RoboSyn demo overlay + final Isaac61 stack. The overlay
-selects independent 2x–4x–6x sliders, Scene Partitions and three previews. It
-remains experimental and requires physical S2 re-acceptance; use the
-[current worksheet](../../GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md). Operator status
-does not make demo logs evidence for the complete S1 contract.
+This selects the canonical VR composition in `configs/isaac61_vr_runtime.yaml`
+on the final Isaac61 stack, with status `SELECTED_HUMAN_ACCEPTANCE_PENDING`.
+`./run-vr diag` uses the same runtime with diagnostic observers. Physical Quest S2
+acceptance remains unresolved; use the
+[current worksheet](../../GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md).
+Only the explicitly selected `robosyn_asset_lab` profile remains experimental.
+VR checks do not qualify the complete S1 contract or record a D1 dataset.
 
-## Base S1/S2 and automated checks
+## Canonical VR automated checks and S1 maintenance
+
+```sh
+./run-vr --smoke
+./run-vr diag --smoke
+./run-vr --xr-smoke
+./run-vr diag --xr-smoke
+```
+
+Separate S1 maintenance uses the bounded complete contract validation and its
+combined preview diagnostics:
 
 ```sh
 python3 tools/launch_isaac_s1.py
-python3 tools/launch_isaac_s2.py
-```
-
-S1 runs the bounded complete contract validation. The base/generic S2 launcher
-runs the canonical S1 robot
-scene with the existing processor/IK and three previews (two policy wrist roles
-plus a presentation-only scene feed); it is simulation-only and does not record D1.
-Its selected sensitivity remains toggle normal 2x / precise 0.5x. This base path
-is not the primary operator workflow or the next physical acceptance target.
-
-Temporary checks also use the project launchers:
-
-```sh
-python3 tools/launch_isaac_s2.py --smoke
-python3 tools/launch_isaac_s2.py --xr-smoke
 python3 tools/launch_isaac_s1.py --combined-preview-test 3000
 python3 tools/launch_isaac_s1.py --combined-preview-test 40 --preview-control
 ```
@@ -96,12 +93,10 @@ cd ~/vla_infrastructure
 ```
 
 This is the operator rollback/debug path, not the current acceptance target.
-Base S1/S2 rollback checks remain available separately:
+S1 rollback maintenance remains available separately:
 
 ```sh
 python3 tools/launch_isaac_s1.py --stack legacy
-python3 tools/launch_isaac_s2.py --stack legacy --smoke
-python3 tools/launch_isaac_s2.py --stack legacy
 ```
 
 This selects the old exact SDK and separate per-user cache without checking out

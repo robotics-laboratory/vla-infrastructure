@@ -27,6 +27,7 @@ rebases. Host Ctrl-C preserves available reports and exits 130, never PASS.
 ./run-vr diag --dry-run
 ./run-vr --smoke
 ./run-vr diag --smoke
+./run-vr --xr-smoke
 ./run-vr diag --xr-smoke
 ./run-vr --stack legacy
 ```
@@ -135,3 +136,10 @@ record consumer inherits the same base semantics. Promotion changes selection,
 not Python ownership. Never copy control loops or builders across modes.
 Recording will attach at the shared observation/action/native/outcome boundary;
 there is currently no record command, dataset writer or D1 acceptance claim.
+
+## Historical references
+
+The [historical pre-canonical documentation audit](RUN_VR_DOCUMENTATION_AUDIT.md)
+records baseline `6430dc1` / documentation commit `2e80d23`. Its retained launcher,
+config and architecture statements are forensic history; current operation follows
+the machine sources and launch path above.

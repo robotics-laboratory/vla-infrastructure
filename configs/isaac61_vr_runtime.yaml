@@ -113,7 +113,7 @@ xr_presentation:
   anchor_rot_xyzw: [0.0, 0.0, -0.7071067811865475, 0.7071067811865476]
   near_plane_m: 0.10
   scale: 1.0
-  rationale: Physical Quest evidence showed +1.20 m was far too low and -0.25 m was slightly too high. The demo-only anchor Z is now -0.10 m, lowering the unchanged table/robots by 0.15 m relative to the previous run; -90 degree world yaw still maps OpenXR forward to scene +X.
+  rationale: Physical Quest evidence showed +1.20 m was far too low and -0.25 m was slightly too high. The selected VR anchor Z is now -0.10 m, lowering the unchanged table/robots by 0.15 m relative to the previous run; -90 degree world yaw still maps OpenXR forward to scene +X.
   recenter:
     execution_mode: sync
     motion_barrier: Hold the request frame; on the next control frame accept XRCore's current physical-to-world transform as the new reference and emit a zero-motion rebase. Any later transform change rebases again. Missing active XR transforms still hold motion.
@@ -168,4 +168,4 @@ validation:
   maximum_home_drift_deg: 1.0
   minimum_scene_rgb_stddev: 5.0
   profile_reset_position_tolerance_m: 0.005
-  collision_smoke: PhysX contact reporting plus finite state and bounded settled joint drift; demo-only self-collisions enabled.
+  collision_smoke: PhysX contact reporting plus finite state and bounded settled joint drift; selected VR self-collisions enabled.

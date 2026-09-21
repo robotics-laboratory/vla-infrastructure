@@ -1,16 +1,18 @@
 # RoboSyn-inspired VR demo report
 
-## Current operator reference — 2026-09-21
+## CURRENT operator reference — canonical migration `93d3497`
 
-The PRIMARY OPERATOR ENTRYPOINT is now documented as `./run-vr`: run-vr + RoboSyn
-demo overlay + final Isaac61 stack. Use [RUN_VR_OPERATIONS.md](RUN_VR_OPERATIONS.md)
-and the [current physical S2 worksheet](GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md).
-Default preview is Scene Partitions with three cameras; effective sensitivity is
-the independent per-controller slider (2x / 4x / 6x). The overlay remains
-`EXPERIMENTAL_TEST_ONLY_NOT_A_GATE` and the slider
-`DEMO_ONLY_CANDIDATE_REQUIRES_PHYSICAL_RETEST`. Primary operator status does not
-accept Gate S2. The dated reconciliation text and historical results/procedures
-below retain their original scope and bytes; use the linked guide for a new run.
+The historical RoboSyn work evolved into the canonical VR composition:
+`configs/isaac61_vr_runtime.yaml`, launched with `./run-vr`, with current default
+status `SELECTED_HUMAN_ACCEPTANCE_PENDING`. Use
+[RUN_VR_OPERATIONS.md](RUN_VR_OPERATIONS.md) and the
+[current physical S2 worksheet](GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md).
+S2 remains unresolved pending physical Quest acceptance. The explicitly selected
+`robosyn_asset_lab` remains `EXPERIMENTAL_TEST_ONLY_NOT_A_GATE`.
+
+All sections below are historical, including the dated reconciliation heading.
+They preserve the original experimental labels, commands and results unchanged;
+these experimental reports are not current acceptance evidence.
 
 ## Current reconciliation state — 2026-09-19
 

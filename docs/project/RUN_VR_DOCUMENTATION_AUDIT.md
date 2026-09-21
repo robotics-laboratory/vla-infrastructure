@@ -1,3 +1,20 @@
+# HISTORICAL PRE-CANONICAL AUDIT
+
+Scope: baseline `6430dc1` / documentation commit `2e80d23`.
+Superseded for current operation by:
+
+- [Resolved contract](../../configs/resolved_contract.yaml)
+- [Shared S2 config](../../configs/isaac61_s2_runtime.yaml)
+- [Canonical VR config](../../configs/isaac61_vr_runtime.yaml)
+- [Current operations](RUN_VR_OPERATIONS.md)
+
+As of `93d3497`, the generic S2 launcher is removed, `isaac_vr` is the canonical
+execution profile, and `./run-vr` is canonical. The asset lab is the only remaining
+experimental RoboSyn profile. The forensic body below is preserved unchanged;
+its current/supported/dual-model statements describe the pre-canonical scope only.
+
+---
+
 # Run-vr documentation launch-reference audit — 2026-09-21
 
 ## Scope and terminology

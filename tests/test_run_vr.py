@@ -389,6 +389,7 @@ def test_current_doc_sources_and_contract():
         ROOT / "AGENTS.md",
         *(ROOT / "docs").glob("*.md"),
         ROOT / "docs/project/RUN_VR_OPERATIONS.md",
+        ROOT / "docs/project/migrations/20260918_isaac1103/OPERATIONS.md",
         ROOT / "docs/project/CORE_ENVIRONMENT_OPERATIONS.md",
         ROOT / "docs/project/GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md",
     ]

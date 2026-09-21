@@ -1695,12 +1695,24 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  isaac61_vr_canonical_config:
+    kind: processor_config
+    sha256: 148baa3da2fdb37d56ef6fb3e310ec3497df4ed3736bf7e8125358c5cea4ec41
+    path: configs/isaac61_vr_runtime.yaml
+    uri: null
+    description: Selected canonical VR operator composition bound through S2 artifact_ids; shared processor semantics remain in the S2 runtime config. Selection is not physical acceptance.
+  vr_step1_postpush_verification:
+    kind: test_output
+    sha256: 734d9e95b852fa3fb83b9371f77c41f643e2abf104eb4912d6b5e92dad8e6202
+    path: docs/project/vr_step1/postpush-verification.json
+    uri: null
+    description: User-supplied clean remote-derived exact-commit post-push verification summary for 93d3497; physical Quest NOT RUN.
   vr_step1_validation:
     kind: test_output
     sha256: 1ab3835bcc678dfa5559a89bbf7e87ceefb8effe0b7268455e0faa1f322bd765
     path: docs/project/vr_step1/validation.json
     uri: null
-    description: Canonical RUN/DIAG tests and hashed no-client smoke artifacts; no physical acceptance.
+    description: Development dirty-worktree RUN/DIAG tests and hashed no-client smoke artifacts over 2e80d23; no exact-commit or physical acceptance claim.
   isaac1103_vr_environment:
     kind: environment_spec
     sha256: fe997db42e9d91e64c4820b5f073cd3ff69625a89ef299cb7db28b58d82ac0c6
@@ -2416,10 +2428,24 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  vr_step1_postpush_93d3497:
+    kind: command_test
+    status: pass
+    summary: Clean fresh detached remote-derived checkout of exact 93d3497 passed automated core/upstream, contract, integrity, RUN/DIAG parity, dry-run and no-client smoke checks; physical Quest NOT RUN.
+    timestamp: '2026-09-21T00:24:14.379484+00:00'
+    command: Reported core/upstream, contract/schema, spec linter, manifest, Ruff, mypy, parity/config, RUN/DIAG dry-run/smoke/XR no-client and explicit asset-lab diagnostic dry-run; see postpush-verification.json
+    artifact_ids:
+    - vr_step1_postpush_verification
+    repository: null
+    revision_type: commit
+    revision: 93d3497bd37c445fd403c0d9ff1c7278bd64492c
+    path: docs/project/vr_step1/postpush-verification.json
+    symbol: null
+    notes: Results supplied by the user for registration, not rerun during Step 2. Timestamp is registration time; original execution time/raw logs were not supplied. Separate from dirty-worktree vr_step1_automated. No human_gate, no S2/D1 acceptance, no qualification of the later cleanup commit.
   vr_step1_automated:
     kind: command_test
     status: pass
-    summary: One canonical VR runtime, mode parity and bounded no-client RUN/DIAG/XR checks pass; S2 human gate remains required.
+    summary: Development dirty-worktree evidence over 2e80d23; canonical VR mode parity and bounded no-client RUN/DIAG/XR checks pass; not exact-commit verification of 93d3497.
     timestamp: '2026-09-20T23:43:58.456339+00:00'
     command: ./run-vr --smoke; ./run-vr diag --smoke; no-client XR checks; core and pinned upstream tests; see validation.json
     artifact_ids:
@@ -3619,6 +3645,7 @@ gates:
   S2:
     state: unresolved
     evidence_ids:
+    - vr_step1_postpush_93d3497
     - vr_step1_automated
     - gate_s2_upstream_reuse_audit__base_682ee936
     - gate_s2_automated_runtime__base_682ee936
@@ -3626,6 +3653,8 @@ gates:
     - gate_s2_physical_run1_failed
     - isaac1103_s2_automated
     artifact_ids:
+    - isaac61_vr_canonical_config
+    - vr_step1_postpush_verification
     - vr_step1_validation
     - isaac_s2_runtime_config__base_682ee936
     - gate_s2_upstream_audit

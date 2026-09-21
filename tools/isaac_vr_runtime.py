@@ -1136,7 +1136,7 @@ def _demo_robot_cfg(
     *,
     home_per_arm: np.ndarray,
 ) -> ArticulationCfg:
-    """Keep imported mimic followers passive in this experiment scene."""
+    """Keep imported mimic followers passive in the selected VR scene."""
 
     cfg = robot_cfg_factory(
         prim_path,
@@ -1217,7 +1217,7 @@ def run_vr(
     wrist_path_resolver,
     environment_type,
 ) -> int:
-    """Build the fixed experiment scene, validate it, then enter the existing S2 loop."""
+    """Build the selected VR scene, validate it, then enter the existing S2 loop."""
 
     config = load_composition(args_cli.demo_profile)
     print(f"[VR] profile={args_cli.demo_profile} physical_human_gate=required")
@@ -1341,7 +1341,7 @@ def run_vr(
     validation = runtime.validate(env)
     print(f"[DEMO] validation={validation}", flush=True)
     if not validation["passed"]:
-        raise RuntimeError(f"RoboSyn demo preflight failed: {validation}")
+        raise RuntimeError(f"VR preflight failed: {validation}")
     if args_cli.demo_scene_preview is not None:
         from PIL import Image
 

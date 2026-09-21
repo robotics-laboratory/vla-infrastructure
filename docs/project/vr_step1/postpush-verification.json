@@ -1,0 +1,86 @@
+{
+  "revision_type": "commit",
+  "revision": "93d3497bd37c445fd403c0d9ff1c7278bd64492c",
+  "registered_at": "2026-09-21T00:24:14.379484+00:00",
+  "provenance": {
+    "source": "User-supplied completed post-push verification results, recorded during Step 2 documentation cleanup.",
+    "execution_timestamp": null,
+    "raw_logs": "Not supplied with this summary; no development-run logs or hashes are attributed to this commit.",
+    "rerun_during_registration": false
+  },
+  "checkout": {
+    "source": "origin/docs/run-vr-primary",
+    "fresh_detached": true,
+    "clean": true,
+    "local_only_dependency": false
+  },
+  "execution_profiles": {
+    "offline_tests": "core",
+    "isaac_vr": "isaac"
+  },
+  "verified_canonical_config": {
+    "path": "configs/isaac61_vr_runtime.yaml",
+    "sha256": "a078d5e762010311a9a3e9340ea9f5ef75f587ad2881c87073fc972de8ff4315"
+  },
+  "checks": {
+    "core": {
+      "status": "PASS",
+      "passed": 206,
+      "skipped": 23,
+      "subtests_passed": 4
+    },
+    "upstream": {
+      "status": "PASS",
+      "passed": 23
+    },
+    "contract_schema": "PASS",
+    "spec_linter": "PASS",
+    "manifest": {
+      "status": "PASS",
+      "files": 101
+    },
+    "ruff": "PASS",
+    "mypy": "PASS",
+    "parity_config": {
+      "status": "PASS",
+      "passed": 10
+    },
+    "run_dry_run": "PASS",
+    "diag_dry_run": "PASS",
+    "run_smoke": {
+      "status": "PASS",
+      "control_steps": 60,
+      "clean_shutdown": true
+    },
+    "diag_smoke": {
+      "status": "PASS",
+      "control_steps": 60,
+      "clean_shutdown": true
+    },
+    "run_xr_no_client": {
+      "status": "PASS",
+      "control_steps": 60
+    },
+    "diag_xr_no_client": {
+      "status": "PASS",
+      "control_steps": 60
+    },
+    "robosyn_asset_lab": {
+      "status": "PASS",
+      "mode": "explicit diagnostic dry-run",
+      "pinned_asset_verification": true
+    },
+    "run_diag_processor_native_target_parity": "PASS"
+  },
+  "master": {
+    "revision": "6430dc1a1a4366d87a3f9d1427f5e95dab7153a0",
+    "unchanged": true
+  },
+  "physical_quest": "NOT RUN",
+  "gate_states": {
+    "S2": "unresolved",
+    "D1": "unresolved"
+  },
+  "human_gate_added": false,
+  "scope": "Automated exact-commit validation only. Does not qualify physical Quest acceptance or the later Step 2 cleanup commit."
+}
