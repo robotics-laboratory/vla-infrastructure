@@ -150,7 +150,7 @@ def install(env, args) -> None:
 
     env._advance = advance
     manifest = {
-        "candidate": "LIVE-MIN60-NONTILED",
+        "candidate": os.environ["VR_BAKEOFF_CANDIDATE"],
         "physics_hz": 60.0,
         "control_target_hz": 30.0,
         "physics_steps_per_control": 2,

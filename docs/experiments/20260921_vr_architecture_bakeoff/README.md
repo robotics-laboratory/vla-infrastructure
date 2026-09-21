@@ -15,6 +15,60 @@ is retained as a camera-alignment failure: its fixed scene camera matched P-2 at
 all 35 changing accepted boundaries. Do not advance it to the physical queue or
 use its 70-sample diagnostic timings as the required short benchmark.
 
+The follow-up [LIVE-MIN60-DEFERRED run](runs/20260922_live_min60_deferred/REPORT.md)
+qualified an exact one-control producer delay across 9,000 long-run camera bundles.
+That result qualifies deferred camera association, not human display latency or
+120-to-60 contact-dynamics equivalence.
+
+## LIVE-MIN60-DEFERRED prototype
+
+`LIVE-MIN60-DEFERRED` preserves the exact LIVE-MIN60 runtime and adds an opt-in,
+experiment-only one-deep observation binder plus content-sensitive qualification.
+It does not alter canonical runtime files, D0 schema, gate state, or dataset
+persistence. `deferred_probe.py` moves an existing robot finger and both existing
+PhysX cubes deterministically, retains state/render/extraction identities, and
+checks offsets 0/-1/-2 independently for all three cameras. The unreliable
+camera-child USD marker was disabled. `deferred_binding.py` owns only prepare,
+complete, abort, epoch invalidation, and immutable publication for one pending
+three-camera observation. `dynamics_probe.py` provides the bounded deterministic
+120-to-60 comparison required after temporal correctness passes.
+
+Mandatory upstream/size re-audit:
+
+- Capability/gates: LIVE-MIN60 temporal binding experiment; D0/S1/S2/D1 scope,
+  with no gate acceptance.
+- Pinned candidates inspected: Isaac Lab `SensorBase`, `Camera`, `RenderContext`,
+  `IsaacRtxRenderer`, `SimulationContext`, PhysX `forward`, and `KitVisualizer` in
+  the declared Isaac 6.1 / Kit 110.3 environment.
+- Upstream ownership: one Kit app pump per render, RTX annotator extraction,
+  camera frame/data generations, render generation, physics/Fabric synchronization,
+  and camera buffers.
+- Exact gap: upstream identities attest extraction completion but expose no token
+  identifying the simulation state depicted by RGB annotator pixels.
+- Narrow project code: a qualification-only visible source witness and a fail-closed
+  one-pending binder. No acquisition, rendering, physics, recorder, or scheduling
+  framework is replaced.
+- Environment impact: none; the existing frozen Isaac environment and canonical
+  scene/loop are reused through the process-local experiment hook.
+- Framework decision: a general asynchronous observation API is unnecessary for
+  one measured pipeline depth. The existing `CausalTransactionValidator` can be
+  invoked after the edge completes the immutable observation.
+
+Short qualification command (use a fresh output directory and only when no other
+Isaac process is active):
+
+```sh
+python docs/experiments/20260921_vr_architecture_bakeoff/launch.py LIVE-MIN60-DEFERRED --mode xr-smoke --ticks 320 --warmup 300 --output /tmp/live-min60-deferred-short-repeat --state-root /tmp/live-min60-deferred-state --deferred-boundaries 300
+```
+
+The retained short phase passed 300/300 expected offsets for every camera and a
+physics-free terminal drain. The saved physical command is intentionally one
+candidate only:
+
+```sh
+python docs/experiments/20260921_vr_architecture_bakeoff/launch.py LIVE-MIN60-DEFERRED --mode physical --ticks 3300 --warmup 300 --output /tmp/live-min60-deferred-physical-01 --state-root /tmp/live-min60-deferred-physical-state
+```
+
 ## Safety and lifecycle scope
 
 Simulation and Quest only; no real robot action is authorized here. Use the existing

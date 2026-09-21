@@ -2586,6 +2586,24 @@ documents:
   owner: vr.performance
   mutable: false
   gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/deferred_binding.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/deferred_probe.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/dynamics_probe.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [S1, S2]
 - path: docs/experiments/20260921_vr_architecture_bakeoff/launch.py
   kind: experiment
   status: current
@@ -2725,6 +2743,12 @@ documents:
   mutable: false
   gates: [D0, S1, S2, D1]
 - path: docs/experiments/20260921_vr_architecture_bakeoff/checks.txt
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min60_deferred/REPORT.md
   kind: experiment
   status: historical
   owner: vr.performance
