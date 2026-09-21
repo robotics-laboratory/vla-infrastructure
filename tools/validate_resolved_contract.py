@@ -130,6 +130,7 @@ EXPECTED_SOURCE_TIMING_FEATURE_SETS = [
     "observation.state",
     "observation.images.left_wrist",
     "observation.images.right_wrist",
+    "observation.images.scene",
     "xr.left_pose",
     "xr.right_pose",
     "source_action",
@@ -140,6 +141,7 @@ EXPECTED_SOURCE_TIMING_BY_SOURCE_CLASS = {
         "observation.state",
         "observation.images.left_wrist",
         "observation.images.right_wrist",
+        "observation.images.scene",
         "source_action",
     ],
 }
@@ -584,6 +586,8 @@ def validate_materialization(d):
         out.append("projected source feature schemas differ")
     if vals and final and any(v.lower() != final.lower() for v in vals):
         out.append("projected source schema fingerprint != final dataset schema fingerprint")
+    if final and final != canonical_training_schema_fingerprint(d):
+        out.append("final materialized schema must equal the canonical three-camera schema")
     fd = m["final_dataset"]
     if fd["identity_type"] == "hub_revision" and (not fd["repo_id"] or not fd["revision"]):
         out.append("hub_revision final dataset identity requires repo_id and revision")
@@ -644,6 +648,11 @@ def validate_dataset_contract(d):
         out.append("D0 observation.state units must exactly preserve the accepted Gate A units")
     if action["shape"] != [len(action_names)] or state["shape"] != [len(observation_names)]:
         out.append("D0 state/action vector shapes must equal their ordered scalar counts")
+    roles = ["left_wrist", "right_wrist", "scene"]
+    if list(dataset["cameras"]) != roles:
+        out.append("D0 camera roles/order must be left_wrist, right_wrist, scene")
+    if dataset["policy_data_contract_revision"] != "piper_x_d0_policy_data_v4":
+        out.append("D0 requires policy data contract v4")
     camera_features = [camera["feature_key"] for camera in dataset["cameras"].values()]
     expected_inputs = [
         state["feature_key"],
@@ -676,9 +685,7 @@ def validate_dataset_contract(d):
     source_timing = temporal["source_timing"]
     expected_source_timing_implementation = {
         "recorder_adapter": "tools.d0_temporal.TemporalFrameRecorder",
-        "production_dataset_adapter": (
-            "tools.temporal_recording.TemporalLeRobotDatasetAdapter"
-        ),
+        "production_dataset_adapter": ("tools.temporal_recording.TemporalLeRobotDatasetAdapter"),
         "record_loop_factory": (
             "tools.temporal_recording.wrap_lerobot_dataset_for_temporal_recording"
         ),
@@ -715,6 +722,33 @@ def validate_dataset_contract(d):
             f"source timing features missing provenance_only classification: {missing_temporal}"
         )
 
+    profiles = temporal["source_profiles"]
+    for sid, source in dataset["sources"].items():
+        profile = profiles.get(source.get("temporal_profile"), {})
+        if profile.get("runtime") != source["runtime"] or source["source_class"] not in profile.get(
+            "source_classes", []
+        ):
+            out.append(f"source {sid}: temporal profile selector mismatch")
+        bindings = source.get("camera_bindings", [])
+        if [b["canonical_feature_key"] for b in bindings] != camera_features or len(
+            {b["physical_source_name"] for b in bindings}
+        ) != 3:
+            out.append(f"source {sid}: three distinct physical camera bindings required in order")
+        if source["schema_fingerprint_sha256"] != canonical_training_schema_fingerprint(d):
+            out.append(f"source {sid}: canonical three-camera fingerprint mismatch")
+        if source["processor_contract_revision"] != dataset["policy_data_contract_revision"]:
+            out.append(f"source {sid}: D0 profile revision mismatch")
+        if not source.get("preprocessing_revision") or not source.get("calibration_artifact_ids"):
+            out.append(f"source {sid}: preprocessing/calibration admission missing")
+        for aid in source.get("calibration_artifact_ids", []):
+            if d["artifacts"].get(aid, {}).get("kind") != "calibration":
+                out.append(f"source {sid}: unregistered calibration artifact {aid}")
+    if accepted(d, "D0"):
+        if eid != "gate_d0_v4_causality" or eid not in d["gates"]["D0"]["evidence_ids"]:
+            out.append("D0 v4 requires its registered v4 causality evidence attached to D0")
+        elif ev and not set(ev["artifact_ids"]) <= set(d["gates"]["D0"]["artifact_ids"]):
+            out.append("D0 v4 causality artifacts must be attached to D0")
+
     expected_fingerprint = canonical_training_schema_fingerprint(d)
     if dataset["common_training_view"]["schema_fingerprint_sha256"] != expected_fingerprint:
         out.append(
@@ -723,8 +757,8 @@ def validate_dataset_contract(d):
     return out
 
 
-def canonical_training_schema_fingerprint(d):
-    """Hash only the ordered, operational common-training feature specification."""
+def canonical_training_schema(d):
+    """Return the exact ordered feature specification used by the project hash."""
     dataset = d["dataset"]
     state = dataset["observation_contract"]["state"]
     action = dataset["action_label_pipeline"]["dataset_action"]
@@ -768,7 +802,14 @@ def canonical_training_schema_fingerprint(d):
             "semantics": action["semantics"],
         }
     )
-    encoded = json.dumps(ordered_features, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return ordered_features
+
+
+def canonical_training_schema_fingerprint(d):
+    """Hash only the ordered, operational common-training feature specification."""
+    encoded = json.dumps(
+        canonical_training_schema(d), sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
 
@@ -935,6 +976,18 @@ def validate_gates(d, rules):
                 out.append(
                     f"gate {gid}: automated dataset source manifest must be attached to gate artifacts"
                 )
+        for path in r.get("required_paths", []):
+            if path.endswith("_evidence_id"):
+                eid = get_path(d, path)
+                if (
+                    d["evidence"].get(eid, {}).get("status") != "pass"
+                    or eid not in g["evidence_ids"]
+                ):
+                    out.append(f"gate {gid}: required PASS evidence not attached: {path}")
+            if path.endswith("demonstration_quality_envelope_artifact_id"):
+                aid = get_path(d, path)
+                if aid not in d["artifacts"] or aid not in g["artifact_ids"]:
+                    out.append(f"gate {gid}: demonstration quality envelope not attached")
         sp = r.get("special_check")
         if sp == "cross_sim":
             out += validate_cross_sim(d)

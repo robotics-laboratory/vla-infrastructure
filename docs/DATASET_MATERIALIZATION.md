@@ -28,7 +28,15 @@ Do not create a runtime multi-dataset abstraction merely to avoid materializatio
 
 ## Schema fingerprint
 
-Each projected source records a SHA-256 schema fingerprint derived from the canonical ordered feature specification.
+Each projected source records the SHA-256 from the project implementation's
+canonical ordered specification: `observation.state`,
+`observation.images.left_wrist`, `observation.images.right_wrist`,
+`observation.images.scene`, `task`, `action`. Camera capture is uint8 RGB HWC
+[480,640,3], policy input float32 CHW [3,480,640] in [0,1], without canonical
+crop/resize/flip. Source manifests declare physical-name-to-canonical-role
+bindings, preprocessing revision, calibration references and temporal profile.
+D2 parity compares this three-camera schema and profile-appropriate causal proof;
+physical timing fields are not fabricated for Isaac.
 
 Before [[gate:DM]] is accepted:
 
@@ -59,7 +67,7 @@ Cover:
 ```text
 all episodes
 all frames
-all configured video streams
+all three canonical video streams, with no omitted scene stream
 DataLoader iteration
 episode boundaries
 obs/action pairing
@@ -68,13 +76,16 @@ success/termination
 camera role mapping
 NaN/Inf
 dataset timestamp monotonicity
-source timestamp/sequence monotonicity by clock domain
-source age limits for camera, joint state, XR, and policy action
-cross-modal skew limits
+common causal identities, epochs, transition/successor and immutable payload binding
+source-profile parity and dispatch by runtime/source_class
+physical profiles: timestamp/sequence monotonicity by clock domain
+physical profiles: camera/joint/XR/action age and cross-modal skew
+Isaac human: capture barrier and resolved XR identities, not acquisition time
+Isaac automated: generator identity/provenance, no XR
 duplicate logical timestamps and repeated source sequences
 frozen/empty camera streams
 large joint discontinuities
-stale XR intervals
+physical stale XR intervals; Isaac tracking-invalid/resolved-input gaps
 action saturation/residual modification rates where available
 abort/timeout classification
 ```

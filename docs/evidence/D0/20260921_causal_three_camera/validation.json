@@ -1,0 +1,78 @@
+{
+  "recorded_at": "2026-09-21T14:47:40.978205+00:00",
+  "trusted_base": "76b93ee6562ac1da2e21551d1aff5454cfd7a859",
+  "scope": "Offline D0 v4 contract, tests and dependency graph; no Isaac execution, hardware, Quest or source registration.",
+  "full_pytest": {
+    "command": "UV_PROJECT_ENVIRONMENT=/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env UV_CACHE_DIR=/tmp/d0-v4-uv PYTHONPATH=packages/lerobot_robot_piperx/src HF_HOME=/tmp/d0-v4-hf uv run --frozen --no-sync python -m pytest -q",
+    "result": "338 passed, 23 skipped, 1 upstream deprecation warning, 4 subtests passed",
+    "execution": "outside sandbox only to permit local Unix sockets; no runtime-dependent tests enabled"
+  },
+  "checks": {
+    "lint_docs --base 76b93ee6562ac1da2e21551d1aff5454cfd7a859": "PASS: all 312 baseline frozen files preserved; existing historical integrity debt remains separate",
+    "lint_spec_references": "PASS",
+    "validate_resolved_contract": "STRUCTURALLY AND SEMANTICALLY VALID; final RC not ready",
+    "generate_manifest verify": "PASS: 107 reviewed paths; membership/order unchanged",
+    "ruff check affected files": "PASS",
+    "mypy --explicit-package-bases tools/d0_causal.py tools/d0_temporal.py tools/temporal_recording.py tools/validate_resolved_contract.py": "PASS",
+    "git diff --check": "PASS"
+  },
+  "broader_lint_limitations": {
+    "ruff": {
+      "result": "29 errors in 2 unchanged files",
+      "files_verified_byte_identical_to_base": [
+        "tools/check_isaac_s1_preview.py",
+        "tools/materialize_isaac1103.py"
+      ]
+    },
+    "mypy": {
+      "result": "Found 95 errors in 12 files (checked 30 source files)",
+      "files_verified_byte_identical_to_base": [
+        "tools/check_isaac_preview_partitions.py",
+        "tools/check_isaac_s1_preview.py",
+        "tools/isaac_demo_launch.py",
+        "tools/isaac_preview_partitions.py",
+        "tools/isaac_s1_preview.py",
+        "tools/isaac_s2_runtime.py",
+        "tools/isaac_vr_runtime.py",
+        "tools/launch_isaac_s1.py",
+        "tools/launch_isaac_vr.py",
+        "tools/materialize_isaac1103.py",
+        "tools/run_isaac_s1.py",
+        "tools/verify_piperx_model.py"
+      ]
+    }
+  },
+  "prior_attempt": {
+    "file": "first_full_attempt.txt",
+    "result": "9 failed, 329 passed, 23 skipped, 4 subtests passed",
+    "causes": [
+      "Gate B still referenced source_requirement after physical-only scope rename; fixed reference without weakening physical requirement.",
+      "New documentation was not staged because worktree Git index is read-only in sandbox; staged through approved Git operation.",
+      "Three local Unix-socket tests could not bind in sandbox; full rerun outside sandbox passed."
+    ]
+  },
+  "final_source_changes_since_causal_proof": {
+    "configs/gate_rules.yaml": {
+      "proof_sha256": "f0b98b9f959039fa538efe5895d2e1c9e84f59d604acb846bc73c8939bd8706b",
+      "final_sha256": "d6e86a4388290c768f540f9ef6addd77bee44a1dbfa6f3b9255c5278ce29f09b"
+    }
+  },
+  "change_scope": "Only Gate B path reference changed after first proof; full suite above verifies final rule graph. All production/test/schema bytes in the initial proof are unchanged.",
+  "gate_states": {
+    "D0": "accepted",
+    "S0": "accepted",
+    "S1": "accepted",
+    "S2": "unresolved",
+    "D1": "unresolved"
+  },
+  "all_non_D0_gate_records_unchanged": true,
+  "all_old_artifact_and_evidence_entries_unchanged": true,
+  "sources": {},
+  "real_source_status": "real three-camera source requirement defined; actual source registration remains pending \u2014 UNREGISTERED / EVIDENCE PENDING",
+  "schema_fingerprint_sha256": "5926a9271f997202970f757738327593d22ed2ad2696c478cb69a75d35dd1ee1",
+  "production_size": {
+    "added_or_reworked_lines_including_moves": 553,
+    "removed_lines": 90,
+    "net_new_lines": 463
+  }
+}

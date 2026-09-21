@@ -1,13 +1,20 @@
-"""Fail-closed D0 source-time validation at the LeRobot ``add_frame`` seam."""
+"""Physical D0 timing validation and the existing LeRobot compatibility facade."""
 
 from __future__ import annotations
 
 from collections import Counter
 from dataclasses import dataclass
+from types import MappingProxyType
 import math
-from typing import Any, Mapping, Protocol
+import hashlib
+import json
+from typing import TYPE_CHECKING, Any, Mapping, Protocol
 
 import numpy as np
+
+
+if TYPE_CHECKING:
+    from tools.d0_causal import CausalTransactionValidator, PreparedTransaction
 
 
 CROSS_MODAL_SKEW_KEY = "temporal.cross_modal_skew_ms"
@@ -63,6 +70,7 @@ class PreparedTemporalFrame:
     enrichment: Mapping[str, Any]
     accepted: Mapping[str, SourceTiming]
     previous: Mapping[str, SourceTiming]
+    generation: int
 
 
 @dataclass(frozen=True)
@@ -92,6 +100,7 @@ class TemporalLimits:
             "observation.state": "max_joint_age_ms",
             "observation.images.left_wrist": "max_camera_age_ms",
             "observation.images.right_wrist": "max_camera_age_ms",
+            "observation.images.scene": "max_camera_age_ms",
             "xr.left_pose": "max_xr_age_ms",
             "xr.right_pose": "max_xr_age_ms",
             "source_action": "max_policy_action_age_ms",
@@ -132,12 +141,11 @@ def temporal_feature_specs(
     return specs
 
 
-class TemporalFrameRecorder:
-    """Validate and persist physical source time before delegating to LeRobot."""
+class PhysicalTimingValidator:
+    """Validate physical source timing independently of any dataset writer."""
 
     def __init__(
         self,
-        dataset: DatasetWriter,
         *,
         feature_sets: Mapping[str, Mapping[str, str]],
         required_sources: tuple[str, ...],
@@ -155,7 +163,6 @@ class TemporalFrameRecorder:
         if not accepted_clock_domains or any(not domain for domain in accepted_clock_domains):
             raise ValueError("accepted_clock_domains must contain non-empty names")
 
-        self.dataset = dataset
         self.feature_sets = {name: dict(feature_sets[name]) for name in required_sources}
         self.required_sources = required_sources
         self.limits = limits
@@ -163,55 +170,8 @@ class TemporalFrameRecorder:
         self.cross_modal_skew_key = cross_modal_skew_key
         self._last_accepted: dict[str, SourceTiming] = {}
         self.accepted_frames = 0
+        self._generation = 0
         self.rejected_frames: Counter[str] = Counter()
-
-        expected = temporal_feature_specs(
-            self.feature_sets,
-            required_sources,
-            cross_modal_skew_key=cross_modal_skew_key,
-        )
-        missing = set(expected) - set(dataset.features)
-        if missing:
-            raise ValueError(f"dataset is missing temporal features: {sorted(missing)}")
-
-    @classmethod
-    def from_resolved_contract(
-        cls,
-        dataset: DatasetWriter,
-        contract: Mapping[str, Any],
-        *,
-        source_class: str,
-        limits: TemporalLimits | None = None,
-        accepted_clock_domains: tuple[str, ...] = ("host_monotonic",),
-    ) -> "TemporalFrameRecorder":
-        timing = contract["dataset"]["temporal_semantics"]["source_timing"]
-        source_classes = tuple(contract["taxonomy"]["source_classes"])
-        if source_class not in source_classes:
-            raise ValueError(
-                f"unknown source_class {source_class!r}; expected one of {source_classes}"
-            )
-        group = "human_vr" if source_class == "human_vr" else "automated"
-        required_sources = tuple(timing["required_feature_sets_by_source_class"][group])
-        return cls(
-            dataset,
-            feature_sets=timing["feature_sets"],
-            required_sources=required_sources,
-            limits=limits or TemporalLimits.from_resolved_contract(contract, required_sources),
-            accepted_clock_domains=accepted_clock_domains,
-            cross_modal_skew_key=timing["cross_modal_skew_feature_key"],
-        )
-
-    def add_frame(
-        self,
-        frame: Mapping[str, Any],
-        source_timing: Mapping[str, SourceTiming],
-        *,
-        selection_timestamp: float,
-    ) -> None:
-        """Add one accepted frame, or reject it without calling upstream."""
-
-        prepared = self.prepare_frame(source_timing, selection_timestamp=selection_timestamp)
-        self.commit_frame(frame, prepared)
 
     def prepare_frame(
         self,
@@ -228,46 +188,30 @@ class TemporalFrameRecorder:
         except TemporalContractViolation as exc:
             self.rejected_frames[exc.reason] += 1
             raise
+        for value in enrichment.values():
+            if isinstance(value, np.ndarray):
+                value.setflags(write=False)
         return PreparedTemporalFrame(
-            enrichment=enrichment,
-            accepted=accepted,
-            previous=dict(self._last_accepted),
+            enrichment=MappingProxyType(enrichment),
+            accepted=MappingProxyType(accepted),
+            previous=MappingProxyType(dict(self._last_accepted)),
+            generation=self._generation,
         )
 
-    def commit_frame(
-        self,
-        frame: Mapping[str, Any],
-        prepared: PreparedTemporalFrame,
-    ) -> None:
-        """Persist the dataset frame only if it matches the pre-actuation validation."""
-
-        try:
-            if dict(self._last_accepted) != dict(prepared.previous):
-                self._reject(
-                    "prepared_frame_order",
-                    "another temporal frame was committed after this bundle was prepared",
-                )
-            forbidden = {"timestamp", "frame_index"} & set(frame)
-            if forbidden:
-                self._reject("logical_time_override", f"LeRobot owns {sorted(forbidden)}")
-            overlap = set(frame) & set(prepared.enrichment)
-            if overlap:
-                self._reject(
-                    "temporal_metadata_override",
-                    f"frame must not provide recorder-owned fields {sorted(overlap)}",
-                )
-            enriched = {**dict(frame), **dict(prepared.enrichment)}
-            self.dataset.add_frame(enriched)
-        except TemporalContractViolation as exc:
-            self.rejected_frames[exc.reason] += 1
-            raise
+    def accept(self, prepared: PreparedTemporalFrame) -> None:
+        if prepared.generation != self._generation or dict(self._last_accepted) != dict(
+            prepared.previous
+        ):
+            self._reject("prepared_frame_order", "physical history changed after preparation")
         self._last_accepted = dict(prepared.accepted)
         self.accepted_frames += 1
+        self._generation += 1
 
     def reset_episode(self) -> None:
         """Reset episode-local sequence/time history without erasing QA counters."""
 
         self._last_accepted.clear()
+        self._generation += 1
 
     def qa_summary(self) -> dict[str, Any]:
         return {
@@ -363,3 +307,154 @@ class TemporalFrameRecorder:
             enriched[keys["age_ms"]] = np.asarray([ages[source]], dtype=np.float64)
         enriched[self.cross_modal_skew_key] = np.asarray([skew_ms], dtype=np.float64)
         return enriched, dict(source_timing)
+
+
+def frame_payloads(frame: Mapping[str, Any]) -> tuple[bytes, bytes]:
+    """Bind typed frame content without retaining image bytes in a transaction."""
+
+    def encode(values: Mapping[str, Any]) -> bytes:
+        encoded: dict[str, Any] = {}
+        for key, value in values.items():
+            if isinstance(value, str):
+                encoded[key] = ["string", value]
+            elif isinstance(value, np.ndarray) and not value.dtype.hasobject:
+                encoded[key] = [
+                    value.dtype.str,
+                    list(value.shape),
+                    hashlib.sha256(value.tobytes(order="C")).hexdigest(),
+                ]
+            else:
+                raise ValueError(f"unsupported payload type for {key}")
+        return json.dumps(encoded, sort_keys=True, separators=(",", ":")).encode()
+
+    return (
+        encode({k: v for k, v in frame.items() if k.startswith("observation.") or k == "task"}),
+        encode({"action": frame["action"]}),
+    )
+
+
+class TemporalFrameRecorder(PhysicalTimingValidator):
+    """Compatibility facade for the physical LeRobot persistence seam.
+
+    Pre-actuation timing and source identities are frozen; upstream owns the
+    observation/label processor pairing. This seam does not attest a successor
+    observation or hardware acceptance. Full v4 source admission needs that proof.
+    """
+
+    def __init__(
+        self,
+        dataset: DatasetWriter,
+        *,
+        feature_sets: Mapping[str, Mapping[str, str]],
+        required_sources: tuple[str, ...],
+        limits: TemporalLimits,
+        accepted_clock_domains: tuple[str, ...],
+        cross_modal_skew_key: str = CROSS_MODAL_SKEW_KEY,
+    ) -> None:
+        super().__init__(
+            feature_sets=feature_sets,
+            required_sources=required_sources,
+            limits=limits,
+            accepted_clock_domains=accepted_clock_domains,
+            cross_modal_skew_key=cross_modal_skew_key,
+        )
+        self.dataset = dataset
+        expected = temporal_feature_specs(
+            self.feature_sets,
+            required_sources,
+            cross_modal_skew_key=cross_modal_skew_key,
+        )
+        missing = set(expected) - set(dataset.features)
+        if missing:
+            raise ValueError(f"dataset is missing temporal features: {sorted(missing)}")
+
+    @classmethod
+    def from_resolved_contract(
+        cls,
+        dataset: DatasetWriter,
+        contract: Mapping[str, Any],
+        *,
+        source_class: str,
+        runtime: str = "real",
+        limits: TemporalLimits | None = None,
+        accepted_clock_domains: tuple[str, ...] = ("host_monotonic",),
+    ) -> "TemporalFrameRecorder":
+        if runtime != "real":
+            raise ValueError(
+                "physical LeRobot compatibility facade is real-only; select the Isaac causal profile"
+            )
+        timing = contract["dataset"]["temporal_semantics"]["source_timing"]
+        source_classes = tuple(contract["taxonomy"]["source_classes"])
+        if source_class not in source_classes:
+            raise ValueError(
+                f"unknown source_class {source_class!r}; expected one of {source_classes}"
+            )
+        group = "human_vr" if source_class == "human_vr" else "automated"
+        required_sources = tuple(timing["required_feature_sets_by_source_class"][group])
+        return cls(
+            dataset,
+            feature_sets=timing["feature_sets"],
+            required_sources=required_sources,
+            limits=limits or TemporalLimits.from_resolved_contract(contract, required_sources),
+            accepted_clock_domains=accepted_clock_domains,
+            cross_modal_skew_key=timing["cross_modal_skew_feature_key"],
+        )
+
+    def add_frame(
+        self,
+        frame: Mapping[str, Any],
+        source_timing: Mapping[str, SourceTiming],
+        *,
+        selection_timestamp: float,
+    ) -> None:
+        """Add one accepted frame, or reject it without calling upstream."""
+
+        prepared = self.prepare_frame(source_timing, selection_timestamp=selection_timestamp)
+        self.commit_frame(frame, prepared)
+
+    def commit_transaction_frame(
+        self,
+        frame: Mapping[str, Any],
+        causal: CausalTransactionValidator,
+        transaction: PreparedTransaction,
+    ) -> None:
+        """Persist a real prepared pair now; causal completion still needs obs_t+1."""
+        if causal.physical is not self or transaction.physical is None:
+            raise ValueError("transaction must use this physical recorder")
+        obs, action = frame_payloads(frame)
+        causal.validate_persistence(transaction, observation_payload=obs, action_payload=action)
+        self.commit_frame(frame, transaction.physical)
+        causal.mark_persisted(transaction)
+
+    def commit_frame(
+        self,
+        frame: Mapping[str, Any],
+        prepared: PreparedTemporalFrame,
+    ) -> None:
+        """Persist the dataset frame only if it matches the pre-actuation validation."""
+
+        try:
+            if prepared.generation != self._generation or dict(self._last_accepted) != dict(
+                prepared.previous
+            ):
+                self._reject(
+                    "prepared_frame_order",
+                    "another temporal frame was committed after this bundle was prepared",
+                )
+            forbidden = {"timestamp", "frame_index"} & set(frame)
+            if forbidden:
+                self._reject("logical_time_override", f"LeRobot owns {sorted(forbidden)}")
+            overlap = set(frame) & set(prepared.enrichment)
+            if overlap:
+                self._reject(
+                    "temporal_metadata_override",
+                    f"frame must not provide recorder-owned fields {sorted(overlap)}",
+                )
+            enriched = {**dict(frame), **dict(prepared.enrichment)}
+            self.dataset.add_frame(enriched)
+        except TemporalContractViolation as exc:
+            self.rejected_frames[exc.reason] += 1
+            raise
+        self._last_accepted = dict(prepared.accepted)
+        self.accepted_frames += 1
+        self._generation += 1

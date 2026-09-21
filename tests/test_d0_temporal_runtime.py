@@ -62,6 +62,7 @@ def _samples(sequence: int = 1) -> dict[str, SourceTiming]:
         "observation.state": SourceTiming(sequence, 100.030, "host_monotonic"),
         "observation.images.left_wrist": SourceTiming(sequence, 100.000, "host_monotonic"),
         "observation.images.right_wrist": SourceTiming(sequence, 100.010, "host_monotonic"),
+        "observation.images.scene": SourceTiming(sequence, 100.015, "host_monotonic"),
         "source_action": SourceTiming(sequence, 100.040, "host_monotonic"),
     }
 

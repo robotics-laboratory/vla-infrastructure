@@ -32,11 +32,11 @@ dataset profile may remain 30 Hz while physics, acquisition, control, policy, an
 rates differ. With LeRobot action interpolation, `command_fps = policy_fps ×
 interpolation_multiplier`; this does not change dataset FPS.
 
-Every accepted asynchronous sample carries `sequence`, `source_timestamp`,
+Every accepted physical-profile asynchronous sample carries `sequence`, `source_timestamp`,
 `clock_domain`, and `age_ms`. Age is computed only after timestamps are placed in a
 common monotonic domain. Cross-modal skew is the maximum minus minimum source timestamp
-for all physical inputs contributing to `obs_t` and `source_action_t`, including XR for
-human-VR sources.
+for all physical inputs contributing to `obs_t` and `source_action_t`, including both physical XR poses for real human-VR sources and all three canonical
+cameras: left_wrist, right_wrist, scene.
 
 For chunk/RTC inference additionally resolve:
 
@@ -53,13 +53,20 @@ Chunk-only fields are required only for chunked modes.
 
 ### Source-freshness ownership
 
-D0 defines the fields, clock semantics, and fail-closed enforcement phase; it does not
-invent numeric limits without runtime evidence. Isaac human recording [[gate:D1]], real
-human-VR recording [[gate:R2]], and per-arm HIL [[gate:HIL]] cannot be accepted until
-`timing.max_camera_age_ms`, `timing.max_joint_age_ms`, `timing.max_xr_age_ms`, and
-`timing.max_cross_modal_skew_ms` are numeric and enforced. Automated Isaac generation
-[[gate:G1]] requires the camera, joint, and skew limits but does not synthesize an XR
-stream.
+D0 v4 separates common causal transaction identity from source-profile timing.
+Real human-VR recording [[gate:R2]] and per-arm HIL [[gate:HIL]] retain numeric
+camera, joint, XR, action and skew enforcement: 75 ms camera/XR/skew and 45 ms
+joint/action in the selected physical profile. CAN component receive timing,
+oldest-component assembly and wall-to-monotonic calibration remain unchanged;
+a wall-clock drift beyond the existing budget fails closed.
+
+Isaac human recording [[gate:D1]] requires simulation generation, three-camera
+capture barrier, XR session/DeviceIO/submitted/returned/resolved-input identities,
+tracking validity, preclip action binding and completed transition/successor
+proof. Host timestamps are QA/provenance, never physical XR acquisition time.
+Automated Isaac generation [[gate:G1]] uses generator decision/revision/state/seed
+identity and no XR stream. Neither Isaac profile inherits physical age paths.
+These semantic declarations do not qualify the pending runtime bindings.
 
 Physical XR identity/session acceptance alone does not select or prove a numeric
 source-pose age threshold. The earliest data/control gate owns the measured value and its

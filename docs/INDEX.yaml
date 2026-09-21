@@ -2316,3 +2316,45 @@ documents:
   mutable: false
   gates:
   - S2
+- path: docs/evidence/D0/20260921_causal_three_camera/README.md
+  kind: evidence
+  status: historical
+  owner: data.collection
+  mutable: false
+  gates:
+  - D0
+- path: docs/evidence/D0/20260921_causal_three_camera/inputs_and_schema.json
+  kind: evidence
+  status: historical
+  owner: data.collection
+  mutable: false
+  gates:
+  - D0
+- path: docs/evidence/D0/20260921_causal_three_camera/causality_tests.txt
+  kind: evidence
+  status: historical
+  owner: data.collection
+  mutable: false
+  gates:
+  - D0
+- path: docs/evidence/D0/20260921_causal_three_camera/validation.json
+  kind: evidence
+  status: historical
+  owner: data.collection
+  mutable: false
+  gates:
+  - D0
+- path: docs/evidence/D0/20260921_causal_three_camera/full_suite.txt
+  kind: evidence
+  status: historical
+  owner: data.collection
+  mutable: false
+  gates:
+  - D0
+- path: docs/evidence/D0/20260921_causal_three_camera/first_full_attempt.txt
+  kind: evidence
+  status: historical
+  owner: data.collection
+  mutable: false
+  gates:
+  - D0

@@ -24,7 +24,13 @@ Pin PIPER-X model, frames, joint semantics, calibration interface and offline FK
 
 ## [[gate:D0]] Canonical policy/data semantics
 
-Resolve policy-facing action/state/camera contract, feature classifications, temporal `obs_t/action_t` semantics, FPS/resampling and causality regression test.
+Resolve the v4 three-camera ordered canonical schema and fingerprint, unchanged
+PIPER-X action/state units/order, common immutable causal transactions and explicit
+Isaac-human, Isaac-automated and real-physical profiles. Offline evidence must
+exercise prepare/complete/commit/abort, payload binding, epochs, duplicate rejection,
+physical timing preservation and profile isolation. Reaccept D0 atomically with
+its new evidence; historical proof remains frozen. This does not qualify runtime
+camera/XR/recording bindings or change S0/S1 facts.
 
 ## [[gate:S0]] Simulator/evaluation upstream audit
 
@@ -49,15 +55,23 @@ requirements remain mandatory.
 
 ## [[gate:D1]] Isaac human-VR dataset
 
-Record successful Isaac human-VR episode, explicitly map native fields to `obs_t`, `action_t`, outcome/termination, and finalize a LeRobotDataset v3 source dataset.
+Record successful Isaac human-VR episodes using the Isaac human causal profile.
+Require registered proof for the three-camera capture barrier, resolved XR identity,
+post-DifferentialIK preclip action seam, native recorder mapping, converter,
+causal transition/successor, dataset manifest and demonstration-quality envelope.
+Commit after successful transition plus successor observation. Physical XR/camera
+acquisition-age paths are not D1 prerequisites. Finalize a LeRobotDataset v3 source.
 
 ## [[gate:G1]] Isaac automated dataset
 
-Generate successful episodes without per-step human control. Preserve attempts/success/failure, generator config/seeds and source-demo lineage where applicable.
+Generate successful episodes with the Isaac automated causal profile, three-camera
+barrier and completed transition/successor. Preserve attempts/success/failure,
+generator decision/revision/state/seeds and source-demo lineage where applicable;
+no synthetic XR fields or physical acquisition timestamps.
 
 ## [[gate:D2a]] Isaac human <-> automated parity
 
-Compare common training view of Isaac human-VR and Isaac automated datasets.
+Compare the full three-camera canonical schema/fingerprint and profile-appropriate causal proof of Isaac human-VR and Isaac automated datasets.
 
 ## [[gate:M1]] MuJoCo PIPER-X environment
 
@@ -89,15 +103,17 @@ Prove collision handling or disjoint workspaces and preserve left/right identity
 
 ## [[gate:R2]] Real human-VR dataset
 
-After real XR and real safety gates, enforce the resolved maximum XR pose age at the timestamped teleop-to-robot-control boundary, then record/finalize a representative real human-VR LeRobotDataset v3 source dataset.
+After real XR and real safety gates, enforce the resolved maximum XR pose age at the timestamped teleop-to-robot-control boundary, retain strict state/action/camera/XR age, clock/sequence and skew requirements,
+including scene-camera acquisition, then record/finalize a representative real
+human-VR LeRobotDataset v3 source with complete causal transition proof.
 
 ## [[gate:D2b]] Real <-> Isaac training parity
 
-Compare real human-VR, Isaac human-VR and Isaac automated common training view.
+Compare the full three-camera schema/fingerprint and declared profiles of real human-VR, Isaac human-VR and Isaac automated datasets; retain physical timing on the real source.
 
 ## [[gate:DM]] Mixed-source dataset materialization
 
-Deterministically project selected source datasets to one identical schema and materialize final training dataset.
+Deterministically project selected source datasets to one identical schema and materialize final training dataset, preserving three-camera schema/profile parity and full stream validation.
 
 ## [[gate:DQ]] Dataset QA / semantic replay
 

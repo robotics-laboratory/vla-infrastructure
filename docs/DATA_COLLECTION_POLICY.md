@@ -46,43 +46,54 @@ obs_t
 
 The stored BC pair is `(obs_t, dataset_action_t)` unless a later contract revision explicitly changes the learning target.
 
-Logical dataset time and physical source time are different contracts:
+D0 v4 selects a temporal profile by `(runtime, source_class)`. Common causal
+identity binds run, episode, source, reset epoch, control-reference epoch,
+source/session epoch, control tick, observation, dataset action, native command,
+transition, and successor observation. The neutral `CausalTransactionValidator`
+prepares immutable payload digests/source identities, completes a successful
+transition, then commits only the original observation/action payloads. Abort or
+epoch change invalidates the pending transaction. Duplicate source identities,
+wrong ticks, repeated transitions and payload substitution fail closed. Edges must
+serialize dtype, shape, role and content unambiguously or use immutable
+content-addressed references; large images are not retained in the validator.
 
-```text
-dataset_timestamp = frame_index / dataset_fps
-source_timestamp  = physical acquisition time in a declared clock_domain
-age_ms            = selection_time - source_timestamp
-```
+The logical LeRobot timestamp remains `frame_index / dataset_fps` for indexing
+and video lookup. It never proves physical acquisition or simulation capture.
 
-The LeRobot `timestamp` remains the dense episode-relative grid used for indexing and
-video lookup. It is never evidence that a camera, joint state, or XR pose was acquired
-at that logical instant. Every asynchronous input that contributes to an accepted frame
-records `sequence`, `source_timestamp`, `clock_domain`, and `age_ms`; the frame also
-records cross-modal skew. Freshness and skew are checked against the exact selected
-bundle before both `Robot.send_action` and `LeRobotDataset.add_frame`.
+- `isaac_human_vr_v4`: simulation state generation and three-camera capture identity;
+  XR session epoch, DeviceIO update, submitted frame, returned frame, resolved input
+  payload identity and tracking validity. Host begin/end times are optional QA and
+  provenance, **not XR physical acquisition time**. Exact OpenXR query time is
+  optional when explicitly exposed. The source action is the post-DifferentialIK
+  desired joint target **before native clipping**, converted to canonical deg/mm.
+  The runtime binding remains pending D1; this contract does not implement it.
+- `isaac_automated_v4`: the same simulation/camera/transition identities, with
+  generator decision/revision/state and seed when applicable. No XR is synthesized.
+- `real_human_vr_physical_v4`: causal identity plus strict physical timing for state,
+  left wrist, right wrist, scene, both XR poses and source action. Each physical
+  sample carries sequence, source timestamp, clock domain and age; the frame carries
+  cross-modal skew. `PhysicalTimingValidator` retains age/skew, future time,
+  clock-domain and repeated/regressing sequence rejection.
 
-`tools.d0_temporal.TemporalFrameRecorder` performs the validation and
-`tools.temporal_recording.TemporalLeRobotDatasetAdapter` is the dataset-compatible
-proxy passed to the unmodified upstream `record_loop`. The paired
-`TimestampedTeleoperator` triggers validation before returning its action to that loop,
-which is the last project-owned seam before upstream actuation. `add_frame` may only
-commit that already validated bundle. A stale, future, clock-incomparable, skewed,
-missing, repeated, or regressing bundle therefore reaches neither `Robot.send_action`
-nor `LeRobotDataset.add_frame`. The violation aborts the current loop; the caller must
-clear or discard the partial episode before continuing. LeRobot remains the owner of
-logical `timestamp`, `frame_index`, pacing, processors, actuation, and episode
-persistence. Saving or clearing an episode resets the adapter's episode-local sequence
-history before the next episode.
+Isaac persistence follows successful transition and successor observation.
+The real LeRobot persistence seam remains after `send_action`, before the next tick:
+`TimestampedTeleoperator` validates source timing before returning the action;
+`TemporalLeRobotDatasetAdapter` commits the prepared metadata at `add_frame`.
+The explicit `TemporalFrameRecorder.commit_transaction_frame` bridge checks the
+actual typed frame against an already prepared real transaction at this seam;
+causal commit still waits for its successor. Legacy upstream integration remains
+compatible, and full source-runtime identity binding is pending R2.
+LeRobot owns processors, logical time, pacing and episode persistence. This seam
+alone cannot attest hardware acceptance or a successor observation; full real
+source admission must additionally demonstrate the paired transition/successor.
+A physical timing failure aborts before actuation and persistence; the caller must
+clear/discard the partial episode. Saved/cleared episodes reset timing history.
 
-The bounded recording profile uses 75 ms camera/XR age and cross-modal-skew limits,
-and 45 ms joint/source-action age limits. The source rates remain independent: Isaac
-physics is 120 Hz while XR, cameras, control, dataset, policy, and non-interpolated
-command selection are each separately configured at 30 Hz. Equality is not a schema
-constraint; the 30 Hz values are the selected profile. In the duplicate-free live
-recording path, each required camera must nevertheless be configured at no less than
-the dataset rate. Faster cameras are allowed and their intervening frames may be
-dropped. No required source sample is silently reused, even if its age is still below
-the limit.
+Physical camera/XR and cross-modal-skew limits remain 75 ms; joint/source-action
+limits remain 45 ms. CAN clock calibration behavior is unchanged. Rates remain
+independent; the duplicate-free physical recorder requires each camera rate at
+least the dataset rate. Isaac instead needs a qualified three-camera capture
+barrier for the selected simulation generation. No source is silently reused.
 
 PIPER-X CAN payloads contain no device acquisition clock. The timestamped SDK adapter
 therefore captures the kernel SocketCAN receive timestamp separately for joint pairs
@@ -94,11 +105,11 @@ host-monotonic value. Every temporal observation rechecks that conversion; a wal
 step or drift beyond the 5 ms calibration budget aborts recording instead of corrupting
 source age.
 
-A camera is stricter: its backend must implement
+In the real physical profile, a camera is stricter: its backend must implement
 `async_read_with_acquisition_timing()` and atomically return a
 `CameraAcquisitionSample` containing the selected frame, sequence, physical capture
 timestamp, and clock domain. Standard `Camera.async_read()` state or a timestamp taken
-after read, decode, or post-processing is rejected. Human-VR likewise requires one
+after read, decode, or post-processing is rejected. Real human-VR likewise requires one
 atomic reader to return the action and the exact left/right XR pose identities used to
 produce it. The existing Quest diagnostic's host receipt timestamp is not accepted as
 XR acquisition time.
@@ -122,9 +133,12 @@ action_t = 1000 + t
 
 After recording/conversion, verify exact pairs `(obs_0, action_0)`, `(obs_1, action_1)`, etc.
 
-Timestamp monotonicity alone does not prove causal pairing. A temporal regression
-must also prove that stale source samples and excessive cross-modal skew are rejected,
-and that the logical dataset timestamp is never substituted for source acquisition time.
+Timestamp monotonicity alone does not prove causal pairing. D0 offline evidence
+must reject action t-1/t+1, payload substitution, reset/reference/session epoch
+crossing, incomplete or wrong-tick transitions and duplicate commits. Profile
+isolation proves Isaac does not need physical XR time, while real human-VR does.
+Physical regression also rejects stale/future/missing timing, skew, clock mismatch,
+and repeated/regressing sources; logical time cannot replace acquisition time.
 
 ## Common training view
 
@@ -138,7 +152,23 @@ provenance_only
 privileged_debug
 ```
 
-The exact policy-input set is whitelist-checked.
+The exact ordered canonical schema is:
+
+```text
+observation.state
+observation.images.left_wrist
+observation.images.right_wrist
+observation.images.scene
+task
+action
+```
+
+The first five features are the policy-input whitelist; `action` is the target.
+All three cameras capture uint8 RGB `[480,640,3]` and expose float32 RGB
+`[3,480,640]` in `[0,1]`. There is no canonical crop, resize or flip. Native
+camera/device names belong in source bindings, never canonical role names.
+State and action remain float32[14], left six joints in degrees and gripper in
+millimetres, then the same right-arm order. Native clipping never replaces labels.
 
 Simulator ground-truth state must not enter a real-deployable policy through implicit passthrough.
 
@@ -179,3 +209,13 @@ The QA report classifies them.
 ## Immutable source datasets
 
 Keep source/canonical datasets identifiable. A mixed training dataset should be reproducibly materialized rather than destructively replacing the only source copy.
+
+## Source admission
+
+A future source declares its temporal profile, ordered `physical_source_name` ->
+`canonical_feature_key` camera bindings, preprocessing revision and registered
+calibration references, plus immutable dataset/manifest identity. All three camera
+roles and the current canonical fingerprint are mandatory. `dataset.sources`
+remains empty: real three-camera source requirement defined; actual source
+registration remains pending (UNREGISTERED / EVIDENCE PENDING). The legacy
+RoboSyn 25 FPS dataset is not registered or qualified by this contract migration.

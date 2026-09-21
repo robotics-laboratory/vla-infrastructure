@@ -383,7 +383,11 @@
         "task_id",
         "task_revision",
         "processor_contract_revision",
-        "lineage_artifact_id"
+        "lineage_artifact_id",
+        "temporal_profile",
+        "camera_bindings",
+        "preprocessing_revision",
+        "calibration_artifact_ids"
       ],
       "properties": {
         "runtime": {
@@ -448,6 +452,52 @@
             "string",
             "null"
           ]
+        },
+        "temporal_profile": {
+          "enum": [
+            "isaac_human_vr_v4",
+            "isaac_automated_v4",
+            "real_human_vr_physical_v4"
+          ]
+        },
+        "camera_bindings": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "physical_source_name",
+              "canonical_feature_key"
+            ],
+            "properties": {
+              "physical_source_name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "canonical_feature_key": {
+                "enum": [
+                  "observation.images.left_wrist",
+                  "observation.images.right_wrist",
+                  "observation.images.scene"
+                ]
+              }
+            }
+          }
+        },
+        "preprocessing_revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "calibration_artifact_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
@@ -474,7 +524,8 @@
         "runtime_binding_owner",
         "policy_tensor_shape",
         "policy_tensor_dtype",
-        "policy_tensor_range"
+        "policy_tensor_range",
+        "canonical_transforms"
       ],
       "properties": {
         "feature_key": {
@@ -482,37 +533,23 @@
           "minLength": 1
         },
         "shape": {
-          "type": "array",
-          "items": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "minItems": 3,
-          "maxItems": 3
+          "const": [
+            480,
+            640,
+            3
+          ]
         },
         "dtype": {
-          "type": "string",
-          "enum": [
-            "uint8",
-            "float32"
-          ]
+          "const": "uint8"
         },
         "color_space": {
-          "type": "string",
-          "enum": [
-            "RGB",
-            "BGR",
-            "GRAY"
-          ]
+          "const": "RGB"
         },
         "resolution": {
-          "type": "array",
-          "items": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "minItems": 2,
-          "maxItems": 2
+          "const": [
+            640,
+            480
+          ]
         },
         "nominal_fps": {
           "type": "number",
@@ -570,30 +607,27 @@
           "minLength": 1
         },
         "policy_tensor_shape": {
-          "type": "array",
-          "items": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "minItems": 3,
-          "maxItems": 3
+          "const": [
+            3,
+            480,
+            640
+          ]
         },
         "policy_tensor_dtype": {
           "const": "float32"
         },
         "policy_tensor_range": {
-          "type": "array",
-          "prefixItems": [
-            {
-              "const": 0.0
-            },
-            {
-              "const": 1.0
-            }
-          ],
-          "items": false,
-          "minItems": 2,
-          "maxItems": 2
+          "const": [
+            0.0,
+            1.0
+          ]
+        },
+        "canonical_transforms": {
+          "const": {
+            "crop": false,
+            "resize": false,
+            "flip": false
+          }
         }
       }
     },
@@ -973,13 +1007,79 @@
         "obs_t_field",
         "action_t_field",
         "outcome_field",
-        "termination_field"
+        "termination_field",
+        "causal_transaction_evidence_id",
+        "three_camera_barrier_evidence_id",
+        "native_recorder_mapping_evidence_id",
+        "demonstration_quality_envelope_artifact_id"
       ],
       "properties": {
-        "obs_t_field": {"type": ["string", "null"]},
-        "action_t_field": {"type": ["string", "null"]},
-        "outcome_field": {"type": ["string", "null"]},
-        "termination_field": {"type": ["string", "null"]}
+        "obs_t_field": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "action_t_field": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "outcome_field": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "termination_field": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "preclip_action_seam_evidence_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "native_recorder_mapping_evidence_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "resolved_xr_identity_evidence_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "generator_identity_evidence_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "demonstration_quality_envelope_artifact_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "causal_transaction_evidence_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "three_camera_barrier_evidence_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     }
   },
@@ -1015,7 +1115,7 @@
   ],
   "properties": {
     "contract_version": {
-      "const": "5.2.5"
+      "const": "5.2.6"
     },
     "schema_version": {
       "const": "5.2"
@@ -2321,11 +2421,11 @@
         "clock_domains": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["pacing", "dataset", "source_requirement"],
+          "required": ["pacing", "dataset", "physical_source_requirement"],
           "properties": {
             "pacing": {"const": "host_monotonic_time_perf_counter"},
             "dataset": {"const": "episode_relative_fixed_grid"},
-            "source_requirement": {"const": "host_monotonic_or_explicitly_synchronized_to_host_monotonic"}
+            "physical_source_requirement": {"const": "host_monotonic_or_explicitly_synchronized_to_host_monotonic"}
           }
         },
         "physics_fps": {
@@ -2892,8 +2992,7 @@
           "const": "LeRobotDataset_v3"
         },
         "policy_data_contract_revision": {
-          "type": "string",
-          "minLength": 1
+          "const": "piper_x_d0_policy_data_v4"
         },
         "temporal_semantics": {
           "type": "object",
@@ -2916,47 +3015,125 @@
             "source_timing",
             "freshness",
             "causality_test_evidence_id",
-            "converters"
+            "converters",
+            "profile_selector",
+            "causal_transaction",
+            "source_profiles"
           ],
           "properties": {
-            "pairing": {"const": "obs_t_action_t"},
-            "observation_phase": {"const": "pre_decision_t"},
-            "action_phase": {"const": "decision_t"},
-            "source_action_phase": {"const": "controller_output_for_obs_t"},
-            "dataset_action_phase": {"const": "deterministic_label_output_t"},
-            "native_actuation_phase": {"const": "after_dataset_action_t"},
-            "runtime_command_phase": {"const": "after_dataset_action_t_before_transition_t"},
-            "device_accepted_command_phase": {"const": "runtime_or_device_residual_after_runtime_command_t"},
-            "next_observation_phase": {"const": "post_transition_t"},
-            "outcome_phase": {"const": "transition_t"},
-            "outcome_definition": {"type": "string", "minLength": 1},
-            "label_fixed_before_runtime_mapping": {"const": true},
-            "persistence_call_phase": {"const": "after_send_action_before_next_tick"},
+            "pairing": {
+              "const": "obs_t_action_t"
+            },
+            "observation_phase": {
+              "const": "pre_decision_t"
+            },
+            "action_phase": {
+              "const": "decision_t"
+            },
+            "source_action_phase": {
+              "const": "controller_output_for_obs_t"
+            },
+            "dataset_action_phase": {
+              "const": "deterministic_label_output_t"
+            },
+            "native_actuation_phase": {
+              "const": "after_dataset_action_t"
+            },
+            "runtime_command_phase": {
+              "const": "after_dataset_action_t_before_transition_t"
+            },
+            "device_accepted_command_phase": {
+              "const": "runtime_or_device_residual_after_runtime_command_t"
+            },
+            "next_observation_phase": {
+              "const": "post_transition_t"
+            },
+            "outcome_phase": {
+              "const": "transition_t"
+            },
+            "outcome_definition": {
+              "type": "string",
+              "minLength": 1
+            },
+            "label_fixed_before_runtime_mapping": {
+              "const": true
+            },
+            "persistence_call_phase": {
+              "const": "source_profile_owned"
+            },
             "dataset_timestamp": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["feature_key", "clock_domain", "computation", "semantics", "freshness_eligible"],
+              "required": [
+                "feature_key",
+                "clock_domain",
+                "computation",
+                "semantics",
+                "freshness_eligible"
+              ],
               "properties": {
-                "feature_key": {"const": "timestamp"},
-                "clock_domain": {"const": "episode_relative_fixed_grid"},
-                "computation": {"const": "frame_index_div_dataset_fps"},
-                "semantics": {"type": "string", "minLength": 1},
-                "freshness_eligible": {"const": false}
+                "feature_key": {
+                  "const": "timestamp"
+                },
+                "clock_domain": {
+                  "const": "episode_relative_fixed_grid"
+                },
+                "computation": {
+                  "const": "frame_index_div_dataset_fps"
+                },
+                "semantics": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "freshness_eligible": {
+                  "const": false
+                }
               }
             },
             "source_timing": {
               "type": "object",
               "additionalProperties": false,
-                  "required": ["storage", "recorder_adapter", "production_dataset_adapter", "record_loop_factory", "feature_spec_factory", "qa_summary_method", "required_fields", "field_types", "feature_sets", "required_feature_sets_by_source_class", "cross_modal_skew_feature_key", "timestamp_requirement"],
+              "required": [
+                "storage",
+                "recorder_adapter",
+                "production_dataset_adapter",
+                "record_loop_factory",
+                "feature_spec_factory",
+                "qa_summary_method",
+                "required_fields",
+                "field_types",
+                "feature_sets",
+                "required_feature_sets_by_source_class",
+                "cross_modal_skew_feature_key",
+                "timestamp_requirement",
+                "scope"
+              ],
               "properties": {
-                    "storage": {"const": "lerobot_additional_frame_features"},
-                    "recorder_adapter": {"const": "tools.d0_temporal.TemporalFrameRecorder"},
-                    "production_dataset_adapter": {"const": "tools.temporal_recording.TemporalLeRobotDatasetAdapter"},
-                    "record_loop_factory": {"const": "tools.temporal_recording.wrap_lerobot_dataset_for_temporal_recording"},
-                    "feature_spec_factory": {"const": "tools.d0_temporal.temporal_feature_specs"},
-                "qa_summary_method": {"const": "tools.d0_temporal.TemporalFrameRecorder.qa_summary"},
+                "storage": {
+                  "const": "lerobot_additional_frame_features"
+                },
+                "recorder_adapter": {
+                  "const": "tools.d0_temporal.TemporalFrameRecorder"
+                },
+                "production_dataset_adapter": {
+                  "const": "tools.temporal_recording.TemporalLeRobotDatasetAdapter"
+                },
+                "record_loop_factory": {
+                  "const": "tools.temporal_recording.wrap_lerobot_dataset_for_temporal_recording"
+                },
+                "feature_spec_factory": {
+                  "const": "tools.d0_temporal.temporal_feature_specs"
+                },
+                "qa_summary_method": {
+                  "const": "tools.d0_temporal.TemporalFrameRecorder.qa_summary"
+                },
                 "required_fields": {
-                  "const": ["sequence", "source_timestamp", "clock_domain", "age_ms"]
+                  "const": [
+                    "sequence",
+                    "source_timestamp",
+                    "clock_domain",
+                    "age_ms"
+                  ]
                 },
                 "field_types": {
                   "const": {
@@ -2973,48 +3150,229 @@
                   "additionalProperties": {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["sequence", "source_timestamp", "clock_domain", "age_ms"],
+                    "required": [
+                      "sequence",
+                      "source_timestamp",
+                      "clock_domain",
+                      "age_ms"
+                    ],
                     "properties": {
-                      "sequence": {"type": "string", "minLength": 1},
-                      "source_timestamp": {"type": "string", "minLength": 1},
-                      "clock_domain": {"type": "string", "minLength": 1},
-                      "age_ms": {"type": "string", "minLength": 1}
+                      "sequence": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "source_timestamp": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "clock_domain": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "age_ms": {
+                        "type": "string",
+                        "minLength": 1
+                      }
                     }
                   }
                 },
                 "required_feature_sets_by_source_class": {
                   "type": "object",
                   "additionalProperties": false,
-                  "required": ["human_vr", "automated"],
+                  "required": [
+                    "human_vr",
+                    "automated"
+                  ],
                   "properties": {
-                    "human_vr": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
-                    "automated": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true}
+                    "human_vr": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "minItems": 1,
+                      "uniqueItems": true
+                    },
+                    "automated": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "minItems": 1,
+                      "uniqueItems": true
+                    }
                   }
                 },
-                "cross_modal_skew_feature_key": {"type": "string", "minLength": 1},
-                "timestamp_requirement": {"type": "string", "minLength": 1}
+                "cross_modal_skew_feature_key": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "timestamp_requirement": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "scope": {
+                  "const": "physical_profiles_only"
+                }
               }
             },
             "freshness": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["age_reference", "cross_modal_skew_reference", "enforcement_phase", "invalid_tick_behavior"],
+              "required": [
+                "age_reference",
+                "cross_modal_skew_reference",
+                "enforcement_phase",
+                "invalid_tick_behavior",
+                "scope"
+              ],
               "properties": {
-                "age_reference": {"const": "recording_selection_time_minus_source_timestamp_in_a_common_monotonic_domain"},
-                "cross_modal_skew_reference": {"const": "max_minus_min_source_timestamp_for_all_source_inputs_contributing_to_obs_t_and_source_action_t"},
-                "enforcement_phase": {"const": "after_exact_source_selection_before_robot_send_action_and_lerobot_dataset_add_frame"},
-                "invalid_tick_behavior": {"type": "string", "minLength": 1}
+                "age_reference": {
+                  "const": "recording_selection_time_minus_source_timestamp_in_a_common_monotonic_domain"
+                },
+                "cross_modal_skew_reference": {
+                  "const": "max_minus_min_source_timestamp_for_all_source_inputs_contributing_to_obs_t_and_source_action_t"
+                },
+                "enforcement_phase": {
+                  "const": "after_exact_source_selection_before_robot_send_action_and_lerobot_dataset_add_frame"
+                },
+                "invalid_tick_behavior": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "scope": {
+                  "const": "physical_profiles_only"
+                }
               }
             },
-            "causality_test_evidence_id": {"type": ["string", "null"]},
+            "causality_test_evidence_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
             "converters": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["isaac_human", "isaac_automated", "real_human"],
+              "required": [
+                "isaac_human",
+                "isaac_automated",
+                "real_human"
+              ],
               "properties": {
-                "isaac_human": {"$ref": "#/$defs/temporal_converter"},
-                "isaac_automated": {"$ref": "#/$defs/temporal_converter"},
-                "real_human": {"$ref": "#/$defs/temporal_converter"}
+                "isaac_human": {
+                  "$ref": "#/$defs/temporal_converter"
+                },
+                "isaac_automated": {
+                  "$ref": "#/$defs/temporal_converter"
+                },
+                "real_human": {
+                  "$ref": "#/$defs/temporal_converter"
+                }
+              }
+            },
+            "profile_selector": {
+              "const": "tools.d0_causal.select_temporal_profile(runtime, source_class)"
+            },
+            "causal_transaction": {
+              "const": {
+                "validator": "tools.d0_causal.CausalTransactionValidator",
+                "physical_validator": "tools.d0_temporal.PhysicalTimingValidator",
+                "identity_fields": [
+                  "run_id",
+                  "episode_id",
+                  "source_id",
+                  "reset_epoch",
+                  "control_reference_epoch",
+                  "source_epoch",
+                  "control_tick_id",
+                  "obs_id",
+                  "dataset_action_id",
+                  "native_command_id",
+                  "transition_id",
+                  "next_obs_id"
+                ],
+                "payload_binding": "sha256_of_edge_owned_canonical_bytes_or_immutable_content_addressed_references",
+                "epoch_rule": "invalidate_pending_on_reset_reference_or_session_source_epoch_change_no_reentry",
+                "duplicate_rule": "reject_reused_tick_source_identity_or_transition_within_run",
+                "label_native_separation": true,
+                "completion": "successful_transition_and_successor_observation_before_causal_commit",
+                "real_persistence_qualification": "LeRobot add_frame remains after send_action; persistence alone does not attest physical transition or successor. Full source admission requires separately paired successor evidence."
+              }
+            },
+            "source_profiles": {
+              "const": {
+                "isaac_human_vr_v4": {
+                  "runtime": "isaac",
+                  "source_classes": [
+                    "human_vr"
+                  ],
+                  "physical_timing_required": false,
+                  "required_source_identities": [
+                    "simulation.state_generation",
+                    "camera.left_wrist",
+                    "camera.right_wrist",
+                    "camera.scene",
+                    "xr.device_io_update",
+                    "xr.submitted_frame",
+                    "xr.returned_frame",
+                    "xr.resolved_input"
+                  ],
+                  "source_epoch_semantics": "XR session epoch",
+                  "tracking_valid_required": true,
+                  "persistence_call_phase": "after_successful_transition_and_successor_observation",
+                  "source_action": "post-DifferentialIK desired joint target BEFORE native clipping, converted to canonical deg/mm",
+                  "runtime_binding_status": "pending_D1",
+                  "host_timestamps": "optional_QA_provenance_not_XR_physical_acquisition_time",
+                  "openxr_query_time": "optional_when_explicitly_exposed_by_source"
+                },
+                "isaac_automated_v4": {
+                  "runtime": "isaac",
+                  "source_classes": [
+                    "scripted_expert",
+                    "planner",
+                    "datagen",
+                    "policy_generated"
+                  ],
+                  "physical_timing_required": false,
+                  "required_source_identities": [
+                    "simulation.state_generation",
+                    "camera.left_wrist",
+                    "camera.right_wrist",
+                    "camera.scene",
+                    "generator.decision"
+                  ],
+                  "source_epoch_semantics": "generator lifecycle epoch",
+                  "tracking_valid_required": false,
+                  "persistence_call_phase": "after_successful_transition_and_successor_observation",
+                  "source_action": "generator decision mapped deterministically to canonical deg/mm before native clipping",
+                  "runtime_binding_status": "pending_G1",
+                  "generator_provenance": [
+                    "revision",
+                    "state",
+                    "seed_when_applicable"
+                  ]
+                },
+                "real_human_vr_physical_v4": {
+                  "runtime": "real",
+                  "source_classes": [
+                    "human_vr"
+                  ],
+                  "physical_timing_required": true,
+                  "required_source_identities": [
+                    "observation.state",
+                    "observation.images.left_wrist",
+                    "observation.images.right_wrist",
+                    "observation.images.scene",
+                    "xr.left_pose",
+                    "xr.right_pose",
+                    "source_action"
+                  ],
+                  "source_epoch_semantics": "physical XR session and source lifecycle epoch",
+                  "tracking_valid_required": true,
+                  "persistence_call_phase": "after_send_action_before_next_tick",
+                  "source_action": "physical timestamped controller output in canonical deg/mm before native mapping",
+                  "runtime_binding_status": "physical_LeRobot_seam_preserved_full_source_admission_pending_R2"
+                }
               }
             }
           }
@@ -3022,13 +3380,25 @@
         "observation_contract": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["state", "raw_vs_derived_rule", "policy_whitelist"],
+          "required": [
+            "state",
+            "raw_vs_derived_rule",
+            "policy_whitelist"
+          ],
           "properties": {
-            "state": {"$ref": "#/$defs/canonical_vector_feature"},
-            "raw_vs_derived_rule": {"type": "string", "minLength": 1},
+            "state": {
+              "$ref": "#/$defs/canonical_vector_feature"
+            },
+            "raw_vs_derived_rule": {
+              "type": "string",
+              "minLength": 1
+            },
             "policy_whitelist": {
               "type": "array",
-              "items": {"type": "string", "minLength": 1},
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
               "minItems": 1,
               "uniqueItems": true
             }
@@ -3048,25 +3418,46 @@
             "source_action": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["owner", "representation", "feature_names", "units"],
+              "required": [
+                "owner",
+                "representation",
+                "feature_names",
+                "units"
+              ],
               "properties": {
-                "owner": {"type": "string", "minLength": 1},
-                "representation": {"type": "string", "minLength": 1},
+                "owner": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "representation": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "feature_names": {
                   "type": "array",
-                  "items": {"type": "string", "minLength": 1},
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
                   "minItems": 1,
                   "uniqueItems": true
                 },
                 "units": {
                   "type": "array",
-                  "items": {"type": "string", "minLength": 1},
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
                   "minItems": 1
                 }
               }
             },
-            "label_processor": {"$ref": "#/$defs/processor_binding"},
-            "dataset_action": {"$ref": "#/$defs/canonical_vector_feature"},
+            "label_processor": {
+              "$ref": "#/$defs/processor_binding"
+            },
+            "dataset_action": {
+              "$ref": "#/$defs/canonical_vector_feature"
+            },
             "runtime_mapping": {
               "type": "object",
               "additionalProperties": false,
@@ -3078,15 +3469,29 @@
                 "send_action_return_semantics"
               ],
               "properties": {
-                "owner": {"type": "string", "minLength": 1},
-                "pipeline": {"type": "string", "minLength": 1},
+                "owner": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "pipeline": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "steps": {
                   "type": "array",
-                  "items": {"type": "string", "minLength": 1},
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
                   "minItems": 1
                 },
-                "stored_label_mutation_allowed": {"const": false},
-                "send_action_return_semantics": {"type": "string", "minLength": 1}
+                "stored_label_mutation_allowed": {
+                  "const": false
+                },
+                "send_action_return_semantics": {
+                  "type": "string",
+                  "minLength": 1
+                }
               }
             },
             "device_accepted_command": {
@@ -3099,10 +3504,19 @@
                 "definitionally_equal_to_dataset_action"
               ],
               "properties": {
-                "observable_at_d0": {"const": false},
-                "observation_source": {"type": "null"},
-                "evidence_owner": {"type": "string", "minLength": 1},
-                "definitionally_equal_to_dataset_action": {"const": false}
+                "observable_at_d0": {
+                  "const": false
+                },
+                "observation_source": {
+                  "type": "null"
+                },
+                "evidence_owner": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "definitionally_equal_to_dataset_action": {
+                  "const": false
+                }
               }
             }
           }
@@ -3118,10 +3532,22 @@
             "transform_classification"
           ],
           "properties": {
-            "label_processors": {"type": "string", "minLength": 1},
-            "policy_processors": {"type": "string", "minLength": 1},
-            "runtime_device_mapping": {"type": "string", "minLength": 1},
-            "stateful_processors": {"type": "array", "maxItems": 0},
+            "label_processors": {
+              "type": "string",
+              "minLength": 1
+            },
+            "policy_processors": {
+              "type": "string",
+              "minLength": 1
+            },
+            "runtime_device_mapping": {
+              "type": "string",
+              "minLength": 1
+            },
+            "stateful_processors": {
+              "type": "array",
+              "maxItems": 0
+            },
             "transform_classification": {
               "type": "object",
               "additionalProperties": false,
@@ -3137,15 +3563,42 @@
                 "camera_preprocessing"
               ],
               "properties": {
-                "units_conversion": {"type": "string", "minLength": 1},
-                "feature_rename_reorder": {"type": "string", "minLength": 1},
-                "normalization": {"type": "string", "minLength": 1},
-                "frame_mapping": {"type": "string", "minLength": 1},
-                "clipping": {"type": "string", "minLength": 1},
-                "rounding": {"type": "string", "minLength": 1},
-                "gripper_conversion": {"type": "string", "minLength": 1},
-                "left_right_composition": {"type": "string", "minLength": 1},
-                "camera_preprocessing": {"type": "string", "minLength": 1}
+                "units_conversion": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "feature_rename_reorder": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "normalization": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "frame_mapping": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "clipping": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "rounding": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "gripper_conversion": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "left_right_composition": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "camera_preprocessing": {
+                  "type": "string",
+                  "minLength": 1
+                }
               }
             }
           }
@@ -3166,27 +3619,68 @@
             "recording_command_relationship"
           ],
           "properties": {
-            "canonical_fps": {"const": 30},
-            "grid": {"const": "episode_relative_frame_index_div_fps"},
-            "exact_rate_behavior": {"type": "string", "minLength": 1},
-            "faster_source_behavior": {"type": "string", "minLength": 1},
-            "slower_source_behavior": {"type": "string", "minLength": 1},
-            "duplicate_policy": {"type": "string", "minLength": 1},
-            "drop_policy": {"type": "string", "minLength": 1},
+            "canonical_fps": {
+              "const": 30
+            },
+            "grid": {
+              "const": "episode_relative_frame_index_div_fps"
+            },
+            "exact_rate_behavior": {
+              "type": "string",
+              "minLength": 1
+            },
+            "faster_source_behavior": {
+              "type": "string",
+              "minLength": 1
+            },
+            "slower_source_behavior": {
+              "type": "string",
+              "minLength": 1
+            },
+            "duplicate_policy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "drop_policy": {
+              "type": "string",
+              "minLength": 1
+            },
             "interpolation_policy": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["camera", "joint_state", "xr_pose", "dataset_action", "command"],
+              "required": [
+                "camera",
+                "joint_state",
+                "xr_pose",
+                "dataset_action",
+                "command"
+              ],
               "properties": {
-                "camera": {"const": "none"},
-                "joint_state": {"const": "source_path_declared_causal"},
-                "xr_pose": {"const": "source_path_declared_causal"},
-                "dataset_action": {"const": "none"},
-                "command": {"const": "lerobot_action_interpolator_when_configured"}
+                "camera": {
+                  "const": "none"
+                },
+                "joint_state": {
+                  "const": "source_path_declared_causal"
+                },
+                "xr_pose": {
+                  "const": "source_path_declared_causal"
+                },
+                "dataset_action": {
+                  "const": "none"
+                },
+                "command": {
+                  "const": "lerobot_action_interpolator_when_configured"
+                }
               }
             },
-            "causality_rule": {"type": "string", "minLength": 1},
-            "recording_command_relationship": {"type": "string", "minLength": 1}
+            "causality_rule": {
+              "type": "string",
+              "minLength": 1
+            },
+            "recording_command_relationship": {
+              "type": "string",
+              "minLength": 1
+            }
           }
         },
         "common_training_view": {
@@ -3322,8 +3816,22 @@
         },
         "cameras": {
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/camera"
+          "additionalProperties": false,
+          "required": [
+            "left_wrist",
+            "right_wrist",
+            "scene"
+          ],
+          "properties": {
+            "left_wrist": {
+              "$ref": "#/$defs/camera"
+            },
+            "right_wrist": {
+              "$ref": "#/$defs/camera"
+            },
+            "scene": {
+              "$ref": "#/$defs/camera"
+            }
           }
         },
         "sources": {

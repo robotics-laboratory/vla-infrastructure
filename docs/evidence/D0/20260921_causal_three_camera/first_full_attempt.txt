@@ -1,0 +1,298 @@
+........................................F.......................F....... [ 19%]
+........................................................................ [ 39%]
+..............................FFF....................................sss [ 59%]
+ssssssssssssssssssss................................................ [ 78%]
+....................F.........F.........F.............F................. [ 98%]
+.....                                                                    [100%]
+=================================== FAILURES ===================================
+________ test_three_camera_schema_fingerprint_order_and_preserved_gates ________
+
+    def test_three_camera_schema_fingerprint_order_and_preserved_gates():
+        c = contract()
+        d = c["dataset"]
+        assert list(d["cameras"]) == ["left_wrist", "right_wrist", "scene"]
+        ordered = [
+            "observation.state",
+            "observation.images.left_wrist",
+            "observation.images.right_wrist",
+            "observation.images.scene",
+            "task",
+            "action",
+        ]
+        assert (
+            d["common_training_view"]["input_features"] + d["common_training_view"]["target_features"]
+            == ordered
+        )
+        assert d["observation_contract"]["policy_whitelist"] == ordered[:-1]
+        assert (
+            canonical_training_schema_fingerprint(c)
+            == d["common_training_view"]["schema_fingerprint_sha256"]
+        )
+        for cam in d["cameras"].values():
+            assert (cam["dtype"], cam["shape"], cam["color_space"]) == ("uint8", [480, 640, 3], "RGB")
+            assert (
+                cam["policy_tensor_dtype"],
+                cam["policy_tensor_shape"],
+                cam["policy_tensor_range"],
+            ) == ("float32", [3, 480, 640], [0, 1])
+            assert cam["canonical_transforms"] == dict(crop=False, resize=False, flip=False)
+        assert d["sources"] == {}
+        assert [c["gates"][g]["state"] for g in ("D0", "S0", "S1", "S2", "D1")] == [
+            "accepted",
+            "accepted",
+            "accepted",
+            "unresolved",
+            "unresolved",
+        ]
+        rules = yaml.safe_load((ROOT / "configs/gate_rules.yaml").read_text())
+>       assert not validate_gates(c, rules)
+E       AssertionError: assert not ['gate B: unresolved required path timing.clock_domains.source_requirement']
+E        +  where ['gate B: unresolved required path timing.clock_domains.source_requirement'] = validate_gates({'contract_version': '5.2.6', 'schema_version': '5.2', 'project': {'name': 'PIPER-X Quest multi-runtime robot-learning..._human_vr_record': True, 'isaac_human_vr_record': True, 'isaac_automated_record': True, 'isaac_eval': True, ...}}, ...}, {'M0': {'prerequisites': [], 'required_paths': ['migration.mode', 'migration.state'], 'required_nonempty_paths': [], '...ed_nonempty_paths': ['teleop.real.evidence_ids'], 'required_evidence_kinds': ['human_gate', 'command_test'], ...}, ...})
+
+tests/test_d0_causal.py:402: AssertionError
+___________ test_repository_coverage_is_part_of_normal_offline_tests ___________
+
+    def test_repository_coverage_is_part_of_normal_offline_tests():
+        found, _ = docs.check(Path(__file__).resolve().parents[1])
+>       assert found == []
+E       AssertionError: assert ['docs/eviden... not tracked'] == []
+E         
+E         Left contains 3 more items, first extra item: 'docs/evidence/D0/20260921_causal_three_camera/README.md: indexed path is not tracked'
+E         Use -v to get more diff
+
+tests/test_docs_governance.py:90: AssertionError
+___________ test_reconnect_reuses_endpoint_cache_without_reexecution ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-ebulochkin/pytest-135/test_reconnect_reuses_endpoint0')
+
+    def test_reconnect_reuses_endpoint_cache_without_reexecution(tmp_path: Path) -> None:
+        environment = FakeIsaacEnvironment()
+>       socket_path, _endpoint, thread = _start_server(tmp_path, environment)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_isaac_eval_rpc.py:176: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+tmp_path = PosixPath('/tmp/pytest-of-ebulochkin/pytest-135/test_reconnect_reuses_endpoint0')
+environment = <test_isaac_eval_rpc.FakeIsaacEnvironment object at 0x7edd9d6b3ce0>
+
+    def _start_server(tmp_path: Path, environment: FakeIsaacEnvironment):
+        socket_path = tmp_path / "eval.sock"
+        endpoint = IsaacEvalEndpoint(environment, _handshake())
+        thread = Thread(target=serve_unix_socket, args=(endpoint, socket_path), daemon=True)
+        thread.start()
+        deadline = time.monotonic() + 2.0
+        while not socket_path.exists():
+            if time.monotonic() >= deadline:
+>               raise AssertionError("server socket did not appear")
+E               AssertionError: server socket did not appear
+
+tests/test_isaac_eval_rpc.py:95: AssertionError
+____________ test_ambiguous_timeout_requires_explicit_same_id_retry ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-ebulochkin/pytest-135/test_ambiguous_timeout_require0')
+
+    def test_ambiguous_timeout_requires_explicit_same_id_retry(tmp_path: Path) -> None:
+        environment = FakeIsaacEnvironment(reset_delay_s=0.08)
+>       socket_path, _endpoint, thread = _start_server(tmp_path, environment)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_isaac_eval_rpc.py:211: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+tmp_path = PosixPath('/tmp/pytest-of-ebulochkin/pytest-135/test_ambiguous_timeout_require0')
+environment = <test_isaac_eval_rpc.FakeIsaacEnvironment object at 0x7edd9d63b770>
+
+    def _start_server(tmp_path: Path, environment: FakeIsaacEnvironment):
+        socket_path = tmp_path / "eval.sock"
+        endpoint = IsaacEvalEndpoint(environment, _handshake())
+        thread = Thread(target=serve_unix_socket, args=(endpoint, socket_path), daemon=True)
+        thread.start()
+        deadline = time.monotonic() + 2.0
+        while not socket_path.exists():
+            if time.monotonic() >= deadline:
+>               raise AssertionError("server socket did not appear")
+E               AssertionError: server socket did not appear
+
+tests/test_isaac_eval_rpc.py:95: AssertionError
+___________ test_client_detects_endpoint_restart_and_invalidates_run ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-ebulochkin/pytest-135/test_client_detects_endpoint_r0')
+
+    def test_client_detects_endpoint_restart_and_invalidates_run(tmp_path: Path) -> None:
+>       socket_path, _endpoint, first_thread = _start_server(tmp_path, FakeIsaacEnvironment())
+                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_isaac_eval_rpc.py:248: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+tmp_path = PosixPath('/tmp/pytest-of-ebulochkin/pytest-135/test_client_detects_endpoint_r0')
+environment = <test_isaac_eval_rpc.FakeIsaacEnvironment object at 0x7edd9d63ac30>
+
+    def _start_server(tmp_path: Path, environment: FakeIsaacEnvironment):
+        socket_path = tmp_path / "eval.sock"
+        endpoint = IsaacEvalEndpoint(environment, _handshake())
+        thread = Thread(target=serve_unix_socket, args=(endpoint, socket_path), daemon=True)
+        thread.start()
+        deadline = time.monotonic() + 2.0
+        while not socket_path.exists():
+            if time.monotonic() >= deadline:
+>               raise AssertionError("server socket did not appear")
+E               AssertionError: server socket did not appear
+
+tests/test_isaac_eval_rpc.py:95: AssertionError
+_____________ test_gate_a_selects_the_hardened_plugin_and_evidence _____________
+
+    def test_gate_a_selects_the_hardened_plugin_and_evidence() -> None:
+        contract = load_contract()
+        rules = yaml.safe_load(RULES_PATH.read_text(encoding="utf-8"))
+        plugin = contract["implementation"]["robot_plugin"]
+        gate = contract["gates"]["A"]
+    
+        assert plugin == {
+            "package": "lerobot_robot_piperx",
+            "version": "0.2.2",
+            "revision": "90b37c2d72376f544f4fbda3b0138badc83bc856",
+            "single_arm_type": "piperx_follower",
+            "bimanual_type": "bi_piperx_follower",
+            "evidence_ids": [
+                "v43_track_1b_package_boundary",
+                "v43_a_plugin_tests",
+                "gate_a_piperx_adapter_hardening_review",
+                "gate_a_piperx_adapter_hardening_tests",
+            ],
+        }
+        assert "gate_a_piperx_adapter_hardening_review" in gate["evidence_ids"]
+        assert "gate_a_piperx_adapter_hardening_tests" in gate["evidence_ids"]
+        assert "gate_a_piperx_adapter_hardening_audit" in gate["artifact_ids"]
+        assert "gate_a_piperx_adapter_hardening_test_output" in gate["artifact_ids"]
+>       assert validate_gates(contract, rules) == []
+E       AssertionError: assert ['gate B: unr..._requirement'] == []
+E         
+E         Left contains one more item: 'gate B: unresolved required path timing.clock_domains.source_requirement'
+E         Use -v to get more diff
+
+tests/test_piperx_adapter_contract.py:48: AssertionError
+__ ResolvedContractTests.test_gate_a_accepts_the_implemented_plugin_artifact ___
+
+self = <test_resolved_contract.ResolvedContractTests testMethod=test_gate_a_accepts_the_implemented_plugin_artifact>
+
+    def test_gate_a_accepts_the_implemented_plugin_artifact(self) -> None:
+        data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+    
+        self.assertEqual(data["gates"]["A"]["state"], "accepted")
+        plugin = data["implementation"]["robot_plugin"]
+        self.assertEqual(plugin["package"], "lerobot_robot_piperx")
+        self.assertEqual(plugin["version"], "0.2.2")
+        self.assertEqual(plugin["revision"], "90b37c2d72376f544f4fbda3b0138badc83bc856")
+        self.assertEqual(data["robot_contract"]["revision"], "piperx_plugin_0.2.2_contract_v4")
+        self.assertEqual(
+            data["robot_contract"]["adapter_fail_closed"]["telemetry"]["missing_behavior"],
+            "reject_observation",
+        )
+        errors, ready, blockers = validate_contract(CONTRACT)
+>       self.assertEqual(errors, [])
+E       AssertionError: Lists differ: ['gate B: unresolved required path timing.clock_domains.source_requirement'] != []
+E       
+E       First list contains 1 additional elements.
+E       First extra element 0:
+E       'gate B: unresolved required path timing.clock_domains.source_requirement'
+E       
+E       - ['gate B: unresolved required path timing.clock_domains.source_requirement']
+E       + []
+
+tests/test_resolved_contract.py:56: AssertionError
+_____ ResolvedContractTests.test_validator_accepts_the_checked_in_contract _____
+
+self = <test_resolved_contract.ResolvedContractTests testMethod=test_validator_accepts_the_checked_in_contract>
+
+    def test_validator_accepts_the_checked_in_contract(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(VALIDATOR), str(CONTRACT)],
+            cwd=REPOSITORY_ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+    
+>       self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+E       AssertionError: 1 != 0 : CONTRACT INVALID
+E       - gate B: unresolved required path timing.clock_domains.source_requirement
+
+tests/test_resolved_contract.py:37: AssertionError
+__________________ test_live_contract_is_valid_but_not_ready ___________________
+
+    def test_live_contract_is_valid_but_not_ready():
+        errors, ready, blockers = mod.validate_contract(ROOT / "configs/resolved_contract.yaml")
+>       assert errors == []
+E       AssertionError: assert ['gate B: unr..._requirement'] == []
+E         
+E         Left contains one more item: 'gate B: unresolved required path timing.clock_domains.source_requirement'
+E         Use -v to get more diff
+
+tests/test_validator_baseline.py:14: AssertionError
+=============================== warnings summary ===============================
+../../../../../data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/cmeel.prefix/lib/python3.12/site-packages/hppfcl/__init__.py:3
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/cmeel.prefix/lib/python3.12/site-packages/hppfcl/__init__.py:3: DeprecationWarning: Please update your 'hppfcl' imports to 'coal'
+    warnings.warn(
+
+tests/test_isaac_eval_rpc.py::test_reconnect_reuses_endpoint_cache_without_reexecution
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-1 (serve_unix_socket)
+  
+  Traceback (most recent call last):
+    File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+      self.run()
+    File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/threading.py", line 1012, in run
+      self._target(*self._args, **self._kwargs)
+    File "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording/tools/isaac_eval_rpc.py", line 305, in serve_unix_socket
+      server.bind(str(socket_path))
+  PermissionError: [Errno 1] Operation not permitted
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+tests/test_isaac_eval_rpc.py::test_ambiguous_timeout_requires_explicit_same_id_retry
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-2 (serve_unix_socket)
+  
+  Traceback (most recent call last):
+    File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+      self.run()
+    File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/threading.py", line 1012, in run
+      self._target(*self._args, **self._kwargs)
+    File "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording/tools/isaac_eval_rpc.py", line 305, in serve_unix_socket
+      server.bind(str(socket_path))
+  PermissionError: [Errno 1] Operation not permitted
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+tests/test_isaac_eval_rpc.py::test_client_detects_endpoint_restart_and_invalidates_run
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-3 (serve_unix_socket)
+  
+  Traceback (most recent call last):
+    File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+      self.run()
+    File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/threading.py", line 1012, in run
+      self._target(*self._args, **self._kwargs)
+    File "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording/tools/isaac_eval_rpc.py", line 305, in serve_unix_socket
+      server.bind(str(socket_path))
+  PermissionError: [Errno 1] Operation not permitted
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_d0_causal.py::test_three_camera_schema_fingerprint_order_and_preserved_gates
+FAILED tests/test_docs_governance.py::test_repository_coverage_is_part_of_normal_offline_tests
+FAILED tests/test_isaac_eval_rpc.py::test_reconnect_reuses_endpoint_cache_without_reexecution
+FAILED tests/test_isaac_eval_rpc.py::test_ambiguous_timeout_requires_explicit_same_id_retry
+FAILED tests/test_isaac_eval_rpc.py::test_client_detects_endpoint_restart_and_invalidates_run
+FAILED tests/test_piperx_adapter_contract.py::test_gate_a_selects_the_hardened_plugin_and_evidence
+FAILED tests/test_resolved_contract.py::ResolvedContractTests::test_gate_a_accepts_the_implemented_plugin_artifact
+FAILED tests/test_resolved_contract.py::ResolvedContractTests::test_validator_accepts_the_checked_in_contract
+FAILED tests/test_validator_baseline.py::test_live_contract_is_valid_but_not_ready
+9 failed, 329 passed, 23 skipped, 4 warnings, 4 subtests passed in 23.31s

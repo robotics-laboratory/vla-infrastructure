@@ -37,10 +37,12 @@ class TimedRobot:
             "marker": float(self.sequence),
             "left_wrist": np.full((2, 2, 3), 17, dtype=np.uint8),
             "right_wrist": np.full((2, 2, 3), 23, dtype=np.uint8),
+            "scene": np.full((2, 2, 3), 29, dtype=np.uint8),
         }
 
     def latest_observation_timing(self) -> dict[str, SourceTiming]:
         return {
+            "observation.images.scene": SourceTiming(self.sequence, 100.015, "host_monotonic"),
             "observation.state": SourceTiming(self.sequence, 100.030, "host_monotonic"),
             "observation.images.left_wrist": SourceTiming(self.sequence, 100.000, "host_monotonic"),
             "observation.images.right_wrist": SourceTiming(
@@ -99,6 +101,7 @@ def test_upstream_record_loop_writes_temporal_features_before_add_frame(tmp_path
         },
         "observation.images.left_wrist": {"dtype": "image", "shape": (2, 2, 3)},
         "observation.images.right_wrist": {"dtype": "image", "shape": (2, 2, 3)},
+        "observation.images.scene": {"dtype": "image", "shape": (2, 2, 3)},
         "action": action_spec,
         **temporal_feature_specs(timing["feature_sets"], required),
     }
@@ -188,6 +191,7 @@ def test_stale_bundle_is_rejected_before_robot_actuation() -> None:
                 },
                 "observation.images.left_wrist": {"dtype": "image", "shape": (2, 2, 3)},
                 "observation.images.right_wrist": {"dtype": "image", "shape": (2, 2, 3)},
+                "observation.images.scene": {"dtype": "image", "shape": (2, 2, 3)},
                 "action": {"dtype": "float32", "shape": (1,), "names": ["marker"]},
                 **temporal_feature_specs(timing["feature_sets"], required),
             }

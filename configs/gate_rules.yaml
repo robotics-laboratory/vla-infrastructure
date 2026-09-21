@@ -81,7 +81,7 @@ B:
   - teleop.real.right_source
   - execution_profiles.quest_xr_real.command
   - timing.clock_domains.pacing
-  - timing.clock_domains.source_requirement
+  - timing.clock_domains.physical_source_requirement
   - timing.xr_fps.real
   - timing.stale_behavior
   required_nonempty_paths:
@@ -168,6 +168,11 @@ D0:
   - timing.max_xr_age_ms
   - timing.max_policy_action_age_ms
   - timing.max_cross_modal_skew_ms
+  - dataset.temporal_semantics.profile_selector
+  - dataset.temporal_semantics.causal_transaction.validator
+  - dataset.temporal_semantics.causal_transaction.physical_validator
+  - dataset.temporal_semantics.source_profiles
+  - dataset.cameras.scene.feature_key
   required_nonempty_paths:
   - dataset.common_training_view.input_features
   - dataset.feature_classification.training_input
@@ -278,10 +283,14 @@ D1:
   - simulation.isaac.recorder.native_format
   - simulation.isaac.recorder.execution_profile
   - simulation.isaac.recorder.conversion_revision
-  - timing.max_camera_age_ms
-  - timing.max_joint_age_ms
-  - timing.max_xr_age_ms
-  - timing.max_cross_modal_skew_ms
+  - dataset.temporal_semantics.source_profiles.isaac_human_vr_v4.persistence_call_phase
+  - dataset.cameras.scene.feature_key
+  - dataset.temporal_semantics.converters.isaac_human.causal_transaction_evidence_id
+  - dataset.temporal_semantics.converters.isaac_human.three_camera_barrier_evidence_id
+  - dataset.temporal_semantics.converters.isaac_human.native_recorder_mapping_evidence_id
+  - dataset.temporal_semantics.converters.isaac_human.demonstration_quality_envelope_artifact_id
+  - dataset.temporal_semantics.converters.isaac_human.resolved_xr_identity_evidence_id
+  - dataset.temporal_semantics.converters.isaac_human.preclip_action_seam_evidence_id
   required_nonempty_paths: []
   required_evidence_kinds:
   - artifact_validation
@@ -311,9 +320,13 @@ G1:
   - simulation.isaac.generator.report_summary.attempted
   - simulation.isaac.generator.report_summary.successful
   - simulation.isaac.generator.report_summary.rejected
-  - timing.max_camera_age_ms
-  - timing.max_joint_age_ms
-  - timing.max_cross_modal_skew_ms
+  - dataset.temporal_semantics.source_profiles.isaac_automated_v4.persistence_call_phase
+  - dataset.cameras.scene.feature_key
+  - dataset.temporal_semantics.converters.isaac_automated.causal_transaction_evidence_id
+  - dataset.temporal_semantics.converters.isaac_automated.three_camera_barrier_evidence_id
+  - dataset.temporal_semantics.converters.isaac_automated.native_recorder_mapping_evidence_id
+  - dataset.temporal_semantics.converters.isaac_automated.demonstration_quality_envelope_artifact_id
+  - dataset.temporal_semantics.converters.isaac_automated.generator_identity_evidence_id
   required_nonempty_paths: []
   required_evidence_kinds:
   - run
@@ -328,7 +341,10 @@ D2a:
   prerequisites:
   - D1
   - G1
-  required_paths: []
+  required_paths:
+  - dataset.cameras.scene.feature_key
+  - dataset.temporal_semantics.source_profiles
+  - dataset.common_training_view.schema_fingerprint_sha256
   required_nonempty_paths: []
   required_evidence_kinds:
   - artifact_validation
@@ -519,6 +535,13 @@ R2:
   - timing.max_joint_age_ms
   - timing.max_xr_age_ms
   - timing.max_cross_modal_skew_ms
+  - dataset.temporal_semantics.source_profiles.real_human_vr_physical_v4.persistence_call_phase
+  - dataset.cameras.scene.feature_key
+  - dataset.temporal_semantics.converters.real_human.causal_transaction_evidence_id
+  - dataset.temporal_semantics.converters.real_human.three_camera_barrier_evidence_id
+  - dataset.temporal_semantics.converters.real_human.native_recorder_mapping_evidence_id
+  - dataset.temporal_semantics.converters.real_human.demonstration_quality_envelope_artifact_id
+  - timing.max_policy_action_age_ms
   required_nonempty_paths: []
   required_evidence_kinds:
   - human_gate
@@ -535,7 +558,10 @@ D2b:
   prerequisites:
   - D2a
   - R2
-  required_paths: []
+  required_paths:
+  - dataset.cameras.scene.feature_key
+  - dataset.temporal_semantics.source_profiles
+  - dataset.common_training_view.schema_fingerprint_sha256
   required_nonempty_paths: []
   required_evidence_kinds:
   - artifact_validation
@@ -551,6 +577,11 @@ DM:
   - dataset.materialization.final_dataset.manifest_artifact_id
   - dataset.materialization.final_dataset.schema_fingerprint_sha256
   - execution_profiles.dataset_materialize.command
+  - dataset.cameras.scene.feature_key
+  - dataset.temporal_semantics.source_profiles
+  - dataset.common_training_view.schema_fingerprint_sha256
+  - dataset.qa.full_frame_iteration_required
+  - dataset.qa.all_video_streams_required
   required_nonempty_paths:
   - dataset.materialization.selected_source_ids
   - dataset.materialization.projected_schema_fingerprints
@@ -567,6 +598,11 @@ DQ:
   required_paths:
   - dataset.qa.report_artifact_id
   - execution_profiles.dataset_qa.command
+  - dataset.cameras.scene.feature_key
+  - dataset.temporal_semantics.source_profiles
+  - dataset.common_training_view.schema_fingerprint_sha256
+  - dataset.qa.full_frame_iteration_required
+  - dataset.qa.all_video_streams_required
   required_nonempty_paths: []
   required_evidence_kinds:
   - artifact_validation

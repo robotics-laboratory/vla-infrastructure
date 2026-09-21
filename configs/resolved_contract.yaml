@@ -1,4 +1,4 @@
-contract_version: 5.2.5
+contract_version: 5.2.6
 schema_version: '5.2'
 project:
   name: PIPER-X Quest multi-runtime robot-learning platform
@@ -324,8 +324,8 @@ process_architecture:
   rpc_implementation_selected: true
   shared_semantic_boundary:
     gate: D0
-    contract_revision: piper_x_d0_policy_data_v2
-    schema_fingerprint_sha256: eb7e4613e5f8d0ff59039874555e6f2d73b728973e64cc01da8414e010d8d33d
+    contract_revision: piper_x_d0_policy_data_v4
+    schema_fingerprint_sha256: 5926a9271f997202970f757738327593d22ed2ad2696c478cb69a75d35dd1ee1
   processes:
     core_lerobot:
       environment: core
@@ -893,7 +893,7 @@ timing:
   clock_domains:
     pacing: host_monotonic_time_perf_counter
     dataset: episode_relative_fixed_grid
-    source_requirement: host_monotonic_or_explicitly_synchronized_to_host_monotonic
+    physical_source_requirement: host_monotonic_or_explicitly_synchronized_to_host_monotonic
   physics_fps:
     isaac: 120
     mujoco: null
@@ -903,6 +903,7 @@ timing:
   camera_fps:
     left_wrist: 30
     right_wrist: 30
+    scene: 30
   control_fps:
     real: 30
     isaac: 30
@@ -915,7 +916,11 @@ timing:
   max_xr_age_ms: 75.0
   max_policy_action_age_ms: 45.0
   max_cross_modal_skew_ms: 75.0
-  stale_behavior: A dataset tick is admissible only when every required source sample is valid, unique, within its modality age limit, and within the cross-modal skew limit. Reject any invalid bundle before Robot.send_action and LeRobotDataset.add_frame, increment temporal QA, and abort the current record loop; the caller must clear or discard the partial episode. Never relabel or reuse a stale sample with the logical dataset timestamp.
+  stale_behavior: 'Physical profiles: A dataset tick is admissible only when every required source sample is valid, unique,
+    within its modality age limit, and within the cross-modal skew limit. Reject any invalid bundle before Robot.send_action
+    and LeRobotDataset.add_frame, increment temporal QA, and abort the current record loop; the caller must clear or discard
+    the partial episode. Never relabel or reuse a stale sample with the logical dataset timestamp. Isaac profiles instead
+    require causal simulation/capture/input identity and completed transition; no fabricated physical acquisition times.'
   inference:
     mode: null
     chunk_horizon: null
@@ -1028,7 +1033,7 @@ teleop:
     - isaac1103_s2_automated
 dataset:
   format: LeRobotDataset_v3
-  policy_data_contract_revision: piper_x_d0_policy_data_v2
+  policy_data_contract_revision: piper_x_d0_policy_data_v4
   temporal_semantics:
     pairing: obs_t_action_t
     observation_phase: pre_decision_t
@@ -1040,14 +1045,16 @@ dataset:
     device_accepted_command_phase: runtime_or_device_residual_after_runtime_command_t
     next_observation_phase: post_transition_t
     outcome_phase: transition_t
-    outcome_definition: Runtime transition, success, termination, failure, or device response caused by runtime_command_t; it is not part of obs_t.
+    outcome_definition: Runtime transition, success, termination, failure, or device response caused by runtime_command_t;
+      it is not part of obs_t.
     label_fixed_before_runtime_mapping: true
-    persistence_call_phase: after_send_action_before_next_tick
+    persistence_call_phase: source_profile_owned
     dataset_timestamp:
       feature_key: timestamp
       clock_domain: episode_relative_fixed_grid
       computation: frame_index_div_dataset_fps
-      semantics: Logical LeRobot sample-grid time used for indexing and video lookup; it is not an acquisition or freshness timestamp.
+      semantics: Logical LeRobot sample-grid time used for indexing and video lookup; it is not an acquisition or freshness
+        timestamp.
       freshness_eligible: false
     source_timing:
       storage: lerobot_additional_frame_features
@@ -1083,6 +1090,11 @@ dataset:
           source_timestamp: temporal.observation.images.right_wrist.source_timestamp
           clock_domain: temporal.observation.images.right_wrist.clock_domain
           age_ms: temporal.observation.images.right_wrist.age_ms
+        observation.images.scene:
+          sequence: temporal.observation.images.scene.sequence
+          source_timestamp: temporal.observation.images.scene.source_timestamp
+          clock_domain: temporal.observation.images.scene.clock_domain
+          age_ms: temporal.observation.images.scene.age_ms
         xr.left_pose:
           sequence: temporal.xr.left_pose.sequence
           source_timestamp: temporal.xr.left_pose.source_timestamp
@@ -1099,10 +1111,11 @@ dataset:
           clock_domain: temporal.source_action.clock_domain
           age_ms: temporal.source_action.age_ms
       required_feature_sets_by_source_class:
-        human_vr:
+        human_vr: &id001
         - observation.state
         - observation.images.left_wrist
         - observation.images.right_wrist
+        - observation.images.scene
         - xr.left_pose
         - xr.right_pose
         - source_action
@@ -1110,31 +1123,133 @@ dataset:
         - observation.state
         - observation.images.left_wrist
         - observation.images.right_wrist
+        - observation.images.scene
         - source_action
       cross_modal_skew_feature_key: temporal.cross_modal_skew_ms
-      timestamp_requirement: Source-owned acquisition identity in host monotonic time or an explicitly synchronized domain with a recorded conversion. Cameras must report capture time atomically with the selected frame; host read/decode/postprocess time is forbidden. PIPER-X, whose CAN payload has no device timestamp, uses the kernel SocketCAN receive timestamp of every required component as an explicitly declared lower-bound acquisition proxy and selects the oldest component time for the assembled state.
+      timestamp_requirement: Source-owned acquisition identity in host monotonic time or an explicitly synchronized domain
+        with a recorded conversion. Cameras must report capture time atomically with the selected frame; host read/decode/postprocess
+        time is forbidden. PIPER-X, whose CAN payload has no device timestamp, uses the kernel SocketCAN receive timestamp
+        of every required component as an explicitly declared lower-bound acquisition proxy and selects the oldest component
+        time for the assembled state.
+      scope: physical_profiles_only
     freshness:
       age_reference: recording_selection_time_minus_source_timestamp_in_a_common_monotonic_domain
       cross_modal_skew_reference: max_minus_min_source_timestamp_for_all_source_inputs_contributing_to_obs_t_and_source_action_t
       enforcement_phase: after_exact_source_selection_before_robot_send_action_and_lerobot_dataset_add_frame
       invalid_tick_behavior: reject_tick_record_reason_and_abort_current_record_loop_before_actuation_caller_must_clear_or_discard_episode
-    causality_test_evidence_id: gate_d0_causality_regression__other_0a0ed027
+      scope: physical_profiles_only
+    causality_test_evidence_id: gate_d0_v4_causality
     converters:
       isaac_human:
         obs_t_field: null
         action_t_field: null
         outcome_field: null
         termination_field: null
+        causal_transaction_evidence_id: null
+        three_camera_barrier_evidence_id: null
+        native_recorder_mapping_evidence_id: null
+        demonstration_quality_envelope_artifact_id: null
+        resolved_xr_identity_evidence_id: null
+        preclip_action_seam_evidence_id: null
       isaac_automated:
         obs_t_field: null
         action_t_field: null
         outcome_field: null
         termination_field: null
+        causal_transaction_evidence_id: null
+        three_camera_barrier_evidence_id: null
+        native_recorder_mapping_evidence_id: null
+        demonstration_quality_envelope_artifact_id: null
+        generator_identity_evidence_id: null
       real_human:
         obs_t_field: null
         action_t_field: null
         outcome_field: null
         termination_field: null
+        causal_transaction_evidence_id: null
+        three_camera_barrier_evidence_id: null
+        native_recorder_mapping_evidence_id: null
+        demonstration_quality_envelope_artifact_id: null
+    profile_selector: tools.d0_causal.select_temporal_profile(runtime, source_class)
+    causal_transaction:
+      validator: tools.d0_causal.CausalTransactionValidator
+      physical_validator: tools.d0_temporal.PhysicalTimingValidator
+      identity_fields:
+      - run_id
+      - episode_id
+      - source_id
+      - reset_epoch
+      - control_reference_epoch
+      - source_epoch
+      - control_tick_id
+      - obs_id
+      - dataset_action_id
+      - native_command_id
+      - transition_id
+      - next_obs_id
+      payload_binding: sha256_of_edge_owned_canonical_bytes_or_immutable_content_addressed_references
+      epoch_rule: invalidate_pending_on_reset_reference_or_session_source_epoch_change_no_reentry
+      duplicate_rule: reject_reused_tick_source_identity_or_transition_within_run
+      label_native_separation: true
+      completion: successful_transition_and_successor_observation_before_causal_commit
+      real_persistence_qualification: LeRobot add_frame remains after send_action; persistence alone does not attest physical
+        transition or successor. Full source admission requires separately paired successor evidence.
+    source_profiles:
+      isaac_human_vr_v4:
+        runtime: isaac
+        source_classes:
+        - human_vr
+        physical_timing_required: false
+        required_source_identities:
+        - simulation.state_generation
+        - camera.left_wrist
+        - camera.right_wrist
+        - camera.scene
+        - xr.device_io_update
+        - xr.submitted_frame
+        - xr.returned_frame
+        - xr.resolved_input
+        source_epoch_semantics: XR session epoch
+        tracking_valid_required: true
+        persistence_call_phase: after_successful_transition_and_successor_observation
+        source_action: post-DifferentialIK desired joint target BEFORE native clipping, converted to canonical deg/mm
+        runtime_binding_status: pending_D1
+        host_timestamps: optional_QA_provenance_not_XR_physical_acquisition_time
+        openxr_query_time: optional_when_explicitly_exposed_by_source
+      isaac_automated_v4:
+        runtime: isaac
+        source_classes:
+        - scripted_expert
+        - planner
+        - datagen
+        - policy_generated
+        physical_timing_required: false
+        required_source_identities:
+        - simulation.state_generation
+        - camera.left_wrist
+        - camera.right_wrist
+        - camera.scene
+        - generator.decision
+        source_epoch_semantics: generator lifecycle epoch
+        tracking_valid_required: false
+        persistence_call_phase: after_successful_transition_and_successor_observation
+        source_action: generator decision mapped deterministically to canonical deg/mm before native clipping
+        runtime_binding_status: pending_G1
+        generator_provenance:
+        - revision
+        - state
+        - seed_when_applicable
+      real_human_vr_physical_v4:
+        runtime: real
+        source_classes:
+        - human_vr
+        physical_timing_required: true
+        required_source_identities: *id001
+        source_epoch_semantics: physical XR session and source lifecycle epoch
+        tracking_valid_required: true
+        persistence_call_phase: after_send_action_before_next_tick
+        source_action: physical timestamped controller output in canonical deg/mm before native mapping
+        runtime_binding_status: physical_LeRobot_seam_preserved_full_source_admission_pending_R2
   observation_contract:
     state:
       feature_key: observation.state
@@ -1187,21 +1302,25 @@ dataset:
       - measured_joint_position
       - absolute_measured_gripper_travel
       policy_role: training_input
-      source_owner: Runtime observation provider; real path is BiPiperXFollower.get_observation composed from both PiperXFollower instances and rejects the sample unless each joint/gripper SDK envelope has positive finite time_stamp and Hz and every required payload field is present.
+      source_owner: Runtime observation provider; real path is BiPiperXFollower.get_observation composed from both PiperXFollower
+        instances and rejects the sample unless each joint/gripper SDK envelope has positive finite time_stamp and Hz and
+        every required payload field is present.
       processor_chain:
       - lerobot.robot_observation_processor.IdentityProcessorStep
       - lerobot.aggregate_pipeline_dataset_features
       - lerobot.build_dataset_frame_float32
       derived: false
-    raw_vs_derived_rule: Only the 14 measured Gate A scalars are canonical state; FK/IK pose, velocity, force, torque, and normalized gripper values are absent unless a later owned processor declares them as derived outside this revision.
+    raw_vs_derived_rule: Only the 14 measured Gate A scalars are canonical state; FK/IK pose, velocity, force, torque, and
+      normalized gripper values are absent unless a later owned processor declares them as derived outside this revision.
     policy_whitelist:
     - observation.state
     - observation.images.left_wrist
     - observation.images.right_wrist
+    - observation.images.scene
     - task
   action_label_pipeline:
     source_action:
-      owner: Current controller/source after its owned control solution emits the Gate A RobotAction mapping for obs_t.
+      owner: Source/runtime controller after its owned control solution for obs_t; source profile defines the pre-native boundary.
       representation: Flat ordered RobotAction mapping in the accepted PIPER-X boundary units; no policy normalization.
       feature_names:
       - left_joint_1.pos
@@ -1234,14 +1353,16 @@ dataset:
       - degree
       - millimeter
     label_processor:
-      owner: LeRobot teleop_action_processor at the canonical RobotAction seam
+      owner: Source-owned deterministic label processor; real uses LeRobot teleop_action_processor; Isaac mapping is pending
+        source qualification.
       pipeline: lerobot.processor.RobotProcessorPipeline
       steps:
       - lerobot.processor.pipeline.IdentityProcessorStep
       deterministic: true
       stateful: false
       serialization_artifact_id: gate_d0_processor_snapshot
-      reset_boundary: Stateless; pipeline.reset is still called at every episode boundary by any source path that supplies additional stateful steps.
+      reset_boundary: Stateless; pipeline.reset is still called at every episode boundary by any source path that supplies
+        additional stateful steps.
     dataset_action:
       feature_key: action
       dtype: float32
@@ -1293,74 +1414,101 @@ dataset:
       - absolute_joint_position_command
       - signed_gripper_travel_command
       policy_role: training_target
-      source_owner: LeRobot teleop_action_processor output packed by build_dataset_frame using the ordered action names.
+      source_owner: Source-owned deterministic label output packed in canonical order; real uses LeRobot build_dataset_frame,
+        Isaac converter binding remains pending.
       processor_chain:
       - lerobot.teleop_action_processor.IdentityProcessorStep
       - lerobot.aggregate_pipeline_dataset_features
       - lerobot.build_dataset_frame_float32
       derived: false
     runtime_mapping:
-      owner: Runtime-specific LeRobot robot_action_processor followed by Robot.send_action or env.step mapping.
+      owner: Runtime-owned mapping after the canonical dataset_action; real uses LeRobot robot_action_processor/Robot.send_action;
+        Isaac native mapping is source-gate-owned.
       pipeline: lerobot.processor.RobotProcessorPipeline_then_Robot.send_action
       steps:
       - lerobot.processor.pipeline.IdentityProcessorStep
       - lerobot_robot_piperx.BiPiperXFollower.send_action_for_real_runtime
       - source_runtime_native_mapping_for_simulators_selected_later
       stored_label_mutation_allowed: false
-      send_action_return_semantics: LeRobot returns the action actually sent to motors, potentially clipped or modified; the PIPER-X plugin first rejects partial/invalid arm actions and any command before motion_ready, validates and converts both bimanual sides before either SDK call, then returns the SDK command after integer milli-unit round-trip, not hardware acceptance feedback. record_loop does not store this return as dataset.action.
+      send_action_return_semantics: LeRobot returns the action actually sent to motors, potentially clipped or modified; the
+        PIPER-X plugin first rejects partial/invalid arm actions and any command before motion_ready, validates and converts
+        both bimanual sides before either SDK call, then returns the SDK command after integer milli-unit round-trip, not
+        hardware acceptance feedback. record_loop does not store this return as dataset.action.
     device_accepted_command:
       observable_at_d0: false
       observation_source: null
       evidence_owner: R1 hardware evidence or the later simulator-native step result where observable.
       definitionally_equal_to_dataset_action: false
   processor_ownership:
-    label_processors: Deterministic source_action to dataset_action transforms only; D0 selects upstream IdentityProcessorStep at the canonical RobotAction seam and later source gates must pin any source-specific steps without changing the output schema.
-    policy_processors: LeRobot policy pre/postprocessor pipelines own model normalization, batching, device transfer, and any policy-specific rename; no policy or normalization is selected by D0.
-    runtime_device_mapping: robot_action_processor plus Robot.send_action/env.step owns runtime units, native ordering, safety residuals, clipping, and device rounding after dataset_action.
+    label_processors: Source-owned deterministic transforms to canonical float32[14] deg/mm before native clipping; real reuses
+      LeRobot IdentityProcessorStep. Isaac runtime binding remains pending.
+    policy_processors: LeRobot policy pre/postprocessor pipelines own model normalization, batching, device transfer, and
+      any policy-specific rename; no policy or normalization is selected by D0.
+    runtime_device_mapping: robot_action_processor plus Robot.send_action/env.step owns runtime units, native ordering, safety
+      residuals, clipping, and device rounding after dataset_action.
     stateful_processors: []
     transform_classification:
-      units_conversion: None in the D0 label processor; PIPER-X degree/millimeter to SDK integer milli-units belongs to runtime/device mapping.
-      feature_rename_reorder: LeRobot feature aggregation/build_dataset_frame packs the explicit left-then-right name order into observation.state and action.
-      normalization: None in canonical data semantics; only an explicit serialized LeRobot policy processor may normalize later.
-      frame_mapping: None in canonical data semantics; source/runtime-specific controller or simulator mapping owns any frame transform.
+      units_conversion: Real label seam already uses deg/mm; Isaac source label mapping must convert post-IK desired targets
+        to canonical deg/mm before native clipping; binding pending D1.
+      feature_rename_reorder: LeRobot feature aggregation/build_dataset_frame packs the explicit left-then-right name order
+        into observation.state and action.
+      normalization: None in canonical data semantics; only an explicit serialized LeRobot policy processor may normalize
+        later.
+      frame_mapping: None in canonical data semantics; source/runtime-specific controller or simulator mapping owns any frame
+        transform.
       clipping: None in label semantics; runtime safety or device clipping is residual behavior and must not replace dataset.action.
-      rounding: PIPER-X unit_to_milli integer rounding is runtime/device mapping; send_action return evidence is separate from the label.
-      gripper_conversion: No label conversion; signed millimeter command and absolute millimeter observation are preserved, with SDK integer conversion only at send_action.
-      left_right_composition: BiPiperXFollower owns deterministic left_ then right_ flat composition; LeRobot packs that declared order.
-      camera_preprocessing: Runtime providers supply canonical uint8 RGB HWC frames; LeRobot video decoding deterministically exposes float32 RGB CHW in [0,1], with no D0 crop or resize.
+      rounding: PIPER-X unit_to_milli integer rounding is runtime/device mapping; send_action return evidence is separate
+        from the label.
+      gripper_conversion: No label conversion; signed millimeter command and absolute millimeter observation are preserved,
+        with SDK integer conversion only at send_action.
+      left_right_composition: BiPiperXFollower owns deterministic left_ then right_ flat composition; LeRobot packs that declared
+        order.
+      camera_preprocessing: Runtime providers supply canonical uint8 RGB HWC frames; LeRobot video decoding deterministically
+        exposes float32 RGB CHW in [0,1], with no D0 crop or resize.
   resampling:
     canonical_fps: 30
     grid: episode_relative_frame_index_div_fps
-    exact_rate_behavior: One causally aligned obs_t/source_action_t/dataset_action_t bundle may be accepted for each canonical dataset tick after source age and cross-modal skew validation at that tick selection time.
-    faster_source_behavior: In the common source clock, causally select the latest complete sample at or before the physical selection time for each target dataset tick and drop intervening samples.
-    slower_source_behavior: The duplicate-free live recording path requires every configured required camera rate to be at least dataset_fps before recording starts. Every other required source must still produce a new admissible sequence for each accepted tick; no previous sample is reused. A repeated, stale, missing, or skewed sample aborts the current record loop before actuation.
-    duplicate_policy: Repeated or non-monotonic source sequences are rejected before Robot.send_action and LeRobotDataset.add_frame; duplicate logical dataset timestamps remain forbidden.
-    drop_policy: Faster unselected source samples may be dropped. An inadmissible canonical tick is counted in temporal QA and aborts the current loop without actuation or persistence; any partial episode requires explicit caller clear/discard handling.
+    exact_rate_behavior: One causally aligned three-camera obs_t/dataset_action_t transaction per accepted logical tick, validated
+      by its declared source profile.
+    faster_source_behavior: Select unique causal source identities; physical profiles additionally require acquisition no
+      later than selection. Drop unselected intermediate samples.
+    slower_source_behavior: No silent source reuse. Physical LeRobot compatibility requires each camera rate >= dataset_fps.
+      Isaac capture barriers must supply each camera for the selected state generation.
+    duplicate_policy: Reject repeated/regressing source identities and ticks; physical profiles also enforce source acquisition
+      sequence/time monotonicity.
+    drop_policy: Count rejection and abort pending transaction; do not persist inadmissible data. Physical pre-actuation failures
+      still abort the upstream loop before send_action.
     interpolation_policy:
       camera: none
       joint_state: source_path_declared_causal
       xr_pose: source_path_declared_causal
       dataset_action: none
       command: lerobot_action_interpolator_when_configured
-    causality_rule: No future sample may contribute to tick t; obs_t and dataset_action_t must retain the same source tick identity.
-    recording_command_relationship: Pinned record_loop makes one send_action attempt per accepted dataset tick. Policy rollout command cadence is independent of dataset FPS and, when interpolation is configured, equals policy_fps multiplied by interpolation_multiplier.
+    causality_rule: No future sample may contribute to tick t; obs_t and dataset_action_t must retain the same source tick
+      identity.
+    recording_command_relationship: Pinned record_loop makes one send_action attempt per accepted dataset tick. Policy rollout
+      command cadence is independent of dataset FPS and, when interpolation is configured, equals policy_fps multiplied by
+      interpolation_multiplier.
   common_training_view:
     input_features:
     - observation.state
     - observation.images.left_wrist
     - observation.images.right_wrist
+    - observation.images.scene
     - task
     target_features:
     - action
     task_feature: task
-    task_semantics: Natural-language instruction string recovered by LeRobotDataset from task_index and the dataset task table; identical task_id/revision semantics are required across sources.
+    task_semantics: Natural-language instruction string recovered by LeRobotDataset from task_index and the dataset task table;
+      identical task_id/revision semantics are required across sources.
     schema_fingerprint_algorithm: sha256_canonical_json_ordered_feature_spec_v1
-    schema_fingerprint_sha256: eb7e4613e5f8d0ff59039874555e6f2d73b728973e64cc01da8414e010d8d33d
+    schema_fingerprint_sha256: 5926a9271f997202970f757738327593d22ed2ad2696c478cb69a75d35dd1ee1
   feature_classification:
     training_input:
     - observation.state
     - observation.images.left_wrist
     - observation.images.right_wrist
+    - observation.images.scene
     - task
     training_target:
     - action
@@ -1408,6 +1556,10 @@ dataset:
     - temporal.source_action.clock_domain
     - temporal.source_action.age_ms
     - temporal.cross_modal_skew_ms
+    - temporal.observation.images.scene.sequence
+    - temporal.observation.images.scene.source_timestamp
+    - temporal.observation.images.scene.clock_domain
+    - temporal.observation.images.scene.age_ms
     privileged_debug: []
   provenance_schema:
     storage: hybrid
@@ -1486,15 +1638,19 @@ dataset:
       - 640
       - 480
       nominal_fps: 30
-      timestamp_source: temporal.observation.images.left_wrist.source_timestamp is the physical acquisition time; LeRobot timestamp remains the separate logical lookup grid.
-      freshness_source: CameraAcquisitionSample sequence/source_timestamp/clock_domain/age_ms are validated before Robot.send_action and persisted with each accepted frame; Camera.async_read or host read/decode/postprocess time is insufficient.
+      timestamp_source: 'Physical profile: temporal.observation.images.left_wrist.source_timestamp; Isaac: simulation/capture
+        identity, not physical acquisition time.'
+      freshness_source: 'Source-profile-owned validation: physical acquisition age/skew or Isaac aligned simulation/capture
+        identity; logical timestamp is never freshness evidence.'
       crop_resize_revision: null
-      missing_frame_behavior: Reject the tick when no admissible sample exists; repeated or non-monotonic source sequences are inadmissible.
+      missing_frame_behavior: Reject the tick when no admissible sample exists; repeated or non-monotonic source sequences
+        are inadmissible.
       intrinsics_artifact_id: null
       extrinsics_artifact_id: null
-      acquisition_owner: Left-arm runtime camera provider configured under key wrist must implement async_read_with_acquisition_timing and atomically return CameraAcquisitionSample; BiPiperXFollower exposes left_wrist.
+      acquisition_owner: Source/runtime camera provider; physical_source_name maps to canonical_feature_key in source camera_bindings.
+        No device is selected by D0.
       policy_observation_status: training_input
-      processor_mapping: LeRobot video storage from uint8 RGB HWC, then decoder output float32 RGB CHW divided by 255; no crop/resize.
+      processor_mapping: uint8 RGB HWC -> float32 RGB CHW divided by 255; no canonical crop, resize, or flip.
       runtime_binding: null
       runtime_binding_owner: Per-runtime source configuration; no device index/path belongs to D0.
       policy_tensor_shape:
@@ -1505,6 +1661,10 @@ dataset:
       policy_tensor_range:
       - 0.0
       - 1.0
+      canonical_transforms:
+        crop: false
+        resize: false
+        flip: false
     right_wrist:
       feature_key: observation.images.right_wrist
       shape:
@@ -1517,15 +1677,19 @@ dataset:
       - 640
       - 480
       nominal_fps: 30
-      timestamp_source: temporal.observation.images.right_wrist.source_timestamp is the physical acquisition time; LeRobot timestamp remains the separate logical lookup grid.
-      freshness_source: CameraAcquisitionSample sequence/source_timestamp/clock_domain/age_ms are validated before Robot.send_action and persisted with each accepted frame; Camera.async_read or host read/decode/postprocess time is insufficient.
+      timestamp_source: 'Physical profile: temporal.observation.images.right_wrist.source_timestamp; Isaac: simulation/capture
+        identity, not physical acquisition time.'
+      freshness_source: 'Source-profile-owned validation: physical acquisition age/skew or Isaac aligned simulation/capture
+        identity; logical timestamp is never freshness evidence.'
       crop_resize_revision: null
-      missing_frame_behavior: Reject the tick when no admissible sample exists; repeated or non-monotonic source sequences are inadmissible.
+      missing_frame_behavior: Reject the tick when no admissible sample exists; repeated or non-monotonic source sequences
+        are inadmissible.
       intrinsics_artifact_id: null
       extrinsics_artifact_id: null
-      acquisition_owner: Right-arm runtime camera provider configured under key wrist must implement async_read_with_acquisition_timing and atomically return CameraAcquisitionSample; BiPiperXFollower exposes right_wrist.
+      acquisition_owner: Source/runtime camera provider; physical_source_name maps to canonical_feature_key in source camera_bindings.
+        No device is selected by D0.
       policy_observation_status: training_input
-      processor_mapping: LeRobot video storage from uint8 RGB HWC, then decoder output float32 RGB CHW divided by 255; no crop/resize.
+      processor_mapping: uint8 RGB HWC -> float32 RGB CHW divided by 255; no canonical crop, resize, or flip.
       runtime_binding: null
       runtime_binding_owner: Per-runtime source configuration; no device index/path belongs to D0.
       policy_tensor_shape:
@@ -1536,6 +1700,49 @@ dataset:
       policy_tensor_range:
       - 0.0
       - 1.0
+      canonical_transforms:
+        crop: false
+        resize: false
+        flip: false
+    scene:
+      feature_key: observation.images.scene
+      shape:
+      - 480
+      - 640
+      - 3
+      dtype: uint8
+      color_space: RGB
+      resolution:
+      - 640
+      - 480
+      nominal_fps: 30
+      timestamp_source: 'Physical profile: temporal.observation.images.scene.source_timestamp; Isaac: simulation/capture identity,
+        not physical acquisition time.'
+      freshness_source: 'Source-profile-owned validation: physical acquisition age/skew or Isaac aligned simulation/capture
+        identity; logical timestamp is never freshness evidence.'
+      crop_resize_revision: null
+      missing_frame_behavior: Reject the tick when no admissible sample exists; repeated or non-monotonic source sequences
+        are inadmissible.
+      intrinsics_artifact_id: null
+      extrinsics_artifact_id: null
+      acquisition_owner: Source/runtime camera provider; physical_source_name maps to canonical_feature_key in source camera_bindings.
+        No device is selected by D0.
+      policy_observation_status: training_input
+      processor_mapping: uint8 RGB HWC -> float32 RGB CHW divided by 255; no canonical crop, resize, or flip.
+      runtime_binding: null
+      runtime_binding_owner: Per-runtime source configuration; no device index/path belongs to D0.
+      policy_tensor_shape:
+      - 3
+      - 480
+      - 640
+      policy_tensor_dtype: float32
+      policy_tensor_range:
+      - 0.0
+      - 1.0
+      canonical_transforms:
+        crop: false
+        resize: false
+        flip: false
   sources: {}
   materialization:
     strategy: deterministic_projection_then_merge
@@ -1695,6 +1902,42 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  gate_d0_v4_final_validation:
+    kind: report
+    sha256: b44d5c41bf8b358478540b665c5b96f2c10f1ed6f2cba2a88e03cc351fbc4c62
+    path: docs/evidence/D0/20260921_causal_three_camera/validation.json
+    uri: null
+    description: D0 v4 final offline validation; preserve first failure and final passing scope separately.
+  gate_d0_v4_full_suite:
+    kind: test_output
+    sha256: 8d819c02c2946c74ee3c295fdd3b7b6db7ed10bf528d75656f9ab70fb3ab9444
+    path: docs/evidence/D0/20260921_causal_three_camera/full_suite.txt
+    uri: null
+    description: D0 v4 final offline validation; preserve first failure and final passing scope separately.
+  gate_d0_v4_first_full_attempt:
+    kind: log
+    sha256: ead2877941ff480d7591f7e42ac9176fc0cbea99e5efe3aca07e5fda156163bd
+    path: docs/evidence/D0/20260921_causal_three_camera/first_full_attempt.txt
+    uri: null
+    description: D0 v4 final offline validation; preserve first failure and final passing scope separately.
+  gate_d0_v4_report:
+    kind: report
+    sha256: 3a2fdf30ae4152a728e6f2128cfae7b83dc6a19fe3ade0e527b5400550b8c85c
+    path: docs/evidence/D0/20260921_causal_three_camera/README.md
+    uri: null
+    description: D0 v4 bounded offline report; exact three-camera causal/profile semantics, no runtime/source qualification.
+  gate_d0_v4_inputs:
+    kind: run_manifest
+    sha256: 9c3296a732c1e54c2c16ec16abfb8387c4d0cef885eeede40e38c006917308ae
+    path: docs/evidence/D0/20260921_causal_three_camera/inputs_and_schema.json
+    uri: null
+    description: D0 v4 bounded offline run_manifest; exact three-camera causal/profile semantics, no runtime/source qualification.
+  gate_d0_v4_test_output:
+    kind: test_output
+    sha256: f0d3cd78de8377653081f0eeee88d9743c6b1d7b52d824073816da864ba0162f
+    path: docs/evidence/D0/20260921_causal_three_camera/causality_tests.txt
+    uri: null
+    description: D0 v4 bounded offline test_output; exact three-camera causal/profile semantics, no runtime/source qualification.
   isaac61_vr_canonical_config:
     kind: processor_config
     sha256: 148baa3da2fdb37d56ef6fb3e310ec3497df4ed3736bf7e8125358c5cea4ec41
@@ -2428,6 +2671,61 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  gate_d0_v4_dependency_validation:
+    kind: command_test
+    status: pass
+    summary: Full offline suite passes 338 tests and 4 subtests; 23 runtime-dependent skips. Final contract/dependency graph
+      valid; S0/S1 unchanged; historical preservation PASS. Affected Ruff/mypy pass; unrelated broad lint debt retained.
+    timestamp: '2026-09-21T14:47:40.978205+00:00'
+    command: UV_PROJECT_ENVIRONMENT=/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env UV_CACHE_DIR=/tmp/d0-v4-uv
+      PYTHONPATH=packages/lerobot_robot_piperx/src HF_HOME=/tmp/d0-v4-hf uv run --frozen --no-sync python -m pytest -q
+    artifact_ids:
+    - gate_d0_v4_final_validation
+    - gate_d0_v4_full_suite
+    - gate_d0_v4_first_full_attempt
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/evidence/D0/20260921_causal_three_camera/validation.json
+    symbol: validate_contract; validate_gates; full offline pytest
+    notes: Full source hash applicability, resolved first-attempt failures and unchanged broad-lint limitations are explicit
+      in validation.json; no hardware or Isaac runtime qualification.
+  gate_d0_v4_causality:
+    status: pass
+    timestamp: '2026-09-21T14:43:37.886237+00:00'
+    artifact_ids: &d0_v4_artifacts
+    - gate_d0_v4_report
+    - gate_d0_v4_inputs
+    - gate_d0_v4_test_output
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/evidence/D0/20260921_causal_three_camera
+    symbol: CausalTransactionValidator; PhysicalTimingValidator; TemporalFrameRecorder
+    notes: Exact tested source digests and schema in gate_d0_v4_inputs. Offline only; source/runtime bindings and physical qualification
+      remain pending.
+    kind: command_test
+    summary: '105 tests and 4 subtests pass: immutable causal transactions, three-camera schema/profile isolation, strict physical
+      timing and real LeRobot/PIPER regression.'
+    command: UV_PROJECT_ENVIRONMENT=/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env UV_CACHE_DIR=/tmp/d0-v4-uv
+      PYTHONPATH=packages/lerobot_robot_piperx/src HF_HOME=/tmp/d0-v4-hf uv run --frozen --no-sync python -m pytest -q tests/test_d0_causal.py
+      tests/test_gate_d0_contract.py tests/test_d0_temporal_runtime.py tests/test_temporal_recording_path.py tests/test_lerobot_robot_piperx.py
+      --deselect=tests/test_d0_causal.py::test_three_camera_schema_fingerprint_order_and_preserved_gates
+  gate_d0_v4_review:
+    status: pass
+    timestamp: '2026-09-21T14:43:37.886237+00:00'
+    artifact_ids: *d0_v4_artifacts
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/evidence/D0/20260921_causal_three_camera
+    symbol: CausalTransactionValidator; PhysicalTimingValidator; TemporalFrameRecorder
+    notes: Exact tested source digests and schema in gate_d0_v4_inputs. Offline only; source/runtime bindings and physical qualification
+      remain pending.
+    kind: document_review
+    summary: Pinned upstream reread, physical-code reuse/size audit, three-camera schema and source-profile migration; historical
+      preservation and unchanged S0/S1 scope.
+    command: Local pinned-source hash comparison, reviewed contract/schema/policy and source diff; see bounded report.
   vr_step1_postpush_93d3497:
     kind: command_test
     status: pass
@@ -3585,12 +3883,24 @@ gates:
     evidence_ids:
     - gate_d0_pinned_lerobot_audit__other_0a0ed027
     - gate_d0_causality_regression__other_0a0ed027
+    - gate_d0_v4_causality
+    - gate_d0_v4_review
+    - gate_d0_v4_dependency_validation
     artifact_ids:
     - gate_d0_upstream_audit__other_0a0ed027
     - gate_d0_processor_snapshot
     - gate_d0_causality_test_output__other_0a0ed027
     - gate_d0_e1_runtime_audit
-    notes: D0 v2 accepts canonical PIPER-X policy/data, same-tick causality, a 30 FPS logical dataset grid, separate physical source timing with sequence/clock/age/skew metadata, independent rates, wrist-camera roles, provenance isolation, identity label processing, and runtime/device command separation. The thin TemporalFrameRecorder now enforces and persists source timing immediately before the upstream LeRobot writer without replacing it. The bounded production profile selects 75 ms camera/XR/skew limits and 45 ms joint/source-action limits.
+    - gate_d0_v4_report
+    - gate_d0_v4_inputs
+    - gate_d0_v4_test_output
+    - gate_d0_v4_final_validation
+    - gate_d0_v4_full_suite
+    - gate_d0_v4_first_full_attempt
+    notes: D0 v4 accepts offline canonical state/action and three-camera schema, common immutable causal transactions, explicit
+      Isaac human/automated identity and strict real physical profiles. New v4 proof supplements frozen history. S0/S1 facts
+      are unchanged; Isaac runtime bindings and all source registrations remain pending. No physical or S2/D1 qualification
+      is claimed.
   S0:
     state: accepted
     evidence_ids:

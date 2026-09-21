@@ -86,7 +86,7 @@ class ResolvedContractTests(unittest.TestCase):
         self.assertTrue(freshness_limits.isdisjoint(rules["B"]["required_paths"]))
         for path in freshness_limits:
             self.assertGreater(data["timing"][path.removeprefix("timing.")], 0)
-        for gate_id in ("D1", "R2", "HIL"):
+        for gate_id in ("R2", "HIL"):
             self.assertTrue(freshness_limits.issubset(rules[gate_id]["required_paths"]))
             probe = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
             probe["gates"][gate_id]["state"] = "accepted"
@@ -98,7 +98,7 @@ class ResolvedContractTests(unittest.TestCase):
         temporal = data["dataset"]["temporal_semantics"]
 
         self.assertEqual(
-            data["dataset"]["policy_data_contract_revision"], "piper_x_d0_policy_data_v2"
+            data["dataset"]["policy_data_contract_revision"], "piper_x_d0_policy_data_v4"
         )
         self.assertEqual(temporal["dataset_timestamp"]["feature_key"], "timestamp")
         self.assertEqual(
@@ -192,7 +192,7 @@ class ResolvedContractTests(unittest.TestCase):
     def test_distinct_source_control_dataset_policy_and_command_rates_are_allowed(self) -> None:
         data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
         data["timing"]["xr_fps"]["real"] = 72
-        data["timing"]["camera_fps"] = {"left_wrist": 60, "right_wrist": 45}
+        data["timing"]["camera_fps"] = {"left_wrist": 60, "right_wrist": 45, "scene": 30}
         data["dataset"]["cameras"]["left_wrist"]["nominal_fps"] = 60
         data["dataset"]["cameras"]["right_wrist"]["nominal_fps"] = 45
         data["timing"]["control_fps"]["real"] = 50

@@ -1,0 +1,2 @@
+# Preserve pytest's raw diagnostic whitespace in this frozen evidence log.
+docs/evidence/D0/20260921_causal_three_camera/first_full_attempt.txt whitespace=-blank-at-eol
