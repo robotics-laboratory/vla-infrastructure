@@ -1,0 +1,41 @@
+Core targeted D0/4B/4C/S1/RUN-DIAG tests
+........................................................................ [ 42%]
+........................................................................ [ 84%]
+...........................                                              [100%]
+=============================== warnings summary ===============================
+tests/test_isaac_vr_decision.py::test_original_native_parity_and_preclip_precision[0.0--1.0]
+  actual_ik_wrapper:123: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+171 passed, 1 warning in 12.38s
+
+Pinned upstream tests
+Warp DeprecationWarning: warp.config.quiet is deprecated; use warp.config.log_level = warp.LOG_WARNING to suppress the init banner.
+Warp CUDA error 100: no CUDA-capable device is detected (in function init_cuda_driver, /builds/omniverse/warp/warp/native/cuda_util.cpp:333)
+/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/torch/jit/_script.py:1488: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+{"epoch": 1, "event": "demo_xr_navigation_frame_applied", "monotonic_ns": 2236355743922491, "recenter": false, "recenter_ack": null, "world_T_physical": [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]}
+{"backdrop_visible": false, "control": "right_secondary_click", "event": "demo_backdrop_visibility_changed", "event_origin": "controller_pipeline", "quest_button": "B", "visual_only": true}
+{"backdrop_visible": true, "control": "right_secondary_click", "event": "demo_backdrop_visibility_changed", "event_origin": "controller_pipeline", "quest_button": "B", "visual_only": true}
+[DEMO] wrist camera panels prebound hidden before XR session
+[DEMO] wrist camera display ON
+{"capture_continues": true, "control": "left_primary_click", "display_visible": true, "event": "demo_vr_camera_feed_visibility_changed", "event_origin": "controller_pipeline", "feed_bound": true, "quest_button": "X"}
+[DEMO] wrist camera display OFF
+{"capture_continues": true, "control": "left_primary_click", "display_visible": false, "event": "demo_vr_camera_feed_visibility_changed", "event_origin": "controller_pipeline", "feed_bound": true, "quest_button": "X"}
+[DEMO] wrist camera display ON
+{"capture_continues": true, "control": "left_primary_click", "display_visible": true, "event": "demo_vr_camera_feed_visibility_changed", "event_origin": "controller_pipeline", "feed_bound": true, "quest_button": "X"}
+{"authoritative_scene_geometry_changed": false, "control": "right_thumbstick_click", "event": "demo_xr_recenter_requested", "event_origin": "controller_pipeline", "quest_button": "R3", "scheduled": true, "session_restart": false, "view_prim_path": "/World/RobosynDemo/SceneCamera"}
+{"authoritative_scene_geometry_changed": false, "control": "right_thumbstick_click", "event": "demo_xr_recenter_requested", "event_origin": "controller_pipeline", "quest_button": "R3", "scheduled": true, "session_restart": false, "view_prim_path": "/World/RobosynDemo/SceneCamera"}
+{"epoch": 1, "event": "demo_xr_navigation_frame_applied", "monotonic_ns": 2236355749897588, "recenter": true, "recenter_ack": "first_control_frame_after_scheduled_app_updates", "world_T_physical": [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]}
+{"epoch": 2, "event": "demo_xr_navigation_frame_applied", "monotonic_ns": 2236355750020612, "recenter": false, "recenter_ack": null, "world_T_physical": [[1.0, 0.0, 0.0, 0.6000000238418579], [0.0, 1.0, 0.0, 0.10000000149011612], [0.0, 0.0, 1.0, 1.399999976158142], [0.0, 0.0, 0.0, 1.0]]}
+{"epoch": 3, "event": "demo_xr_navigation_frame_applied", "monotonic_ns": 2236355750112623, "recenter": true, "recenter_ack": "first_control_frame_after_scheduled_app_updates", "world_T_physical": [[1.0, 0.0, 0.0, 0.6000000238418579], [0.0, 1.0, 0.0, 0.10000000149011612], [0.0, 0.0, 1.0, 1.399999976158142], [0.0, 0.0, 0.0, 1.0]]}
+pinned_ik_parity:123: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+----------------------------------------------------------------------
+Ran 26 tests in 1.133s
+
+OK
+
+Governance before evidence registration
+........................................................................ [ 66%]
+....................................                                     [100%]
+108 passed in 4.80s

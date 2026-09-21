@@ -1902,6 +1902,41 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  vr_render_substeps_report:
+    kind: report
+    sha256: 0e7e920c8e0b0d60c66b34fdd13906c6c931e82dce19cd1024e4199620c80bae
+    path: docs/evidence/S2/20260921_vr_render_substeps/README.md
+    uri: null
+    description: 'Frozen render-substep experiment at bd288917: offline camera/performance pass, physical Quest usability
+      rejection; no promotion.'
+  vr_render_substeps_summary:
+    kind: test_output
+    sha256: eec3ef1219b0a13d290f9b8eecd4a882ed861db5997173937b319ebc360461b3
+    path: docs/evidence/S2/20260921_vr_render_substeps/summary.json
+    uri: null
+    description: 'Frozen render-substep experiment at bd288917: offline camera/performance pass, physical Quest usability
+      rejection; no promotion.'
+  vr_render_substeps_provenance:
+    kind: run_manifest
+    sha256: debd2602a07b11d0cb641d10aeff4713c8e76776d10844aeff568ae1266da0bb
+    path: docs/evidence/S2/20260921_vr_render_substeps/provenance.json
+    uri: null
+    description: 'Frozen render-substep experiment at bd288917: offline camera/performance pass, physical Quest usability
+      rejection; no promotion.'
+  vr_render_substeps_tests:
+    kind: test_output
+    sha256: 8d2b0a0b8d9577d239fab27b3e5487dfe1fbc1648914080a452124d43b932638
+    path: docs/evidence/S2/20260921_vr_render_substeps/tests.txt
+    uri: null
+    description: 'Frozen render-substep experiment at bd288917: offline camera/performance pass, physical Quest usability
+      rejection; no promotion.'
+  vr_render_substeps_raw:
+    kind: test_output
+    sha256: f68c54f3c597458434d3610378bb9481309e7000f9665c25e802eac5fcb8b7cf
+    path: /data/ebulochkin/vla-runtime/evidence/20260921_vr_render_substeps/vr4p2-evidence.tar.gz
+    uri: null
+    description: Retained original A/B run manifests, runtime/CloudXR logs, per-control timings, probe code, visible
+      targets, tests and failed startup attempts; no datasets.
   vr_xr_decision_attempts:
     kind: log
     sha256: 89e4c05e0f13ec4d4f0934e766b6c3e7e770f74908014a06209e43444bebd44b
@@ -2808,6 +2843,50 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  vr_render_substeps_offline:
+    timestamp: '2026-09-21T18:25:43.906935+00:00'
+    artifact_ids:
+    - vr_render_substeps_report
+    - vr_render_substeps_summary
+    - vr_render_substeps_provenance
+    - vr_render_substeps_tests
+    - vr_render_substeps_raw
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/evidence/S2/20260921_vr_render_substeps
+    symbol: null
+    kind: command_test
+    status: pass
+    summary: Four integrations and one rendered three-camera P+4 boundary pass visible-target, dynamics and bounded
+      runtime checks; no-client mean tick 85.141 to 39.282 ms.
+    command: Temporary VR4P2_CANDIDATE=0/1 probe with ./run-vr diag --smoke --max-control-steps 360 --performance-warmup-steps
+      60; exact commands and hashes in provenance/archive.
+    notes: Tested clean bd288917ac44a873feef04df9a488c4046927d87 plus temporary import hook. 171 core, 26 upstream
+      tests; RUN/DIAG and S1 regression. No physical usability PASS or S2/D1 acceptance.
+  vr_render_substeps_quest_rejected:
+    timestamp: '2026-09-21T18:25:43.906935+00:00'
+    artifact_ids:
+    - vr_render_substeps_report
+    - vr_render_substeps_summary
+    - vr_render_substeps_provenance
+    - vr_render_substeps_tests
+    - vr_render_substeps_raw
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/evidence/S2/20260921_vr_render_substeps
+    symbol: null
+    kind: human_gate
+    status: fail
+    summary: Physical operator found candidate headset scene less comfortable and preferred baseline streaming, despite
+      smoother cameras and faster control. Preserve canonical cadence.
+    command: 'Operator A/B: ./run-vr diag with temporary VR4P2_CANDIDATE=0/1, --max-control-steps 18000 --performance-warmup-steps
+      60 --performance-window-steps 300; exact argv in provenance.'
+    notes: User observations in task plus saved physical A/B logs. Both Ctrl-C exits clean at 130, not automated PASS.
+      Tracked control 5.996 to 16.520 Hz while Kit/render 23.984 to 16.520 Hz. Headset presented FPS and end-to-end
+      latency unmeasured; recalled panel numbers unverified. Tested bd288917 plus temporary hook; no promotion or
+      commit.
   vr_xr_decision_qualification:
     kind: command_test
     status: pass
@@ -4202,6 +4281,8 @@ gates:
   S2:
     state: unresolved
     evidence_ids:
+    - vr_render_substeps_offline
+    - vr_render_substeps_quest_rejected
     - vr_xr_decision_qualification
     - vr_three_camera_boundary_runtime
     - vr_step1_postpush_93d3497
@@ -4212,6 +4293,11 @@ gates:
     - gate_s2_physical_run1_failed
     - isaac1103_s2_automated
     artifact_ids:
+    - vr_render_substeps_report
+    - vr_render_substeps_summary
+    - vr_render_substeps_provenance
+    - vr_render_substeps_tests
+    - vr_render_substeps_raw
     - vr_three_camera_boundary_config
     - isaac61_vr_canonical_config
     - vr_step1_postpush_verification
