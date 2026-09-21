@@ -1,0 +1,132 @@
+{
+  "base": "b3577b4613d0669efcee72493b66e4148de745c3",
+  "checked_at_utc": "2026-09-21T15:24:52.544907+00:00",
+  "checks": [
+    {
+      "command": [
+        "uv",
+        "run",
+        "--frozen",
+        "--no-sync",
+        "python",
+        "tools/lint_docs.py",
+        "--base",
+        "b3577b4613d0669efcee72493b66e4148de745c3"
+      ],
+      "exit_code": 0,
+      "output": "INDEX: 358 entries; classification {'current': 28, 'historical': 330}\nHISTORICAL PRESERVATION: PASS (318 frozen files vs b3577b4613d0669efcee72493b66e4148de745c3)\nKNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.\nDOC GOVERNANCE CHECKS: PASS\n"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "--frozen",
+        "--no-sync",
+        "python",
+        "tools/lint_spec_references.py"
+      ],
+      "exit_code": 0,
+      "output": "SPEC REFERENCE LINT OK\n"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "--frozen",
+        "--no-sync",
+        "python",
+        "tools/validate_resolved_contract.py",
+        "configs/resolved_contract.yaml"
+      ],
+      "exit_code": 0,
+      "output": "CONTRACT STRUCTURALLY VALID\nCONTRACT SEMANTICALLY VALID\nFINAL RC NOT READY\nBLOCKERS: S2, D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0\n"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "--frozen",
+        "--no-sync",
+        "python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "exit_code": 0,
+      "output": "MANIFEST OK: 107 reviewed files\n"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "--frozen",
+        "--no-sync",
+        "ruff",
+        "check",
+        "tools/isaac_vr_capture.py",
+        "tools/isaac_vr_runtime.py",
+        "tools/run_isaac_s1.py",
+        "tools/isaac_s1_runtime.py",
+        "tools/launch_isaac_vr.py",
+        "tests/test_isaac_vr_capture.py",
+        "tests/test_run_vr.py"
+      ],
+      "exit_code": 0,
+      "output": "All checks passed!\n"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "--frozen",
+        "--no-sync",
+        "mypy",
+        "--explicit-package-bases",
+        "--follow-imports",
+        "skip",
+        "--ignore-missing-imports",
+        "tools/isaac_vr_capture.py",
+        "tools/isaac_vr_runtime.py",
+        "tools/run_isaac_s1.py",
+        "tools/isaac_s1_runtime.py",
+        "tools/launch_isaac_vr.py"
+      ],
+      "exit_code": 0,
+      "output": "Success: no issues found in 5 source files\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exit_code": 0,
+      "output": ""
+    }
+  ],
+  "core_environment": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env",
+  "gate_states": {
+    "D0": "accepted",
+    "D1": "unresolved",
+    "S0": "accepted",
+    "S1": "accepted",
+    "S2": "unresolved"
+  },
+  "historical_preservation": "318 immutable baseline files unchanged; old configuration SHA preserved at a new explicit locator.",
+  "limitations": [
+    "No headless Kit qualification; known pinned SDK pump issue fails closed.",
+    "No headset/physical XR or D1 acceptance.",
+    "No valid before-change GPU timing baseline; synthetic before/after and canonical no-client timings reported separately."
+  ],
+  "native_runtime": "canonical RUN/DIAG and plain S1 PASS; unsupported HEADLESS Kit rejected. No physical human evidence.",
+  "offline_suite": "365 passed, 23 skipped, 4 subtests; see offline_tests.txt",
+  "post_registration_contract_and_temporal_tests": "..........................................                               [100%]\n42 passed in 9.32s\n",
+  "production_loc": {
+    "added": 249,
+    "new_capture_module": 153,
+    "removed": 22
+  },
+  "source_registration": "dataset.sources remains empty; actual three-camera real source registration pending",
+  "typing_scope": "Changed production files; skip following external modules and absent SDK stubs. The unfiltered initial check also exposed pre-existing import/support-module debt. New barrier types checked normally.",
+  "verdict": "THREE-CAMERA CAPTURE BARRIER QUALIFIED (canonical non-headless Kit path)"
+}

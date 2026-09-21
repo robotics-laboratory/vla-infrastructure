@@ -150,14 +150,8 @@ def d0_action_to_native(action: Sequence[float] | np.ndarray) -> NativeBimanualT
     return NativeBimanualTargets(native_arms[0], native_arms[1], saturated)
 
 
-def native_observation_to_d0(
-    left_rad_m: Sequence[float] | np.ndarray,
-    right_rad_m: Sequence[float] | np.ndarray,
-    left_image: np.ndarray,
-    right_image: np.ndarray,
-) -> dict[str, np.ndarray]:
-    """Map named native measured state and the two wrist roles to exact D0 semantics."""
-
+def native_state_to_d0(left_rad_m, right_rad_m) -> np.ndarray:
+    """Canonical measured joint degrees and absolute gripper millimetres."""
     native_arms = [
         _checked_vector(left_rad_m, length=7, name="left native observation"),
         _checked_vector(right_rad_m, length=7, name="right native observation"),
@@ -165,6 +159,17 @@ def native_observation_to_d0(
     d0_arms = []
     for arm in native_arms:
         d0_arms.append(np.concatenate((np.rad2deg(arm[:6]), [abs(arm[6]) * 1000.0])))
+
+    return np.concatenate(d0_arms).astype(np.float32)
+
+
+def native_observation_to_d0(
+    left_rad_m: Sequence[float] | np.ndarray,
+    right_rad_m: Sequence[float] | np.ndarray,
+    left_image: np.ndarray,
+    right_image: np.ndarray,
+) -> dict[str, np.ndarray]:
+    """Map the plain S1 state/wrist subset; this is not a complete D0 v4 source view."""
 
     def rgb(value: np.ndarray, role: str) -> np.ndarray:
         array = np.asarray(value)
@@ -175,7 +180,7 @@ def native_observation_to_d0(
         return np.ascontiguousarray(array[..., :3])
 
     return {
-        "observation.state": np.concatenate(d0_arms).astype(np.float32),
+        "observation.state": native_state_to_d0(left_rad_m, right_rad_m),
         "observation.images.left_wrist": rgb(left_image, "left_wrist"),
         "observation.images.right_wrist": rgb(right_image, "right_wrist"),
     }

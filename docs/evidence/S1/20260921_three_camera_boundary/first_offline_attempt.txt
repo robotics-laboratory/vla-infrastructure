@@ -1,0 +1,78 @@
+........................................................................ [ 18%]
+........................................................................ [ 37%]
+.....................................................................sss [ 55%]
+ssssssssssssssssssss................................................ [ 73%]
+........................................................F.........F..... [ 91%]
+........F......................                                          [100%]
+=================================== FAILURES ===================================
+__ ResolvedContractTests.test_gate_a_accepts_the_implemented_plugin_artifact ___
+
+self = <test_resolved_contract.ResolvedContractTests testMethod=test_gate_a_accepts_the_implemented_plugin_artifact>
+
+    def test_gate_a_accepts_the_implemented_plugin_artifact(self) -> None:
+        data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+    
+        self.assertEqual(data["gates"]["A"]["state"], "accepted")
+        plugin = data["implementation"]["robot_plugin"]
+        self.assertEqual(plugin["package"], "lerobot_robot_piperx")
+        self.assertEqual(plugin["version"], "0.2.2")
+        self.assertEqual(plugin["revision"], "90b37c2d72376f544f4fbda3b0138badc83bc856")
+        self.assertEqual(data["robot_contract"]["revision"], "piperx_plugin_0.2.2_contract_v4")
+        self.assertEqual(
+            data["robot_contract"]["adapter_fail_closed"]["telemetry"]["missing_behavior"],
+            "reject_observation",
+        )
+        errors, ready, blockers = validate_contract(CONTRACT)
+>       self.assertEqual(errors, [])
+E       AssertionError: Lists differ: ['artifact isaac61_vr_canonical_config: SH[61 chars]tch'] != []
+E       
+E       First list contains 2 additional elements.
+E       First extra element 0:
+E       'artifact isaac61_vr_canonical_config: SHA-256 mismatch'
+E       
+E       + []
+E       - ['artifact isaac61_vr_canonical_config: SHA-256 mismatch',
+E       -  'artifact isaac1103_s2_config: SHA-256 mismatch']
+
+tests/test_resolved_contract.py:56: AssertionError
+_____ ResolvedContractTests.test_validator_accepts_the_checked_in_contract _____
+
+self = <test_resolved_contract.ResolvedContractTests testMethod=test_validator_accepts_the_checked_in_contract>
+
+    def test_validator_accepts_the_checked_in_contract(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(VALIDATOR), str(CONTRACT)],
+            cwd=REPOSITORY_ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+    
+>       self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+E       AssertionError: 1 != 0 : CONTRACT INVALID
+E       - artifact isaac61_vr_canonical_config: SHA-256 mismatch
+E       - artifact isaac1103_s2_config: SHA-256 mismatch
+
+tests/test_resolved_contract.py:37: AssertionError
+__________________ test_live_contract_is_valid_but_not_ready ___________________
+
+    def test_live_contract_is_valid_but_not_ready():
+        errors, ready, blockers = mod.validate_contract(ROOT / "configs/resolved_contract.yaml")
+>       assert errors == []
+E       AssertionError: assert ['artifact is...256 mismatch'] == []
+E         
+E         Left contains 2 more items, first extra item: 'artifact isaac61_vr_canonical_config: SHA-256 mismatch'
+E         Use -v to get more diff
+
+tests/test_validator_baseline.py:14: AssertionError
+=============================== warnings summary ===============================
+../../../../../data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/cmeel.prefix/lib/python3.12/site-packages/hppfcl/__init__.py:3
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/cmeel.prefix/lib/python3.12/site-packages/hppfcl/__init__.py:3: DeprecationWarning: Please update your 'hppfcl' imports to 'coal'
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_resolved_contract.py::ResolvedContractTests::test_gate_a_accepts_the_implemented_plugin_artifact
+FAILED tests/test_resolved_contract.py::ResolvedContractTests::test_validator_accepts_the_checked_in_contract
+FAILED tests/test_validator_baseline.py::test_live_contract_is_valid_but_not_ready
+3 failed, 361 passed, 23 skipped, 1 warning, 4 subtests passed in 19.10s

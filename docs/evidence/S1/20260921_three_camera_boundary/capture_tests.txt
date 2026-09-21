@@ -1,0 +1,3 @@
+......................SYNTHETIC_CAPTURE_COMPARISON={"after": {"alignment": [[25, 25], [29, 29], [33, 33]], "camera_updates": 900, "mandatory_rgb_cpu_copies": 0, "physics_and_render_steps": 1200, "synthetic_control_mean_us": 48.690353333333334}, "before": {"alignment": [[25, 24], [29, 28], [33, 32]], "camera_updates": 900, "mandatory_rgb_cpu_copies": 0, "physics_and_render_steps": 1200, "synthetic_control_mean_us": 19.48872}}
+.....
+27 passed in 0.76s

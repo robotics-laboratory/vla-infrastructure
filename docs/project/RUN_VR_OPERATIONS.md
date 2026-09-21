@@ -51,8 +51,9 @@ of the canonical run mode. Diagnostic qualification uses the same execution prof
 | [Experimental asset lab](../../configs/experiments/robosyn_asset_lab.yaml) | Explicit optional external asset manifest and experimental classification |
 
 Read current numeric values and button mappings from these configs. This guide
-intentionally does not maintain another table of settings. The selected scene
-preview camera is outside the canonical D0 wrist-camera inputs.
+intentionally does not maintain another table of settings. The scene sensor `demo_scene` maps explicitly to canonical
+`observation.images.scene`, alongside `left_wrist` and `right_wrist`. Its production
+does not depend on preview visibility.
 
 ```text
 ./run-vr [diag]
@@ -143,3 +144,17 @@ The [historical pre-canonical documentation audit](RUN_VR_DOCUMENTATION_AUDIT.md
 records baseline `6430dc1` / documentation commit `2e80d23`. Its retained launcher,
 config and architecture statements are forensic history; current operation follows
 the machine sources and launch path above.
+
+## Observation capture availability
+
+All three cameras publish one boundary after reset completion or four control
+substeps. Scene capture remains active while previews are hidden. RUN keeps only
+the current GPU-backed images and immutable identity/state; it does not record
+actions or episodes. Consumers must use a successful current capture before the
+next transition.
+
+Use canonical Kit rendering without `HEADLESS=1`. The pinned headless Kit path
+can advance camera counters without pumping fresh pixels; the capture barrier
+rejects it. A no-client `--smoke` run does not require headless rendering or Quest.
+For capture validity and S1 scope, see the
+[simulation policy](../SIMULATION_POLICY.md#three-camera-observation-boundary).

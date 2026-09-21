@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ctypes
+from dataclasses import asdict
 import hashlib
 import json
 import os
@@ -24,8 +25,10 @@ from isaaclab.sensors.camera import Camera, CameraCfg  # type: ignore[import-not
 ROOT = Path(__file__).resolve().parents[1]
 if TYPE_CHECKING or __package__:
     from .isaac_vr_config import load_composition
+    from .isaac_vr_capture import ProducerBoundary, ThreeCameraCapture
 else:
     from isaac_vr_config import load_composition
+    from isaac_vr_capture import ProducerBoundary, ThreeCameraCapture
 CONVERTED_ROOT = Path(os.environ.get("ROBOSYN_VR_ASSET_CACHE", "/data/vla-infrastructure/assets/robosyn_vr_demo/converted"))
 PHYSICS_DT = 1.0 / 120.0
 CAMERA_PERIOD = 1.0 / 30.0
@@ -319,7 +322,7 @@ def _scene_rgb(camera):
 
 
 class VRCameraRig:
-    """Present two named upstream cameras through the unchanged batched D0 edge."""
+    """Three canonical cameras with an explicit control-boundary capture owner."""
 
     def __init__(self, wrists: tuple[Camera, Camera], scene: Camera) -> None:
         self.wrists = wrists
@@ -328,27 +331,50 @@ class VRCameraRig:
         self.data = _BimanualCameraData(wrists)
         self.num_instances = 2
         self._elapsed = 0.0
-        self.capture_cycles_total = 0
+        self.reset_epoch = 0
+        self.capture: ThreeCameraCapture | None = None
+
+    @property
+    def capture_cycles_total(self) -> int:
+        return self.capture.successful_capture_cycle if self.capture else 0
 
     @property
     def frame(self) -> torch.Tensor:
         return torch.cat(tuple(_tensor(camera.frame).reshape(-1) for camera in self.wrists))
 
     def reset(self) -> None:
+        self.reset_epoch += 1
+        if self.capture:
+            self.capture.invalidate()
         for camera in (*self.wrists, self.scene_camera):
             camera.reset()
         self._elapsed = 0.0
 
     def update(self, dt: float, *, force_recompute: bool = False) -> None:
-        del force_recompute
+        # Physics advances independently; only capture_boundary extracts pixels.
         self._elapsed += dt
-        if self._elapsed + 1.0e-9 < CAMERA_PERIOD:
-            return
-        elapsed = self._elapsed
+        if self.capture:
+            self.capture.invalidate()
+
+    def producer_boundary(self, env) -> ProducerBoundary:
+        # Pinned Kit advertises pumps_app_update even when HEADLESS skips it.
+        # A counter without a completed pump cannot attest fresh RTX pixels.
+        pumps = [v for v in env.sim.visualizers if v.pumps_app_update()]
+        if not pumps or not all(getattr(v, "_app_pumped_this_step", False) for v in pumps):
+            raise RuntimeError("No completed Kit RTX pump for this boundary; HEADLESS Kit is unsupported")
+        return ProducerBoundary(
+            self.reset_epoch, env.sim.get_physics_step_count(), env.sim.render_generation
+        )
+
+    def capture_boundary(self, env) -> None:
+        if self.capture is None:
+            self.capture = ThreeCameraCapture(
+                dict(zip(("left_wrist", "right_wrist", "scene"), (*self.wrists, self.scene_camera))),
+                lambda: self.producer_boundary(env),
+                env.capture_measured_state,
+            )
+        self.capture.capture(self._elapsed, eligible=env.vr_runtime._validation_complete)
         self._elapsed = 0.0
-        self.capture_cycles_total += 1
-        for camera in (*self.wrists, self.scene_camera):
-            camera.update(elapsed, force_recompute=True)
 
 
 class VRRuntime:
@@ -520,6 +546,7 @@ class VRRuntime:
 
     def open(self, env) -> None:
         self._env = env
+        self._initial_capture = asdict(env.latest_observation_capture())
         self._runtime_frames = self._camera_frames()
         self._runtime_capture_cycles = self.camera_rig.capture_cycles_total
         self._set_backdrop_visibility(bool(self.config["scene"]["backdrop"]["initial_visibility"]))
@@ -768,8 +795,8 @@ class VRRuntime:
         print(f"[DEMO] wrist camera display {'ON' if visible else 'OFF'}", flush=True)
 
     def _camera_frames(self) -> dict[str, int]:
-        wrist = _cpu(self.camera_rig.frame).astype(np.int64)
-        scene = _cpu(self.camera_rig.scene_camera.frame).astype(np.int64)
+        wrist: np.ndarray = _cpu(self.camera_rig.frame).astype(np.int64)
+        scene: np.ndarray = _cpu(self.camera_rig.scene_camera.frame).astype(np.int64)
         return {
             "left_wrist": int(wrist[0]),
             "right_wrist": int(wrist[1]),
@@ -777,10 +804,23 @@ class VRRuntime:
         }
 
     def performance_report(self, elapsed: float, camera_observation_frames: int) -> dict[str, Any]:
+        assert self.camera_rig.capture is not None
         final = self._camera_frames()
         cycles = self.camera_rig.capture_cycles_total - self._runtime_capture_cycles
         rates = {name: camera_observation_frames / elapsed for name in final}
+        try:
+            current_capture = asdict(self.camera_rig.capture.latest())
+        except RuntimeError:
+            current_capture = None
         return {
+            "observation_capture": {
+                "initial": self._initial_capture,
+                "current": current_capture,
+                "last_error": self.camera_rig.capture.last_error,
+                "failed_attempts": self.camera_rig.capture.failed_attempts,
+                "successful_capture_cycles": self.camera_rig.capture_cycles_total,
+                "rgb_cpu_copies_for_capture": 0,
+            },
             "profile": self.profile,
             "preview_partition_topology": self.preview_isolation.report() if self.preview_isolation else {"enabled": False},
             "preview_feed_count": 3 if self.preview_scene else 2,
@@ -834,6 +874,8 @@ class VRRuntime:
         }
 
     def validate(self, env) -> dict[str, Any]:
+        assert self.camera_rig.capture is not None
+        preflight_capture = self.camera_rig.capture.latest(require_eligible=False)
         observation = env.observation()
         state = observation["observation.state"]
         home_error = np.abs(state - env.home_d0)
@@ -892,6 +934,7 @@ class VRRuntime:
         ]
         contact_free = all(value <= 1.0e-3 for value in forces.values())
         report: dict[str, Any] = {
+            "observation_capture": asdict(preflight_capture),
             "candidate_home_used": True,
             "maximum_home_error_deg_or_mm": float(home_error.max()),
             "finite_state": bool(np.isfinite(state).all()),

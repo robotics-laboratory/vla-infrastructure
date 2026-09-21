@@ -106,9 +106,7 @@ cameras:
     horizontal_aperture_mm: 20.955
     focal_length_mm: 18.147558
     clipping_range_m: [0.02, 10.0]
-    canonical_d0_input: true
-    d0_key: observation.images.scene
-    capture_boundary_revision: piper_x_three_camera_boundary_v1
+    canonical_d0_input: false
 
 xr_presentation:
   anchor_pos_m: [-0.05, 0.0, -0.10]

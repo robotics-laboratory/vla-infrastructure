@@ -58,7 +58,7 @@ def test_default_does_not_read_experimental_assets(monkeypatch):
     config = isaac_vr_config.load_composition("dual_cube_to_matching_plates")
     assert "asset_lab" not in config and "environment" not in config
     assert config["cameras"]["wrist"]["roles"] == ["left_wrist", "right_wrist"]
-    assert config["cameras"]["scene"]["canonical_d0_input"] is False
+    assert config["cameras"]["scene"]["canonical_d0_input"] is True
     with pytest.raises(FileNotFoundError):
         isaac_vr_config.load_composition("robosyn_asset_lab")
 

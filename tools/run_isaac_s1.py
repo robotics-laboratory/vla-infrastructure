@@ -30,6 +30,7 @@ from isaac_s1_runtime import (
     jsonable,
     materialize_gate_c_urdf,
     native_observation_to_d0,
+    native_state_to_d0,
     relative_pose_matrix,
     seed_reset,
     transform_error,
@@ -423,6 +424,8 @@ class BimanualPiperXIsaacEnvironment:
                 started_ns = time.perf_counter_ns()
             for robot in self.robots:
                 robot.update(PHYSICS_DT)
+            if self.vr_runtime is not None:
+                self._state_physics_step = self.sim.get_physics_step_count()
             if performance is not None:
                 performance.add_nested("robot_update", time.perf_counter_ns() - started_ns)
                 started_ns = time.perf_counter_ns()
@@ -442,6 +445,26 @@ class BimanualPiperXIsaacEnvironment:
                     performance.add_nested(
                         "experiment_update", time.perf_counter_ns() - started_ns
                     )
+
+        if self.vr_runtime is not None:
+            started_ns = time.perf_counter_ns() if performance is not None else 0
+            self.camera.capture_boundary(self)
+            if performance is not None:
+                performance.add_nested("camera_update", time.perf_counter_ns() - started_ns)
+
+    def capture_measured_state(self):
+        """Read refreshed articulation buffers while the producer remains fixed."""
+        before = self.sim.get_physics_step_count()
+        native = [_cpu(robot.data.joint_pos)[0, ids].copy()
+                  for robot, ids in zip(self.robots, self.joint_ids, strict=True)]
+        if before != self.sim.get_physics_step_count() or before != self._state_physics_step:
+            raise RuntimeError("Articulation state generation changed during capture")
+        return before, tuple(float(value) for value in native_state_to_d0(*native))
+
+    def latest_observation_capture(self):
+        if self.vr_runtime is None or self.camera.capture is None:
+            raise RuntimeError("Three-camera capture belongs to the VR source view")
+        return self.camera.capture.latest()
 
     def reset(self, seed: int = 0) -> dict[str, np.ndarray]:
         seed_reset(seed)
@@ -467,6 +490,8 @@ class BimanualPiperXIsaacEnvironment:
         # Candidate B's qualified native reset lifecycle uses 24 non-evidence
         # renderer-settling ticks followed by one captured physics tick.
         self._advance(25)
+        if self.vr_runtime is not None:
+            self.camera.capture.latest(require_eligible=False)
         if getattr(self, "preview", None) is not None:
             self.preview.refresh()
         return self.observation()
@@ -610,7 +635,7 @@ def _quaternion_error_rad(actual: np.ndarray, expected: np.ndarray) -> float:
 
 
 def _target_image_stats(image: np.ndarray, dominant_channel: int) -> dict:
-    values = image.astype(np.int16)
+    values: np.ndarray = image.astype(np.int16)
     other_channels = [channel for channel in range(3) if channel != dominant_channel]
     mask = (
         (values[..., dominant_channel] >= 90)
@@ -648,7 +673,7 @@ def _camera_sample(env: BimanualPiperXIsaacEnvironment) -> list[dict]:
     observation = env.observation()
     actual = _camera_pose_snapshot(env)
     expected = env.expected_camera_poses()
-    frame_indices = _cpu(env.camera.frame).astype(np.int64)
+    frame_indices: np.ndarray = _cpu(env.camera.frame).astype(np.int64)
     samples = []
     for index, role in enumerate(CAMERA_ROLES):
         image = observation[f"observation.images.{role}"]

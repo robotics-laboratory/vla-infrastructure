@@ -2358,3 +2358,99 @@ documents:
   mutable: false
   gates:
   - D0
+- path: docs/evidence/S1/20260921_three_camera_boundary/README.md
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates:
+  - S1
+  - S2
+- path: docs/evidence/S1/20260921_three_camera_boundary/capture_tests.txt
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates:
+  - S1
+  - S2
+- path: docs/evidence/S1/20260921_three_camera_boundary/counter_only_headless_result.json
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates:
+  - S1
+  - S2
+- path: docs/evidence/S1/20260921_three_camera_boundary/diag_result.json
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates:
+  - S1
+  - S2
+- path: docs/evidence/S1/20260921_three_camera_boundary/first_offline_attempt.txt
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates:
+  - S1
+  - S2
+- path: docs/evidence/S1/20260921_three_camera_boundary/headless_s1_failure_result.json
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates:
+  - S1
+  - S2
+- path: docs/evidence/S1/20260921_three_camera_boundary/offline_tests.txt
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates:
+  - S1
+  - S2
+- path: docs/evidence/S1/20260921_three_camera_boundary/previous_vr_config.yaml
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates:
+  - S1
+  - S2
+- path: docs/evidence/S1/20260921_three_camera_boundary/provenance.json
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates:
+  - S1
+  - S2
+- path: docs/evidence/S1/20260921_three_camera_boundary/run_result.json
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates:
+  - S1
+  - S2
+- path: docs/evidence/S1/20260921_three_camera_boundary/s1_result.json
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates:
+  - S1
+  - S2
+- path: docs/evidence/S1/20260921_three_camera_boundary/validation.json
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates:
+  - S1
+  - S2
