@@ -95,6 +95,9 @@ Do not collapse them into one project-owned `rollout()` abstraction.
 
 ## Canonical files
 
+Use the [documentation reading map](docs/README.md) to select current owners.
+Before documentation/evidence work, follow [documentation governance](docs/DOCUMENTATION_POLICY.md).
+
 Read `docs/NORMATIVE_MODEL.md` first.
 
 Live repository operating commands preserved from the pre-v5.2 project are in

@@ -15,6 +15,8 @@ These define what is allowed and what must be proven:
 ```text
 ../AGENTS.md
 NORMATIVE_MODEL.md
+DOCUMENTATION_POLICY.md
+MANIFEST_POLICY.md
 CAPABILITY_MATRIX.md
 GATE_SPEC.md
 DATA_COLLECTION_POLICY.md
@@ -48,6 +50,21 @@ The contract's `evidence` registry points to proof such as upstream source inspe
 ### Artifacts
 
 The `artifacts` registry identifies reproducible inputs/outputs such as environment specs, model assets, calibration, dataset manifests, checkpoints and evaluation reports.
+
+### Documentation governance
+
+[DOCUMENTATION_POLICY.md](DOCUMENTATION_POLICY.md) owns documentation placement,
+lifecycle, preservation and registration workflow. [INDEX.yaml](INDEX.yaml) owns
+per-file classification, document ownership and navigation only. The mandatory
+implementation discipline in [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)
+preserves the detailed agent reuse/audit rules; its roadmap is explanatory.
+[README.md](README.md) routes reading without duplicating selected facts.
+
+INDEX does not own gate states, evidence results, artifact identities or runtime
+pins. The contract and gate rules retain those roles. [MANIFEST_POLICY.md](MANIFEST_POLICY.md)
+owns the explicitly selected integrity set; neither INDEX coverage nor Git
+tracking adds MANIFEST membership. Historical classification preserves tested
+scope; it neither invalidates evidence nor establishes its authenticity.
 
 ## 3. Conflict behavior
 

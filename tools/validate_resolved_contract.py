@@ -871,6 +871,13 @@ def validate_gates(d, rules):
     if set(d["gates"]) != set(rules):
         return ["contract gate IDs and gate_rules IDs differ"]
     for gid, g in d["gates"].items():
+        # Referential integrity applies even before a gate is ready for acceptance.
+        for eid in g["evidence_ids"]:
+            if eid not in d["evidence"]:
+                out.append(f"gate {gid}: unknown evidence {eid}")
+        for aid in g["artifact_ids"]:
+            if aid not in d["artifacts"]:
+                out.append(f"gate {gid}: unknown artifact {aid}")
         if g["state"] != "accepted":
             continue
         r = rules[gid]
@@ -888,13 +895,8 @@ def validate_gates(d, rules):
             if not nonempty(get_path(d, p)):
                 out.append(f"gate {gid}: empty required path {p}")
         for e in g["evidence_ids"]:
-            if e not in d["evidence"]:
-                out.append(f"gate {gid}: unknown evidence {e}")
-            elif d["evidence"][e]["status"] != "pass":
+            if e in d["evidence"] and d["evidence"][e]["status"] != "pass":
                 out.append(f"gate {gid}: evidence {e} is not PASS")
-        for a in g["artifact_ids"]:
-            if a not in d["artifacts"]:
-                out.append(f"gate {gid}: unknown artifact {a}")
         ek = ev_kinds(d, gid)
         ak = art_kinds(d, gid)
         for k in r.get("required_evidence_kinds", []):

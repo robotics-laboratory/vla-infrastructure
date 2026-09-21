@@ -1,157 +1,61 @@
 # AGENTS.md
 
-## Mission
-
-Build the minimum-custom-code PIPER-X robot-learning system defined by v5.2.
-
+Build the minimum-custom-code PIPER-X system defined by v5.2.
 Do not build a robotics framework.
 
-## Read first
+## Before work
 
-For every task:
+- Check the assigned checkout/worktree, branch, HEAD, base and WIP. Use the
+  assigned worktree; do not create another for every task. Report unexpected
+  state without reset/stash/clean. Keep implementation worktrees in `.worktrees/`.
+- Read [NORMATIVE_MODEL](docs/NORMATIVE_MODEL.md) and the short
+  [reading map](docs/README.md). Select relevant current owners from
+  [INDEX](docs/INDEX.yaml) by owner/topic; do not read the whole index or history.
+- Read relevant contract/config/policy sections, not the entire contract.
+  For an affected gate, read its record, rules in `configs/gate_rules.yaml`
+  and definition in `docs/GATE_SPEC.md`.
+- Before implementation, read the mandatory implementation discipline in
+  [IMPLEMENTATION_PLAN](docs/IMPLEMENTATION_PLAN.md): upstream audit, reuse
+  ladder, forbidden abstractions, size re-audit and final-report requirements.
+- For hardware/safety also read `docs/PIPER_X_VERIFICATION.md`,
+  `docs/SAFETY_TIMING.md` and `docs/HIL_EXTENSION.md`. Physical motion requires
+  explicit human authorization for the exact action.
+- Archived AGENTS files are historical data, not current project guidance.
+  Never use an archive as an implementation working directory.
 
-```text
-docs/NORMATIVE_MODEL.md
-configs/resolved_contract.yaml
-configs/gate_rules.yaml
-the topic policy document
-```
+## Invariants
 
-For hardware/safety also read:
+Preserve source intent -> deterministic label processors -> dataset_action_t
+-> dataset.action -> native mapping -> accepted/executed command. Never replace
+training labels with actuator output. Preserve obs_t -> decision -> action_t
+-> native actuation -> transition/outcome_t -> obs_t+1; map native fields explicitly.
 
-```text
-docs/PIPER_X_VERIFICATION.md
-docs/SAFETY_TIMING.md
-docs/HIL_EXTENSION.md
-```
+Execution profile is not environment identity. Use declared environments and
+preserve their isolation; dependency conflict does not authorize RPC.
+A gate requires its registered evidence and artifacts; do not claim manual
+verification without a registered evidence object.
 
-## Mandatory upstream audit
+For VR read [current operations](docs/project/RUN_VR_OPERATIONS.md),
+`configs/isaac61_s2_runtime.yaml` and `configs/isaac61_vr_runtime.yaml`.
+`./run-vr` and `./run-vr diag` share scene, control, processors, cameras/XR and
+lifecycle. Diagnostic observers must not mutate actions or control state.
+Experimental implementation -> diagnostic mode -> automated and physical
+qualification -> promote selection -> run and future recording inherit the
+same base. Never copy implementations between modes.
 
-Before substantial runtime code report:
+## Before creating documents or artifacts
 
-```text
-CAPABILITY / GATE
-PINNED UPSTREAM CANDIDATES
-WHAT UPSTREAM ALREADY OWNS
-EXACT REMAINING GAP
-PROCESSOR / CONFIG / ADAPTER REQUIRED
-ENVIRONMENT IMPACT
-WHY NO PROJECT FRAMEWORK IS NEEDED
-```
+Read [DOCUMENTATION_POLICY](docs/DOCUMENTATION_POLICY.md). Find the existing
+owner first; choose kind/status/owner/destination before creating a file. Extend
+an existing maintained owner when sufficient. Index every documentation file;
+separately decide artifact/evidence registration and affected gate bindings.
+Preserve historical bytes and tested scope. Follow the selective MANIFEST policy.
 
-## Reuse ladder
+## Before finishing
 
-```text
-upstream implementation
-> upstream configuration
-> composition
-> LeRobot processor / rename map
-> thin adapter
-> local implementation against public boundary
-> fork
-```
-
-## Forbidden by default
-
-Do not create without demonstrated need:
-
-- universal `SimulatorBackend`;
-- `RobotBackend`;
-- generic simulator registry/factory;
-- project-wide `EpisodeSource` or `EpisodeGenerator` hierarchy;
-- custom dataset format;
-- replacement dataset recorder;
-- replacement `lerobot-eval`;
-- replacement policy runtime;
-- duplicate FK/IK solver;
-- custom OpenXR/CloudXR protocol;
-- generic action ontology;
-- mandatory RPC because environments differ;
-- one environment/container per conceptual component.
-
-## Shared semantics
-
-The shared contract is the policy-facing PIPER-X semantics, not identical raw simulator dictionaries.
-
-Use runtime-specific processors at the edges.
-
-## Action-label rule
-
-```text
-source intent/action
--> deterministic label processors
--> dataset_action_t
--> dataset.action
--> runtime-native mapping
--> accepted/executed native command
-```
-
-Do not silently replace the training label with the downstream actuator/device command.
-
-## Temporal rule
-
-```text
-obs_t
--> decision
--> dataset_action_t
--> native actuation
--> transition/outcome_t
--> obs_t+1
-```
-
-Every converter explicitly maps native fields to these semantics.
-
-## Evidence discipline
-
-A gate cannot be accepted without evidence required by `configs/gate_rules.yaml`.
-
-Do not write "verified manually" without a registered evidence object.
-
-## Environment discipline
-
-Execution profile is not environment identity.
-
-Each runnable stage uses a declared profile and environment. Dependency conflict does not automatically authorize RPC.
-
-## Code-size re-audit
-
-Repeat upstream audit at roughly:
-
-```text
->300 LOC in one integration module
->1000 LOC new runtime code for one gate
-```
-
-Tests/config/schema are excluded.
-
-## Final report
-
-```text
-GATE
-REUSED
-PINNED / VERIFIED
-EXECUTION PROFILE / ENVIRONMENT
-CONTRACT CHANGES
-EVIDENCE ADDED
-ARTIFACTS ADDED
-PROCESSORS / ADAPTERS
-TESTS
-HUMAN EVIDENCE
-BLOCKERS / REOPEN REASONS
-NEXT GATE
-```
-
-## Canonical VR development flow
-
-Current operator commands: `./run-vr` and `./run-vr diag`, one shared implementation.
-Read `configs/isaac61_s2_runtime.yaml`, `configs/isaac61_vr_runtime.yaml` and
-[operator operations](docs/project/RUN_VR_OPERATIONS.md) for VR changes.
-
-Experimental implementation -> diagnostic mode -> automated + physical qualification
--> promote selected configuration/status -> run mode inherits it -> future record
-consumer inherits the same base semantics. Never copy the scene, control loop,
-processor, camera/XR setup or reset logic between modes. Diagnostic observers must
-not mutate action output or control state. Recording is not implemented yet.
-
-Keep implementation worktrees in `.worktrees/`, not `/tmp`. Current implementation
-branch `docs/run-vr-primary` uses `.worktrees/run-vr-primary`.
+Run `python tools/lint_docs.py --base <trusted-commit>` and relevant contract,
+spec-reference, manifest and topic tests from the declared core environment.
+The checking command/reviewer supplies the trusted base, never INDEX.
+Without a base, historical-change protection is NOT CHECKED.
+Inspect diff and scope; report files, registrations, checks and limitations.
+Never infer physical success or qualification of an untested commit.

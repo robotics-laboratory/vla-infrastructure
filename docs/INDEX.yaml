@@ -1,0 +1,2318 @@
+version: 1
+documents:
+- path: AGENTS.md
+  kind: normative
+  status: current
+  owner: governance.bootstrap
+  mutable: true
+- path: README.md
+  kind: reference
+  status: current
+  owner: project.entry
+  mutable: true
+- path: docs/ACCEPTANCE_CHECKLIST.md
+  kind: template
+  status: current
+  owner: project.acceptance
+  mutable: true
+- path: docs/BENCHMARK_POLICY.md
+  kind: policy
+  status: current
+  owner: benchmark.policy
+  mutable: true
+- path: docs/CAPABILITY_MATRIX.md
+  kind: normative
+  status: current
+  owner: project.capabilities
+  mutable: true
+- path: docs/DATASET_MATERIALIZATION.md
+  kind: policy
+  status: current
+  owner: data.materialization
+  mutable: true
+- path: docs/DATA_COLLECTION_POLICY.md
+  kind: policy
+  status: current
+  owner: data.collection
+  mutable: true
+- path: docs/DESIGN_BASIS.md
+  kind: design
+  status: current
+  owner: architecture.rationale
+  mutable: true
+- path: docs/DOCUMENTATION_POLICY.md
+  kind: policy
+  status: current
+  owner: governance.documentation
+  mutable: true
+- path: docs/ENVIRONMENT_POLICY.md
+  kind: policy
+  status: current
+  owner: environment.policy
+  mutable: true
+- path: docs/EVALUATION_POLICY.md
+  kind: policy
+  status: current
+  owner: evaluation.policy
+  mutable: true
+- path: docs/GATE_SPEC.md
+  kind: normative
+  status: current
+  owner: governance.gates
+  mutable: true
+- path: docs/HIL_EXTENSION.md
+  kind: policy
+  status: current
+  owner: hardware.hil
+  mutable: true
+- path: docs/IMPLEMENTATION_PLAN.md
+  kind: plan
+  status: current
+  owner: project.implementation
+  mutable: true
+- path: docs/INDEX.yaml
+  kind: reference
+  status: current
+  owner: governance.index
+  mutable: true
+- path: docs/MANIFEST_POLICY.md
+  kind: policy
+  status: current
+  owner: governance.integrity
+  mutable: true
+- path: docs/MIGRATION_V4_3_V5_1_TO_V5_2.md
+  kind: policy
+  status: current
+  owner: governance.migration
+  mutable: true
+- path: docs/NORMATIVE_MODEL.md
+  kind: normative
+  status: current
+  owner: governance.normative
+  mutable: true
+- path: docs/PIPER_X_VERIFICATION.md
+  kind: policy
+  status: current
+  owner: hardware.verification
+  mutable: true
+- path: docs/README.md
+  kind: reference
+  status: current
+  owner: governance.navigation
+  mutable: true
+- path: docs/SAFETY_TIMING.md
+  kind: policy
+  status: current
+  owner: safety.timing
+  mutable: true
+- path: docs/SIMULATION_POLICY.md
+  kind: policy
+  status: current
+  owner: simulation.policy
+  mutable: true
+- path: docs/SOURCE_REFERENCES.md
+  kind: reference
+  status: current
+  owner: architecture.sources
+  mutable: true
+- path: docs/archive/v4_3_pre_v5_2/ACCEPTANCE_CHECKLIST.md
+  kind: template
+  status: historical
+  owner: archive.project.acceptance
+  mutable: false
+- path: docs/archive/v4_3_pre_v5_2/AGENTS.md
+  kind: normative
+  status: historical
+  owner: archive.governance.bootstrap
+  mutable: false
+- path: docs/archive/v4_3_pre_v5_2/ENVIRONMENT_POLICY.md
+  kind: policy
+  status: historical
+  owner: archive.environment.policy
+  mutable: false
+- path: docs/archive/v4_3_pre_v5_2/HIL_EXTENSION.md
+  kind: policy
+  status: historical
+  owner: archive.hardware.hil
+  mutable: false
+- path: docs/archive/v4_3_pre_v5_2/IMPLEMENTATION_PLAN.md
+  kind: plan
+  status: historical
+  owner: archive.project.implementation
+  mutable: false
+- path: docs/archive/v4_3_pre_v5_2/MANIFEST.sha256
+  kind: reference
+  status: historical
+  owner: archive.governance.archive
+  mutable: false
+- path: docs/archive/v4_3_pre_v5_2/PIPER_X_VERIFICATION.md
+  kind: policy
+  status: historical
+  owner: archive.hardware.verification
+  mutable: false
+- path: docs/archive/v4_3_pre_v5_2/README.md
+  kind: reference
+  status: historical
+  owner: archive.project.entry
+  mutable: false
+- path: docs/archive/v4_3_pre_v5_2/SAFETY_TIMING.md
+  kind: policy
+  status: historical
+  owner: archive.safety.timing
+  mutable: false
+- path: docs/archive/v4_3_pre_v5_2/SIMULATION_POLICY.md
+  kind: policy
+  status: historical
+  owner: archive.simulation.policy
+  mutable: false
+- path: docs/archive/v4_3_pre_v5_2/configs/resolved_contract.schema.json
+  kind: reference
+  status: historical
+  owner: archive.governance.archive
+  mutable: false
+- path: docs/archive/v4_3_pre_v5_2/configs/resolved_contract.yaml
+  kind: reference
+  status: historical
+  owner: archive.governance.archive
+  mutable: false
+- path: docs/archive/v4_3_pre_v5_2/inventory.json
+  kind: reference
+  status: historical
+  owner: archive.governance.archive
+  mutable: false
+- path: docs/archive/v4_3_pre_v5_2/tools/validate_resolved_contract.py
+  kind: reference
+  status: historical
+  owner: archive.governance.archive
+  mutable: false
+- path: docs/migration/V4_3_TO_V5_2_MIGRATION_MATRIX.md
+  kind: migration
+  status: historical
+  owner: governance.migration
+  mutable: false
+  gates:
+  - M0
+- path: docs/migration/V4_3_TO_V5_2_MIGRATION_REPORT.md
+  kind: migration
+  status: historical
+  owner: governance.migration
+  mutable: false
+  gates:
+  - M0
+- path: docs/migration/evidence/FINAL_M0_CHECKS.txt
+  kind: migration
+  status: historical
+  owner: governance.migration
+  mutable: false
+  gates:
+  - M0
+- path: docs/migration/evidence/PRE_CONTRACT_OFFLINE_RUNTIME_TESTS.txt
+  kind: migration
+  status: historical
+  owner: governance.migration
+  mutable: false
+  gates:
+  - M0
+- path: docs/migration/evidence/V5_2_PACK_MANIFEST_VERIFICATION.txt
+  kind: migration
+  status: historical
+  owner: governance.migration
+  mutable: false
+  gates:
+  - M0
+- path: docs/plans/DOCUMENTATION_GOVERNANCE.md
+  kind: plan
+  status: current
+  owner: governance.documentation
+  mutable: true
+- path: docs/project/CORE_ENVIRONMENT_OPERATIONS.md
+  kind: operations
+  status: current
+  owner: core.operations
+  mutable: true
+  gates:
+  - E0
+- path: docs/project/D0_TEMPORAL_RECORDING_INTEGRATION_20260917.md
+  kind: evidence
+  status: historical
+  owner: data.temporal
+  mutable: false
+  gates:
+  - D0
+- path: docs/project/GATE_A_PIPERX_ADAPTER_HARDENING_TESTS.txt
+  kind: evidence
+  status: historical
+  owner: gates.verification
+  mutable: false
+  gates:
+  - A
+- path: docs/project/GATE_B_Q1_EVIDENCE.txt
+  kind: evidence
+  status: historical
+  owner: gates.verification
+  mutable: false
+  gates:
+  - B
+- path: docs/project/GATE_C_OFFLINE_VERIFICATION.txt
+  kind: evidence
+  status: historical
+  owner: gates.verification
+  mutable: false
+  gates:
+  - C
+- path: docs/project/GATE_D0_CAUSALITY_TEST.txt
+  kind: evidence
+  status: historical
+  owner: gates.verification
+  mutable: false
+  gates:
+  - D0
+- path: docs/project/GATE_D0_E1_RUNTIME_AUDIT.md
+  kind: evidence
+  status: historical
+  owner: data.eval_boundary
+  mutable: false
+  gates:
+  - D0
+  - E1
+- path: docs/project/GATE_D0_UPSTREAM_AUDIT.md
+  kind: evidence
+  status: historical
+  owner: data.upstream
+  mutable: false
+  gates:
+  - D0
+- path: docs/project/GATE_E1_RPC_TESTS.txt
+  kind: evidence
+  status: historical
+  owner: gates.verification
+  mutable: false
+  gates:
+  - E1
+- path: docs/project/GATE_S0_COMPATIBILITY_PROBES.txt
+  kind: evidence
+  status: historical
+  owner: gates.verification
+  mutable: false
+  gates:
+  - S0
+- path: docs/project/GATE_S0_ISAAC_COMPATIBILITY_REMEDIATION.md
+  kind: incident
+  status: historical
+  owner: isaac.compatibility
+  mutable: false
+  gates:
+  - S0
+- path: docs/project/GATE_S0_PROCESS_BOUNDARY_DECISION.md
+  kind: evidence
+  status: historical
+  owner: isaac.process_boundary
+  mutable: false
+  gates:
+  - S0
+- path: docs/project/GATE_S0_TELEOP_DEPENDENCY_AMENDMENT.md
+  kind: evidence
+  status: historical
+  owner: teleop.dependencies
+  mutable: false
+  gates:
+  - S0
+  - B
+- path: docs/project/GATE_S0_UPSTREAM_AUDIT.md
+  kind: evidence
+  status: historical
+  owner: simulation.upstream
+  mutable: false
+  gates:
+  - S0
+- path: docs/project/GATE_S1_PARITY_REPORT.json
+  kind: evidence
+  status: historical
+  owner: gates.verification
+  mutable: false
+  gates:
+  - S1
+- path: docs/project/GATE_S1_RUNTIME_EVIDENCE.txt
+  kind: evidence
+  status: historical
+  owner: gates.verification
+  mutable: false
+  gates:
+  - S1
+- path: docs/project/GATE_S2_DEPENDENCY_RECHECK.txt
+  kind: evidence
+  status: historical
+  owner: gates.verification
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md
+  kind: template
+  status: current
+  owner: vr.acceptance
+  mutable: true
+  gates:
+  - S2
+- path: docs/project/GATE_S2_PHYSICAL_RUN_1_FAILED.md
+  kind: incident
+  status: historical
+  owner: vr.tracking
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/GATE_S2_PROCESSOR_TESTS.txt
+  kind: evidence
+  status: historical
+  owner: gates.verification
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/GATE_S2_RUNTIME_EVIDENCE.txt
+  kind: evidence
+  status: historical
+  owner: gates.verification
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/GATE_S2_UPSTREAM_AUDIT.md
+  kind: evidence
+  status: historical
+  owner: vr.upstream
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/ISAAC_CAMERA_PERFORMANCE_20260915.md
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/ISAAC_TELEOP_PERFORMANCE_INSTRUMENTATION_20260916.md
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/ISAAC_XR_BACKLOG_20260915.md
+  kind: plan
+  status: historical
+  owner: vr.xr_backlog
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/ISAAC_XR_FAILURES_AND_SOLUTIONS_20260915.md
+  kind: incident
+  status: historical
+  owner: vr.xr_failures
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/ISAAC_XR_FIXES_20260915.md
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/ISAAC_XR_PHYSICAL_FOLLOWUP_20260916.md
+  kind: incident
+  status: historical
+  owner: vr.physical_followup
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/PIPER_X_ADAPTER_HARDENING.md
+  kind: evidence
+  status: historical
+  owner: hardware.adapter
+  mutable: false
+  gates:
+  - A
+- path: docs/project/PIPER_X_ISAAC_DEMO_SCENE_SPEC.md
+  kind: design
+  status: historical
+  owner: vr.scene_proposal
+  mutable: false
+  gates:
+  - S1
+  - S2
+  - D0
+  - D1
+  - G1
+- path: docs/project/ROBOSYN_VR_DEMO_REPORT.md
+  kind: experiment
+  status: historical
+  owner: vr.demo
+  mutable: false
+  superseded_by: docs/project/RUN_VR_OPERATIONS.md
+- path: docs/project/ROBOSYN_VR_DEMO_UPSTREAM_AUDIT.md
+  kind: experiment
+  status: historical
+  owner: vr.demo
+  mutable: false
+- path: docs/project/RUN_VR_DOCUMENTATION_AUDIT.md
+  kind: evidence
+  status: historical
+  owner: vr.documentation
+  mutable: false
+  superseded_by: docs/project/RUN_VR_OPERATIONS.md
+- path: docs/project/RUN_VR_OPERATIONS.md
+  kind: operations
+  status: current
+  owner: vr.operations
+  mutable: true
+  gates:
+  - S2
+- path: docs/project/integrations/20260918_kit1103_preview/README.md
+  kind: experiment
+  status: historical
+  owner: isaac.preview_integration
+  mutable: false
+  superseded_by: docs/project/RUN_VR_OPERATIONS.md
+- path: docs/project/integrations/20260918_kit1103_preview/REPORT.md
+  kind: experiment
+  status: historical
+  owner: isaac.preview_integration
+  mutable: false
+- path: docs/project/integrations/20260918_kit1103_preview/UPSTREAM_AUDIT.md
+  kind: experiment
+  status: historical
+  owner: isaac.preview_integration
+  mutable: false
+- path: docs/project/integrations/20260918_kit1103_preview/core_tests.txt
+  kind: experiment
+  status: historical
+  owner: isaac.preview_integration
+  mutable: false
+- path: docs/project/integrations/20260918_kit1103_preview/evidence.json
+  kind: experiment
+  status: historical
+  owner: isaac.preview_integration
+  mutable: false
+- path: docs/project/integrations/20260918_kit1103_preview/evidence/control_sensor_frame4.png
+  kind: experiment
+  status: historical
+  owner: isaac.preview_integration
+  mutable: false
+- path: docs/project/integrations/20260918_kit1103_preview/evidence/partition_sensor_frame2999.png
+  kind: experiment
+  status: historical
+  owner: isaac.preview_integration
+  mutable: false
+- path: docs/project/integrations/20260918_kit1103_preview/evidence/partition_witness_frame2999.png
+  kind: experiment
+  status: historical
+  owner: isaac.preview_integration
+  mutable: false
+- path: docs/project/migrations/20260918_isaac1103/MIGRATION_DIFF.md
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/OPERATIONS.md
+  kind: operations
+  status: current
+  owner: isaac.installation
+  mutable: true
+  gates:
+  - S0
+  - S1
+- path: docs/project/migrations/20260918_isaac1103/REPORT.md
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/UPSTREAM_AUDIT.md
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/affected-tests.txt
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/evidence/control_sensor_raw.png
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/evidence/partition_witness.png
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/evidence/preview_input.png
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/evidence/sensor_raw.png
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/final-inventory.json
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/final_s1_parity.json
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/frozen-dry-run.txt
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/legacy_runtime_snapshot.json
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/legacy_s2_config.yaml
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/offline-tests.txt
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/owned-process-check.json
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/postcutover-process-check.json
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/postcutover.json
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/registered_runs.json
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/s1_comparison.json
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/scope_preservation.json
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/source_manifest.json
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/spec-lint.txt
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/migrations/20260918_isaac1103/validator.txt
+  kind: migration
+  status: historical
+  owner: isaac.migration
+  mutable: false
+  gates:
+  - S0
+  - S1
+  - S2
+- path: docs/project/performance/20260915/historical_cloudxr_summary.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/historical_log_excerpts.txt
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/historical_r3_excerpts.txt
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/historical_source_manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_probe.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_probe.py
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_probe_results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_xr_current.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_xr_current_result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_xr_current_timings.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_xr_probe.py
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_xr_raw_cpu_upload.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_xr_raw_cpu_upload_render_once.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_xr_raw_cpu_upload_render_once_result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_xr_raw_cpu_upload_render_once_timings.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_xr_raw_cpu_upload_result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_xr_raw_cpu_upload_timings.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_xr_render_once.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_xr_render_once_result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_camera_xr_render_once_timings.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_xr_frame_math_probe.py
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_xr_frame_math_result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_xr_panel_layout_probe.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_xr_panel_layout_probe.py
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_xr_panel_layout_result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/piper_xr_panel_layout_s2_result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/performance/20260915/xr_diagnosis_source_manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/reconciliation/20260919_contracts_kit1103/README.md
+  kind: migration
+  status: historical
+  owner: governance.reconciliation
+  mutable: false
+- path: docs/project/reconciliation/20260919_contracts_kit1103/historical-provenance.json
+  kind: migration
+  status: historical
+  owner: governance.reconciliation
+  mutable: false
+- path: docs/project/reconciliation/20260919_contracts_kit1103/history/0a0ed027/configs/isaac_s2_runtime.yaml
+  kind: migration
+  status: historical
+  owner: governance.reconciliation
+  mutable: false
+- path: docs/project/reconciliation/20260919_contracts_kit1103/history/0a0ed027/docs/migration/evidence/FINAL_M0_CHECKS.txt
+  kind: migration
+  status: historical
+  owner: governance.reconciliation
+  mutable: false
+- path: docs/project/reconciliation/20260919_contracts_kit1103/history/0a0ed027/docs/migration/evidence/V5_2_PACK_MANIFEST_VERIFICATION.txt
+  kind: migration
+  status: historical
+  owner: governance.reconciliation
+  mutable: false
+- path: docs/project/reconciliation/20260919_contracts_kit1103/history/0a0ed027/docs/project/xr_fixes/20260916/07_camera_visual_tuning/manifest.json.original
+  kind: migration
+  status: historical
+  owner: governance.reconciliation
+  mutable: false
+- path: docs/project/reconciliation/20260919_contracts_kit1103/history/0a0ed027/docs/project/xr_fixes/20260916/07_camera_visual_tuning/source_manifest.json.original
+  kind: migration
+  status: historical
+  owner: governance.reconciliation
+  mutable: false
+- path: docs/project/reconciliation/20260919_contracts_kit1103/history/682ee936/configs/environments/isaac_release_3_0_0.yaml
+  kind: migration
+  status: historical
+  owner: governance.reconciliation
+  mutable: false
+- path: docs/project/reconciliation/20260919_contracts_kit1103/history/682ee936/docs/project/GATE_D0_CAUSALITY_TEST.txt
+  kind: migration
+  status: historical
+  owner: governance.reconciliation
+  mutable: false
+- path: docs/project/reconciliation/20260919_contracts_kit1103/history/682ee936/docs/project/GATE_D0_UPSTREAM_AUDIT.md
+  kind: evidence
+  status: historical
+  owner: data.upstream_history
+  mutable: false
+  gates:
+  - D0
+- path: docs/project/reconciliation/20260919_contracts_kit1103/history/682ee936/pyproject.toml
+  kind: migration
+  status: historical
+  owner: governance.reconciliation
+  mutable: false
+- path: docs/project/reconciliation/20260919_contracts_kit1103/history/682ee936/uv.lock
+  kind: migration
+  status: historical
+  owner: governance.reconciliation
+  mutable: false
+- path: docs/project/vr_step1/REVIEW.md
+  kind: evidence
+  status: historical
+  owner: vr.qualification
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/vr_step1/affected-tests.txt
+  kind: evidence
+  status: historical
+  owner: vr.qualification
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/vr_step1/checks.json
+  kind: evidence
+  status: historical
+  owner: vr.qualification
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/vr_step1/core-tests.txt
+  kind: evidence
+  status: historical
+  owner: vr.qualification
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/vr_step1/current-reference-sweep.tsv
+  kind: evidence
+  status: historical
+  owner: vr.qualification
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/vr_step1/isaac1103_environment_before_vr.yaml
+  kind: evidence
+  status: historical
+  owner: vr.qualification
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/vr_step1/isaac61_preview_integration_before_vr.yaml
+  kind: evidence
+  status: historical
+  owner: vr.qualification
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/vr_step1/parity-tests.txt
+  kind: evidence
+  status: historical
+  owner: vr.qualification
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/vr_step1/postpush-verification.json
+  kind: evidence
+  status: historical
+  owner: vr.qualification
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/vr_step1/upstream-tests.txt
+  kind: evidence
+  status: historical
+  owner: vr.qualification
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/vr_step1/validation.json
+  kind: evidence
+  status: historical
+  owner: vr.qualification
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/01_recenter/commands.txt
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/01_recenter/isaac.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/01_recenter/manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/01_recenter/result.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/01_recenter/source_manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/01_recenter/tests.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/01_recenter/tests_initial_failure.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/02_panels/commands.txt
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/02_panels/gpu_processes.csv
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/02_panels/isaac.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/02_panels/manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/02_panels/panel_layout.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/02_panels/panel_probe.py
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/02_panels/result.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/02_panels/source_manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/02_panels/tests.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/03_preview/commands.txt
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/03_preview/gpu_processes.csv
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/03_preview/isaac.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/03_preview/isaac_initial_failure.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/03_preview/manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/03_preview/preview_probe.py
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/03_preview/preview_probe_initial_failure.py
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/03_preview/result.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/03_preview/runtime_isaac.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/03_preview/runtime_result.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/03_preview/source_manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/03_preview/tests.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/03_preview/timings.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260915/03_preview/timings_initial_failure.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/01_recenter_resume/commands.txt
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/01_recenter_resume/manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/01_recenter_resume/source_manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/01_recenter_resume/tests.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/02_camera_feedback/commands.txt
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/02_camera_feedback/isaac.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/02_camera_feedback/manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/02_camera_feedback/result.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/02_camera_feedback/source_manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/02_camera_feedback/tests.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/above_x04_z00_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/above_x04_z00_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/above_x05_z03_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/above_x05_z03_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/above_x06_z00_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/above_x06_z00_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/commands.txt
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/comparison.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/comparison_initial.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/current_sideways_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/current_sideways_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/forward_z_up_minus_x_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/forward_z_up_minus_x_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/forward_z_up_plus_x_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/forward_z_up_plus_x_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/isaac.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/isaac_configured.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/isaac_initial.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/pose_probe.py
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/poses.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/poses_initial.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/result.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/ruff.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/selected_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/selected_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/selection.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/source_manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/03_camera_pose/tests.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/04_per_hand_speed_slider/commands.txt
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/04_per_hand_speed_slider/isaac.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/04_per_hand_speed_slider/manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/04_per_hand_speed_slider/mapping_cases.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/04_per_hand_speed_slider/result.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/04_per_hand_speed_slider/ruff.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/04_per_hand_speed_slider/source_manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/04_per_hand_speed_slider/tests.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/05_preview_height/commands.txt
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/05_preview_height/isaac.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/05_preview_height/layout_probe.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/05_preview_height/layout_probe.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/05_preview_height/layout_probe.py
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/05_preview_height/manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/05_preview_height/result.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/05_preview_height/ruff.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/05_preview_height/source_manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/05_preview_height/tests.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn04_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn04_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn04_zp10_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn04_zp10_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn055_z00_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn055_z00_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn055_zp01_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn055_zp01_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn05_z00_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn05_z00_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn05_zp01_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn05_zp01_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn06_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn06_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn06_zp06_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn06_zp06_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn06_zp10_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn06_zp10_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn06_zp14_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn06_zp14_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn08_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/above_xn08_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/commands.txt
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/comparison.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/comparison_forward_sweep.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/comparison_side_only.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/current_below_xp06_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/current_below_xp06_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/isaac.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/isaac_configured.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/isaac_forward_sweep.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/isaac_side_only.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/pose_probe.py
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/poses.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/poses_forward_sweep.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/poses_side_only.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/result.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/ruff.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/selected_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/selected_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/selection.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/source_manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/06_camera_mount_side/tests.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/A_base_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/A_base_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/A_raise5_pitch3_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/A_raise5_pitch3_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/B_raise5_pitch5_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/B_raise5_pitch5_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/C_raise10_pitch5_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/C_raise10_pitch5_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/D_raise5_pitch7_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/D_raise5_pitch7_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/E_forward5_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/E_forward5_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/F_forward10_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/F_forward10_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/baseline_current_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/baseline_current_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/commands.txt
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/comparison.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/comparison_roll_height_pitch.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/isaac.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/isaac_configured.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/isaac_roll_height_pitch.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/pose_probe.py
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/result.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/ruff.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/selected_left.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/selected_right.png
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/selection.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/source_manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/tests.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/variants.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/07_camera_visual_tuning/variants_roll_height_pitch.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/08_target_api/commands.txt
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/08_target_api/isaac.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/08_target_api/manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/08_target_api/result.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/08_target_api/ruff.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/08_target_api/source_manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/08_target_api/tests.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/08_target_api/verification.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/physical_report/analysis.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/physical_report/copy_hashes.txt
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260916/physical_report/stdout.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260917/09_cross_user_camera_recursion/analysis.md
+  kind: incident
+  status: historical
+  owner: vr.camera_recursion
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260917/09_cross_user_camera_recursion/commands.txt
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260917/09_cross_user_camera_recursion/manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260917/09_cross_user_camera_recursion/source_manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2
+- path: docs/project/xr_fixes/20260917/09_cross_user_camera_recursion/tests.log
+  kind: experiment
+  status: historical
+  owner: vr.xr_fixes
+  mutable: false
+  gates:
+  - S2

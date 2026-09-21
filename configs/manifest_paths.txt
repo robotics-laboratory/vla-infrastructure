@@ -104,3 +104,10 @@ tests/test_isaac_vr_config.py
 docs/project/GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md
 # Original environment bytes retained for historical evidence references.
 docs/project/vr_step1/isaac1103_environment_before_vr.yaml
+# Documentation governance: explicitly authorized additions.
+docs/DOCUMENTATION_POLICY.md
+docs/INDEX.yaml
+docs/README.md
+docs/plans/DOCUMENTATION_GOVERNANCE.md
+tools/lint_docs.py
+tests/test_docs_governance.py
