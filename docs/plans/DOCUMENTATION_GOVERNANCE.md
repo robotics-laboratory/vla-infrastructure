@@ -3,6 +3,17 @@
 Owner: governance.documentation. This maintained plan records follow-up decisions;
 it is not evidence, a gate acceptance claim or a replacement for the contract.
 
+## Initial migration review context
+
+The initial migration base `98fb74f278e91a7f29a3b00f44a4a2284a053607`
+predates INDEX and therefore required manual/code review of classification and
+historical file changes. Review of governance commit
+`4778ac305d68b2c051b0357487d7bbdb1d6ae9d1` observed 312 historical-classified
+files, 0 modified historical files and 0 deleted historical files. These are
+migration review observations, not an automated preservation PASS, independently
+verified classification or gate evidence. Subsequent preservation uses the INDEX
+from a trusted base containing governance.
+
 ## Known historical integrity debt
 
 Source: the completed read-only audit of repository

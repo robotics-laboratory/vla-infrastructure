@@ -153,16 +153,31 @@ Ruff and type checks as well. Normal offline pytest discovery includes governanc
 tests; no separate CI platform is required.
 
 The reviewer/checking command supplies `--base`, which must resolve to an ancestor
-commit. With a base INDEX, immutable/historical entries and their classifications
-are protected using that trusted copy, including against removal from the new
-INDEX or changes of status/mutable. Without a base INDEX, the only bootstrap base
-is the audited commit above: newly classified existing historical/immutable files
-must retain its exact bytes. This initial classification itself requires review;
-it cannot recover omitted pre-governance intent. Git history must include the
-baseline object for explicit grandfathered-path checking.
+commit. When that commit contains INDEX, exactly `<base>:docs/INDEX.yaml` supplies
+the trusted classification. Every entry with `status: historical` or
+`mutable: false` is protected against reclassification, removal from the current
+INDEX, file deletion and byte changes.
+
+When the base has no INDEX, there is no machine-verifiable classification source.
+The linter does not derive trust from the current INDEX and prints:
+
+```text
+HISTORICAL PRESERVATION: BOOTSTRAP REVIEW REQUIRED
+base has no trusted docs/INDEX.yaml
+```
+
+The first governance migration requires human/code-review verification of INDEX
+classification and absence of unintended historical file modifications/deletions.
+Once governance is merged, subsequent trusted bases contain INDEX and normal
+automated preservation applies. This is a one-time migration review condition,
+not a runtime/configuration mechanism. The earlier Git baseline used to grandfather
+legacy paths controls placement only; it supplies no trusted classification.
 
 Without `--base`, the linter prints historical preservation NOT CHECKED; its exit
-zero covers static checks only. A full pre-merge check requires the trusted base.
+zero covers static checks only. Static inventory, placement, link and spec checks
+also run during bootstrap; exit zero there does not complete migration review or
+independently verify historical classification. Automated preservation requires
+a trusted base containing INDEX.
 Preservation is relative to that base, not authentication of historical bundles.
 Known debt is reported separately and retained in the governance plan. The linter
 does not read `/data`, run hardware, fetch URLs, validate external artifacts,

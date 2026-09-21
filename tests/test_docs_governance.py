@@ -56,7 +56,7 @@ def repo(tmp_path, monkeypatch):
     )
     git(tmp_path, "commit", "-qm", "pre-governance")
     baseline = git(tmp_path, "rev-parse", "HEAD")
-    monkeypatch.setattr(docs, "BOOTSTRAP_BASE", baseline)
+    monkeypatch.setattr(docs, "LEGACY_PLACEMENT_BASE", baseline)
     entries = [
         entry(docs.INDEX),
         entry("docs/operations/VR.md", "operations"),
@@ -77,8 +77,7 @@ def trusted(repo):
     return git(root, "rev-parse", "HEAD")
 
 
-def test_bootstrap_positive_and_no_base_is_not_checked(repo):
-    assert errors(repo, repo[2]) == []
+def test_no_base_is_not_checked(repo):
     found, notes = docs.check(repo[0])
     assert not found
     assert any("PRESERVATION: NOT CHECKED" in n for n in notes)
@@ -92,7 +91,9 @@ def test_repository_coverage_is_part_of_normal_offline_tests():
 
 
 def test_trusted_index_positive(repo):
-    assert errors(repo, trusted(repo)) == []
+    found, notes = docs.check(repo[0], trusted(repo))
+    assert not found
+    assert any("PRESERVATION: PASS" in n for n in notes)
 
 
 def test_missing_entry(repo):
@@ -219,7 +220,7 @@ def test_spec_tokens_in_grandfathered_nested_project_current_doc(repo, monkeypat
     save(root, entries + [entry(path, "operations")])
     git(root, "add", path, docs.INDEX)
     git(root, "commit", "-qm", "existing nested owner")
-    monkeypatch.setattr(docs, "BOOTSTRAP_BASE", git(root, "rev-parse", "HEAD"))
+    monkeypatch.setattr(docs, "LEGACY_PLACEMENT_BASE", git(root, "rev-parse", "HEAD"))
     assert not errors(repo)
     write(root, path, "[[gate:UNKNOWN]]\n")
     assert any("unknown gate" in e for e in errors(repo))
@@ -236,9 +237,10 @@ def test_local_navigation_does_not_follow_external_symlinks(repo, tmp_path):
 
 
 def test_historical_tokens_are_not_checked_against_current_registry(repo):
+    base = trusted(repo)
     write(repo[0], "docs/project/old.md", "[[gate:OLD_GATE]]\n")
     assert not errors(repo)  # No preservation claim without --base.
-    assert errors(repo, repo[2])
+    assert errors(repo, base)
 
 
 @pytest.mark.parametrize(
@@ -269,17 +271,19 @@ def test_valid_new_bundle_and_markdown_destinations(repo):
     assert not errors(repo)
 
 
-@pytest.mark.parametrize("action", ["edit", "delete", "drop", "relax", "status", "staged"])
+@pytest.mark.parametrize(
+    "action", ["edit", "delete", "drop", "drop_delete", "relax", "status", "staged"]
+)
 def test_trusted_historical_protection_cannot_be_relaxed(repo, action):
     root, entries, _ = repo
     base = trusted(repo)
     path = entries[2]["path"]
     if action in {"edit", "relax", "staged"}:
         write(root, path, "altered evidence\n")
-    if action == "delete":
+    if action in {"delete", "drop_delete"}:
         (root / path).unlink()
         git(root, "add", path)
-    if action == "drop":
+    if action in {"drop", "drop_delete"}:
         entries.pop()
     if action == "relax":
         entries[2].update(status="current", mutable=True)
@@ -292,22 +296,77 @@ def test_trusted_historical_protection_cannot_be_relaxed(repo, action):
     assert any("immutable" in e for e in errors(repo, base))
 
 
-def test_bootstrap_compares_exact_bytes_without_claiming_authenticity(repo):
-    write(repo[0], "docs/project/old.md", "transformed baseline bytes\n")
-    assert any("immutable bytes" in e for e in errors(repo, repo[2]))
+@pytest.mark.parametrize("action", ["unchanged", "edit", "unfreeze", "drop_delete"])
+def test_base_without_index_requires_review_without_trusting_current_classification(repo, action):
+    root, entries, baseline = repo
+    path = entries[2]["path"]
+    if action in {"edit", "unfreeze"}:
+        write(root, path, "changed historical bytes\n")
+    if action == "unfreeze":
+        entries[2].update(status="current", mutable=True)
+    if action == "drop_delete":
+        entries.pop()
+        (root / path).unlink()
+        git(root, "add", path)
+        write(root, entries[1]["path"], "# Current guide without a dangling link\n")
+    save(root, entries)
+    found, notes = docs.check(root, baseline)
+    assert not found
+    assert "HISTORICAL PRESERVATION: BOOTSTRAP REVIEW REQUIRED" in notes
+    assert "base has no trusted docs/INDEX.yaml" in notes
+    assert not any("PRESERVATION: PASS" in n for n in notes)
 
 
-def test_arbitrary_base_without_index_is_not_a_bootstrap_exception(repo):
+def test_any_base_without_index_requires_review(repo):
     root, _, _ = repo
-    write(root, "unrelated.txt", "another commit")
-    git(root, "add", "unrelated.txt")
-    git(root, "commit", "-qm", "with index")
+    trusted(repo)
     git(root, "rm", docs.INDEX)
     git(root, "commit", "-qm", "remove index")
     no_index = git(root, "rev-parse", "HEAD")
     save(root, repo[1])
     git(root, "add", docs.INDEX)
-    assert any("audited bootstrap" in e for e in errors(repo, no_index))
+    found, notes = docs.check(root, no_index)
+    assert not found
+    assert "HISTORICAL PRESERVATION: BOOTSTRAP REVIEW REQUIRED" in notes
+    assert not any("PRESERVATION: PASS" in n for n in notes)
+
+
+@pytest.mark.parametrize("base_kind", ["none", "bootstrap", "trusted"])
+@pytest.mark.parametrize("issue", ["index", "placement", "link", "spec"])
+def test_static_checks_run_regardless_of_preservation_mode(repo, base_kind, issue):
+    root, entries, baseline = repo
+    base = (
+        trusted(repo) if base_kind == "trusted" else baseline if base_kind == "bootstrap" else None
+    )
+    if issue == "index":
+        save(root, entries[:-1])
+        message = "missing index entry"
+    elif issue == "placement":
+        path = "docs/project/new.md"
+        write(root, path, "# New loose report\n")
+        git(root, "add", path)
+        save(root, entries + [entry(path, "evidence")])
+        message = "forbidden new documentation placement"
+    else:
+        write(
+            root, entries[1]["path"], "[broken](missing.md)" if issue == "link" else "[[gate:BAD]]"
+        )
+        message = "missing/unsafe local target" if issue == "link" else "unknown gate"
+    assert any(message in e for e in errors(repo, base))
+
+
+def test_current_immutable_base_entry_is_also_protected(repo):
+    root, entries, _ = repo
+    entries[2]["status"] = "current"
+    save(root, entries)
+    git(root, "add", docs.INDEX)
+    base = trusted(repo)
+    entries[2]["mutable"] = True
+    save(root, entries)
+    write(root, entries[2]["path"], "changed immutable bytes\n")
+    found = errors(repo, base)
+    assert any("cannot remove or relax" in e for e in found)
+    assert any("immutable bytes" in e for e in found)
 
 
 def test_read_only_and_untracked_caches_ignored(repo):

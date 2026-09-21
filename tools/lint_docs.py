@@ -25,7 +25,8 @@ except ImportError:
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = "docs/INDEX.yaml"
-BOOTSTRAP_BASE = "98fb74f278e91a7f29a3b00f44a4a2284a053607"
+# Placement exceptions only; this commit supplies no trusted classification.
+LEGACY_PLACEMENT_BASE = "98fb74f278e91a7f29a3b00f44a4a2284a053607"
 KINDS = set(
     "normative policy operations design plan template evidence experiment migration incident reference generated".split()
 )
@@ -297,18 +298,16 @@ def navigation(root: Path, path: str, entries: dict[str, dict]) -> list[str]:
     return errors
 
 
-def preservation(root: Path, base: str, entries: dict[str, dict]) -> tuple[list[str], int]:
+def preservation(root: Path, base: str, entries: dict[str, dict]) -> tuple[list[str], int | None]:
+    """Use only the base INDEX; None means classification needs bootstrap review."""
     commit = (
         git(root, "rev-parse", "--verify", "--end-of-options", base + "^{commit}").decode().strip()
     )
     git(root, "merge-base", "--is-ancestor", commit, "HEAD")
     old_paths = tree(root, commit)
-    if INDEX in old_paths:
-        old = read_index(git(root, "show", f"{commit}:{INDEX}").decode())
-    else:
-        if commit != BOOTSTRAP_BASE:
-            raise ValueError("base without INDEX must be the audited bootstrap commit")
-        old = {p: e for p, e in entries.items() if p in old_paths}
+    if INDEX not in old_paths:
+        return [], None
+    old = read_index(git(root, "show", f"{commit}:{INDEX}").decode())
     protected = {p: e for p, e in old.items() if e["status"] == "historical" or not e["mutable"]}
     staged_changes = set(
         git(root, "diff", "--cached", "--name-only", "-z", commit).decode().split("\0")
@@ -342,7 +341,7 @@ def check(root: Path, base: str | None = None) -> tuple[list[str], list[str]]:
         entries = read_index((root / INDEX).read_text())
         rules = yaml.safe_load((root / "configs/gate_rules.yaml").read_text())
         contract = yaml.safe_load((root / "configs/resolved_contract.yaml").read_text())
-        legacy = set(tree(root, BOOTSTRAP_BASE))
+        legacy = set(tree(root, LEGACY_PLACEMENT_BASE))
         scope = {p for p in tracked if in_scope(p)}
         for path in sorted(scope - entries.keys()):
             errors.append(f"{path}: missing index entry")
@@ -386,9 +385,13 @@ def check(root: Path, base: str | None = None) -> tuple[list[str], list[str]]:
         if base:
             issues, count = preservation(root, base, entries)
             errors.extend(issues)
-            notes.append(
-                f"HISTORICAL PRESERVATION: {'FAIL' if issues else 'PASS'} ({count} frozen files vs {base})"
-            )
+            if count is None:
+                notes.append("HISTORICAL PRESERVATION: BOOTSTRAP REVIEW REQUIRED")
+                notes.append("base has no trusted docs/INDEX.yaml")
+            else:
+                notes.append(
+                    f"HISTORICAL PRESERVATION: {'FAIL' if issues else 'PASS'} ({count} frozen files vs {base})"
+                )
         else:
             notes.append(
                 "HISTORICAL PRESERVATION: NOT CHECKED (supply --base for full pre-merge check)"
