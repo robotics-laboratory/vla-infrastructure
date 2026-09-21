@@ -2454,3 +2454,57 @@ documents:
   gates:
   - S1
   - S2
+- path: docs/evidence/D0/20260921_xr_preclip_decision/README.md
+  kind: evidence
+  status: historical
+  owner: data.collection.xr_decision
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/evidence/D0/20260921_xr_preclip_decision/attempts.json
+  kind: evidence
+  status: historical
+  owner: data.collection.xr_decision
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/evidence/D0/20260921_xr_preclip_decision/checks.txt
+  kind: evidence
+  status: historical
+  owner: data.collection.xr_decision
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/evidence/D0/20260921_xr_preclip_decision/core_tests.txt
+  kind: evidence
+  status: historical
+  owner: data.collection.xr_decision
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/evidence/D0/20260921_xr_preclip_decision/previous_s2_config.yaml
+  kind: evidence
+  status: historical
+  owner: data.collection.xr_decision
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/evidence/D0/20260921_xr_preclip_decision/provenance.json
+  kind: evidence
+  status: historical
+  owner: data.collection.xr_decision
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/evidence/D0/20260921_xr_preclip_decision/upstream_tests.txt
+  kind: evidence
+  status: historical
+  owner: data.collection.xr_decision
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/evidence/D0/20260921_xr_preclip_decision/diag_result.json
+  kind: evidence
+  status: historical
+  owner: data.collection.xr_decision
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/evidence/D0/20260921_xr_preclip_decision/run_result.json
+  kind: evidence
+  status: historical
+  owner: data.collection.xr_decision
+  mutable: false
+  gates: [D0, S1, S2, D1]

@@ -186,11 +186,15 @@ def module(monkeypatch, name, **attrs):
     return m
 
 
-def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch):
+@pytest.mark.parametrize("decision_receipts", [False, True])
+def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, decision_receipts):
     """Execute run_s2 twice, including its native IK boundary; mock vendor IO only."""
     monkeypatch.syspath_prepend(str(ROOT / "tools"))
     from isaac_s2_processor import PROCESSOR_REVISION
     from isaac_vr_config import load_composition
+
+    from tools.isaac_vr_decision import XrInputReceipt
+    from test_isaac_vr_decision import capture
 
     config = load_composition("dual_cube_to_matching_plates")
     events = NS(should_reset=False, is_active=True)
@@ -203,16 +207,31 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch):
 
         def __enter__(self):
             self.index = 0
+            self.xr_receipt = XrInputReceipt()
+            self.xr_input = None
+            self.session_token = object()
             return self
 
         def __exit__(self, *args):
             pass
 
         def reset(self, **kwargs):
-            pass
+            self.xr_receipt.reference_epoch += 1
+            self.xr_input = None
+
+        def validate_xr(self, xr):
+            self.xr_receipt.validate(xr)
 
         def advance(self):
             self.index += 1
+            self.xr_input = None
+            if decision_receipts:
+                previous = self.xr_receipt.update_epoch
+                self.xr_receipt.polled(self.session_token, self.index)
+                self.xr_receipt.transformed(((), ()), np.eye(4), False)
+                self.xr_input = self.xr_receipt.resolve(NS(
+                    ran_synchronously=True, worker_exception=None,
+                    submitted_frame_id=self.index, returned_frame_id=self.index), previous)
             events.should_reset = self.index == 23
             events.is_active = self.index != 26
             if self.index in (14, 15):
@@ -300,12 +319,28 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch):
     ]
     rig = NS(wrists=sensors[:2], scene_camera=sensors[2], frame=torch.ones(2, dtype=torch.int64))
 
-    def advance(_):
+    def unavailable_capture():
+        if decision_receipts:
+            return env.current_capture
+        raise RuntimeError("fixture has no qualified camera capture")
+
+    def advance(repeat):
+        assert repeat == 4
+        if env.last_control_decision is not None:
+            assert env.last_control_decision.observation_identity is env.current_capture
+            assert env.prepared_control_transaction is not None
+            assert device.index not in (8, 9, 10, 14, 15, 16, 18, 19, 23, 24, 26, 27)
+            admitted.append(env.last_control_decision.control_tick_id)
+        env.step += repeat
+        env._state_physics_step = env.step
+        env.current_capture = capture(env.step, env.reset_epoch)
         for c in sensors:
             c.frame += 1
         rig.frame += 1
 
     def reset(_):
+        env.reset_epoch += 1
+        env.current_capture = capture(env.step, env.reset_epoch)
         for c in sensors:
             c.frame.fill_(1)
         rig.frame.fill_(1)
@@ -329,12 +364,15 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch):
         consume_recenter_button=lambda *a, **k: False,
         performance_report=lambda *a: {},
     )
+    admitted = []
     env = NS(
+        step=20, _state_physics_step=20, reset_epoch=0, current_capture=capture(),
+        latest_observation_capture=unavailable_capture,
         vr_runtime=composition,
         robots=robots,
         wrist_ids=[1, 1],
         joint_ids=[list(range(6))] * 2,
-        sim=NS(device="cpu"),
+        sim=NS(device="cpu", get_physics_step_count=lambda: env.step),
         camera=rig,
         reset=reset,
         _advance=advance,
@@ -381,6 +419,9 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch):
     for run, diag in zip(outputs[0][1], outputs[1][1], strict=True):
         assert torch.equal(run, diag)
     assert any(torch.count_nonzero(c) for c in outputs[0][1])
+    if decision_receipts:
+        half = len(admitted) // 2
+        assert admitted[:half] == admitted[half:] == list(range(1, half + 1))
 
 
 def test_current_doc_sources_and_contract():

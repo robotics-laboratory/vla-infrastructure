@@ -1,0 +1,16 @@
+........................................................................ [ 16%]
+........................................................................ [ 33%]
+.....................................................................sss [ 50%]
+sssssssssssssssssssssss................................................. [ 67%]
+.................................................................... [ 83%]
+....................................................................     [100%]
+=============================== warnings summary ===============================
+../../../../../data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/cmeel.prefix/lib/python3.12/site-packages/hppfcl/__init__.py:3
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/cmeel.prefix/lib/python3.12/site-packages/hppfcl/__init__.py:3: DeprecationWarning: Please update your 'hppfcl' imports to 'coal'
+    warnings.warn(
+
+tests/test_isaac_vr_decision.py::test_original_native_parity_and_preclip_precision[0.0--1.0]
+  actual_ik_wrapper:123: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+398 passed, 26 skipped, 2 warnings, 4 subtests passed in 19.21s

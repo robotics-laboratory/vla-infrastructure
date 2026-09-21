@@ -14,7 +14,6 @@ session:
   implementation: isaaclab_teleop IsaacTeleopDevice lifecycle with one S2 motion ControllersSource and no redundant anchor-hotkey ControllersSource
   cloudxr_profile: cloudxrjs
   use_kit_xr_bridge: true
-  resolved_input_revision: piper_x_xr_preclip_decision_v1
   controller_source_count: 1
   source_outputs: [controller_left, controller_right]
   physical_gate_b_runtime_reused_semantically: one coherent session owns independent physical left and right streams
@@ -25,7 +24,6 @@ xr_presentation:
   semantics: Static XR presentation only. The simulation point at this anchor appears at the XR local origin, placing the world origin 0.6 m forward and 1.05 m above it under the upstream OpenXR-to-Isaac basis.
   geometry_impact: none; Gate C embodiment and accepted S1 world geometry are unchanged
 processor:
-  provenance_revision: piper_x_s2_generation_v1
   revision: piper_x_isaac_s2_bimanual_relative_v3
   input_per_arm:
     pose_delta: [dx, dy, dz, rotation_vector_x, rotation_vector_y, rotation_vector_z]
@@ -82,8 +80,6 @@ retargeting_ik:
   ik: upstream Isaac Lab DifferentialIKController
   mode: relative pose
   method: damped least squares
-  solution_revision: piper_x_xr_preclip_decision_v1
-  d0_action_binding: post-IK preclip float32[14] degree/mm; native actuation retains original radians/metres
   native_output: six Gate C arm joint position targets plus one Gate C aperture target per arm
   actuation: accepted S1 NativeBimanualTargets and articulation position-target path
 cameras:

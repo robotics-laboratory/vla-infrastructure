@@ -158,3 +158,28 @@ can advance camera counters without pumping fresh pixels; the capture barrier
 rejects it. A no-client `--smoke` run does not require headless rendering or Quest.
 For capture validity and S1 scope, see the
 [simulation policy](../SIMULATION_POLICY.md#three-camera-observation-boundary).
+
+## In-memory decision boundary
+
+The shared loop latches the qualified three-camera observation before one synchronous
+XR update. Its owned input receipt records both resolved controller tensor groups,
+the exact world transform, session/reference/update epochs and matching upstream
+request/result IDs. These are application provenance, not physical acquisition time.
+The post-IK solution exposes immutable float32[14] preclip degree/mm labels and
+separate original native radians/metres, clipped targets, residuals and saturation.
+Native actuation never converts the float32 label back to radians.
+
+`env.last_control_decision` and `env.prepared_control_transaction` expose the latest
+eligible applied decision and validator preparation. They are cleared on each loop;
+RUN aborts pending validator work on the next loop and never claims a committed
+transition. A future recording consumer must freeze camera pixels at the existing
+observation boundary, bind the native write and successful successor, then commit.
+No episode buffer or recording storage is installed.
+
+Control tick IDs count eligible attempts and never restart on reset/recenter.
+Inactive sessions, invalid tracking, initial recovery and release/rebase frames
+retain existing RUN holds but are ineligible. Reset discards the already-polled
+action; the next loop acquires fresh input after the reset boundary. Recenter
+invalidates the reference immediately and uses the existing hold/rebase path.
+State, reference, session, update reuse or processor-generation mismatch rejects
+application of a pending eligible solution.

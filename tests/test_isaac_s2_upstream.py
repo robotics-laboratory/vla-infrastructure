@@ -423,6 +423,8 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         xr_core = XrCore()
         lifecycle = Lifecycle()
         device = self.PiperXIsaacTeleopDevice.__new__(self.PiperXIsaacTeleopDevice)
+        from tools.isaac_vr_decision import XrInputReceipt
+        device.xr_receipt = XrInputReceipt()
         device._anchor_manager = type(
             "AnchorManager",
             (),
@@ -540,6 +542,8 @@ class IsaacS2UpstreamTests(unittest.TestCase):
             reset_haptics=lambda: None,
         )
         device = self.PiperXIsaacTeleopDevice.__new__(self.PiperXIsaacTeleopDevice)
+        from tools.isaac_vr_decision import XrInputReceipt
+        device.xr_receipt = XrInputReceipt()
         device._anchor_manager = manager
         device._session_lifecycle = lifecycle
         device._include_xr_navigation_in_controller_transform = True
@@ -553,21 +557,21 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         self.assertTrue(device.schedule_recenter_to_view("/World/Camera"))
         base = self.PiperXIsaacTeleopDevice.__bases__[0]
         with patch.object(base, "advance", return_value="fresh_frame"):
-            self.assertEqual(device.advance(), "fresh_frame")
+            self.assertEqual(device._advance_navigation(), "fresh_frame")
             self.assertTrue(device.navigation_reset_applied)
             self.assertEqual(lifecycle.resets, [False])
-            self.assertEqual(device.advance(), "fresh_frame")
+            self.assertEqual(device._advance_navigation(), "fresh_frame")
             self.assertFalse(device.navigation_reset_applied)
             self.assertEqual(lifecycle.resets, [False])
             # XR may apply the space-origin change after the first control
             # boundary. The observed transform change gets its own safe rebase.
             core.matrix = core.requested.tolist()
-            self.assertEqual(device.advance(), "fresh_frame")
+            self.assertEqual(device._advance_navigation(), "fresh_frame")
             self.assertTrue(device.navigation_reset_applied)
             self.assertEqual(lifecycle.resets, [False, False])
             # The already reached viewpoint is a valid repeat/no-op target.
             device.schedule_recenter_to_view("/World/Camera")
-            self.assertEqual(device.advance(), "fresh_frame")
+            self.assertEqual(device._advance_navigation(), "fresh_frame")
             self.assertEqual(lifecycle.resets, [False, False, False])
 
     def test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery(self) -> None:
@@ -575,14 +579,14 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         base = self.PiperXIsaacTeleopDevice.__bases__[0]
         with patch.object(base, "advance", return_value="fresh_frame") as advance:
             core.matrix = None
-            self.assertIsNone(device.advance())
+            self.assertIsNone(device._advance_navigation())
             with self.assertRaises(RuntimeError):
                 device._anchor_manager.get_world_matrix()
             core.matrix = np.full((4, 4), np.nan).tolist()
-            self.assertIsNone(device.advance())
+            self.assertIsNone(device._advance_navigation())
             advance.assert_not_called()
             core.matrix = np.eye(4).tolist()
-            self.assertEqual(device.advance(), "fresh_frame")
+            self.assertEqual(device._advance_navigation(), "fresh_frame")
             self.assertEqual(lifecycle.resets, [False])
 
     def test_rightward_relative_motion_preserves_direction_after_navigation_yaw(self) -> None:
@@ -836,3 +840,154 @@ class IsaacS2UpstreamTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class XrDecisionSourceTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        IsaacS2UpstreamTests.setUpClass()
+
+    def fixture(self):
+        from isaacteleop import schema
+        from isaacteleop.teleop_session_manager import (
+            TeleopSession, TeleopSessionConfig, RetargetingExecutionConfig,
+        )
+        from isaacteleop.retargeting_engine.interface import TensorGroup
+        from isaacteleop.retargeting_engine.tensor_types import TransformMatrix
+        from tools.isaac_s2_upstream import build_piper_x_bimanual_pipeline
+        from tools.isaac_vr_decision import XrInputReceipt
+        receipt = XrInputReceipt()
+        pipeline = build_piper_x_bimanual_pipeline(receipt=receipt)
+        session = TeleopSession(TeleopSessionConfig(
+            app_name="synthetic_source", pipeline=pipeline,
+            retargeting_execution=RetargetingExecutionConfig(mode="sync")))
+        receipt.session_provider = lambda: session
+        counters = dict(update=0, left=0, right=0)
+        snapshots = []
+        for side in range(2):
+            pose = schema.ControllerPose(
+                schema.Pose(schema.Point(side + .25, 0., 0.), schema.Quaternion(w=1.)), True)
+            snap = schema.ControllerSnapshot(pose, pose, schema.ControllerInputState(
+                True, True, True, True, -.25, .75, .5, .25 + side * .5))
+            snapshots.append(snap)
+        def update():
+            counters['update'] += 1
+        def poll(side):
+            counters[side] += 1
+            assert counters[side] == counters['update']
+            snap = snapshots[side == 'right']
+            return (schema.ControllerSnapshotTrackedT() if snap is None else
+                    schema.ControllerSnapshotTrackedT(data=snap))
+        self.assertEqual(len(session._sources), 1)
+        session._sources[0]._controller_tracker = SimpleNamespace(
+            get_left_controller=lambda _: poll('left'), get_right_controller=lambda _: poll('right'))
+        session.deviceio_session = SimpleNamespace(update=update)
+        transform = TensorGroup(TransformMatrix())
+        transform[0] = np.eye(4, dtype=np.float32)
+        inputs = {"world_T_anchor": {"value": transform}}
+        return receipt, session, snapshots, counters, inputs
+
+    def test_actual_upstream_sync_update_source_conversion_owned_inputs(self):
+        from dataclasses import replace
+        receipt, session, snapshots, counts, inputs = self.fixture()
+        result = session.step(external_inputs=inputs)
+        xr = receipt.resolve(session.last_step_info, 0)
+        self.assertEqual(counts, dict(update=1, left=1, right=1))
+        self.assertEqual((xr.submitted_frame_id, xr.returned_frame_id), (0, 0))
+        for side, hand in enumerate(xr.hands):
+            values = dict(hand)
+            self.assertEqual(values['GRIP_POSITION'][0], side + .25)
+            for button in ('PRIMARY_CLICK', 'SECONDARY_CLICK', 'MENU_CLICK', 'THUMBSTICK_CLICK'):
+                self.assertEqual(values[button], 1.)
+            self.assertEqual(values['THUMBSTICK_X'], -.25)
+            self.assertEqual(values['THUMBSTICK_Y'], .75)
+            self.assertEqual(values['SQUEEZE_VALUE'], .5)
+            self.assertEqual(values['TRIGGER_VALUE'], .25 + side * .5)
+        before = xr.hands
+        snapshots[0] = snapshots[1]
+        session.step(external_inputs=inputs)
+        self.assertEqual(xr.hands, before)
+        self.assertEqual(counts, dict(update=2, left=2, right=2))
+        with self.assertRaisesRegex(RuntimeError, 'mismatch'):
+            receipt.resolve(replace(session.last_step_info, returned_frame_id=0), 1)
+        self.assertEqual(np.from_dlpack(result['action'][0]).shape, (22,))
+        xr2 = receipt.resolve(session.last_step_info, 1)
+        receipt.validate(xr2)
+        receipt.last_consumed = xr2.deviceio_update_epoch
+        with self.assertRaisesRegex(RuntimeError, 'reused'):
+            receipt.validate(xr2)
+
+    def test_missing_invalid_hand_and_reference_change(self):
+        from isaacteleop.retargeting_engine.interface.execution_events import (
+            ExecutionEvents, ExecutionState,
+        )
+        receipt, session, snapshots, counts, inputs = self.fixture()
+        snapshots[0] = None
+        from isaacteleop import schema
+        snapshots[1] = schema.ControllerSnapshot()
+        session.step(external_inputs=inputs)
+        xr = receipt.resolve(session.last_step_info, 0)
+        self.assertIsNone(xr.hands[0])
+        self.assertEqual(dict(xr.hands[1])['GRIP_IS_VALID'], 0.)
+        previous_epoch = xr.control_reference_epoch
+        inputs['world_T_anchor']['value'][0] = np.diag([1., -1., -1., 1.]).astype(np.float32)
+        session.step(external_inputs=inputs, execution_events=ExecutionEvents(
+            reset=True, execution_state=ExecutionState.RUNNING))
+        newer = receipt.resolve(session.last_step_info, 1)
+        self.assertGreater(newer.control_reference_epoch, previous_epoch)
+        self.assertTrue(newer.rebased)
+        with self.assertRaises(RuntimeError):
+            receipt.validate(xr)
+        old_session_epoch = receipt.session_epoch
+        session.deviceio_session = SimpleNamespace(update=lambda: counts.update(update=counts['update'] + 1))
+        session.step(external_inputs=inputs)
+        self.assertGreater(receipt.session_epoch, old_session_epoch)
+
+    def test_actual_differential_ik_preclip_native_parity(self):
+        import ast
+        import subprocess
+        from typing import Any
+        import torch
+        from isaaclab.controllers import DifferentialIKController, DifferentialIKControllerCfg
+        from tools.isaac_s1_runtime import NativeBimanualTargets
+        from tools.isaac_s2_processor import BimanualS2TeleopProcessor, ControllerDeltaSample
+        from tools.isaac_vr_decision import SolvedControlDecision, check_observation
+        root = Path(__file__).resolve().parents[1]
+        cfg = DifferentialIKControllerCfg(command_type='pose', use_relative_mode=True, ik_method='dls')
+        wrappers = []
+        for baseline in (True, False):
+            source = subprocess.check_output([
+                'git', 'show', '4423cacfd1ed226bc0169cc55890589e2a5b2a4c:tools/isaac_s2_runtime.py'
+            ], cwd=root, text=True) if baseline else (root / 'tools/isaac_s2_runtime.py').read_text()
+            node = next(n for n in ast.parse(source).body if isinstance(n, ast.ClassDef)
+                        and n.name == '_BimanualDifferentialIk')
+            ns = dict(np=np, Any=Any, BimanualS2TeleopProcessor=BimanualS2TeleopProcessor,
+                      NativeBimanualTargets=NativeBimanualTargets,
+                      SolvedControlDecision=SolvedControlDecision, check_observation=check_observation)
+            exec(compile(ast.Module([node], []), 'pinned_ik_parity', 'exec'), ns)
+            cls = ns['_BimanualDifferentialIk']
+            ik = cls.__new__(cls)
+            ik.torch = torch
+            ik.controllers = tuple(DifferentialIKController(cfg, num_envs=1, device='cpu') for _ in range(2))
+            robots = [SimpleNamespace(data=SimpleNamespace(
+                joint_limits=SimpleNamespace(torch=torch.tensor([[[-.1, .1]] * 6])),
+                joint_pos=SimpleNamespace(torch=torch.full((1, 6), .031234567)),
+                body_link_pose_w=SimpleNamespace(torch=torch.tensor([[[0., 0., 0., 0., 0., 0., 1.]]])),
+                body_link_jacobian_w=SimpleNamespace(torch=torch.eye(6).reshape(1, 1, 6, 6))),
+                is_fixed_base=True, num_base_dofs=0) for _ in range(2)]
+            applied = []
+            ik.env = SimpleNamespace(robots=robots, wrist_ids=[0, 0], joint_ids=[list(range(6))] * 2,
+                                     sim=SimpleNamespace(device='cpu'), _apply=applied.append)
+            wrappers.append((ik, applied))
+        proc = BimanualS2TeleopProcessor()
+        for delta in (0., .001, .01, 1., 0.):
+            sample = ControllerDeltaSample(np.full(3, delta), np.full(3, delta), True, True, 0., .25, 0.)
+            command = proc.advance(sample, sample)
+            old, old_applied = wrappers[0]
+            new, new_applied = wrappers[1]
+            old_saturated = old.apply(command)
+            solution = new.solve(command)
+            self.assertEqual(new.apply(solution), old_saturated)
+            for side in ('left_rad_m', 'right_rad_m'):
+                self.assertEqual(getattr(old_applied[-1], side).tobytes(),
+                                 getattr(new_applied[-1], side).tobytes())

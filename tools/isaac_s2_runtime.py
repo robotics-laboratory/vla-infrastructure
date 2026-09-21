@@ -10,11 +10,15 @@ from pathlib import Path
 import platform
 import subprocess
 import time
+from uuid import uuid4
 from typing import Any, cast
 
 import numpy as np
 import yaml
 
+from tools.isaac_vr_decision import (
+    SolvedControlDecision, check_observation, decision_epoch, CausalTransactionValidator,
+)
 from isaac_s1_runtime import NativeBimanualTargets, jsonable
 from isaac_s2_performance import S2PerformanceLogger
 from isaac_vr_camera_guard import CameraGuard
@@ -64,6 +68,9 @@ def _gpu_observation() -> dict[str, Any]:
 class _BimanualDifferentialIk:
     """Bind upstream differential IK to the two accepted S1 articulations."""
 
+    device: Any
+    processor: BimanualS2TeleopProcessor
+
     def __init__(self, env) -> None:
         import torch
         from isaaclab.controllers import (  # type: ignore[import-not-found]
@@ -100,9 +107,10 @@ class _BimanualDifferentialIk:
             poses.append(self.torch.cat((position, quaternion), dim=-1)[0].detach().cpu().numpy())
         return poses
 
-    def apply(self, command) -> bool:
+    def solve(self, command, observation=None, xr=None, tick=None):
+        check_observation(self.env, observation)
         native = []
-        saturated = False
+        preclip: list[float] = []
         for robot, wrist_id, ids, controller, arm_command in zip(
             self.env.robots,
             self.env.wrist_ids,
@@ -121,7 +129,7 @@ class _BimanualDifferentialIk:
                 :, jacobian_index, :, jacobian_joint_ids
             ]
             delta = self.torch.as_tensor(
-                arm_command.delta_pose,
+                arm_command.delta_pose.copy(),
                 dtype=self.torch.float32,
                 device=self.env.sim.device,
             ).unsqueeze(0)
@@ -131,11 +139,24 @@ class _BimanualDifferentialIk:
                 raise RuntimeError("Non-finite IK target")
             limits = robot.data.joint_limits.torch[0, ids[:6], :]
             clipped = desired.clamp(limits[:, 0], limits[:, 1])
-            saturated |= not bool(self.torch.equal(desired, clipped))
+            preclip.extend((*desired.detach().cpu().numpy(), arm_command.gripper_aperture_m))
             values = clipped.detach().cpu().numpy()
             native.append(np.concatenate((values, [arm_command.gripper_aperture_m])))
-        self.env._apply(NativeBimanualTargets(native[0], native[1], saturated))
-        return saturated
+        check_observation(self.env, observation)
+        return SolvedControlDecision.from_native(
+            tick, observation, xr, command, preclip, np.concatenate(native))
+
+    def apply(self, solution) -> bool:
+        if solution.xr_identity is not None:
+            self.device.validate_xr(solution.xr_identity)
+            if solution.cartesian_intent.processor_generation != self.processor.generation:
+                raise RuntimeError("Processor generation changed before application")
+        check_observation(self.env, solution.observation_identity)
+        native = np.asarray(solution.native_clipped).reshape(2, 7)
+        self.env._apply(NativeBimanualTargets(native[0], native[1], solution.saturated))
+        if solution.xr_identity is not None:
+            self.device.xr_receipt.last_consumed = solution.xr_identity.deviceio_update_epoch
+        return solution.saturated
 
 
 def _camera_sample(env, previous_indices: np.ndarray | None) -> dict[str, Any]:
@@ -274,7 +295,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     )
     anchor_position = tuple(float(value) for value in presentation["anchor_pos_m"])
     anchor_rotation = tuple(float(value) for value in presentation["anchor_rot_xyzw"])
-    pipeline_kwargs = {
+    pipeline_kwargs: dict[str, Any] = {
         "sensitivity_control": str(
             sensitivity.get("input_control", sensitivity.get("toggle_control"))
         )
@@ -302,6 +323,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
         include_xr_navigation_in_controller_transform=experiment is not None,
     )
 
+    ik.device, ik.processor = device, processor
     reset_observation = env.reset(0)
     del reset_observation
     processor.reset()
@@ -334,6 +356,11 @@ def run_s2(env, args_cli, simulation_app) -> int:
     maximum_rebase_motion_m = {"left": 0.0, "right": 0.0}
     saturated_frames = 0
     control_steps = 0
+    run_id = str(uuid4())
+    validator = None
+    control_tick_id = 0
+    env.last_control_decision = None
+    env.prepared_control_transaction = None
 
     performance = (
         S2PerformanceLogger(
@@ -374,9 +401,16 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         "tcp_pose_before", time.perf_counter_ns() - stage_started_ns
                     )
                     stage_started_ns = time.perf_counter_ns()
-                # Future recording consumer: latch obs_t before this decision,
-                # preserve its processed action label before IK/native actuation,
-                # then pair the outcome after _advance. No writer is installed here.
+                env.last_control_decision = None
+                env.prepared_control_transaction = None
+                if validator is not None:
+                    validator.abort()  # 4D will complete transitions; RUN never commits.
+                observation = None
+                if getattr(env, "vr_runtime", None) is not None:
+                    try:
+                        observation = env.latest_observation_capture()
+                    except RuntimeError:
+                        pass  # Existing RUN camera guard still owns failed-capture policy.
                 action = device.advance()
                 if performance is not None:
                     performance.add_stage(
@@ -422,6 +456,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     previous_camera_indices = None
                     camera_guard.reset()
                     device.reset(pause=False)
+                    action = None  # Never reuse an action acquired before this reset.
+                    observation = None
                     before_pose = ik.tcp_poses_base() if diagnostic else ()
 
                 session_started_ever |= device.session_running
@@ -522,7 +558,28 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         "command_processing", time.perf_counter_ns() - command_started_ns
                     )
                     stage_started_ns = time.perf_counter_ns()
-                saturated_frames += int(ik.apply(command))
+                xr = getattr(device, "xr_input", None)
+                eligible = (observation is not None and xr is not None and not xr.rebased
+                            and command.session_active and all(
+                                arm.tracking_valid and not arm.rebased
+                                for arm in (command.left, command.right)))
+                if eligible:
+                    control_tick_id += 1  # Monotonic attempts; failures never reuse this ID.
+                    device.validate_xr(xr)
+                solution = ik.solve(command, observation if eligible else None,
+                                    xr if eligible else None, control_tick_id if eligible else None)
+                if eligible:
+                    assert observation is not None and xr is not None
+                    device.validate_xr(xr)
+                    epoch = decision_epoch(run_id, observation, xr)
+                    if validator is None:
+                        validator = CausalTransactionValidator("isaac", "human_vr", epoch)
+                    elif validator.epoch != epoch:
+                        validator.begin_epoch(epoch)
+                    env.prepared_control_transaction = solution.prepare(validator)
+                saturated_frames += int(ik.apply(solution))
+                if eligible:
+                    env.last_control_decision = solution
                 if performance is not None:
                     performance.add_stage("ik_apply", time.perf_counter_ns() - stage_started_ns)
                     stage_started_ns = time.perf_counter_ns()

@@ -65,12 +65,19 @@ class ArmTeleopCommand:
     rotation_scale: float
     transition: str
 
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "delta_pose", np.frombuffer(
+            np.asarray(self.delta_pose, dtype=np.float64).tobytes(), dtype=np.float64))
+
 
 @dataclass(frozen=True)
 class BimanualTeleopCommand:
     left: ArmTeleopCommand
     right: ArmTeleopCommand
     session_active: bool
+    processor_revision: str = PROCESSOR_REVISION
+    processor_generation: int = 0
+    provenance_revision: str = "piper_x_s2_generation_v1"
 
 
 @dataclass(frozen=True)
@@ -117,6 +124,7 @@ class BimanualS2TeleopProcessor:
         self.config = config or S2ProcessorConfig()
         self._validate_config()
         self._states = {side: self._new_state() for side in ("left", "right")}
+        self.generation = 0
 
     def _validate_config(self) -> None:
         cfg = self.config
@@ -200,10 +208,12 @@ class BimanualS2TeleopProcessor:
         """Clear episode/session state and require a fresh valid rebase per arm."""
 
         self._states = {side: self._new_state() for side in ("left", "right")}
+        self.generation += 1
 
     def session_inactive(self) -> BimanualTeleopCommand:
         """Enter the safe simulation hold state without replaying stale intent."""
 
+        self.generation += 1
         commands = {}
         for side in ("left", "right"):
             state = self._states[side]
@@ -212,7 +222,9 @@ class BimanualS2TeleopProcessor:
             state.rebase_pending = True
             state.sensitivity_button_pressed = False
             commands[side] = self._hold(state, "session_inactive")
-        return BimanualTeleopCommand(commands["left"], commands["right"], False)
+        return BimanualTeleopCommand(
+            commands["left"], commands["right"], False, PROCESSOR_REVISION, self.generation
+        )
 
     def advance(
         self,
@@ -223,10 +235,11 @@ class BimanualS2TeleopProcessor:
     ) -> BimanualTeleopCommand:
         if not session_active:
             return self.session_inactive()
+        self.generation += 1
         return BimanualTeleopCommand(
             self._advance_arm("left", left),
             self._advance_arm("right", right),
-            True,
+            True, PROCESSOR_REVISION, self.generation,
         )
 
     def _advance_arm(

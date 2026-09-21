@@ -106,7 +106,9 @@ state/two-wrist mapping. Its `observation()` compatibility API is a subset, not 
 complete D0 v4 training source. Historical evidence retains its exact tested scope.
 The human/automated Isaac source profiles own the complete training view; the VR
 composition implements its three-camera production boundary. Recording admission,
-XR identity, preclip action extraction and persistence remain pending.
+persistence and completed episode admission remain pending. The selected VR runtime
+exposes an in-memory resolved-XR/post-IK preclip decision seam; its bounded
+qualification does not accept a dataset or physical human operation.
 
 VR advances the requested physics steps before one all-or-none capture. Reset
 retains 24 settling steps plus the completion step. Preflight reaches its configured

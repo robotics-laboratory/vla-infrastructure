@@ -13,6 +13,7 @@ import os
 import platform
 import signal
 import subprocess
+import sys
 import time
 import traceback
 from pathlib import Path
@@ -41,6 +42,7 @@ import isaaclab  # type: ignore[import-not-found]  # noqa: E402
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))  # Shared D0 validators use the project tools package.
 CONFIG_PATH = ROOT / "configs/isaac_s1_runtime.yaml"
 MODEL_PATH = ROOT / "configs/piper_x_model_contract.yaml"
 

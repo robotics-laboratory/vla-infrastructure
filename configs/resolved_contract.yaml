@@ -1018,7 +1018,7 @@ teleop:
         source_detail: Exact final frozen teleop extra; source parentae37b028, lock-only materialization0c2e2c64; CloudXR6.2.1. Independent Gate B/core pin unchanged.
         evidence_ids:
         - isaac1103_s0_source
-    resolved_implementation: ./run-vr (mode run; ./run-vr diag adds observers) selects configs/isaac61_vr_runtime.yaml over shared configs/isaac61_s2_runtime.yaml through tools/launch_isaac_vr.py and one tools/isaac_s2_runtime.py loop on final Kit110.3 SDK with isaaclab_teleop.IsaacTeleopDevice/IsaacTeleopCfg, one TeleopSessionLifecycle, one bimanual ControllersSource, a narrow tracking-safe subclass of upstream Se3RelRetargeter, the concrete PIPER-X S2 processor, and upstream Isaac Lab DifferentialIKController
+    resolved_implementation: ./run-vr (mode run; ./run-vr diag adds observers) selects configs/isaac61_vr_runtime.yaml over shared configs/isaac61_s2_runtime.yaml through tools/launch_isaac_vr.py and one tools/isaac_s2_runtime.py loop on final Kit110.3 SDK with isaaclab_teleop.IsaacTeleopDevice/IsaacTeleopCfg, one TeleopSessionLifecycle, one bimanual ControllersSource, a narrow tracking-safe subclass of upstream Se3RelRetargeter, the concrete PIPER-X S2 processor, and upstream Isaac Lab DifferentialIKController; piper_x_xr_preclip_decision_v1 binds owned synchronous XR inputs and qualified observations to immutable preclip labels, native residuals and piper_x_s2_generation_v1 provenance
     left_source: isaacteleop ControllersSource.LEFT controller_left OptionalTensorGroup from the one shared piper_x_s2_controllers source and lifecycle
     right_source: isaacteleop ControllersSource.RIGHT controller_right OptionalTensorGroup from the one shared piper_x_s2_controllers source and lifecycle
     processor_revision: piper_x_isaac_s2_bimanual_relative_v3
@@ -1902,6 +1902,60 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  vr_xr_decision_attempts:
+    kind: log
+    sha256: 89e4c05e0f13ec4d4f0934e766b6c3e7e770f74908014a06209e43444bebd44b
+    path: docs/evidence/D0/20260921_xr_preclip_decision/attempts.json
+    uri: null
+    description: Bounded XR decision seam runtime results or retained failed attempts; no human acceptance.
+  vr_xr_decision_diag_result:
+    kind: report
+    sha256: e77063bc75fbd30c37fb5c0420e10c6ab2c9234f66b24a650500b2500f4cc479
+    path: docs/evidence/D0/20260921_xr_preclip_decision/diag_result.json
+    uri: null
+    description: Bounded XR decision seam runtime results or retained failed attempts; no human acceptance.
+  vr_xr_decision_run_result:
+    kind: report
+    sha256: 1706ec625cfed2512d020523cdce35b9b71521c5fb0b99c2c20ba3748af0a280
+    path: docs/evidence/D0/20260921_xr_preclip_decision/run_result.json
+    uri: null
+    description: Bounded XR decision seam runtime results or retained failed attempts; no human acceptance.
+  vr_xr_decision_report:
+    kind: report
+    sha256: 4696055b82a6775d9e5376b85261793d199a7ef733bebf95b86bcbc22d54238f
+    path: docs/evidence/D0/20260921_xr_preclip_decision/README.md
+    uri: null
+    description: Bounded resolved XR/preclip decision qualification; no physical or dataset acceptance.
+  vr_xr_decision_provenance:
+    kind: run_manifest
+    sha256: d4329f94e082823d51c8bb6a2e7c2fbd80420f9760297991b75164f2e64b7e27
+    path: docs/evidence/D0/20260921_xr_preclip_decision/provenance.json
+    uri: null
+    description: Bounded resolved XR/preclip decision qualification; no physical or dataset acceptance.
+  vr_xr_decision_core_tests:
+    kind: test_output
+    sha256: 33115545d4855cc001afea9a5d9d51faa21dd79fc0a019fca7ace4ffabbe417a
+    path: docs/evidence/D0/20260921_xr_preclip_decision/core_tests.txt
+    uri: null
+    description: Bounded resolved XR/preclip decision qualification; no physical or dataset acceptance.
+  vr_xr_decision_upstream_tests:
+    kind: test_output
+    sha256: 49ab229919882bd1a29f15487644581456b065b7062d6a7d9d224d6895645597
+    path: docs/evidence/D0/20260921_xr_preclip_decision/upstream_tests.txt
+    uri: null
+    description: Bounded resolved XR/preclip decision qualification; no physical or dataset acceptance.
+  vr_xr_decision_checks:
+    kind: test_output
+    sha256: 3f0a61fb34a194d6285fd030f1f8b4b0769b6422247f101de432a7aeefe6e60e
+    path: docs/evidence/D0/20260921_xr_preclip_decision/checks.txt
+    uri: null
+    description: Bounded resolved XR/preclip decision qualification; no physical or dataset acceptance.
+  vr_xr_decision_config:
+    kind: processor_config
+    sha256: 8bf47ae99191b9f63317e5f5ff5aa557f533b6a1890df14d8c45e60b15a02977
+    path: configs/isaac61_s2_runtime.yaml
+    uri: null
+    description: Current XR decision and processor provenance revisions; unchanged RUN numeric controls.
   vr_three_camera_boundary_report:
     kind: report
     sha256: f1f2a71314a55eaa149b309a5b809eebc39711f3737c1f4efbce22874c66f3a9
@@ -2384,7 +2438,7 @@ artifacts:
   isaac1103_s2_config:
     kind: processor_config
     sha256: 1eb6016096353c902247b3c8ca51f6c7cc9cd5e73b4c1dd7a8d50ab664e55b93
-    path: configs/isaac61_s2_runtime.yaml
+    path: docs/evidence/D0/20260921_xr_preclip_decision/previous_s2_config.yaml
     uri: null
     description: REP-02 metadata matches canonical processorv3, physical S2 pending.
   isaac1103_s1_parity:
@@ -2754,6 +2808,28 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  vr_xr_decision_qualification:
+    kind: command_test
+    status: pass
+    summary: Application-level XR identity, preclip label and native parity regression; no physical or dataset qualification.
+    timestamp: '2026-09-21T16:02:45.079517+00:00'
+    command: Declared core pytest and pinned Isaac SDK unittest; exact commands and source identities in provenance.
+    artifact_ids:
+    - vr_xr_decision_attempts
+    - vr_xr_decision_diag_result
+    - vr_xr_decision_run_result
+    - vr_xr_decision_report
+    - vr_xr_decision_provenance
+    - vr_xr_decision_core_tests
+    - vr_xr_decision_upstream_tests
+    - vr_xr_decision_checks
+    - vr_xr_decision_config
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/evidence/D0/20260921_xr_preclip_decision
+    symbol: null
+    notes: Prepared only; transition, successor, commit and storage remain 4D. S2/D1 unresolved.
   vr_three_camera_boundary_headless_failure:
     kind: command_test
     status: fail
@@ -4064,8 +4140,8 @@ gates:
     - gate_d0_v4_first_full_attempt
     notes: D0 v4 accepts offline canonical state/action and three-camera schema, common immutable causal transactions, explicit
       Isaac human/automated identity and strict real physical profiles. New v4 proof supplements frozen history. S0/S1 facts
-      are unchanged; Isaac runtime bindings and all source registrations remain pending. No physical or S2/D1 qualification
-      is claimed.
+      are unchanged; camera and XR/preclip seams have bounded machine qualification. Full recording and source admission
+      remain pending. No physical or S2/D1 acceptance is claimed.
   S0:
     state: accepted
     evidence_ids:
@@ -4099,6 +4175,7 @@ gates:
   S1:
     state: accepted
     evidence_ids:
+    - vr_xr_decision_qualification
     - vr_three_camera_boundary_s1_regression
     - vr_three_camera_boundary_offline
     - isaac1103_s1_runtime
@@ -4125,6 +4202,7 @@ gates:
   S2:
     state: unresolved
     evidence_ids:
+    - vr_xr_decision_qualification
     - vr_three_camera_boundary_runtime
     - vr_step1_postpush_93d3497
     - vr_step1_automated
@@ -4168,7 +4246,8 @@ gates:
     notes: 'Unresolved: historical physical FAIL/PARTIAL preserved. Canonical code/config processorv3 aligned; final SDK automated path and combined previews pass. Complete physical Quest human acceptance still required. Reconciled instrumentation/interrupt path has not been executed; physical Quest remains unresolved.'
   D1:
     state: unresolved
-    evidence_ids: []
+    evidence_ids:
+    - vr_xr_decision_qualification
     artifact_ids: []
     notes: No Isaac human-VR dataset exists.
   G1:

@@ -1,0 +1,29 @@
+COMMAND: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python tools/lint_docs.py --base 4423cacfd1ed226bc0169cc55890589e2a5b2a4c
+INDEX: 367 entries; classification {'current': 28, 'historical': 339}
+HISTORICAL PRESERVATION: PASS (330 frozen files vs 4423cacfd1ed226bc0169cc55890589e2a5b2a4c)
+KNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.
+DOC GOVERNANCE CHECKS: PASS
+EXIT: 0
+COMMAND: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python tools/lint_spec_references.py
+SPEC REFERENCE LINT OK
+EXIT: 0
+COMMAND: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python tools/validate_resolved_contract.py configs/resolved_contract.yaml
+CONTRACT STRUCTURALLY VALID
+CONTRACT SEMANTICALLY VALID
+FINAL RC NOT READY
+BLOCKERS: S2, D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0
+EXIT: 0
+COMMAND: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python tools/generate_manifest.py verify
+MANIFEST OK: 107 reviewed files
+EXIT: 0
+COMMAND: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python -m ruff check tools/isaac_vr_decision.py tools/isaac_s2_runtime.py tools/isaac_s2_processor.py tools/isaac_s2_upstream.py tools/run_isaac_s1.py tools/launch_isaac_vr.py tests/test_isaac_vr_decision.py tests/test_isaac_s2_upstream.py tests/test_run_vr.py
+All checks passed!
+EXIT: 0
+COMMAND: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python -m mypy --explicit-package-bases --follow-imports=silent tools/isaac_vr_decision.py tools/isaac_s2_processor.py tools/isaac_s2_upstream.py
+Success: no issues found in 3 source files
+EXIT: 0
+COMMAND: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python -m mypy --follow-imports=silent tools/isaac_s2_runtime.py
+Success: no issues found in 1 source file
+EXIT: 0
+COMMAND: git diff HEAD --check
+EXIT: 0

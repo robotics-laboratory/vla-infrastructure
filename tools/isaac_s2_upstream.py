@@ -7,6 +7,7 @@ environment. It deliberately builds one ControllersSource carrying both hands.
 from __future__ import annotations
 
 import json
+from functools import partial
 import time
 from typing import Any
 
@@ -50,6 +51,39 @@ from isaaclab_teleop.session_lifecycle import (  # type: ignore[import-not-found
     TeleopSessionLifecycle,
 )
 from isaaclab_teleop.xr_anchor_manager import XrAnchorManager  # type: ignore[import-not-found]
+
+
+from tools.isaac_vr_decision import ResolvedXrInput, XrInputReceipt
+from isaacteleop.retargeting_engine.utilities.controller_transform import ControllerTransform
+
+
+class _OwnedControllersSource(ControllersSource):
+    def __init__(self, name, receipt):
+        super().__init__(name)
+        self.receipt = receipt
+
+    def poll_tracker(self, deviceio_session):
+        result = super().poll_tracker(deviceio_session)
+        session = self.receipt.session_provider()
+        self.receipt.polled(deviceio_session, session.frame_count)
+        return result
+
+
+class _OwnedControllerTransform(ControllerTransform):
+    def __init__(self, name, receipt):
+        super().__init__(name)
+        self.receipt = receipt
+
+    def _compute_fn(self, inputs, outputs, context):
+        # Copy resolved tensors before downstream code can mutate or recycle them.
+        hands = tuple(None if inputs[side].is_none else tuple(
+            (index.name, tuple(float(v) for v in np.from_dlpack(inputs[side][index]).flat)
+             if hasattr(inputs[side][index], "__dlpack__") else float(inputs[side][index]))
+            for index in ControllerInputIndex) for side in (self.LEFT, self.RIGHT))
+        self.receipt.transformed(
+            hands, inputs["transform"][0], context.execution_events.reset,
+            tuple(_controller_grip_pose_is_usable(inputs[side]) for side in (self.LEFT, self.RIGHT)))
+        super()._compute_fn(inputs, outputs, context)
 
 
 PIPELINE_ACTION_DIM = 22
@@ -246,6 +280,7 @@ def build_piper_x_bimanual_pipeline(
     display_control: str | None = None,
     backdrop_control: str | None = None,
     recenter_control: str | None = None,
+    receipt: XrInputReceipt | None = None,
 ) -> OutputCombiner:
     """Build the one-source bimanual controller pipeline used by S2.
 
@@ -253,9 +288,16 @@ def build_piper_x_bimanual_pipeline(
     action. Production S2 callers leave all of them unset.
     """
 
-    controllers = ControllersSource(name="piper_x_s2_controllers")
+    controllers = (ControllersSource(name="piper_x_s2_controllers") if receipt is None
+                   else _OwnedControllersSource("piper_x_s2_controllers", receipt))
     world_transform = ValueInput("world_T_anchor", TransformMatrix())
-    transformed = controllers.transformed(world_transform.output(ValueInput.VALUE))
+    transformed = (controllers.transformed(world_transform.output(ValueInput.VALUE))
+                   if receipt is None else _OwnedControllerTransform(
+                       "piper_x_s2_transform", receipt).connect({
+                           controllers.LEFT: controllers.output(controllers.LEFT),
+                           controllers.RIGHT: controllers.output(controllers.RIGHT),
+                           "transform": world_transform.output(ValueInput.VALUE),
+                       }))
 
     connected: dict[str, Any] = {}
     for side in ("left", "right"):
@@ -408,12 +450,13 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
         # This mirrors only Candidate B IsaacTeleopDevice.__init__; inherited
         # public lifecycle/advance/reset methods remain authoritative.
         self._cfg = cfg
-        if include_xr_navigation_in_controller_transform:
-            from isaacteleop.teleop_session_manager import RetargetingExecutionConfig
+        self.xr_receipt = XrInputReceipt()
+        self.xr_input: ResolvedXrInput | None = None
+        cfg.pipeline_builder = partial(cfg.pipeline_builder, receipt=self.xr_receipt)
+        from isaacteleop.teleop_session_manager import RetargetingExecutionConfig
 
-            # Relative deltas must belong to the current navigation frame. The
-            # upstream pipelined default can return a pre-teleport result.
-            cfg.retargeting_execution = RetargetingExecutionConfig(mode="sync")
+        # Exact source receipts require the existing canonical synchronous mode.
+        cfg.retargeting_execution = RetargetingExecutionConfig(mode="sync")
         anchor_manager_type = (
             _NavigationAwareXrAnchorManager
             if include_xr_navigation_in_controller_transform
@@ -436,6 +479,7 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
             enable_debug_visualization=False,
             haptic_cfg=None,
         )
+        self.xr_receipt.session_provider = lambda: self._session_lifecycle._session
         self._prev_right_a_pressed = False
         self._prev_control_is_active: bool | None = None
         self._enable_debug_visualization = False
@@ -448,7 +492,30 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
     def session_running(self) -> bool:
         return bool(self._session_lifecycle.is_active)
 
+    def reset(self, pause=False):
+        self.xr_receipt.reference_epoch += 1
+        self.xr_input = None
+        super().reset(pause=pause)
+
+    def validate_xr(self, xr):
+        self.xr_receipt.validate(xr)
+        session = self._session_lifecycle._session
+        if session is None or session.deviceio_session is not self.xr_receipt.session:
+            raise RuntimeError("XR session changed before application")
+        matrix = tuple(float(v) for v in self._anchor_manager.get_world_matrix().reshape(-1))
+        if matrix != xr.world_transform:
+            raise RuntimeError("XR world reference changed before application")
+
     def advance(self, target_T_world=None):
+        self.xr_input = None
+        previous_update = self.xr_receipt.update_epoch
+        action = self._advance_navigation(target_T_world)
+        if action is not None:
+            self.xr_input = self.xr_receipt.resolve(
+                self._session_lifecycle._session.last_step_info, previous_update)
+        return action
+
+    def _advance_navigation(self, target_T_world=None):
         """Rebase relative history only after XR applies the requested viewpoint."""
         self.navigation_reset_applied = False
         if not self._include_xr_navigation_in_controller_transform:
@@ -479,6 +546,7 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
             or previous is None
             or not np.allclose(transform, previous, rtol=0.0, atol=1e-5)
         ):
+            self.xr_receipt.reference_epoch += 1
             self._session_lifecycle.request_reset(pause=False)
             self._session_lifecycle.reset_haptics()
             self.navigation_reset_applied = True
@@ -523,6 +591,7 @@ class PiperXIsaacTeleopDevice(IsaacTeleopDevice):
             view_pose,
         )
         self._recenter_rebase_pending = True
+        self.xr_receipt.reference_epoch += 1
         self._session_lifecycle.reset_haptics()
         return True
 
