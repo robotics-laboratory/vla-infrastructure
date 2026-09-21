@@ -24,7 +24,8 @@ def qualify(env, out, set_marker):
         mat = UsdShade.Material.Define(stage, path)
         shader = UsdShade.Shader.Define(stage, path + '/Shader')
         shader.CreateIdAttr('UsdPreviewSurface')
-        shader.CreateInput('diffuseColor', Sdf.ValueTypeNames.Color3f).Set(Gf.Vec3f(0,0,0))
+        diffuse = tuple(min(1.0, float(value)) for value in color)
+        shader.CreateInput('diffuseColor', Sdf.ValueTypeNames.Color3f).Set(Gf.Vec3f(*diffuse))
         emission = shader.CreateInput('emissiveColor', Sdf.ValueTypeNames.Color3f)
         emission.Set(Gf.Vec3f(*color))
         mat.CreateSurfaceOutput().ConnectToSource(shader.ConnectableAPI(), 'surface')
@@ -50,14 +51,15 @@ def qualify(env, out, set_marker):
             xf=UsdGeom.Xformable(shape)
             xf.AddTranslateOp().Set(Gf.Vec3d((bit-2.5)*.019,-.045,-.15))
             xf.AddScaleOp().Set(Gf.Vec3f(.015,.016,.001))
-            mat,emission=material(path+'/PhaseBit'+str(bit)+'/Mat',(0,0,0))
+            mat,_=material(path+'/PhaseBit'+str(bit)+'/Mat',(1,1,1))
             UsdShade.MaterialBindingAPI.Apply(shape.GetPrim()).Bind(mat)
-            marker_inputs.append((bit,emission))
+            marker_inputs.append((bit,UsdGeom.Imageable(shape.GetPrim())))
     initial_q = host(robot.data.joint_pos)
     initial_pose = host(cube.data.root_link_pose_w)
     history={}
     rows=[]
     reference_samples=[]
+    max_lag = 2 if abs(float(env.sim.cfg.dt) - 1.0 / 60.0) < 1.0e-12 else 3
     def points():
         pose=host(robot.data.body_link_pose_w)[0,env.wrist_ids[0]]
         return {'articulation': (pose[:3]+quaternion_xyzw_to_matrix(pose[3:])@offset).tolist(),
@@ -65,19 +67,24 @@ def qualify(env, out, set_marker):
                 'joint_positions':host(robot.data.joint_pos).tolist()}
     def update(step):
         history[step-1]=points()
-        phase=step%4
-        q=initial_q.copy();q[0,env.joint_ids[0][0]] += [-.30,.30,-.15,.15][phase]
+        # Coprime bounded sequences avoid the P versus P-2 ambiguity of a
+        # short alternating witness while remaining deterministic.
+        joint_phase = ((step * 17) % 97) / 96.0
+        cube_phase = ((step * 29) % 101) / 100.0
+        q=initial_q.copy();q[0,env.joint_ids[0][0]] += -.30 + .60 * joint_phase
         qt=torch.as_tensor(q,device=env.sim.device)
         robot.write_joint_position_to_sim_index(position=qt)
         robot.write_joint_velocity_to_sim_index(velocity=torch.zeros_like(qt))
         robot.actuators.target_command.set_position_index(value=qt)
         robot.write_data_to_sim()
-        pose=initial_pose.copy();pose[0,:3]=[.65,[-.12,.12,-.04,.04][phase],1.02]
+        pose=initial_pose.copy();pose[0,:3]=[.65,-.12 + .24 * cube_phase,1.02]
         cube.write_root_pose_to_sim_index(root_pose=torch.as_tensor(pose,device=env.sim.device))
         cube.write_root_velocity_to_sim_index(root_velocity=torch.zeros((1,6),device=env.sim.device))
-        for bit,attr in marker_inputs:
-            v=8.*float(bool(step&(1<<bit)))
-            attr.Set(Gf.Vec3f(v,v,v))
+        for bit,imageable in marker_inputs:
+            if step & (1 << bit):
+                imageable.MakeVisible()
+            else:
+                imageable.MakeInvisible()
     def project(point,camera):
         pos=host(camera.data.pos_w)[0];q=host(camera.data.quat_w_opengl)[0]
         local=quaternion_xyzw_to_matrix(q).T@(np.asarray(point)-pos)
@@ -85,7 +92,9 @@ def qualify(env, out, set_marker):
         return [float(k[0,0]*local[0]/-local[2]+k[0,2]),float(k[1,1]*-local[1]/-local[2]+k[1,2])]
     set_marker(update)
     try:
-        for tick in range(24):
+        # Five settling observations followed by 35 consecutive changing
+        # accepted boundaries. This exceeds the LIVE-MIN60 minimum of 30.
+        for tick in range(40):
             before=env.sim.render_generation
             env._advance(4)
             snap=env.latest_observation_capture();p=snap.producer.physics_step
@@ -107,11 +116,11 @@ def qualify(env, out, set_marker):
                 for kind,mask in masks.items():
                     ys,xs=np.where(mask)
                     center=[float(xs.mean()),float(ys.mean())] if len(xs)>5 else None
-                    predicted={str(lag):project(history[p-lag][kind],camera) for lag in range(4)}
+                    predicted={str(lag):project(history[p-lag][kind],camera) for lag in range(max_lag + 1)}
                     errors={lag:float(np.linalg.norm(np.asarray(xy)-center)) for lag,xy in predicted.items()} if center else {}
                     view['native'][kind]={'pixels':int(len(xs)),'observed_center':center,'predicted_centers':predicted,'errors_px':errors,'best_lag':min(errors,key=errors.get) if errors else None}
                 row['views'][role]=view
-                if role == 'scene' and tick >= 21:
+                if role == 'scene' and tick >= 37:
                     reference_samples.append((tick, p, masks['articulation'].copy()))
                 if tick in (8,9):
                     (out/f'phase-{tick}-{role}.ppm').write_bytes(b'P6\n640 480\n255\n'+rgb.tobytes())
@@ -123,7 +132,7 @@ def qualify(env, out, set_marker):
         reference_physics=env.sim.get_physics_step_count()
         camera=roles['scene']
         for tick, physics, measured_mask in reference_samples:
-            for lag in range(4):
+            for lag in range(max_lag + 1):
                 q=torch.as_tensor(history[physics-lag]['joint_positions'],device=env.sim.device)
                 robot.write_joint_position_to_sim_index(position=q)
                 robot.write_joint_velocity_to_sim_index(velocity=torch.zeros_like(q))
@@ -199,7 +208,8 @@ def summarize(out):
         native = {}
         for kind in ('rigid', 'articulation'):
             witnesses = [v['native'][kind] for v in views]
-            errors = {str(lag): [v['errors_px'][str(lag)] for v in witnesses if v['errors_px']] for lag in range(4)}
+            lag_keys = sorted(witnesses[0]['predicted_centers'], key=int)
+            errors = {lag: [v['errors_px'][lag] for v in witnesses if v['errors_px']] for lag in lag_keys}
             native[kind] = dict(best_lag_counts=dict(Counter(v['best_lag'] for v in witnesses)),
                                 minimum_visible_pixels=min(v['pixels'] for v in witnesses),
                                 mean_error_px={lag: statistics.mean(values) if values else None for lag, values in errors.items()},

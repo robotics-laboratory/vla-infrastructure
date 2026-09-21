@@ -10,7 +10,7 @@ import shutil
 
 ROOT = Path(__file__).resolve().parents[3]
 parser = argparse.ArgumentParser()
-parser.add_argument('candidate', choices=['A0', 'J60', 'E08', 'E06', 'F-minimal', 'D-desktop-off', 'B1-capture', 'B1-cost', 'B1-FULL-OFFLINE', 'B1-FULL-OFFLINE-D', 'C1-640', 'C1-320', 'C2-320', 'C2-256', 'G-tiled640', 'G-assay', 'H-cpu', 'H-cpu-capture', 'render-assay', 'phase'])
+parser.add_argument('candidate', choices=['A0', 'J60', 'E08', 'E06', 'F-minimal', 'D-desktop-off', 'B1-capture', 'B1-cost', 'B1-FULL-OFFLINE', 'B1-FULL-OFFLINE-D', 'C1-640', 'C1-320', 'C2-320', 'C2-256', 'G-tiled640', 'G-assay', 'H-cpu', 'H-cpu-capture', 'render-assay', 'phase', 'LIVE-MIN60-NONTILED'])
 parser.add_argument('--mode', choices=['smoke', 'xr-smoke', 'physical'], default='smoke')
 parser.add_argument('--ticks', type=int, default=160)
 parser.add_argument('--warmup', type=int, default=30)
@@ -18,6 +18,7 @@ parser.add_argument('--output', type=Path, required=True)
 parser.add_argument('--state-root', type=Path, default=Path('/tmp/vr4p5-runtime'))
 parser.add_argument('--verify-xr-display',action='store_true',help='Two XR-display screenshots during ordinary pumps; functional probe only')
 parser.add_argument('--profile-passes',action='store_true',help='150 post-control render-only frames, outside control timing')
+parser.add_argument('--phase-qualification',action='store_true',help='Run the bounded content phase witness after timed controls')
 args = parser.parse_args()
 if args.candidate.startswith('B1-FULL-OFFLINE') and args.profile_passes:
     raise SystemExit('B1-FULL-OFFLINE forbids auxiliary profiling render passes')
@@ -39,6 +40,7 @@ env.update(DISPLAY=env.get('DISPLAY', ':0'), OMNI_KIT_ACCEPT_EULA='Y',
            VR_BAKEOFF_OUTPUT=str(args.output.resolve()), PYTHONPATH=str((args.output/'sources').resolve()))
 env['VR_BAKEOFF_VERIFY_XR_DISPLAY']='1' if args.verify_xr_display else '0'
 env['VR_BAKEOFF_PROFILE_PASSES']='1' if args.profile_passes else '0'
+env['VR_LIVE_MIN60_PHASE']='1' if args.phase_qualification else '0'
 cmd = ['./run-vr', 'diag', '--state-root', str(args.state_root.resolve()),
        '--max-control-steps', str(args.ticks), '--performance-warmup-steps', str(args.warmup),
        '--performance-window-steps', '100']
@@ -47,7 +49,7 @@ if args.mode != 'physical':
 manifest = dict(candidate=args.candidate, command=cmd, cwd=str(ROOT),
                 head=subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip(),
                 env={k: env[k] for k in ['DISPLAY','OMNI_KIT_ACCEPT_EULA','ISAACLAB_CXR_ACCEPT_EULA',
-                                       'VR_BAKEOFF_CANDIDATE','VR_BAKEOFF_OUTPUT','VR_BAKEOFF_PROFILE_PASSES','VR_BAKEOFF_VERIFY_XR_DISPLAY','PYTHONPATH']},
+                                       'VR_BAKEOFF_CANDIDATE','VR_BAKEOFF_OUTPUT','VR_BAKEOFF_PROFILE_PASSES','VR_BAKEOFF_VERIFY_XR_DISPLAY','VR_LIVE_MIN60_PHASE','PYTHONPATH']},
                 sources={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in Path(__file__).parent.glob('*.py')},
                 started=time.time())
 (args.output/'launch.json').write_text(json.dumps(manifest, indent=2))

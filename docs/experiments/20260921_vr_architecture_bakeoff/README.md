@@ -10,6 +10,11 @@ on branch `wip/vr-recording`. Tested base HEAD is
 commands and environments are copied into each output; repository delivery of
 these experiment files does not qualify a later runtime revision.
 
+The bounded [LIVE-MIN60-NONTILED run](runs/20260922_live_min60_phase/REPORT.md)
+is retained as a camera-alignment failure: its fixed scene camera matched P-2 at
+all 35 changing accepted boundaries. Do not advance it to the physical queue or
+use its 70-sample diagnostic timings as the required short benchmark.
+
 ## Safety and lifecycle scope
 
 Simulation and Quest only; no real robot action is authorized here. Use the existing

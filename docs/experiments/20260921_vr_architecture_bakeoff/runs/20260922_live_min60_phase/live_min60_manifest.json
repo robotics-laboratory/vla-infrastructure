@@ -1,0 +1,35 @@
+{
+  "candidate": "LIVE-MIN60-NONTILED",
+  "physics_hz": 60.0,
+  "control_target_hz": 30.0,
+  "physics_steps_per_control": 2,
+  "renders_per_control": 1,
+  "renderer": "MinimalRendering",
+  "minimal_mode": 2,
+  "xr_scale": 0.4,
+  "app_async_rendering": false,
+  "replicator_async_rendering": false,
+  "renderer_capture_sync": true,
+  "renderer_capture_sync_install": "first control boundary after render products exist",
+  "camera_implementation": "three independent Isaac Lab Camera products",
+  "camera_roles": [
+    "left_wrist",
+    "right_wrist",
+    "scene"
+  ],
+  "camera_shape": [
+    480,
+    640,
+    3
+  ],
+  "camera_dtype": "uint8",
+  "preview_panels": false,
+  "rgb_owned_freeze": true,
+  "bytes_per_tick": 2764800,
+  "hdf5": false,
+  "recorder_manager": false,
+  "lerobot_encoding": false,
+  "phase_fix": "disable unsupported app async rendering; explicit PhysX/Fabric forward before one Kit render; synchronous renderer capture",
+  "extra_physics_steps": 0,
+  "extra_renders": 0
+}

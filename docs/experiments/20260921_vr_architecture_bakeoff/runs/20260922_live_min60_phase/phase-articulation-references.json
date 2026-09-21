@@ -1,0 +1,227 @@
+[
+  {
+    "tick": 37,
+    "source_physics": 471,
+    "lag": 0,
+    "native_joint_positions": [
+      [
+        -0.31781038641929626,
+        1.5707945823669434,
+        -0.8726682662963867,
+        -1.0611097422952298e-06,
+        2.1593730537006195e-07,
+        -9.156281066680094e-07,
+        0.049999963492155075,
+        0.02500012516975403,
+        -0.02499992959201336
+      ]
+    ],
+    "reference_physics_before": 475,
+    "reference_physics_after": 475,
+    "settling_renders": 4,
+    "iou": 0.007285546415981199,
+    "centroid_error_px": 64.38013187242946,
+    "reference_pixels": 1882,
+    "measured_pixels": 2404
+  },
+  {
+    "tick": 37,
+    "source_physics": 471,
+    "lag": 1,
+    "native_joint_positions": [
+      [
+        -0.4240381419658661,
+        1.5707873106002808,
+        -0.8726585507392883,
+        -1.9667241701881721e-07,
+        -5.377972684073029e-06,
+        -8.111191505122406e-07,
+        0.05002445727586746,
+        0.024756478145718575,
+        -0.024671807885169983
+      ]
+    ],
+    "reference_physics_before": 475,
+    "reference_physics_after": 475,
+    "settling_renders": 4,
+    "iou": 0.20254506892895016,
+    "centroid_error_px": 32.54483729347621,
+    "reference_pixels": 2132,
+    "measured_pixels": 2404
+  },
+  {
+    "tick": 37,
+    "source_physics": 471,
+    "lag": 2,
+    "native_joint_positions": [
+      [
+        -0.530303955078125,
+        1.5707963705062866,
+        -0.8726646304130554,
+        -4.0962936509458814e-07,
+        -5.198403982831223e-07,
+        -9.10447568003292e-07,
+        0.049999989569187164,
+        0.024999074637889862,
+        -0.024999594315886497
+      ]
+    ],
+    "reference_physics_before": 475,
+    "reference_physics_after": 475,
+    "settling_renders": 4,
+    "iou": 0.9925280199252802,
+    "centroid_error_px": 0.09875985349986982,
+    "reference_pixels": 2396,
+    "measured_pixels": 2404
+  },
+  {
+    "tick": 38,
+    "source_physics": 473,
+    "lag": 0,
+    "native_joint_positions": [
+      [
+        -0.10531735420227051,
+        1.5707945823669434,
+        -0.8726646304130554,
+        -4.6590182023464877e-07,
+        5.427918381428753e-07,
+        -8.817697221275012e-07,
+        0.05000000447034836,
+        0.025000186637043953,
+        -0.02500004693865776
+      ]
+    ],
+    "reference_physics_before": 475,
+    "reference_physics_after": 475,
+    "settling_renders": 4,
+    "iou": 0.0,
+    "centroid_error_px": 62.990000044564596,
+    "reference_pixels": 1245,
+    "measured_pixels": 1882
+  },
+  {
+    "tick": 38,
+    "source_physics": 473,
+    "lag": 1,
+    "native_joint_positions": [
+      [
+        -0.21156427264213562,
+        1.5707926750183105,
+        -0.8726657629013062,
+        -6.603178803743504e-07,
+        3.575822802304174e-07,
+        -8.872619901012513e-07,
+        0.04999998211860657,
+        0.02500014565885067,
+        -0.024999739602208138
+      ]
+    ],
+    "reference_physics_before": 475,
+    "reference_physics_after": 475,
+    "settling_renders": 4,
+    "iou": 0.17453798767967146,
+    "centroid_error_px": 33.12307859863456,
+    "reference_pixels": 1550,
+    "measured_pixels": 1882
+  },
+  {
+    "tick": 38,
+    "source_physics": 473,
+    "lag": 2,
+    "native_joint_positions": [
+      [
+        -0.31781038641929626,
+        1.5707945823669434,
+        -0.8726682662963867,
+        -1.0611097422952298e-06,
+        2.1593730537006195e-07,
+        -9.156281066680094e-07,
+        0.049999963492155075,
+        0.02500012516975403,
+        -0.02499992959201336
+      ]
+    ],
+    "reference_physics_before": 475,
+    "reference_physics_after": 475,
+    "settling_renders": 4,
+    "iou": 0.9957582184517497,
+    "centroid_error_px": 0.013906750614543335,
+    "reference_pixels": 1882,
+    "measured_pixels": 1882
+  },
+  {
+    "tick": 39,
+    "source_physics": 475,
+    "lag": 0,
+    "native_joint_positions": [
+      [
+        -0.4990665018558502,
+        1.5707954168319702,
+        -0.8726651072502136,
+        -5.386548309616046e-07,
+        5.335158448360744e-07,
+        -8.840711984703375e-07,
+        0.050000015646219254,
+        0.025000128895044327,
+        -0.025000106543302536
+      ]
+    ],
+    "reference_physics_before": 475,
+    "reference_physics_after": 475,
+    "settling_renders": 4,
+    "iou": 0.0,
+    "centroid_error_px": 117.53989329323032,
+    "reference_pixels": 2331,
+    "measured_pixels": 1245
+  },
+  {
+    "tick": 39,
+    "source_physics": 475,
+    "lag": 1,
+    "native_joint_positions": [
+      [
+        -0.6053162813186646,
+        1.5707954168319702,
+        -0.8726649284362793,
+        -5.420515094556322e-07,
+        5.351536742637109e-07,
+        -8.826278872220428e-07,
+        0.050000011920928955,
+        0.025000156834721565,
+        -0.025000074878335
+      ]
+    ],
+    "reference_physics_before": 475,
+    "reference_physics_after": 475,
+    "settling_renders": 4,
+    "iou": 0.0,
+    "centroid_error_px": 150.06206200231614,
+    "reference_pixels": 2595,
+    "measured_pixels": 1245
+  },
+  {
+    "tick": 39,
+    "source_physics": 475,
+    "lag": 2,
+    "native_joint_positions": [
+      [
+        -0.10531735420227051,
+        1.5707945823669434,
+        -0.8726646304130554,
+        -4.6590182023464877e-07,
+        5.427918381428753e-07,
+        -8.817697221275012e-07,
+        0.05000000447034836,
+        0.025000186637043953,
+        -0.02500004693865776
+      ]
+    ],
+    "reference_physics_before": 475,
+    "reference_physics_after": 475,
+    "settling_renders": 4,
+    "iou": 1.0,
+    "centroid_error_px": 0.0,
+    "reference_pixels": 1245,
+    "measured_pixels": 1245
+  }
+]

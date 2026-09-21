@@ -1,0 +1,665 @@
+{
+  "cameras": {
+    "left_wrist": "640x480 uint8 RGB HWC",
+    "right_wrist": "640x480 uint8 RGB HWC",
+    "strictly_advanced_bimanual_frames": 100,
+    "valid_bimanual_frames": 100
+  },
+  "canonical_d0_changed": false,
+  "composition": {
+    "backdrop_visibility": {
+      "control": "right_secondary_click",
+      "final": true,
+      "initial": true,
+      "quest_button": "B",
+      "toggle_count": 4,
+      "visual_only": true
+    },
+    "camera_capture_cycles_including_reset": 142,
+    "camera_configured_simulation_hz": {
+      "demo_scene": 30.0,
+      "left_wrist": 30.0,
+      "right_wrist": 30.0
+    },
+    "camera_effective_hz": {
+      "demo_scene": 13.669362068781334,
+      "left_wrist": 13.669362068781334,
+      "right_wrist": 13.669362068781334
+    },
+    "camera_feed_updates": {},
+    "camera_frames_end": {
+      "demo_scene": 120,
+      "left_wrist": 111,
+      "right_wrist": 111
+    },
+    "camera_frames_start": {
+      "demo_scene": 1,
+      "left_wrist": 1,
+      "right_wrist": 1
+    },
+    "observation_capture": {
+      "current": null,
+      "failed_attempts": 0,
+      "initial": {
+        "cameras": [
+          {
+            "data_generation": 5,
+            "frame": 1,
+            "role": "left_wrist"
+          },
+          {
+            "data_generation": 5,
+            "frame": 1,
+            "role": "right_wrist"
+          },
+          {
+            "data_generation": 5,
+            "frame": 1,
+            "role": "scene"
+          }
+        ],
+        "capture_cycle": 3,
+        "eligible": true,
+        "producer": {
+          "physics_step": 145,
+          "render_generation": 145,
+          "reset_epoch": 2
+        },
+        "state": [
+          -20.0,
+          90.0,
+          -50.0,
+          5.924872814588866e-10,
+          -2.360685646962679e-09,
+          3.386827207574328e-10,
+          50.0,
+          20.0,
+          90.0,
+          -50.0,
+          5.985399953445381e-10,
+          -3.4116780511794786e-09,
+          3.7241079664518395e-10,
+          50.0
+        ]
+      },
+      "last_error": null,
+      "rgb_cpu_copies_for_capture": 0,
+      "successful_capture_cycles": 145
+    },
+    "optional_demo_performance_mode": "preview_uploads_optimized_renderer_unchanged",
+    "preview_feed_count": 3,
+    "preview_partition_topology": {
+      "active_panel_roots": [],
+      "enabled": true,
+      "panel_roots": [],
+      "preview_token": "vla_xr_preview",
+      "sensor_paths": [
+        "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+        "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+        "/World/RobosynDemo/SceneCamera"
+      ],
+      "sensor_token": "vla_sensor_world",
+      "ui_base": "/ui",
+      "world": "unpartitioned/shared",
+      "xr": "unassigned spectator, showAllPartitionsByDefault=true"
+    },
+    "profile": "dual_cube_to_matching_plates",
+    "validation": {
+      "candidate_home_used": true,
+      "collision_free_at_home": true,
+      "finite_state": true,
+      "home_tcp_separation_m": 0.3481847047805837,
+      "home_tcp_world_m": {
+        "left": [
+          0.5789287686347961,
+          0.1740923523902893,
+          1.0264804363250732
+        ],
+        "right": [
+          0.5789287090301514,
+          -0.1740923523902893,
+          1.0264804363250732
+        ]
+      },
+      "imported_prim_valid": {},
+      "maximum_arm_contact_force_n": {
+        "left": 0.0,
+        "right": 0.0
+      },
+      "maximum_home_error_deg_or_mm": 4.3597370158465765e-09,
+      "maximum_profile_reset_position_error_m": 0.0020011081360280514,
+      "observation_capture": {
+        "cameras": [
+          {
+            "data_generation": 3,
+            "frame": 2,
+            "role": "left_wrist"
+          },
+          {
+            "data_generation": 3,
+            "frame": 2,
+            "role": "right_wrist"
+          },
+          {
+            "data_generation": 3,
+            "frame": 2,
+            "role": "scene"
+          }
+        ],
+        "capture_cycle": 2,
+        "eligible": false,
+        "producer": {
+          "physics_step": 120,
+          "render_generation": 120,
+          "reset_epoch": 1
+        },
+        "state": [
+          -20.0,
+          90.0,
+          -50.0,
+          2.061359971605725e-09,
+          -3.830464390119914e-09,
+          3.038393425747188e-10,
+          50.0,
+          20.0,
+          90.0,
+          -50.0,
+          1.5315015922112707e-09,
+          -4.3597370158465765e-09,
+          3.593389752420961e-10,
+          50.0
+        ]
+      },
+      "passed": true,
+      "required_prim_valid": {
+        "/World/LeftPiper": true,
+        "/World/RightPiper": true,
+        "/World/RobosynDemo/Backdrop": true,
+        "/World/RobosynDemo/LeftCube": true,
+        "/World/RobosynDemo/LeftPlate": true,
+        "/World/RobosynDemo/RightCube": true,
+        "/World/RobosynDemo/RightPlate": true,
+        "/World/RobosynDemo/SceneCamera": true,
+        "/World/RobosynDemo/Table": true
+      },
+      "scene_camera": {
+        "dtype": "uint8",
+        "frame": 2,
+        "rgb_stddev": 80.09760284423828,
+        "shape": [
+          480,
+          640,
+          3
+        ]
+      },
+      "table_collision_api": true,
+      "wrist_shapes": {
+        "left_wrist": [
+          480,
+          640,
+          3
+        ],
+        "right_wrist": [
+          480,
+          640,
+          3
+        ]
+      }
+    },
+    "vr_feed_visibility": {
+      "capture_continues_when_hidden": true,
+      "control": "left_primary_click",
+      "feed_bound_ever": false,
+      "final": false,
+      "initial": false,
+      "preview_policy": "visible fresh camera frames; on-demand UI texture capture",
+      "provider_api": "ByteImageProvider.set_raw_bytes_data CPU RGBA8_UNORM",
+      "quest_button": "X",
+      "toggle_count": 0,
+      "upload_path": "cpu_staged",
+      "upstream_session_prepared_enabled": false
+    },
+    "xr_recenter": {
+      "authoritative_scene_geometry_changed": false,
+      "control": "right_thumbstick_click",
+      "controller_transform_source": "XRCore.get_physical_to_virtual_world_transform",
+      "quest_button": "R3",
+      "request_count": 2,
+      "scheduled_count": 2,
+      "upstream_mechanism": "XRCore.schedule_teleport_to_view",
+      "view_prim_path": "/World/RobosynDemo/SceneCamera"
+    }
+  },
+  "environment": {
+    "cloudxr": "6.2.1",
+    "cloudxr_profile": "standalone",
+    "isaac_lab_commit": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d",
+    "isaac_lab_package": "17.0.2",
+    "isaac_lab_release": "release/3.0.0",
+    "isaac_sim": "6.1.0.0",
+    "isaaclab_teleop": "0.9.0",
+    "isaacteleop": "1.4.98rc1",
+    "kit_xr_bridge": true,
+    "python": "3.12.13"
+  },
+  "execution": {
+    "control_hz": 13.669362068781334,
+    "control_steps": 100,
+    "maximum_rebase_or_clutch_tcp_motion_m": {
+      "left": 0.0,
+      "right": 0.0
+    },
+    "motion_scale_observed": {
+      "left": {
+        "rotation_max": 4.0,
+        "rotation_min": 4.0,
+        "translation_max": 4.0,
+        "translation_min": 4.0
+      },
+      "right": {
+        "rotation_max": 4.0,
+        "rotation_min": 4.0,
+        "translation_max": 4.0,
+        "translation_min": 4.0
+      }
+    },
+    "performance": {
+      "control": {
+        "max_ms": 416.104118,
+        "mean_ms": 36.92747218571429,
+        "p50_ms": 29.870582499999998,
+        "p90_ms": 34.657778099999994,
+        "p95_ms": 44.67012199999999,
+        "p99_ms": 164.34389528000082,
+        "samples": 70
+      },
+      "deadline_miss_fraction": 0.18571428571428572,
+      "deadline_misses": 13,
+      "deadline_ms": 33.333333333333336,
+      "effective_hz": 27.080109761394898,
+      "event": "performance_summary",
+      "host_timing_only_no_added_cuda_synchronization": true,
+      "instrumentation_write": {
+        "max_ms": 0.059654,
+        "mean_ms": 0.039252385714285715,
+        "p50_ms": 0.035922,
+        "p90_ms": 0.0521269,
+        "p95_ms": 0.054398449999999994,
+        "p99_ms": 0.05861831000000001,
+        "samples": 70
+      },
+      "log_path": "/tmp/live-min60-state/runs/20260921T223239544943Z-diagnostic-dual_cube_to_matching_plates-hud-off/performance.jsonl",
+      "monotonic_ns": 2256346699442239,
+      "nested_stages_not_additive": {
+        "camera_update": {
+          "max_ms": 4.164017,
+          "mean_ms": 0.05948595714285715,
+          "p50_ms": 0.0,
+          "p90_ms": 0.0,
+          "p95_ms": 0.0,
+          "p99_ms": 1.2908452700000095,
+          "samples": 70
+        },
+        "experiment_update": {
+          "max_ms": 0.07994499999999999,
+          "mean_ms": 0.0011420714285714285,
+          "p50_ms": 0.0,
+          "p90_ms": 0.0,
+          "p95_ms": 0.0,
+          "p99_ms": 0.02478295000000018,
+          "samples": 70
+        },
+        "live_min60_camera_extraction": {
+          "max_ms": 6.483603,
+          "mean_ms": 4.690288228571428,
+          "p50_ms": 4.523099500000001,
+          "p90_ms": 5.770962300000001,
+          "p95_ms": 5.957978649999999,
+          "p99_ms": 6.247366320000001,
+          "samples": 70
+        },
+        "live_min60_physics": {
+          "max_ms": 8.775659,
+          "mean_ms": 7.6339903428571425,
+          "p50_ms": 7.6328405,
+          "p90_ms": 8.0888834,
+          "p95_ms": 8.1771897,
+          "p99_ms": 8.57428733,
+          "samples": 70
+        },
+        "live_min60_render_app": {
+          "max_ms": 19.374948,
+          "mean_ms": 9.6871203,
+          "p50_ms": 9.223063,
+          "p90_ms": 11.28932,
+          "p95_ms": 11.54127295,
+          "p99_ms": 14.541773310000016,
+          "samples": 70
+        },
+        "live_min60_rgb_freeze": {
+          "max_ms": 1.521056,
+          "mean_ms": 0.8842273857142857,
+          "p50_ms": 0.7806299999999999,
+          "p90_ms": 1.4172962,
+          "p95_ms": 1.4616243500000001,
+          "p99_ms": 1.49976674,
+          "samples": 70
+        },
+        "live_min60_state_updates": {
+          "max_ms": 0.330352,
+          "mean_ms": 0.2748161,
+          "p50_ms": 0.2712715,
+          "p90_ms": 0.2949869,
+          "p95_ms": 0.3025195,
+          "p99_ms": 0.32703930999999997,
+          "samples": 70
+        },
+        "live_min60_synchronization": {
+          "max_ms": 0.910018,
+          "mean_ms": 0.7518160857142857,
+          "p50_ms": 0.7434955000000001,
+          "p90_ms": 0.8042226,
+          "p95_ms": 0.8147955499999999,
+          "p99_ms": 0.8551657600000002,
+          "samples": 70
+        },
+        "physics_probe_update": {
+          "max_ms": 0.04778600000000001,
+          "mean_ms": 0.000682657142857143,
+          "p50_ms": 0.0,
+          "p90_ms": 0.0,
+          "p95_ms": 0.0,
+          "p99_ms": 0.014813660000000112,
+          "samples": 70
+        },
+        "physics_target_write": {
+          "max_ms": 6.521304,
+          "mean_ms": 0.09316148571428572,
+          "p50_ms": 0.0,
+          "p90_ms": 0.0,
+          "p95_ms": 0.0,
+          "p99_ms": 2.021604240000015,
+          "samples": 70
+        },
+        "render_app": {
+          "max_ms": 235.12297999999998,
+          "mean_ms": 12.830388185714286,
+          "p50_ms": 9.2638175,
+          "p90_ms": 11.306631900000001,
+          "p95_ms": 11.679802899999999,
+          "p99_ms": 86.20874699000048,
+          "samples": 70
+        },
+        "robot_update": {
+          "max_ms": 49.083586999999994,
+          "mean_ms": 0.7011940999999999,
+          "p50_ms": 0.0,
+          "p90_ms": 0.0,
+          "p95_ms": 0.0,
+          "p99_ms": 15.21591197000011,
+          "samples": 70
+        },
+        "sim_step": {
+          "max_ms": 319.564266,
+          "mean_ms": 4.5652038,
+          "p50_ms": 0.0,
+          "p90_ms": 0.0,
+          "p95_ms": 0.0,
+          "p99_ms": 99.06492246000072,
+          "samples": 70
+        }
+      },
+      "schema": "piper_x_isaac_s2_performance_v1",
+      "stages": {
+        "camera_observation": {
+          "max_ms": 2.015796,
+          "mean_ms": 1.5424743857142857,
+          "p50_ms": 1.5012735,
+          "p90_ms": 1.6320192000000002,
+          "p95_ms": 1.9829059,
+          "p99_ms": 2.0129345699999996,
+          "samples": 70
+        },
+        "command_processing": {
+          "max_ms": 386.175925,
+          "mean_ms": 5.6099542428571425,
+          "p50_ms": 0.07424349999999999,
+          "p90_ms": 0.1177206,
+          "p95_ms": 0.22423994999999963,
+          "p99_ms": 120.15880774000087,
+          "samples": 70
+        },
+        "control_events": {
+          "max_ms": 0.008008,
+          "mean_ms": 0.0034899285714285713,
+          "p50_ms": 0.003234,
+          "p90_ms": 0.0039346,
+          "p95_ms": 0.0049939999999999984,
+          "p99_ms": 0.00789898,
+          "samples": 70
+        },
+        "gpu_probe": {
+          "max_ms": 16.752502,
+          "mean_ms": 0.9087027999999999,
+          "p50_ms": 0.0008389999999999999,
+          "p90_ms": 0.0011984,
+          "p95_ms": 8.485010699999956,
+          "p99_ms": 16.18953928,
+          "samples": 70
+        },
+        "ik_apply": {
+          "max_ms": 4.88392,
+          "mean_ms": 2.5138620428571428,
+          "p50_ms": 2.4748704999999998,
+          "p90_ms": 2.6115329,
+          "p95_ms": 2.6528706,
+          "p99_ms": 3.4642394800000047,
+          "samples": 70
+        },
+        "runtime_bookkeeping": {
+          "max_ms": 0.020983,
+          "mean_ms": 0.013570571428571428,
+          "p50_ms": 0.012841,
+          "p90_ms": 0.0178535,
+          "p95_ms": 0.01941595,
+          "p99_ms": 0.020210890000000002,
+          "samples": 70
+        },
+        "simulation_advance": {
+          "max_ms": 33.287773,
+          "mean_ms": 24.067174357142857,
+          "p50_ms": 23.60784,
+          "p90_ms": 26.5613787,
+          "p95_ms": 27.4752461,
+          "p99_ms": 29.364974650000015,
+          "samples": 70
+        },
+        "status_emit": {
+          "max_ms": 0.031386,
+          "mean_ms": 0.0011198999999999998,
+          "p50_ms": 0.00024799999999999996,
+          "p90_ms": 0.0003869000000000001,
+          "p95_ms": 0.0004890499999999999,
+          "p99_ms": 0.029493330000000005,
+          "samples": 70
+        },
+        "tcp_pose_after": {
+          "max_ms": 1.241022,
+          "mean_ms": 0.6643478428571429,
+          "p50_ms": 0.5818575,
+          "p90_ms": 1.1640747,
+          "p95_ms": 1.2031834,
+          "p99_ms": 1.23590841,
+          "samples": 70
+        },
+        "tcp_pose_before": {
+          "max_ms": 1.355781,
+          "mean_ms": 0.4455632428571428,
+          "p50_ms": 0.38828450000000003,
+          "p90_ms": 0.5062951,
+          "p95_ms": 0.9068521,
+          "p99_ms": 1.070795820000001,
+          "samples": 70
+        },
+        "teleop_advance": {
+          "max_ms": 2.940728,
+          "mean_ms": 1.1338089142857144,
+          "p50_ms": 1.0497465,
+          "p90_ms": 1.2308404,
+          "p95_ms": 1.7150026499999997,
+          "p99_ms": 2.1644359100000026,
+          "samples": 70
+        }
+      },
+      "step_first": 31,
+      "step_last": 100,
+      "total_logged_steps": 70,
+      "warmup_steps_excluded": 30
+    },
+    "physics_hz": 54.677448275125336,
+    "saturated_frames": 0,
+    "sensitivity_mode_frames": {
+      "left": {
+        "slider": 100
+      },
+      "right": {
+        "slider": 100
+      }
+    },
+    "stopped_by_user": false,
+    "tracking_valid_frames": {
+      "left": 0,
+      "right": 0
+    },
+    "transitions": {
+      "left:session_inactive": 100,
+      "right:session_inactive": 100
+    },
+    "wall_seconds": 7.315630348864943
+  },
+  "gate": "S2",
+  "gpu": {
+    "end": {
+      "gpu_utilization_percent": 35,
+      "vram_total_mib": 24564,
+      "vram_used_mib": 7224
+    },
+    "samples": [
+      {
+        "gpu_utilization_percent": 30,
+        "vram_total_mib": 24564,
+        "vram_used_mib": 5733
+      },
+      {
+        "gpu_utilization_percent": 0,
+        "vram_total_mib": 24564,
+        "vram_used_mib": 7224
+      },
+      {
+        "gpu_utilization_percent": 33,
+        "vram_total_mib": 24564,
+        "vram_used_mib": 7224
+      },
+      {
+        "gpu_utilization_percent": 41,
+        "vram_total_mib": 24564,
+        "vram_used_mib": 7224
+      },
+      {
+        "gpu_utilization_percent": 28,
+        "vram_total_mib": 24564,
+        "vram_used_mib": 7224
+      },
+      {
+        "gpu_utilization_percent": 28,
+        "vram_total_mib": 24564,
+        "vram_used_mib": 7224
+      },
+      {
+        "gpu_utilization_percent": 28,
+        "vram_total_mib": 24564,
+        "vram_used_mib": 7224
+      },
+      {
+        "gpu_utilization_percent": 35,
+        "vram_total_mib": 24564,
+        "vram_used_mib": 7224
+      }
+    ],
+    "start": {
+      "gpu_utilization_percent": 30,
+      "vram_total_mib": 24564,
+      "vram_used_mib": 5733
+    }
+  },
+  "mode": "diagnostic",
+  "passed": true,
+  "physical_human_gate": "required_not_implied_by_runtime_smoke",
+  "process": {
+    "clean_shutdown": true,
+    "exit_code": 0,
+    "launcher": "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording/tools/launch_isaac_vr.py",
+    "stdout_log": "/tmp/live-min60-state/runs/20260921T223239544943Z-diagnostic-dual_cube_to_matching_plates-hud-off/stdout.log",
+    "stop_requested": false
+  },
+  "processor": {
+    "clutch": "independent squeeze > 0.5; release discards one delta",
+    "gripper": "independent analog trigger [0,1] maps linearly and monotonically from 0.1 m open to 0.0 m closed",
+    "revision": "piper_x_isaac_s2_bimanual_relative_v3",
+    "sensitivity": {
+      "center": {
+        "rotation_scale": 4.0,
+        "translation_scale": 4.0
+      },
+      "control_mode": "slider",
+      "input_control": "thumbstick_x",
+      "input_range": [
+        -1.0,
+        1.0
+      ],
+      "mapping": "Piecewise linear and clamped; left is slower, center keeps the previous normal speed, right is faster.",
+      "maximum": {
+        "rotation_scale": 6.0,
+        "translation_scale": 6.0
+      },
+      "minimum": {
+        "rotation_scale": 2.0,
+        "translation_scale": 2.0
+      },
+      "quest_control": "each controller's own horizontal thumbstick axis",
+      "scope": "independent per arm"
+    },
+    "source_timestamp_threshold": null,
+    "tracking_recovery": "unusable pose invalidates upstream SE(3) baseline and smoothing; first recovered frame emits zero delta"
+  },
+  "production_gate_status_changed": false,
+  "runtime_path": "Quest -> CloudXR/isaacteleop -> isaaclab_teleop -> one ControllersSource -> S2 processor -> DifferentialIKController -> accepted S1 native actuation",
+  "session": {
+    "action_frames": 97,
+    "demo_backdrop_toggle_smoke_met": true,
+    "demo_display_toggle_smoke_met": true,
+    "demo_recenter_smoke_met": true,
+    "require_physical_tracking": false,
+    "require_session": true,
+    "single_controller_source": true,
+    "started_ever": true
+  },
+  "status": "runtime_smoke_passed_physical_human_gate_required",
+  "xr_presentation": {
+    "anchor_pos_m": [
+      -0.05,
+      0.0,
+      -0.1
+    ],
+    "anchor_rot_xyzw": [
+      0.0,
+      0.0,
+      -0.7071067811865475,
+      0.7071067811865476
+    ],
+    "authoritative_scene_geometry_changed": false,
+    "controller_transform_source": "XRCore.get_physical_to_virtual_world_transform",
+    "near_plane_m": 0.1,
+    "selected_vr_scene_geometry_applied": true
+  }
+}

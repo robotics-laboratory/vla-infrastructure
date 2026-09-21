@@ -1,0 +1,48 @@
+{
+  "candidate": "LIVE-MIN60-NONTILED",
+  "command": [
+    "./run-vr",
+    "diag",
+    "--state-root",
+    "/tmp/live-min60-state",
+    "--max-control-steps",
+    "100",
+    "--performance-warmup-steps",
+    "30",
+    "--performance-window-steps",
+    "100",
+    "--xr-smoke"
+  ],
+  "cwd": "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording",
+  "head": "f858ff3f293a6d6024690258af2c09df0590d15d",
+  "env": {
+    "DISPLAY": ":0",
+    "OMNI_KIT_ACCEPT_EULA": "Y",
+    "ISAACLAB_CXR_ACCEPT_EULA": "1",
+    "VR_BAKEOFF_CANDIDATE": "LIVE-MIN60-NONTILED",
+    "VR_BAKEOFF_OUTPUT": "/tmp/live-min60-phase-07",
+    "VR_BAKEOFF_PROFILE_PASSES": "0",
+    "VR_BAKEOFF_VERIFY_XR_DISPLAY": "0",
+    "VR_LIVE_MIN60_PHASE": "1",
+    "PYTHONPATH": "/tmp/live-min60-phase-07/sources"
+  },
+  "sources": {
+    "benchmark.py": "5656c3bc5830acfbc633eea8fd95d741e01ba1cf019021ed79bf00bedeca2229",
+    "offline_probe.py": "23bf29046965404b1e1964a421ff726c62184a19cd4e7e52feea107df3b48eca",
+    "summarize.py": "9ad925c74e5f0a05e228c49eb6207cbc77cadd51bba276584569483cc49f85e7",
+    "render_assay.py": "eed1003a8f2f7b9a069eaccf597ed528ddc559daa13e482934e67a025deade9f",
+    "retain.py": "795f0ec9b6d269e70665f07565cff68c3fafcc86103a7fe817cac35f15155feb",
+    "phase_probe.py": "6a977f97cf6251b6b24002d5253801c15b9ea91325fb185e32ba589cda812917",
+    "variants.py": "dd99110a4ffb5898ca251837c970a084e649028937544875095c3f53eecc6c24",
+    "live_state_cost.py": "3533cba92cccdb098d14807b481667e55fad871c4952c15fb03c4b7ee52d80cd",
+    "sitecustomize.py": "1f96eefe057bf16153bb7133ec3b7825356fe22130ec73ea897dcfbf20cc237c",
+    "state_probe.py": "0df3abb759bc06e443524cbbbfb68f35451aad8a5a2d06baa50ce471df9ebd89",
+    "launch.py": "735cedd9ed24c2f759dbfc8119221c080a3824088ee7f15d6b61400d25d41d7b",
+    "pass_cost.py": "545ef2f7d1e029b831ea680282182ea547a8daf8f8d11031a0b768a9db3d5802",
+    "full_offline.py": "e4301a7e971d4446970ea473a9dd6863c48bdf1d1cb5c264f2b92be932791380",
+    "live_min60.py": "d4b23e9d282a4f680c8042b9cfd2135067a3d2a145d4def624c655b2a0e93d26"
+  },
+  "started": 1790029959.4401252,
+  "exit_code": 0,
+  "ended": 1790029984.480994
+}

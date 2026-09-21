@@ -2598,6 +2598,12 @@ documents:
   owner: vr.performance
   mutable: true
   gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/live_min60.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
 - path: docs/experiments/20260921_vr_architecture_bakeoff/offline_probe.py
   kind: experiment
   status: current
@@ -2719,6 +2725,72 @@ documents:
   mutable: false
   gates: [D0, S1, S2, D1]
 - path: docs/experiments/20260921_vr_architecture_bakeoff/checks.txt
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min60_phase/REPORT.md
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min60_phase/gpu.csv
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min60_phase/launch.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min60_phase/live_min60_manifest.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min60_phase/live_min60_samples.jsonl
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min60_phase/performance.jsonl
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min60_phase/phase-analysis.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min60_phase/phase-articulation-references.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min60_phase/phase.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min60_phase/runtime-result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min60_phase/variant.json
   kind: experiment
   status: historical
   owner: vr.performance
