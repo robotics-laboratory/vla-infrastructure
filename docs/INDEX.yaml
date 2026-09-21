@@ -2532,3 +2532,27 @@ documents:
   owner: vr.performance
   mutable: false
   gates: [D0, S1, S2]
+- path: docs/evidence/S2/20260921_vr_sensor_xr_scheduling/README.md
+  kind: evidence
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [S1, S2]
+- path: docs/evidence/S2/20260921_vr_sensor_xr_scheduling/summary.json
+  kind: evidence
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [S1, S2]
+- path: docs/evidence/S2/20260921_vr_sensor_xr_scheduling/provenance.json
+  kind: evidence
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [S1, S2]
+- path: docs/evidence/S2/20260921_vr_sensor_xr_scheduling/tests.txt
+  kind: evidence
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [S1, S2]

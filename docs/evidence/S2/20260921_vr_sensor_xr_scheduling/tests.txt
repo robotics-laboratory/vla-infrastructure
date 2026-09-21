@@ -1,0 +1,182 @@
+Presentation copy: trailing whitespace removed; original stdout and stderr retained in raw archive.
+Declared core environment; 242 passed in initial run, 3 Unix-socket tests blocked by sandbox bind permissions. Only those 3 were retried with socket access and passed. No test or runtime source changed.
+
+Command: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python -m pytest -q tests/test_gate_d0_contract.py tests/test_isaac_vr_capture.py tests/test_isaac_vr_decision.py tests/test_isaac_s2_processor.py tests/test_isaac_vr_config.py tests/test_isaac_demo_launch.py tests/test_isaac_s2_performance.py tests/test_isaac_eval_rpc.py tests/test_docs_governance.py tests/test_resolved_contract.py tests/test_manifest.py
+
+........................................................................ [ 29%]
+....................FFF................................................. [ 58%]
+........................................................................ [ 88%]
+.............................                                            [100%]
+=================================== FAILURES ===================================
+___________ test_reconnect_reuses_endpoint_cache_without_reexecution ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-ebulochkin/pytest-161/test_reconnect_reuses_endpoint0')
+
+    def test_reconnect_reuses_endpoint_cache_without_reexecution(tmp_path: Path) -> None:
+        environment = FakeIsaacEnvironment()
+>       socket_path, _endpoint, thread = _start_server(tmp_path, environment)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_isaac_eval_rpc.py:176:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+tmp_path = PosixPath('/tmp/pytest-of-ebulochkin/pytest-161/test_reconnect_reuses_endpoint0')
+environment = <test_isaac_eval_rpc.FakeIsaacEnvironment object at 0x79bf8206c560>
+
+    def _start_server(tmp_path: Path, environment: FakeIsaacEnvironment):
+        socket_path = tmp_path / "eval.sock"
+        endpoint = IsaacEvalEndpoint(environment, _handshake())
+        thread = Thread(target=serve_unix_socket, args=(endpoint, socket_path), daemon=True)
+        thread.start()
+        deadline = time.monotonic() + 2.0
+        while not socket_path.exists():
+            if time.monotonic() >= deadline:
+>               raise AssertionError("server socket did not appear")
+E               AssertionError: server socket did not appear
+
+tests/test_isaac_eval_rpc.py:95: AssertionError
+____________ test_ambiguous_timeout_requires_explicit_same_id_retry ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-ebulochkin/pytest-161/test_ambiguous_timeout_require0')
+
+    def test_ambiguous_timeout_requires_explicit_same_id_retry(tmp_path: Path) -> None:
+        environment = FakeIsaacEnvironment(reset_delay_s=0.08)
+>       socket_path, _endpoint, thread = _start_server(tmp_path, environment)
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_isaac_eval_rpc.py:211:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+tmp_path = PosixPath('/tmp/pytest-of-ebulochkin/pytest-161/test_ambiguous_timeout_require0')
+environment = <test_isaac_eval_rpc.FakeIsaacEnvironment object at 0x79bf8206dd00>
+
+    def _start_server(tmp_path: Path, environment: FakeIsaacEnvironment):
+        socket_path = tmp_path / "eval.sock"
+        endpoint = IsaacEvalEndpoint(environment, _handshake())
+        thread = Thread(target=serve_unix_socket, args=(endpoint, socket_path), daemon=True)
+        thread.start()
+        deadline = time.monotonic() + 2.0
+        while not socket_path.exists():
+            if time.monotonic() >= deadline:
+>               raise AssertionError("server socket did not appear")
+E               AssertionError: server socket did not appear
+
+tests/test_isaac_eval_rpc.py:95: AssertionError
+___________ test_client_detects_endpoint_restart_and_invalidates_run ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-ebulochkin/pytest-161/test_client_detects_endpoint_r0')
+
+    def test_client_detects_endpoint_restart_and_invalidates_run(tmp_path: Path) -> None:
+>       socket_path, _endpoint, first_thread = _start_server(tmp_path, FakeIsaacEnvironment())
+                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_isaac_eval_rpc.py:248:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+tmp_path = PosixPath('/tmp/pytest-of-ebulochkin/pytest-161/test_client_detects_endpoint_r0')
+environment = <test_isaac_eval_rpc.FakeIsaacEnvironment object at 0x79bf8206d100>
+
+    def _start_server(tmp_path: Path, environment: FakeIsaacEnvironment):
+        socket_path = tmp_path / "eval.sock"
+        endpoint = IsaacEvalEndpoint(environment, _handshake())
+        thread = Thread(target=serve_unix_socket, args=(endpoint, socket_path), daemon=True)
+        thread.start()
+        deadline = time.monotonic() + 2.0
+        while not socket_path.exists():
+            if time.monotonic() >= deadline:
+>               raise AssertionError("server socket did not appear")
+E               AssertionError: server socket did not appear
+
+tests/test_isaac_eval_rpc.py:95: AssertionError
+=============================== warnings summary ===============================
+tests/test_isaac_vr_decision.py::test_original_native_parity_and_preclip_precision[0.0--1.0]
+  actual_ik_wrapper:123: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+
+tests/test_isaac_eval_rpc.py::test_reconnect_reuses_endpoint_cache_without_reexecution
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-1 (serve_unix_socket)
+
+  Traceback (most recent call last):
+    File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+      self.run()
+    File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/threading.py", line 1012, in run
+      self._target(*self._args, **self._kwargs)
+    File "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording/tools/isaac_eval_rpc.py", line 305, in serve_unix_socket
+      server.bind(str(socket_path))
+  PermissionError: [Errno 1] Operation not permitted
+
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+tests/test_isaac_eval_rpc.py::test_ambiguous_timeout_requires_explicit_same_id_retry
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-2 (serve_unix_socket)
+
+  Traceback (most recent call last):
+    File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+      self.run()
+    File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/threading.py", line 1012, in run
+      self._target(*self._args, **self._kwargs)
+    File "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording/tools/isaac_eval_rpc.py", line 305, in serve_unix_socket
+      server.bind(str(socket_path))
+  PermissionError: [Errno 1] Operation not permitted
+
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+tests/test_isaac_eval_rpc.py::test_client_detects_endpoint_restart_and_invalidates_run
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-3 (serve_unix_socket)
+
+  Traceback (most recent call last):
+    File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+      self.run()
+    File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/threading.py", line 1012, in run
+      self._target(*self._args, **self._kwargs)
+    File "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording/tools/isaac_eval_rpc.py", line 305, in serve_unix_socket
+      server.bind(str(socket_path))
+  PermissionError: [Errno 1] Operation not permitted
+
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_isaac_eval_rpc.py::test_reconnect_reuses_endpoint_cache_without_reexecution
+FAILED tests/test_isaac_eval_rpc.py::test_ambiguous_timeout_requires_explicit_same_id_retry
+FAILED tests/test_isaac_eval_rpc.py::test_client_detects_endpoint_restart_and_invalidates_run
+3 failed, 242 passed, 4 warnings in 13.35s
+
+Exit: 1
+
+Permission-corrected retry:
+Command: core Python -m pytest -q tests/test_isaac_eval_rpc.py -k "reconnect_reuses_endpoint_cache_without_reexecution or ambiguous_timeout_requires_explicit_same_id_retry or client_detects_endpoint_restart_and_invalidates_run"
+...                                                                      [100%]
+3 passed, 24 deselected in 0.28s
+
+Post-registration governance tests:
+........................................................................ [ 55%]
+..........................................................               [100%]
+130 passed in 4.88s
+
+Governance/integrity checks:
+0: fulfilled
+INDEX: 375 entries; classification {'current': 28, 'historical': 347}
+HISTORICAL PRESERVATION: PASS (343 frozen files vs b076d5ea00bc899ce0dea05ff3ca8c62f354adac)
+KNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.
+DOC GOVERNANCE CHECKS: PASS
+
+
+1: fulfilled
+SPEC REFERENCE LINT OK
+
+
+2: fulfilled
+CONTRACT STRUCTURALLY VALID
+CONTRACT SEMANTICALLY VALID
+FINAL RC NOT READY
+BLOCKERS: S2, D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0
+
+
+3: fulfilled
+MANIFEST OK: 107 reviewed files

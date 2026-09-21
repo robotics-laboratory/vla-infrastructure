@@ -1902,6 +1902,41 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  vr_sensor_xr_report:
+    kind: report
+    sha256: a9d062506d3e7383db3bea2619bd71f6a844c4c1440737420f9da1ed50643c8f
+    path: docs/evidence/S2/20260921_vr_sensor_xr_scheduling/README.md
+    uri: null
+    description: 'Pinned sensor/XR scheduling audit: inventory, bounded failed cadence probes, GPU cost assays and
+      three long canonical no-client repetitions; no runtime promotion.'
+  vr_sensor_xr_summary:
+    kind: test_output
+    sha256: 1ba79d642735a171191b28f31d3f0a1e93fed777ef24f9c9c3306f183f0d3a81
+    path: docs/evidence/S2/20260921_vr_sensor_xr_scheduling/summary.json
+    uri: null
+    description: 'Pinned sensor/XR scheduling audit: inventory, bounded failed cadence probes, GPU cost assays and
+      three long canonical no-client repetitions; no runtime promotion.'
+  vr_sensor_xr_provenance:
+    kind: run_manifest
+    sha256: 7439a8dea2b6636bee30347aba1a39841704943cb18c9e41dc7deeaff08f828d
+    path: docs/evidence/S2/20260921_vr_sensor_xr_scheduling/provenance.json
+    uri: null
+    description: 'Pinned sensor/XR scheduling audit: inventory, bounded failed cadence probes, GPU cost assays and
+      three long canonical no-client repetitions; no runtime promotion.'
+  vr_sensor_xr_tests:
+    kind: test_output
+    sha256: 141dbb73ca785fbd19bb2cd37dab2f09a21bdecddb4f9039c3fb79ba23c9c075
+    path: docs/evidence/S2/20260921_vr_sensor_xr_scheduling/tests.txt
+    uri: null
+    description: 'Pinned sensor/XR scheduling audit: inventory, bounded failed cadence probes, GPU cost assays and
+      three long canonical no-client repetitions; no runtime promotion.'
+  vr_sensor_xr_raw:
+    kind: test_output
+    sha256: b20dac7a78b5530957fd1a78f2727c1a96a509a5c77ba9a4b7e88d7bf0bdcfbd
+    path: /data/ebulochkin/vla-runtime/evidence/20260921_vr_sensor_xr_scheduling/vr4p3-evidence.tar.gz
+    uri: null
+    description: Verified raw probe source versions, visible-target images, inventories, every control sample, GPU
+      traces, CloudXR logs and failed setup attempts.
   vr_render_substeps_report:
     kind: report
     sha256: 0e7e920c8e0b0d60c66b34fdd13906c6c931e82dce19cd1024e4199620c80bae
@@ -2843,6 +2878,90 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  vr_sensor_xr_audit:
+    timestamp: '2026-09-21T19:15:09.103297+00:00'
+    artifact_ids:
+    - vr_sensor_xr_report
+    - vr_sensor_xr_summary
+    - vr_sensor_xr_provenance
+    - vr_sensor_xr_tests
+    - vr_sensor_xr_raw
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/evidence/S2/20260921_vr_sensor_xr_scheduling
+    symbol: null
+    kind: command_test
+    status: pass
+    summary: Bounded pinned API/inventory and GPU-cost audit plus three independent canonical baseline repetitions,
+      each 300 warmup and 3000 retained controls.
+    command: Temporary /tmp/vr4p3-probe instrumentation; exact argv, source identities and diagnostic/long-run conditions
+      in provenance and raw archive.
+    notes: Tested b076d5e with unchanged bd288917 runtime. No sensor/XR decoupling qualification, complete private-renderer
+      inventory, headset-present measurement, or S2 acceptance is claimed.
+  vr_sensor_xr_cadence_probes:
+    timestamp: '2026-09-21T19:15:09.103297+00:00'
+    artifact_ids:
+    - vr_sensor_xr_report
+    - vr_sensor_xr_summary
+    - vr_sensor_xr_provenance
+    - vr_sensor_xr_tests
+    - vr_sensor_xr_raw
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/evidence/S2/20260921_vr_sensor_xr_scheduling
+    symbol: null
+    kind: command_test
+    status: fail
+    summary: Native sensor rate-30 factory probes do not qualify the required one P+4 sensor generation while retaining
+      four Kit updates.
+    command: VR4P3_TICK_RATE=30 with synchronous/asynchronous sensor textures; four physics steps and existing 4B
+      barrier. Bounded visible-target and drawable-count probes.
+    notes: No long candidate benchmark or physical A/C trial because the prerequisite sensor schedule did not pass.
+      Prior per-substep Hydra pause was not retried. Static disabling was cost attribution only.
+  vr_sensor_xr_alignment_probe:
+    timestamp: '2026-09-21T19:15:09.103297+00:00'
+    artifact_ids:
+    - vr_sensor_xr_report
+    - vr_sensor_xr_summary
+    - vr_sensor_xr_provenance
+    - vr_sensor_xr_tests
+    - vr_sensor_xr_raw
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/evidence/S2/20260921_vr_sensor_xr_scheduling
+    symbol: null
+    kind: command_test
+    status: fail
+    summary: XR-enabled unchanged baseline and rate-30 async C2 each decode P+3 USD marker content in all three views
+      at 15 checked boundaries while captured state matches P+4.
+    command: VR4P3_CONTENT=1 ./run-vr diag --xr-smoke with baseline and rate-30 async sensor factory options; raw
+      images, state checks and exact argv retained.
+    notes: Bounded USD/material marker lag; not proof that every PhysX/Fabric pose is late and not attributed to the
+      candidate alone. Standalone prior qualification remains scoped; XR-enabled P+4 content needs further state-driven
+      qualification. No extra render or canonical change.
+  vr_sensor_xr_operator_clarification:
+    timestamp: '2026-09-21T19:15:09.103297+00:00'
+    artifact_ids:
+    - vr_sensor_xr_report
+    - vr_sensor_xr_summary
+    - vr_sensor_xr_provenance
+    - vr_sensor_xr_tests
+    - vr_sensor_xr_raw
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/evidence/S2/20260921_vr_sensor_xr_scheduling
+    symbol: null
+    kind: human_gate
+    status: fail
+    summary: 'Operator clarified prior B discomfort: headset world/head movement; camera panels were smoother; earlier
+      controls were reported fine.'
+    command: Direct operator clarification in this task about the completed 4P2 A/B sessions.
+    notes: Qualitative observation, no numeric FPS/latency claim; preserves rejection of B. Original frozen 4P2 report
+      remains unchanged. No new physical C trial.
   vr_render_substeps_offline:
     timestamp: '2026-09-21T18:25:43.906935+00:00'
     artifact_ids:
@@ -4281,6 +4400,10 @@ gates:
   S2:
     state: unresolved
     evidence_ids:
+    - vr_sensor_xr_audit
+    - vr_sensor_xr_cadence_probes
+    - vr_sensor_xr_alignment_probe
+    - vr_sensor_xr_operator_clarification
     - vr_render_substeps_offline
     - vr_render_substeps_quest_rejected
     - vr_xr_decision_qualification
@@ -4293,6 +4416,11 @@ gates:
     - gate_s2_physical_run1_failed
     - isaac1103_s2_automated
     artifact_ids:
+    - vr_sensor_xr_report
+    - vr_sensor_xr_summary
+    - vr_sensor_xr_provenance
+    - vr_sensor_xr_tests
+    - vr_sensor_xr_raw
     - vr_render_substeps_report
     - vr_render_substeps_summary
     - vr_render_substeps_provenance

@@ -1,0 +1,3140 @@
+{
+  "recorded_at": "2026-09-21T19:09:52.192043+00:00",
+  "evidence_preservation_commit": "b076d5ea00bc899ce0dea05ff3ca8c62f354adac",
+  "runtime_parent": "bd288917ac44a873feef04df9a488c4046927d87",
+  "recommendation": "BLOCKED ON XR-enabled P+4 camera content alignment and a supported phase-locked sensor-product scheduling API",
+  "best_candidate": null,
+  "canonical_promoted": false,
+  "recording_fps": 30,
+  "physics_simulated_hz": 120,
+  "control_simulated_hz": 30,
+  "operator_clarification": {
+    "source": "Direct operator reply in this task",
+    "headset_world": "B discomfort was in headset world/head movement",
+    "camera_panels": "Panels were smoother",
+    "control_response": "Previously reported controls fine",
+    "quantitative_presentation_measurement": false
+  },
+  "probes": {
+    "inventory-a2": {
+      "name": "inventory-a2",
+      "run": "/tmp/vr4p-audit/runs/20260921T183924518887Z-diagnostic-dual_cube_to_matching_plates-hud-off",
+      "output": "/tmp/vr4p3-inventory-a2",
+      "diagnostic_only": true,
+      "measurement_samples": 120,
+      "tick_ms": {
+        "n": 120,
+        "mean": 85.55954805833333,
+        "stddev": 5.941184063143777,
+        "coefficient_of_variation": 0.0694391707059177,
+        "p50": 83.187604,
+        "p90": 93.9651915,
+        "p95": 100.96313465,
+        "p99": 106.88411257000001,
+        "p99.9": 108.93372386400002,
+        "max": 109.067021
+      },
+      "timings_ms": {
+        "physics_only": {
+          "n": 120,
+          "mean": 12.978018783333335,
+          "stddev": 0.5150845622699669,
+          "coefficient_of_variation": 0.03968899805657934,
+          "p50": 12.883745999999999,
+          "p90": 13.6685537,
+          "p95": 13.872030350000001,
+          "p99": 14.216038939999999,
+          "p99.9": 14.598510843000007,
+          "max": 14.649229
+        },
+        "sim_render": {
+          "n": 120,
+          "mean": 60.41532155833333,
+          "stddev": 3.4861094865981226,
+          "coefficient_of_variation": 0.0577024072152318,
+          "p50": 59.2146825,
+          "p90": 64.09303720000004,
+          "p95": 68.74122315,
+          "p99": 72.86219765,
+          "p99.9": 75.37317874900003,
+          "max": 75.626319
+        },
+        "capture_boundary": {
+          "n": 120,
+          "mean": 2.751954225,
+          "stddev": 0.27388485319415573,
+          "coefficient_of_variation": 0.09952376776694231,
+          "p50": 2.7128375,
+          "p90": 2.8580680000000003,
+          "p95": 2.97703665,
+          "p99": 4.22725594,
+          "p99.9": 4.322143636000002,
+          "max": 4.331825
+        }
+      },
+      "counts": {
+        "camera_left_wrist": {
+          "1": 120
+        },
+        "camera_right_wrist": {
+          "1": 120
+        },
+        "camera_scene": {
+          "1": 120
+        },
+        "capture_boundary": {
+          "1": 120
+        },
+        "extract_left_wrist": {
+          "1": 120
+        },
+        "extract_right_wrist": {
+          "1": 120
+        },
+        "extract_scene": {
+          "1": 120
+        },
+        "hydra_drawable_left_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_right_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_scene": {
+          "4": 120
+        },
+        "kit_app_update": {
+          "4": 120
+        },
+        "physics_only": {
+          "4": 120
+        },
+        "rgb_tensor_d2h": {
+          "1": 120
+        },
+        "rig_update_no_acquisition": {
+          "4": 120
+        },
+        "scalar_tensor_d2h": {
+          "18": 120
+        },
+        "sim_render": {
+          "4": 120
+        },
+        "sim_step": {
+          "4": 120
+        },
+        "small_tensor_d2h": {
+          "17": 120
+        },
+        "visualizer_0": {
+          "4": 120
+        }
+      },
+      "camera_content_pass": null,
+      "camera_checked_boundaries": null,
+      "sensor_render_cadence_pass": false,
+      "runtime_smoke_result": {
+        "passed": true,
+        "status": "runtime_smoke_passed_physical_human_gate_required",
+        "physical_human_gate": "required_not_implied_by_runtime_smoke",
+        "canonical_d0_changed": false,
+        "capture_failed_attempts": 0,
+        "full_result_path": "/tmp/vr4p-audit/runs/20260921T183924518887Z-diagnostic-dual_cube_to_matching_plates-hud-off/result.json"
+      }
+    },
+    "profile-a": {
+      "name": "profile-a",
+      "run": "/tmp/vr4p-audit/runs/20260921T184141836982Z-diagnostic-dual_cube_to_matching_plates-hud-off",
+      "output": "/tmp/vr4p3-profile-a",
+      "diagnostic_only": true,
+      "measurement_samples": 120,
+      "tick_ms": {
+        "n": 120,
+        "mean": 94.71845133333333,
+        "stddev": 25.402486264357222,
+        "coefficient_of_variation": 0.26818941723361533,
+        "p50": 86.7226225,
+        "p90": 100.2367478,
+        "p95": 183.87981545,
+        "p99": 187.27635942,
+        "p99.9": 203.16112319800027,
+        "max": 205.287791
+      },
+      "timings_ms": {
+        "physics_only": {
+          "n": 120,
+          "mean": 13.336586441666668,
+          "stddev": 0.7105084054740831,
+          "coefficient_of_variation": 0.05327513217732282,
+          "p50": 13.166700500000001,
+          "p90": 14.397213,
+          "p95": 14.553926650000001,
+          "p99": 15.28117267,
+          "p99.9": 15.465517021000002,
+          "max": 15.488119999999999
+        },
+        "sim_render": {
+          "n": 120,
+          "mean": 62.83117524166667,
+          "stddev": 3.404168856953745,
+          "coefficient_of_variation": 0.05417961456013417,
+          "p50": 61.69384049999999,
+          "p90": 66.5211484,
+          "p95": 68.1176086,
+          "p99": 76.65655467,
+          "p99.9": 81.36554947700006,
+          "max": 81.92336399999999
+        },
+        "capture_boundary": {
+          "n": 120,
+          "mean": 2.883688066666666,
+          "stddev": 0.3860072911362101,
+          "coefficient_of_variation": 0.13385889257516206,
+          "p50": 2.7875829999999997,
+          "p90": 3.025582,
+          "p95": 3.5821511499999983,
+          "p99": 4.47383513,
+          "p99.9": 4.764714560000005,
+          "max": 4.803718
+        }
+      },
+      "counts": {
+        "camera_left_wrist": {
+          "1": 120
+        },
+        "camera_right_wrist": {
+          "1": 120
+        },
+        "camera_scene": {
+          "1": 120
+        },
+        "capture_boundary": {
+          "1": 120
+        },
+        "extract_left_wrist": {
+          "1": 120
+        },
+        "extract_right_wrist": {
+          "1": 120
+        },
+        "extract_scene": {
+          "1": 120
+        },
+        "hydra_drawable_left_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_right_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_scene": {
+          "4": 120
+        },
+        "kit_app_update": {
+          "4": 120
+        },
+        "physics_only": {
+          "4": 120
+        },
+        "rgb_tensor_d2h": {
+          "1": 120
+        },
+        "rig_update_no_acquisition": {
+          "4": 120
+        },
+        "scalar_tensor_d2h": {
+          "18": 120
+        },
+        "sim_render": {
+          "4": 120
+        },
+        "sim_step": {
+          "4": 120
+        },
+        "small_tensor_d2h": {
+          "17": 120
+        },
+        "visualizer_0": {
+          "4": 120
+        }
+      },
+      "camera_content_pass": null,
+      "camera_checked_boundaries": null,
+      "sensor_render_cadence_pass": false,
+      "runtime_smoke_result": {
+        "passed": true,
+        "status": "runtime_smoke_passed_physical_human_gate_required",
+        "physical_human_gate": "required_not_implied_by_runtime_smoke",
+        "canonical_d0_changed": false,
+        "capture_failed_attempts": 0,
+        "full_result_path": "/tmp/vr4p-audit/runs/20260921T184141836982Z-diagnostic-dual_cube_to_matching_plates-hud-off/result.json"
+      }
+    },
+    "profile-b": {
+      "name": "profile-b",
+      "run": "/tmp/vr4p-audit/runs/20260921T184255544706Z-diagnostic-dual_cube_to_matching_plates-hud-off",
+      "output": "/tmp/vr4p3-profile-b",
+      "diagnostic_only": true,
+      "measurement_samples": 120,
+      "tick_ms": {
+        "n": 120,
+        "mean": 46.09378784166666,
+        "stddev": 25.261442490989978,
+        "coefficient_of_variation": 0.5480444041128423,
+        "p50": 38.94216,
+        "p90": 42.97902870000001,
+        "p95": 136.57378565,
+        "p99": 142.19193434000002,
+        "p99.9": 146.48621083500007,
+        "max": 147.039446
+      },
+      "timings_ms": {
+        "physics_only": {
+          "n": 120,
+          "mean": 12.5066567,
+          "stddev": 0.685954079757697,
+          "coefficient_of_variation": 0.05484711831561643,
+          "p50": 12.328406000000001,
+          "p90": 13.272501000000002,
+          "p95": 13.8550393,
+          "p99": 15.082283430000002,
+          "p99.9": 15.329571068000003,
+          "max": 15.349733
+        },
+        "sim_render": {
+          "n": 120,
+          "mean": 15.860157625,
+          "stddev": 0.5275924015908536,
+          "coefficient_of_variation": 0.03326526848378997,
+          "p50": 15.741685,
+          "p90": 16.2229026,
+          "p95": 16.4780095,
+          "p99": 18.515515980000004,
+          "p99.9": 19.063192693000005,
+          "max": 19.09164
+        },
+        "capture_boundary": {
+          "n": 120,
+          "mean": 2.7146240833333337,
+          "stddev": 0.23143719035722574,
+          "coefficient_of_variation": 0.08525570511886126,
+          "p50": 2.6772739999999997,
+          "p90": 2.8813513,
+          "p95": 2.97995735,
+          "p99": 3.16296501,
+          "p99.9": 4.526553436000022,
+          "max": 4.709832
+        }
+      },
+      "counts": {
+        "camera_left_wrist": {
+          "1": 120
+        },
+        "camera_right_wrist": {
+          "1": 120
+        },
+        "camera_scene": {
+          "1": 120
+        },
+        "capture_boundary": {
+          "1": 120
+        },
+        "extract_left_wrist": {
+          "1": 120
+        },
+        "extract_right_wrist": {
+          "1": 120
+        },
+        "extract_scene": {
+          "1": 120
+        },
+        "hydra_drawable_left_wrist": {
+          "1": 120
+        },
+        "hydra_drawable_right_wrist": {
+          "1": 120
+        },
+        "hydra_drawable_scene": {
+          "1": 120
+        },
+        "kit_app_update": {
+          "1": 120
+        },
+        "physics_only": {
+          "4": 120
+        },
+        "rgb_tensor_d2h": {
+          "1": 120
+        },
+        "rig_update_no_acquisition": {
+          "4": 120
+        },
+        "scalar_tensor_d2h": {
+          "18": 120
+        },
+        "sim_render": {
+          "1": 120
+        },
+        "sim_step": {
+          "4": 120
+        },
+        "small_tensor_d2h": {
+          "17": 120
+        },
+        "visualizer_0": {
+          "1": 120
+        }
+      },
+      "camera_content_pass": null,
+      "camera_checked_boundaries": null,
+      "sensor_render_cadence_pass": true,
+      "runtime_smoke_result": {
+        "passed": true,
+        "status": "runtime_smoke_passed_physical_human_gate_required",
+        "physical_human_gate": "required_not_implied_by_runtime_smoke",
+        "canonical_d0_changed": false,
+        "capture_failed_attempts": 0,
+        "full_result_path": "/tmp/vr4p-audit/runs/20260921T184255544706Z-diagnostic-dual_cube_to_matching_plates-hud-off/result.json"
+      }
+    },
+    "rate30-sync": {
+      "name": "rate30-sync",
+      "run": "/tmp/vr4p-audit/runs/20260921T184359194116Z-diagnostic-dual_cube_to_matching_plates-hud-off",
+      "output": "/tmp/vr4p3-rate30-sync",
+      "diagnostic_only": true,
+      "measurement_samples": 120,
+      "tick_ms": {
+        "n": 120,
+        "mean": 85.3374591,
+        "stddev": 5.69482210727324,
+        "coefficient_of_variation": 0.06673297010870623,
+        "p50": 82.98790199999999,
+        "p90": 94.90426790000002,
+        "p95": 99.5112783,
+        "p99": 102.28002563,
+        "p99.9": 102.640743803,
+        "max": 102.659232
+      },
+      "timings_ms": {
+        "physics_only": {
+          "n": 120,
+          "mean": 13.087370316666666,
+          "stddev": 0.7781619720458819,
+          "coefficient_of_variation": 0.05945900155777655,
+          "p50": 12.9293815,
+          "p90": 14.0615074,
+          "p95": 14.45785145,
+          "p99": 15.799767890000002,
+          "p99.9": 16.173670142000006,
+          "max": 16.21508
+        },
+        "sim_render": {
+          "n": 120,
+          "mean": 59.84701534166667,
+          "stddev": 2.827004120332138,
+          "coefficient_of_variation": 0.04723717806464982,
+          "p50": 58.7496115,
+          "p90": 63.075946900000005,
+          "p95": 67.12738915,
+          "p99": 69.39804875,
+          "p99.9": 69.90924398000001,
+          "max": 69.965957
+        },
+        "capture_boundary": {
+          "n": 120,
+          "mean": 2.7505735833333333,
+          "stddev": 0.2542196362774092,
+          "coefficient_of_variation": 0.09242422664778464,
+          "p50": 2.6996285,
+          "p90": 2.9150803,
+          "p95": 3.1322344999999996,
+          "p99": 3.93553269,
+          "p99.9": 4.108442853000003,
+          "max": 4.130745
+        }
+      },
+      "counts": {
+        "camera_left_wrist": {
+          "1": 120
+        },
+        "camera_right_wrist": {
+          "1": 120
+        },
+        "camera_scene": {
+          "1": 120
+        },
+        "capture_boundary": {
+          "1": 120
+        },
+        "extract_left_wrist": {
+          "1": 120
+        },
+        "extract_right_wrist": {
+          "1": 120
+        },
+        "extract_scene": {
+          "1": 120
+        },
+        "hydra_drawable_left_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_right_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_scene": {
+          "4": 120
+        },
+        "kit_app_update": {
+          "4": 120
+        },
+        "physics_only": {
+          "4": 120
+        },
+        "rgb_tensor_d2h": {
+          "1": 120
+        },
+        "rig_update_no_acquisition": {
+          "4": 120
+        },
+        "scalar_tensor_d2h": {
+          "18": 120
+        },
+        "sim_render": {
+          "4": 120
+        },
+        "sim_step": {
+          "4": 120
+        },
+        "small_tensor_d2h": {
+          "17": 120
+        },
+        "visualizer_0": {
+          "4": 120
+        }
+      },
+      "camera_content_pass": true,
+      "camera_checked_boundaries": 15,
+      "sensor_render_cadence_pass": false,
+      "runtime_smoke_result": {
+        "passed": true,
+        "status": "runtime_smoke_passed_physical_human_gate_required",
+        "physical_human_gate": "required_not_implied_by_runtime_smoke",
+        "canonical_d0_changed": false,
+        "capture_failed_attempts": 0,
+        "full_result_path": "/tmp/vr4p-audit/runs/20260921T184359194116Z-diagnostic-dual_cube_to_matching_plates-hud-off/result.json"
+      }
+    },
+    "rate30-sync2": {
+      "name": "rate30-sync2",
+      "run": "/tmp/vr4p-audit/runs/20260921T184626049987Z-diagnostic-dual_cube_to_matching_plates-hud-off",
+      "output": "/tmp/vr4p3-rate30-sync2",
+      "diagnostic_only": true,
+      "measurement_samples": 120,
+      "tick_ms": {
+        "n": 120,
+        "mean": 85.93929305833332,
+        "stddev": 5.8397517032782424,
+        "coefficient_of_variation": 0.0679520565675863,
+        "p50": 83.488036,
+        "p90": 94.35069150000001,
+        "p95": 99.29953069999999,
+        "p99": 106.53401841,
+        "p99.9": 107.554327547,
+        "max": 107.615849
+      },
+      "timings_ms": {
+        "physics_only": {
+          "n": 120,
+          "mean": 13.022185066666664,
+          "stddev": 0.5192712746137972,
+          "coefficient_of_variation": 0.03987589424934482,
+          "p50": 12.903253,
+          "p90": 13.7103302,
+          "p95": 13.922869599999999,
+          "p99": 14.24429445,
+          "p99.9": 14.498229672000004,
+          "max": 14.530016
+        },
+        "sim_render": {
+          "n": 120,
+          "mean": 60.67521740833333,
+          "stddev": 3.598120847681366,
+          "coefficient_of_variation": 0.05930132600047657,
+          "p50": 59.335548,
+          "p90": 68.33978090000001,
+          "p95": 69.21080315,
+          "p99": 71.84151089000001,
+          "p99.9": 71.98118762700001,
+          "max": 71.982814
+        },
+        "capture_boundary": {
+          "n": 120,
+          "mean": 2.7414785499999996,
+          "stddev": 0.293064098981628,
+          "coefficient_of_variation": 0.10690001531532246,
+          "p50": 2.689498,
+          "p90": 2.8808696,
+          "p95": 3.01555525,
+          "p99": 4.24084131,
+          "p99.9": 4.539318048000005,
+          "max": 4.579184
+        }
+      },
+      "counts": {
+        "camera_left_wrist": {
+          "1": 120
+        },
+        "camera_right_wrist": {
+          "1": 120
+        },
+        "camera_scene": {
+          "1": 120
+        },
+        "capture_boundary": {
+          "1": 120
+        },
+        "extract_left_wrist": {
+          "1": 120
+        },
+        "extract_right_wrist": {
+          "1": 120
+        },
+        "extract_scene": {
+          "1": 120
+        },
+        "hydra_drawable_left_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_right_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_scene": {
+          "4": 120
+        },
+        "kit_app_update": {
+          "4": 120
+        },
+        "physics_only": {
+          "4": 120
+        },
+        "rgb_tensor_d2h": {
+          "1": 120
+        },
+        "rig_update_no_acquisition": {
+          "4": 120
+        },
+        "scalar_tensor_d2h": {
+          "18": 120
+        },
+        "sim_render": {
+          "4": 120
+        },
+        "sim_step": {
+          "4": 120
+        },
+        "small_tensor_d2h": {
+          "17": 120
+        },
+        "visualizer_0": {
+          "4": 120
+        }
+      },
+      "camera_content_pass": true,
+      "camera_checked_boundaries": 15,
+      "sensor_render_cadence_pass": false,
+      "runtime_smoke_result": {
+        "passed": true,
+        "status": "runtime_smoke_passed_physical_human_gate_required",
+        "physical_human_gate": "required_not_implied_by_runtime_smoke",
+        "canonical_d0_changed": false,
+        "capture_failed_attempts": 0,
+        "full_result_path": "/tmp/vr4p-audit/runs/20260921T184626049987Z-diagnostic-dual_cube_to_matching_plates-hud-off/result.json"
+      }
+    },
+    "rate30-async": {
+      "name": "rate30-async",
+      "run": "/tmp/vr4p-audit/runs/20260921T184740696938Z-diagnostic-dual_cube_to_matching_plates-hud-off",
+      "output": "/tmp/vr4p3-rate30-async",
+      "diagnostic_only": true,
+      "measurement_samples": 120,
+      "tick_ms": {
+        "n": 120,
+        "mean": 86.98378124166666,
+        "stddev": 6.175658610179632,
+        "coefficient_of_variation": 0.07099781731748159,
+        "p50": 84.1366395,
+        "p90": 97.8176816,
+        "p95": 99.17235579999999,
+        "p99": 104.80688246000001,
+        "p99.9": 106.39938780000001,
+        "max": 106.511343
+      },
+      "timings_ms": {
+        "physics_only": {
+          "n": 120,
+          "mean": 13.213552316666666,
+          "stddev": 0.6883196860941427,
+          "coefficient_of_variation": 0.05209194844795397,
+          "p50": 13.171458000000001,
+          "p90": 14.135234400000002,
+          "p95": 14.528184399999999,
+          "p99": 15.17540633,
+          "p99.9": 15.516993623000005,
+          "max": 15.554310000000001
+        },
+        "sim_render": {
+          "n": 120,
+          "mean": 61.087855741666665,
+          "stddev": 3.5024312807882034,
+          "coefficient_of_variation": 0.057334330011509525,
+          "p50": 59.719476,
+          "p90": 66.0186066,
+          "p95": 68.54642369999999,
+          "p99": 73.03299116000001,
+          "p99.9": 74.06388906200002,
+          "max": 74.155793
+        },
+        "capture_boundary": {
+          "n": 120,
+          "mean": 2.8156089749999995,
+          "stddev": 0.3262849883325683,
+          "coefficient_of_variation": 0.11588434020124132,
+          "p50": 2.7660665,
+          "p90": 2.9434217,
+          "p95": 3.3055850499999995,
+          "p99": 4.393396700000001,
+          "p99.9": 4.570639168000001,
+          "max": 4.582126
+        }
+      },
+      "counts": {
+        "camera_left_wrist": {
+          "1": 120
+        },
+        "camera_right_wrist": {
+          "1": 120
+        },
+        "camera_scene": {
+          "1": 120
+        },
+        "capture_boundary": {
+          "1": 120
+        },
+        "extract_left_wrist": {
+          "1": 120
+        },
+        "extract_right_wrist": {
+          "1": 120
+        },
+        "extract_scene": {
+          "1": 120
+        },
+        "hydra_drawable_left_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_right_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_scene": {
+          "4": 120
+        },
+        "kit_app_update": {
+          "4": 120
+        },
+        "physics_only": {
+          "4": 120
+        },
+        "rgb_tensor_d2h": {
+          "1": 120
+        },
+        "rig_update_no_acquisition": {
+          "4": 120
+        },
+        "scalar_tensor_d2h": {
+          "18": 120
+        },
+        "sim_render": {
+          "4": 120
+        },
+        "sim_step": {
+          "4": 120
+        },
+        "small_tensor_d2h": {
+          "17": 120
+        },
+        "visualizer_0": {
+          "4": 120
+        }
+      },
+      "camera_content_pass": true,
+      "camera_checked_boundaries": 15,
+      "sensor_render_cadence_pass": false,
+      "runtime_smoke_result": {
+        "passed": true,
+        "status": "runtime_smoke_passed_physical_human_gate_required",
+        "physical_human_gate": "required_not_implied_by_runtime_smoke",
+        "canonical_d0_changed": false,
+        "capture_failed_attempts": 0,
+        "full_result_path": "/tmp/vr4p-audit/runs/20260921T184740696938Z-diagnostic-dual_cube_to_matching_plates-hud-off/result.json"
+      }
+    },
+    "xr-inventory": {
+      "name": "xr-inventory",
+      "run": "/tmp/vr4p-audit/runs/20260921T184847636736Z-diagnostic-dual_cube_to_matching_plates-hud-off",
+      "output": "/tmp/vr4p3-xr-inventory",
+      "diagnostic_only": true,
+      "measurement_samples": 120,
+      "tick_ms": {
+        "n": 120,
+        "mean": 152.56690372499997,
+        "stddev": 5.749742816951981,
+        "coefficient_of_variation": 0.037686697944108664,
+        "p50": 150.8843715,
+        "p90": 163.1285134,
+        "p95": 165.66033375,
+        "p99": 171.10836242,
+        "p99.9": 171.934651136,
+        "max": 171.957482
+      },
+      "timings_ms": {
+        "physics_only": {
+          "n": 120,
+          "mean": 14.876779925,
+          "stddev": 0.8695406065292929,
+          "coefficient_of_variation": 0.058449517362830314,
+          "p50": 14.7979895,
+          "p90": 15.777400400000001,
+          "p95": 16.457391499999996,
+          "p99": 17.369085939999998,
+          "p99.9": 17.93794843300001,
+          "max": 18.005492
+        },
+        "sim_render": {
+          "n": 120,
+          "mean": 50.08974211666667,
+          "stddev": 4.533024976200775,
+          "coefficient_of_variation": 0.09049806975733007,
+          "p50": 48.768874,
+          "p90": 57.14511050000001,
+          "p95": 60.09029495,
+          "p99": 62.93993651000001,
+          "p99.9": 66.87609113400006,
+          "max": 67.37218
+        },
+        "capture_boundary": {
+          "n": 120,
+          "mean": 18.674411974999998,
+          "stddev": 0.6939639303745297,
+          "coefficient_of_variation": 0.03716121992508039,
+          "p50": 18.99966,
+          "p90": 19.156771000000003,
+          "p95": 19.223998299999998,
+          "p99": 19.37135845,
+          "p99.9": 19.419559906,
+          "max": 19.423847
+        }
+      },
+      "counts": {
+        "camera_left_wrist": {
+          "1": 120
+        },
+        "camera_right_wrist": {
+          "1": 120
+        },
+        "camera_scene": {
+          "1": 120
+        },
+        "capture_boundary": {
+          "1": 120
+        },
+        "extract_left_wrist": {
+          "1": 120
+        },
+        "extract_right_wrist": {
+          "1": 120
+        },
+        "extract_scene": {
+          "1": 120
+        },
+        "hydra_drawable_left_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_right_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_scene": {
+          "4": 120
+        },
+        "kit_app_update": {
+          "4": 120
+        },
+        "physics_only": {
+          "4": 120
+        },
+        "rgb_tensor_d2h": {
+          "1": 120
+        },
+        "rig_update_no_acquisition": {
+          "4": 120
+        },
+        "scalar_tensor_d2h": {
+          "18": 120
+        },
+        "sim_render": {
+          "4": 120
+        },
+        "sim_step": {
+          "4": 120
+        },
+        "small_tensor_d2h": {
+          "17": 120
+        },
+        "visualizer_0": {
+          "4": 120
+        }
+      },
+      "camera_content_pass": null,
+      "camera_checked_boundaries": null,
+      "sensor_render_cadence_pass": false,
+      "runtime_smoke_result": {
+        "passed": true,
+        "status": "runtime_smoke_passed_physical_human_gate_required",
+        "physical_human_gate": "required_not_implied_by_runtime_smoke",
+        "canonical_d0_changed": false,
+        "capture_failed_attempts": 0,
+        "full_result_path": "/tmp/vr4p-audit/runs/20260921T184847636736Z-diagnostic-dual_cube_to_matching_plates-hud-off/result.json"
+      }
+    },
+    "rate30-xr-async": {
+      "name": "rate30-xr-async",
+      "run": "/tmp/vr4p-audit/runs/20260921T190558820972Z-diagnostic-dual_cube_to_matching_plates-hud-off",
+      "output": "/tmp/vr4p3-rate30-xr-async",
+      "diagnostic_only": true,
+      "measurement_samples": 120,
+      "tick_ms": {
+        "n": 120,
+        "mean": 152.6747321166667,
+        "stddev": 9.69015878177075,
+        "coefficient_of_variation": 0.06346930266342958,
+        "p50": 150.82359350000002,
+        "p90": 156.27479180000003,
+        "p95": 162.8286403,
+        "p99": 171.97091288,
+        "p99.9": 236.05819394000105,
+        "max": 244.661387
+      },
+      "timings_ms": {
+        "physics_only": {
+          "n": 120,
+          "mean": 14.764134466666667,
+          "stddev": 0.7082694715297094,
+          "coefficient_of_variation": 0.04797229889288709,
+          "p50": 14.827986,
+          "p90": 15.5662897,
+          "p95": 15.99026355,
+          "p99": 16.412664980000002,
+          "p99.9": 17.018243988000012,
+          "max": 17.096278
+        },
+        "sim_render": {
+          "n": 120,
+          "mean": 51.161736125,
+          "stddev": 8.419799186632787,
+          "coefficient_of_variation": 0.16457219446308982,
+          "p50": 50.016615,
+          "p90": 56.0378274,
+          "p95": 59.145006800000004,
+          "p99": 64.02389732,
+          "p99.9": 122.48559242100094,
+          "max": 130.321545
+        },
+        "capture_boundary": {
+          "n": 120,
+          "mean": 18.42599243333333,
+          "stddev": 0.8716972171517158,
+          "coefficient_of_variation": 0.04730801992378885,
+          "p50": 18.8508645,
+          "p90": 19.0471012,
+          "p95": 19.11477305,
+          "p99": 20.21843777,
+          "p99.9": 20.25361138,
+          "max": 20.258131
+        }
+      },
+      "counts": {
+        "camera_left_wrist": {
+          "1": 120
+        },
+        "camera_right_wrist": {
+          "1": 120
+        },
+        "camera_scene": {
+          "1": 120
+        },
+        "capture_boundary": {
+          "1": 120
+        },
+        "extract_left_wrist": {
+          "1": 120
+        },
+        "extract_right_wrist": {
+          "1": 120
+        },
+        "extract_scene": {
+          "1": 120
+        },
+        "hydra_drawable_left_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_right_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_scene": {
+          "4": 120
+        },
+        "kit_app_update": {
+          "4": 120
+        },
+        "physics_only": {
+          "4": 120
+        },
+        "rgb_tensor_d2h": {
+          "1": 120
+        },
+        "rig_update_no_acquisition": {
+          "4": 120
+        },
+        "scalar_tensor_d2h": {
+          "18": 120
+        },
+        "sim_render": {
+          "4": 120
+        },
+        "sim_step": {
+          "4": 120
+        },
+        "small_tensor_d2h": {
+          "17": 120
+        },
+        "visualizer_0": {
+          "4": 120
+        }
+      },
+      "camera_content_pass": false,
+      "camera_checked_boundaries": 15,
+      "sensor_render_cadence_pass": false,
+      "runtime_smoke_result": {
+        "passed": true,
+        "status": "runtime_smoke_passed_physical_human_gate_required",
+        "physical_human_gate": "required_not_implied_by_runtime_smoke",
+        "canonical_d0_changed": false,
+        "capture_failed_attempts": 0,
+        "full_result_path": "/tmp/vr4p-audit/runs/20260921T190558820972Z-diagnostic-dual_cube_to_matching_plates-hud-off/result.json"
+      }
+    },
+    "xr-baseline-content": {
+      "name": "xr-baseline-content",
+      "run": "/tmp/vr4p-audit/runs/20260921T190757677814Z-diagnostic-dual_cube_to_matching_plates-hud-off",
+      "output": "/tmp/vr4p3-xr-baseline-content",
+      "diagnostic_only": true,
+      "measurement_samples": 120,
+      "tick_ms": {
+        "n": 120,
+        "mean": 150.35725486666666,
+        "stddev": 4.6597371939379295,
+        "coefficient_of_variation": 0.03099110314344377,
+        "p50": 149.138779,
+        "p90": 153.8338999,
+        "p95": 163.38452245,
+        "p99": 166.4818334,
+        "p99.9": 167.66402756500003,
+        "max": 167.78081
+      },
+      "timings_ms": {
+        "physics_only": {
+          "n": 120,
+          "mean": 14.918724908333333,
+          "stddev": 0.7246752321606849,
+          "coefficient_of_variation": 0.048574877317825886,
+          "p50": 14.868281,
+          "p90": 15.9506772,
+          "p95": 16.08434015,
+          "p99": 16.757493659999998,
+          "p99.9": 17.412595911000007,
+          "max": 17.485975
+        },
+        "sim_render": {
+          "n": 120,
+          "mean": 47.681128566666665,
+          "stddev": 3.5203914618573453,
+          "coefficient_of_variation": 0.0738319659723493,
+          "p50": 47.062,
+          "p90": 52.817260499999996,
+          "p95": 54.99341525,
+          "p99": 57.024791560000004,
+          "p99.9": 57.234912693000005,
+          "max": 57.243249000000006
+        },
+        "capture_boundary": {
+          "n": 120,
+          "mean": 18.670369100000002,
+          "stddev": 0.614262268583243,
+          "coefficient_of_variation": 0.03290038163108639,
+          "p50": 18.863307499999998,
+          "p90": 19.037476599999998,
+          "p95": 19.1159171,
+          "p99": 19.45633592,
+          "p99.9": 20.00145441700001,
+          "max": 20.070029
+        }
+      },
+      "counts": {
+        "camera_left_wrist": {
+          "1": 120
+        },
+        "camera_right_wrist": {
+          "1": 120
+        },
+        "camera_scene": {
+          "1": 120
+        },
+        "capture_boundary": {
+          "1": 120
+        },
+        "extract_left_wrist": {
+          "1": 120
+        },
+        "extract_right_wrist": {
+          "1": 120
+        },
+        "extract_scene": {
+          "1": 120
+        },
+        "hydra_drawable_left_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_right_wrist": {
+          "4": 120
+        },
+        "hydra_drawable_scene": {
+          "4": 120
+        },
+        "kit_app_update": {
+          "4": 120
+        },
+        "physics_only": {
+          "4": 120
+        },
+        "rgb_tensor_d2h": {
+          "1": 120
+        },
+        "rig_update_no_acquisition": {
+          "4": 120
+        },
+        "scalar_tensor_d2h": {
+          "18": 120
+        },
+        "sim_render": {
+          "4": 120
+        },
+        "sim_step": {
+          "4": 120
+        },
+        "small_tensor_d2h": {
+          "17": 120
+        },
+        "visualizer_0": {
+          "4": 120
+        }
+      },
+      "camera_content_pass": false,
+      "camera_checked_boundaries": 15,
+      "sensor_render_cadence_pass": false,
+      "runtime_smoke_result": {
+        "passed": true,
+        "status": "runtime_smoke_passed_physical_human_gate_required",
+        "physical_human_gate": "required_not_implied_by_runtime_smoke",
+        "canonical_d0_changed": false,
+        "capture_failed_attempts": 0,
+        "full_result_path": "/tmp/vr4p-audit/runs/20260921T190757677814Z-diagnostic-dual_cube_to_matching_plates-hud-off/result.json"
+      }
+    }
+  },
+  "long_baseline": [
+    {
+      "output": "/tmp/vr4p3-long-a1",
+      "run": "/tmp/vr4p-audit/runs/20260921T185022035883Z-diagnostic-dual_cube_to_matching_plates-hud-off",
+      "warmup": 300,
+      "samples": 3000,
+      "tick_ms": {
+        "n": 3000,
+        "mean": 85.70338426699999,
+        "stddev": 5.944441584273317,
+        "coefficient_of_variation": 0.06936064001573178,
+        "p50": 83.4878195,
+        "p90": 93.92437890000001,
+        "p95": 100.33814499999998,
+        "p99": 106.60481693,
+        "p99.9": 120.07510738800036,
+        "max": 153.948381
+      },
+      "control_hz": 11.668150663509435,
+      "rtf": 0.38893835545031447,
+      "wall_elapsed_s": 257.8945419,
+      "wall_control_hz": 11.632661854329847,
+      "wall_rtf": 0.3877553951443282,
+      "stages": {
+        "camera_observation": {
+          "n": 3000,
+          "mean": 1.5330402723333334,
+          "stddev": 0.12053945356073978,
+          "coefficient_of_variation": 0.07862771496359655,
+          "p50": 1.5201835,
+          "p90": 1.5859407,
+          "p95": 1.6467394999999998,
+          "p99": 2.083026799999999,
+          "p99.9": 2.4013477810000694,
+          "max": 3.745992
+        },
+        "command_processing": {
+          "n": 3000,
+          "mean": 0.081549386,
+          "stddev": 0.011876407457828825,
+          "coefficient_of_variation": 0.1456345417221023,
+          "p50": 0.0791315,
+          "p90": 0.0882841,
+          "p95": 0.09466859999999995,
+          "p99": 0.13837561999999995,
+          "p99.9": 0.1734737500000038,
+          "max": 0.223311
+        },
+        "control_events": {
+          "n": 3000,
+          "mean": 0.003351608,
+          "stddev": 0.0006964777096715705,
+          "coefficient_of_variation": 0.20780404798877747,
+          "p50": 0.0032055,
+          "p90": 0.0036100999999999998,
+          "p95": 0.004052449999999997,
+          "p99": 0.007298059999999974,
+          "p99.9": 0.008800112000000023,
+          "max": 0.009702
+        },
+        "gpu_probe": {
+          "n": 3000,
+          "mean": 1.150743186,
+          "stddev": 4.310690258054267,
+          "coefficient_of_variation": 3.7460054602089707,
+          "p50": 0.001067,
+          "p90": 0.001503,
+          "p95": 16.37839805,
+          "p99": 18.4579132,
+          "p99.9": 19.15663658800001,
+          "max": 20.294169
+        },
+        "ik_apply": {
+          "n": 3000,
+          "mean": 2.577185950333333,
+          "stddev": 0.330566801589441,
+          "coefficient_of_variation": 0.1282665698013314,
+          "p50": 2.5216155000000002,
+          "p90": 2.7298934999999998,
+          "p95": 2.8243900999999996,
+          "p99": 4.493197919999974,
+          "p99.9": 5.238206161000014,
+          "max": 5.436488
+        },
+        "runtime_bookkeeping": {
+          "n": 3000,
+          "mean": 0.013819332666666668,
+          "stddev": 0.0019301567952935055,
+          "coefficient_of_variation": 0.13967076716730306,
+          "p50": 0.0134515,
+          "p90": 0.014891399999999999,
+          "p95": 0.0178592,
+          "p99": 0.020248939999999976,
+          "p99.9": 0.03876732400000007,
+          "max": 0.044306
+        },
+        "simulation_advance": {
+          "n": 3000,
+          "mean": 78.26265046433335,
+          "stddev": 3.864167428066186,
+          "coefficient_of_variation": 0.04937434913256872,
+          "p50": 77.086936,
+          "p90": 82.11482609999999,
+          "p95": 86.844366,
+          "p99": 91.90516722999999,
+          "p99.9": 110.39843928800076,
+          "max": 146.227848
+        },
+        "status_emit": {
+          "n": 3000,
+          "mean": 0.001334203,
+          "stddev": 0.005806243359273422,
+          "coefficient_of_variation": 4.3518440291870295,
+          "p50": 0.000241,
+          "p90": 0.000415,
+          "p95": 0.0006203499999999981,
+          "p99": 0.032169279999999946,
+          "p99.9": 0.04462617600000004,
+          "max": 0.046406
+        },
+        "tcp_pose_after": {
+          "n": 3000,
+          "mean": 0.6445770396666667,
+          "stddev": 0.10456680351727007,
+          "coefficient_of_variation": 0.16222545496089222,
+          "p50": 0.6219589999999999,
+          "p90": 0.6683241,
+          "p95": 0.8062335499999999,
+          "p99": 1.2225816199999997,
+          "p99.9": 1.4146588390000017,
+          "max": 1.745815
+        },
+        "tcp_pose_before": {
+          "n": 3000,
+          "mean": 0.4209773973333334,
+          "stddev": 0.09410539491566289,
+          "coefficient_of_variation": 0.22354025539558708,
+          "p50": 0.39666650000000003,
+          "p90": 0.4839568,
+          "p95": 0.5469272999999999,
+          "p99": 0.9403752399999997,
+          "p99.9": 1.0816156110000044,
+          "max": 1.138307
+        },
+        "teleop_advance": {
+          "n": 3000,
+          "mean": 0.991926537,
+          "stddev": 0.17203013910016923,
+          "coefficient_of_variation": 0.17343032239107162,
+          "p50": 0.9550080000000001,
+          "p90": 1.0657248000000001,
+          "p95": 1.2056315499999997,
+          "p99": 1.7915835799999997,
+          "p99.9": 2.580377824000015,
+          "max": 3.834829
+        }
+      },
+      "nested": {
+        "camera_update": {
+          "n": 3000,
+          "mean": 2.8035258753333334,
+          "stddev": 0.3231218617209176,
+          "coefficient_of_variation": 0.11525553038903166,
+          "p50": 2.7493285,
+          "p90": 2.9150853000000003,
+          "p95": 3.02499065,
+          "p99": 4.43281435,
+          "p99.9": 4.676459169000007,
+          "max": 7.72871
+        },
+        "experiment_update": {
+          "n": 3000,
+          "mean": 0.013071284666666665,
+          "stddev": 0.0024836033658492736,
+          "coefficient_of_variation": 0.1900045350693615,
+          "p50": 0.012711,
+          "p90": 0.0149302,
+          "p95": 0.016296099999999997,
+          "p99": 0.01940604,
+          "p99.9": 0.02829361600000013,
+          "max": 0.100523
+        },
+        "physics_probe_update": {
+          "n": 3000,
+          "mean": 0.008002160666666666,
+          "stddev": 0.0013961636250127793,
+          "coefficient_of_variation": 0.1744733307878405,
+          "p50": 0.0077325,
+          "p90": 0.0092529,
+          "p95": 0.01020125,
+          "p99": 0.01309861999999989,
+          "p99.9": 0.01925322200000005,
+          "max": 0.034277
+        },
+        "physics_target_write": {
+          "n": 3000,
+          "mean": 0.7665235646666667,
+          "stddev": 0.09561845193659747,
+          "coefficient_of_variation": 0.12474300379555646,
+          "p50": 0.733305,
+          "p90": 0.8992897,
+          "p95": 0.9745527499999999,
+          "p99": 1.1134394199999997,
+          "p99.9": 1.4411267770000062,
+          "max": 1.73466
+        },
+        "robot_update": {
+          "n": 3000,
+          "mean": 0.972780208,
+          "stddev": 0.07885694190811042,
+          "coefficient_of_variation": 0.08106347277586719,
+          "p50": 0.9465375,
+          "p90": 1.0737724,
+          "p95": 1.1266990999999997,
+          "p99": 1.2781260699999997,
+          "p99.9": 1.4442313340000017,
+          "max": 1.660812
+        },
+        "sim_step": {
+          "n": 3000,
+          "mean": 73.67234001,
+          "stddev": 3.6939287739750806,
+          "coefficient_of_variation": 0.05013996804599502,
+          "p50": 72.593705,
+          "p90": 77.0943432,
+          "p95": 82.30588895,
+          "p99": 86.23122910999996,
+          "p99.9": 102.69937797500131,
+          "max": 141.063132
+        }
+      },
+      "observed_times_ms": {
+        "physics_only": {
+          "n": 3000,
+          "mean": 12.983064617333332,
+          "stddev": 0.6126631471871777,
+          "coefficient_of_variation": 0.04718940906827407,
+          "p50": 12.893792000000001,
+          "p90": 13.661186299999999,
+          "p95": 13.966023199999999,
+          "p99": 14.801686789999987,
+          "p99.9": 17.01941999100015,
+          "max": 24.610273000000003
+        },
+        "sim_render": {
+          "n": 3000,
+          "mean": 60.267547486666665,
+          "stddev": 3.4032428885778985,
+          "coefficient_of_variation": 0.05646891288102967,
+          "p50": 59.242909499999996,
+          "p90": 63.213086999999994,
+          "p95": 68.71783494999998,
+          "p99": 71.57081165999995,
+          "p99.9": 84.01154679800035,
+          "max": 126.396093
+        },
+        "capture_boundary": {
+          "n": 3000,
+          "mean": 2.783820510666667,
+          "stddev": 0.3222108732678977,
+          "coefficient_of_variation": 0.1157441264741364,
+          "p50": 2.730008,
+          "p90": 2.8954128,
+          "p95": 3.0052166999999996,
+          "p99": 4.410340469999999,
+          "p99.9": 4.653106678000007,
+          "max": 7.702537
+        }
+      },
+      "counts": {
+        "camera_left_wrist": [
+          1
+        ],
+        "camera_right_wrist": [
+          1
+        ],
+        "camera_scene": [
+          1
+        ],
+        "capture_boundary": [
+          1
+        ],
+        "extract_left_wrist": [
+          1
+        ],
+        "extract_right_wrist": [
+          1
+        ],
+        "extract_scene": [
+          1
+        ],
+        "hydra_drawable_left_wrist": [
+          4
+        ],
+        "hydra_drawable_right_wrist": [
+          4
+        ],
+        "hydra_drawable_scene": [
+          4
+        ],
+        "kit_app_update": [
+          4
+        ],
+        "physics_only": [
+          4
+        ],
+        "rgb_tensor_d2h": [
+          1
+        ],
+        "rig_update_no_acquisition": [
+          4
+        ],
+        "scalar_tensor_d2h": [
+          18
+        ],
+        "sim_render": [
+          4
+        ],
+        "sim_step": [
+          4
+        ],
+        "small_tensor_d2h": [
+          17
+        ],
+        "visualizer_0": [
+          4
+        ]
+      },
+      "rolling": {
+        "100": {
+          "window_count": 2901,
+          "min_control_hz": 11.354820941301977,
+          "max_mean_latency_ms": 88.06831963,
+          "rtf_min": 0.37849403137673254,
+          "rtf_max": 0.39498843712606857,
+          "rtf_first": 0.39007888978286587,
+          "rtf_last": 0.3887416152229173,
+          "rtf_drift_last_minus_first": -0.001337274559948587
+        },
+        "300": {
+          "window_count": 2701,
+          "min_control_hz": 11.52415990974536,
+          "max_mean_latency_ms": 86.7742211,
+          "rtf_min": 0.38413866365817867,
+          "rtf_max": 0.3925652315598558,
+          "rtf_first": 0.3901392724148941,
+          "rtf_last": 0.38970050741241774,
+          "rtf_drift_last_minus_first": -0.0004387650024763601
+        }
+      },
+      "runtime_smoke_result": {
+        "passed": true,
+        "status": "runtime_smoke_passed_physical_human_gate_required",
+        "physical_human_gate": "required_not_implied_by_runtime_smoke",
+        "canonical_d0_changed": false,
+        "capture_failed_attempts": 0,
+        "full_result_path": "/tmp/vr4p-audit/runs/20260921T185022035883Z-diagnostic-dual_cube_to_matching_plates-hud-off/result.json"
+      }
+    },
+    {
+      "output": "/tmp/vr4p3-long-a2",
+      "run": "/tmp/vr4p-audit/runs/20260921T185525298928Z-diagnostic-dual_cube_to_matching_plates-hud-off",
+      "warmup": 300,
+      "samples": 3000,
+      "tick_ms": {
+        "n": 3000,
+        "mean": 85.48339486133334,
+        "stddev": 6.1754185599300975,
+        "coefficient_of_variation": 0.07224114776849394,
+        "p50": 83.3161975,
+        "p90": 93.32033489999999,
+        "p95": 99.83566889999997,
+        "p99": 106.86545007999997,
+        "p99.9": 143.6197877370021,
+        "max": 170.043384
+      },
+      "control_hz": 11.698178361097467,
+      "rtf": 0.3899392787032489,
+      "wall_elapsed_s": 257.215453698,
+      "wall_control_hz": 11.66337386369615,
+      "wall_rtf": 0.38877912878987164,
+      "stages": {
+        "camera_observation": {
+          "n": 3000,
+          "mean": 1.5252326613333334,
+          "stddev": 0.09540259387864443,
+          "coefficient_of_variation": 0.06254953509535066,
+          "p50": 1.5181265,
+          "p90": 1.5753633,
+          "p95": 1.6251284,
+          "p99": 2.0454457999999973,
+          "p99.9": 2.295964202000004,
+          "max": 2.587832
+        },
+        "command_processing": {
+          "n": 3000,
+          "mean": 0.08031556233333333,
+          "stddev": 0.013093246352075049,
+          "coefficient_of_variation": 0.16302253226758479,
+          "p50": 0.077816,
+          "p90": 0.08634420000000001,
+          "p95": 0.09205769999999998,
+          "p99": 0.14161301999999995,
+          "p99.9": 0.21024420500000207,
+          "max": 0.280236
+        },
+        "control_events": {
+          "n": 3000,
+          "mean": 0.0033357510000000005,
+          "stddev": 0.0007464792848922586,
+          "coefficient_of_variation": 0.22378147676258164,
+          "p50": 0.003197,
+          "p90": 0.003579,
+          "p95": 0.003945,
+          "p99": 0.007146229999999994,
+          "p99.9": 0.009973062000000829,
+          "max": 0.018625
+        },
+        "gpu_probe": {
+          "n": 3000,
+          "mean": 1.1544519226666667,
+          "stddev": 4.325440650718637,
+          "coefficient_of_variation": 3.7467481891556886,
+          "p50": 0.001096,
+          "p90": 0.001516,
+          "p95": 16.412811749999996,
+          "p99": 18.480324419999995,
+          "p99.9": 19.309543150000085,
+          "max": 20.823603
+        },
+        "ik_apply": {
+          "n": 3000,
+          "mean": 2.5169645683333335,
+          "stddev": 0.375624312790876,
+          "coefficient_of_variation": 0.1492370284098216,
+          "p50": 2.455152,
+          "p90": 2.6542283,
+          "p95": 2.74722405,
+          "p99": 4.706145949999989,
+          "p99.9": 5.684049159000093,
+          "max": 8.340971
+        },
+        "runtime_bookkeeping": {
+          "n": 3000,
+          "mean": 0.014020965666666666,
+          "stddev": 0.002365250879518332,
+          "coefficient_of_variation": 0.16869386429933717,
+          "p50": 0.0137235,
+          "p90": 0.015007099999999999,
+          "p95": 0.015824449999999993,
+          "p99": 0.02041707,
+          "p99.9": 0.028632650000005228,
+          "max": 0.094324
+        },
+        "simulation_advance": {
+          "n": 3000,
+          "mean": 78.14760937833334,
+          "stddev": 4.239537547990322,
+          "coefficient_of_variation": 0.05425038055182973,
+          "p50": 77.030114,
+          "p90": 81.3608765,
+          "p95": 86.2767289,
+          "p99": 92.39664001999988,
+          "p99.9": 137.61226572400207,
+          "max": 162.621759
+        },
+        "status_emit": {
+          "n": 3000,
+          "mean": 0.0013820563333333334,
+          "stddev": 0.005925301627339451,
+          "coefficient_of_variation": 4.287308327764341,
+          "p50": 0.000273,
+          "p90": 0.0004780999999999999,
+          "p95": 0.0006383999999999978,
+          "p99": 0.03180383999999998,
+          "p99.9": 0.05100077000000036,
+          "max": 0.056272
+        },
+        "tcp_pose_after": {
+          "n": 3000,
+          "mean": 0.624422461,
+          "stddev": 0.08979516874913357,
+          "coefficient_of_variation": 0.14380515493521553,
+          "p50": 0.6082544999999999,
+          "p90": 0.6437533999999999,
+          "p95": 0.7123381999999993,
+          "p99": 1.1941294299999994,
+          "p99.9": 1.348351158000002,
+          "max": 1.862211
+        },
+        "tcp_pose_before": {
+          "n": 3000,
+          "mean": 0.40089011733333335,
+          "stddev": 0.09329988266594655,
+          "coefficient_of_variation": 0.23273181011935318,
+          "p50": 0.37790650000000003,
+          "p90": 0.46407089999999995,
+          "p95": 0.5230904999999999,
+          "p99": 0.9344814699999996,
+          "p99.9": 1.0692514620000007,
+          "max": 2.08715
+        },
+        "teleop_advance": {
+          "n": 3000,
+          "mean": 0.9926030463333333,
+          "stddev": 0.16890154185544676,
+          "coefficient_of_variation": 0.17016020903760826,
+          "p50": 0.9554020000000001,
+          "p90": 1.0721612,
+          "p95": 1.1955863999999992,
+          "p99": 1.7496903299999986,
+          "p99.9": 2.589502034000009,
+          "max": 3.83537
+        }
+      },
+      "nested": {
+        "camera_update": {
+          "n": 3000,
+          "mean": 2.8018122263333334,
+          "stddev": 0.287999985028533,
+          "coefficient_of_variation": 0.10279060899289169,
+          "p50": 2.7571909999999997,
+          "p90": 2.90132,
+          "p95": 2.9959174500000003,
+          "p99": 4.434323029999999,
+          "p99.9": 4.6130190050000035,
+          "max": 4.744324
+        },
+        "experiment_update": {
+          "n": 3000,
+          "mean": 0.013925188000000002,
+          "stddev": 0.0030671716597955325,
+          "coefficient_of_variation": 0.22026070023582678,
+          "p50": 0.013545999999999999,
+          "p90": 0.015910300000000002,
+          "p95": 0.01723459999999999,
+          "p99": 0.02027211,
+          "p99.9": 0.03001820000000065,
+          "max": 0.147564
+        },
+        "physics_probe_update": {
+          "n": 3000,
+          "mean": 0.008910299666666666,
+          "stddev": 0.0011639265564786212,
+          "coefficient_of_variation": 0.13062709448851173,
+          "p50": 0.008734,
+          "p90": 0.010105,
+          "p95": 0.010757049999999999,
+          "p99": 0.013379609999999988,
+          "p99.9": 0.01671523200000025,
+          "max": 0.019387
+        },
+        "physics_target_write": {
+          "n": 3000,
+          "mean": 0.772885645,
+          "stddev": 0.0953375453690621,
+          "coefficient_of_variation": 0.12335271845948452,
+          "p50": 0.7388175,
+          "p90": 0.9034357,
+          "p95": 0.9674529999999999,
+          "p99": 1.1363748999999999,
+          "p99.9": 1.4374934600000333,
+          "max": 1.786222
+        },
+        "robot_update": {
+          "n": 3000,
+          "mean": 0.9818413983333333,
+          "stddev": 0.07885902999716031,
+          "coefficient_of_variation": 0.08031748318111538,
+          "p50": 0.9565565,
+          "p90": 1.0795282,
+          "p95": 1.1233857500000002,
+          "p99": 1.25924284,
+          "p99.9": 1.5850474390000162,
+          "max": 1.772339
+        },
+        "sim_step": {
+          "n": 3000,
+          "mean": 73.54129552533334,
+          "stddev": 4.101826290370344,
+          "coefficient_of_variation": 0.055775823108220275,
+          "p50": 72.49947750000001,
+          "p90": 76.4963044,
+          "p95": 81.80346995000001,
+          "p99": 86.22924721,
+          "p99.9": 133.05385265200198,
+          "max": 157.72207899999998
+        }
+      },
+      "observed_times_ms": {
+        "physics_only": {
+          "n": 3000,
+          "mean": 13.020750629333333,
+          "stddev": 0.5970324835370139,
+          "coefficient_of_variation": 0.0458523859747387,
+          "p50": 12.949375,
+          "p90": 13.6814479,
+          "p95": 13.9617648,
+          "p99": 15.005001269999969,
+          "p99.9": 17.324837951000053,
+          "max": 20.775899000000003
+        },
+        "sim_render": {
+          "n": 3000,
+          "mean": 60.100862338333336,
+          "stddev": 3.804196571784898,
+          "coefficient_of_variation": 0.0632968716882872,
+          "p50": 59.142142500000006,
+          "p90": 62.4825064,
+          "p95": 68.3463684,
+          "p99": 71.09057611999998,
+          "p99.9": 119.58309495900126,
+          "max": 139.568668
+        },
+        "capture_boundary": {
+          "n": 3000,
+          "mean": 2.7807111703333334,
+          "stddev": 0.28709196697412315,
+          "coefficient_of_variation": 0.10324408016087067,
+          "p50": 2.736416,
+          "p90": 2.8790402999999998,
+          "p95": 2.9751480999999993,
+          "p99": 4.40990652,
+          "p99.9": 4.589087430000002,
+          "max": 4.720837
+        }
+      },
+      "counts": {
+        "camera_left_wrist": [
+          1
+        ],
+        "camera_right_wrist": [
+          1
+        ],
+        "camera_scene": [
+          1
+        ],
+        "capture_boundary": [
+          1
+        ],
+        "extract_left_wrist": [
+          1
+        ],
+        "extract_right_wrist": [
+          1
+        ],
+        "extract_scene": [
+          1
+        ],
+        "hydra_drawable_left_wrist": [
+          4
+        ],
+        "hydra_drawable_right_wrist": [
+          4
+        ],
+        "hydra_drawable_scene": [
+          4
+        ],
+        "kit_app_update": [
+          4
+        ],
+        "physics_only": [
+          4
+        ],
+        "rgb_tensor_d2h": [
+          1
+        ],
+        "rig_update_no_acquisition": [
+          4
+        ],
+        "scalar_tensor_d2h": [
+          18
+        ],
+        "sim_render": [
+          4
+        ],
+        "sim_step": [
+          4
+        ],
+        "small_tensor_d2h": [
+          17
+        ],
+        "visualizer_0": [
+          4
+        ]
+      },
+      "rolling": {
+        "100": {
+          "window_count": 2901,
+          "min_control_hz": 11.377213961807149,
+          "max_mean_latency_ms": 87.89498056000001,
+          "rtf_min": 0.37924046539357165,
+          "rtf_max": 0.3954550772844632,
+          "rtf_first": 0.39368055967593935,
+          "rtf_last": 0.38858280913338494,
+          "rtf_drift_last_minus_first": -0.005097750542554402
+        },
+        "300": {
+          "window_count": 2701,
+          "min_control_hz": 11.570354355581214,
+          "max_mean_latency_ms": 86.42777647666668,
+          "rtf_min": 0.3856784785193738,
+          "rtf_max": 0.3937452808663412,
+          "rtf_first": 0.3912610067488386,
+          "rtf_last": 0.3905305913347488,
+          "rtf_drift_last_minus_first": -0.0007304154140898023
+        }
+      },
+      "runtime_smoke_result": {
+        "passed": true,
+        "status": "runtime_smoke_passed_physical_human_gate_required",
+        "physical_human_gate": "required_not_implied_by_runtime_smoke",
+        "canonical_d0_changed": false,
+        "capture_failed_attempts": 0,
+        "full_result_path": "/tmp/vr4p-audit/runs/20260921T185525298928Z-diagnostic-dual_cube_to_matching_plates-hud-off/result.json"
+      }
+    },
+    {
+      "output": "/tmp/vr4p3-long-a3",
+      "run": "/tmp/vr4p-audit/runs/20260921T190028033147Z-diagnostic-dual_cube_to_matching_plates-hud-off",
+      "warmup": 300,
+      "samples": 3000,
+      "tick_ms": {
+        "n": 3000,
+        "mean": 85.57000952066667,
+        "stddev": 5.768201985486438,
+        "coefficient_of_variation": 0.06740915441984746,
+        "p50": 83.3960455,
+        "p90": 93.80834589999999,
+        "p95": 99.65732824999998,
+        "p99": 104.93838133999999,
+        "p99.9": 119.98462039300007,
+        "max": 148.496304
+      },
+      "control_hz": 11.686337369852486,
+      "rtf": 0.3895445789950829,
+      "wall_elapsed_s": 257.486909246,
+      "wall_control_hz": 11.651077752981356,
+      "wall_rtf": 0.38836925843271186,
+      "stages": {
+        "camera_observation": {
+          "n": 3000,
+          "mean": 1.5322786826666663,
+          "stddev": 0.10630266658714546,
+          "coefficient_of_variation": 0.0693755436198747,
+          "p50": 1.52438,
+          "p90": 1.5857238,
+          "p95": 1.6255528,
+          "p99": 2.090809469999999,
+          "p99.9": 2.2795994060000275,
+          "max": 3.322842
+        },
+        "command_processing": {
+          "n": 3000,
+          "mean": 0.080195512,
+          "stddev": 0.011897654978994351,
+          "coefficient_of_variation": 0.14835811484057052,
+          "p50": 0.07780999999999999,
+          "p90": 0.0863831,
+          "p95": 0.09124225,
+          "p99": 0.13944514999999982,
+          "p99.9": 0.18274496600000734,
+          "max": 0.245077
+        },
+        "control_events": {
+          "n": 3000,
+          "mean": 0.0036085019999999995,
+          "stddev": 0.0008054343226765184,
+          "coefficient_of_variation": 0.22320462138486233,
+          "p50": 0.003462,
+          "p90": 0.0039362,
+          "p95": 0.004297049999999999,
+          "p99": 0.007596139999999997,
+          "p99.9": 0.009098683000000342,
+          "max": 0.023931
+        },
+        "gpu_probe": {
+          "n": 3000,
+          "mean": 1.1447787466666668,
+          "stddev": 4.2890248411424805,
+          "coefficient_of_variation": 3.746597194987361,
+          "p50": 0.001084,
+          "p90": 0.001477,
+          "p95": 16.20125909999999,
+          "p99": 18.546785659999998,
+          "p99.9": 19.068777759000014,
+          "max": 19.583782
+        },
+        "ik_apply": {
+          "n": 3000,
+          "mean": 2.5775517310000002,
+          "stddev": 0.30903932918461413,
+          "coefficient_of_variation": 0.11989646045424572,
+          "p50": 2.526492,
+          "p90": 2.7310792000000004,
+          "p95": 2.81669725,
+          "p99": 4.245064779999965,
+          "p99.9": 5.202727463000026,
+          "max": 5.397439
+        },
+        "runtime_bookkeeping": {
+          "n": 3000,
+          "mean": 0.013536602666666666,
+          "stddev": 0.001663630076209766,
+          "coefficient_of_variation": 0.1228986413486441,
+          "p50": 0.0132155,
+          "p90": 0.0145084,
+          "p95": 0.017091499999999996,
+          "p99": 0.020123099999999994,
+          "p99.9": 0.026568655000000135,
+          "max": 0.030658
+        },
+        "simulation_advance": {
+          "n": 3000,
+          "mean": 78.13698065166666,
+          "stddev": 3.7772338399319154,
+          "coefficient_of_variation": 0.04834117991800528,
+          "p50": 76.98805250000001,
+          "p90": 82.1246641,
+          "p95": 86.59757595,
+          "p99": 91.66145561999997,
+          "p99.9": 110.91881890900002,
+          "max": 142.709722
+        },
+        "status_emit": {
+          "n": 3000,
+          "mean": 0.001316698,
+          "stddev": 0.005749587451990392,
+          "coefficient_of_variation": 4.366671364269097,
+          "p50": 0.000235,
+          "p90": 0.000355,
+          "p95": 0.0005780499999999997,
+          "p99": 0.03220704,
+          "p99.9": 0.04095032800000007,
+          "max": 0.042916
+        },
+        "tcp_pose_after": {
+          "n": 3000,
+          "mean": 0.6456898663333334,
+          "stddev": 0.0952374529303643,
+          "coefficient_of_variation": 0.1474972086385487,
+          "p50": 0.627946,
+          "p90": 0.6666819,
+          "p95": 0.7736140999999996,
+          "p99": 1.2159141599999999,
+          "p99.9": 1.2999593630000057,
+          "max": 1.770773
+        },
+        "tcp_pose_before": {
+          "n": 3000,
+          "mean": 0.4181992346666666,
+          "stddev": 0.08180838809325364,
+          "coefficient_of_variation": 0.19562060690632427,
+          "p50": 0.3968975,
+          "p90": 0.47854069999999993,
+          "p95": 0.5368057499999997,
+          "p99": 0.9057506999999997,
+          "p99.9": 1.0200858370000012,
+          "max": 1.095355
+        },
+        "teleop_advance": {
+          "n": 3000,
+          "mean": 0.993715923,
+          "stddev": 0.1574152962785189,
+          "coefficient_of_variation": 0.15841076170268725,
+          "p50": 0.962276,
+          "p90": 1.0703431,
+          "p95": 1.17567365,
+          "p99": 1.7045597699999984,
+          "p99.9": 2.8480478990000107,
+          "max": 3.342787
+        }
+      },
+      "nested": {
+        "camera_update": {
+          "n": 3000,
+          "mean": 2.8144575096666666,
+          "stddev": 0.3054199187110391,
+          "coefficient_of_variation": 0.10851821982105951,
+          "p50": 2.767069,
+          "p90": 2.9248273,
+          "p95": 3.0343935999999996,
+          "p99": 4.440833559999998,
+          "p99.9": 4.670915278000007,
+          "max": 4.9707170000000005
+        },
+        "experiment_update": {
+          "n": 3000,
+          "mean": 0.013702266999999999,
+          "stddev": 0.0019468363167608842,
+          "coefficient_of_variation": 0.14208132980921218,
+          "p50": 0.013321,
+          "p90": 0.015967099999999998,
+          "p95": 0.017091099999999994,
+          "p99": 0.020343159999999992,
+          "p99.9": 0.029220014,
+          "max": 0.033759
+        },
+        "physics_probe_update": {
+          "n": 3000,
+          "mean": 0.008403279666666668,
+          "stddev": 0.0013661202002704905,
+          "coefficient_of_variation": 0.16256988395727046,
+          "p50": 0.008133,
+          "p90": 0.009657599999999999,
+          "p95": 0.010662449999999997,
+          "p99": 0.01361510999999995,
+          "p99.9": 0.01921392600000039,
+          "max": 0.032734000000000006
+        },
+        "physics_target_write": {
+          "n": 3000,
+          "mean": 0.7675077929999999,
+          "stddev": 0.09304252080076329,
+          "coefficient_of_variation": 0.12122680922506711,
+          "p50": 0.7353055000000001,
+          "p90": 0.8973702,
+          "p95": 0.98101675,
+          "p99": 1.1211030499999999,
+          "p99.9": 1.3112194840000304,
+          "max": 1.5073789999999998
+        },
+        "robot_update": {
+          "n": 3000,
+          "mean": 0.9779828650000001,
+          "stddev": 0.08061897506947022,
+          "coefficient_of_variation": 0.08243393412569679,
+          "p50": 0.9513585,
+          "p90": 1.0806767,
+          "p95": 1.1355504,
+          "p99": 1.2796029699999991,
+          "p99.9": 1.4621414110000033,
+          "max": 1.558139
+        },
+        "sim_step": {
+          "n": 3000,
+          "mean": 73.52783153666667,
+          "stddev": 3.6159571526848855,
+          "coefficient_of_variation": 0.04917807416748975,
+          "p50": 72.4401,
+          "p90": 77.0603428,
+          "p95": 82.04949335,
+          "p99": 85.84726881999997,
+          "p99.9": 104.96324140500026,
+          "max": 138.28125899999998
+        }
+      },
+      "observed_times_ms": {
+        "physics_only": {
+          "n": 3000,
+          "mean": 13.016142819333334,
+          "stddev": 0.6033304798191863,
+          "coefficient_of_variation": 0.046352478471812585,
+          "p50": 12.926503,
+          "p90": 13.6651773,
+          "p95": 13.968539899999998,
+          "p99": 15.123388479999996,
+          "p99.9": 18.446311535000053,
+          "max": 19.169396
+        },
+        "sim_render": {
+          "n": 3000,
+          "mean": 60.08719862,
+          "stddev": 3.3142981347144174,
+          "coefficient_of_variation": 0.055158140349902324,
+          "p50": 59.0798525,
+          "p90": 62.9746809,
+          "p95": 68.44325564999998,
+          "p99": 71.26572677,
+          "p99.9": 90.42690172500009,
+          "max": 124.354759
+        },
+        "capture_boundary": {
+          "n": 3000,
+          "mean": 2.7937056166666667,
+          "stddev": 0.30450281120411155,
+          "coefficient_of_variation": 0.10899602642007486,
+          "p50": 2.7462965,
+          "p90": 2.9047016,
+          "p95": 3.0127888499999997,
+          "p99": 4.418895189999999,
+          "p99.9": 4.644206807000008,
+          "max": 4.946515
+        }
+      },
+      "counts": {
+        "camera_left_wrist": [
+          1
+        ],
+        "camera_right_wrist": [
+          1
+        ],
+        "camera_scene": [
+          1
+        ],
+        "capture_boundary": [
+          1
+        ],
+        "extract_left_wrist": [
+          1
+        ],
+        "extract_right_wrist": [
+          1
+        ],
+        "extract_scene": [
+          1
+        ],
+        "hydra_drawable_left_wrist": [
+          4
+        ],
+        "hydra_drawable_right_wrist": [
+          4
+        ],
+        "hydra_drawable_scene": [
+          4
+        ],
+        "kit_app_update": [
+          4
+        ],
+        "physics_only": [
+          4
+        ],
+        "rgb_tensor_d2h": [
+          1
+        ],
+        "rig_update_no_acquisition": [
+          4
+        ],
+        "scalar_tensor_d2h": [
+          18
+        ],
+        "sim_render": [
+          4
+        ],
+        "sim_step": [
+          4
+        ],
+        "small_tensor_d2h": [
+          17
+        ],
+        "visualizer_0": [
+          4
+        ]
+      },
+      "rolling": {
+        "100": {
+          "window_count": 2901,
+          "min_control_hz": 11.473653341434966,
+          "max_mean_latency_ms": 87.15619778999998,
+          "rtf_min": 0.38245511138116556,
+          "rtf_max": 0.3957458369043077,
+          "rtf_first": 0.3910100353714834,
+          "rtf_last": 0.3913159898255659,
+          "rtf_drift_last_minus_first": 0.0003059544540825465
+        },
+        "300": {
+          "window_count": 2701,
+          "min_control_hz": 11.586916756908497,
+          "max_mean_latency_ms": 86.30423614666667,
+          "rtf_min": 0.3862305585636166,
+          "rtf_max": 0.39266932086229706,
+          "rtf_first": 0.39102119581146433,
+          "rtf_last": 0.3904982280908406,
+          "rtf_drift_last_minus_first": -0.0005229677206237127
+        }
+      },
+      "runtime_smoke_result": {
+        "passed": true,
+        "status": "runtime_smoke_passed_physical_human_gate_required",
+        "physical_human_gate": "required_not_implied_by_runtime_smoke",
+        "canonical_d0_changed": false,
+        "capture_failed_attempts": 0,
+        "full_result_path": "/tmp/vr4p-audit/runs/20260921T190028033147Z-diagnostic-dual_cube_to_matching_plates-hud-off/result.json"
+      }
+    }
+  ],
+  "gpu": {
+    "nsys": {
+      "a": {
+        "controls": 20,
+        "substeps": 80,
+        "trace_range_ms": 1911.073476,
+        "vulkan_gpu_interval_union_ms": 589.056891,
+        "cuda_kernel_interval_union_ms": 168.18814,
+        "cuda_copy_interval_union_ms": 8.458967,
+        "combined_observed_gpu_busy_union_ms": 764.32783,
+        "main_thread_osrt_totals_ms": [
+          [
+            "poll",
+            497,
+            767.431457
+          ],
+          [
+            "futex",
+            1171,
+            259.438101
+          ],
+          [
+            "recvmsg",
+            623,
+            3.428611
+          ],
+          [
+            "pthread_cond_broadcast",
+            80,
+            0.587354
+          ],
+          [
+            "sendmsg",
+            98,
+            0.247692
+          ],
+          [
+            "waitpid",
+            1,
+            0.149223
+          ],
+          [
+            "pthread_mutex_lock",
+            6,
+            0.100439
+          ],
+          [
+            "read",
+            18,
+            0.071838
+          ],
+          [
+            "write",
+            3,
+            0.042213
+          ],
+          [
+            "open64",
+            7,
+            0.039626
+          ],
+          [
+            "fopen64",
+            6,
+            0.028084
+          ],
+          [
+            "pthread_cond_signal",
+            3,
+            0.015576
+          ],
+          [
+            "close",
+            8,
+            0.014016
+          ],
+          [
+            "pthread_rwlock_tryrdlock",
+            3,
+            0.010649
+          ],
+          [
+            "pipe2",
+            2,
+            0.009931
+          ],
+          [
+            "mprotect",
+            1,
+            0.007314
+          ],
+          [
+            "epoll_wait",
+            6,
+            0.006353
+          ],
+          [
+            "pthread_mutex_trylock",
+            1,
+            0.004676
+          ]
+        ],
+        "limits": "Bounded profiling diagnostics, overhead enabled; interval unions are traced work, not utilization counters; no XR client and no per-product Vulkan labels."
+      },
+      "b": {
+        "controls": 20,
+        "substeps": 80,
+        "trace_range_ms": 935.152593,
+        "vulkan_gpu_interval_union_ms": 104.183924,
+        "cuda_kernel_interval_union_ms": 155.31733,
+        "cuda_copy_interval_union_ms": 6.445895,
+        "combined_observed_gpu_busy_union_ms": 264.687781,
+        "main_thread_osrt_totals_ms": [
+          [
+            "poll",
+            135,
+            263.155771
+          ],
+          [
+            "futex",
+            422,
+            200.847384
+          ],
+          [
+            "recvmsg",
+            740,
+            4.85658
+          ],
+          [
+            "pthread_cond_broadcast",
+            80,
+            0.447063
+          ],
+          [
+            "sendmsg",
+            169,
+            0.402339
+          ],
+          [
+            "waitpid",
+            1,
+            0.149888
+          ],
+          [
+            "write",
+            3,
+            0.042675
+          ],
+          [
+            "read",
+            10,
+            0.034883
+          ],
+          [
+            "open64",
+            4,
+            0.028305
+          ],
+          [
+            "close",
+            8,
+            0.020062
+          ],
+          [
+            "fopen64",
+            4,
+            0.012092
+          ],
+          [
+            "pipe2",
+            2,
+            0.009551
+          ],
+          [
+            "epoll_wait",
+            1,
+            0.00102
+          ]
+        ],
+        "limits": "Bounded profiling diagnostics, overhead enabled; interval unions are traced work, not utilization counters; no XR client and no per-product Vulkan labels."
+      }
+    },
+    "static_cost_assay": [
+      {
+        "case": "all_on",
+        "disabled": [],
+        "samples": 100,
+        "host_ms": {
+          "n": 100,
+          "mean": 22.06440145000001,
+          "stddev": 1.397449353414771,
+          "coefficient_of_variation": 0.06333502209799444,
+          "p50": 21.965392,
+          "p90": 23.5554253,
+          "p95": 24.23572205,
+          "p99": 25.778692760000002,
+          "p99.9": 25.823043176000002,
+          "max": 25.827971
+        },
+        "gpu_reported_ms": {
+          "RTX Rendering": {
+            "n": 100,
+            "mean": 20.20379168,
+            "stddev": 0.1437783417422776,
+            "coefficient_of_variation": 0.007116403891879646,
+            "p50": 20.191152,
+            "p90": 20.3885376,
+            "p95": 20.4652864,
+            "p99": 20.568623359999997,
+            "p99.9": 20.592801536,
+            "max": 20.595488
+          },
+          "RTX Render Tile": {
+            "n": 100,
+            "mean": 19.48698112,
+            "stddev": 0.1932322103856678,
+            "coefficient_of_variation": 0.009915964365940116,
+            "p50": 19.520608,
+            "p90": 19.726742400000003,
+            "p95": 19.7837152,
+            "p99": 19.91496448,
+            "p99.9": 19.936747647999997,
+            "max": 19.939168
+          },
+          "OmniGraph Post Processing": {
+            "n": 100,
+            "mean": 1.7339625599999997,
+            "stddev": 0.017978397807469838,
+            "coefficient_of_variation": 0.010368388696622054,
+            "p50": 1.730128,
+            "p90": 1.7366111999999998,
+            "p95": 1.7989631999999998,
+            "p99": 1.8053507199999999,
+            "p99.9": 1.8059494719999998,
+            "max": 1.8060159999999998
+          },
+          "Resample/Unwarp": {
+            "n": 100,
+            "mean": 0.09357727999999998,
+            "stddev": 0.0005294461004987509,
+            "coefficient_of_variation": 0.005657848790846997,
+            "p50": 0.09369599999999999,
+            "p90": 0.0941184,
+            "p95": 0.094368,
+            "p99": 0.0944976,
+            "p99.9": 0.09464015999999999,
+            "max": 0.09465599999999999
+          },
+          "Update GPU SceneDb AccelStruct": {
+            "n": 100,
+            "mean": 0.13736479999999998,
+            "stddev": 0.000737556544656514,
+            "coefficient_of_variation": 0.0053693271104133964,
+            "p50": 0.13747199999999998,
+            "p90": 0.1381856,
+            "p95": 0.13834239999999998,
+            "p99": 0.13868992,
+            "p99.9": 0.13886099200000002,
+            "max": 0.13888
+          },
+          "Compositing": {
+            "n": 100,
+            "mean": 0.19244384,
+            "stddev": 0.02718782954054363,
+            "coefficient_of_variation": 0.1412766942321647,
+            "p50": 0.18953599999999998,
+            "p90": 0.19182719999999998,
+            "p95": 0.193632,
+            "p99": 0.20248064000000132,
+            "p99.9": 0.4349104640000027,
+            "max": 0.460736
+          },
+          "Synthetic Image Data RT": {
+            "n": 100,
+            "mean": 0.2605839999999999,
+            "stddev": 0.07775975662762762,
+            "coefficient_of_variation": 0.2984057218694457,
+            "p50": 0.21184,
+            "p90": 0.36811839999999996,
+            "p95": 0.37111999999999995,
+            "p99": 0.4428643200000003,
+            "p99.9": 0.49564003200000056,
+            "max": 0.501504
+          }
+        },
+        "render_tile_counts": [
+          5
+        ]
+      },
+      {
+        "case": "left_off",
+        "disabled": [
+          "left_wrist"
+        ],
+        "samples": 100,
+        "host_ms": {
+          "n": 100,
+          "mean": 20.21056682,
+          "stddev": 1.3649938340040213,
+          "coefficient_of_variation": 0.0675386220565199,
+          "p50": 20.1514315,
+          "p90": 21.743241,
+          "p95": 22.52497035,
+          "p99": 23.108823900000008,
+          "p99.9": 24.235662690000012,
+          "max": 24.360867
+        },
+        "gpu_reported_ms": {
+          "RTX Rendering": {
+            "n": 100,
+            "mean": 18.22172544,
+            "stddev": 0.16970744605988275,
+            "coefficient_of_variation": 0.00931346741112365,
+            "p50": 18.208416,
+            "p90": 18.460752,
+            "p95": 18.5053216,
+            "p99": 18.69975392,
+            "p99.9": 18.726298592,
+            "max": 18.729248
+          },
+          "RTX Render Tile": {
+            "n": 100,
+            "mean": 17.604632319999997,
+            "stddev": 0.20754368699785639,
+            "coefficient_of_variation": 0.011789152038243558,
+            "p50": 17.589984,
+            "p90": 17.8683872,
+            "p95": 17.9485568,
+            "p99": 18.14591424,
+            "p99.9": 18.173913024,
+            "max": 18.177024
+          },
+          "OmniGraph Post Processing": {
+            "n": 100,
+            "mean": 1.65136544,
+            "stddev": 0.1808535197549775,
+            "coefficient_of_variation": 0.10951756369261155,
+            "p50": 1.723312,
+            "p90": 1.7898368,
+            "p95": 1.7973744,
+            "p99": 1.8013945599999999,
+            "p99.9": 1.8030482559999998,
+            "max": 1.803232
+          },
+          "Resample/Unwarp": {
+            "n": 100,
+            "mean": 0.09351008,
+            "stddev": 0.0013814630195352444,
+            "coefficient_of_variation": 0.014773412872015985,
+            "p50": 0.093232,
+            "p90": 0.09431039999999999,
+            "p95": 0.09457279999999998,
+            "p99": 0.09760928000000003,
+            "p99.9": 0.10413852800000008,
+            "max": 0.104864
+          },
+          "Update GPU SceneDb AccelStruct": {
+            "n": 100,
+            "mean": 0.13732608000000002,
+            "stddev": 0.0007211332226769778,
+            "coefficient_of_variation": 0.005251247415472558,
+            "p50": 0.13735999999999998,
+            "p90": 0.13808959999999998,
+            "p95": 0.13840159999999999,
+            "p99": 0.13901088,
+            "p99.9": 0.139267488,
+            "max": 0.139296
+          },
+          "Compositing": {
+            "n": 100,
+            "mean": 0.17125663999999996,
+            "stddev": 0.0023048028006532324,
+            "coefficient_of_variation": 0.01345818066180227,
+            "p50": 0.170896,
+            "p90": 0.172896,
+            "p95": 0.17316,
+            "p99": 0.18159232000000003,
+            "p99.9": 0.18661043200000005,
+            "max": 0.18716799999999997
+          },
+          "Synthetic Image Data RT": {
+            "n": 100,
+            "mean": 0.19614975999999995,
+            "stddev": 0.08168208949200677,
+            "coefficient_of_variation": 0.4164271701989683,
+            "p50": 0.141808,
+            "p90": 0.29834879999999997,
+            "p95": 0.3070095999999998,
+            "p99": 0.41376928000000013,
+            "p99.9": 0.4345545280000002,
+            "max": 0.436864
+          }
+        },
+        "render_tile_counts": [
+          4
+        ]
+      },
+      {
+        "case": "right_off",
+        "disabled": [
+          "right_wrist"
+        ],
+        "samples": 100,
+        "host_ms": {
+          "n": 100,
+          "mean": 20.184712740000002,
+          "stddev": 1.3288626584907803,
+          "coefficient_of_variation": 0.06583510380394843,
+          "p50": 20.1906995,
+          "p90": 21.5861832,
+          "p95": 22.143181,
+          "p99": 23.28261725,
+          "p99.9": 23.453800625000003,
+          "max": 23.472821
+        },
+        "gpu_reported_ms": {
+          "RTX Rendering": {
+            "n": 100,
+            "mean": 18.22107584,
+            "stddev": 0.1703416680562221,
+            "coefficient_of_variation": 0.009348606501174746,
+            "p50": 18.19048,
+            "p90": 18.4496128,
+            "p95": 18.511024,
+            "p99": 18.60666848,
+            "p99.9": 18.676209248,
+            "max": 18.683936
+          },
+          "RTX Render Tile": {
+            "n": 100,
+            "mean": 17.6049728,
+            "stddev": 0.20857036135955787,
+            "coefficient_of_variation": 0.011847241329424711,
+            "p50": 17.621167999999997,
+            "p90": 17.8682976,
+            "p95": 17.914376,
+            "p99": 18.02206656,
+            "p99.9": 18.117809856,
+            "max": 18.128448
+          },
+          "OmniGraph Post Processing": {
+            "n": 100,
+            "mean": 1.7356479999999999,
+            "stddev": 0.08893906987268407,
+            "coefficient_of_variation": 0.05124257330558044,
+            "p50": 1.729184,
+            "p90": 1.7972768,
+            "p95": 1.8024383999999998,
+            "p99": 1.8042918399999999,
+            "p99.9": 1.8046339839999999,
+            "max": 1.8046719999999998
+          },
+          "Resample/Unwarp": {
+            "n": 100,
+            "mean": 0.09369248,
+            "stddev": 0.001247099556020393,
+            "coefficient_of_variation": 0.013310561915112002,
+            "p50": 0.093424,
+            "p90": 0.0944384,
+            "p95": 0.0946896,
+            "p99": 0.10061439999999999,
+            "p99.9": 0.10118463999999999,
+            "max": 0.10124799999999999
+          },
+          "Update GPU SceneDb AccelStruct": {
+            "n": 100,
+            "mean": 0.13772895999999998,
+            "stddev": 0.0006833853035669651,
+            "coefficient_of_variation": 0.004961812704945751,
+            "p50": 0.13776,
+            "p90": 0.13856,
+            "p95": 0.1386896,
+            "p99": 0.13904896,
+            "p99.9": 0.139847296,
+            "max": 0.139936
+          },
+          "Compositing": {
+            "n": 100,
+            "mean": 0.17088288,
+            "stddev": 0.0013713360091899458,
+            "coefficient_of_variation": 0.008025005250320839,
+            "p50": 0.170896,
+            "p90": 0.17277439999999997,
+            "p95": 0.1731616,
+            "p99": 0.17379904000000002,
+            "p99.9": 0.174426304,
+            "max": 0.17449599999999998
+          },
+          "Synthetic Image Data RT": {
+            "n": 100,
+            "mean": 0.18407327999999995,
+            "stddev": 0.07455568927340099,
+            "coefficient_of_variation": 0.40503265478509975,
+            "p50": 0.14128,
+            "p90": 0.2994528,
+            "p95": 0.3026048,
+            "p99": 0.37629791999999995,
+            "p99.9": 0.377181792,
+            "max": 0.37728
+          }
+        },
+        "render_tile_counts": [
+          4
+        ]
+      },
+      {
+        "case": "scene_off",
+        "disabled": [
+          "scene"
+        ],
+        "samples": 100,
+        "host_ms": {
+          "n": 100,
+          "mean": 20.21969884,
+          "stddev": 1.621037148068263,
+          "coefficient_of_variation": 0.08017118162321071,
+          "p50": 20.033437,
+          "p90": 22.547420900000002,
+          "p95": 23.1928182,
+          "p99": 24.299674170000003,
+          "p99.9": 25.082165517000007,
+          "max": 25.169109
+        },
+        "gpu_reported_ms": {
+          "RTX Rendering": {
+            "n": 100,
+            "mean": 18.28425376,
+            "stddev": 0.1424212700223183,
+            "coefficient_of_variation": 0.0077892853540399735,
+            "p50": 18.286208,
+            "p90": 18.473814400000002,
+            "p95": 18.4902704,
+            "p99": 18.50985664,
+            "p99.9": 18.564086464,
+            "max": 18.570111999999998
+          },
+          "RTX Render Tile": {
+            "n": 100,
+            "mean": 17.68309344,
+            "stddev": 0.17229137121621038,
+            "coefficient_of_variation": 0.009743282293949716,
+            "p50": 17.701568,
+            "p90": 17.896067199999997,
+            "p95": 17.935935999999998,
+            "p99": 17.9448768,
+            "p99.9": 18.00874368,
+            "max": 18.015839999999997
+          },
+          "OmniGraph Post Processing": {
+            "n": 100,
+            "mean": 1.7263046400000002,
+            "stddev": 0.0857194692682279,
+            "coefficient_of_variation": 0.049654891310625164,
+            "p50": 1.7271519999999998,
+            "p90": 1.7980287999999998,
+            "p95": 1.8002432,
+            "p99": 1.8013392000000001,
+            "p99.9": 1.80376272,
+            "max": 1.8040319999999999
+          },
+          "Resample/Unwarp": {
+            "n": 100,
+            "mean": 0.09341152,
+            "stddev": 0.00076768875848158,
+            "coefficient_of_variation": 0.008218352067085303,
+            "p50": 0.09331199999999999,
+            "p90": 0.0942816,
+            "p95": 0.0947216,
+            "p99": 0.09522016,
+            "p99.9": 0.09701641600000002,
+            "max": 0.097216
+          },
+          "Update GPU SceneDb AccelStruct": {
+            "n": 100,
+            "mean": 0.13762432,
+            "stddev": 0.0008688185276220778,
+            "coefficient_of_variation": 0.006312972355627827,
+            "p50": 0.1376,
+            "p90": 0.13872639999999997,
+            "p95": 0.1390416,
+            "p99": 0.13927616,
+            "p99.9": 0.14035961600000002,
+            "max": 0.14048
+          },
+          "Compositing": {
+            "n": 100,
+            "mean": 0.17177727999999998,
+            "stddev": 0.001701901954944062,
+            "coefficient_of_variation": 0.009907608008137411,
+            "p50": 0.17175999999999997,
+            "p90": 0.1733472,
+            "p95": 0.17405439999999997,
+            "p99": 0.17516416,
+            "p99.9": 0.18052441600000005,
+            "max": 0.18111999999999998
+          },
+          "Synthetic Image Data RT": {
+            "n": 100,
+            "mean": 0.17378656000000006,
+            "stddev": 0.07480172969537942,
+            "coefficient_of_variation": 0.4304229837760722,
+            "p50": 0.14079999999999998,
+            "p90": 0.2938208,
+            "p95": 0.3024127999999998,
+            "p99": 0.42934208,
+            "p99.9": 0.4348734080000001,
+            "max": 0.435488
+          }
+        },
+        "render_tile_counts": [
+          4
+        ]
+      },
+      {
+        "case": "all_sensors_off",
+        "disabled": [
+          "left_wrist",
+          "right_wrist",
+          "scene"
+        ],
+        "samples": 100,
+        "host_ms": {
+          "n": 100,
+          "mean": 16.89549867,
+          "stddev": 1.5237912931939923,
+          "coefficient_of_variation": 0.09018918724782407,
+          "p50": 16.5975605,
+          "p90": 19.107392100000002,
+          "p95": 20.1667804,
+          "p99": 20.9260079,
+          "p99.9": 21.05350109,
+          "max": 21.067667
+        },
+        "gpu_reported_ms": {
+          "RTX Rendering": {
+            "n": 100,
+            "mean": 14.20774144,
+            "stddev": 0.5457581867153941,
+            "coefficient_of_variation": 0.03841273358050314,
+            "p50": 14.107952,
+            "p90": 14.336435199999999,
+            "p95": 14.5171872,
+            "p99": 15.704841280000018,
+            "p99.9": 18.841988128000036,
+            "max": 19.190559999999998
+          },
+          "RTX Render Tile": {
+            "n": 100,
+            "mean": 13.845074560000002,
+            "stddev": 0.5458493253420861,
+            "coefficient_of_variation": 0.03942552443300717,
+            "p50": 13.744864,
+            "p90": 13.9706528,
+            "p95": 14.154305599999999,
+            "p99": 15.344122240000019,
+            "p99.9": 18.479929024000036,
+            "max": 18.828352
+          },
+          "OmniGraph Post Processing": {
+            "n": 100,
+            "mean": 0.0005932800000000001,
+            "stddev": 7.479400397293242e-05,
+            "coefficient_of_variation": 0.1260686420795112,
+            "p50": 0.000576,
+            "p90": 0.0006079999999999999,
+            "p95": 0.0006079999999999999,
+            "p99": 0.0009302400000000011,
+            "p99.9": 0.0011298240000000024,
+            "max": 0.001152
+          },
+          "Resample/Unwarp": {
+            "n": 100,
+            "mean": 0.09161727999999998,
+            "stddev": 0.0006614415551725573,
+            "coefficient_of_variation": 0.007219615722847889,
+            "p50": 0.09159999999999999,
+            "p90": 0.0924576,
+            "p95": 0.09261119999999999,
+            "p99": 0.09288448000000002,
+            "p99.9": 0.09470924800000002,
+            "max": 0.094912
+          },
+          "Update GPU SceneDb AccelStruct": {
+            "n": 100,
+            "mean": 0.13709535999999997,
+            "stddev": 0.0006617844795503554,
+            "coefficient_of_variation": 0.004827183644656942,
+            "p50": 0.13707199999999997,
+            "p90": 0.137856,
+            "p95": 0.13808159999999997,
+            "p99": 0.13852895999999998,
+            "p99.9": 0.138614496,
+            "max": 0.138624
+          },
+          "Compositing": {
+            "n": 100,
+            "mean": 0.13586624,
+            "stddev": 0.0011220841099930923,
+            "coefficient_of_variation": 0.008258741170677075,
+            "p50": 0.13584000000000002,
+            "p90": 0.13683520000000002,
+            "p95": 0.1373152,
+            "p99": 0.13988896,
+            "p99.9": 0.141400096,
+            "max": 0.14156799999999997
+          },
+          "Synthetic Image Data RT": {
+            "n": 100,
+            "mean": 0.0,
+            "stddev": 0.0,
+            "coefficient_of_variation": null,
+            "p50": 0.0,
+            "p90": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "p99.9": 0.0,
+            "max": 0.0
+          }
+        },
+        "render_tile_counts": [
+          2
+        ]
+      },
+      {
+        "case": "restored",
+        "disabled": [],
+        "samples": 100,
+        "host_ms": {
+          "n": 100,
+          "mean": 22.291662130000006,
+          "stddev": 1.4265005038768128,
+          "coefficient_of_variation": 0.06399255899168844,
+          "p50": 22.318073499999997,
+          "p90": 23.7274164,
+          "p95": 24.7220749,
+          "p99": 25.796756230000003,
+          "p99.9": 26.183738023000004,
+          "max": 26.226736
+        },
+        "gpu_reported_ms": {
+          "RTX Rendering": {
+            "n": 100,
+            "mean": 20.251379200000002,
+            "stddev": 0.1595241044141333,
+            "coefficient_of_variation": 0.007877197046121841,
+            "p50": 20.227584,
+            "p90": 20.4284096,
+            "p95": 20.463404799999996,
+            "p99": 20.75055328,
+            "p99.9": 20.841192928,
+            "max": 20.851264
+          },
+          "RTX Render Tile": {
+            "n": 100,
+            "mean": 19.56279776,
+            "stddev": 0.18701081577564746,
+            "coefficient_of_variation": 0.009559512809462663,
+            "p50": 19.573152,
+            "p90": 19.76352,
+            "p95": 19.8054528,
+            "p99": 20.09184544,
+            "p99.9": 20.177866144,
+            "max": 20.187424
+          },
+          "OmniGraph Post Processing": {
+            "n": 100,
+            "mean": 1.6695571200000001,
+            "stddev": 0.15935695855083115,
+            "coefficient_of_variation": 0.09544864122458484,
+            "p50": 1.7294079999999998,
+            "p90": 1.7360544,
+            "p95": 1.7391376,
+            "p99": 1.80684992,
+            "p99.9": 1.807020992,
+            "max": 1.80704
+          },
+          "Resample/Unwarp": {
+            "n": 100,
+            "mean": 0.09335423999999999,
+            "stddev": 0.000672098193884065,
+            "coefficient_of_variation": 0.007199439402903018,
+            "p50": 0.093216,
+            "p90": 0.0941568,
+            "p95": 0.09446399999999999,
+            "p99": 0.09501216,
+            "p99.9": 0.095382816,
+            "max": 0.095424
+          },
+          "Update GPU SceneDb AccelStruct": {
+            "n": 100,
+            "mean": 0.13768287999999998,
+            "stddev": 0.0009821245295354097,
+            "coefficient_of_variation": 0.007133236387380986,
+            "p50": 0.137632,
+            "p90": 0.1386624,
+            "p95": 0.13895039999999997,
+            "p99": 0.13917856,
+            "p99.9": 0.14297065600000003,
+            "max": 0.143392
+          },
+          "Compositing": {
+            "n": 100,
+            "mean": 0.19190144,
+            "stddev": 0.020163934164149654,
+            "coefficient_of_variation": 0.10507442864498387,
+            "p50": 0.18911999999999998,
+            "p90": 0.190848,
+            "p95": 0.1920352,
+            "p99": 0.33014592000000004,
+            "p99.9": 0.33316819200000003,
+            "max": 0.33350399999999997
+          },
+          "Synthetic Image Data RT": {
+            "n": 100,
+            "mean": 0.23711968000000003,
+            "stddev": 0.06071463830063862,
+            "coefficient_of_variation": 0.25605060828624016,
+            "p50": 0.21132799999999996,
+            "p90": 0.364656,
+            "p95": 0.3661776,
+            "p99": 0.4312723200000001,
+            "p99.9": 0.4462696320000002,
+            "max": 0.447936
+          }
+        },
+        "render_tile_counts": [
+          5
+        ]
+      }
+    ]
+  },
+  "limits": [
+    "Native XR eye IDs and independent render-completion/present receipts are not exhaustively exposed by the inspected Python APIs.",
+    "No headset presented frame cadence, reprojected/dropped frame count, or end-to-end presentation latency was validated.",
+    "No C with one sensor render and four Kit updates qualified, so no long C qualification or physical A/C run was launched.",
+    "Long A is standalone no-client; separate XR-enabled no-client cost assay is not interchangeable with standalone or physical performance.",
+    "Short probes are rejection/semantics evidence, never performance qualification."
+  ],
+  "xr_content_and_scheduling": {
+    "rate30-xr-async": {
+      "pixel_step_offsets_mod64": {
+        "left_wrist": {
+          "63": 15
+        },
+        "right_wrist": {
+          "63": 15
+        },
+        "scene": {
+          "63": 15
+        }
+      },
+      "checked_boundaries": 15,
+      "state_matches_count": 15,
+      "render_deltas": [
+        4
+      ],
+      "xr_snapshot": {
+        "enabled": true,
+        "display_enabled": true,
+        "viewport_enabled": true,
+        "profile": "ar",
+        "status_fps": 27.21088409423828
+      },
+      "xr_event_counts_per_control": {},
+      "xr_event_total": 0
+    },
+    "xr-baseline-content": {
+      "pixel_step_offsets_mod64": {
+        "left_wrist": {
+          "63": 15
+        },
+        "right_wrist": {
+          "63": 15
+        },
+        "scene": {
+          "63": 15
+        }
+      },
+      "checked_boundaries": 15,
+      "state_matches_count": 15,
+      "render_deltas": [
+        4
+      ],
+      "xr_snapshot": {
+        "enabled": true,
+        "display_enabled": true,
+        "viewport_enabled": true,
+        "profile": "ar",
+        "status_fps": 26.62721824645996
+      },
+      "xr_event_counts_per_control": {
+        "pre_sync_update": {
+          "4": 120
+        },
+        "post_device_events_update": {
+          "4": 120
+        }
+      },
+      "xr_event_total": 960
+    }
+  }
+}
