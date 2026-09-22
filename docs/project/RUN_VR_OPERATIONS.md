@@ -42,6 +42,33 @@ synthetic presentation-button checks. Neither implies physical Quest acceptance.
 Use [the physical worksheet](GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md) for acceptance
 of the canonical run mode. Diagnostic qualification uses the same execution profile.
 
+## Multi-episode recording and replay
+
+Record to a chosen dataset root:
+
+```sh
+./run-vr record --recording-dir /data/my_dataset
+```
+
+The existing NVIDIA/Isaac XR main overlay remains authoritative: press its Start
+to begin each episode. During recording, Quest Y opens the small recording menu;
+X selects Save and B selects Discard. Either choice resets the scene, stops teleop,
+and returns to the existing main overlay, where Start is required again. Main Reset,
+disconnect, and Ctrl-C discard only the current incomplete episode; previously saved
+episodes remain intact.
+
+Saved recordings are published atomically as `episode_000000`, `episode_000001`,
+and so on. Replay needs only one such path:
+
+```sh
+./run-vr replay /data/my_dataset/episode_000000
+```
+
+Replay uses the existing main Start and Reset lifecycle: Start plays state frames;
+Reset reapplies frame 0 and requires Start again. Replay applies no controller
+actions and performs no physics steps. This workflow is simulated/tested only until
+the relevant physical gate has registered evidence.
+
 ## Ownership and launch path
 
 | Source | Owns |
@@ -139,11 +166,10 @@ qualification → promote canonical config/status → `./run-vr` inherits it →
 record consumer inherits the same base semantics. Promotion changes selection,
 not Python ownership. Never copy control loops or builders across modes.
 RECORD reuses that shared scene, XR, controller, processor, IK and native actuation
-path. It exports one `stage_snapshot.usd`, records static scene from that snapshot,
-and stores articulated robots, dynamic cubes, camera pose/intrinsics, SimTime and
-the numeric D0 transition track through public NVIDIA Recordables. Each sample is
-explicitly taken at O0 and after each four-substep control transition. Live canonical
-RGB and preview panels are off in RECORD; no RGB is read, retained or uploaded.
+path. It exports one `stage_snapshot.usd`, records articulated robots, dynamic cubes,
+SimTime and the numeric D0 transition track through public NVIDIA Recordables. Each
+sample is explicitly taken at O0 and after each four-substep control transition. Live
+canonical RGB and preview panels are off in RECORD; no RGB is read, retained or uploaded.
 
 `./run-vr replay --recording <session.hdf5> --episode 0` uses the unmodified NVIDIA
 `SessionReader` and `EpisodeReplayer` with the USD pose backend. It disables the S2

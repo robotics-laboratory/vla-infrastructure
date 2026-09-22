@@ -129,10 +129,12 @@ class LiveRecording:
                  *, output_dir: Path, hdf5_path: Path, snapshot: Path) -> None:
         self.storage, self.sampler, self.recordables, self.d0 = storage, sampler, tuple(recordables), d0
         self.output_dir, self.hdf5_path, self.snapshot = output_dir, hdf5_path, snapshot
+        self.frame_count = 0
 
     def sample(self, d0_sample: Mapping[str, Any]) -> None:
         self.d0.set_sample(d0_sample)
         self.sampler.sample_frame()
+        self.frame_count += 1
 
     def close(self, *, outcome: str) -> None:
         close_explicit_session(self.storage, self.recordables, metadata={"outcome": outcome})
@@ -150,7 +152,7 @@ class LiveRecording:
 def start_live_recording(output_dir: Path, env: Any, *, session_metadata: Mapping[str, Any]) -> LiveRecording:
     """Configure upstream state tracks for the canonical VR scene, then sample O0."""
     from isaacsim.replicator.episode_recorder import (
-        ArticulationRecordable, CameraRecordable, RigidBodyRecordable, SimTimeRecordable,
+        ArticulationRecordable, RigidBodyRecordable, SimTimeRecordable,
         export_stage_snapshot,
     )
     import omni.usd
@@ -166,11 +168,6 @@ def start_live_recording(output_dir: Path, env: Any, *, session_metadata: Mappin
     sidecar["sha256"] = snapshot_hash
     sidecar_path.write_text(json.dumps(sidecar, indent=2, sort_keys=True) + "\n")
     D0 = ensure_d0_recordable()
-    cameras = {
-        "left_wrist": env.camera.wrists[0],
-        "right_wrist": env.camera.wrists[1],
-        "scene": env.camera.scene_camera,
-    }
     recordables: list[Any] = [
         SimTimeRecordable(),
         ArticulationRecordable(group="state/left_robot", prim_path="/World/LeftPiper"),
@@ -178,10 +175,6 @@ def start_live_recording(output_dir: Path, env: Any, *, session_metadata: Mappin
         *(
             RigidBodyRecordable(group=f"state/object_{index}", prim_path=asset.cfg.prim_path)
             for index, asset in enumerate(env.vr_runtime.dynamic_assets)
-        ),
-        *(
-            CameraRecordable(group=f"state/camera/{role}", prim_path=camera._view.prim_paths[0], resolution=(640, 480))
-            for role, camera in cameras.items()
         ),
     ]
     d0 = D0()
@@ -199,7 +192,7 @@ def start_live_recording(output_dir: Path, env: Any, *, session_metadata: Mappin
         "dirty_status": subprocess.check_output(["git", "-C", str(repository), "status", "--porcelain=v1"], text=True),
         "session_metadata": dict(session_metadata), "stage_snapshot": snapshot.name,
         "stage_snapshot_sha256": snapshot_hash,
-        "camera_roles": {role: camera._view.prim_paths[0] for role, camera in cameras.items()},
+        "camera_roles": {},
         "recordables": [recordable.to_manifest() for recordable in recordables],
     }, indent=2, sort_keys=True) + "\n")
     return LiveRecording(storage, sampler, recordables, d0, output_dir=output_dir, hdf5_path=path, snapshot=snapshot)

@@ -87,10 +87,11 @@ class _OwnedControllerTransform(ControllerTransform):
 
 
 PIPELINE_ACTION_DIM = 22
-DEMO_PIPELINE_ACTION_DIM = 25
+DEMO_PIPELINE_ACTION_DIM = 26
 DEMO_DISPLAY_BUTTON_INDEX = 22
 DEMO_BACKDROP_BUTTON_INDEX = 23
 DEMO_RECENTER_BUTTON_INDEX = 24
+DEMO_RECORD_BUTTON_INDEX = 25
 
 
 def _gf_row_matrix_to_numpy_transform(matrix: Any) -> np.ndarray:
@@ -280,6 +281,7 @@ def build_piper_x_bimanual_pipeline(
     display_control: str | None = None,
     backdrop_control: str | None = None,
     recenter_control: str | None = None,
+    record_control: str | None = None,
     receipt: XrInputReceipt | None = None,
 ) -> OutputCombiner:
     """Build the one-source bimanual controller pipeline used by S2.
@@ -370,6 +372,17 @@ def build_piper_x_bimanual_pipeline(
         connected["demo_recenter"] = recenter.connect(
             {recenter_side: transformed.output(recenter_side)}
         )
+    if record_control is not None:
+        record_controls = {
+            "left_secondary_click": (ControllersSource.LEFT, "secondary_click"),
+        }
+        if record_control not in record_controls:
+            raise ValueError(f"unsupported recording control: {record_control}")
+        record_side, record_button = record_controls[record_control]
+        record = ControllerButtonRetargeter(
+            record_side, control=record_button, name="piper_x_record_menu_button"
+        )
+        connected["record_menu"] = record.connect({record_side: transformed.output(record_side)})
     left_delta_names = [f"left_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]
     right_delta_names = [f"right_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]
     left_state_names = [
@@ -402,6 +415,9 @@ def build_piper_x_bimanual_pipeline(
     if recenter_control is not None:
         input_config["demo_recenter"] = ["demo_recenter_button"]
         output_order += ["demo_recenter_button"]
+    if record_control is not None:
+        input_config["record_menu"] = ["record_menu_button"]
+        output_order += ["record_menu_button"]
     reorderer = TensorReorderer(
         input_config=input_config,
         output_order=output_order,
@@ -420,6 +436,8 @@ def build_piper_x_bimanual_pipeline(
         reorder_inputs["demo_backdrop"] = connected["demo_backdrop"].output("button")
     if recenter_control is not None:
         reorder_inputs["demo_recenter"] = connected["demo_recenter"].output("button")
+    if record_control is not None:
+        reorder_inputs["record_menu"] = connected["record_menu"].output("button")
     packed = reorderer.connect(reorder_inputs)
     return OutputCombiner({"action": packed.output("output")})
 

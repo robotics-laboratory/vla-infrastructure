@@ -5,6 +5,7 @@ from __future__ import annotations
 from functools import partial
 import hashlib
 import importlib.metadata
+import itertools
 import json
 from pathlib import Path
 import platform
@@ -34,6 +35,7 @@ from isaac_s2_upstream import (
     DEMO_BACKDROP_BUTTON_INDEX,
     DEMO_DISPLAY_BUTTON_INDEX,
     DEMO_RECENTER_BUTTON_INDEX,
+    DEMO_RECORD_BUTTON_INDEX,
     PIPELINE_ACTION_DIM,
     build_piper_x_bimanual_pipeline,
     create_piper_x_teleop_device,
@@ -309,6 +311,11 @@ def run_s2(env, args_cli, simulation_app) -> int:
         pipeline_kwargs["backdrop_control"] = experiment.backdrop_control
         pipeline_kwargs["recenter_control"] = experiment.recenter_control
         pipeline_action_dim = experiment.pipeline_action_dim
+    if recording_requested:
+        # Quest Y is left-secondary in the pinned controller representation.
+        # It is appended after the unchanged control action and never reaches IK.
+        pipeline_kwargs["record_control"] = "left_secondary_click"
+        pipeline_action_dim += 1
     teleop_cfg = IsaacTeleopCfg(
         xr_cfg=XrCfg(
             anchor_pos=anchor_position,
@@ -365,6 +372,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
     env.last_control_decision = None
     env.prepared_control_transaction = None
     recording = None
+    lifecycle = None
+    menu_save_held = False
+    menu_discard_held = False
 
     def record_sample(solution=None, *, observation_id: int) -> None:
         if recording is None:
@@ -413,27 +423,76 @@ def run_s2(env, args_cli, simulation_app) -> int:
         flush=True,
     )
     try:
-        if recording_requested:
-            from isaac_vr_recording import start_live_recording
-            if experiment is not None:
-                experiment.disable_live_rgb()
-            recording = start_live_recording(
-                args_cli.s2_recording_dir, env,
-                session_metadata={
-                    "task": "dual_cube_to_matching_plates", "profile": "isaac_vr_record",
-                    "live_rgb": False, "d0_revision": PROCESSOR_REVISION,
-                    "runtime_config_sha256": hashlib.sha256(config_path.read_bytes()).hexdigest(),
-                    "environment_pins": actual_versions,
-                },
-            )
-            record_sample(observation_id=0)
         if experiment is not None and not recording_requested:
             # Pinned Candidate B requires camera-feed bind(env) before the XR
             # teleop session is entered. This also makes the panels available
             # when X is first pressed after the headset connects.
             experiment.open(env)
         with device:
-            for step in range(1, args_cli.s2_max_control_steps + 1):
+            if recording_requested:
+                from isaac_vr_episode_lifecycle import EpisodeStore, RecordingCallbacks, RecordingLifecycle
+                from isaac_vr_recording import start_live_recording
+
+                def reset_recording_scene() -> None:
+                    env.reset(0)
+                    processor.reset()
+                    ik.reset()
+                    camera_guard.reset()
+                    device.reset(pause=True)
+
+                def begin_recording_episode(path: Path) -> None:
+                    nonlocal recording
+                    if experiment is not None:
+                        experiment.disable_live_rgb()
+                    recording = start_live_recording(
+                        path, env,
+                        session_metadata={
+                            "task": "dual_cube_to_matching_plates", "profile": "isaac_vr_record",
+                            "live_rgb": False, "d0_revision": PROCESSOR_REVISION,
+                            "runtime_config_sha256": hashlib.sha256(config_path.read_bytes()).hexdigest(),
+                            "environment_pins": actual_versions,
+                        },
+                    )
+                    record_sample(observation_id=0)
+
+                def finalize_recording_episode() -> dict[str, Any]:
+                    nonlocal recording
+                    assert recording is not None
+                    recording.close(outcome="saved")
+                    metadata = {
+                        "schema": "piper_x_isaac_vr_episode_v1",
+                        "hdf5": "session.hdf5", "upstream_episode": 0,
+                        "hdf5_sha256": hashlib.sha256(recording.hdf5_path.read_bytes()).hexdigest(),
+                        "stage_snapshot": recording.snapshot.name,
+                        "stage_snapshot_sha256": hashlib.sha256(recording.snapshot.read_bytes()).hexdigest(),
+                        "git_commit": subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip(),
+                        "runtime_config_sha256": hashlib.sha256(config_path.read_bytes()).hexdigest(),
+                        "d0_revision": PROCESSOR_REVISION,
+                        "task": "dual_cube_to_matching_plates", "frame_count": recording.frame_count,
+                    }
+                    recording = None
+                    return metadata
+
+                def abort_recording_episode() -> None:
+                    nonlocal recording
+                    if recording is not None:
+                        recording.close(outcome="discarded")
+                        recording = None
+                    if validator is not None:
+                        validator.abort()
+
+                lifecycle = RecordingLifecycle(
+                    EpisodeStore(args_cli.s2_recording_dir),
+                    RecordingCallbacks(
+                        begin=begin_recording_episode, finalize=finalize_recording_episode,
+                        abort=abort_recording_episode, reset=reset_recording_scene,
+                        stop_main_teleop=device.request_stop,
+                        menu_visible=lambda visible: setattr(env, "recording_menu_visible", visible),
+                    ),
+                )
+            step_iterator = (itertools.count(1) if args_cli.s2_max_control_steps == 0
+                             else range(1, args_cli.s2_max_control_steps + 1))
+            for step in step_iterator:
                 if not simulation_app.is_running():
                     break
                 control_steps = step
@@ -451,7 +510,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 if validator is not None:
                     validator.abort()  # 4D will complete transitions; RUN never commits.
                 observation = None
-                if not recording_requested and getattr(env, "vr_runtime", None) is not None:
+                if getattr(env, "vr_runtime", None) is not None:
                     try:
                         observation = env.latest_observation_capture()
                     except RuntimeError:
@@ -471,6 +530,14 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 recenter_execution_reset = bool(
                     device.navigation_reset_applied and events.should_reset
                 )
+                if lifecycle is not None and events.should_reset and not recenter_execution_reset:
+                    # The NVIDIA Reset is authoritative and fail-safe: an unsaved
+                    # episode is discarded before the shared reset path runs.
+                    lifecycle.on_main_reset()
+                    action = None
+                    observation = None
+                elif lifecycle is not None:
+                    lifecycle.on_main_active(events.is_active)
                 if recenter_execution_reset:
                     processor.session_inactive()
                     print(
@@ -509,6 +576,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 display_button_value = 0.0
                 backdrop_button_value = 0.0
                 recenter_button_value = 0.0
+                record_menu_button_value = 0.0
                 if action is None:
                     command = processor.session_inactive()
                 else:
@@ -524,6 +592,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         display_button_value = float(action_numpy[DEMO_DISPLAY_BUTTON_INDEX])
                         backdrop_button_value = float(action_numpy[DEMO_BACKDROP_BUTTON_INDEX])
                         recenter_button_value = float(action_numpy[DEMO_RECENTER_BUTTON_INDEX])
+                    if recording_requested:
+                        record_menu_button_value = float(action_numpy[DEMO_RECORD_BUTTON_INDEX])
                     left, right = unpack_pipeline_action(action_numpy[:PIPELINE_ACTION_DIM])
                     command = processor.advance(
                         left,
@@ -604,7 +674,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     )
                     stage_started_ns = time.perf_counter_ns()
                 xr = getattr(device, "xr_input", None)
-                eligible = (observation is not None and xr is not None and not xr.rebased
+                eligible = ((lifecycle is None or lifecycle.admits_control)
+                            and observation is not None and xr is not None and not xr.rebased
                             and command.session_active and all(
                                 arm.tracking_valid and not arm.rebased
                                 for arm in (command.left, command.right)))
@@ -622,7 +693,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     elif validator.epoch != epoch:
                         validator.begin_epoch(epoch)
                     env.prepared_control_transaction = solution.prepare(validator)
-                saturated_frames += int(ik.apply(solution))
+                if lifecycle is None or lifecycle.admits_control:
+                    saturated_frames += int(ik.apply(solution))
                 if eligible:
                     env.last_control_decision = solution
                 if performance is not None:
@@ -634,6 +706,22 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     # transition.  It must not acquire an action identity merely
                     # because the native hold target was written.
                     record_sample(solution if eligible else None, observation_id=step)
+                if lifecycle is not None:
+                    # Called after the current boundary is fully sampled, so Y
+                    # cannot admit a half transition or a subsequent target write.
+                    lifecycle.on_y(record_menu_button_value >= 0.5)
+                    # The existing X/B controller seams stay presentation-only.
+                    # While the project-owned menu is visible they select its
+                    # two actions; no controller value enters D0 or IK.
+                    save_pressed = display_button_value >= 0.5
+                    discard_pressed = backdrop_button_value >= 0.5
+                    if lifecycle.state.value == "save_discard_menu":
+                        if save_pressed and not menu_save_held:
+                            lifecycle.save()
+                        elif discard_pressed and not menu_discard_held:
+                            lifecycle.discard()
+                    menu_save_held = save_pressed
+                    menu_discard_held = discard_pressed
                 if performance is not None:
                     performance.add_stage(
                         "simulation_advance", time.perf_counter_ns() - stage_started_ns
@@ -764,7 +852,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
         )
     finally:
         try:
-            if recording is not None:
+            if lifecycle is not None:
+                lifecycle.shutdown()
+            elif recording is not None:
                 recording.close(outcome="operator_stopped" if interrupted else "unclassified")
             if experiment is not None:
                 experiment.close()
@@ -793,7 +883,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
         or (experiment is not None and experiment.recenter_request_count == 2)
     )
     passed = bool(
-        control_steps == args_cli.s2_max_control_steps
+        (args_cli.s2_max_control_steps == 0 or control_steps == args_cli.s2_max_control_steps)
         and camera_valid_frames == control_steps
         and (not diagnostic or camera_advanced_frames == control_steps)
         and session_requirement_met

@@ -77,8 +77,7 @@ def replay(env: Any, simulation_app: Any, *, recording: Path, episode: int,
             raise RuntimeError("recording episode contains no frames")
         manifest = reader.manifest()
         tracks = {str(track["group"]): str(track["type"]) for track in manifest.tracks}
-        required = {"state/left_robot", "state/right_robot", "state/camera/left_wrist",
-                    "state/camera/right_wrist", "state/camera/scene", "d0/transition"}
+        required = {"state/left_robot", "state/right_robot", "d0/transition"}
         missing = required - set(tracks)
         if missing:
             raise RuntimeError(f"recording missing required tracks: {sorted(missing)}")
@@ -92,11 +91,11 @@ def replay(env: Any, simulation_app: Any, *, recording: Path, episode: int,
         if any(not np.isfinite(values).all() for values in d0.values() if np.issubdtype(values.dtype, np.floating)):
             raise RuntimeError("D0 contains NaN/Inf")
     physics_before = env.sim.get_physics_step_count()
-    camera_paths = {
+    camera_paths = ({
         "left_wrist": env.camera.wrists[0]._view.prim_paths[0],
         "right_wrist": env.camera.wrists[1]._view.prim_paths[0],
         "scene": env.camera.scene_camera._view.prim_paths[0],
-    }
+    } if render_cameras is not None else {})
     replayer = EpisodeReplayer(str(recording), pose_backend="usd")
     rendered: list[dict[str, Any]] = []
     try:

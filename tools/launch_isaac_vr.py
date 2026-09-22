@@ -49,12 +49,28 @@ PROVENANCE_INPUTS = (
     ROOT / "tools/isaac_s2_runtime.py",
     ROOT / "tools/isaac_s2_upstream.py",
     ROOT / "tools/isaac_vr_recording.py",
+    ROOT / "tools/isaac_vr_episode_lifecycle.py",
     ROOT / "tools/isaac_vr_replay.py",
 )
 
 
 def _git_output(*args: str) -> str:
     return subprocess.check_output(["git", "-C", str(ROOT), *args], text=True).rstrip("\n")
+
+
+def _resolve_episode_path(path: Path) -> tuple[Path, int]:
+    """Resolve the public episode directory without asking users for HDF5 internals."""
+    manifest_path = path / "manifest.json"
+    if not manifest_path.is_file():
+        raise ValueError(f"replay episode manifest not found: {manifest_path}")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if manifest.get("save_classification") != "saved":
+        raise ValueError(f"episode is not a saved replayable recording: {path}")
+    hdf5_name = manifest.get("hdf5", "session.hdf5")
+    recording = path / hdf5_name
+    if not recording.is_file():
+        raise ValueError(f"episode HDF5 not found: {recording}")
+    return recording, int(manifest.get("upstream_episode", 0))
 
 
 def _write_launch_manifest(
@@ -157,6 +173,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     defaults = config["operator"]
     parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
     parser.add_argument("mode", nargs="?", choices=("run", "diag", "record", "replay"), default="run")
+    parser.add_argument("episode_path", nargs="?", type=Path, help="Saved episode directory (replay only).")
     parser.add_argument(
         "--profile",
         choices=("dual_cube_to_matching_plates", "robosyn_asset_lab"),
@@ -236,8 +253,17 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("HUD measurement requires --xr-smoke or the default physical XR run")
     if args.recording_dir is not None and args.mode != "record":
         parser.error("--recording-dir requires ./run-vr record")
+    if args.mode == "replay" and args.episode_path is not None:
+        if args.recording is not None:
+            parser.error("replay accepts either an episode path or --recording, not both")
+        try:
+            args.recording, args.episode = _resolve_episode_path(args.episode_path)
+        except ValueError as exc:
+            parser.error(str(exc))
     if args.mode == "replay" and args.recording is None:
-        parser.error("./run-vr replay requires --recording <session.hdf5>")
+        parser.error("./run-vr replay requires <episode_path> or --recording <session.hdf5>")
+    if args.mode != "replay" and args.episode_path is not None:
+        parser.error("episode path requires ./run-vr replay <episode_path>")
     if args.mode != "replay" and (args.recording is not None or args.render_cameras is not None or args.replay_report is not None):
         parser.error("--recording, --render-cameras and --replay-report require ./run-vr replay")
     if args.episode < 0:
@@ -250,9 +276,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error(
             "legacy Kit is not qualified for Scene Partitions; use --preview-isolation off"
         )
-    args.max_control_steps = (
-        args.max_control_steps
-        or defaults["smoke_control_steps" if args.smoke or args.xr_smoke else "max_control_steps"]
+    args.max_control_steps = args.max_control_steps or (
+        0 if args.mode == "record" and not (args.smoke or args.xr_smoke)
+        else defaults["smoke_control_steps" if args.smoke or args.xr_smoke else "max_control_steps"]
     )
     return args
 
