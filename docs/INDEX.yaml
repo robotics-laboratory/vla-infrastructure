@@ -225,6 +225,15 @@ documents:
   status: current
   owner: governance.documentation
   mutable: true
+- path: docs/plans/ISAAC_VR_RECORDING_REMEDIATION.md
+  kind: plan
+  status: current
+  owner: data.collection
+  mutable: true
+  gates:
+  - D0
+  - S2
+  - D1
 - path: docs/project/CORE_ENVIRONMENT_OPERATIONS.md
   kind: operations
   status: current
