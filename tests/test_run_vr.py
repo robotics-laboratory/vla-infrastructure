@@ -55,6 +55,11 @@ def test_cli_modes_and_explicit_rollback(launcher):
     with pytest.raises(SystemExit):
         launcher.parse_args(["record", "--capture-preview-evidence"])
     with pytest.raises(SystemExit):
+        launcher.parse_args(["record", "--injected-actions"])
+    with pytest.raises(SystemExit):
+        launcher.parse_args(["--smoke", "--injected-actions"])
+    assert launcher.parse_args(["record", "--smoke", "--injected-actions"]).injected_actions
+    with pytest.raises(SystemExit):
         launcher.parse_args(["replay"])
     for option in (["--smoke"], ["--xr-smoke"], ["--hud-on-start"], ["--cloudxr-mode", "existing"]):
         with pytest.raises(SystemExit):
@@ -250,6 +255,36 @@ def test_physical_record_keeps_teleop_and_xr(launcher, tmp_path, monkeypatch):
     command = json.loads(manifest.read_text())["launch"]["command"]
     assert "--s2-record" in command and "--s2-teleop" in command
     assert "--xr" in command and "--experience" in command
+
+
+def test_injected_recording_smoke_selects_real_writer_without_xr(
+    launcher, tmp_path, monkeypatch
+):
+    stack = launcher.STACKS["isaac61"]
+    monkeypatch.setattr(launcher, "verify_stack", lambda _: stack)
+    monkeypatch.setattr(launcher, "_git_output", lambda *a: "")
+    monkeypatch.setattr(launcher, "configure_cloudxr", lambda *args, **kwargs: None)
+    assert (
+        launcher.main(
+            [
+                "record",
+                "--smoke",
+                "--injected-actions",
+                "--dry-run",
+                "--state-root",
+                str(tmp_path),
+            ]
+        )
+        == 0
+    )
+    manifest = max(
+        (tmp_path / "runs").glob("*/run_manifest.json"), key=lambda p: p.stat().st_mtime_ns
+    )
+    command = json.loads(manifest.read_text())["launch"]["command"]
+    assert "--s2-injected-recording-smoke" in command
+    assert "--s2-record" in command and "--s2-teleop" not in command
+    assert "--xr" not in command and "--experience" not in command
+    assert "--s2-cloudxr-profile" not in command
 
 
 def module(monkeypatch, name, **attrs):

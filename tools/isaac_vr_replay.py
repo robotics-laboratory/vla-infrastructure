@@ -20,6 +20,18 @@ try:
     from .isaac_vr_asset_closure import AssetClosureError, verify_asset_closure_manifest
 except ImportError:  # Runtime imports tools directly from its source directory.
     from isaac_vr_asset_closure import AssetClosureError, verify_asset_closure_manifest
+try:
+    from .isaac_vr_visual_provenance import (
+        VisualProvenanceError,
+        assert_visual_provenance_matches,
+        verify_visual_provenance,
+    )
+except ImportError:  # Runtime imports tools directly from its source directory.
+    from isaac_vr_visual_provenance import (
+        VisualProvenanceError,
+        assert_visual_provenance_matches,
+        verify_visual_provenance,
+    )
 
 
 CANONICAL_CAMERA_ROLES = ("left_wrist", "right_wrist", "scene")
@@ -57,6 +69,10 @@ class ReplayArtifact:
     snapshot_sha256: str
     asset_closure_path: Path
     asset_closure_sha256: str
+    visual_provenance: Mapping[str, Any]
+    visual_provenance_sha256: str
+    terminal_successor_path: Path
+    terminal_successor_sha256: str
     camera_paths: Mapping[str, str]
     committed_frames: int
     outcome: str
@@ -207,6 +223,20 @@ def verify_recording_artifact(
             "recording manifest and asset closure aggregate hashes differ"
         )
 
+    visual_provenance = manifest.get("visual_provenance")
+    if not isinstance(visual_provenance, dict):
+        raise ValueError("recording manifest requires visual_provenance")
+    visual_provenance_sha256 = _required_digest(manifest, "visual_provenance_sha256")
+    try:
+        verified_visual_provenance = verify_visual_provenance(visual_provenance)
+    except VisualProvenanceError as exc:
+        raise ValueError(f"recording visual provenance verification failed: {exc}") from exc
+    if (
+        verified_visual_provenance["visual_provenance_sha256"]
+        != visual_provenance_sha256
+    ):
+        raise ValueError("recording manifest and visual provenance hashes differ")
+
     camera_paths = manifest.get("camera_roles")
     if not isinstance(camera_paths, dict) or set(camera_paths) != set(CANONICAL_CAMERA_ROLES):
         raise ValueError(
@@ -221,6 +251,44 @@ def verify_recording_artifact(
         normalized_camera_paths[role] = path
     if len(set(normalized_camera_paths.values())) != len(normalized_camera_paths):
         raise ValueError("recording camera prim paths must be unique")
+    provenance_camera_paths = {
+        str(entry["role"]): str(entry["prim_path"])
+        for entry in verified_visual_provenance["camera_roles"]
+    }
+    if provenance_camera_paths != normalized_camera_paths:
+        raise ValueError("recording camera roles disagree with visual provenance")
+
+    terminal = manifest.get("terminal_successor")
+    if not isinstance(terminal, dict):
+        raise ValueError("finalized recording requires a terminal successor artifact")
+    if terminal.get("file") != "terminal_successor.npz":
+        raise ValueError("recording terminal successor has an unsupported filename")
+    terminal_path = (artifact_dir / "terminal_successor.npz").resolve()
+    if not terminal_path.is_relative_to(artifact_dir):
+        raise ValueError("terminal successor escapes the recording artifact directory")
+    terminal_sha256 = _required_digest(terminal, "sha256")
+    try:
+        from isaac_vr_recording import verify_terminal_successor_snapshot
+    except ImportError:
+        from tools.isaac_vr_recording import verify_terminal_successor_snapshot
+    try:
+        verified_terminal = verify_terminal_successor_snapshot(
+            terminal_path,
+            expected_artifact_sha256=terminal_sha256,
+        )
+    except (OSError, TypeError, ValueError) as exc:
+        raise ValueError(f"recording terminal successor verification failed: {exc}") from exc
+    if terminal.get("schema") != "piper_x_terminal_successor_v1":
+        raise ValueError("recording terminal successor schema is unsupported")
+    if terminal.get("scene_state_snapshot_id") != verified_terminal.token.scene_state_snapshot_id:
+        raise ValueError("recording manifest terminal successor identity mismatch")
+    if (
+        terminal.get("scene_state_snapshot_sha256")
+        != verified_terminal.token.scene_state_snapshot_sha256
+    ):
+        raise ValueError("recording manifest terminal successor digest mismatch")
+    if terminal.get("capture_sequence") != verified_terminal.token.capture_sequence:
+        raise ValueError("recording manifest terminal successor sequence mismatch")
 
     return ReplayArtifact(
         recording=recording,
@@ -231,6 +299,10 @@ def verify_recording_artifact(
         snapshot_sha256=snapshot_sha256,
         asset_closure_path=asset_closure_path,
         asset_closure_sha256=asset_closure_sha256,
+        visual_provenance=verified_visual_provenance,
+        visual_provenance_sha256=visual_provenance_sha256,
+        terminal_successor_path=terminal_path,
+        terminal_successor_sha256=terminal_sha256,
         camera_paths=normalized_camera_paths,
         committed_frames=committed_frames,
         outcome=outcome,
@@ -277,6 +349,8 @@ def _validate_session(reader: Any, artifact: ReplayArtifact, episode: int) -> Re
         raise RuntimeError("HDF public manifest does not bind the verified snapshot digest")
     if hdf_session.get("asset_closure_sha256") != artifact.asset_closure_sha256:
         raise RuntimeError("HDF public manifest does not bind the verified asset closure")
+    if hdf_session.get("visual_provenance_sha256") != artifact.visual_provenance_sha256:
+        raise RuntimeError("HDF public manifest does not bind the verified visual provenance")
     sampling = dict(manifest.sampling)
     if sampling.get("pose_backend") != "fabric" or sampling.get(
         "mode"
@@ -385,6 +459,20 @@ def _validate_session(reader: Any, artifact: ReplayArtifact, episode: int) -> Re
                 raise RuntimeError(f"D0 crosses {epoch_field} within one episode")
 
     committed = np.asarray([int(row["committed"]) for row in rows], dtype=bool)
+    try:
+        from isaac_vr_recording import verify_terminal_successor_snapshot
+    except ImportError:
+        from tools.isaac_vr_recording import verify_terminal_successor_snapshot
+    try:
+        verify_terminal_successor_snapshot(
+            artifact.terminal_successor_path,
+            expected_artifact_sha256=artifact.terminal_successor_sha256,
+            committed_transition=rows[-1],
+        )
+    except (OSError, TypeError, ValueError) as exc:
+        raise RuntimeError(
+            f"terminal successor does not close the final D0 transition: {exc}"
+        ) from exc
     return ReplaySession(
         episode_name=episode_name,
         frames=frames,
@@ -415,6 +503,20 @@ def apply_replay_frames(
     after = physics_steps() if physics_steps is not None else None
     if before is not None and after != before:
         raise RuntimeError(f"replay advanced physics: {before} -> {after}")
+
+
+def _validate_render_coverage(rendered: list[dict[str, Any]], frames: int) -> None:
+    expected = {
+        (frame, role)
+        for frame in range(frames)
+        for role in CANONICAL_CAMERA_ROLES
+    }
+    actual = {(int(item["frame"]), str(item["role"])) for item in rendered}
+    if actual != expected or len(rendered) != len(expected):
+        raise RuntimeError(
+            "offline RGB materialization is incomplete: "
+            f"expected={len(expected)}, actual={len(rendered)}"
+        )
 
 
 class ReplayRuntimeGuard:
@@ -470,33 +572,51 @@ class ReplayCameraMaterializer:
         self.output_dir = output_dir
         self.products: dict[str, Any] = {}
         self.annotators: dict[str, Any] = {}
+        self.attached_roles: set[str] = set()
+        self._settings: Any = None
+        self._previous_orchestrator_enabled: bool | None = None
 
     def open(self) -> None:
+        import carb.settings
         import omni.replicator.core as rep
 
-        self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.products = {
-            role: rep.create.render_product(path, (640, 480), force_new=True)
-            for role, path in self.camera_paths.items()
-        }
-        self.annotators = {
-            role: rep.AnnotatorRegistry.get_annotator("rgb") for role in self.products
-        }
-        for role, annotator in self.annotators.items():
+        if self.output_dir.exists() or self.output_dir.is_symlink():
+            raise FileExistsError(f"render output directory already exists: {self.output_dir}")
+        self.output_dir.mkdir(parents=True, mode=0o700)
+        self.output_dir.chmod(0o700)
+        self._settings = carb.settings.get_settings()
+        self._previous_orchestrator_enabled = self._settings.get_as_bool(
+            "/exts/omni.replicator.core/Orchestrator/enabled"
+        )
+        # State-only replay has no live Fabric simulation-time producer.  Turn
+        # off the reference-time gate so attached RGB annotators expose each
+        # explicitly rendered Hydra update without Replicator scheduling.
+        self._settings.set("/exts/omni.replicator.core/Orchestrator/enabled", False)
+        for role in CANONICAL_CAMERA_ROLES:
+            self.products[role] = rep.create.render_product(
+                self.camera_paths[role], (640, 480), force_new=True
+            )
+            annotator = rep.AnnotatorRegistry.get_annotator("rgb")
+            self.annotators[role] = annotator
             annotator.attach(self.products[role])
+            self.attached_roles.add(role)
+        # Render products and SyntheticData graphs are initialized lazily.  A
+        # bounded stopped-timeline warm-up mirrors the pinned Replicator's own
+        # async-rendering integration test and prevents the first capture from
+        # racing graph creation.
+        import omni.kit.app
+
+        for _ in range(3):
+            omni.kit.app.get_app().update()
 
     def render(self, frame: int) -> list[dict[str, Any]]:
-        import omni.replicator.core as rep
+        import omni.kit.app
         from PIL import Image
 
         if set(self.annotators) != set(CANONICAL_CAMERA_ROLES):
             raise RuntimeError("all three canonical replay cameras must be prepared")
-        rep.orchestrator.step(
-            rt_subframes=4,
-            delta_time=0.0,
-            pause_timeline=True,
-            wait_for_render=True,
-        )
+        for _ in range(4):
+            omni.kit.app.get_app().update()
         rendered: list[dict[str, Any]] = []
         for role in CANONICAL_CAMERA_ROLES:
             image = np.asarray(self.annotators[role].get_data())
@@ -506,14 +626,32 @@ class ReplayCameraMaterializer:
                 )
             path = self.output_dir / f"frame_{frame:06d}_{role}.png"
             Image.fromarray(image[..., :3]).save(path)
-            rendered.append({"role": role, "frame": frame, "path": str(path)})
+            path.chmod(0o600)
+            rendered.append(
+                {
+                    "dtype": "uint8",
+                    "frame": frame,
+                    "path": str(path),
+                    "role": role,
+                    "sha256": _sha256(path),
+                    "shape": [480, 640, 3],
+                }
+            )
         return rendered
 
     def close(self) -> None:
-        for annotator in self.annotators.values():
-            annotator.detach()
+        for role in tuple(self.attached_roles):
+            self.annotators[role].detach()
+            self.attached_roles.remove(role)
         for product in self.products.values():
             product.destroy()
+        if self._settings is not None and self._previous_orchestrator_enabled is not None:
+            self._settings.set(
+                "/exts/omni.replicator.core/Orchestrator/enabled",
+                self._previous_orchestrator_enabled,
+            )
+        self._settings = None
+        self._previous_orchestrator_enabled = None
         self.annotators.clear()
         self.products.clear()
 
@@ -538,6 +676,10 @@ def _open_verified_snapshot(artifact: ReplayArtifact, simulation_app: Any) -> No
         raise RuntimeError(
             f"opened USD root {root_identifier} != verified snapshot {artifact.snapshot}"
         )
+    try:
+        assert_visual_provenance_matches(artifact.visual_provenance, stage)
+    except VisualProvenanceError as exc:
+        raise RuntimeError(f"replay visual provenance mismatch: {exc}") from exc
 
 
 def replay_from_snapshot(
@@ -558,6 +700,7 @@ def replay_from_snapshot(
         artifact.snapshot,
         artifact.manifest_path,
         artifact.asset_closure_path,
+        artifact.terminal_successor_path,
         artifact.recording.parent / "recording_state.json",
     }
     if report_candidate in protected_inputs:
@@ -592,7 +735,9 @@ def replay_from_snapshot(
             pose_backend="usd",
         )
         replayer.prepare_episode(session.episode_name)
-        prepared_groups = tuple(recordable.group for recordable in replayer.prepared_recordables())
+        # Pinned Episode Recorder 0.1.6 exposes the prepared list as a public
+        # property, not a callable accessor.
+        prepared_groups = tuple(recordable.group for recordable in replayer.prepared_recordables)
         recorded_groups = {str(track["group"]) for track in session.tracks}
         if set(prepared_groups) != recorded_groups or len(prepared_groups) != len(
             set(prepared_groups)
@@ -624,6 +769,9 @@ def replay_from_snapshot(
             replayer.close()
         guard.close()
 
+    if render_cameras is not None:
+        _validate_render_coverage(rendered, session.frames)
+
     report = {
         "schema": "piper_x_isaac_vr_replay_report_v2",
         "recording": str(artifact.recording),
@@ -632,6 +780,9 @@ def replay_from_snapshot(
         "stage_snapshot_sha256": artifact.snapshot_sha256,
         "asset_closure": str(artifact.asset_closure_path),
         "asset_closure_sha256": artifact.asset_closure_sha256,
+        "visual_provenance_sha256": artifact.visual_provenance_sha256,
+        "terminal_successor": str(artifact.terminal_successor_path),
+        "terminal_successor_sha256": artifact.terminal_successor_sha256,
         "episode": session.episode_name,
         "frames_applied": session.frames,
         "physics_callbacks": len(guard.physics_callbacks),

@@ -13,7 +13,56 @@ import pytest
 
 from tools import isaac_vr_replay as replay
 from tools.isaac_vr_asset_closure import build_asset_closure_manifest
+from tools.isaac_vr_visual_provenance import (
+    RENDERER_SETTING_PATHS,
+    VISUAL_PROVENANCE_SCHEMA,
+)
+from tools.isaac_vr_recording import (
+    RecordedObservationToken,
+    _captured_frame_sha256,
+    write_terminal_successor_snapshot,
+)
 from test_isaac_vr_recording import committed_sample, seal_sample
+
+
+TERMINAL_FRAMES = {"state/test": {"marker": np.asarray(7, dtype=np.int64)}}
+TERMINAL_SNAPSHOT_ID = "snapshot:2"
+TERMINAL_SNAPSHOT_SHA256 = _captured_frame_sha256(TERMINAL_FRAMES)
+
+
+def _visual_provenance(camera_roles):
+    document = {
+        "schema": VISUAL_PROVENANCE_SCHEMA,
+        "camera_roles": [
+            {
+                "attributes": [{"name": "focalLength", "payload": {"default": 18.0}}],
+                "data_type": "rgb",
+                "prim_path": path,
+                "prim_type": "Camera",
+                "resolution": [640, 480],
+                "role": role,
+            }
+            for role, path in camera_roles.items()
+        ],
+        "materialization": {},
+        "mutable_visual_state": {
+            "excluded_transient_prefixes": ["/Render", "/Replicator", "/_xr"],
+            "property_count": 0,
+            "properties": [],
+        },
+        "renderer": {
+            "implementation": "RTX",
+            "runtime_identity": {"version": "fixture"},
+            "settings": [
+                {"path": path, "state": {"present": False}} for path in RENDERER_SETTING_PATHS
+            ],
+            "settings_policy": "piper_x_rtx_settings_v1",
+        },
+    }
+    document["visual_provenance_sha256"] = hashlib.sha256(
+        json.dumps(document, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    return document
 
 
 def _artifact(tmp_path: Path, **updates) -> Path:
@@ -28,6 +77,28 @@ def _artifact(tmp_path: Path, **updates) -> Path:
         dependency_provider=lambda _snapshot: ((), (), ()),
     )
     (tmp_path / "asset_closure.json").write_text(json.dumps(asset_closure))
+    camera_roles = {
+        "left_wrist": "/World/Left/Camera",
+        "right_wrist": "/World/Right/Camera",
+        "scene": "/World/SceneCamera",
+    }
+    visual_provenance = _visual_provenance(camera_roles)
+    terminal_token = RecordedObservationToken(
+        token_id=2,
+        observation=None,
+        state=tuple(float(value) for value in np.arange(14, dtype=np.float32) + 2),
+        physics_step=18,
+        capture_sequence=2,
+        reset_epoch=0,
+        state_generation=18,
+        scene_state_snapshot_id=TERMINAL_SNAPSHOT_ID,
+        scene_state_snapshot_sha256=TERMINAL_SNAPSHOT_SHA256,
+    )
+    terminal = write_terminal_successor_snapshot(
+        tmp_path / "terminal_successor.npz",
+        terminal_token,
+        TERMINAL_FRAMES,
+    )
     manifest = {
         "schema": "piper_x_isaac_vr_recording_manifest_v2",
         "artifact_state": "finalized",
@@ -37,22 +108,22 @@ def _artifact(tmp_path: Path, **updates) -> Path:
         "hdf5_sha256": hashlib.sha256(recording.read_bytes()).hexdigest(),
         "stage_snapshot": snapshot.name,
         "stage_snapshot_sha256": hashlib.sha256(snapshot.read_bytes()).hexdigest(),
-        "camera_roles": {
-            "left_wrist": "/World/Left/Camera",
-            "right_wrist": "/World/Right/Camera",
-            "scene": "/World/SceneCamera",
-        },
+        "camera_roles": camera_roles,
         "committed_frames": 2,
         "outcome": "operator_stopped",
         "pose_backend_effective": "fabric",
         "pose_backend_requested": "fabric",
         "transition_schema": "piper_x_committed_transition_v2",
+        "terminal_successor": terminal,
         "session_metadata": {
             "run_id": "run",
             "session_id": "session",
             "episode_id": "episode_000000",
             "source_profile": "isaac_human_vr_offline_rgb_v1",
+            "visual_provenance_sha256": visual_provenance["visual_provenance_sha256"],
         },
+        "visual_provenance": visual_provenance,
+        "visual_provenance_sha256": visual_provenance["visual_provenance_sha256"],
     }
     manifest.update(updates)
     (tmp_path / "manifest.json").write_text(json.dumps(manifest))
@@ -99,6 +170,7 @@ def _canonical_d0_arrays() -> dict[str, np.ndarray]:
             "transition_id": "transition:1",
             "next_obs_id": "obs:2",
             "next_scene_state_snapshot_id": "snapshot:2",
+            "next_scene_state_snapshot_sha256": TERMINAL_SNAPSHOT_SHA256,
             "successor_observation_state": np.arange(14, dtype=np.float32) + 2,
             "successor_capture_sequence": 2,
             "control_tick_id": 1,
@@ -263,6 +335,20 @@ def test_frame_guard_checks_quiescence_after_every_pump_and_materialization():
     ]
 
 
+def test_offline_rgb_coverage_requires_each_role_exactly_once_per_frame():
+    rendered = [
+        {"frame": frame, "role": role}
+        for frame in range(2)
+        for role in replay.CANONICAL_CAMERA_ROLES
+    ]
+    replay._validate_render_coverage(rendered, 2)
+
+    with pytest.raises(RuntimeError, match="incomplete"):
+        replay._validate_render_coverage(rendered[:-1], 2)
+    with pytest.raises(RuntimeError, match="incomplete"):
+        replay._validate_render_coverage([*rendered, rendered[0]], 2)
+
+
 def test_pre_scene_entry_opens_snapshot_before_strict_prepare(tmp_path, monkeypatch):
     artifact = _verify(_artifact(tmp_path))
     events = []
@@ -291,8 +377,9 @@ def test_pre_scene_entry_opens_snapshot_before_strict_prepare(tmp_path, monkeypa
             assert "open" in events
             events.append("prepare")
 
-        def prepared_recordables(self):
-            return [SimpleNamespace(group=group) for group in replay.REQUIRED_TRACKS]
+        prepared_recordables = [
+            SimpleNamespace(group=group) for group in replay.REQUIRED_TRACKS
+        ]
 
         def apply_frame(self, frame):
             events.append("apply")

@@ -22,7 +22,9 @@ from tools.isaac_vr_recording import (
     enrich_recording_session_metadata,
     prepare_private_output_dir,
     sha256_file,
+    verify_terminal_successor_snapshot,
     verify_committed_transition_sample,
+    write_terminal_successor_snapshot,
     write_asset_closure_sidecar,
 )
 from tools.isaac_vr_decision import (
@@ -546,6 +548,25 @@ def make_live(tmp_path: Path):
     return live, storage
 
 
+def row_for_tokens(token, successor_token):
+    row = committed_sample()
+    row["scene_state_snapshot_id"] = token.scene_state_snapshot_id
+    row["scene_state_snapshot_sha256"] = token.scene_state_snapshot_sha256
+    row["observation_state"] = np.asarray(token.state, dtype=np.float32)
+    row["observation_physics_step"] = token.physics_step
+    row["observation_capture_sequence"] = token.capture_sequence
+    row["simulation_state_generation"] = token.state_generation
+    row["reset_epoch"] = token.reset_epoch
+    row["next_scene_state_snapshot_id"] = successor_token.scene_state_snapshot_id
+    row["next_scene_state_snapshot_sha256"] = successor_token.scene_state_snapshot_sha256
+    row["successor_observation_state"] = np.asarray(successor_token.state, dtype=np.float32)
+    row["successor_physics_step"] = successor_token.physics_step
+    row["successor_capture_sequence"] = successor_token.capture_sequence
+    row["successor_state_generation"] = successor_token.state_generation
+    row["successor_reset_epoch"] = successor_token.reset_epoch
+    return seal_sample(row)
+
+
 def test_live_recording_buffers_ot_then_admits_only_committed_row(tmp_path):
     live, storage = make_live(tmp_path)
     token = live.capture_observation()
@@ -567,6 +588,71 @@ def test_live_recording_buffers_ot_then_admits_only_committed_row(tmp_path):
     with pytest.raises(RuntimeError, match="no pending"):
         live.commit_transition(token, successor_token, row)
     assert live.capture_observation() is successor_token
+
+
+def test_close_persists_full_terminal_successor_bound_to_last_row(tmp_path):
+    live, _ = make_live(tmp_path)
+    token = live.capture_observation()
+    successor = live.capture_successor(token)
+    row = row_for_tokens(token, successor)
+    live.commit_transition(token, successor, row)
+    # Consuming and rejecting the promoted buffer must not erase the final
+    # successor of the last committed transition.
+    promoted = live.capture_observation()
+    assert promoted is successor
+    live.discard_observation(promoted, reason="operator_stopped_before_next_action")
+    live.close(outcome="operator_stopped")
+
+    manifest = json.loads((tmp_path / "manifest.json").read_text())
+    terminal = manifest["terminal_successor"]
+    assert terminal["file"] == "terminal_successor.npz"
+    assert terminal["scene_state_snapshot_id"] == successor.scene_state_snapshot_id
+    assert terminal["scene_state_snapshot_sha256"] == successor.scene_state_snapshot_sha256
+    verified = verify_terminal_successor_snapshot(
+        tmp_path / terminal["file"],
+        expected_artifact_sha256=terminal["sha256"],
+        committed_transition=row,
+    )
+    assert verified.token.capture_sequence == successor.capture_sequence
+    assert verified.token.physics_step == successor.physics_step
+    assert verified.frames["world"]["marker"] == 7
+
+    mismatched_row = dict(row)
+    mismatched_row["next_scene_state_snapshot_id"] = "unrelated:successor"
+    mismatched_row = seal_sample(mismatched_row)
+    with pytest.raises(ValueError, match="identity differs from the last committed row"):
+        verify_terminal_successor_snapshot(
+            tmp_path / terminal["file"],
+            expected_artifact_sha256=terminal["sha256"],
+            committed_transition=mismatched_row,
+        )
+
+
+def test_terminal_successor_writer_is_deterministic_and_detects_tampering(tmp_path):
+    source_dir = tmp_path / "source"
+    source_dir.mkdir()
+    live, _ = make_live(source_dir)
+    token = live.capture_observation()
+    successor = live.capture_successor(token)
+    frames = live._successor[1]
+    first_dir, second_dir = tmp_path / "one", tmp_path / "two"
+    first_dir.mkdir()
+    second_dir.mkdir()
+    first = first_dir / "terminal_successor.npz"
+    second = second_dir / "terminal_successor.npz"
+    first_info = write_terminal_successor_snapshot(first, successor, frames)
+    second_info = write_terminal_successor_snapshot(second, successor, frames)
+    assert first.read_bytes() == second.read_bytes()
+    assert first_info["sha256"] == second_info["sha256"]
+
+    payload = bytearray(first.read_bytes())
+    payload[-1] ^= 1
+    first.write_bytes(payload)
+    with pytest.raises(ValueError, match="artifact digest mismatch"):
+        verify_terminal_successor_snapshot(
+            first,
+            expected_artifact_sha256=first_info["sha256"],
+        )
 
 
 def test_runtime_builder_uses_causal_receipt_ids_hashes_and_token_snapshot(tmp_path):
@@ -720,16 +806,19 @@ def test_hdf_session_metadata_binds_snapshot_and_asset_closure():
         stage_snapshot="stage_snapshot.usd",
         stage_snapshot_sha256=digest,
         asset_closure_sha256=digest,
+        visual_provenance_sha256=digest,
     )
     assert enriched["stage_snapshot"] == "stage_snapshot.usd"
     assert enriched["stage_snapshot_sha256"] == digest
     assert enriched["asset_closure_sha256"] == digest
+    assert enriched["visual_provenance_sha256"] == digest
     with pytest.raises(ValueError, match="artifact-relative"):
         enrich_recording_session_metadata(
             enriched,
             stage_snapshot="../stage_snapshot.usd",
             stage_snapshot_sha256=digest,
             asset_closure_sha256=digest,
+            visual_provenance_sha256=digest,
         )
 
 

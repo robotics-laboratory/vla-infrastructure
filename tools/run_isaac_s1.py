@@ -79,6 +79,7 @@ parser.add_argument(
 parser.add_argument("--s2-max-control-steps", type=int, default=300)
 parser.add_argument("--s2-record", action="store_true", help="Write state/provenance through NVIDIA Episode Recorder HDF5 V2.")
 parser.add_argument("--s2-recording-dir", type=Path)
+parser.add_argument("--s2-injected-recording-smoke", action="store_true", help=argparse.SUPPRESS)
 parser.add_argument("--s2-replay-hdf5", type=Path)
 parser.add_argument("--s2-replay-episode", type=int, default=0)
 parser.add_argument("--s2-render-cameras", type=Path)
@@ -150,6 +151,10 @@ if args_cli.s2_replay_hdf5 is not None and (
     args_cli.s2_teleop or args_cli.s2_record or args_cli.s2_recording_dir is not None or args_cli.xr
 ):
     parser.error("state-only replay cannot share teleop, recording, or XR")
+if args_cli.s2_injected_recording_smoke and (
+    not args_cli.s2_record or args_cli.s2_teleop or args_cli.xr
+):
+    parser.error("injected recording smoke requires no-client --s2-record")
 if args_cli.s2_replay_hdf5 is None and (
     args_cli.s2_render_cameras is not None or args_cli.s2_replay_report is not None
 ):

@@ -16,6 +16,7 @@ from collections import Counter
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -23,6 +24,7 @@ import shutil
 import stat
 import subprocess
 from typing import Any, ContextManager
+import zipfile
 
 import numpy as np
 
@@ -33,6 +35,8 @@ REQUIRED_SESSION_METADATA = ("run_id", "session_id", "episode_id", "source_profi
 FINAL_OUTCOMES = {"success", "operator_stopped", "aborted", "failure"}
 _ID_BYTES = 256
 _HASH_BYTES = 32
+TERMINAL_SUCCESSOR_SCHEMA = "piper_x_terminal_successor_v1"
+TERMINAL_SUCCESSOR_FILENAME = "terminal_successor.npz"
 
 
 def _fabric_backend_context() -> ContextManager[None]:
@@ -256,8 +260,8 @@ def open_explicit_session(
             storage.close()
         except Exception as cleanup_exc:
             cleanup_errors.append(cleanup_exc)
-        for cleanup_exc in cleanup_errors:
-            exc.add_note(f"session-open rollback also failed: {cleanup_exc!r}")
+        for rollback_error in cleanup_errors:
+            exc.add_note(f"session-open rollback also failed: {rollback_error!r}")
         raise
 
 
@@ -322,6 +326,15 @@ class RecordedObservationToken:
     scene_state_snapshot_sha256: str
 
 
+@dataclass(frozen=True)
+class TerminalSuccessorSnapshot:
+    """Verified full Recordable bundle for the final committed O_(t+1)."""
+
+    token: RecordedObservationToken
+    frames: dict[str, dict[str, np.ndarray]]
+    artifact_sha256: str
+
+
 class LiveRecording:
     """Owner of one live V2 session and one pending pre-action observation."""
 
@@ -356,6 +369,9 @@ class LiveRecording:
         self._pending: tuple[RecordedObservationToken, dict[str, dict[str, Any]]] | None = None
         self._successor: tuple[RecordedObservationToken, dict[str, dict[str, Any]]] | None = None
         self._promoted: tuple[RecordedObservationToken, dict[str, dict[str, Any]]] | None = None
+        self._terminal_successor: (
+            tuple[RecordedObservationToken, dict[str, dict[str, Any]], dict[str, Any]] | None
+        ) = None
         self._next_capture_sequence = 0
         self._closed = False
         self._failure_reason: str | None = None
@@ -446,6 +462,10 @@ class LiveRecording:
             frames[self.d0.group] = canonical
             self.sampler.append_captured_frame(frames)
             self.committed_frames += 1
+            # Retain the most recent full successor independently of the
+            # double buffer.  A later rejected tick may consume/discard the
+            # promoted buffer, but it must not erase the last committed O_(t+1).
+            self._terminal_successor = (successor_token, successor, canonical)
             # Exact O_(t+1) becomes the next O_t without sampling it again.
             self._promoted = (successor_token, successor)
             if self.committed_frames % self.flush_every_frames == 0:
@@ -484,6 +504,7 @@ class LiveRecording:
         # it is not an invalid action attempt and does not increment rejection QA.
         self._promoted = None
         self._successor = None
+        effective_reason: str | None
         if self._failure_reason is not None:
             effective_outcome = "failure"
             effective_reason = self._failure_reason
@@ -507,6 +528,24 @@ class LiveRecording:
                     "rejections": dict(self.rejections),
                 },
             )
+            terminal_successor: dict[str, Any] | None = None
+            if self.committed_frames:
+                if self._terminal_successor is None:
+                    raise RuntimeError("committed recording lacks its terminal successor buffer")
+                successor_token, successor_frames, last_transition = self._terminal_successor
+                terminal_path = self.output_dir / TERMINAL_SUCCESSOR_FILENAME
+                terminal_successor = write_terminal_successor_snapshot(
+                    terminal_path,
+                    successor_token,
+                    successor_frames,
+                )
+                # Read the just-written artifact through the same strict path
+                # used by replay before advertising it in the final manifest.
+                verify_terminal_successor_snapshot(
+                    terminal_path,
+                    expected_artifact_sha256=terminal_successor["sha256"],
+                    committed_transition=last_transition,
+                )
             hdf5_hash = sha256_file(self.hdf5_path)
             manifest_path = self.output_dir / "manifest.json"
             manifest = json.loads(manifest_path.read_text())
@@ -521,6 +560,7 @@ class LiveRecording:
                     "outcome": effective_outcome,
                     "reason": effective_reason,
                     "rejections": dict(sorted(self.rejections.items())),
+                    "terminal_successor": terminal_successor,
                 }
             )
             _atomic_write_json(manifest_path, manifest)
@@ -533,6 +573,7 @@ class LiveRecording:
                 "outcome": effective_outcome,
                 "reason": effective_reason,
                 "stage_snapshot": str(self.snapshot),
+                "terminal_successor": terminal_successor,
             }
             _atomic_write_json(self.output_dir / "result.json", state)
             # This marker is deliberately written last.
@@ -659,7 +700,7 @@ def start_live_recording(
         export_stage_snapshot,
     )
     import omni.usd
-    from isaac_vr_decision import capture_state_snapshot
+    from tools.isaac_vr_decision import capture_state_snapshot
 
     _validate_session_metadata(session_metadata)
     repository = Path(__file__).resolve().parents[1]
@@ -674,6 +715,7 @@ def start_live_recording(
     if stage is None:
         raise RuntimeError("recording requires a loaded USD stage")
     snapshot = Path(export_stage_snapshot(str(output_dir)))
+    snapshot_stage = _sanitize_exported_stage(snapshot)
     snapshot_hash = sha256_file(snapshot)
     asset_closure = write_asset_closure_sidecar(
         snapshot,
@@ -691,6 +733,19 @@ def start_live_recording(
         "right_wrist": env.camera.wrists[1],
         "scene": env.camera.scene_camera,
     }
+    try:
+        from tools.isaac_vr_visual_provenance import build_visual_provenance
+    except ImportError:  # Runtime can import tools directly from its source directory.
+        from isaac_vr_visual_provenance import build_visual_provenance
+
+    camera_roles = {role: camera._view.prim_paths[0] for role, camera in cameras.items()}
+    visual_provenance = build_visual_provenance(
+        snapshot_stage,
+        {
+            role: {"data_type": "rgb", "prim_path": path, "resolution": (640, 480)}
+            for role, path in camera_roles.items()
+        },
+    )
     recordables: list[Any] = [
         SimTimeRecordable(),
         ArticulationRecordable(group="state/left_robot", prim_path="/World/LeftPiper"),
@@ -716,6 +771,7 @@ def start_live_recording(
         stage_snapshot=snapshot.name,
         stage_snapshot_sha256=snapshot_hash,
         asset_closure_sha256=str(asset_closure["asset_closure_sha256"]),
+        visual_provenance_sha256=str(visual_provenance["visual_provenance_sha256"]),
     )
     storage, sampler = open_explicit_session(
         str(path),
@@ -741,7 +797,7 @@ def start_live_recording(
         "artifact_state": "in_progress",
         "asset_closure": asset_closure_path.name,
         "asset_closure_sha256": asset_closure["asset_closure_sha256"],
-        "camera_roles": {role: camera._view.prim_paths[0] for role, camera in cameras.items()},
+        "camera_roles": camera_roles,
         "committed_frames": 0,
         "dataset_admissible": False,
         "dirty_status": subprocess.check_output(
@@ -758,6 +814,8 @@ def start_live_recording(
         "stage_snapshot": snapshot.name,
         "stage_snapshot_sha256": snapshot_hash,
         "transition_schema": TRANSITION_SCHEMA,
+        "visual_provenance": visual_provenance,
+        "visual_provenance_sha256": visual_provenance["visual_provenance_sha256"],
     }
     _atomic_write_json(output_dir / "manifest.json", manifest)
     return LiveRecording(
@@ -774,12 +832,36 @@ def start_live_recording(
     )
 
 
+def _sanitize_exported_stage(snapshot: Path) -> Any:
+    """Remove runtime-only prims and open the immutable replay input.
+
+    ``export_stage_snapshot`` may canonicalize authored asset paths.  Hashing the
+    live stage would therefore describe a different composed input than replay
+    later opens.  Render, Replicator, and XR graphs are runtime products and
+    collide with fresh offline render products when persisted.  A separate USD
+    stage preserves the active simulation while binding provenance to the
+    sanitized snapshot that replay actually opens.
+    """
+    from pxr import Usd
+
+    stage = Usd.Stage.Open(str(snapshot))
+    if stage is None:
+        raise RuntimeError(f"could not open exported recording snapshot: {snapshot}")
+    for path in ("/Render", "/Replicator", "/_xr"):
+        if stage.GetPrimAtPath(path).IsValid():
+            stage.RemovePrim(path)
+    if stage.GetRootLayer().Save() is False:
+        raise RuntimeError(f"could not save sanitized recording snapshot: {snapshot}")
+    return stage
+
+
 def enrich_recording_session_metadata(
     metadata: Mapping[str, Any],
     *,
     stage_snapshot: str,
     stage_snapshot_sha256: str,
     asset_closure_sha256: str,
+    visual_provenance_sha256: str,
 ) -> dict[str, Any]:
     """Bind public HDF session metadata to the verified portable scene artifact."""
     _validate_session_metadata(metadata)
@@ -794,6 +876,7 @@ def enrich_recording_session_metadata(
     for field, digest in (
         ("stage_snapshot_sha256", stage_snapshot_sha256),
         ("asset_closure_sha256", asset_closure_sha256),
+        ("visual_provenance_sha256", visual_provenance_sha256),
     ):
         if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
             raise ValueError(f"{field} must be lowercase SHA-256 hex")
@@ -802,6 +885,7 @@ def enrich_recording_session_metadata(
         "stage_snapshot": stage_snapshot,
         "stage_snapshot_sha256": stage_snapshot_sha256,
         "asset_closure_sha256": asset_closure_sha256,
+        "visual_provenance_sha256": visual_provenance_sha256,
     }
 
 
@@ -1362,6 +1446,265 @@ def sha256_file(path: Path, *, chunk_bytes: int = 1024 * 1024) -> str:
         while chunk := stream.read(chunk_bytes):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def write_terminal_successor_snapshot(
+    path: Path,
+    token: RecordedObservationToken,
+    frames: Mapping[str, Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Atomically persist the final full Recordable O_(t+1) bundle.
+
+    The file is a deterministic, uncompressed NPZ-compatible ZIP.  Array
+    member names are generated indexes rather than Recordable-controlled
+    paths, so group/channel names cannot escape the archive namespace.
+    """
+    path = Path(path)
+    if path.name != TERMINAL_SUCCESSOR_FILENAME:
+        raise ValueError(f"terminal successor must be named {TERMINAL_SUCCESSOR_FILENAME!r}")
+    if not frames:
+        raise ValueError("terminal successor must contain at least one Recordable group")
+    arrays: list[tuple[str, np.ndarray]] = []
+    descriptors: list[dict[str, Any]] = []
+    seen_channels: set[tuple[str, str]] = set()
+    for group in sorted(frames):
+        if not group or not frames[group]:
+            raise ValueError("terminal successor groups and channel maps must be non-empty")
+        for channel in sorted(frames[group]):
+            identity = (str(group), str(channel))
+            if identity in seen_channels:
+                raise ValueError(f"duplicate terminal successor channel: {identity!r}")
+            seen_channels.add(identity)
+            value = np.ascontiguousarray(np.asarray(frames[group][channel]))
+            if value.dtype.hasobject:
+                raise TypeError(f"terminal successor {group}/{channel} cannot contain objects")
+            entry = f"arrays/{len(arrays):08d}.npy"
+            arrays.append((entry, value))
+            descriptors.append(
+                {
+                    "channel": str(channel),
+                    "dtype": value.dtype.str,
+                    "entry": entry,
+                    "group": str(group),
+                    "shape": list(value.shape),
+                }
+            )
+    snapshot_sha256 = _captured_frame_sha256(frames)
+    if snapshot_sha256 != token.scene_state_snapshot_sha256:
+        raise ValueError("terminal successor frames differ from the committed snapshot digest")
+    metadata = {
+        "arrays": descriptors,
+        "capture_sequence": token.capture_sequence,
+        "observation_state": list(token.state),
+        "physics_step": token.physics_step,
+        "reset_epoch": token.reset_epoch,
+        "scene_state_snapshot_id": token.scene_state_snapshot_id,
+        "scene_state_snapshot_sha256": token.scene_state_snapshot_sha256,
+        "schema": TERMINAL_SUCCESSOR_SCHEMA,
+        "state_generation": token.state_generation,
+    }
+    metadata_bytes = json.dumps(
+        metadata, allow_nan=False, separators=(",", ":"), sort_keys=True
+    ).encode("utf-8")
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+    fd = os.open(temporary, flags, 0o600)
+    try:
+        with os.fdopen(fd, "wb") as raw_stream:
+            with zipfile.ZipFile(raw_stream, mode="w", compression=zipfile.ZIP_STORED) as archive:
+                _write_deterministic_zip_member(archive, "metadata.json", metadata_bytes)
+                for entry, value in arrays:
+                    buffer = io.BytesIO()
+                    np.lib.format.write_array(buffer, value, allow_pickle=False)
+                    _write_deterministic_zip_member(archive, entry, buffer.getvalue())
+            raw_stream.flush()
+            os.fsync(raw_stream.fileno())
+        os.replace(temporary, path)
+        dir_fd = os.open(path.parent, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+        try:
+            os.fsync(dir_fd)
+        finally:
+            os.close(dir_fd)
+    except Exception:
+        try:
+            temporary.unlink()
+        except FileNotFoundError:
+            pass
+        raise
+    return {
+        "capture_sequence": token.capture_sequence,
+        "file": path.name,
+        "scene_state_snapshot_id": token.scene_state_snapshot_id,
+        "scene_state_snapshot_sha256": token.scene_state_snapshot_sha256,
+        "schema": TERMINAL_SUCCESSOR_SCHEMA,
+        "sha256": sha256_file(path),
+    }
+
+
+def verify_terminal_successor_snapshot(
+    path: Path,
+    *,
+    expected_artifact_sha256: str,
+    committed_transition: Mapping[str, Any] | None = None,
+) -> TerminalSuccessorSnapshot:
+    """Verify and decode a terminal successor artifact, failing closed.
+
+    Passing the last committed D0 row additionally proves that the complete
+    Recordable bundle is its declared successor rather than an unrelated valid
+    snapshot.  Strict replay should always provide that row.
+    """
+    path = Path(path)
+    if path.is_symlink() or not path.is_file():
+        raise ValueError("terminal successor must be a regular non-symlink file")
+    if path.name != TERMINAL_SUCCESSOR_FILENAME:
+        raise ValueError(f"terminal successor must be named {TERMINAL_SUCCESSOR_FILENAME!r}")
+    if not _is_sha256_hex(expected_artifact_sha256):
+        raise ValueError("terminal successor artifact digest must be lowercase SHA-256 hex")
+    artifact_sha256 = sha256_file(path)
+    if artifact_sha256 != expected_artifact_sha256:
+        raise ValueError("terminal successor artifact digest mismatch")
+    try:
+        with zipfile.ZipFile(path, mode="r") as archive:
+            entries = archive.infolist()
+            names = [entry.filename for entry in entries]
+            if len(names) != len(set(names)) or "metadata.json" not in names:
+                raise ValueError("terminal successor archive has duplicate entries or no metadata")
+            metadata_entry = archive.getinfo("metadata.json")
+            if metadata_entry.file_size > 4 * 1024 * 1024:
+                raise ValueError("terminal successor metadata is unreasonably large")
+            metadata = json.loads(archive.read(metadata_entry).decode("utf-8"))
+            if not isinstance(metadata, dict) or metadata.get("schema") != TERMINAL_SUCCESSOR_SCHEMA:
+                raise ValueError("terminal successor schema mismatch")
+            if set(metadata) != {
+                "arrays",
+                "capture_sequence",
+                "observation_state",
+                "physics_step",
+                "reset_epoch",
+                "scene_state_snapshot_id",
+                "scene_state_snapshot_sha256",
+                "schema",
+                "state_generation",
+            }:
+                raise ValueError("terminal successor metadata fields are not canonical")
+            descriptors = metadata.get("arrays")
+            if not isinstance(descriptors, list) or not descriptors or len(descriptors) > 10000:
+                raise ValueError("terminal successor array table is invalid")
+            expected_names = {"metadata.json"}
+            frames: dict[str, dict[str, np.ndarray]] = {}
+            prior_key: tuple[str, str] | None = None
+            for index, descriptor in enumerate(descriptors):
+                if not isinstance(descriptor, dict) or set(descriptor) != {
+                    "channel", "dtype", "entry", "group", "shape"
+                }:
+                    raise ValueError("terminal successor array descriptor is invalid")
+                group, channel = descriptor["group"], descriptor["channel"]
+                entry = descriptor["entry"]
+                key = (group, channel)
+                if not isinstance(group, str) or not group or not isinstance(channel, str) or not channel:
+                    raise ValueError("terminal successor group/channel must be non-empty strings")
+                if prior_key is not None and key <= prior_key:
+                    raise ValueError("terminal successor descriptors are not uniquely sorted")
+                prior_key = key
+                expected_entry = f"arrays/{index:08d}.npy"
+                if entry != expected_entry:
+                    raise ValueError("terminal successor array entry is not canonical")
+                expected_names.add(entry)
+                member = archive.getinfo(entry)
+                if member.file_size > 8 * 1024 * 1024 * 1024:
+                    raise ValueError("terminal successor array is unreasonably large")
+                payload = archive.read(member)
+                buffer = io.BytesIO(payload)
+                value = np.lib.format.read_array(buffer, allow_pickle=False)
+                if buffer.tell() != len(payload) or value.dtype.hasobject:
+                    raise ValueError("terminal successor array encoding is invalid")
+                if value.dtype.str != descriptor["dtype"] or list(value.shape) != descriptor["shape"]:
+                    raise ValueError("terminal successor array dtype/shape differs from metadata")
+                frames.setdefault(group, {})[channel] = np.ascontiguousarray(value)
+            if set(names) != expected_names:
+                raise ValueError("terminal successor archive contains undeclared entries")
+    except (OSError, UnicodeError, json.JSONDecodeError, zipfile.BadZipFile, KeyError) as exc:
+        raise ValueError(f"terminal successor archive is invalid: {exc}") from exc
+
+    snapshot_sha256 = _captured_frame_sha256(frames)
+    snapshot_id = _required_metadata_text(metadata, "scene_state_snapshot_id")
+    _fixed_id(snapshot_id, field="scene_state_snapshot_id")
+    declared_snapshot_sha256 = _required_metadata_text(metadata, "scene_state_snapshot_sha256")
+    if not _is_sha256_hex(declared_snapshot_sha256) or snapshot_sha256 != declared_snapshot_sha256:
+        raise ValueError("terminal successor Recordable snapshot digest mismatch")
+    state = metadata.get("observation_state")
+    if not isinstance(state, list) or len(state) != 14:
+        raise ValueError("terminal successor observation_state must be float[14]")
+    state_array = np.asarray(state, dtype=np.float64)
+    if not np.isfinite(state_array).all():
+        raise ValueError("terminal successor observation_state must be finite")
+    token = RecordedObservationToken(
+        token_id=_required_metadata_int(metadata, "capture_sequence"),
+        observation=None,
+        state=tuple(float(value) for value in state_array),
+        physics_step=_required_metadata_int(metadata, "physics_step"),
+        capture_sequence=_required_metadata_int(metadata, "capture_sequence"),
+        reset_epoch=_required_metadata_int(metadata, "reset_epoch"),
+        state_generation=_required_metadata_int(metadata, "state_generation"),
+        scene_state_snapshot_id=snapshot_id,
+        scene_state_snapshot_sha256=declared_snapshot_sha256,
+    )
+    if committed_transition is not None:
+        canonical = canonical_committed_transition(committed_transition)
+        verify_committed_transition_sample(canonical)
+        if snapshot_id != _decode_fixed_id(canonical["next_scene_state_snapshot_id"]):
+            raise ValueError("terminal successor identity differs from the last committed row")
+        if declared_snapshot_sha256 != _digest_hex(
+            canonical["next_scene_state_snapshot_sha256"]
+        ):
+            raise ValueError("terminal successor digest differs from the last committed row")
+        expected_state = np.asarray(canonical["successor_observation_state"], dtype=np.float32)
+        if not np.array_equal(np.asarray(token.state, dtype=np.float32), expected_state):
+            raise ValueError("terminal successor native state differs from the last committed row")
+        scalar_bindings = {
+            "physics_step": "successor_physics_step",
+            "capture_sequence": "successor_capture_sequence",
+            "state_generation": "successor_state_generation",
+            "reset_epoch": "successor_reset_epoch",
+        }
+        for token_field, row_field in scalar_bindings.items():
+            if getattr(token, token_field) != int(canonical[row_field]):
+                raise ValueError(
+                    f"terminal successor {token_field} differs from the last committed row"
+                )
+    return TerminalSuccessorSnapshot(token, frames, artifact_sha256)
+
+
+def _write_deterministic_zip_member(
+    archive: zipfile.ZipFile, name: str, payload: bytes
+) -> None:
+    info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+    info.compress_type = zipfile.ZIP_STORED
+    info.create_system = 3
+    info.external_attr = 0o100600 << 16
+    archive.writestr(info, payload)
+
+
+def _required_metadata_text(metadata: Mapping[str, Any], field: str) -> str:
+    value = metadata.get(field)
+    if not isinstance(value, str) or not value:
+        raise ValueError(f"terminal successor {field} must be a non-empty string")
+    return value
+
+
+def _required_metadata_int(metadata: Mapping[str, Any], field: str) -> int:
+    value = metadata.get(field)
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise ValueError(f"terminal successor {field} must be a nonnegative integer")
+    return value
+
+
+def _is_sha256_hex(value: Any) -> bool:
+    return (
+        isinstance(value, str)
+        and len(value) == 64
+        and all(character in "0123456789abcdef" for character in value)
+    )
 
 
 def _to_numpy_f32(value: Any) -> np.ndarray:

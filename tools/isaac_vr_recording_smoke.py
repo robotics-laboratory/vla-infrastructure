@@ -99,24 +99,56 @@ def run_recording_lifecycle_smoke(
             ),
             portable_roots=recording_portable_roots(args_cli),
         )
-        token = recording.capture_observation()
-        recording.discard_observation(token, reason="no_client_lifecycle_smoke")
-        summary = {
-            "artifact_state": "failed",
-            "committed_frames": 0,
-            "discarded_observations": recording.discarded_observations,
-            "episode_id": recording.episode_id,
-            "mode": "recording_lifecycle_smoke",
-            "outcome": "aborted",
-            "passed": True,
-            "reason": "no_client_lifecycle_smoke",
-            "run_id": recording.run_id,
-            "session_id": recording.session_id,
-            "teleop_initialized": False,
-            "xr_initialized": False,
-        }
-        recording.close(outcome="aborted", reason="no_client_lifecycle_smoke")
-        recording = None
+        if getattr(args_cli, "s2_injected_recording_smoke", False):
+            from isaac_vr_injected_recording import (
+                record_injected_transitions,
+                validate_injected_recording,
+            )
+
+            injected = record_injected_transitions(recording, env)
+            summary = {
+                **injected,
+                "artifact_state": "finalized",
+                "discarded_observations": recording.discarded_observations,
+                "episode_id": recording.episode_id,
+                "mode": "injected_recording_integration_smoke",
+                "outcome": "operator_stopped",
+                "passed": True,
+                "reason": "deterministic_injected_xr_completed",
+                "run_id": recording.run_id,
+                "session_id": recording.session_id,
+                "teleop_initialized": False,
+                "xr_initialized": False,
+            }
+            hdf5_path = recording.hdf5_path
+            recording.close(
+                outcome="operator_stopped",
+                reason="deterministic_injected_xr_completed",
+            )
+            recording = None
+            summary["reader_validation"] = validate_injected_recording(
+                hdf5_path,
+                portable_roots=recording_portable_roots(args_cli),
+            )
+        else:
+            token = recording.capture_observation()
+            recording.discard_observation(token, reason="no_client_lifecycle_smoke")
+            summary = {
+                "artifact_state": "failed",
+                "committed_frames": 0,
+                "discarded_observations": recording.discarded_observations,
+                "episode_id": recording.episode_id,
+                "mode": "recording_lifecycle_smoke",
+                "outcome": "aborted",
+                "passed": True,
+                "reason": "no_client_lifecycle_smoke",
+                "run_id": recording.run_id,
+                "session_id": recording.session_id,
+                "teleop_initialized": False,
+                "xr_initialized": False,
+            }
+            recording.close(outcome="aborted", reason="no_client_lifecycle_smoke")
+            recording = None
     except Exception as exc:
         if recording is not None:
             recording.close(

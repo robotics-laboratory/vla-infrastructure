@@ -179,6 +179,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--smoke", action="store_true", help="Bounded standalone no-client run.")
     parser.add_argument(
+        "--injected-actions",
+        action="store_true",
+        help="With 'record --smoke', commit deterministic actions for recorder integration QA.",
+    )
+    parser.add_argument(
         "--xr-smoke", action="store_true", help="Bounded no-client run with XR Kit enabled."
     )
     parser.add_argument(
@@ -193,7 +198,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--recording", type=Path, help="Episode Recorder HDF5 V2 input (replay only).")
     parser.add_argument("--episode", type=int, default=0, help="Episode index for replay (default: 0).")
-    parser.add_argument("--render-cameras", type=Path, help="Optional first/middle/last replay RGB output directory.")
+    parser.add_argument(
+        "--render-cameras",
+        type=Path,
+        help="Optional all-frame replay RGB output directory.",
+    )
     parser.add_argument("--replay-report", type=Path, help="Machine-readable replay validation report (replay only).")
     parser.add_argument(
         "--max-control-steps", type=int, help="Default:60 for smoke,18000 otherwise."
@@ -234,6 +243,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("--max-control-steps must be positive")
     if args.smoke and args.xr_smoke:
         parser.error("--smoke and --xr-smoke are mutually exclusive")
+    if args.injected_actions and not (args.mode == "record" and args.smoke):
+        parser.error("--injected-actions requires './run-vr record --smoke'")
     if args.mode == "replay":
         replay_incompatible = {
             "--smoke",
@@ -372,6 +383,8 @@ def main(argv: list[str] | None = None) -> int:
         if recording_dir.exists():
             raise RuntimeError(f"recording directory already exists: {recording_dir}")
         command.extend(["--s2-record", "--s2-recording-dir", str(recording_dir)])
+        if args.injected_actions:
+            command.append("--s2-injected-recording-smoke")
         print(f"Recording directory: {recording_dir}", flush=True)
     if args.mode == "replay":
         assert args.recording is not None
