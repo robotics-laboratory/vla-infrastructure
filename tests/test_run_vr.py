@@ -48,8 +48,14 @@ def test_cli_modes_and_explicit_rollback(launcher):
         with pytest.raises(SystemExit):
             launcher.parse_args(flag)
         assert launcher.parse_args(["diag", *flag]).mode == "diagnostic"
+    record = launcher.parse_args(["record"])
+    assert record.mode == "record"
+    replay = launcher.parse_args(["replay", "--recording", "/tmp/session.hdf5", "--episode", "0"])
+    assert (replay.mode, replay.recording, replay.episode) == ("replay", Path("/tmp/session.hdf5"), 0)
     with pytest.raises(SystemExit):
-        launcher.parse_args(["record"])
+        launcher.parse_args(["record", "--capture-preview-evidence"])
+    with pytest.raises(SystemExit):
+        launcher.parse_args(["replay"])
 
 
 def test_default_does_not_read_experimental_assets(monkeypatch):
@@ -177,6 +183,22 @@ def test_manifest_and_child_commands(launcher, tmp_path, monkeypatch):
     assert run["generated_runtime_config_sha256"] == diag["generated_runtime_config_sha256"]
     assert "--s2-performance-log" not in run["launch"]["command"]
     assert "--s2-performance-log" in diag["launch"]["command"]
+
+
+def test_record_and_replay_child_commands(launcher, tmp_path, monkeypatch):
+    stack = launcher.STACKS["isaac61"]
+    monkeypatch.setattr(launcher, "verify_stack", lambda _: stack)
+    monkeypatch.setattr(launcher, "_git_output", lambda *a: "")
+    assert launcher.main(["record", "--dry-run", "--smoke", "--state-root", str(tmp_path)]) == 0
+    record_manifest = max((tmp_path / "runs").glob("*/run_manifest.json"), key=lambda p: p.stat().st_mtime_ns)
+    record_command = json.loads(record_manifest.read_text())["launch"]["command"]
+    assert "--s2-record" in record_command and "--s2-teleop" in record_command
+    hdf5 = tmp_path / "external" / "session.hdf5"
+    assert launcher.main(["replay", "--recording", str(hdf5), "--render-cameras", str(tmp_path / "renders"), "--dry-run", "--smoke", "--state-root", str(tmp_path)]) == 0
+    replay_manifest = max((tmp_path / "runs").glob("*/run_manifest.json"), key=lambda p: p.stat().st_mtime_ns)
+    replay_command = json.loads(replay_manifest.read_text())["launch"]["command"]
+    assert "--s2-replay-hdf5" in replay_command and "--s2-teleop" not in replay_command
+    assert "--s2-render-cameras" in replay_command and "--demo-preview-scene" not in replay_command
 
 
 def module(monkeypatch, name, **attrs):
@@ -445,8 +467,8 @@ def test_current_doc_sources_and_contract():
     assert c["teleop"]["isaac"]["execution_profile"] == "isaac_vr"
     assert "execution_profiles.isaac_vr.command" in rules["S2"]["required_paths"]
     assert c["gates"]["S2"]["state"] == c["gates"]["D1"]["state"] == "unresolved"
-    assert c["simulation"]["isaac"]["recorder"]["execution_profile"] is None
+    assert c["simulation"]["isaac"]["recorder"]["execution_profile"] == "isaac_vr_record"
     from tools.validate_resolved_contract import validate_profiles
 
     c["simulation"]["isaac"]["recorder"]["execution_profile"] = "isaac_vr"
-    assert any("does not implement recording" in e for e in validate_profiles(c))
+    assert any("must be distinct" in e for e in validate_profiles(c))

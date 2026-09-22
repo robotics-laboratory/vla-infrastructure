@@ -202,6 +202,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
     if config["processor"]["revision"] != PROCESSOR_REVISION:
         raise RuntimeError("S2 processor config/code revision mismatch")
     diagnostic = getattr(args_cli, "s2_mode", "diagnostic") == "diagnostic"
+    recording_requested = bool(getattr(args_cli, "s2_record", False))
+    if recording_requested and (diagnostic or getattr(args_cli, "s2_recording_dir", None) is None):
+        raise ValueError("recording requires run mode and --s2-recording-dir")
     if not diagnostic and any(getattr(args_cli, name, False) for name in (
         "s2_performance_log", "demo_display_toggle_smoke", "demo_backdrop_toggle_smoke",
         "demo_recenter_smoke", "demo_scene_preview",
@@ -361,6 +364,34 @@ def run_s2(env, args_cli, simulation_app) -> int:
     control_tick_id = 0
     env.last_control_decision = None
     env.prepared_control_transaction = None
+    recording = None
+
+    def record_sample(solution=None, *, observation_id: int) -> None:
+        if recording is None:
+            return
+        state = np.asarray(env.capture_measured_state()[1], dtype=np.float32)
+        sample = {
+            "observation_id": np.int64(observation_id),
+            "action_valid": np.uint8(solution is not None),
+            "action_from_observation_id": np.int64(observation_id - 1 if solution is not None else -1),
+            "action_to_observation_id": np.int64(observation_id if solution is not None else -1),
+            "control_tick_id": np.int64(solution.control_tick_id if solution and solution.control_tick_id is not None else -1),
+            "reset_epoch": np.int64(env.camera.reset_epoch),
+            "control_reference_epoch": np.int64(solution.xr_identity.control_reference_epoch if solution and solution.xr_identity else -1),
+            "session_epoch": np.int64(solution.xr_identity.session_epoch if solution and solution.xr_identity else -1),
+            "observation_state": state,
+            "dataset_action": np.asarray(solution.dataset_action if solution else np.zeros(14), dtype=np.float32),
+            "native_preclip": np.asarray(solution.native_preclip if solution else np.zeros(14), dtype=np.float32),
+            "native_clipped": np.asarray(solution.native_clipped if solution else np.zeros(14), dtype=np.float32),
+            "native_residual": np.asarray(solution.residual if solution else np.zeros(14), dtype=np.float32),
+            "saturation": np.asarray(solution.saturation if solution else np.zeros(14), dtype=np.uint8),
+            "deviceio_update_epoch": np.int64(solution.xr_identity.deviceio_update_epoch if solution and solution.xr_identity else -1),
+            "submitted_frame_id": np.int64(solution.xr_identity.submitted_frame_id if solution and solution.xr_identity else -1),
+            "returned_frame_id": np.int64(solution.xr_identity.returned_frame_id if solution and solution.xr_identity else -1),
+            "tracking_valid": np.asarray(solution.xr_identity.tracking_valid if solution and solution.xr_identity else (False, False), dtype=np.uint8),
+            "transition_completed": np.uint8(solution is not None),
+        }
+        recording.sample(sample)
 
     performance = (
         S2PerformanceLogger(
@@ -382,7 +413,21 @@ def run_s2(env, args_cli, simulation_app) -> int:
         flush=True,
     )
     try:
-        if experiment is not None:
+        if recording_requested:
+            from isaac_vr_recording import start_live_recording
+            if experiment is not None:
+                experiment.disable_live_rgb()
+            recording = start_live_recording(
+                args_cli.s2_recording_dir, env,
+                session_metadata={
+                    "task": "dual_cube_to_matching_plates", "profile": "isaac_vr_record",
+                    "live_rgb": False, "d0_revision": PROCESSOR_REVISION,
+                    "runtime_config_sha256": hashlib.sha256(config_path.read_bytes()).hexdigest(),
+                    "environment_pins": actual_versions,
+                },
+            )
+            record_sample(observation_id=0)
+        if experiment is not None and not recording_requested:
             # Pinned Candidate B requires camera-feed bind(env) before the XR
             # teleop session is entered. This also makes the panels available
             # when X is first pressed after the headset connects.
@@ -406,7 +451,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 if validator is not None:
                     validator.abort()  # 4D will complete transitions; RUN never commits.
                 observation = None
-                if getattr(env, "vr_runtime", None) is not None:
+                if not recording_requested and getattr(env, "vr_runtime", None) is not None:
                     try:
                         observation = env.latest_observation_capture()
                     except RuntimeError:
@@ -448,7 +493,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     env.reset(0)
                     processor.reset()
                     ik.reset()
-                    if experiment is not None:
+                    if experiment is not None and not recording_requested:
                         experiment.after_reset()
                     # Camera frame indices are local to a reset epoch. Comparing the
                     # first post-reset index with the prior epoch would report a
@@ -485,7 +530,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         right,
                         session_active=events.is_active is not False,
                     )
-                if experiment is not None:
+                if experiment is not None and not recording_requested:
                     smoke_display_edge = bool(
                         args_cli.demo_display_toggle_smoke and control_steps in (10, 20, 40, 50)
                     )
@@ -584,6 +629,11 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     performance.add_stage("ik_apply", time.perf_counter_ns() - stage_started_ns)
                     stage_started_ns = time.perf_counter_ns()
                 env._advance(4)
+                if recording is not None:
+                    # A held/session-inactive IK solution is not an accepted D0
+                    # transition.  It must not acquire an action identity merely
+                    # because the native hold target was written.
+                    record_sample(solution if eligible else None, observation_id=step)
                 if performance is not None:
                     performance.add_stage(
                         "simulation_advance", time.perf_counter_ns() - stage_started_ns
@@ -633,7 +683,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         "runtime_bookkeeping", time.perf_counter_ns() - bookkeeping_started_ns
                     )
                     stage_started_ns = time.perf_counter_ns()
-                camera = camera_guard.sample(env)
+                camera = {"valid": True, "strictly_advanced": False, "roles": {}}
+                if not recording_requested:
+                    camera = camera_guard.sample(env)
                 if diagnostic:
                     camera = _camera_sample(env, previous_camera_indices)
                     previous_camera_indices = camera.pop("frame_indices")
@@ -712,6 +764,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
         )
     finally:
         try:
+            if recording is not None:
+                recording.close(outcome="operator_stopped" if interrupted else "unclassified")
             if experiment is not None:
                 experiment.close()
         finally:

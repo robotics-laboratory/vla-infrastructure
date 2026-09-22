@@ -48,6 +48,8 @@ PROVENANCE_INPUTS = (
     ROOT / "tools/isaac_vr_runtime.py",
     ROOT / "tools/isaac_s2_runtime.py",
     ROOT / "tools/isaac_s2_upstream.py",
+    ROOT / "tools/isaac_vr_recording.py",
+    ROOT / "tools/isaac_vr_replay.py",
 )
 
 
@@ -154,7 +156,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     config = yaml.safe_load(CONFIG_PATH.read_text())
     defaults = config["operator"]
     parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
-    parser.add_argument("mode", nargs="?", choices=("run", "diag"), default="run")
+    parser.add_argument("mode", nargs="?", choices=("run", "diag", "record", "replay"), default="run")
     parser.add_argument(
         "--profile",
         choices=("dual_cube_to_matching_plates", "robosyn_asset_lab"),
@@ -184,6 +186,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--scene-preview", type=Path, help="Optional scene-camera PNG output.")
     parser.add_argument(
+        "--recording-dir", type=Path,
+        help="Private explicit NVIDIA HDF5 V2 recording directory (record mode only).",
+    )
+    parser.add_argument("--recording", type=Path, help="Episode Recorder HDF5 V2 input (replay only).")
+    parser.add_argument("--episode", type=int, default=0, help="Episode index for replay (default: 0).")
+    parser.add_argument("--render-cameras", type=Path, help="Optional first/middle/last replay RGB output directory.")
+    parser.add_argument("--replay-report", type=Path, help="Machine-readable replay validation report (replay only).")
+    parser.add_argument(
         "--max-control-steps", type=int, help="Default:60 for smoke,18000 otherwise."
     )
     parser.add_argument(
@@ -200,7 +210,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     args = parser.parse_args(invocation)
     args.invocation = invocation
-    args.mode = "diagnostic" if args.mode == "diag" else "run"
+    args.mode = {"diag": "diagnostic", "record": "record", "replay": "replay"}.get(args.mode, "run")
     diagnostic_flags = {
         "--preview-isolation",
         "--preview-cameras",
@@ -212,7 +222,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     used = [
         item.split("=", 1)[0] for item in invocation if item.split("=", 1)[0] in diagnostic_flags
     ]
-    if args.mode == "run" and (used or args.profile == "robosyn_asset_lab"):
+    if args.mode in ("run", "record", "replay") and (used or args.profile == "robosyn_asset_lab"):
         parser.error(
             f"Diagnostic-only option/profile: {used or args.profile}; use ./run-vr diag ..."
         )
@@ -224,6 +234,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("--smoke and --xr-smoke are mutually exclusive")
     if args.hud_on_start and args.smoke:
         parser.error("HUD measurement requires --xr-smoke or the default physical XR run")
+    if args.recording_dir is not None and args.mode != "record":
+        parser.error("--recording-dir requires ./run-vr record")
+    if args.mode == "replay" and args.recording is None:
+        parser.error("./run-vr replay requires --recording <session.hdf5>")
+    if args.mode != "replay" and (args.recording is not None or args.render_cameras is not None or args.replay_report is not None):
+        parser.error("--recording, --render-cameras and --replay-report require ./run-vr replay")
+    if args.episode < 0:
+        parser.error("--episode must be nonnegative")
     if args.preview_isolation is None:
         args.preview_isolation = defaults["stacks"][args.stack]["preview_isolation"]
     if args.preview_cameras is None:
@@ -289,8 +307,7 @@ def main(argv: list[str] | None = None) -> int:
         str(ROOT / "configs" / stack["s2"]),
         "--vr-runtime",
         "--s2-mode",
-        args.mode,
-        "--s2-teleop",
+        "run" if args.mode in ("record", "replay") else args.mode,
         "--demo-profile",
         args.profile,
         "--device",
@@ -304,6 +321,21 @@ def main(argv: list[str] | None = None) -> int:
         "--s2-max-control-steps",
         str(max_steps),
     ]
+    if args.mode != "replay":
+        command.append("--s2-teleop")
+    if args.mode == "record":
+        recording_dir = args.recording_dir or state / "recordings" / output_dir.name
+        if recording_dir.exists():
+            raise RuntimeError(f"recording directory already exists: {recording_dir}")
+        command.extend(["--s2-record", "--s2-recording-dir", str(recording_dir)])
+        print(f"Recording directory: {recording_dir}", flush=True)
+    if args.mode == "replay":
+        assert args.recording is not None
+        command.extend(["--s2-replay-hdf5", str(args.recording), "--s2-replay-episode", str(args.episode)])
+        if args.render_cameras is not None:
+            command.extend(["--s2-render-cameras", str(args.render_cameras)])
+        if args.replay_report is not None:
+            command.extend(["--s2-replay-report", str(args.replay_report)])
     if args.mode == "diagnostic":
         command.extend(
             [
@@ -319,7 +351,7 @@ def main(argv: list[str] | None = None) -> int:
         command += ["--viz", "kit"]
     if not args.smoke:
         command += ["--experience", str(stack["lab"] / "apps/isaaclab.python.xr.openxr.kit")]
-    if args.preview_cameras == 3:
+    if args.preview_cameras == 3 and args.mode not in ("record", "replay"):
         command.append("--demo-preview-scene")
     if args.hud_on_start:
         command.append("--demo-hud-on-start")

@@ -1,8 +1,9 @@
 # Canonical Quest → Isaac VR operations
 
 `./run-vr` is the operator entrypoint. `./run-vr diag` runs the same implementation
-with diagnostics. Dataset recording is not implemented; S2 physical acceptance
-and D1 remain unresolved.
+with diagnostics. `./run-vr record` writes a native NVIDIA Episode Recorder HDF5 V2
+state/action/provenance artifact. It does not create a D1 dataset; S2 physical
+acceptance and D1 remain unresolved.
 
 ## Start and qualify
 
@@ -29,6 +30,8 @@ rebases. Host Ctrl-C preserves available reports and exits 130, never PASS.
 ./run-vr diag --smoke
 ./run-vr --xr-smoke
 ./run-vr diag --xr-smoke
+./run-vr record --smoke --max-control-steps 30
+./run-vr replay --recording /private/state/recordings/<run>/session.hdf5 --episode 0
 ./run-vr --stack legacy
 ```
 
@@ -56,7 +59,7 @@ intentionally does not maintain another table of settings. The scene sensor `dem
 does not depend on preview visibility.
 
 ```text
-./run-vr [diag]
+./run-vr [diag|record|replay]
   -> tools/launch_isaac_vr.py
   -> tools/run_isaac_s1.py --vr-runtime --s2-mode run|diagnostic
   -> tools/isaac_vr_runtime.py::run_vr / VRRuntime
@@ -83,7 +86,7 @@ DIAG adds strict frame progression, image hashes, per-step/nested performance
 logs with mean/percentiles/max, GPU sampling, transition/tracking windows, slider
 statistics and presentation counters. Bounded preview PPM capture is opt-in.
 
-Both modes support `--stack`, `--profile`, `--cloudxr-mode`, `--state-root`,
+RUN, DIAG and RECORD support `--stack`, `--profile`, `--cloudxr-mode`, `--state-root`,
 `--hud-on-start`, `--max-control-steps`, `--dry-run`, `--smoke` and `--xr-smoke`.
 Diagnostic-only flags fail in run mode with a `./run-vr diag ...` suggestion:
 `--performance-window-steps`, `--performance-warmup-steps`,
@@ -135,8 +138,39 @@ Experimental shared implementation → `./run-vr diag` → automated + physical
 qualification → promote canonical config/status → `./run-vr` inherits it → future
 record consumer inherits the same base semantics. Promotion changes selection,
 not Python ownership. Never copy control loops or builders across modes.
-Recording will attach at the shared observation/action/native/outcome boundary;
-there is currently no record command, dataset writer or D1 acceptance claim.
+RECORD reuses that shared scene, XR, controller, processor, IK and native actuation
+path. It exports one `stage_snapshot.usd`, records static scene from that snapshot,
+and stores articulated robots, dynamic cubes, camera pose/intrinsics, SimTime and
+the numeric D0 transition track through public NVIDIA Recordables. Each sample is
+explicitly taken at O0 and after each four-substep control transition. Live canonical
+RGB and preview panels are off in RECORD; no RGB is read, retained or uploaded.
+
+`./run-vr replay --recording <session.hdf5> --episode 0` uses the unmodified NVIDIA
+`SessionReader` and `EpisodeReplayer` with the USD pose backend. It disables the S2
+decision loop, controller actuation and physics stepping. Add
+`--render-cameras <output-dir>` to write first/middle/last 640x480 RGB images for
+`left_wrist`, `right_wrist` and `scene` from synchronously rendered replay state.
+The native record artifact is not yet a final D0 observation dataset; canonical
+three-camera images are produced at replay/materialization. Runtime round-trip
+qualification remains pending manual validation outside the agent execution host.
+
+For the bounded manual round-trip, choose a new private directory and run this
+exact command from the branch checkout (the second command writes the only
+machine-readable validation report):
+
+```sh
+set -e
+export OMNI_KIT_ACCEPT_EULA=Y ISAACLAB_CXR_ACCEPT_EULA=1
+recording="$HOME/.local/state/piper-x/recordings/manual-$(date +%Y%m%dT%H%M%S)"
+./run-vr record --smoke --max-control-steps 30 --recording-dir "$recording"
+./run-vr replay --smoke --recording "$recording/session.hdf5" --episode 0 \
+  --render-cameras "$recording/replay-renders" --replay-report "$recording/validation_report.json"
+```
+
+Pass only when `session.hdf5`, `stage_snapshot.usd`, and
+`validation_report.json` exist; the report must show at least 30 applied frames,
+unchanged `physics_steps_before/after`, `native_action_replay: false`, valid D0
+observation/action indexing, and nine first/middle/last role images.
 
 ## Historical references
 

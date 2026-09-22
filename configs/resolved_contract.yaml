@@ -270,9 +270,27 @@ execution_profiles:
     prerequisites:
     - OMNI_KIT_ACCEPT_EULA=Y after accepting the NVIDIA EULA
     - Physical Meta Quest 3 CloudXR client is available for S2 human acceptance
-    - This S2 command controls simulation only and records no D1 dataset
+    - This S2 command controls simulation only; state-only native recording is selected by isaac_vr_record and is not a D1 dataset
     - Final frozen isaac1103_environment SDK materialized under /data; execute from your ~/vla_infrastructure checkout; private /data/<username> state.
     - ISAACLAB_CXR_ACCEPT_EULA=1 after accepting CloudXR EULA; port48322 available or current-user existing runtime.
+  isaac_vr_record:
+    environment: isaac
+    working_directory: .
+    command:
+    - ./run-vr
+    - record
+    prerequisites:
+    - OMNI_KIT_ACCEPT_EULA=Y after accepting the NVIDIA EULA
+    - ISAACLAB_CXR_ACCEPT_EULA=1 after accepting CloudXR EULA
+    - Native HDF5 is state/action/provenance only; canonical RGB is materialized later by isaac_vr_replay
+  isaac_vr_replay:
+    environment: isaac
+    working_directory: .
+    command:
+    - ./run-vr
+    - replay
+    prerequisites:
+    - OMNI_KIT_ACCEPT_EULA=Y after accepting the NVIDIA EULA
   isaac_generate:
     environment: isaac
     working_directory: .
@@ -1796,10 +1814,10 @@ simulation:
       action_hold_or_interpolation: Zero-order hold of one native target for four 120 Hz physics steps; no interpolation
       reset_seed_protocol: Seed Python random, NumPy, and torch before the deterministic fixed reset; accepted S1 evidence uses seed 0
     recorder:
-      backend: Conditional Isaac Lab RecorderManager with ActionStateRecorderManagerCfg and minimal D0 recorder terms
-      native_format: Isaac Lab HDF5DatasetFileHandler format_version 1; deterministic D1 conversion to LeRobotDataset v3 required
+      backend: NVIDIA isaacsim.replicator.episode_recorder SessionStorage with public Recordable tracks and explicit control-boundary sampling
+      native_format: Episode Recorder HDF5 V2; not a final D0 observation dataset
       conversion_revision: null
-      execution_profile: null
+      execution_profile: isaac_vr_record
     generator:
       source_class: scripted_expert
       backend: Conditional task-local state machine composed with Isaac Lab ManagerBasedRLEnv and RecorderManager

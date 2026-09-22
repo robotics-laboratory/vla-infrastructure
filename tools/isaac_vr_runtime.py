@@ -333,6 +333,7 @@ class VRCameraRig:
         self._elapsed = 0.0
         self.reset_epoch = 0
         self.capture: ThreeCameraCapture | None = None
+        self.live_rgb_enabled = True
 
     @property
     def capture_cycles_total(self) -> int:
@@ -352,6 +353,8 @@ class VRCameraRig:
 
     def update(self, dt: float, *, force_recompute: bool = False) -> None:
         # Physics advances independently; only capture_boundary extracts pixels.
+        if not self.live_rgb_enabled:
+            return
         self._elapsed += dt
         if self.capture:
             self.capture.invalidate()
@@ -367,6 +370,8 @@ class VRCameraRig:
         )
 
     def capture_boundary(self, env) -> None:
+        if not self.live_rgb_enabled:
+            return
         if self.capture is None:
             self.capture = ThreeCameraCapture(
                 dict(zip(("left_wrist", "right_wrist", "scene"), (*self.wrists, self.scene_camera))),
@@ -543,6 +548,10 @@ class VRRuntime:
     def before_render(self) -> None:
         if self.preview_isolation is not None:
             self.preview_isolation.assert_valid()
+
+    def disable_live_rgb(self) -> None:
+        """Stop sensor updates and keep all canonical camera prims for replay."""
+        self.camera_rig.live_rgb_enabled = False
 
     def open(self, env) -> None:
         self._env = env
@@ -1392,6 +1401,14 @@ def run_vr(
         args_cli.demo_scene_preview.parent.mkdir(parents=True, exist_ok=True)
         Image.fromarray(preview).save(args_cli.demo_scene_preview)
         print(f"[DEMO] scene preview={args_cli.demo_scene_preview}", flush=True)
+    if args_cli.s2_replay_hdf5 is not None:
+        from isaac_vr_replay import replay
+
+        return replay(
+            env, simulation_app, recording=args_cli.s2_replay_hdf5,
+            episode=args_cli.s2_replay_episode, render_cameras=args_cli.s2_render_cameras,
+            report_path=args_cli.s2_replay_report or args_cli.report,
+        )
     from isaac_s2_runtime import run_s2
 
     return run_s2(env, args_cli, simulation_app)

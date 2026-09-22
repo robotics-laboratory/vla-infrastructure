@@ -77,6 +77,12 @@ parser.add_argument(
     default="cloudxrjs",
 )
 parser.add_argument("--s2-max-control-steps", type=int, default=300)
+parser.add_argument("--s2-record", action="store_true", help="Write state/provenance through NVIDIA Episode Recorder HDF5 V2.")
+parser.add_argument("--s2-recording-dir", type=Path)
+parser.add_argument("--s2-replay-hdf5", type=Path)
+parser.add_argument("--s2-replay-episode", type=int, default=0)
+parser.add_argument("--s2-render-cameras", type=Path)
+parser.add_argument("--s2-replay-report", type=Path)
 parser.add_argument("--s2-reset-step", type=int, default=120)
 parser.add_argument(
     "--s2-performance-log",

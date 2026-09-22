@@ -308,7 +308,7 @@ def validate_profiles(d):
         if recorder is None or not recorder["command"]:
             out.append("Isaac recorder: execution_profile must reference a runnable profile")
         if recorder_profile == "isaac_vr":
-            out.append("Isaac recorder: isaac_vr does not implement recording")
+            out.append("Isaac recorder: recorder profile must be distinct from the live run profile")
     return out
 
 
