@@ -20,7 +20,7 @@ import math
 from typing import Any
 
 
-VISUAL_PROVENANCE_SCHEMA = "piper_x_isaac_vr_visual_provenance_v1"
+VISUAL_PROVENANCE_SCHEMA = "piper_x_isaac_vr_visual_provenance_v2"
 CANONICAL_CAMERA_ROLES = ("left_wrist", "right_wrist", "scene")
 TRANSIENT_PRIM_PREFIXES = ("/Render", "/Replicator", "/_xr")
 
@@ -149,7 +149,9 @@ def _sha256(value: Any) -> str:
 
 
 def _is_transient(path: str) -> bool:
-    return any(path == prefix or path.startswith(prefix + "/") for prefix in TRANSIENT_PRIM_PREFIXES)
+    return any(
+        path == prefix or path.startswith(prefix + "/") for prefix in TRANSIENT_PRIM_PREFIXES
+    )
 
 
 def _is_visual_attribute(prim_type: str, name: str) -> bool:
@@ -173,7 +175,10 @@ def _attribute_payload(attribute: Any) -> dict[str, Any]:
     if hasattr(attribute, "GetTimeSamples"):
         for time_code in attribute.GetTimeSamples():
             samples.append(
-                {"time": _canonical_value(time_code), "value": _canonical_value(attribute.Get(time_code))}
+                {
+                    "time": _canonical_value(time_code),
+                    "value": _canonical_value(attribute.Get(time_code)),
+                }
             )
     payload = {
         "default": _canonical_value(attribute.Get()),
@@ -210,9 +215,7 @@ def _property_index(stage: Any) -> list[dict[str, Any]]:
                     "prim_type": prim_type,
                 }
             )
-        for relationship in sorted(
-            prim.GetRelationships(), key=lambda item: str(item.GetName())
-        ):
+        for relationship in sorted(prim.GetRelationships(), key=lambda item: str(item.GetName())):
             name = str(relationship.GetName())
             if not _is_visual_relationship(prim_type, name):
                 continue
@@ -261,7 +264,7 @@ def _camera_entry(stage: Any, role: str, spec: Mapping[str, Any]) -> dict[str, A
         )
     if not attributes:
         raise VisualProvenanceError(f"camera {role} has no composed attributes: {path}")
-    return {
+    entry = {
         "attributes": attributes,
         "data_type": str(spec.get("data_type", "rgb")),
         "prim_path": path,
@@ -269,6 +272,8 @@ def _camera_entry(stage: Any, role: str, spec: Mapping[str, Any]) -> dict[str, A
         "resolution": [int(resolution[0]), int(resolution[1])],
         "role": role,
     }
+    entry["camera_configuration_sha256"] = _sha256(entry)
+    return entry
 
 
 def _kit_runtime_identity() -> dict[str, Any]:
@@ -316,13 +321,19 @@ def build_visual_provenance(
         )
     reader = setting_reader or _kit_setting_reader
     settings = [
-        {"path": path, "state": _canonical_value(reader(path))}
-        for path in RENDERER_SETTING_PATHS
+        {"path": path, "state": _canonical_value(reader(path))} for path in RENDERER_SETTING_PATHS
     ]
     cameras = [_camera_entry(stage, role, camera_specs[role]) for role in CANONICAL_CAMERA_ROLES]
     if len({camera["prim_path"] for camera in cameras}) != len(cameras):
         raise VisualProvenanceError("canonical camera roles must use unique prim paths")
     properties = _property_index(stage)
+    renderer = {
+        "implementation": "RTX",
+        "runtime_identity": _canonical_value(runtime_identity or _kit_runtime_identity()),
+        "settings": settings,
+        "settings_policy": "piper_x_rtx_settings_v1",
+    }
+    renderer["renderer_configuration_sha256"] = _sha256(renderer)
     document: dict[str, Any] = {
         "camera_roles": cameras,
         "materialization": {
@@ -340,12 +351,7 @@ def build_visual_provenance(
             "property_count": len(properties),
             "properties": properties,
         },
-        "renderer": {
-            "implementation": "RTX",
-            "runtime_identity": _canonical_value(runtime_identity or _kit_runtime_identity()),
-            "settings": settings,
-            "settings_policy": "piper_x_rtx_settings_v1",
-        },
+        "renderer": renderer,
         "schema": VISUAL_PROVENANCE_SCHEMA,
     }
     document["visual_provenance_sha256"] = _sha256(document)
@@ -378,12 +384,33 @@ def verify_visual_provenance(document: Mapping[str, Any]) -> dict[str, Any]:
         raise VisualProvenanceError("visual provenance has an invalid camera path")
     if len(paths) != len(set(paths)):
         raise VisualProvenanceError("visual provenance camera paths are not unique")
+    for camera in cameras:
+        camera_digest = camera.get("camera_configuration_sha256")
+        if not isinstance(camera_digest, str) or len(camera_digest) != 64:
+            raise VisualProvenanceError("visual provenance camera has no configuration hash")
+        unsigned_camera = dict(camera)
+        unsigned_camera.pop("camera_configuration_sha256", None)
+        if camera_digest != _sha256(unsigned_camera):
+            raise VisualProvenanceError("visual provenance camera configuration hash mismatch")
     renderer = document.get("renderer")
     settings = renderer.get("settings") if isinstance(renderer, Mapping) else None
     if not isinstance(settings, list) or [entry.get("path") for entry in settings] != list(
         RENDERER_SETTING_PATHS
     ):
         raise VisualProvenanceError("visual provenance renderer settings policy is incomplete")
+    renderer_digest = renderer.get("renderer_configuration_sha256")
+    if not isinstance(renderer_digest, str) or len(renderer_digest) != 64:
+        raise VisualProvenanceError("visual provenance renderer has no configuration hash")
+    unsigned_renderer = dict(renderer)
+    unsigned_renderer.pop("renderer_configuration_sha256", None)
+    if renderer_digest != _sha256(unsigned_renderer):
+        raise VisualProvenanceError("visual provenance renderer configuration hash mismatch")
+    materialization = document.get("materialization")
+    if (
+        not isinstance(materialization, Mapping)
+        or materialization.get("materialization_revision") != "piper_x_offline_rgb_materializer_v1"
+    ):
+        raise VisualProvenanceError("visual provenance materialization revision is invalid")
     visuals = document.get("mutable_visual_state")
     if not isinstance(visuals, Mapping):
         raise VisualProvenanceError("visual provenance mutable state is invalid")

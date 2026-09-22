@@ -31,20 +31,29 @@ TERMINAL_SNAPSHOT_SHA256 = _captured_frame_sha256(TERMINAL_FRAMES)
 
 
 def _visual_provenance(camera_roles):
+    def seal(value):
+        value = dict(value)
+        value["camera_configuration_sha256"] = hashlib.sha256(
+            json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        return value
+
     document = {
         "schema": VISUAL_PROVENANCE_SCHEMA,
         "camera_roles": [
-            {
-                "attributes": [{"name": "focalLength", "payload": {"default": 18.0}}],
-                "data_type": "rgb",
-                "prim_path": path,
-                "prim_type": "Camera",
-                "resolution": [640, 480],
-                "role": role,
-            }
+            seal(
+                {
+                    "attributes": [{"name": "focalLength", "payload": {"default": 18.0}}],
+                    "data_type": "rgb",
+                    "prim_path": path,
+                    "prim_type": "Camera",
+                    "resolution": [640, 480],
+                    "role": role,
+                }
+            )
             for role, path in camera_roles.items()
         ],
-        "materialization": {},
+        "materialization": {"materialization_revision": "piper_x_offline_rgb_materializer_v1"},
         "mutable_visual_state": {
             "excluded_transient_prefixes": ["/Render", "/Replicator", "/_xr"],
             "property_count": 0,
@@ -59,6 +68,10 @@ def _visual_provenance(camera_roles):
             "settings_policy": "piper_x_rtx_settings_v1",
         },
     }
+    renderer = document["renderer"]
+    renderer["renderer_configuration_sha256"] = hashlib.sha256(
+        json.dumps(renderer, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
     document["visual_provenance_sha256"] = hashlib.sha256(
         json.dumps(document, sort_keys=True, separators=(",", ":")).encode()
     ).hexdigest()
@@ -184,10 +197,7 @@ def _canonical_d0_arrays() -> dict[str, np.ndarray]:
         }
     )
     seal_sample(second)
-    return {
-        name: np.stack((np.asarray(first[name]), np.asarray(second[name])))
-        for name in first
-    }
+    return {name: np.stack((np.asarray(first[name]), np.asarray(second[name]))) for name in first}
 
 
 def test_artifact_verifier_accepts_only_finalized_v2_and_streaming_hashes(tmp_path):
@@ -330,8 +340,14 @@ def test_frame_guard_checks_quiescence_after_every_pump_and_materialization():
         physics_steps=lambda: 7,
     )
     assert events == [
-        ("apply", 0), ("pump", None), ("render", 0), ("guard", None),
-        ("apply", 1), ("pump", None), ("render", 1), ("guard", None),
+        ("apply", 0),
+        ("pump", None),
+        ("render", 0),
+        ("guard", None),
+        ("apply", 1),
+        ("pump", None),
+        ("render", 1),
+        ("guard", None),
     ]
 
 
@@ -347,6 +363,43 @@ def test_offline_rgb_coverage_requires_each_role_exactly_once_per_frame():
         replay._validate_render_coverage(rendered[:-1], 2)
     with pytest.raises(RuntimeError, match="incomplete"):
         replay._validate_render_coverage([*rendered, rendered[0]], 2)
+
+
+def test_render_identity_binds_exact_d0_camera_renderer_and_stage(tmp_path):
+    artifact = _verify(_artifact(tmp_path))
+    session = replay.ReplaySession(
+        "episode_000000",
+        2,
+        (),
+        ("obs:0", "obs:1"),
+        ("snapshot:0", "snapshot:1"),
+        ("1" * 64, "2" * 64),
+        2,
+    )
+    rendered = [
+        {"frame": 1, "role": role, "sha256": str(index) * 64}
+        for index, role in enumerate(replay.CANONICAL_CAMERA_ROLES, start=3)
+    ]
+
+    replay._bind_render_identity(rendered, frame=1, session=session, artifact=artifact)
+
+    for item in rendered:
+        camera = next(
+            camera
+            for camera in artifact.visual_provenance["camera_roles"]
+            if camera["role"] == item["role"]
+        )
+        assert item["obs_id"] == "obs:1"
+        assert item["scene_state_snapshot_id"] == "snapshot:1"
+        assert item["scene_state_snapshot_sha256"] == "2" * 64
+        assert item["camera_configuration_sha256"] == camera["camera_configuration_sha256"]
+        assert (
+            item["renderer_configuration_sha256"]
+            == artifact.visual_provenance["renderer"]["renderer_configuration_sha256"]
+        )
+        assert item["stage_snapshot_sha256"] == artifact.snapshot_sha256
+        assert item["asset_closure_sha256"] == artifact.asset_closure_sha256
+        assert item["rgb_sha256"] == item["sha256"]
 
 
 def test_pre_scene_entry_opens_snapshot_before_strict_prepare(tmp_path, monkeypatch):
@@ -377,9 +430,7 @@ def test_pre_scene_entry_opens_snapshot_before_strict_prepare(tmp_path, monkeypa
             assert "open" in events
             events.append("prepare")
 
-        prepared_recordables = [
-            SimpleNamespace(group=group) for group in replay.REQUIRED_TRACKS
-        ]
+        prepared_recordables = [SimpleNamespace(group=group) for group in replay.REQUIRED_TRACKS]
 
         def apply_frame(self, frame):
             events.append("apply")
@@ -404,8 +455,13 @@ def test_pre_scene_entry_opens_snapshot_before_strict_prepare(tmp_path, monkeypa
         replay,
         "_validate_session",
         lambda *args: replay.ReplaySession(
-            "episode_000000", 1, tuple({"group": group} for group in replay.REQUIRED_TRACKS),
-            ("obs-0",), 1,
+            "episode_000000",
+            1,
+            tuple({"group": group} for group in replay.REQUIRED_TRACKS),
+            ("obs-0",),
+            ("snapshot-0",),
+            ("0" * 64,),
+            1,
         ),
     )
     monkeypatch.setattr(replay, "_open_verified_snapshot", lambda *args: events.append("open"))
@@ -413,22 +469,32 @@ def test_pre_scene_entry_opens_snapshot_before_strict_prepare(tmp_path, monkeypa
     class Guard:
         physics_callbacks = []
 
-        def configure(self): events.append("guard_configure")
-        def start_monitoring(self): events.append("monitor")
-        def assert_quiescent(self): events.append("quiet")
-        def close(self): events.append("guard_close")
+        def configure(self):
+            events.append("guard_configure")
+
+        def start_monitoring(self):
+            events.append("monitor")
+
+        def assert_quiescent(self):
+            events.append("quiet")
+
+        def close(self):
+            events.append("guard_close")
 
     monkeypatch.setattr(replay, "ReplayRuntimeGuard", Guard)
     app = SimpleNamespace(update=lambda: events.append("pump"))
     report = tmp_path / "report.json"
-    assert replay.replay_from_snapshot(
-        app,
-        recording=artifact.recording,
-        episode=0,
-        render_cameras=None,
-        report_path=report,
-        portable_roots={"recording": tmp_path},
-    ) == 0
+    assert (
+        replay.replay_from_snapshot(
+            app,
+            recording=artifact.recording,
+            episode=0,
+            render_cameras=None,
+            report_path=report,
+            portable_roots={"recording": tmp_path},
+        )
+        == 0
+    )
     assert events.index("open") < events.index("replayer") < events.index("prepare")
     payload = json.loads(report.read_text())
     assert payload["strict_policy"] is True

@@ -86,6 +86,8 @@ class ReplaySession:
     frames: int
     tracks: tuple[Mapping[str, Any], ...]
     observation_ids: tuple[str, ...]
+    scene_state_snapshot_ids: tuple[str, ...]
+    scene_state_snapshot_sha256: tuple[str, ...]
     committed_count: int
 
 
@@ -154,16 +156,18 @@ def verify_recording_artifact(
         raise ValueError("finalized recording has no accepted terminal outcome")
     if finalization.get("outcome") != outcome:
         raise ValueError("recording manifest and finalization marker outcomes differ")
-    if manifest.get("pose_backend_requested") != "fabric" or manifest.get(
-        "pose_backend_effective"
-    ) != "fabric":
+    if (
+        manifest.get("pose_backend_requested") != "fabric"
+        or manifest.get("pose_backend_effective") != "fabric"
+    ):
         raise ValueError("recording did not prove the required Fabric pose backend")
     if manifest.get("transition_schema") != "piper_x_committed_transition_v2":
         raise ValueError("recording manifest has an unsupported transition schema")
     session_metadata = manifest.get("session_metadata")
-    if not isinstance(session_metadata, dict) or session_metadata.get(
-        "source_profile"
-    ) != "isaac_human_vr_offline_rgb_v1":
+    if (
+        not isinstance(session_metadata, dict)
+        or session_metadata.get("source_profile") != "isaac_human_vr_offline_rgb_v1"
+    ):
         raise ValueError("recording manifest has an unsupported source profile")
 
     declared_hdf = manifest.get("hdf5")
@@ -219,9 +223,7 @@ def verify_recording_artifact(
     except AssetClosureError as exc:
         raise ValueError(f"recording asset closure verification failed: {exc}") from exc
     if asset_closure["asset_closure_sha256"] != asset_closure_sha256:
-        raise ValueError(
-            "recording manifest and asset closure aggregate hashes differ"
-        )
+        raise ValueError("recording manifest and asset closure aggregate hashes differ")
 
     visual_provenance = manifest.get("visual_provenance")
     if not isinstance(visual_provenance, dict):
@@ -231,17 +233,13 @@ def verify_recording_artifact(
         verified_visual_provenance = verify_visual_provenance(visual_provenance)
     except VisualProvenanceError as exc:
         raise ValueError(f"recording visual provenance verification failed: {exc}") from exc
-    if (
-        verified_visual_provenance["visual_provenance_sha256"]
-        != visual_provenance_sha256
-    ):
+    if verified_visual_provenance["visual_provenance_sha256"] != visual_provenance_sha256:
         raise ValueError("recording manifest and visual provenance hashes differ")
 
     camera_paths = manifest.get("camera_roles")
     if not isinstance(camera_paths, dict) or set(camera_paths) != set(CANONICAL_CAMERA_ROLES):
         raise ValueError(
-            "recording camera_roles must contain exactly "
-            f"{list(CANONICAL_CAMERA_ROLES)}"
+            f"recording camera_roles must contain exactly {list(CANONICAL_CAMERA_ROLES)}"
         )
     normalized_camera_paths: dict[str, str] = {}
     for role in CANONICAL_CAMERA_ROLES:
@@ -352,9 +350,10 @@ def _validate_session(reader: Any, artifact: ReplayArtifact, episode: int) -> Re
     if hdf_session.get("visual_provenance_sha256") != artifact.visual_provenance_sha256:
         raise RuntimeError("HDF public manifest does not bind the verified visual provenance")
     sampling = dict(manifest.sampling)
-    if sampling.get("pose_backend") != "fabric" or sampling.get(
-        "mode"
-    ) != "explicit_committed_control_boundary":
+    if (
+        sampling.get("pose_backend") != "fabric"
+        or sampling.get("mode") != "explicit_committed_control_boundary"
+    ):
         raise RuntimeError("HDF public manifest has unsupported sampling provenance")
     attrs = reader.episode_attrs(episode_name)
     if int(attrs.get("num_frames", frames)) != frames:
@@ -404,6 +403,10 @@ def _validate_session(reader: Any, artifact: ReplayArtifact, episode: int) -> Re
         return np.asarray(value, dtype=np.uint8).tobytes()
 
     observation_ids = tuple(text(row["obs_id"]) for row in rows)
+    scene_state_snapshot_ids = tuple(text(row["scene_state_snapshot_id"]) for row in rows)
+    scene_state_snapshot_sha256 = tuple(
+        digest(row["scene_state_snapshot_sha256"]).hex() for row in rows
+    )
     for field in ("obs_id", "dataset_action_id", "native_command_id", "transition_id"):
         identities = [text(row[field]) for row in rows]
         if len(identities) != len(set(identities)):
@@ -478,6 +481,8 @@ def _validate_session(reader: Any, artifact: ReplayArtifact, episode: int) -> Re
         frames=frames,
         tracks=tracks,
         observation_ids=observation_ids,
+        scene_state_snapshot_ids=scene_state_snapshot_ids,
+        scene_state_snapshot_sha256=scene_state_snapshot_sha256,
         committed_count=int(committed.sum()),
     )
 
@@ -506,16 +511,53 @@ def apply_replay_frames(
 
 
 def _validate_render_coverage(rendered: list[dict[str, Any]], frames: int) -> None:
-    expected = {
-        (frame, role)
-        for frame in range(frames)
-        for role in CANONICAL_CAMERA_ROLES
-    }
+    expected = {(frame, role) for frame in range(frames) for role in CANONICAL_CAMERA_ROLES}
     actual = {(int(item["frame"]), str(item["role"])) for item in rendered}
     if actual != expected or len(rendered) != len(expected):
         raise RuntimeError(
             "offline RGB materialization is incomplete: "
             f"expected={len(expected)}, actual={len(rendered)}"
+        )
+
+
+def _bind_render_identity(
+    rendered: list[dict[str, Any]],
+    *,
+    frame: int,
+    session: ReplaySession,
+    artifact: ReplayArtifact,
+) -> None:
+    """Bind every RGB to immutable D0, camera, renderer, and stage identities."""
+
+    if not 0 <= frame < session.frames:
+        raise IndexError(f"render frame {frame} is outside the replay session")
+    cameras = {str(camera["role"]): camera for camera in artifact.visual_provenance["camera_roles"]}
+    renderer_sha256 = artifact.visual_provenance["renderer"]["renderer_configuration_sha256"]
+    materialization_revision = artifact.visual_provenance["materialization"][
+        "materialization_revision"
+    ]
+    for item in rendered:
+        role = str(item.get("role"))
+        if int(item.get("frame", -1)) != frame or role not in cameras:
+            raise RuntimeError("render output cannot be bound to the requested frame and camera")
+        rgb_sha256 = item.get("sha256")
+        if not isinstance(rgb_sha256, str) or len(rgb_sha256) != 64:
+            raise RuntimeError("render output has no RGB SHA-256")
+        camera = cameras[role]
+        item.update(
+            {
+                "asset_closure_sha256": artifact.asset_closure_sha256,
+                "camera_configuration_sha256": camera["camera_configuration_sha256"],
+                "camera_prim_path": camera["prim_path"],
+                "camera_role": role,
+                "materialization_revision": materialization_revision,
+                "obs_id": session.observation_ids[frame],
+                "renderer_configuration_sha256": renderer_sha256,
+                "rgb_sha256": rgb_sha256,
+                "scene_state_snapshot_id": session.scene_state_snapshot_ids[frame],
+                "scene_state_snapshot_sha256": session.scene_state_snapshot_sha256[frame],
+                "stage_snapshot_sha256": artifact.snapshot_sha256,
+            }
         )
 
 
@@ -554,9 +596,7 @@ class ReplayRuntimeGuard:
         if self._timeline is None or self._timeline.is_playing():
             raise RuntimeError("timeline started during state-only replay")
         if self.physics_callbacks:
-            raise RuntimeError(
-                f"replay emitted {len(self.physics_callbacks)} physics callbacks"
-            )
+            raise RuntimeError(f"replay emitted {len(self.physics_callbacks)} physics callbacks")
 
     def close(self) -> None:
         subscription, self._subscription = self._subscription, None
@@ -621,9 +661,7 @@ class ReplayCameraMaterializer:
         for role in CANONICAL_CAMERA_ROLES:
             image = np.asarray(self.annotators[role].get_data())
             if image.shape not in ((480, 640, 4), (480, 640, 3)) or image.dtype != np.uint8:
-                raise RuntimeError(
-                    f"{role}: unexpected RGB buffer {image.shape} {image.dtype}"
-                )
+                raise RuntimeError(f"{role}: unexpected RGB buffer {image.shape} {image.dtype}")
             path = self.output_dir / f"frame_{frame:06d}_{role}.png"
             Image.fromarray(image[..., :3]).save(path)
             path.chmod(0o600)
@@ -749,9 +787,17 @@ def replay_from_snapshot(
         if render_cameras is not None:
             materializer = ReplayCameraMaterializer(artifact.camera_paths, render_cameras)
             materializer.open()
+
         def materialize(frame: int) -> None:
             if materializer is not None:
-                rendered.extend(materializer.render(frame))
+                frame_renders = materializer.render(frame)
+                _bind_render_identity(
+                    frame_renders,
+                    frame=frame,
+                    session=session,
+                    artifact=artifact,
+                )
+                rendered.extend(frame_renders)
 
         apply_replay_frames(
             replayer,
@@ -773,7 +819,7 @@ def replay_from_snapshot(
         _validate_render_coverage(rendered, session.frames)
 
     report = {
-        "schema": "piper_x_isaac_vr_replay_report_v2",
+        "schema": "piper_x_isaac_vr_replay_report_v3",
         "recording": str(artifact.recording),
         "recording_sha256": artifact.hdf5_sha256,
         "stage_snapshot": str(artifact.snapshot),
@@ -791,9 +837,7 @@ def replay_from_snapshot(
         "required_tracks": sorted(REQUIRED_TRACKS),
         "tracks": list(session.tracks),
         "prepared_groups": list(prepared_groups),
-        "applied_group_frames": {
-            group: session.frames for group in prepared_groups
-        },
+        "applied_group_frames": {group: session.frames for group in prepared_groups},
         "camera_paths": dict(artifact.camera_paths),
         "renders": rendered,
         "d0": {

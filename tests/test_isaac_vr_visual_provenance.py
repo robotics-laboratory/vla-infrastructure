@@ -149,9 +149,11 @@ def test_visual_provenance_is_canonical_hashed_and_complete():
     assert [entry["path"] for entry in document["renderer"]["settings"]] == list(
         RENDERER_SETTING_PATHS
     )
-    assert [entry["role"] for entry in document["camera_roles"]] == list(
-        CANONICAL_CAMERA_ROLES
+    assert [entry["role"] for entry in document["camera_roles"]] == list(CANONICAL_CAMERA_ROLES)
+    assert all(
+        len(entry["camera_configuration_sha256"]) == 64 for entry in document["camera_roles"]
     )
+    assert len(document["renderer"]["renderer_configuration_sha256"]) == 64
     assert document["materialization"] == {
         "annotator": "rgb",
         "capture_driver": "kit_app_update",
