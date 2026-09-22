@@ -2754,6 +2754,12 @@ documents:
   owner: vr.performance
   mutable: false
   gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min120_deferred/REPORT.md
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
 - path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min60_phase/REPORT.md
   kind: experiment
   status: historical

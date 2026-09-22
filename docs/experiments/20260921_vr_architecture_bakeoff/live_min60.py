@@ -1,6 +1,6 @@
-"""Exact LIVE-MIN60-NONTILED experiment boundary.
+"""Exact LIVE-MIN deferred-camera experiment boundary.
 
-Two 60 Hz physics integrations feed one explicitly synchronized Kit/RTX render,
+Two 60 Hz or four 120 Hz integrations feed one synchronized Kit/RTX render,
 then the existing three-Camera capture barrier extracts and owns RGB copies.
 Canonical sources and configuration remain untouched.
 """
@@ -15,7 +15,6 @@ import numpy as np
 
 
 ROLES = ("left_wrist", "right_wrist", "scene")
-DT = 1.0 / 60.0
 
 
 def install(env, args) -> None:
@@ -23,6 +22,11 @@ def install(env, args) -> None:
     from omni.kit.xr.core import XRSettings
 
     out = Path(os.environ["VR_BAKEOFF_OUTPUT"])
+    candidate = os.environ["VR_BAKEOFF_CANDIDATE"]
+    physics_hz, physics_steps = (
+        (120.0, 4) if candidate == "LIVE-MIN120-DEFERRED" else (60.0, 2)
+    )
+    dt = 1.0 / physics_hz
     settings = carb.settings.get_settings()
     settings.set("/rtx/rendermode", "MinimalRendering")
     settings.set("/rtx/minimal/mode", 2)
@@ -36,8 +40,8 @@ def install(env, args) -> None:
         "profile/persistent/render/resolutionMultiplier", 0.4
     )
 
-    if abs(float(env.sim.cfg.dt) - DT) > 1.0e-12:
-        raise RuntimeError(f"LIVE-MIN60 requires physics dt {DT}, got {env.sim.cfg.dt}")
+    if abs(float(env.sim.cfg.dt) - dt) > 1.0e-12:
+        raise RuntimeError(f"{candidate} requires physics dt {dt}, got {env.sim.cfg.dt}")
 
     # Do not bind SceneUI panels; canonical camera products remain live.
     runtime = env.vr_runtime
@@ -72,7 +76,7 @@ def install(env, args) -> None:
         boundary_started = time.perf_counter_ns()
         physics_ns = 0
         update_ns = 0
-        for _ in range(2):
+        for _ in range(physics_steps):
             started = time.perf_counter_ns()
             for robot in env.robots:
                 robot.write_data_to_sim()
@@ -81,10 +85,10 @@ def install(env, args) -> None:
 
             started = time.perf_counter_ns()
             for robot in env.robots:
-                robot.update(DT)
+                robot.update(dt)
             env._state_physics_step = env.sim.get_physics_step_count()
-            env.physics_probe.update(DT)
-            runtime.update(DT)
+            env.physics_probe.update(dt)
+            runtime.update(dt)
             update_ns += time.perf_counter_ns() - started
 
         started = time.perf_counter_ns()
@@ -105,7 +109,7 @@ def install(env, args) -> None:
         freeze_ns = time.perf_counter_ns() - started
         capture = env.latest_observation_capture()
         if capture.producer.physics_step != env.sim.get_physics_step_count():
-            raise RuntimeError("LIVE-MIN60 capture does not belong to current physics state")
+            raise RuntimeError(f"{candidate} capture does not belong to current physics state")
         for role in ROLES:
             image = frozen[f"observation.images.{role}"]
             if image.shape != (480, 640, 3) or image.dtype != np.uint8 or not image.flags.owndata:
@@ -125,7 +129,7 @@ def install(env, args) -> None:
             "rgb_freeze_ms": freeze_ns / 1.0e6,
             "acquisition_boundary_ms": total_ns / 1.0e6,
             "renders": 1,
-            "physics_steps": 2,
+            "physics_steps": physics_steps,
             "bytes_per_tick": sum(
                 frozen[f"observation.images.{role}"].nbytes for role in ROLES
             ),
@@ -150,10 +154,10 @@ def install(env, args) -> None:
 
     env._advance = advance
     manifest = {
-        "candidate": os.environ["VR_BAKEOFF_CANDIDATE"],
-        "physics_hz": 60.0,
+        "candidate": candidate,
+        "physics_hz": physics_hz,
         "control_target_hz": 30.0,
-        "physics_steps_per_control": 2,
+        "physics_steps_per_control": physics_steps,
         "renders_per_control": 1,
         "renderer": "MinimalRendering",
         "minimal_mode": 2,

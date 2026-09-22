@@ -29,7 +29,7 @@ class Imports(importlib.abc.MetaPathFinder):
                         return result
                     module.user_environment = environment
                 elif fullname == 'isaac_vr_runtime':
-                    if os.environ['VR_BAKEOFF_CANDIDATE'] in ('H-cpu','H-cpu-capture','F-minimal','LIVE-MIN60-NONTILED','LIVE-MIN60-DEFERRED'):
+                    if os.environ['VR_BAKEOFF_CANDIDATE'] in ('H-cpu','H-cpu-capture','F-minimal','LIVE-MIN60-NONTILED','LIVE-MIN60-DEFERRED','LIVE-MIN120-DEFERRED'):
                         original = module.run_vr
                         def run_vr(args, *a, **kw):
                             candidate = os.environ['VR_BAKEOFF_CANDIDATE']
@@ -53,7 +53,7 @@ class Imports(importlib.abc.MetaPathFinder):
                         from variants import install
                         install(env, args)
                         candidate = os.environ['VR_BAKEOFF_CANDIDATE']
-                        if candidate in ('LIVE-MIN60-NONTILED','LIVE-MIN60-DEFERRED'):
+                        if candidate in ('LIVE-MIN60-NONTILED','LIVE-MIN60-DEFERRED','LIVE-MIN120-DEFERRED'):
                             from live_min60 import install as install_live_min60
                             install_live_min60(env, args)
                             if os.environ.get('VR_DYNAMICS_QUALIFICATION') == '1':
@@ -62,10 +62,10 @@ class Imports(importlib.abc.MetaPathFinder):
                             if os.environ.get('VR_LIVE_MIN60_PHASE') == '1':
                                 from phase_probe import install as install_phase
                                 install_phase(env, args, Path(os.environ['VR_BAKEOFF_OUTPUT']))
-                            if candidate == 'LIVE-MIN60-DEFERRED' and int(os.environ.get('VR_DEFERRED_BOUNDARIES','0')):
+                            if candidate in ('LIVE-MIN60-DEFERRED','LIVE-MIN120-DEFERRED') and int(os.environ.get('VR_DEFERRED_BOUNDARIES','0')):
                                 from deferred_probe import install as install_deferred
                                 install_deferred(env, args, Path(os.environ['VR_BAKEOFF_OUTPUT']))
-                            elif candidate == 'LIVE-MIN60-DEFERRED':
+                            elif candidate in ('LIVE-MIN60-DEFERRED','LIVE-MIN120-DEFERRED'):
                                 create_device = module.create_piper_x_teleop_device
                                 def create_deferred_device(*device_args, **device_kwargs):
                                     device = create_device(*device_args, **device_kwargs)
@@ -99,7 +99,7 @@ class Imports(importlib.abc.MetaPathFinder):
         return spec
 
 
-if os.environ.get('VR_BAKEOFF_CANDIDATE') in ('LIVE-MIN60-NONTILED','LIVE-MIN60-DEFERRED') and '--kit_args' in sys.argv:
+if os.environ.get('VR_BAKEOFF_CANDIDATE') in ('LIVE-MIN60-NONTILED','LIVE-MIN60-DEFERRED','LIVE-MIN120-DEFERRED') and '--kit_args' in sys.argv:
     # Apply synchronous rendering before Kit starts. Toggling app async mode
     # after RTX/annotator initialization can leave camera products stale.
     index = sys.argv.index('--kit_args') + 1

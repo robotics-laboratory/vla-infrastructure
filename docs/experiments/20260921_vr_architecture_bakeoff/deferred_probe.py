@@ -1,4 +1,4 @@
-"""Content-sensitive LIVE-MIN60 deferred-camera qualification."""
+"""Content-sensitive LIVE-MIN deferred-camera qualification."""
 from __future__ import annotations
 
 from collections import Counter
@@ -61,6 +61,11 @@ def qualify(env, out: Path, boundaries: int) -> None:
         raise ValueError("deferred qualification requires at least one boundary")
     out.mkdir(parents=True, exist_ok=True)
     stage = env.sim.stage
+    physics_hz = int(round(1.0 / float(env.sim.cfg.dt)))
+    physics_steps = physics_hz // 30
+    candidate = os.environ["VR_BAKEOFF_CANDIDATE"]
+    if (physics_hz, physics_steps) not in ((60, 2), (120, 4)):
+        raise RuntimeError(f"Unsupported deferred runtime {physics_hz} Hz/{physics_steps} steps")
     cameras = env.camera.capture.cameras
     robots = env.robots
     cubes = env.vr_runtime.dynamic_assets
@@ -408,8 +413,10 @@ def qualify(env, out: Path, boundaries: int) -> None:
                 "rgb": env.camera.capture.freeze(),
             }
             elapsed_ms = (time.perf_counter_ns() - started) / 1.0e6
-            if env.sim.get_physics_step_count() - before_physics != 2:
-                raise RuntimeError("LIVE-MIN60 qualification did not advance exactly two physics steps")
+            if env.sim.get_physics_step_count() - before_physics != physics_steps:
+                raise RuntimeError(
+                    f"{candidate} qualification did not advance exactly {physics_steps} physics steps"
+                )
             current = witness_state(state_id, env.sim.render_generation)
             history[state_id] = current
             camera_identities = tuple(
@@ -551,17 +558,17 @@ def qualify(env, out: Path, boundaries: int) -> None:
                 "best_offset_counts": dict(Counter(sample["best_offset"] for sample in samples)),
             }
     result = {
-        "schema": "piper_x_live_min60_deferred_phase_v1",
+        "schema": "piper_x_live_min_deferred_phase_v1",
         "requested_boundaries": boundaries,
         "checked_boundaries": len(rows),
         "calibration_boundaries": len(calibration_rows),
         "area_references": area_references,
         "center_references": center_references,
-        "candidate": "LIVE-MIN60-DEFERRED",
+        "candidate": candidate,
         "runtime": {
-            "physics_hz": 60,
+            "physics_hz": physics_hz,
             "control_target_hz": 30,
-            "physics_steps_per_control": 2,
+            "physics_steps_per_control": physics_steps,
             "renders_per_control": 1,
             "renderer": "RTX Minimal mode 2",
             "xr_scale": 0.4,

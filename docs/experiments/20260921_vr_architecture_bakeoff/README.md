@@ -20,6 +20,11 @@ qualified an exact one-control producer delay across 9,000 long-run camera bundl
 That result qualifies deferred camera association, not human display latency or
 120-to-60 contact-dynamics equivalence.
 
+The bounded [LIVE-MIN120-DEFERRED run](runs/20260922_live_min120_deferred/REPORT.md)
+is retained as a temporal-binding failure. At the second accepted changing
+boundary both wrist cameras depicted N-1 while the scene camera depicted N.
+Per the stop rule, no long performance run or physical candidate was attempted.
+
 ## LIVE-MIN60-DEFERRED prototype
 
 `LIVE-MIN60-DEFERRED` preserves the exact LIVE-MIN60 runtime and adds an opt-in,
