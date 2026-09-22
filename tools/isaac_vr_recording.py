@@ -16,12 +16,22 @@ from typing import Any
 import numpy as np
 
 
+def ensure_episode_recorder_enabled() -> None:
+    """Enable the public recorder extension before importing its Python package."""
+    import omni.kit.app
+
+    omni.kit.app.get_app().get_extension_manager().set_extension_enabled_immediate(
+        "isaacsim.replicator.episode_recorder", True
+    )
+
+
 class ExplicitFrameSampler:
     """Append one complete public-Recordable frame at a caller-owned boundary."""
 
-    def __init__(self, storage: Any, recordables: Sequence[Any]) -> None:
+    def __init__(self, storage: Any, recordables: Sequence[Any], *, pose_backend: str | None = None) -> None:
         self.storage = storage
         self.recordables = tuple(recordables)
+        self.pose_backend = pose_backend
         groups = [recordable.group for recordable in self.recordables]
         if not groups or len(groups) != len(set(groups)):
             raise ValueError("recordables must have non-empty unique groups")
@@ -42,14 +52,22 @@ class ExplicitFrameSampler:
         if self.failed:
             raise RuntimeError("recording is failed closed after an earlier sample error")
         try:
-            for recordable in self.recordables:
-                frame = recordable.sample()
-                self._validate(recordable.group, frame)
-                self.storage.append_frame(recordable.group, frame)
+            if self.pose_backend is None:
+                self._append_recordable_frames()
+            else:
+                from isaacsim.core.experimental.utils.backend import use_backend
+                with use_backend(self.pose_backend):
+                    self._append_recordable_frames()
         except Exception:
             self.failed = True
             raise
         self.storage.advance_episode_frame()
+
+    def _append_recordable_frames(self) -> None:
+        for recordable in self.recordables:
+            frame = recordable.sample()
+            self._validate(recordable.group, frame)
+            self.storage.append_frame(recordable.group, frame)
 
     def _validate(self, group: str, frame: Mapping[str, Any]) -> None:
         schema = self._schemas[group]
@@ -72,6 +90,7 @@ def open_explicit_session(
     stage: Any,
     session_metadata: Mapping[str, Any],
     stage_snapshot: str | None,
+    pose_backend: str | None = None,
 ) -> tuple[Any, ExplicitFrameSampler]:
     """Open NVIDIA V2 storage and invoke the public Recordable setup lifecycle."""
     from isaacsim.replicator.episode_recorder import SessionStorage, build_manifest
@@ -90,11 +109,11 @@ def open_explicit_session(
         storage.write_manifest(
             build_manifest(
                 [recordable.to_manifest() for recordable in recordables],
-                sampling={"mode": "explicit_control_boundary", "decimation": 1},
+                sampling={"mode": "explicit_control_boundary", "decimation": 1, "pose_backend": pose_backend},
                 session_metadata=dict(session_metadata),
             )
         )
-        return storage, ExplicitFrameSampler(storage, recordables)
+        return storage, ExplicitFrameSampler(storage, recordables, pose_backend=pose_backend)
     except Exception:
         for recordable in reversed(opened):
             recordable.on_session_close()
@@ -149,6 +168,7 @@ class LiveRecording:
 
 def start_live_recording(output_dir: Path, env: Any, *, session_metadata: Mapping[str, Any]) -> LiveRecording:
     """Configure upstream state tracks for the canonical VR scene, then sample O0."""
+    ensure_episode_recorder_enabled()
     from isaacsim.replicator.episode_recorder import (
         ArticulationRecordable, CameraRecordable, RigidBodyRecordable, SimTimeRecordable,
         export_stage_snapshot,
@@ -189,7 +209,7 @@ def start_live_recording(output_dir: Path, env: Any, *, session_metadata: Mappin
     path = output_dir / "session.hdf5"
     storage, sampler = open_explicit_session(
         str(path), recordables=recordables, stage=stage, session_metadata=session_metadata,
-        stage_snapshot=snapshot.name,
+        stage_snapshot=snapshot.name, pose_backend="fabric",
     )
     start_explicit_episode(storage, sampler, recordables, {"outcome": "unclassified"})
     repository = Path(__file__).resolve().parents[1]
@@ -250,7 +270,10 @@ def _d0_channels(ChannelDescriptor: Any) -> dict[str, Any]:
     return {
         "observation_id": scalar_i(), "action_valid": ChannelDescriptor(shape=(), dtype="u1"),
         "action_from_observation_id": scalar_i(), "action_to_observation_id": scalar_i(),
-        "control_tick_id": scalar_i(), "reset_epoch": scalar_i(), "control_reference_epoch": scalar_i(),
+        "control_tick_id": scalar_i(), "reset_epoch": scalar_i(),
+        "observation_physics_step": scalar_i(), "observation_render_generation": scalar_i(),
+        "action_source_physics_step": scalar_i(), "action_source_render_generation": scalar_i(),
+        "control_reference_epoch": scalar_i(),
         "session_epoch": scalar_i(), "observation_state": ChannelDescriptor(shape=(14,), dtype="f4"),
         "dataset_action": ChannelDescriptor(shape=(14,), dtype="f4"),
         "native_preclip": ChannelDescriptor(shape=(14,), dtype="f4"),

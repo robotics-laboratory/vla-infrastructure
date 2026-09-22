@@ -193,6 +193,7 @@ def test_record_and_replay_child_commands(launcher, tmp_path, monkeypatch):
     record_manifest = max((tmp_path / "runs").glob("*/run_manifest.json"), key=lambda p: p.stat().st_mtime_ns)
     record_command = json.loads(record_manifest.read_text())["launch"]["command"]
     assert "--s2-record" in record_command and "--s2-teleop" in record_command
+    assert "--s2-performance-log" in record_command
     hdf5 = tmp_path / "external" / "session.hdf5"
     assert launcher.main(["replay", "--recording", str(hdf5), "--render-cameras", str(tmp_path / "renders"), "--dry-run", "--smoke", "--state-root", str(tmp_path)]) == 0
     replay_manifest = max((tmp_path / "runs").glob("*/run_manifest.json"), key=lambda p: p.stat().st_mtime_ns)

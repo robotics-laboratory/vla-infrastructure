@@ -116,7 +116,9 @@ Every run retains:
 - `result.json`: runtime result and process/shutdown status, when the child reaches
   reporting. Early failures may leave only manifest/config; nonzero exit remains fatal.
 
-DIAG also retains `stdout.log` and `performance.jsonl`. Optional bounded camera
+DIAG and RECORD retain `stdout.log` and `performance.jsonl`; RECORD measures the
+actual public SessionStorage/HDF5 path, so its result is the only performance number
+that may be cited for recording. Optional bounded camera
 captures live under `camera_feed_diagnostics/`; scene snapshots use the supplied
 path. RUN does not create the diagnostic bundle. Retain a completed physical
 worksheet and observed shutdown facts alongside the manifest for human evidence.
@@ -142,8 +144,10 @@ RECORD reuses that shared scene, XR, controller, processor, IK and native actuat
 path. It exports one `stage_snapshot.usd`, records static scene from that snapshot,
 and stores articulated robots, dynamic cubes, camera pose/intrinsics, SimTime and
 the numeric D0 transition track through public NVIDIA Recordables. Each sample is
-explicitly taken at O0 and after each four-substep control transition. Live canonical
-RGB and preview panels are off in RECORD; no RGB is read, retained or uploaded.
+explicitly taken at O0 and after each four-substep control transition. RECORD is
+state-only: RGB extraction, preview panels, and the camera capture boundary are
+disabled. Camera prims remain in the exported USD snapshot, so replay can render
+RGB after state application without placing RGB on the acquisition path.
 
 `./run-vr replay --recording <session.hdf5> --episode 0` uses the unmodified NVIDIA
 `SessionReader` and `EpisodeReplayer` with the USD pose backend. It disables the S2

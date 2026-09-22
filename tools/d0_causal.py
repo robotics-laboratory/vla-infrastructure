@@ -13,6 +13,9 @@ from tools.d0_temporal import TemporalContractViolation
 
 CAMERAS = ("left_wrist", "right_wrist", "scene")
 SIM_SOURCES = ("simulation.state_generation", *(f"camera.{role}" for role in CAMERAS))
+# Recording does not acquire RGB frames. Its state boundary is nevertheless a
+# first-class source identity, rather than an implicit side effect of a camera capture.
+STATE_ONLY_SIM_SOURCES = ("simulation.state_generation", "recording.measured_state")
 XR_SOURCES = ("xr.device_io_update", "xr.submitted_frame", "xr.returned_frame", "xr.resolved_input")
 AUTOMATED = frozenset(("scripted_expert", "planner", "datagen", "policy_generated"))
 
@@ -109,6 +112,7 @@ class CausalTransactionValidator:
         epoch: Epoch,
         *,
         physical: PhysicalTimingValidator | None = None,
+        sim_sources: tuple[str, ...] = SIM_SOURCES,
     ) -> None:
         self.profile = select_temporal_profile(runtime, source_class)
         if (physical is not None) != (runtime == "real"):
@@ -123,6 +127,10 @@ class CausalTransactionValidator:
             raise ValueError("real profile requires all seven physical source streams")
         self.epoch = epoch
         self.physical = physical
+        if (not sim_sources or len(sim_sources) != len(set(sim_sources))
+                or "simulation.state_generation" not in sim_sources):
+            raise ValueError("invalid simulator source set")
+        self.sim_sources = sim_sources
         self._epochs = {epoch}
         self._expected_observation: PayloadIdentity | None = None
         self._pending: PreparedTransaction | None = None
@@ -183,7 +191,7 @@ class CausalTransactionValidator:
         if "human_vr" in self.profile and tracking_valid is not True:
             self._reject("tracking_invalid")
         names = tuple(source.name for source in sources)
-        expected = SIM_SOURCES
+        expected = self.sim_sources
         if self.profile == "isaac_human_vr_v4":
             expected += XR_SOURCES
             if tracking_valid is not True:

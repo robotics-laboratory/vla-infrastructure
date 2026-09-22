@@ -283,6 +283,8 @@ def main(argv: list[str] | None = None) -> int:
     bounded = args.smoke or args.xr_smoke
     max_steps = args.max_control_steps
     kit_args = ["--portable-root", str(state / "kit")]
+    if args.mode in ("record", "replay"):
+        kit_args += ["--enable", "isaacsim.replicator.episode_recorder"]
     if not args.smoke:
         kit_args += [
             "--enable",
@@ -327,7 +329,12 @@ def main(argv: list[str] | None = None) -> int:
         recording_dir = args.recording_dir or state / "recordings" / output_dir.name
         if recording_dir.exists():
             raise RuntimeError(f"recording directory already exists: {recording_dir}")
-        command.extend(["--s2-record", "--s2-recording-dir", str(recording_dir)])
+        command.extend([
+            "--s2-record", "--s2-recording-dir", str(recording_dir),
+            "--s2-performance-log", str(output_dir / "performance.jsonl"),
+            "--s2-performance-window-steps", str(args.performance_window_steps),
+            "--s2-performance-warmup-steps", str(args.performance_warmup_steps),
+        ])
         print(f"Recording directory: {recording_dir}", flush=True)
     if args.mode == "replay":
         assert args.recording is not None

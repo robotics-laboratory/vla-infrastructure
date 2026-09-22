@@ -7,8 +7,11 @@ from typing import Any
 
 import numpy as np
 
-from tools.d0_causal import CausalTransactionValidator, Epoch, PayloadIdentity, SourceIdentity
-from tools.isaac_vr_capture import ObservationCapture
+from tools.d0_causal import (
+    STATE_ONLY_SIM_SOURCES, CausalTransactionValidator, Epoch, PayloadIdentity, PreparedTransaction,
+    SourceIdentity,
+)
+from tools.isaac_vr_capture import ObservationCapture, ProducerBoundary
 
 DECISION_REVISION = "piper_x_xr_preclip_decision_v1"
 
@@ -81,8 +84,38 @@ class XrInputReceipt:
             raise RuntimeError("XR session/reference/update changed or reused")
 
 
-def check_observation(env: Any, observation: ObservationCapture | None) -> None:
+@dataclass(frozen=True)
+class StateOnlyObservation:
+    """A measured-state boundary used by record mode without touching RTX data."""
+
+    producer: ProducerBoundary
+    state: tuple[float, ...]
+    eligible: bool = True
+
+
+def capture_state_only_observation(env: Any) -> StateOnlyObservation:
+    """Bind the current articulation state to its exact physics/reset boundary."""
+    before = env.sim.get_physics_step_count()
+    state_step, state = env.capture_measured_state()
+    after = env.sim.get_physics_step_count()
+    boundary = ProducerBoundary(int(env.camera.reset_epoch), before, int(env.sim.render_generation))
+    state_tuple = tuple(float(value) for value in state)
+    if (before != after or state_step != before or len(state_tuple) != 14
+            or not np.isfinite(state_tuple).all()):
+        raise RuntimeError("State-only observation/state generation mismatch")
+    return StateOnlyObservation(boundary, state_tuple)
+
+
+def check_observation(env: Any, observation: ObservationCapture | StateOnlyObservation | None) -> None:
     if observation is not None:
+        if isinstance(observation, StateOnlyObservation):
+            step, state = env.capture_measured_state()
+            if (step != observation.producer.physics_step
+                    or tuple(float(value) for value in state) != observation.state
+                    or env.camera.reset_epoch != observation.producer.reset_epoch
+                    or env.sim.get_physics_step_count() != observation.producer.physics_step):
+                raise RuntimeError("IK observation/state generation mismatch")
+            return
         if (env.latest_observation_capture() is not observation
                 or env._state_physics_step != observation.producer.physics_step
                 or env.sim.get_physics_step_count() != observation.producer.physics_step):
@@ -92,7 +125,7 @@ def check_observation(env: Any, observation: ObservationCapture | None) -> None:
 @dataclass(frozen=True)
 class SolvedControlDecision:
     control_tick_id: int | None  # None for ordinary RUN holds outside D0 admission.
-    observation_identity: ObservationCapture | None
+    observation_identity: ObservationCapture | StateOnlyObservation | None
     xr_identity: ResolvedXrInput | None
     cartesian_intent: Any  # frozen BimanualTeleopCommand includes processor identity
     native_preclip: tuple[float, ...]
@@ -157,23 +190,65 @@ class SolvedControlDecision:
         obs_bytes = payload(asdict(observation))
         action_bytes = b"action:<f4:[14]:deg/mm:" + self.canonical_d0_action
         xr_bytes = payload(asdict(xr))
-        sequences = [observation.producer.physics_step,
-                     *(c.data_generation for c in observation.cameras),
-                     xr.deviceio_update_epoch, xr.submitted_frame_id,
-                     xr.returned_frame_id, xr.deviceio_update_epoch]
-        names = ("simulation.state_generation", "camera.left_wrist", "camera.right_wrist",
-                 "camera.scene", "xr.device_io_update", "xr.submitted_frame",
-                 "xr.returned_frame", "xr.resolved_input")
+        if isinstance(observation, StateOnlyObservation):
+            names = (*STATE_ONLY_SIM_SOURCES, "xr.device_io_update", "xr.submitted_frame",
+                     "xr.returned_frame", "xr.resolved_input")
+            sequences = [observation.producer.physics_step, observation.producer.physics_step,
+                         xr.deviceio_update_epoch, xr.submitted_frame_id,
+                         xr.returned_frame_id, xr.deviceio_update_epoch]
+            source_payloads = (obs_bytes, obs_bytes, xr_bytes, xr_bytes, xr_bytes, xr_bytes)
+        else:
+            names = ("simulation.state_generation", "camera.left_wrist", "camera.right_wrist",
+                     "camera.scene", "xr.device_io_update", "xr.submitted_frame",
+                     "xr.returned_frame", "xr.resolved_input")
+            sequences = [observation.producer.physics_step,
+                         *(c.data_generation for c in observation.cameras),
+                         xr.deviceio_update_epoch, xr.submitted_frame_id,
+                         xr.returned_frame_id, xr.deviceio_update_epoch]
+            source_payloads = (obs_bytes, obs_bytes, obs_bytes, obs_bytes,
+                               xr_bytes, xr_bytes, xr_bytes, xr_bytes)
         def bind(name, data):
             return PayloadIdentity.bind(epoch, tick, f"{epoch}:{name}:{tick}", data)
         return validator.prepare(
             bind("observation", obs_bytes), bind("action", action_bytes),
-            tuple(SourceIdentity(name, bind(name, obs_bytes if i < 4 else xr_bytes), seq)
-                  for i, (name, seq) in enumerate(zip(names, sequences, strict=True))),
+            tuple(SourceIdentity(name, bind(name, source_payload), seq)
+                  for name, seq, source_payload in zip(names, sequences, source_payloads, strict=True)),
             observation_payload=obs_bytes, action_payload=action_bytes, tracking_valid=True,
         )
 
 
-def decision_epoch(run_id: str, observation: ObservationCapture, xr: ResolvedXrInput) -> Epoch:
+def decision_epoch(
+    run_id: str, observation: ObservationCapture | StateOnlyObservation, xr: ResolvedXrInput
+) -> Epoch:
     return Epoch(run_id, "unrecorded", "isaac_human_vr", observation.producer.reset_epoch,
                  xr.control_reference_epoch, str(xr.session_epoch))
+
+
+def complete_recorded_transition(
+    solution: SolvedControlDecision,
+    validator: CausalTransactionValidator,
+    prepared: PreparedTransaction,
+    successor: StateOnlyObservation,
+) -> None:
+    """Close one recorded D0 edge only after its four physics steps succeeded."""
+    tick = solution.control_tick_id
+    if tick is None or solution.observation_identity is None:
+        raise RuntimeError("Cannot complete an unqualified control decision")
+    if successor.producer.reset_epoch != solution.observation_identity.producer.reset_epoch:
+        raise RuntimeError("Transition crosses a reset epoch")
+    epoch = validator.epoch
+    observation_payload = payload(asdict(solution.observation_identity))
+    action_payload = b"action:<f4:[14]:deg/mm:" + solution.canonical_d0_action
+    native_payload = b"native:<f8:[14]:rad/m:" + np.asarray(
+        solution.native_clipped, dtype="<f8"
+    ).tobytes()
+    successor_payload = payload(asdict(successor))
+    native = PayloadIdentity.bind(epoch, tick, f"{epoch}:native:{tick}", native_payload)
+    successor_identity = PayloadIdentity.bind(
+        epoch, tick + 1, f"{epoch}:observation:{tick + 1}", successor_payload
+    )
+    validator.complete_transition(
+        prepared, native, f"{epoch}:physics_transition:{tick}:{successor.producer.physics_step}",
+        successor_identity, successful=True,
+    )
+    validator.commit(prepared, observation_payload=observation_payload, action_payload=action_payload)

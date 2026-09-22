@@ -943,6 +943,14 @@ def _camera_regression(env: BimanualPiperXIsaacEnvironment, seed: int) -> dict:
 
 
 def main() -> int:
+    if args_cli.vr_runtime and args_cli.s2_replay_hdf5 is not None:
+        # Replay owns no current-scene assets or URDF conversion.
+        from isaac_vr_runtime import run_vr
+        return run_vr(
+            args_cli, simulation_app, urdf_path=Path(), urdf_sha="replay_snapshot",
+            robot_cfg_factory=_robot_cfg, wrist_path_resolver=_wrist_path,
+            environment_type=BimanualPiperXIsaacEnvironment,
+        )
     print("[S1] loading checked configuration", flush=True)
     config = yaml.safe_load(args_cli.config.read_text(encoding="utf-8"))
     model = yaml.safe_load(MODEL_PATH.read_text(encoding="utf-8"))

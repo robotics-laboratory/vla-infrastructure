@@ -552,6 +552,8 @@ class VRRuntime:
     def disable_live_rgb(self) -> None:
         """Stop sensor updates and keep all canonical camera prims for replay."""
         self.camera_rig.live_rgb_enabled = False
+        if self.camera_rig.capture is not None:
+            self.camera_rig.capture.invalidate()
 
     def open(self, env) -> None:
         self._env = env
@@ -1271,6 +1273,16 @@ def run_vr(
 ) -> int:
     """Build the selected VR scene, validate it, then enter the existing S2 loop."""
 
+    if args_cli.s2_replay_hdf5 is not None:
+        # Replay must not reconstruct today's scene: all state tracks apply to
+        # the snapshot exported with this recording.
+        from isaac_vr_replay import replay_snapshot
+        return replay_snapshot(
+            simulation_app, recording=args_cli.s2_replay_hdf5,
+            episode=args_cli.s2_replay_episode, render_cameras=args_cli.s2_render_cameras,
+            report_path=args_cli.s2_replay_report or args_cli.report,
+        )
+
     config = load_composition(args_cli.demo_profile)
     print(f"[VR] profile={args_cli.demo_profile} physical_human_gate=required")
     sim = sim_utils.SimulationContext(
@@ -1401,14 +1413,6 @@ def run_vr(
         args_cli.demo_scene_preview.parent.mkdir(parents=True, exist_ok=True)
         Image.fromarray(preview).save(args_cli.demo_scene_preview)
         print(f"[DEMO] scene preview={args_cli.demo_scene_preview}", flush=True)
-    if args_cli.s2_replay_hdf5 is not None:
-        from isaac_vr_replay import replay
-
-        return replay(
-            env, simulation_app, recording=args_cli.s2_replay_hdf5,
-            episode=args_cli.s2_replay_episode, render_cameras=args_cli.s2_render_cameras,
-            report_path=args_cli.s2_replay_report or args_cli.report,
-        )
     from isaac_s2_runtime import run_s2
 
     return run_s2(env, args_cli, simulation_app)

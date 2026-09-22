@@ -10,12 +10,13 @@ import numpy as np
 import pytest
 import torch
 
-from tools.d0_causal import CausalTransactionValidator
+from tools.d0_causal import STATE_ONLY_SIM_SOURCES, CausalTransactionValidator
 from tools.isaac_s1_runtime import NativeBimanualTargets
 from tools.isaac_s2_processor import BimanualS2TeleopProcessor, ControllerDeltaSample, S2ProcessorConfig
 from tools.isaac_vr_capture import CameraIdentity, ObservationCapture, ProducerBoundary
 from tools.isaac_vr_decision import (
-    SolvedControlDecision, XrInputReceipt, check_observation, decision_epoch,
+    SolvedControlDecision, StateOnlyObservation, XrInputReceipt, capture_state_only_observation,
+    check_observation, complete_recorded_transition, decision_epoch,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -249,3 +250,32 @@ def test_noneligible_run_solution_has_no_control_tick_identity():
     proc = BimanualS2TeleopProcessor()
     solution = ik.solve(proc.session_inactive())
     assert solution.control_tick_id is None
+
+
+def test_state_only_observation_never_reads_camera_and_commits_successor():
+    state = (0.0,) * 14
+    env = NS(
+        step=20, camera=NS(reset_epoch=3),
+        sim=NS(render_generation=9, get_physics_step_count=lambda: env.step),
+        capture_measured_state=lambda: (env.step, state),
+    )
+    observation = capture_state_only_observation(env)
+    assert isinstance(observation, StateOnlyObservation)
+    check_observation(env, observation)
+    receipt, _, xr = xr_receipt()
+    command = NS(
+        session_active=True,
+        left=NS(tracking_valid=True, rebased=False),
+        right=NS(tracking_valid=True, rebased=False),
+    )
+    solution = SolvedControlDecision.from_native(
+        1, observation, xr, command, np.zeros(14), np.zeros(14)
+    )
+    validator = CausalTransactionValidator(
+        "isaac", "human_vr", decision_epoch("test", observation, xr),
+        sim_sources=STATE_ONLY_SIM_SOURCES,
+    )
+    prepared = solution.prepare(validator)
+    env.step = 24
+    complete_recorded_transition(solution, validator, prepared, capture_state_only_observation(env))
+    assert validator.accepted_transactions == 1

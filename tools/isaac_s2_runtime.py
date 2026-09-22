@@ -17,8 +17,10 @@ import numpy as np
 import yaml
 
 from tools.isaac_vr_decision import (
-    SolvedControlDecision, check_observation, decision_epoch, CausalTransactionValidator,
+    CausalTransactionValidator, SolvedControlDecision, capture_state_only_observation,
+    check_observation, complete_recorded_transition, decision_epoch,
 )
+from tools.d0_causal import STATE_ONLY_SIM_SOURCES
 from isaac_s1_runtime import NativeBimanualTargets, jsonable
 from isaac_s2_performance import S2PerformanceLogger
 from isaac_vr_camera_guard import CameraGuard
@@ -206,7 +208,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     if recording_requested and (diagnostic or getattr(args_cli, "s2_recording_dir", None) is None):
         raise ValueError("recording requires run mode and --s2-recording-dir")
     if not diagnostic and any(getattr(args_cli, name, False) for name in (
-        "s2_performance_log", "demo_display_toggle_smoke", "demo_backdrop_toggle_smoke",
+        "demo_display_toggle_smoke", "demo_backdrop_toggle_smoke",
         "demo_recenter_smoke", "demo_scene_preview",
     )):
         raise ValueError("Diagnostic-only flags require ./run-vr diag ...")
@@ -366,17 +368,24 @@ def run_s2(env, args_cli, simulation_app) -> int:
     env.prepared_control_transaction = None
     recording = None
 
-    def record_sample(solution=None, *, observation_id: int) -> None:
+    def record_sample(solution=None, *, observation_id: int, state_observation=None) -> None:
         if recording is None:
             return
-        state = np.asarray(env.capture_measured_state()[1], dtype=np.float32)
+        if state_observation is None:
+            state_observation = capture_state_only_observation(env)
+        state = np.asarray(state_observation.state, dtype=np.float32)
+        valid = solution is not None
         sample = {
             "observation_id": np.int64(observation_id),
-            "action_valid": np.uint8(solution is not None),
-            "action_from_observation_id": np.int64(observation_id - 1 if solution is not None else -1),
-            "action_to_observation_id": np.int64(observation_id if solution is not None else -1),
-            "control_tick_id": np.int64(solution.control_tick_id if solution and solution.control_tick_id is not None else -1),
-            "reset_epoch": np.int64(env.camera.reset_epoch),
+            "action_valid": np.uint8(valid),
+            "action_from_observation_id": np.int64(observation_id - 1 if valid else -1),
+            "action_to_observation_id": np.int64(observation_id if valid else -1),
+            "control_tick_id": np.int64(solution.control_tick_id if valid and solution.control_tick_id is not None else -1),
+            "reset_epoch": np.int64(state_observation.producer.reset_epoch),
+            "observation_physics_step": np.int64(state_observation.producer.physics_step),
+            "observation_render_generation": np.int64(state_observation.producer.render_generation),
+            "action_source_physics_step": np.int64(solution.observation_identity.producer.physics_step if valid else -1),
+            "action_source_render_generation": np.int64(solution.observation_identity.producer.render_generation if valid else -1),
             "control_reference_epoch": np.int64(solution.xr_identity.control_reference_epoch if solution and solution.xr_identity else -1),
             "session_epoch": np.int64(solution.xr_identity.session_epoch if solution and solution.xr_identity else -1),
             "observation_state": state,
@@ -389,7 +398,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
             "submitted_frame_id": np.int64(solution.xr_identity.submitted_frame_id if solution and solution.xr_identity else -1),
             "returned_frame_id": np.int64(solution.xr_identity.returned_frame_id if solution and solution.xr_identity else -1),
             "tracking_valid": np.asarray(solution.xr_identity.tracking_valid if solution and solution.xr_identity else (False, False), dtype=np.uint8),
-            "transition_completed": np.uint8(solution is not None),
+            "transition_completed": np.uint8(valid),
         }
         recording.sample(sample)
 
@@ -400,7 +409,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
             warmup_steps=args_cli.s2_performance_warmup_steps,
             target_hz=30.0,
         )
-        if diagnostic and args_cli.s2_performance_log is not None
+        if (diagnostic or recording_requested) and args_cli.s2_performance_log is not None
         else None
     )
     performance_summary: dict[str, Any] | None = None
@@ -414,9 +423,12 @@ def run_s2(env, args_cli, simulation_app) -> int:
     )
     try:
         if recording_requested:
+            # State-only recording keeps camera prims in the snapshot but never
+            # schedules RGB extraction or camera-boundary capture.
+            if experiment is None:
+                raise RuntimeError("recording requires the VR runtime")
+            experiment.disable_live_rgb()
             from isaac_vr_recording import start_live_recording
-            if experiment is not None:
-                experiment.disable_live_rgb()
             recording = start_live_recording(
                 args_cli.s2_recording_dir, env,
                 session_metadata={
@@ -449,9 +461,11 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 env.last_control_decision = None
                 env.prepared_control_transaction = None
                 if validator is not None:
-                    validator.abort()  # 4D will complete transitions; RUN never commits.
+                    validator.abort()  # Drop a non-admitted/failed prior attempt.
                 observation = None
-                if not recording_requested and getattr(env, "vr_runtime", None) is not None:
+                if recording_requested:
+                    observation = capture_state_only_observation(env)
+                elif getattr(env, "vr_runtime", None) is not None:
                     try:
                         observation = env.latest_observation_capture()
                     except RuntimeError:
@@ -618,7 +632,14 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     device.validate_xr(xr)
                     epoch = decision_epoch(run_id, observation, xr)
                     if validator is None:
-                        validator = CausalTransactionValidator("isaac", "human_vr", epoch)
+                        validator = (
+                            CausalTransactionValidator(
+                                "isaac", "human_vr", epoch,
+                                sim_sources=STATE_ONLY_SIM_SOURCES,
+                            )
+                            if recording_requested
+                            else CausalTransactionValidator("isaac", "human_vr", epoch)
+                        )
                     elif validator.epoch != epoch:
                         validator.begin_epoch(epoch)
                     env.prepared_control_transaction = solution.prepare(validator)
@@ -630,10 +651,20 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     stage_started_ns = time.perf_counter_ns()
                 env._advance(4)
                 if recording is not None:
-                    # A held/session-inactive IK solution is not an accepted D0
-                    # transition.  It must not acquire an action identity merely
-                    # because the native hold target was written.
-                    record_sample(solution if eligible else None, observation_id=step)
+                    # A label becomes valid only after the native target has
+                    # survived all four physics substeps and has an exact
+                    # successor state boundary. No camera/RGB access occurs.
+                    successor = capture_state_only_observation(env)
+                    if eligible:
+                        prepared = env.prepared_control_transaction
+                        if prepared is None:
+                            raise RuntimeError("Missing prepared D0 transaction")
+                        complete_recorded_transition(solution, validator, prepared, successor)
+                    record_sample(
+                        solution if eligible else None,
+                        observation_id=step,
+                        state_observation=successor,
+                    )
                 if performance is not None:
                     performance.add_stage(
                         "simulation_advance", time.perf_counter_ns() - stage_started_ns
