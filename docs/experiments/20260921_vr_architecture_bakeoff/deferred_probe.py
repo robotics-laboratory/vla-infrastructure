@@ -51,7 +51,14 @@ def _percentiles(values):
     }
 
 
-def qualify(env, out: Path, boundaries: int) -> None:
+def qualify(
+    env,
+    out: Path,
+    boundaries: int,
+    *,
+    characterize: bool = False,
+    priming_renders: int = 2,
+) -> None:
     from pxr import UsdGeom, UsdPhysics, UsdShade
     import omni.kit.app
     import torch
@@ -59,10 +66,13 @@ def qualify(env, out: Path, boundaries: int) -> None:
 
     if boundaries < 1:
         raise ValueError("deferred qualification requires at least one boundary")
+    if priming_renders not in range(5):
+        raise ValueError("priming renders must be in [0, 4]")
     out.mkdir(parents=True, exist_ok=True)
     stage = env.sim.stage
     physics_hz = int(round(1.0 / float(env.sim.cfg.dt)))
     physics_steps = physics_hz // 30
+    state_slots = 4 if characterize else 3
     candidate = os.environ["VR_BAKEOFF_CANDIDATE"]
     if (physics_hz, physics_steps) not in ((60, 2), (120, 4)):
         raise RuntimeError(f"Unsupported deferred runtime {physics_hz} Hz/{physics_steps} steps")
@@ -95,11 +105,15 @@ def qualify(env, out: Path, boundaries: int) -> None:
         UsdShade.Tokens.strongerThanDescendants,
     )
     left_cube_prim = stage.GetPrimAtPath(cubes[0].cfg.prim_path)
+    if characterize:
+        UsdPhysics.RigidBodyAPI(left_cube_prim).CreateKinematicEnabledAttr().Set(True)
     UsdShade.MaterialBindingAPI.Apply(left_cube_prim).Bind(
         _material(stage, "/World/DeferredLeftCubeMaterial", (0, 8, 8)),
         UsdShade.Tokens.strongerThanDescendants,
     )
     right_cube_prim = stage.GetPrimAtPath(cubes[1].cfg.prim_path)
+    if characterize:
+        UsdPhysics.RigidBodyAPI(right_cube_prim).CreateKinematicEnabledAttr().Set(True)
     UsdShade.MaterialBindingAPI.Apply(right_cube_prim).Bind(
         _material(stage, "/World/DeferredRightCubeMaterial", (8, 8, 0)),
         UsdShade.Tokens.strongerThanDescendants,
@@ -110,9 +124,8 @@ def qualify(env, out: Path, boundaries: int) -> None:
     requested_state = 0
 
     def apply_state(state_id: int) -> None:
-        # Three deliberately separated states ensure the current and two retained
-        # predecessors never have visually identical native witness positions.
-        aperture = (0.0, 0.05, 0.10)[state_id % 3]
+        apertures = (0.0, 0.033, 0.067, 0.10) if characterize else (0.0, 0.05, 0.10)
+        aperture = apertures[state_id % state_slots]
         for side, (robot, q0) in enumerate(zip(robots, initial_q, strict=True)):
             q = q0.copy()
             arm_deg = (-40.0, 90.0, -50.0, 0.0, 0.0, 0.0)
@@ -127,15 +140,26 @@ def qualify(env, out: Path, boundaries: int) -> None:
             robot.write_joint_velocity_to_sim_index(velocity=torch.zeros_like(target))
             robot.actuators.target_command.set_position_index(value=target)
             robot.write_data_to_sim()
-        state_slot = state_id % 3
-        cube_paths = (
-            ((0.17, 0.96), (0.17, 1.01), (0.10, 1.01)),
-            ((0.17, 0.92), (0.17, 0.96), (0.10, 1.00)),
-        )
+        state_slot = state_id % state_slots
+        if characterize:
+            # These kinematic PhysX witness poses are deliberately separated in
+            # both wrist products. Kinematic mode prevents contact/gravity from
+            # changing the commanded visual identity before it is rendered.
+            cube_paths = (
+                ((0.62, 0.17, 0.96), (0.62, 0.17, 1.01),
+                 (0.62, 0.10, 1.01), (0.62, 0.10, 0.94)),
+                ((0.62, -0.17, 0.92), (0.62, -0.17, 0.96),
+                 (0.62, -0.10, 1.00), (0.62, -0.10, 0.93)),
+            )
+        else:
+            cube_paths = (
+                ((0.62, 0.17, 0.96), (0.62, 0.17, 1.01), (0.62, 0.10, 1.01)),
+                ((0.62, -0.17, 0.92), (0.62, -0.17, 0.96), (0.62, -0.10, 1.00)),
+            )
         for side, (cube, pose0) in enumerate(zip(cubes[:2], initial_cube, strict=True)):
-            cube_y, cube_z = cube_paths[side][state_slot]
+            cube_x, cube_y, cube_z = cube_paths[side][state_slot]
             pose = pose0.copy()
-            pose[0, :3] = [0.62, cube_y * (1 if side == 0 else -1), cube_z]
+            pose[0, :3] = [cube_x, cube_y, cube_z]
             cube.write_root_pose_to_sim_index(root_pose=torch.as_tensor(pose, device=env.sim.device))
             cube.write_root_velocity_to_sim_index(
                 root_velocity=torch.zeros((1, 6), device=env.sim.device)
@@ -187,7 +211,9 @@ def qualify(env, out: Path, boundaries: int) -> None:
     primary_witness = {
         "left_wrist": "right_cube",
         "right_wrist": "left_cube",
-        "scene": "articulation",
+        # The four-state characterization uses the always-visible left cube;
+        # the existing qualification path retains its articulation witness.
+        "scene": "left_cube" if characterize else "articulation",
     }
     area_references: dict[str, dict[int, int]] = {
         "left_wrist": {},
@@ -203,7 +229,9 @@ def qualify(env, out: Path, boundaries: int) -> None:
         views = {}
         resolved_offsets = {}
         candidate_offsets = tuple(
-            offset for offset in (0, -1, -2) if availability_state_id + offset >= 0
+            offset
+            for offset in ((0, -1, -2, -3) if characterize else (0, -1, -2))
+            if availability_state_id + offset >= 0
         )
         for role in ROLES:
             rgb = owned_rgb[role]
@@ -228,7 +256,12 @@ def qualify(env, out: Path, boundaries: int) -> None:
             native = {}
             for kind, mask in masks.items():
                 yy, xx = np.where(mask)
-                observed = [float(xx.mean()), float(yy.mean())] if len(xx) > 50 else None
+                minimum_pixels = 20 if characterize else 50
+                observed = (
+                    [float(xx.mean()), float(yy.mean())]
+                    if len(xx) > minimum_pixels
+                    else None
+                )
                 predictions = {}
                 errors = {}
                 fixed_pose = history[availability_state_id]["camera_poses"][role]
@@ -262,11 +295,11 @@ def qualify(env, out: Path, boundaries: int) -> None:
                 and primary["separation_margin_px"] < 5.0
             ):
                 resolved = "other"
-            if role != "scene" and len(area_references[role]) == 3:
+            if role != "scene" and len(area_references[role]) == state_slots:
                 reference_errors = {}
                 if primary["observed_center"] is not None:
                     for offset in candidate_offsets:
-                        source_mod = (availability_state_id + offset) % 3
+                        source_mod = (availability_state_id + offset) % state_slots
                         center_error = np.linalg.norm(
                             np.asarray(primary["observed_center"])
                             - np.asarray(center_references[role][source_mod])
@@ -293,12 +326,12 @@ def qualify(env, out: Path, boundaries: int) -> None:
                     reference_margin is not None and reference_margin < 5.0
                 ):
                     resolved = "other"
-            elif role == "scene" and len(area_references[role]) == 3:
+            elif role == "scene" and len(area_references[role]) == state_slots:
                 reference_errors = {
                     offset: abs(
                         primary["pixels"]
                         - area_references[role][
-                            (availability_state_id + offset) % 3
+                            (availability_state_id + offset) % state_slots
                         ]
                     )
                     for offset in candidate_offsets
@@ -370,23 +403,18 @@ def qualify(env, out: Path, boundaries: int) -> None:
         robot.update(0.0)
     for cube in cubes[:2]:
         cube.update(0.0)
-    # The first request returns pre-S0 bootstrap content. A second render-only
-    # request at the unchanged S0 state drains that startup slot; both are discarded.
-    prime_first = render_extract()
-    prime = render_extract()
-    history[0] = witness_state(0, prime["render_after"])
-    binder.prepare(history[0]["source"], history[0]["state"])
+    prime_frames = [render_extract() for _ in range(priming_renders)]
+    history[0] = witness_state(0, env.sim.render_generation)
+    if not characterize:
+        binder.prepare(history[0]["source"], history[0]["state"])
     prime_result = {
-        "renders": 2,
-        "discarded_frame_bundles": 2,
+        "renders": priming_renders,
+        "discarded_frame_bundles": priming_renders,
         "physics_before": prime_physics,
         "physics_after": env.sim.get_physics_step_count(),
         "cost_ms": (time.perf_counter_ns() - prime_started) / 1.0e6,
         "discarded_rgb_sha256": {
-            role: [
-                sha256(prime_first["rgb"][role].tobytes()).hexdigest(),
-                sha256(prime["rgb"][role].tobytes()).hexdigest(),
-            ]
+            role: [sha256(frame["rgb"][role].tobytes()).hexdigest() for frame in prime_frames]
             for role in ROLES
         },
     }
@@ -397,7 +425,7 @@ def qualify(env, out: Path, boundaries: int) -> None:
 
     env.sim.step = step
     failure = None
-    calibration_boundaries = 30
+    calibration_boundaries = 0 if characterize else 30
     try:
         for state_id in range(1, boundaries + calibration_boundaries + 1):
             requested_state = state_id
@@ -432,7 +460,7 @@ def qualify(env, out: Path, boundaries: int) -> None:
             if calibrating:
                 if state_id <= 2 and resolved_offsets["scene"] != -1:
                     failure = "calibration_scene_offset_unstable"
-                source_mod = (state_id - 1) % 3
+                source_mod = (state_id - 1) % state_slots
                 for role in area_references:
                     witness = primary_witness[role]
                     native_witness = views[role]["native"][witness]
@@ -445,14 +473,20 @@ def qualify(env, out: Path, boundaries: int) -> None:
                             ]
                 if state_id == calibration_boundaries and failure is None:
                     if any(
-                        len(references) != 3 or min(references.values()) <= 50
+                        len(references) != state_slots or min(references.values()) <= 50
                         for references in area_references.values()
                     ):
                         failure = "calibration_witness_not_visible"
-                    if any(len(references) != 3 for references in center_references.values()):
+                    if any(
+                        len(references) != state_slots
+                        for references in center_references.values()
+                    ):
                         failure = failure or "calibration_witness_center_missing"
                     scene_areas = area_references["scene"]
-                    if not (scene_areas[0] < scene_areas[1] < scene_areas[2]):
+                    if not all(
+                        scene_areas[index] < scene_areas[index + 1]
+                        for index in range(state_slots - 1)
+                    ):
                         failure = "calibration_robot_area_nonmonotonic"
                     for role, references in center_references.items():
                         separations = [
@@ -465,14 +499,16 @@ def qualify(env, out: Path, boundaries: int) -> None:
                                     - area_references[role][right]
                                 ) / 100.0,
                             ))
-                            for left in range(3)
-                            for right in range(left + 1, 3)
+                            for left in range(state_slots)
+                            for right in range(left + 1, state_slots)
                         ]
                         if min(separations) < 10:
                             failure = (
                                 f"calibration_witness_features_ambiguous:{role}"
                             )
                 observed_offset = -1
+            elif characterize:
+                observed_offset = None
             else:
                 if len(set(resolved_offsets.values())) != 1:
                     failure = "camera_source_disagreement"
@@ -482,7 +518,7 @@ def qualify(env, out: Path, boundaries: int) -> None:
                 if observed_offset != -1:
                     failure = failure or "offset_unstable"
             bind_started = time.perf_counter_ns()
-            if failure is None:
+            if failure is None and not characterize:
                 binder.complete(
                     observed_source=history[state_id - 1]["source"],
                     availability_control_tick=state_id,
@@ -511,13 +547,107 @@ def qualify(env, out: Path, boundaries: int) -> None:
                 "calibration": calibrating,
             }
             (calibration_rows if calibrating else rows).append(row)
-            if failure:
+            if failure and not characterize:
                 break
     finally:
         env.sim.step = original_step
 
+    characterization = None
+    if characterize and failure is None:
+        reference_features = {role: {} for role in ROLES}
+        reference_samples = {role: {} for role in ROLES}
+
+        def feature(native, role):
+            center = native[primary_witness[role]]["observed_center"]
+            pixels = native[primary_witness[role]]["pixels"]
+            minimum_pixels = 20 if role == "scene" else 50
+            if center is None or pixels <= minimum_pixels:
+                return None
+            area_scale = 10.0 if role == "scene" else 100.0
+            return np.asarray([center[0], center[1], pixels / area_scale], dtype=float)
+
+        reference_physics = env.sim.get_physics_step_count()
+        for slot in range(4):
+            apply_state(slot)
+            env.sim.forward()
+            for robot in robots:
+                robot.update(0.0)
+            for cube in cubes[:2]:
+                cube.update(0.0)
+            samples = []
+            for _ in range(4):
+                rendered = render_extract()
+                reference_views, _ = classify_views(slot, rendered["rgb"])
+                samples.append(reference_views)
+            for role in ROLES:
+                values = [feature(sample[role]["native"], role) for sample in samples[-2:]]
+                if any(value is None for value in values):
+                    failure = f"reference_witness_not_visible:{role}:{slot}"
+                    continue
+                reference_samples[role][str(slot)] = [value.tolist() for value in values]
+                reference_features[role][slot] = np.mean(values, axis=0)
+
+        for row in rows:
+            tick = row["availability_control_tick"]
+            resolved = {}
+            for role in ROLES:
+                observed = feature(row["views"][role]["native"], role)
+                errors = {}
+                if observed is not None and len(reference_features[role]) == 4:
+                    errors = {
+                        offset: float(np.linalg.norm(
+                            observed - reference_features[role][(tick + offset) % 4]
+                        ))
+                        for offset in (0, -1, -2, -3)
+                        if tick + offset >= 0
+                    }
+                ordered = sorted(errors, key=errors.get)
+                margin = errors[ordered[1]] - errors[ordered[0]] if len(ordered) > 1 else None
+                offset = ordered[0] if ordered and margin is not None and margin >= 3.0 else "other"
+                resolved[role] = offset
+                row["views"][role]["offset"] = offset
+                row["views"][role]["characterization_errors"] = {
+                    str(key): value for key, value in errors.items()
+                }
+                row["views"][role]["characterization_separation"] = margin
+            row["resolved_offsets"] = resolved
+
+        timelines = {}
+        stable_suffixes = {}
+        first_stable = {}
+        for role in ROLES:
+            segments = []
+            for row in rows:
+                tick = row["availability_control_tick"]
+                offset = row["resolved_offsets"][role]
+                if segments and segments[-1]["offset"] == offset:
+                    segments[-1]["end"] = tick
+                    segments[-1]["count"] += 1
+                else:
+                    segments.append({"start": tick, "end": tick, "count": 1, "offset": offset})
+            timelines[role] = segments
+            suffix = segments[-1]["count"] if segments else 0
+            stable_suffixes[role] = suffix
+            first_stable[role] = segments[-1]["start"] if segments else None
+        characterization = {
+            "reference_render_count_per_state": 4,
+            "reference_physics_before": reference_physics,
+            "reference_physics_after": env.sim.get_physics_step_count(),
+            "reference_features": {
+                role: {str(slot): value.tolist() for slot, value in values.items()}
+                for role, values in reference_features.items()
+            },
+            "reference_samples": reference_samples,
+            "transition_timelines": timelines,
+            "first_stable_boundary": first_stable,
+            "longest_stable_suffix": stable_suffixes,
+            "first_30_offsets": {
+                role: [row["resolved_offsets"][role] for row in rows[:30]] for role in ROLES
+            },
+        }
+
     drain = None
-    if failure is None:
+    if failure is None and not characterize:
         terminal_state = boundaries + calibration_boundaries
         drain_started = time.perf_counter_ns()
         drain_physics = env.sim.get_physics_step_count()
@@ -578,15 +708,24 @@ def qualify(env, out: Path, boundaries: int) -> None:
             "owned_rgb_freeze": True,
         },
         "priming": prime_result,
+        "characterization": characterization,
         "offset_histograms": histograms,
         "native_witnesses": native_summary,
         "primary_witnesses": primary_witness,
         "usd_witness": "disabled: camera-child marker was absent in both wrist products",
         "control_timing": _percentiles(control_ms) if control_ms else None,
-        "binding_timing": _percentiles(binding_ms) if binding_ms else None,
+        "binding_timing": (
+            None if characterize else (_percentiles(binding_ms) if binding_ms else None)
+        ),
         "terminal_drain": drain,
         "failure": failure,
-        "verdict": "STABLE ONE-CONTROL PIPELINE" if failure is None else "UNSTABLE / UNSAFE",
+        "verdict": (
+            "CHARACTERIZED"
+            if characterize and failure is None
+            else "STABLE ONE-CONTROL PIPELINE"
+            if failure is None
+            else "UNSTABLE / UNSAFE"
+        ),
         "upstream_identity_limit": (
             "Camera frame/data generations identify extraction, not depicted simulation state; "
             "the content-sensitive native robot/cube witnesses supply source proof."
@@ -610,14 +749,27 @@ def install(env, args, out) -> None:
     from isaac_s2_performance import S2PerformanceLogger
 
     output = Path(out)
-    boundaries = int(os.environ.get("VR_DEFERRED_BOUNDARIES", "300"))
+    characterization_boundaries = int(os.environ.get("VR_DEFERRED_CHARACTERIZE", "0"))
+    characterize = characterization_boundaries > 0
+    boundaries = (
+        characterization_boundaries
+        if characterize
+        else int(os.environ.get("VR_DEFERRED_BOUNDARIES", "300"))
+    )
+    priming_renders = int(os.environ.get("VR_DEFERRED_PRIMES", "2"))
     previous_end = S2PerformanceLogger.end_step
 
     def end(log, number, **state):
         result = previous_end(log, number, **state)
         if number == args.s2_max_control_steps:
             S2PerformanceLogger.end_step = previous_end
-            qualify(env, output, boundaries)
+            qualify(
+                env,
+                output,
+                boundaries,
+                characterize=characterize,
+                priming_renders=priming_renders,
+            )
         return result
 
     S2PerformanceLogger.end_step = end

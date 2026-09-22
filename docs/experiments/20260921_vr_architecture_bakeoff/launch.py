@@ -20,6 +20,8 @@ parser.add_argument('--verify-xr-display',action='store_true',help='Two XR-displ
 parser.add_argument('--profile-passes',action='store_true',help='150 post-control render-only frames, outside control timing')
 parser.add_argument('--phase-qualification',action='store_true',help='Run the bounded content phase witness after timed controls')
 parser.add_argument('--deferred-boundaries',type=int,help='Run the deferred content qualification for this many changing boundaries')
+parser.add_argument('--latency-characterization',type=int,help='Characterize each camera offset independently for this many changing boundaries')
+parser.add_argument('--priming-renders',type=int,choices=range(5),default=2,help='Render-only primes before latency characterization (0-4)')
 parser.add_argument('--dynamics-qualification',action='store_true',help='Run the bounded deterministic dynamics trace instead of the S2 loop')
 args = parser.parse_args()
 if args.candidate.startswith('B1-FULL-OFFLINE') and args.profile_passes:
@@ -44,6 +46,8 @@ env['VR_BAKEOFF_VERIFY_XR_DISPLAY']='1' if args.verify_xr_display else '0'
 env['VR_BAKEOFF_PROFILE_PASSES']='1' if args.profile_passes else '0'
 env['VR_LIVE_MIN60_PHASE']='1' if args.phase_qualification else '0'
 env['VR_DEFERRED_BOUNDARIES']=str(args.deferred_boundaries or 0)
+env['VR_DEFERRED_CHARACTERIZE']=str(args.latency_characterization or 0)
+env['VR_DEFERRED_PRIMES']=str(args.priming_renders)
 env['VR_DYNAMICS_QUALIFICATION']='1' if args.dynamics_qualification else '0'
 cmd = ['./run-vr', 'diag', '--state-root', str(args.state_root.resolve()),
        '--max-control-steps', str(args.ticks), '--performance-warmup-steps', str(args.warmup),
@@ -53,7 +57,7 @@ if args.mode != 'physical':
 manifest = dict(candidate=args.candidate, command=cmd, cwd=str(ROOT),
                 head=subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip(),
                 env={k: env[k] for k in ['DISPLAY','OMNI_KIT_ACCEPT_EULA','ISAACLAB_CXR_ACCEPT_EULA',
-                                       'VR_BAKEOFF_CANDIDATE','VR_BAKEOFF_OUTPUT','VR_BAKEOFF_PROFILE_PASSES','VR_BAKEOFF_VERIFY_XR_DISPLAY','VR_LIVE_MIN60_PHASE','VR_DEFERRED_BOUNDARIES','VR_DYNAMICS_QUALIFICATION','PYTHONPATH']},
+                                       'VR_BAKEOFF_CANDIDATE','VR_BAKEOFF_OUTPUT','VR_BAKEOFF_PROFILE_PASSES','VR_BAKEOFF_VERIFY_XR_DISPLAY','VR_LIVE_MIN60_PHASE','VR_DEFERRED_BOUNDARIES','VR_DEFERRED_CHARACTERIZE','VR_DEFERRED_PRIMES','VR_DYNAMICS_QUALIFICATION','PYTHONPATH']},
                 sources={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in Path(__file__).parent.glob('*.py')},
                 started=time.time())
 (args.output/'launch.json').write_text(json.dumps(manifest, indent=2))

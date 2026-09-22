@@ -25,6 +25,13 @@ is retained as a temporal-binding failure. At the second accepted changing
 boundary both wrist cameras depicted N-1 while the scene camera depicted N.
 Per the stop rule, no long performance run or physical candidate was attempted.
 
+The follow-up [per-camera 120 Hz characterization](runs/20260922_live_min120_camera_latency/REPORT.md)
+tested zero through four render-only primes and then retained 1,000 consecutive
+changing-boundary classifications without publishing observations. All cameras
+showed time-varying content offsets; a fixed role-specific temporal join is unsafe.
+No joined correctness, drain, lifecycle, performance, or physical-candidate phase
+was attempted after that stop condition.
+
 ## LIVE-MIN60-DEFERRED prototype
 
 `LIVE-MIN60-DEFERRED` preserves the exact LIVE-MIN60 runtime and adds an opt-in,

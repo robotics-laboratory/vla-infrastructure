@@ -62,7 +62,10 @@ class Imports(importlib.abc.MetaPathFinder):
                             if os.environ.get('VR_LIVE_MIN60_PHASE') == '1':
                                 from phase_probe import install as install_phase
                                 install_phase(env, args, Path(os.environ['VR_BAKEOFF_OUTPUT']))
-                            if candidate in ('LIVE-MIN60-DEFERRED','LIVE-MIN120-DEFERRED') and int(os.environ.get('VR_DEFERRED_BOUNDARIES','0')):
+                            if candidate == 'LIVE-MIN120-DEFERRED' and int(os.environ.get('VR_DEFERRED_CHARACTERIZE','0')):
+                                from deferred_probe import install as install_deferred
+                                install_deferred(env, args, Path(os.environ['VR_BAKEOFF_OUTPUT']))
+                            elif candidate in ('LIVE-MIN60-DEFERRED','LIVE-MIN120-DEFERRED') and int(os.environ.get('VR_DEFERRED_BOUNDARIES','0')):
                                 from deferred_probe import install as install_deferred
                                 install_deferred(env, args, Path(os.environ['VR_BAKEOFF_OUTPUT']))
                             elif candidate in ('LIVE-MIN60-DEFERRED','LIVE-MIN120-DEFERRED'):

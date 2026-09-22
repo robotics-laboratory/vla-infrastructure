@@ -2760,6 +2760,30 @@ documents:
   owner: vr.performance
   mutable: false
   gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min120_camera_latency/REPORT.md
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min120_camera_latency/priming-summary.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min120_camera_latency/long-summary.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min120_camera_latency/classifications.jsonl
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
 - path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min60_phase/REPORT.md
   kind: experiment
   status: historical
