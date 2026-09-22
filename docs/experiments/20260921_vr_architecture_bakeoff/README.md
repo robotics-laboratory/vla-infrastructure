@@ -32,6 +32,14 @@ showed time-varying content offsets; a fixed role-specific temporal join is unsa
 No joined correctness, drain, lifecycle, performance, or physical-candidate phase
 was attempted after that stop condition.
 
+The bounded [one-`Camera` 120 Hz experiment](runs/20260922_live_min120_batched/REPORT.md)
+confirmed that the pinned `Camera` already owns one vectorized tiled render product
+and can expose the three heterogeneous prims as `[3,H,W,C]`; deprecated
+`TiledCamera` was not used. Dynamic wrist/world-fixed role semantics passed, but
+the mandatory 300-boundary content test still found nine cross-view disagreements,
+including four right-wrist N-3 classifications. The candidate stopped before long
+or performance qualification and is not in the physical queue.
+
 ## LIVE-MIN60-DEFERRED prototype
 
 `LIVE-MIN60-DEFERRED` preserves the exact LIVE-MIN60 runtime and adds an opt-in,

@@ -10,7 +10,7 @@ import shutil
 
 ROOT = Path(__file__).resolve().parents[3]
 parser = argparse.ArgumentParser()
-parser.add_argument('candidate', choices=['A0', 'J60', 'E08', 'E06', 'F-minimal', 'D-desktop-off', 'B1-capture', 'B1-cost', 'B1-FULL-OFFLINE', 'B1-FULL-OFFLINE-D', 'C1-640', 'C1-320', 'C2-320', 'C2-256', 'G-tiled640', 'G-assay', 'H-cpu', 'H-cpu-capture', 'render-assay', 'phase', 'LIVE-MIN60-NONTILED', 'LIVE-MIN60-DEFERRED', 'LIVE-MIN120-DEFERRED'])
+parser.add_argument('candidate', choices=['A0', 'J60', 'E08', 'E06', 'F-minimal', 'D-desktop-off', 'B1-capture', 'B1-cost', 'B1-FULL-OFFLINE', 'B1-FULL-OFFLINE-D', 'C1-640', 'C1-320', 'C2-320', 'C2-256', 'G-tiled640', 'G-assay', 'H-cpu', 'H-cpu-capture', 'render-assay', 'phase', 'LIVE-MIN60-NONTILED', 'LIVE-MIN60-DEFERRED', 'LIVE-MIN120-DEFERRED', 'LIVE-MIN120-BATCHED'])
 parser.add_argument('--mode', choices=['smoke', 'xr-smoke', 'physical'], default='smoke')
 parser.add_argument('--ticks', type=int, default=160)
 parser.add_argument('--warmup', type=int, default=30)

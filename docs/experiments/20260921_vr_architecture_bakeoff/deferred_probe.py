@@ -74,6 +74,7 @@ def qualify(
     physics_steps = physics_hz // 30
     state_slots = 4 if characterize else 3
     candidate = os.environ["VR_BAKEOFF_CANDIDATE"]
+    batched = candidate == "LIVE-MIN120-BATCHED"
     if (physics_hz, physics_steps) not in ((60, 2), (120, 4)):
         raise RuntimeError(f"Unsupported deferred runtime {physics_hz} Hz/{physics_steps} steps")
     cameras = env.camera.capture.cameras
@@ -81,6 +82,14 @@ def qualify(
     cubes = env.vr_runtime.dynamic_assets
     if len(robots) != 2 or len(cubes) < 2 or tuple(cameras) != ROLES:
         raise RuntimeError("Deferred probe requires the selected bimanual/two-cube/three-camera scene")
+    batched_ownership = None
+    if batched:
+        from batched_camera import ownership
+
+        batched_ownership = ownership(env)
+        (out / "batched-ownership.json").write_text(
+            json.dumps(batched_ownership, indent=2) + "\n"
+        )
 
     # Native witnesses: one existing moving finger mesh and both existing PhysX cubes.
     links = [
@@ -125,7 +134,8 @@ def qualify(
 
     def apply_state(state_id: int) -> None:
         apertures = (0.0, 0.033, 0.067, 0.10) if characterize else (0.0, 0.05, 0.10)
-        aperture = apertures[state_id % state_slots]
+        state_slot = state_id % state_slots
+        aperture = apertures[state_slot]
         for side, (robot, q0) in enumerate(zip(robots, initial_q, strict=True)):
             q = q0.copy()
             arm_deg = (-40.0, 90.0, -50.0, 0.0, 0.0, 0.0)
@@ -140,7 +150,6 @@ def qualify(
             robot.write_joint_velocity_to_sim_index(velocity=torch.zeros_like(target))
             robot.actuators.target_command.set_position_index(value=target)
             robot.write_data_to_sim()
-        state_slot = state_id % state_slots
         if characterize:
             # These kinematic PhysX witness poses are deliberately separated in
             # both wrist products. Kinematic mode prevents contact/gravity from
@@ -264,10 +273,11 @@ def qualify(
                 )
                 predictions = {}
                 errors = {}
-                fixed_pose = history[availability_state_id]["camera_poses"][role]
                 for candidate_offset in candidate_offsets:
                     candidate = history[availability_state_id + candidate_offset]
-                    predicted = project(candidate[kind], fixed_pose)
+                    # A moving wrist camera's depicted pose belongs to the same
+                    # retained source boundary as its visible object content.
+                    predicted = project(candidate[kind], candidate["camera_poses"][role])
                     predictions[str(candidate_offset)] = predicted
                     if observed is not None and predicted is not None:
                         errors[candidate_offset] = float(
@@ -395,8 +405,97 @@ def qualify(
     history = {}
     control_ms = []
     binding_ms = []
+    failure = None
     prime_started = time.perf_counter_ns()
     prime_physics = env.sim.get_physics_step_count()
+    dynamic_role_support = None
+    if batched:
+        def apply_dynamic_arms(left_joint1: float, right_joint1: float) -> None:
+            for side, (robot, q0, joint1) in enumerate(
+                zip(robots, initial_q, (left_joint1, right_joint1), strict=True)
+            ):
+                q = q0.copy()
+                arm_deg = (joint1, 90.0, -50.0, 0.0, 0.0, 0.0)
+                q[0, env.joint_ids[side][:-1]] = np.deg2rad(arm_deg)
+                q[0, env.joint_ids[side][-1]] = 0.05
+                q[0, env.actuated_joint_ids[side][-2]] = 0.025
+                q[0, env.actuated_joint_ids[side][-1]] = -0.025
+                target = torch.as_tensor(q, device=env.sim.device)
+                robot.write_joint_position_to_sim_index(position=target)
+                robot.write_joint_velocity_to_sim_index(velocity=torch.zeros_like(target))
+                robot.actuators.target_command.set_position_index(value=target)
+                robot.write_data_to_sim()
+            env.sim.forward()
+            for robot in robots:
+                robot.update(0.0)
+
+        def dynamic_sample(left_joint1: float, right_joint1: float) -> dict:
+            apply_dynamic_arms(left_joint1, right_joint1)
+            rendered = None
+            for _ in range(2):
+                rendered = render_extract()
+            return {
+                "poses": {
+                    role: {
+                        "position": _host(camera.data.pos_w)[0].tolist(),
+                        "quaternion_xyzw": _host(camera.data.quat_w_opengl)[0].tolist(),
+                    }
+                    for role, camera in cameras.items()
+                },
+                "rgb": rendered["rgb"],
+            }
+
+        dynamic_physics = env.sim.get_physics_step_count()
+        dynamic_samples = {
+            "baseline": dynamic_sample(-40.0, 40.0),
+            "left_only": dynamic_sample(-34.0, 40.0),
+            "right_only": dynamic_sample(-40.0, 34.0),
+            "both": dynamic_sample(-34.0, 34.0),
+        }
+        baseline = dynamic_samples["baseline"]
+        dynamic_role_support = {
+            "physics_before": dynamic_physics,
+            "physics_after": env.sim.get_physics_step_count(),
+            "renders_per_pose": 2,
+            "role_paths": {role: camera.path for role, camera in cameras.items()},
+            "phases": {},
+        }
+        for phase in ("left_only", "right_only", "both"):
+            sample = dynamic_samples[phase]
+            dynamic_role_support["phases"][phase] = {
+                role: {
+                    "camera_position_delta_m": float(np.linalg.norm(
+                        np.asarray(sample["poses"][role]["position"])
+                        - np.asarray(baseline["poses"][role]["position"])
+                    )),
+                    "rgb_mean_absolute_delta": float(np.abs(
+                        sample["rgb"][role].astype(np.float32)
+                        - baseline["rgb"][role].astype(np.float32)
+                    ).mean()),
+                }
+                for role in ROLES
+            }
+        phases = dynamic_role_support["phases"]
+        dynamic_role_support["passed"] = bool(
+            dynamic_role_support["physics_before"] == dynamic_role_support["physics_after"]
+            and phases["left_only"]["left_wrist"]["camera_position_delta_m"] > 1.0e-3
+            and phases["left_only"]["right_wrist"]["camera_position_delta_m"] < 1.0e-5
+            and phases["right_only"]["right_wrist"]["camera_position_delta_m"] > 1.0e-3
+            and phases["right_only"]["left_wrist"]["camera_position_delta_m"] < 1.0e-5
+            and phases["both"]["left_wrist"]["camera_position_delta_m"] > 1.0e-3
+            and phases["both"]["right_wrist"]["camera_position_delta_m"] > 1.0e-3
+            and max(
+                phases[phase]["scene"]["camera_position_delta_m"]
+                for phase in phases
+            ) < 1.0e-6
+            and all(
+                phases[phase][role]["rgb_mean_absolute_delta"] > 0.01
+                for phase in phases
+                for role in ROLES
+            )
+        )
+        if not dynamic_role_support["passed"]:
+            failure = "batched_dynamic_role_semantics_failed"
     apply_state(0)
     env.sim.forward()
     for robot in robots:
@@ -424,7 +523,6 @@ def qualify(
         return original_step(*args, **kwargs)
 
     env.sim.step = step
-    failure = None
     calibration_boundaries = 0 if characterize else 30
     try:
         for state_id in range(1, boundaries + calibration_boundaries + 1):
@@ -646,15 +744,74 @@ def qualify(
             },
         }
 
+        if batched and failure is None:
+            disagreements = [
+                row["availability_control_tick"]
+                for row in rows
+                if len(set(row["resolved_offsets"].values())) != 1
+            ]
+            common = [
+                next(iter(row["resolved_offsets"].values()))
+                for row in rows
+                if len(set(row["resolved_offsets"].values())) == 1
+            ]
+            expected_offsets = set(common)
+            if disagreements:
+                failure = f"batched_camera_source_disagreement:{disagreements[0]}"
+            elif len(common) != len(rows) or "other" in expected_offsets:
+                failure = "batched_camera_unresolved_source"
+            elif len(expected_offsets) != 1:
+                failure = f"batched_camera_offset_unstable:{sorted(expected_offsets)}"
+            characterization["batched_temporal_classification"] = {
+                "common_offset": common[0] if common and len(expected_offsets) == 1 else None,
+                "disagreement_ticks": disagreements,
+                "all_boundaries_common": len(common) == len(rows),
+                "stable_common_offset": len(expected_offsets) == 1 and "other" not in expected_offsets,
+            }
+
+            characterization["dynamic_role_support"] = dynamic_role_support
+
     drain = None
-    if failure is None and not characterize:
+    if failure is None and (not characterize or batched):
         terminal_state = boundaries + calibration_boundaries
         drain_started = time.perf_counter_ns()
         drain_physics = env.sim.get_physics_step_count()
-        drained = render_extract()
-        drain_views, drain_offsets = classify_views(terminal_state, drained["rgb"])
+        apply_state(terminal_state)
+        env.sim.forward()
+        for robot in robots:
+            robot.update(0.0)
+        for cube in cubes[:2]:
+            cube.update(0.0)
+        drain_attempts = []
+        drained = None
+        drain_views = None
+        drain_offsets = None
+        for render_number in range(1, 5):
+            drained = render_extract()
+            drain_views, drain_offsets = classify_views(terminal_state, drained["rgb"])
+            if characterize:
+                resolved = {}
+                for role in ROLES:
+                    observed = feature(drain_views[role]["native"], role)
+                    errors = {
+                        offset: float(np.linalg.norm(
+                            observed - reference_features[role][(terminal_state + offset) % 4]
+                        ))
+                        for offset in (0, -1, -2, -3)
+                        if terminal_state + offset >= 0 and observed is not None
+                    }
+                    ordered = sorted(errors, key=errors.get)
+                    margin = errors[ordered[1]] - errors[ordered[0]] if len(ordered) > 1 else None
+                    resolved[role] = (
+                        ordered[0] if ordered and margin is not None and margin >= 3.0 else "other"
+                    )
+                drain_offsets = resolved
+            drain_attempts.append({"render": render_number, "resolved_offsets": drain_offsets})
+            if all(offset == 0 for offset in drain_offsets.values()):
+                break
         drain = {
-            "renders": 1,
+            "renders": len(drain_attempts),
+            "attempts": drain_attempts,
             "physics_before": drain_physics,
             "physics_after": env.sim.get_physics_step_count(),
             "state_preserved": env.sim.get_physics_step_count() == drain_physics,
@@ -665,7 +822,7 @@ def qualify(
         }
         if not drain["state_preserved"] or not drain["all_cameras_match"]:
             failure = "terminal_drain_unsafe"
-        else:
+        elif not characterize:
             binder.complete(
                 observed_source=history[terminal_state]["source"],
                 availability_control_tick=terminal_state,
@@ -695,6 +852,8 @@ def qualify(
         "area_references": area_references,
         "center_references": center_references,
         "candidate": candidate,
+        "batched_ownership": batched_ownership,
+        "dynamic_role_support": dynamic_role_support,
         "runtime": {
             "physics_hz": physics_hz,
             "control_target_hz": 30,

@@ -2592,6 +2592,12 @@ documents:
   owner: vr.performance
   mutable: true
   gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/batched_camera.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: [D0, S1, S2, D1]
 - path: docs/experiments/20260921_vr_architecture_bakeoff/deferred_probe.py
   kind: experiment
   status: current
@@ -2779,6 +2785,42 @@ documents:
   mutable: false
   gates: [D0, S1, S2, D1]
 - path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min120_camera_latency/classifications.jsonl
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min120_batched/REPORT.md
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min120_batched/pinned-camera-audit.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min120_batched/batched-ownership.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min120_batched/short-summary.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min120_batched/classifications.jsonl
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260921_vr_architecture_bakeoff/runs/20260922_live_min120_batched/launch.json
   kind: experiment
   status: historical
   owner: vr.performance

@@ -1,0 +1,40 @@
+{
+  "schema": "piper_x_pinned_camera_source_audit_v1",
+  "isaac_lab_commit": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d",
+  "isaac_lab_package_version": "17.0.2",
+  "sources": {
+    "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/sensors/camera/camera.py": "2d1fede2b9d46c3af14a1b356a2ea7632ecf492c2f72253e2697158aca79d154",
+    "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/sensors/camera/camera_data.py": "bfeb897d31572c3105f179b66798dec387232381091f7958503a3caaf844e076",
+    "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/sensors/camera/tiled_camera.py": "cf234bb60096d897538d3171c6f0724d056d71cb850a36f3457a93685592026e",
+    "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/sensors/camera/tiled_camera_cfg.py": "398419b86756878271774e3383eff7a16675b998787a362fc92524ac27c1d378",
+    "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/renderers/isaac_rtx_renderer.py": "3ad084604d4c7d7de07a5082943b8b1939b4f281f8d644dfa3a48456de6a19ca",
+    "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/sensors/sensor_base.py": "c3108543cc6367df2c98a2159ee628f1a9bf0797447740f3d77568d104e54243",
+    "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/sim/utils/queries.py": "34f0e78deeeedaf32ef566c7761617549f219508f35a90c2e822c414404c4958"
+  },
+  "findings": {
+    "tiled_camera_deprecated": true,
+    "tiled_camera_relationship": "Deprecated Camera subclass/compatibility layer; constructor warns and delegates to Camera.",
+    "one_camera_supports_multiple_prims": true,
+    "matched_prims": "Camera resolves every full-regex match and constructs one FrameView over the resulting paths.",
+    "renderer_ownership": "One CameraRenderSpec and one IsaacRtxRenderData; Isaac RTX calls render_product_tiled once with all matched camera paths.",
+    "public_output": "CameraData output values have shape (N,H,W,C).",
+    "dynamic_pose": "Each camera remains an independent USD Camera prim. Camera updates FrameView poses, while Isaac RTX update_camera is a no-op because Replicator reads USD camera prims directly.",
+    "shared_configuration": [
+      "width and height",
+      "requested data types",
+      "renderer configuration",
+      "depth-clipping behavior",
+      "ISP configuration"
+    ],
+    "experiment_compatibility": "All three canonical cameras share 640x480, RGB-compatible uint8 output, clipping [0.02,10.0], and the same renderer. The experiment requests one shared RGBA buffer and projects owned RGB role arrays."
+  },
+  "source_lines": {
+    "deprecation": "tiled_camera.py:6-13,24-40; tiled_camera_cfg.py:17-40",
+    "matched_paths_and_single_render_data": "camera.py:523-603",
+    "pose_refresh": "camera.py:605-623",
+    "batch_output_contract": "camera_data.py:92-106,124-180",
+    "one_tiled_product": "isaac_rtx_renderer.py:298-314",
+    "usd_camera_pose": "isaac_rtx_renderer.py:478-497",
+    "atlas_to_batch": "isaac_rtx_renderer.py:499-607"
+  }
+}

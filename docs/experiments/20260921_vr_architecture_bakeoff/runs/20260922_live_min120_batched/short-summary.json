@@ -1,0 +1,804 @@
+{
+  "schema": "piper_x_live_min_deferred_phase_v1",
+  "requested_boundaries": 300,
+  "checked_boundaries": 300,
+  "calibration_boundaries": 0,
+  "area_references": {
+    "left_wrist": {},
+    "right_wrist": {},
+    "scene": {}
+  },
+  "center_references": {
+    "left_wrist": {},
+    "right_wrist": {}
+  },
+  "candidate": "LIVE-MIN120-BATCHED",
+  "batched_ownership": {
+    "camera_instance_count": 1,
+    "render_product_count": 1,
+    "output_shape": [
+      3,
+      480,
+      640,
+      4
+    ],
+    "camera_paths_in_batch_order": [
+      "/World/RobosynDemo/SceneCamera",
+      "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+      "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera"
+    ],
+    "role_to_batch_index": {
+      "left_wrist": 1,
+      "right_wrist": 2,
+      "scene": 0
+    },
+    "render_product_path": "/Render/OmniverseKit/HydraTextures/rp_8b41e03d22db42228f10bc9217e6b8cd",
+    "render_spec_camera_paths": [
+      "/World/RobosynDemo/SceneCamera",
+      "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+      "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera"
+    ]
+  },
+  "dynamic_role_support": {
+    "physics_before": 149,
+    "physics_after": 149,
+    "renders_per_pose": 2,
+    "role_paths": {
+      "left_wrist": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+      "right_wrist": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+      "scene": "/World/RobosynDemo/SceneCamera"
+    },
+    "phases": {
+      "left_only": {
+        "left_wrist": {
+          "camera_position_delta_m": 0.04299336140749038,
+          "rgb_mean_absolute_delta": 41.927032470703125
+        },
+        "right_wrist": {
+          "camera_position_delta_m": 0.0,
+          "rgb_mean_absolute_delta": 29.419984817504883
+        },
+        "scene": {
+          "camera_position_delta_m": 0.0,
+          "rgb_mean_absolute_delta": 7.901934623718262
+        }
+      },
+      "right_only": {
+        "left_wrist": {
+          "camera_position_delta_m": 0.0,
+          "rgb_mean_absolute_delta": 24.512231826782227
+        },
+        "right_wrist": {
+          "camera_position_delta_m": 0.04299329859103563,
+          "rgb_mean_absolute_delta": 41.867759704589844
+        },
+        "scene": {
+          "camera_position_delta_m": 0.0,
+          "rgb_mean_absolute_delta": 6.683990955352783
+        }
+      },
+      "both": {
+        "left_wrist": {
+          "camera_position_delta_m": 0.04299336140749038,
+          "rgb_mean_absolute_delta": 45.47614288330078
+        },
+        "right_wrist": {
+          "camera_position_delta_m": 0.04299329859103563,
+          "rgb_mean_absolute_delta": 45.06188201904297
+        },
+        "scene": {
+          "camera_position_delta_m": 0.0,
+          "rgb_mean_absolute_delta": 14.996238708496094
+        }
+      }
+    },
+    "passed": true
+  },
+  "runtime": {
+    "physics_hz": 120,
+    "control_target_hz": 30,
+    "physics_steps_per_control": 4,
+    "renders_per_control": 1,
+    "renderer": "RTX Minimal mode 2",
+    "xr_scale": 0.4,
+    "camera_roles": [
+      "left_wrist",
+      "right_wrist",
+      "scene"
+    ],
+    "camera_shape": [
+      480,
+      640,
+      3
+    ],
+    "preview_panels": false,
+    "owned_rgb_freeze": true
+  },
+  "priming": {
+    "renders": 2,
+    "discarded_frame_bundles": 2,
+    "physics_before": 149,
+    "physics_after": 149,
+    "cost_ms": 186.865574,
+    "discarded_rgb_sha256": {
+      "left_wrist": [
+        "6e9184b6f0dd9a8cad455e624f2b4309854c70262e072ead734004c9fda5d9d2",
+        "bbd0ffebec64e89c6b9da4ea88205ae30c6fd2ee1b1a0df6a0d205d8a84e4087"
+      ],
+      "right_wrist": [
+        "68f5bf39e63fdb05663fdfbc9b92ea31e7ed898c8cb270b608896565ff7ec586",
+        "ca7a36611bc348117cfeb05af3285d2f6151414b98c0c44ead1b6b90e52c31b7"
+      ],
+      "scene": [
+        "f8ae142b5aa44c945120075f05e02592c400763f5abd91db0f4e64649ac60de1",
+        "a8a5a29d92b015c390c6d7b027530fc8db4039e7dd0e73cc26abc163d1c4dd48"
+      ]
+    }
+  },
+  "characterization": {
+    "reference_render_count_per_state": 4,
+    "reference_physics_before": 1349,
+    "reference_physics_after": 1349,
+    "reference_features": {
+      "left_wrist": {
+        "0": [
+          357.5055056750805,
+          244.73945451465357,
+          59.03
+        ],
+        "1": [
+          486.3365662999421,
+          178.62825709322524,
+          69.08
+        ],
+        "2": [
+          451.52876031189965,
+          150.2978867668663,
+          88.49
+        ],
+        "3": [
+          323.38577235772357,
+          251.96829268292683,
+          24.6
+        ]
+      },
+      "right_wrist": {
+        "0": [
+          189.61647254575706,
+          211.844925124792,
+          60.1
+        ],
+        "1": [
+          242.35974090682612,
+          246.436804517522,
+          60.21
+        ],
+        "2": [
+          205.14695526097762,
+          183.003314001657,
+          96.56
+        ],
+        "3": [
+          266.7635557347309,
+          249.2842168917557,
+          49.61
+        ]
+      },
+      "scene": {
+        "0": [
+          192.0,
+          200.52027027027026,
+          14.8
+        ],
+        "1": [
+          175.7743710691824,
+          183.12185534591194,
+          127.2
+        ],
+        "2": [
+          217.5,
+          180.14912280701753,
+          11.4
+        ],
+        "3": [
+          205.53571428571428,
+          207.5,
+          2.8
+        ]
+      }
+    },
+    "reference_samples": {
+      "left_wrist": {
+        "0": [
+          [
+            357.5055056750805,
+            244.73945451465357,
+            59.03
+          ],
+          [
+            357.5055056750805,
+            244.73945451465357,
+            59.03
+          ]
+        ],
+        "1": [
+          [
+            486.3365662999421,
+            178.62825709322524,
+            69.08
+          ],
+          [
+            486.3365662999421,
+            178.62825709322524,
+            69.08
+          ]
+        ],
+        "2": [
+          [
+            451.52876031189965,
+            150.2978867668663,
+            88.49
+          ],
+          [
+            451.52876031189965,
+            150.2978867668663,
+            88.49
+          ]
+        ],
+        "3": [
+          [
+            323.38577235772357,
+            251.96829268292683,
+            24.6
+          ],
+          [
+            323.38577235772357,
+            251.96829268292683,
+            24.6
+          ]
+        ]
+      },
+      "right_wrist": {
+        "0": [
+          [
+            189.61647254575706,
+            211.844925124792,
+            60.1
+          ],
+          [
+            189.61647254575706,
+            211.844925124792,
+            60.1
+          ]
+        ],
+        "1": [
+          [
+            242.35974090682612,
+            246.436804517522,
+            60.21
+          ],
+          [
+            242.35974090682612,
+            246.436804517522,
+            60.21
+          ]
+        ],
+        "2": [
+          [
+            205.14695526097762,
+            183.003314001657,
+            96.56
+          ],
+          [
+            205.14695526097762,
+            183.003314001657,
+            96.56
+          ]
+        ],
+        "3": [
+          [
+            266.7635557347309,
+            249.2842168917557,
+            49.61
+          ],
+          [
+            266.7635557347309,
+            249.2842168917557,
+            49.61
+          ]
+        ]
+      },
+      "scene": {
+        "0": [
+          [
+            192.0,
+            200.52027027027026,
+            14.8
+          ],
+          [
+            192.0,
+            200.52027027027026,
+            14.8
+          ]
+        ],
+        "1": [
+          [
+            175.7743710691824,
+            183.12185534591194,
+            127.2
+          ],
+          [
+            175.7743710691824,
+            183.12185534591194,
+            127.2
+          ]
+        ],
+        "2": [
+          [
+            217.5,
+            180.14912280701753,
+            11.4
+          ],
+          [
+            217.5,
+            180.14912280701753,
+            11.4
+          ]
+        ],
+        "3": [
+          [
+            205.53571428571428,
+            207.5,
+            2.8
+          ],
+          [
+            205.53571428571428,
+            207.5,
+            2.8
+          ]
+        ]
+      }
+    },
+    "transition_timelines": {
+      "left_wrist": [
+        {
+          "start": 1,
+          "end": 103,
+          "count": 103,
+          "offset": -1
+        },
+        {
+          "start": 104,
+          "end": 104,
+          "count": 1,
+          "offset": 0
+        },
+        {
+          "start": 105,
+          "end": 203,
+          "count": 99,
+          "offset": -1
+        },
+        {
+          "start": 204,
+          "end": 204,
+          "count": 1,
+          "offset": "other"
+        },
+        {
+          "start": 205,
+          "end": 300,
+          "count": 96,
+          "offset": -1
+        }
+      ],
+      "right_wrist": [
+        {
+          "start": 1,
+          "end": 28,
+          "count": 28,
+          "offset": -1
+        },
+        {
+          "start": 29,
+          "end": 29,
+          "count": 1,
+          "offset": -3
+        },
+        {
+          "start": 30,
+          "end": 105,
+          "count": 76,
+          "offset": -1
+        },
+        {
+          "start": 106,
+          "end": 106,
+          "count": 1,
+          "offset": -3
+        },
+        {
+          "start": 107,
+          "end": 121,
+          "count": 15,
+          "offset": -1
+        },
+        {
+          "start": 122,
+          "end": 122,
+          "count": 1,
+          "offset": -3
+        },
+        {
+          "start": 123,
+          "end": 145,
+          "count": 23,
+          "offset": -1
+        },
+        {
+          "start": 146,
+          "end": 146,
+          "count": 1,
+          "offset": "other"
+        },
+        {
+          "start": 147,
+          "end": 205,
+          "count": 59,
+          "offset": -1
+        },
+        {
+          "start": 206,
+          "end": 206,
+          "count": 1,
+          "offset": -3
+        },
+        {
+          "start": 207,
+          "end": 213,
+          "count": 7,
+          "offset": -1
+        },
+        {
+          "start": 214,
+          "end": 214,
+          "count": 1,
+          "offset": "other"
+        },
+        {
+          "start": 215,
+          "end": 241,
+          "count": 27,
+          "offset": -1
+        },
+        {
+          "start": 242,
+          "end": 242,
+          "count": 1,
+          "offset": "other"
+        },
+        {
+          "start": 243,
+          "end": 300,
+          "count": 58,
+          "offset": -1
+        }
+      ],
+      "scene": [
+        {
+          "start": 1,
+          "end": 103,
+          "count": 103,
+          "offset": -1
+        },
+        {
+          "start": 104,
+          "end": 104,
+          "count": 1,
+          "offset": "other"
+        },
+        {
+          "start": 105,
+          "end": 300,
+          "count": 196,
+          "offset": -1
+        }
+      ]
+    },
+    "first_stable_boundary": {
+      "left_wrist": 205,
+      "right_wrist": 243,
+      "scene": 105
+    },
+    "longest_stable_suffix": {
+      "left_wrist": 96,
+      "right_wrist": 58,
+      "scene": 196
+    },
+    "first_30_offsets": {
+      "left_wrist": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "right_wrist": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -3,
+        -1
+      ],
+      "scene": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ]
+    },
+    "batched_temporal_classification": {
+      "common_offset": -1,
+      "disagreement_ticks": [
+        29,
+        104,
+        106,
+        122,
+        146,
+        204,
+        206,
+        214,
+        242
+      ],
+      "all_boundaries_common": false,
+      "stable_common_offset": true
+    },
+    "dynamic_role_support": {
+      "physics_before": 149,
+      "physics_after": 149,
+      "renders_per_pose": 2,
+      "role_paths": {
+        "left_wrist": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+        "right_wrist": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+        "scene": "/World/RobosynDemo/SceneCamera"
+      },
+      "phases": {
+        "left_only": {
+          "left_wrist": {
+            "camera_position_delta_m": 0.04299336140749038,
+            "rgb_mean_absolute_delta": 41.927032470703125
+          },
+          "right_wrist": {
+            "camera_position_delta_m": 0.0,
+            "rgb_mean_absolute_delta": 29.419984817504883
+          },
+          "scene": {
+            "camera_position_delta_m": 0.0,
+            "rgb_mean_absolute_delta": 7.901934623718262
+          }
+        },
+        "right_only": {
+          "left_wrist": {
+            "camera_position_delta_m": 0.0,
+            "rgb_mean_absolute_delta": 24.512231826782227
+          },
+          "right_wrist": {
+            "camera_position_delta_m": 0.04299329859103563,
+            "rgb_mean_absolute_delta": 41.867759704589844
+          },
+          "scene": {
+            "camera_position_delta_m": 0.0,
+            "rgb_mean_absolute_delta": 6.683990955352783
+          }
+        },
+        "both": {
+          "left_wrist": {
+            "camera_position_delta_m": 0.04299336140749038,
+            "rgb_mean_absolute_delta": 45.47614288330078
+          },
+          "right_wrist": {
+            "camera_position_delta_m": 0.04299329859103563,
+            "rgb_mean_absolute_delta": 45.06188201904297
+          },
+          "scene": {
+            "camera_position_delta_m": 0.0,
+            "rgb_mean_absolute_delta": 14.996238708496094
+          }
+        }
+      },
+      "passed": true
+    }
+  },
+  "offset_histograms": {
+    "left_wrist": {
+      "-1": 298,
+      "0": 1,
+      "other": 1
+    },
+    "right_wrist": {
+      "-1": 293,
+      "-3": 4,
+      "other": 3
+    },
+    "scene": {
+      "-1": 299,
+      "other": 1
+    }
+  },
+  "native_witnesses": {
+    "articulation": {
+      "left_wrist": {
+        "minimum_visible_pixels": 0,
+        "best_offset_counts": {
+          "null": 300
+        }
+      },
+      "right_wrist": {
+        "minimum_visible_pixels": 0,
+        "best_offset_counts": {
+          "-1": 73,
+          "null": 224,
+          "-2": 3
+        }
+      },
+      "scene": {
+        "minimum_visible_pixels": 20,
+        "best_offset_counts": {
+          "-1": 218,
+          "-2": 81,
+          "null": 1
+        }
+      }
+    },
+    "left_cube": {
+      "left_wrist": {
+        "minimum_visible_pixels": 0,
+        "best_offset_counts": {
+          "null": 300
+        }
+      },
+      "right_wrist": {
+        "minimum_visible_pixels": 850,
+        "best_offset_counts": {
+          "-1": 151,
+          "0": 1,
+          "-2": 74,
+          "-3": 74
+        }
+      },
+      "scene": {
+        "minimum_visible_pixels": 0,
+        "best_offset_counts": {
+          "0": 149,
+          "-1": 150,
+          "null": 1
+        }
+      }
+    },
+    "right_cube": {
+      "left_wrist": {
+        "minimum_visible_pixels": 1367,
+        "best_offset_counts": {
+          "-1": 199,
+          "0": 25,
+          "-2": 74,
+          "-3": 2
+        }
+      },
+      "right_wrist": {
+        "minimum_visible_pixels": 0,
+        "best_offset_counts": {
+          "null": 300
+        }
+      },
+      "scene": {
+        "minimum_visible_pixels": 0,
+        "best_offset_counts": {
+          "null": 151,
+          "-1": 106,
+          "0": 18,
+          "-2": 25
+        }
+      }
+    }
+  },
+  "primary_witnesses": {
+    "left_wrist": "right_cube",
+    "right_wrist": "left_cube",
+    "scene": "left_cube"
+  },
+  "usd_witness": "disabled: camera-child marker was absent in both wrist products",
+  "control_timing": {
+    "samples": 300,
+    "mean_ms": 42.41828866666667,
+    "stddev_ms": 2.350393149014689,
+    "cv": 0.05540990037303616,
+    "p50_ms": 42.294291,
+    "p90_ms": 45.088218,
+    "p95_ms": 46.1370308,
+    "p99_ms": 49.33362594999997,
+    "p99_9_ms": 54.102067618000035,
+    "max_ms": 54.554161
+  },
+  "binding_timing": null,
+  "terminal_drain": null,
+  "failure": "batched_camera_source_disagreement:29",
+  "verdict": "UNSTABLE / UNSAFE",
+  "upstream_identity_limit": "Camera frame/data generations identify extraction, not depicted simulation state; the content-sensitive native robot/cube witnesses supply source proof."
+}

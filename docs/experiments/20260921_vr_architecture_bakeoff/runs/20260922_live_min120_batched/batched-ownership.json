@@ -1,0 +1,26 @@
+{
+  "camera_instance_count": 1,
+  "render_product_count": 1,
+  "output_shape": [
+    3,
+    480,
+    640,
+    4
+  ],
+  "camera_paths_in_batch_order": [
+    "/World/RobosynDemo/SceneCamera",
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera"
+  ],
+  "role_to_batch_index": {
+    "left_wrist": 1,
+    "right_wrist": 2,
+    "scene": 0
+  },
+  "render_product_path": "/Render/OmniverseKit/HydraTextures/rp_8b41e03d22db42228f10bc9217e6b8cd",
+  "render_spec_camera_paths": [
+    "/World/RobosynDemo/SceneCamera",
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera"
+  ]
+}

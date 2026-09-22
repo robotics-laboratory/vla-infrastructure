@@ -35,7 +35,7 @@ def install(env, args):
             # baseline each process so a preceding E06 cannot contaminate A0/D/J.
             try:
                 from omni.kit.xr.core import XRSettings
-                XRSettings.get_singleton().set_setting('profile/persistent/render/resolutionMultiplier',{'E08':.8,'E06':.6,'LIVE-MIN60-NONTILED':.4,'LIVE-MIN60-DEFERRED':.4,'LIVE-MIN120-DEFERRED':.4}.get(candidate,1.0))
+                XRSettings.get_singleton().set_setting('profile/persistent/render/resolutionMultiplier',{'E08':.8,'E06':.6,'LIVE-MIN60-NONTILED':.4,'LIVE-MIN60-DEFERRED':.4,'LIVE-MIN120-DEFERRED':.4,'LIVE-MIN120-BATCHED':.4}.get(candidate,1.0))
             except ModuleNotFoundError:
                 pass
             if candidate in ('E08','E06'):
@@ -44,7 +44,7 @@ def install(env, args):
             elif candidate in ('D-desktop-off','B1-FULL-OFFLINE-D'):
                 from omni.kit.viewport.utility import get_active_viewport
                 get_active_viewport().updates_enabled=False
-            elif candidate in ('F-minimal','LIVE-MIN60-NONTILED','LIVE-MIN60-DEFERRED','LIVE-MIN120-DEFERRED'):
+            elif candidate in ('F-minimal','LIVE-MIN60-NONTILED','LIVE-MIN60-DEFERRED','LIVE-MIN120-DEFERRED','LIVE-MIN120-BATCHED'):
                 settings.set('/rtx/rendermode','MinimalRendering');settings.set('/rtx/minimal/mode',2)
         counts.update(renders=0,updates=0)
         physics_before=env.sim.get_physics_step_count()
@@ -95,7 +95,7 @@ def install(env, args):
         from omni.kit.xr.core import XRSettings
         scale = {'E08': .8, 'E06': .6}[candidate]
         XRSettings.get_singleton().set_setting('profile/persistent/render/resolutionMultiplier', scale)
-    elif candidate in ('F-minimal','LIVE-MIN60-NONTILED','LIVE-MIN60-DEFERRED','LIVE-MIN120-DEFERRED'):
+    elif candidate in ('F-minimal','LIVE-MIN60-NONTILED','LIVE-MIN60-DEFERRED','LIVE-MIN120-DEFERRED','LIVE-MIN120-BATCHED'):
         settings.set('/rtx/rendermode', 'MinimalRendering')
         settings.set('/rtx/minimal/mode', 2)
     elif candidate in ('D-desktop-off','B1-FULL-OFFLINE-D'):

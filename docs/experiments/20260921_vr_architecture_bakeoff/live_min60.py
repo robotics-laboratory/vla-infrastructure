@@ -24,7 +24,7 @@ def install(env, args) -> None:
     out = Path(os.environ["VR_BAKEOFF_OUTPUT"])
     candidate = os.environ["VR_BAKEOFF_CANDIDATE"]
     physics_hz, physics_steps = (
-        (120.0, 4) if candidate == "LIVE-MIN120-DEFERRED" else (60.0, 2)
+        (120.0, 4) if candidate in ("LIVE-MIN120-DEFERRED", "LIVE-MIN120-BATCHED") else (60.0, 2)
     )
     dt = 1.0 / physics_hz
     settings = carb.settings.get_settings()
@@ -166,7 +166,11 @@ def install(env, args) -> None:
         "replicator_async_rendering": False,
         "renderer_capture_sync": True,
         "renderer_capture_sync_install": "first control boundary after render products exist",
-        "camera_implementation": "three independent Isaac Lab Camera products",
+        "camera_implementation": (
+            "one three-view Isaac Lab Camera product"
+            if candidate == "LIVE-MIN120-BATCHED"
+            else "three independent Isaac Lab Camera products"
+        ),
         "camera_roles": list(ROLES),
         "camera_shape": [480, 640, 3],
         "camera_dtype": "uint8",
