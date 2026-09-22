@@ -29,6 +29,7 @@ from isaac_demo_launch import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+EPISODE_RECORDER_EXTENSION = "isaacsim.replicator.episode_recorder"
 PROVENANCE_INPUTS = (
     CONFIG_PATH,
     ROOT / "configs/isaac61_s2_runtime.yaml",
@@ -130,6 +131,7 @@ def _write_launch_manifest(
             "hud_on_start": bool(args.hud_on_start),
             "smoke": bool(args.smoke),
             "xr_smoke": bool(args.xr_smoke),
+            "cloudxr_initialized": bool(getattr(args, "uses_cloudxr", False)),
             "max_control_steps": int(command[command.index("--s2-max-control-steps") + 1]),
         },
         "host_paths": {
@@ -232,6 +234,25 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("--max-control-steps must be positive")
     if args.smoke and args.xr_smoke:
         parser.error("--smoke and --xr-smoke are mutually exclusive")
+    if args.mode == "replay":
+        replay_incompatible = {
+            "--smoke",
+            "--xr-smoke",
+            "--hud-on-start",
+            "--cloudxr-mode",
+        }
+        used_replay_incompatible = sorted(
+            {
+                item.split("=", 1)[0]
+                for item in invocation
+                if item.split("=", 1)[0] in replay_incompatible
+            }
+        )
+        if used_replay_incompatible:
+            parser.error(
+                "REPLAY is an offline snapshot process and does not accept XR/CloudXR "
+                f"options: {used_replay_incompatible}"
+            )
     if args.hud_on_start and args.smoke:
         parser.error("HUD measurement requires --xr-smoke or the default physical XR run")
     if args.recording_dir is not None and args.mode != "record":
@@ -246,6 +267,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         args.preview_isolation = defaults["stacks"][args.stack]["preview_isolation"]
     if args.preview_cameras is None:
         args.preview_cameras = defaults["stacks"][args.stack]["preview_cameras"]
+    if args.mode == "replay" or (args.mode == "record" and args.smoke):
+        # Preview partitions belong to the live XR composition. Offline replay
+        # restores recorded provenance, while no-client record smoke exercises
+        # storage without constructing an XRSceneView.
+        args.preview_isolation = "off"
     if args.stack == "legacy" and args.preview_isolation != "off":
         parser.error(
             "legacy Kit is not qualified for Scene Partitions; use --preview-isolation off"
@@ -269,8 +295,16 @@ def main(argv: list[str] | None = None) -> int:
         raise RuntimeError("NVIDIA EULA acceptance is required: set OMNI_KIT_ACCEPT_EULA=Y")
 
     environment, state = user_environment(stack, args.stack, state_root=args.state_root)
-    environment["VLA_CLOUDXR_INSTALL_DIR"] = str(state / "cloudxr")
-    configure_cloudxr(environment, mode=args.cloudxr_mode, dry_run=args.dry_run)
+    # A plain ``--smoke`` has no XR client and REPLAY is deliberately offline.
+    # In both cases avoid not only reserving the WSS port in this process but also
+    # the child-side CloudXRLauncher triggered by VLA_CLOUDXR_INSTALL_DIR.
+    args.uses_cloudxr = args.mode != "replay" and not args.smoke
+    if args.uses_cloudxr:
+        environment["VLA_CLOUDXR_INSTALL_DIR"] = str(state / "cloudxr")
+        configure_cloudxr(environment, mode=args.cloudxr_mode, dry_run=args.dry_run)
+    else:
+        environment.pop("VLA_CLOUDXR_INSTALL_DIR", None)
+        environment["ISAACLAB_CXR_SKIP_AUTOLAUNCH"] = "1"
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     hud_name = "hud-on" if args.hud_on_start else "hud-off"
     output_dir = state / "runs" / f"{stamp}-{args.mode}-{args.profile}-{hud_name}"
@@ -283,7 +317,11 @@ def main(argv: list[str] | None = None) -> int:
     bounded = args.smoke or args.xr_smoke
     max_steps = args.max_control_steps
     kit_args = ["--portable-root", str(state / "kit")]
-    if not args.smoke:
+    if args.mode in ("record", "replay"):
+        # The custom Isaac Lab XR experience does not own this extension.
+        # Activation must not depend on a cached extension graph.
+        kit_args += ["--enable", EPISODE_RECORDER_EXTENSION]
+    if not args.smoke and args.mode != "replay":
         kit_args += [
             "--enable",
             "omni.kit.scene_view.xr",
@@ -296,7 +334,7 @@ def main(argv: list[str] | None = None) -> int:
             "--/renderer/scenePartitioning/enabled=true",
             "--/rtx/scenePartitioning/showAllPartitionsByDefault=true",
         ]
-        if args.smoke:
+        if args.smoke and args.mode != "record":
             kit_args += ["--enable", "omni.kit.scene_view.xr"]
     command = [
         str(stack["environment"] / "bin/python"),
@@ -321,10 +359,16 @@ def main(argv: list[str] | None = None) -> int:
         "--s2-max-control-steps",
         str(max_steps),
     ]
-    if args.mode != "replay":
+    if args.mode != "replay" and not (args.mode == "record" and args.smoke):
         command.append("--s2-teleop")
     if args.mode == "record":
-        recording_dir = args.recording_dir or state / "recordings" / output_dir.name
+        if args.recording_dir is None:
+            recording_parent = state / "recordings"
+            recording_parent.mkdir(parents=True, mode=0o700, exist_ok=True)
+            recording_parent.chmod(0o700)
+            recording_dir = recording_parent / output_dir.name
+        else:
+            recording_dir = args.recording_dir
         if recording_dir.exists():
             raise RuntimeError(f"recording directory already exists: {recording_dir}")
         command.extend(["--s2-record", "--s2-recording-dir", str(recording_dir)])
@@ -349,7 +393,7 @@ def main(argv: list[str] | None = None) -> int:
         )
     if args.stack == "isaac61":
         command += ["--viz", "kit"]
-    if not args.smoke:
+    if not args.smoke and args.mode != "replay":
         command += ["--experience", str(stack["lab"] / "apps/isaaclab.python.xr.openxr.kit")]
     if args.preview_cameras == 3 and args.mode not in ("record", "replay"):
         command.append("--demo-preview-scene")
@@ -357,11 +401,16 @@ def main(argv: list[str] | None = None) -> int:
         command.append("--demo-hud-on-start")
     if args.scene_preview is not None:
         command.extend(["--demo-scene-preview", str(args.scene_preview.resolve())])
-    if bounded:
+    if args.mode == "replay":
+        # The child still uses AppLauncher/Kit, but must not initialize a headset,
+        # teleoperation or CloudXR transport.  The runtime owns an early replay
+        # branch before construction of the current task scene.
+        command.extend(["--no-s2-require-session", "--s2-reset-step", "0"])
+    elif bounded:
+        if not (args.mode == "record" and args.smoke):
+            command.extend(["--s2-cloudxr-profile", "standalone"])
         command.extend(
             [
-                "--s2-cloudxr-profile",
-                "standalone",
                 "--s2-require-session" if args.xr_smoke else "--no-s2-require-session",
                 "--s2-reset-step",
                 "30",
@@ -400,8 +449,9 @@ def main(argv: list[str] | None = None) -> int:
         stack=stack,
     )
     print(f"VR output: {output_dir}", flush=True)
-    print(f"Quest WebXR client: {config['cloudxr_web_client']['url']}", flush=True)
-    print(f"Quest client setup: {config['cloudxr_web_client']['operator_setup']}", flush=True)
+    if args.uses_cloudxr:
+        print(f"Quest WebXR client: {config['cloudxr_web_client']['url']}", flush=True)
+        print(f"Quest client setup: {config['cloudxr_web_client']['operator_setup']}", flush=True)
     print(f"VR command: {' '.join(command)}", flush=True)
     if args.dry_run:
         return 0

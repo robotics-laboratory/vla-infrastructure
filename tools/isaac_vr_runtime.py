@@ -1401,14 +1401,6 @@ def run_vr(
         args_cli.demo_scene_preview.parent.mkdir(parents=True, exist_ok=True)
         Image.fromarray(preview).save(args_cli.demo_scene_preview)
         print(f"[DEMO] scene preview={args_cli.demo_scene_preview}", flush=True)
-    if args_cli.s2_replay_hdf5 is not None:
-        from isaac_vr_replay import replay
-
-        return replay(
-            env, simulation_app, recording=args_cli.s2_replay_hdf5,
-            episode=args_cli.s2_replay_episode, render_cameras=args_cli.s2_render_cameras,
-            report_path=args_cli.s2_replay_report or args_cli.report,
-        )
     from isaac_s2_runtime import run_s2
 
     return run_s2(env, args_cli, simulation_app)

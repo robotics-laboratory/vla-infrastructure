@@ -56,6 +56,9 @@ def test_cli_modes_and_explicit_rollback(launcher):
         launcher.parse_args(["record", "--capture-preview-evidence"])
     with pytest.raises(SystemExit):
         launcher.parse_args(["replay"])
+    for option in (["--smoke"], ["--xr-smoke"], ["--hud-on-start"], ["--cloudxr-mode", "existing"]):
+        with pytest.raises(SystemExit):
+            launcher.parse_args(["replay", "--recording", "/tmp/session.hdf5", *option])
 
 
 def test_default_does_not_read_experimental_assets(monkeypatch):
@@ -189,16 +192,64 @@ def test_record_and_replay_child_commands(launcher, tmp_path, monkeypatch):
     stack = launcher.STACKS["isaac61"]
     monkeypatch.setattr(launcher, "verify_stack", lambda _: stack)
     monkeypatch.setattr(launcher, "_git_output", lambda *a: "")
+    cloudxr_calls = []
+    monkeypatch.setattr(
+        launcher,
+        "configure_cloudxr",
+        lambda *args, **kwargs: cloudxr_calls.append((args, kwargs)),
+    )
     assert launcher.main(["record", "--dry-run", "--smoke", "--state-root", str(tmp_path)]) == 0
     record_manifest = max((tmp_path / "runs").glob("*/run_manifest.json"), key=lambda p: p.stat().st_mtime_ns)
     record_command = json.loads(record_manifest.read_text())["launch"]["command"]
-    assert "--s2-record" in record_command and "--s2-teleop" in record_command
+    assert "--s2-record" in record_command and "--s2-teleop" not in record_command
+    assert "--xr" not in record_command and "--experience" not in record_command
+    assert (tmp_path / "recordings").stat().st_mode & 0o777 == 0o700
+    record_kit_args = record_command[record_command.index("--kit_args") + 1]
+    assert launcher.EPISODE_RECORDER_EXTENSION in record_kit_args
+    assert "omni.kit.scene_view.xr" not in record_kit_args
+    assert "scenePartitioning" not in record_kit_args
+    assert "--s2-cloudxr-profile" not in record_command
+    assert not cloudxr_calls
     hdf5 = tmp_path / "external" / "session.hdf5"
-    assert launcher.main(["replay", "--recording", str(hdf5), "--render-cameras", str(tmp_path / "renders"), "--dry-run", "--smoke", "--state-root", str(tmp_path)]) == 0
-    replay_manifest = max((tmp_path / "runs").glob("*/run_manifest.json"), key=lambda p: p.stat().st_mtime_ns)
+    assert launcher.main(
+        [
+            "replay",
+            "--recording",
+            str(hdf5),
+            "--render-cameras",
+            str(tmp_path / "renders"),
+            "--dry-run",
+            "--state-root",
+            str(tmp_path),
+        ]
+    ) == 0
+    replay_manifest = max(
+        (tmp_path / "runs").glob("*/run_manifest.json"), key=lambda p: p.stat().st_mtime_ns
+    )
     replay_command = json.loads(replay_manifest.read_text())["launch"]["command"]
     assert "--s2-replay-hdf5" in replay_command and "--s2-teleop" not in replay_command
     assert "--s2-render-cameras" in replay_command and "--demo-preview-scene" not in replay_command
+    replay_kit_args = replay_command[replay_command.index("--kit_args") + 1]
+    assert launcher.EPISODE_RECORDER_EXTENSION in replay_kit_args
+    assert "omni.kit.scene_view.xr" not in replay_kit_args
+    assert "--xr" not in replay_command
+    assert "--experience" not in replay_command
+    assert "--s2-cloudxr-profile" not in replay_command
+    assert not cloudxr_calls
+
+
+def test_physical_record_keeps_teleop_and_xr(launcher, tmp_path, monkeypatch):
+    stack = launcher.STACKS["isaac61"]
+    monkeypatch.setattr(launcher, "verify_stack", lambda _: stack)
+    monkeypatch.setattr(launcher, "_git_output", lambda *a: "")
+    monkeypatch.setattr(launcher, "configure_cloudxr", lambda *args, **kwargs: None)
+    assert launcher.main(["record", "--dry-run", "--state-root", str(tmp_path)]) == 0
+    manifest = max(
+        (tmp_path / "runs").glob("*/run_manifest.json"), key=lambda p: p.stat().st_mtime_ns
+    )
+    command = json.loads(manifest.read_text())["launch"]["command"]
+    assert "--s2-record" in command and "--s2-teleop" in command
+    assert "--xr" in command and "--experience" in command
 
 
 def module(monkeypatch, name, **attrs):

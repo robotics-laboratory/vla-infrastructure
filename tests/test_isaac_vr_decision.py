@@ -1,6 +1,7 @@
 """Exact observation/XR/IK seam and original-native arithmetic regression."""
 import ast
 from dataclasses import replace
+from hashlib import sha256
 from pathlib import Path
 import subprocess
 from types import SimpleNamespace as NS
@@ -15,7 +16,9 @@ from tools.isaac_s1_runtime import NativeBimanualTargets
 from tools.isaac_s2_processor import BimanualS2TeleopProcessor, ControllerDeltaSample, S2ProcessorConfig
 from tools.isaac_vr_capture import CameraIdentity, ObservationCapture, ProducerBoundary
 from tools.isaac_vr_decision import (
-    SolvedControlDecision, XrInputReceipt, check_observation, decision_epoch,
+    SolvedControlDecision, StateSnapshotObservation, XrInputReceipt,
+    canonical_xr_payload, capture_state_snapshot, check_observation,
+    commit_recording_transition, decision_epoch,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,6 +29,14 @@ def capture(step=20, reset=1):
     return ObservationCapture(ProducerBoundary(reset, step, step), step,
                               tuple(CameraIdentity(r, step, step) for r in
                                     ("left_wrist", "right_wrist", "scene")), (0.,) * 14, True)
+
+
+def bind_snapshot(observation, sequence):
+    return observation.bind_recording_snapshot(
+        capture_sequence=sequence,
+        snapshot_id=f"snapshot:{sequence}",
+        snapshot_sha256=f"{sequence + 1:064x}",
+    )
 
 
 def sample(trigger=0.0, squeeze=0., valid=True, sensitivity=0., delta=0.003):
@@ -200,6 +211,110 @@ def test_prepared_only_validator_and_processor_generation():
         solution.prepare(v)
     with pytest.raises(RuntimeError, match="eligible"):
         replace(solution, xr_identity=replace(xr, rebased=True)).prepare(v)
+
+
+def test_state_snapshot_offline_profile_prepare_and_identity():
+    ik, env = ik_fixture()
+    env.camera = NS(reset_epoch=3)
+    env._state_physics_step = env.step
+    env.capture_measured_state = lambda: (env.step, tuple(float(i) for i in range(14)))
+    observation = capture_state_snapshot(env)
+    assert observation == StateSnapshotObservation(
+        3, 20, 20, tuple(float(i) for i in range(14))
+    )
+    observation = bind_snapshot(observation, 0)
+    proc = BimanualS2TeleopProcessor()
+    proc.advance(sample(), sample())
+    command = proc.advance(sample(), sample())
+    receipt, _, xr = xr_receipt()
+    epoch = decision_epoch("run", observation, xr, episode_id="episode_000000")
+    validator = CausalTransactionValidator(
+        "isaac", "human_vr", epoch, profile="isaac_human_vr_offline_rgb_v1"
+    )
+    ik.device = NS(validate_xr=receipt.validate, xr_receipt=receipt)
+    ik.processor = proc
+    decision = ik.solve(command, observation, xr, 1)
+    prepared = decision.prepare(validator)
+    assert [source.name for source in prepared.sources] == [
+        "simulation.scene_state_snapshot", "xr.device_io_update", "xr.submitted_frame",
+        "xr.returned_frame", "xr.resolved_input",
+    ]
+    assert prepared.sources[0].sample.sha256 == prepared.observation.sha256
+    assert {source.sample.sha256 for source in prepared.sources[1:]} == {
+        prepared.sources[-1].sample.sha256
+    }
+    assert prepared.sources[0].sample.sha256 != prepared.sources[-1].sample.sha256
+    assert prepared.observation.sha256
+    assert prepared.observation.sha256 == sha256(observation.canonical_payload()).hexdigest()
+    assert prepared.dataset_action.sha256 == sha256(decision.action_payload).hexdigest()
+    assert {source.sample.sha256 for source in prepared.sources[1:]} == {
+        sha256(canonical_xr_payload(xr)).hexdigest()
+    }
+    assert epoch.episode_id == "episode_000000"
+    with pytest.raises(RuntimeError, match="offline-RGB"):
+        decision.prepare(CausalTransactionValidator("isaac", "human_vr", epoch))
+
+
+def test_state_snapshot_rejects_generation_change():
+    _, env = ik_fixture()
+    env.camera = NS(reset_epoch=1)
+    env.capture_measured_state = lambda: (env.step, (0.0,) * 14)
+    observation = bind_snapshot(capture_state_snapshot(env), 0)
+    env.step += 1
+    env._state_physics_step += 1
+    with pytest.raises(RuntimeError, match="generation mismatch"):
+        check_observation(env, observation)
+
+
+def test_offline_recording_transition_commits_exact_successor_pair():
+    ik, env = ik_fixture()
+    env.camera = NS(reset_epoch=2)
+    state = [float(i) for i in range(14)]
+    env.capture_measured_state = lambda: (env.step, tuple(state))
+    observation = bind_snapshot(capture_state_snapshot(env), 0)
+    proc = BimanualS2TeleopProcessor()
+    proc.advance(sample(), sample())
+    command = proc.advance(sample(), sample())
+    receipt, _, xr = xr_receipt()
+    epoch = decision_epoch("run", observation, xr, episode_id="episode")
+    validator = CausalTransactionValidator(
+        "isaac", "human_vr", epoch, profile="isaac_human_vr_offline_rgb_v1"
+    )
+    ik.device = NS(validate_xr=receipt.validate, xr_receipt=receipt)
+    ik.processor = proc
+    decision = ik.solve(command, observation, xr, 1)
+    prepared = decision.prepare(validator)
+    env.step += 4
+    env._state_physics_step += 4
+    state[:] = [value + 0.25 for value in state]
+    successor = bind_snapshot(capture_state_snapshot(env), 1)
+    committed = commit_recording_transition(validator, decision, prepared, successor)
+    assert validator.accepted_transactions == 1
+    assert committed.completed.successor.control_tick_id == 2
+    assert committed.completed.native_command.sha256 != prepared.dataset_action.sha256
+    assert committed.completed.native_command.sha256 == sha256(
+        committed.native_command_payload
+    ).hexdigest()
+    assert committed.completed.successor.sha256 == sha256(
+        successor.canonical_payload()
+    ).hexdigest()
+
+    # The successor identity from tick 1 is the only observation accepted at tick 2.
+    receipt.update_epoch += 1
+    receipt.frame += 1
+    xr2 = replace(
+        xr,
+        deviceio_update_epoch=xr.deviceio_update_epoch + 1,
+        submitted_frame_id=xr.submitted_frame_id + 1,
+        returned_frame_id=xr.returned_frame_id + 1,
+    )
+    receipt.last_consumed = xr.deviceio_update_epoch
+    receipt.update_epoch = xr2.deviceio_update_epoch
+    receipt.frame = xr2.returned_frame_id
+    command2 = proc.advance(sample(delta=0.004), sample(delta=0.004))
+    next_decision = ik.solve(command2, successor, xr2, 2)
+    next_prepared = next_decision.prepare(validator)
+    assert next_prepared.observation == committed.completed.successor
 
 
 @pytest.mark.parametrize("mutation", ["reset_reference", "old_xr", "processor", "replay"])

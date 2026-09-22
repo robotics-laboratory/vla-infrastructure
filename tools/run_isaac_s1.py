@@ -146,6 +146,14 @@ if args_cli.eval_socket is not None and (
     or args_cli.production_preview or args_cli.xr
 ):
     parser.error("EVAL endpoint cannot share a teleop/demo/preview/XR execution mode")
+if args_cli.s2_replay_hdf5 is not None and (
+    args_cli.s2_teleop or args_cli.s2_record or args_cli.s2_recording_dir is not None or args_cli.xr
+):
+    parser.error("state-only replay cannot share teleop, recording, or XR")
+if args_cli.s2_replay_hdf5 is None and (
+    args_cli.s2_render_cameras is not None or args_cli.s2_replay_report is not None
+):
+    parser.error("replay output options require --s2-replay-hdf5")
 
 # Public upstream lifecycle composition keeps large CloudXR state in /data.
 # The same runtime is consumed by Kit and IsaacTeleop; shutdown stops XR first.
@@ -161,6 +169,10 @@ if (args_cli.xr or args_cli.s2_teleop) and os.environ.get("VLA_CLOUDXR_INSTALL_D
 
 app_launcher = AppLauncher(args_cli)
 simulation_app = app_launcher.app
+if args_cli.s2_record or args_cli.s2_replay_hdf5 is not None:
+    from isaac_episode_recorder_preflight import preflight_episode_recorder
+
+    preflight_episode_recorder()
 
 import torch  # noqa: E402
 
@@ -943,6 +955,30 @@ def _camera_regression(env: BimanualPiperXIsaacEnvironment, seed: int) -> dict:
 
 
 def main() -> int:
+    if args_cli.s2_replay_hdf5 is not None:
+        if args_cli.s2_teleop or args_cli.s2_record:
+            raise ValueError("state-only replay cannot share teleop or recording")
+        from isaac_vr_replay import replay_from_snapshot
+
+        replay_config = yaml.safe_load(args_cli.config.read_text(encoding="utf-8"))
+        return replay_from_snapshot(
+            simulation_app,
+            recording=args_cli.s2_replay_hdf5,
+            episode=args_cli.s2_replay_episode,
+            render_cameras=args_cli.s2_render_cameras,
+            report_path=(
+                args_cli.s2_replay_report
+                or args_cli.report
+                or args_cli.s2_replay_hdf5.parent / "replay_report.json"
+            ),
+            portable_roots={
+                "recording": args_cli.s2_replay_hdf5.parent,
+                "isaac61_production": Path(
+                    replay_config["environment"]["materialized_path"]
+                ).parent,
+                "project_assets": Path(replay_config["asset"]["source_checkout"]).parent,
+            },
+        )
     print("[S1] loading checked configuration", flush=True)
     config = yaml.safe_load(args_cli.config.read_text(encoding="utf-8"))
     model = yaml.safe_load(MODEL_PATH.read_text(encoding="utf-8"))

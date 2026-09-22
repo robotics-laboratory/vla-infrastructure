@@ -252,25 +252,25 @@ Status vocabulary:
 |---|---|---|---|---|
 | VRR-001 | Accept the snapshot-backed/offline-RGB source-profile decision and exact D0 identity model | none | `done` (`tests/test_isaac_vr_recording_contract.py`) | Selected contract/profile names every online and materialized source identity; D1 remains unresolved |
 | VRR-002 | Define the admitted HDF row as one committed `(O_t, A_t, O_(t+1))` transaction | VRR-001 | `done` (`tests/test_isaac_vr_recording_contract.py`) | Schema, units, indexing, invalid-tick policy, and terminal-state handling are explicit and mutation-tested |
-| VRR-010 | Explicitly enable `isaacsim.replicator.episode_recorder` and preflight its version/API | none | `not_started` | Bounded Kit launch proves version 0.1.6 import and required public symbols without ambient extension state |
-| VRR-011 | Split RECORD, REPLAY, and no-client smoke launcher dependencies | none | `not_started` | REPLAY and no-client lifecycle smoke neither reserve CloudXR port nor initialize XR/teleop |
-| VRR-012 | Validate private recording/output paths and disk budget | none | `not_started` | Non-absolute, repository-owned, wrong-UID, permissive, existing, and insufficient-space targets fail closed |
-| VRR-020 | Implement immutable pre-action native/Fabric `O_t` capture and one-frame buffer | VRR-001, VRR-002 | `not_started` | Captured source identity and state remain unchanged through decision and native application |
-| VRR-021 | Complete and commit the production causal transaction after native transition | VRR-020 | `blocked` | Production invokes prepare, complete, and commit; every failure/epoch change aborts without persistence |
-| VRR-022 | Append only committed transitions and move rejection data to QA counters | VRR-021 | `blocked` | `N` validator commits equal `N` HDF frames; no invalid/held zero-action rows are admitted |
-| VRR-023 | Propagate run/session/episode/observation/action/native/transition/successor identities | VRR-002 | `not_started` | A reader can verify every row without process-local state or positional inference |
-| VRR-030 | Select Fabric explicitly for record-side pose sampling and forbid silent demotion | VRR-010 | `blocked` | Manifest records requested/effective backend and a missing FSD path fails before episode start |
+| VRR-010 | Explicitly enable `isaacsim.replicator.episode_recorder` and preflight its version/API | none | `done` (real Kit smoke `20260922T225844486820Z`; preflight tests) | Bounded Kit launch proves version 0.1.6 import and required public symbols without ambient extension state |
+| VRR-011 | Split RECORD, REPLAY, and no-client smoke launcher dependencies | none | `done` (launcher tests; real no-client smoke `20260922T225844486820Z`) | REPLAY and no-client lifecycle smoke neither reserve CloudXR port nor initialize XR/teleop |
+| VRR-012 | Validate private recording/output paths and disk budget | none | `done` (`tests/test_isaac_vr_recording.py`) | Non-absolute, repository-owned, wrong-UID, permissive, existing, and insufficient-space targets fail closed |
+| VRR-020 | Implement immutable pre-action native/Fabric `O_t` capture and one-frame buffer | VRR-001, VRR-002 | `in_progress` (unit invariants and real capture pass; valid-action integration pending) | Captured source identity and state remain unchanged through decision and native application |
+| VRR-021 | Complete and commit the production causal transaction after native transition | VRR-020 | `in_progress` (production path and seam tests; injected-XR/physical proof pending) | Production invokes prepare, complete, and commit; every failure/epoch change aborts without persistence |
+| VRR-022 | Append only committed transitions and move rejection data to QA counters | VRR-021 | `in_progress` (fail-closed writer tests; non-zero real run pending) | `N` validator commits equal `N` HDF frames; no invalid/held zero-action rows are admitted |
+| VRR-023 | Propagate run/session/episode/observation/action/native/transition/successor identities | VRR-002 | `in_progress` (self-verifying row tests; terminal successor snapshot closure pending) | A reader can verify every row without process-local state or positional inference |
+| VRR-030 | Select Fabric explicitly for record-side pose sampling and forbid silent demotion | VRR-010 | `done` (shared-pose tests; real Fabric lifecycle smoke `20260922T225844486820Z`) | Manifest records requested/effective backend and a missing FSD path fails before episode start |
 | VRR-031 | Qualify moving robot/object/camera pose parity against Isaac Lab native tensors | VRR-030 | `blocked` | Retained moving assay passes fixed position/orientation thresholds for every required prim |
-| VRR-040 | Close and hash snapshot asset dependencies | VRR-010 | `blocked` | Snapshot sidecar enumerates every layer/asset with digest; unresolved dependency is fatal |
-| VRR-041 | Capture complete renderer, camera, and mutable visual provenance | VRR-001, VRR-040 | `blocked` | Offline renderer inputs are versioned and complete enough to reproduce every canonical camera role |
-| VRR-042 | Add atomic lifecycle, periodic flush, streaming hashes, and incomplete-artifact state | VRR-022 | `blocked` | Crash/failure tests never produce a finalized artifact and do not require whole-HDF memory loading |
-| VRR-050 | Start REPLAY by verifying and opening the recorded snapshot before scene binding | VRR-011, VRR-040 | `blocked` | Fresh process replays with no current-scene construction and rejects hash/dependency mismatch |
-| VRR-051 | Enforce strict required-track binding and recorded camera paths | VRR-050 | `blocked` | Missing/mismatched track or prim fails; report lists every prepared and applied group |
-| VRR-052 | Prove replay has no physics/timeline advancement | VRR-050 | `blocked` | Timeline and capture-on-play are disabled and physics callback count remains exactly zero |
+| VRR-040 | Close and hash snapshot asset dependencies | VRR-010 | `done` (asset-closure tests; real snapshot closure `20260922T225844486820Z`) | Snapshot sidecar enumerates every layer/asset with digest; unresolved dependency is fatal |
+| VRR-041 | Capture complete renderer, camera, and mutable visual provenance | VRR-001, VRR-040 | `in_progress` (camera paths/resolution recorded; renderer and mutable-attribute closure pending) | Offline renderer inputs are versioned and complete enough to reproduce every canonical camera role |
+| VRR-042 | Add atomic lifecycle, periodic flush, streaming hashes, and incomplete-artifact state | VRR-022 | `done` (lifecycle/failure tests; real aborted close `20260922T225844486820Z`) | Crash/failure tests never produce a finalized artifact and do not require whole-HDF memory loading |
+| VRR-050 | Start REPLAY by verifying and opening the recorded snapshot before scene binding | VRR-011, VRR-040 | `in_progress` (strict ordering/corruption tests; non-zero real artifact pending) | Fresh process replays with no current-scene construction and rejects hash/dependency mismatch |
+| VRR-051 | Enforce strict required-track binding and recorded camera paths | VRR-050 | `in_progress` (semantic validator and strict-group tests; real replay pending) | Missing/mismatched track or prim fails; report lists every prepared and applied group |
+| VRR-052 | Prove replay has no physics/timeline advancement | VRR-050 | `in_progress` (quiescence guard tests; fresh-process proof pending) | Timeline and capture-on-play are disabled and physics callback count remains exactly zero |
 | VRR-053 | Materialize three RGB roles with persistent render products | VRR-041, VRR-051, VRR-052 | `blocked` | First/middle/last and then all admitted states produce complete role sets joined by source identity |
-| VRR-060 | Add deterministic temporal, epoch, failure, partial-write, and corruption unit tests | VRR-002 | `not_started` | Marker test `O_t=t`, `A_t=1000+t` and all negative mutations pass |
-| VRR-061 | Add real Kit SessionStorage/SessionReader record/replay integration | VRR-010, VRR-022, VRR-051 | `blocked` | Non-mock HDF round-trip passes in a fresh process with retained manifest/report |
-| VRR-062 | Add deterministic injected-XR integration with distinct valid actions | VRR-021, VRR-061 | `blocked` | Multiple committed non-zero actions survive readback with exact source identities |
+| VRR-060 | Add deterministic temporal, epoch, failure, partial-write, and corruption unit tests | VRR-002 | `in_progress` (marker and mutation suites pass; terminal closure cases pending) | Marker test `O_t=t`, `A_t=1000+t` and all negative mutations pass |
+| VRR-061 | Add real Kit SessionStorage/SessionReader record/replay integration | VRR-010, VRR-022, VRR-051 | `in_progress` (real SessionStorage capture/close passes; reader/replay pending) | Non-mock HDF round-trip passes in a fresh process with retained manifest/report |
+| VRR-062 | Add deterministic injected-XR integration with distinct valid actions | VRR-021, VRR-061 | `blocked` (VRR-061 reader path incomplete) | Multiple committed non-zero actions survive readback with exact source identities |
 | VRR-070 | Benchmark production HDF recording against paired no-recording baseline | VRR-031, VRR-042, VRR-062 | `blocked` | Retained p50/p95/p99, drop/rejection, CPU/GPU/memory/disk metrics meet agreed budget |
 | VRR-080 | Execute physical Quest recording acceptance | VRR-062, VRR-070, S2 physical prerequisite | `blocked` | Human run records useful distinct actions without causal loss and retains required evidence |
 | VRR-090 | Implement LeRobot v3 materializer and full-read dataset QA | VRR-053, VRR-080 | `blocked` | All rows and video streams load, align, and pass schema/task/action/unit/outcome checks |
@@ -284,6 +284,25 @@ VRR-030/031 -> VRR-040/041/042 -> VRR-050/051/052 -> VRR-060/061/062`.
 VRR-070 and later tasks must not be used to compensate for a failed correctness
 task. Performance tuning begins only after the recorded transaction and strict
 replay are correct.
+
+### Implementation checkpoint: 2026-09-23
+
+The second repair block has implemented and tested the causal recorder boundary,
+strict artifact/replay validation, exact Episode Recorder 0.1.6 preflight,
+Fabric-only shared pose sampling, asset closure, private/atomic artifact lifecycle,
+and launcher isolation. The focused offline suite passes 182 tests. A real Kit
+no-client lifecycle run at
+`/data/blackfire/vla-runtime/isaac-isaac61/runs/20260922T225844486820Z-record-dual_cube_to_matching_plates-hud-off`
+passed scene validation and recorder capture/finalization. Its paired recording
+artifact is intentionally `aborted` with zero committed frames and one QA discard;
+it proves lifecycle wiring only and makes no D0, D1, action, replay, headset, or
+performance claim.
+
+The next correctness block must persist and verify the full terminal successor
+Recordable snapshot, close renderer/camera/mutable-visual provenance, exercise a
+non-zero committed artifact through a real SessionReader and fresh replay process,
+then add deterministic injected XR. Moving Fabric/native pose parity remains a
+separate required assay before physical and performance qualification.
 
 ### Phase 0: select and declare the source profile
 
