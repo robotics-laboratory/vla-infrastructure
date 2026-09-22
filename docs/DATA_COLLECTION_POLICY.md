@@ -60,13 +60,30 @@ content-addressed references; large images are not retained in the validator.
 The logical LeRobot timestamp remains `frame_index / dataset_fps` for indexing
 and video lookup. It never proves physical acquisition or simulation capture.
 
-- `isaac_human_vr_v4`: simulation state generation and three-camera capture identity;
+- `isaac_human_vr_v4`: simulation state generation and live three-camera capture identity;
   XR session epoch, DeviceIO update, submitted frame, returned frame, resolved input
   payload identity and tracking validity. Host begin/end times are optional QA and
   provenance, **not XR physical acquisition time**. Exact OpenXR query time is
   optional when explicitly exposed. The source action is the post-DifferentialIK
   desired joint target **before native clipping**, converted to canonical deg/mm.
-  The runtime binding remains pending D1; this contract does not implement it.
+  Its accepted D0 evidence remains scoped to this profile; it is not evidence for
+  the additive offline-RGB profile below. The runtime binding remains pending D1.
+- `isaac_human_vr_offline_rgb_v1`: the selected recording profile uses an
+  immutable pre-action scene-state snapshot as the online observation source.
+  Online admission requires the snapshot identity plus the exact XR DeviceIO,
+  submitted-frame, returned-frame and resolved-input identities used by the
+  post-DifferentialIK preclip action. The scene snapshot identity binds run,
+  episode, source and reset/reference/session epochs, control tick, `obs_id`,
+  snapshot ID and digest, simulation-state generation and physics step. It does
+  not claim that absent live pixels were captured online. Offline materialization
+  must produce `offline_rgb.left_wrist`, `offline_rgb.right_wrist`, and
+  `offline_rgb.scene`; each identity binds `obs_id`, snapshot ID/digest, camera
+  role and prim path, camera and renderer configuration digests, stage-snapshot
+  and asset-closure digests, materialization revision and RGB digest. The join is
+  exact on `obs_id` and scene-state-snapshot digest; positional joins are
+  forbidden. This declaration is pending implementation and D1 evidence, and a
+  native state recording remains `dataset_admissible=false` until the three
+  camera roles are materialized and the D1 requirements pass.
 - `isaac_automated_v4`: the same simulation/camera/transition identities, with
   generator decision/revision/state and seed when applicable. No XR is synthesized.
 - `real_human_vr_physical_v4`: causal identity plus strict physical timing for state,
@@ -121,6 +138,29 @@ native field -> obs_t
 native field -> action_t
 native field -> outcome_t / termination / success
 ```
+
+For `isaac_human_vr_offline_rgb_v1`, one admitted native HDF row is exactly one
+completed causal transaction `(O_t, A_t, O_(t+1))`. The row is appended only after
+successful native transition, successor observation, causal completion and commit:
+
+- `O_t` stores the pre-decision canonical float32[14] state in ordered joint
+  degrees/gripper millimetres and its immutable scene-state-snapshot reference;
+- `A_t` stores the post-IK, pre-native-clipping canonical float32[14] label in the
+  same degree/millimetre order;
+- the native preclip, clipped and residual float32[14] vectors use joint radians
+  and gripper metres, with saturation represented separately;
+- the transition stores its identity and outcome/termination/success/failure
+  classification;
+- `O_(t+1)` stores the post-transition canonical state and successor identity.
+
+The HDF row index is a dense zero-based commit order, not a control-tick identity;
+control ticks may have gaps. An invalid, held, tracking-invalid, reset-crossing or
+failed tick appends no row and only increments reasoned episode QA. A genuine
+committed zero action remains valid and is never inferred from value alone. The
+last admitted action still requires a successor observation and terminal outcome
+in the same row; there is no actionless terminal row. A missing successor aborts
+the pending transaction, and an episode with zero commits is lifecycle-only and
+not dataset-admissible.
 
 ## Causality regression test
 

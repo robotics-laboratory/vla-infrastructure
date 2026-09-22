@@ -96,8 +96,12 @@ The shared S2 config owns processor/clutch/gripper/tracking semantics; the canon
 VR config owns selected operator scene, presentation, controls and validation.
 The optional external asset lab is experimental and loads its own manifest only
 when selected. A composition object does not imply experimental gate scope.
-Future recording must consume the same base runtime and preserve D0 temporal and
-action-label boundaries. No D1 recorder or recording execution profile is selected.
+Recording consumes the same base runtime and preserves D0 temporal and action-label
+boundaries. The selected `isaac_vr_record` execution profile writes a native
+snapshot/state/action/provenance artifact under the additive
+`isaac_human_vr_offline_rgb_v1` source profile. This contract selection neither
+admits the current implementation nor resolves D1; canonical RGB and final
+LeRobotDataset v3 samples require verified offline materialization.
 
 ## Three-camera observation boundary
 
@@ -139,3 +143,19 @@ VR barrier requires a completed Kit app pump and rejects this unsupported headle
 combination before publication. Canonical non-headless Kit rendering is the
 qualified path; no extra render is issued to repair a missing pump. Headless
 renderer support needs a separately qualified upstream configuration/fix.
+
+## Snapshot-backed recording boundary
+
+The offline-RGB recording profile is distinct from the live three-camera boundary
+above. Before native actuation it freezes a content-addressed scene-state snapshot
+for `O_t`, including the canonical measured state and every world/camera state
+needed for later rendering. It must not reuse a later post-transition state or
+claim live camera identities. After `A_t` is applied and the successor `O_(t+1)`
+is captured, the runtime completes and commits the causal transaction before one
+native row can be appended. Invalid loops append no data row.
+
+Replay opens the recorded stage and applies the immutable `O_t` snapshot without
+advancing physics, then materializes left-wrist, right-wrist and scene RGB. The
+rendered identities bind the snapshot and the full stage/asset/camera/renderer
+inputs. Until those three outputs exist and D1 evidence passes, the native artifact
+is explicitly not a canonical dataset.

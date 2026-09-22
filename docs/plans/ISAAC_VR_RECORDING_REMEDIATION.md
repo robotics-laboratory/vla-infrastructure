@@ -248,17 +248,17 @@ Status vocabulary:
 - `done`: completion check passed at an identified source revision;
 - `deferred`: intentionally outside the current repair milestone, with reason.
 
-| ID | Task | Depends on | Initial status | Completion check |
+| ID | Task | Depends on | Status | Completion check |
 |---|---|---|---|---|
-| VRR-001 | Accept the snapshot-backed/offline-RGB source-profile decision and exact D0 identity model | none | `not_started` | Selected contract/profile names every online and materialized source identity; D1 remains unresolved |
-| VRR-002 | Define the admitted HDF row as one committed `(O_t, A_t, O_(t+1))` transaction | VRR-001 | `blocked` | Schema, units, indexing, invalid-tick policy, and terminal-state handling are explicit and mutation-tested |
+| VRR-001 | Accept the snapshot-backed/offline-RGB source-profile decision and exact D0 identity model | none | `done` (`tests/test_isaac_vr_recording_contract.py`) | Selected contract/profile names every online and materialized source identity; D1 remains unresolved |
+| VRR-002 | Define the admitted HDF row as one committed `(O_t, A_t, O_(t+1))` transaction | VRR-001 | `done` (`tests/test_isaac_vr_recording_contract.py`) | Schema, units, indexing, invalid-tick policy, and terminal-state handling are explicit and mutation-tested |
 | VRR-010 | Explicitly enable `isaacsim.replicator.episode_recorder` and preflight its version/API | none | `not_started` | Bounded Kit launch proves version 0.1.6 import and required public symbols without ambient extension state |
 | VRR-011 | Split RECORD, REPLAY, and no-client smoke launcher dependencies | none | `not_started` | REPLAY and no-client lifecycle smoke neither reserve CloudXR port nor initialize XR/teleop |
 | VRR-012 | Validate private recording/output paths and disk budget | none | `not_started` | Non-absolute, repository-owned, wrong-UID, permissive, existing, and insufficient-space targets fail closed |
-| VRR-020 | Implement immutable pre-action native/Fabric `O_t` capture and one-frame buffer | VRR-001, VRR-002 | `blocked` | Captured source identity and state remain unchanged through decision and native application |
+| VRR-020 | Implement immutable pre-action native/Fabric `O_t` capture and one-frame buffer | VRR-001, VRR-002 | `not_started` | Captured source identity and state remain unchanged through decision and native application |
 | VRR-021 | Complete and commit the production causal transaction after native transition | VRR-020 | `blocked` | Production invokes prepare, complete, and commit; every failure/epoch change aborts without persistence |
 | VRR-022 | Append only committed transitions and move rejection data to QA counters | VRR-021 | `blocked` | `N` validator commits equal `N` HDF frames; no invalid/held zero-action rows are admitted |
-| VRR-023 | Propagate run/session/episode/observation/action/native/transition/successor identities | VRR-002 | `blocked` | A reader can verify every row without process-local state or positional inference |
+| VRR-023 | Propagate run/session/episode/observation/action/native/transition/successor identities | VRR-002 | `not_started` | A reader can verify every row without process-local state or positional inference |
 | VRR-030 | Select Fabric explicitly for record-side pose sampling and forbid silent demotion | VRR-010 | `blocked` | Manifest records requested/effective backend and a missing FSD path fails before episode start |
 | VRR-031 | Qualify moving robot/object/camera pose parity against Isaac Lab native tensors | VRR-030 | `blocked` | Retained moving assay passes fixed position/orientation thresholds for every required prim |
 | VRR-040 | Close and hash snapshot asset dependencies | VRR-010 | `blocked` | Snapshot sidecar enumerates every layer/asset with digest; unresolved dependency is fatal |
@@ -268,7 +268,7 @@ Status vocabulary:
 | VRR-051 | Enforce strict required-track binding and recorded camera paths | VRR-050 | `blocked` | Missing/mismatched track or prim fails; report lists every prepared and applied group |
 | VRR-052 | Prove replay has no physics/timeline advancement | VRR-050 | `blocked` | Timeline and capture-on-play are disabled and physics callback count remains exactly zero |
 | VRR-053 | Materialize three RGB roles with persistent render products | VRR-041, VRR-051, VRR-052 | `blocked` | First/middle/last and then all admitted states produce complete role sets joined by source identity |
-| VRR-060 | Add deterministic temporal, epoch, failure, partial-write, and corruption unit tests | VRR-002 | `blocked` | Marker test `O_t=t`, `A_t=1000+t` and all negative mutations pass |
+| VRR-060 | Add deterministic temporal, epoch, failure, partial-write, and corruption unit tests | VRR-002 | `not_started` | Marker test `O_t=t`, `A_t=1000+t` and all negative mutations pass |
 | VRR-061 | Add real Kit SessionStorage/SessionReader record/replay integration | VRR-010, VRR-022, VRR-051 | `blocked` | Non-mock HDF round-trip passes in a fresh process with retained manifest/report |
 | VRR-062 | Add deterministic injected-XR integration with distinct valid actions | VRR-021, VRR-061 | `blocked` | Multiple committed non-zero actions survive readback with exact source identities |
 | VRR-070 | Benchmark production HDF recording against paired no-recording baseline | VRR-031, VRR-042, VRR-062 | `blocked` | Retained p50/p95/p99, drop/rejection, CPU/GPU/memory/disk metrics meet agreed budget |
@@ -287,7 +287,7 @@ replay are correct.
 
 ### Phase 0: select and declare the source profile
 
-Add an Isaac snapshot/offline-RGB source profile, provisionally
+The contract selects the additive Isaac snapshot/offline-RGB source profile
 `isaac_human_vr_offline_rgb_v1`, with these semantics:
 
 - the online observation source is an immutable native/Fabric simulation-state
@@ -298,10 +298,11 @@ Add an Isaac snapshot/offline-RGB source profile, provisionally
   renderer/runtime identity, and materialization revision;
 - the profile preserves the normative order
   `observation -> decision -> action -> native transition -> successor`;
-- profile declaration alone does not resolve D1.
+- profile declaration alone does not resolve D1 and does not reuse the accepted
+  evidence scoped to `isaac_human_vr_v4`.
 
-Until this decision is accepted, repaired recording artifacts must state
-`dataset_admissible = false`.
+Until materialization and D1 evidence pass, repaired native recording artifacts
+must state `dataset_admissible = false`.
 
 ### Phase 1: implement a transaction-owned recording boundary
 

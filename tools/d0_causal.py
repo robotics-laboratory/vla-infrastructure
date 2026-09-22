@@ -13,11 +13,19 @@ from tools.d0_temporal import TemporalContractViolation
 
 CAMERAS = ("left_wrist", "right_wrist", "scene")
 SIM_SOURCES = ("simulation.state_generation", *(f"camera.{role}" for role in CAMERAS))
+OFFLINE_RGB_SIM_SOURCES = ("simulation.scene_state_snapshot",)
 XR_SOURCES = ("xr.device_io_update", "xr.submitted_frame", "xr.returned_frame", "xr.resolved_input")
 AUTOMATED = frozenset(("scripted_expert", "planner", "datagen", "policy_generated"))
+ISAAC_HUMAN_PROFILES = frozenset(("isaac_human_vr_v4", "isaac_human_vr_offline_rgb_v1"))
 
 
-def select_temporal_profile(runtime: str, source_class: str) -> str:
+def select_temporal_profile(
+    runtime: str, source_class: str, *, requested: str | None = None
+) -> str:
+    if requested is not None:
+        if runtime == "isaac" and source_class == "human_vr" and requested in ISAAC_HUMAN_PROFILES:
+            return requested
+        raise ValueError(f"temporal profile {requested!r} is not valid for {runtime}/{source_class}")
     if runtime == "isaac" and source_class in AUTOMATED:
         return "isaac_automated_v4"
     if source_class == "human_vr" and runtime in ("isaac", "real"):
@@ -109,8 +117,9 @@ class CausalTransactionValidator:
         epoch: Epoch,
         *,
         physical: PhysicalTimingValidator | None = None,
+        profile: str | None = None,
     ) -> None:
-        self.profile = select_temporal_profile(runtime, source_class)
+        self.profile = select_temporal_profile(runtime, source_class, requested=profile)
         if (physical is not None) != (runtime == "real"):
             raise ValueError("only the real profile requires a physical timing validator")
         if physical is not None and set(physical.required_sources) != {
@@ -186,6 +195,10 @@ class CausalTransactionValidator:
         expected = SIM_SOURCES
         if self.profile == "isaac_human_vr_v4":
             expected += XR_SOURCES
+            if tracking_valid is not True:
+                self._reject("tracking_invalid")
+        elif self.profile == "isaac_human_vr_offline_rgb_v1":
+            expected = OFFLINE_RGB_SIM_SOURCES + XR_SOURCES
             if tracking_valid is not True:
                 self._reject("tracking_invalid")
         elif self.profile == "isaac_automated_v4":

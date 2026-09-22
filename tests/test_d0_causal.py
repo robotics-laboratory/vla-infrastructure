@@ -10,6 +10,7 @@ import yaml
 from tools.d0_causal import (
     CausalTransactionValidator,
     Epoch,
+    OFFLINE_RGB_SIM_SOURCES,
     PayloadIdentity,
     SourceIdentity,
     SIM_SOURCES,
@@ -30,7 +31,7 @@ def contract():
     return yaml.safe_load((ROOT / "configs/resolved_contract.yaml").read_text())
 
 
-def validator(runtime="isaac", source_class="human_vr"):
+def validator(runtime="isaac", source_class="human_vr", *, profile=None):
     physical = None
     if runtime == "real":
         c = contract()
@@ -47,6 +48,7 @@ def validator(runtime="isaac", source_class="human_vr"):
         source_class,
         Epoch("run", "episode", "source", 0, 0, "session0"),
         physical=physical,
+        profile=profile,
     )
 
 
@@ -63,6 +65,9 @@ def bundle(v, tick=0):
         kwargs.update(
             generator_revision="pinned-revision", generator_state="state-digest", generator_seed=42
         )
+    elif v.profile == "isaac_human_vr_offline_rgb_v1":
+        names = OFFLINE_RGB_SIM_SOURCES + XR_SOURCES
+        kwargs["tracking_valid"] = True
     elif v.physical:
         names = v.physical.required_sources
         kwargs.update(
@@ -110,6 +115,28 @@ def complete(v, p, tick=0, **kwargs):
 )
 def test_profile_dispatch(runtime, source, expected):
     assert select_temporal_profile(runtime, source) == expected
+
+
+def test_offline_rgb_profile_requires_explicit_isaac_human_selection():
+    assert select_temporal_profile(
+        "isaac", "human_vr", requested="isaac_human_vr_offline_rgb_v1"
+    ) == "isaac_human_vr_offline_rgb_v1"
+    with pytest.raises(ValueError, match="not valid"):
+        select_temporal_profile(
+            "real", "human_vr", requested="isaac_human_vr_offline_rgb_v1"
+        )
+
+
+def test_offline_rgb_profile_commits_scene_snapshot_and_xr_sources():
+    v = validator(profile="isaac_human_vr_offline_rgb_v1")
+    prepared = prepare(v, 0)
+    assert tuple(source.name for source in prepared.sources) == (
+        "simulation.scene_state_snapshot",
+        *XR_SOURCES,
+    )
+    complete(v, prepared, 0)
+    v.commit(prepared, observation_payload=b"0", action_payload=b"1000")
+    assert v.accepted_transactions == 1
 
 
 @pytest.mark.parametrize(

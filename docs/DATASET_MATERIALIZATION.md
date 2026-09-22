@@ -80,7 +80,8 @@ common causal identities, epochs, transition/successor and immutable payload bin
 source-profile parity and dispatch by runtime/source_class
 physical profiles: timestamp/sequence monotonicity by clock domain
 physical profiles: camera/joint/XR/action age and cross-modal skew
-Isaac human: capture barrier and resolved XR identities, not acquisition time
+Isaac human live profile: capture barrier and resolved XR identities, not acquisition time
+Isaac human offline-RGB profile: scene-state snapshot identity, three materialized camera identities and exact digest join
 Isaac automated: generator identity/provenance, no XR
 duplicate logical timestamps and repeated source sequences
 frozen/empty camera streams
@@ -95,3 +96,17 @@ Task/hardware thresholds remain resolved experimental values rather than guessed
 ## Replay
 
 Use semantic replay/inspection where applicable. Do not require pixel-perfect replay from nondeterministic physics resets.
+
+For the selected Isaac human snapshot/offline-RGB profile, replay is materialization,
+not evidence that live camera pixels existed during teleoperation. Each of the three
+canonical RGB outputs must be rendered from the exact immutable `O_t` scene-state
+snapshot named by the committed native row. The materializer records and verifies
+the snapshot, stage, asset-closure, camera-configuration, renderer-configuration,
+materialization-revision and output-RGB digests. It joins images to state/action by
+`obs_id` and scene-state-snapshot digest; row/list position is not a join key.
+
+The native HDF is not a D1 dataset by itself. Projection may admit a row only when
+all three materialized camera identities exist and verify against the same `O_t`.
+Missing, duplicate, mismatched or extra-role images fail closed. The projected BC
+sample is `(O_t, A_t)`; `O_(t+1)` and transition/outcome remain provenance and QA
+for causal verification rather than silently shifting the learning pair.

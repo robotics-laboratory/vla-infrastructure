@@ -1212,6 +1212,43 @@ dataset:
       completion: successful_transition_and_successor_observation_before_causal_commit
       real_persistence_qualification: LeRobot add_frame remains after send_action; persistence alone does not attest physical
         transition or successor. Full source admission requires separately paired successor evidence.
+    native_recording_row:
+      revision: isaac_vr_committed_transition_row_v1
+      applies_to_profile: isaac_human_vr_offline_rgb_v1
+      admission: only_after_successful_transition_successor_observation_and_causal_commit
+      cardinality: one_hdf_row_per_committed_causal_transaction
+      hdf_row_index: dense_zero_based_committed_order_independent_of_control_tick_id
+      fields:
+        observation_t:
+          identity_field: obs_id
+          phase: pre_decision_t
+          payload: canonical_float32_state_14_and_immutable_scene_state_snapshot_reference
+          units: ordered_joint_degrees_and_gripper_millimetres_from_observation_contract
+        dataset_action_t:
+          identity_field: dataset_action_id
+          phase: deterministic_label_output_t_before_native_mapping_or_clipping
+          payload: canonical_float32_action_14
+          units: ordered_joint_degrees_and_gripper_millimetres_from_action_contract
+        native_command_t:
+          identity_field: native_command_id
+          phase: after_dataset_action_t_before_transition_t
+          payload: exact_native_preclip_clipped_residual_and_saturation_float32_14_fields
+          units: ordered_joint_radians_and_gripper_metres
+        transition_t:
+          identity_field: transition_id
+          phase: successful_environment_transition_caused_by_native_command_t
+          payload: outcome_termination_success_and_failure_classification
+        next_observation_t_plus_1:
+          identity_field: next_obs_id
+          phase: post_transition_t
+          payload: canonical_float32_state_14_and_successor_identity
+          units: ordered_joint_degrees_and_gripper_millimetres_from_observation_contract
+      invalid_tick_policy: do_not_append_hdf_row_and_record_reason_in_episode_qa
+      control_tick_policy: may_have_gaps_and_must_never_be_inferred_from_hdf_row_index
+      zero_action_policy: a_zero_vector_is_admitted_only_as_a_committed_source_action_never_as_invalid_tick_fill
+      terminal_state_policy: final_action_requires_a_successor_observation_and_terminal_outcome_in_the_same_row_no_actionless_terminal_row
+      missing_successor_policy: abort_pending_transaction_and_do_not_append
+      episode_with_zero_commits: lifecycle_artifact_only_dataset_admissible_false
     source_profiles:
       isaac_human_vr_v4:
         runtime: isaac
@@ -1232,6 +1269,57 @@ dataset:
         persistence_call_phase: after_successful_transition_and_successor_observation
         source_action: post-DifferentialIK desired joint target BEFORE native clipping, converted to canonical deg/mm
         runtime_binding_status: pending_D1
+        host_timestamps: optional_QA_provenance_not_XR_physical_acquisition_time
+        openxr_query_time: optional_when_explicitly_exposed_by_source
+      isaac_human_vr_offline_rgb_v1:
+        runtime: isaac
+        source_classes:
+        - human_vr
+        physical_timing_required: false
+        observation_mode: immutable_pre_action_scene_state_snapshot_with_offline_rgb_materialization
+        required_source_identities:
+        - simulation.scene_state_snapshot
+        - xr.device_io_update
+        - xr.submitted_frame
+        - xr.returned_frame
+        - xr.resolved_input
+        scene_state_snapshot_identity_fields:
+        - run_id
+        - episode_id
+        - source_id
+        - reset_epoch
+        - control_reference_epoch
+        - source_epoch
+        - control_tick_id
+        - obs_id
+        - scene_state_snapshot_id
+        - scene_state_snapshot_sha256
+        - simulation_state_generation
+        - physics_step
+        materialized_required_source_identities:
+        - offline_rgb.left_wrist
+        - offline_rgb.right_wrist
+        - offline_rgb.scene
+        materialized_camera_identity_fields:
+        - obs_id
+        - scene_state_snapshot_id
+        - scene_state_snapshot_sha256
+        - camera_role
+        - camera_prim_path
+        - camera_configuration_sha256
+        - renderer_configuration_sha256
+        - stage_snapshot_sha256
+        - asset_closure_sha256
+        - materialization_revision
+        - rgb_sha256
+        materialized_camera_join: exact_obs_id_and_scene_state_snapshot_sha256_positional_join_forbidden
+        source_epoch_semantics: XR session epoch
+        tracking_valid_required: true
+        persistence_call_phase: after_successful_transition_successor_observation_and_causal_commit
+        source_action: post-DifferentialIK desired joint target BEFORE native clipping, converted to canonical deg/mm
+        native_row_semantics_revision: isaac_vr_committed_transition_row_v1
+        runtime_binding_status: pending_D1_implementation_and_evidence
+        dataset_admissible_before_materialization_and_D1_evidence: false
         host_timestamps: optional_QA_provenance_not_XR_physical_acquisition_time
         openxr_query_time: optional_when_explicitly_exposed_by_source
       isaac_automated_v4:
@@ -1818,6 +1906,7 @@ simulation:
       native_format: Episode Recorder HDF5 V2; not a final D0 observation dataset
       conversion_revision: null
       execution_profile: isaac_vr_record
+      source_profile: isaac_human_vr_offline_rgb_v1
     generator:
       source_class: scripted_expert
       backend: Conditional task-local state machine composed with Isaac Lab ManagerBasedRLEnv and RecorderManager
@@ -4522,7 +4611,8 @@ gates:
     notes: D0 v4 accepts offline canonical state/action and three-camera schema, common immutable causal transactions, explicit
       Isaac human/automated identity and strict real physical profiles. New v4 proof supplements frozen history. S0/S1 facts
       are unchanged; camera and XR/preclip seams have bounded machine qualification. Full recording and source admission
-      remain pending. No physical or S2/D1 acceptance is claimed.
+      remain pending. The additive isaac_human_vr_offline_rgb_v1 declaration is pending D1 implementation and evidence and
+      does not alter or inherit the accepted isaac_human_vr_v4 evidence. No physical or S2/D1 acceptance is claimed.
   S0:
     state: accepted
     evidence_ids:
@@ -4659,7 +4749,8 @@ gates:
     evidence_ids:
     - vr_xr_decision_qualification
     artifact_ids: []
-    notes: No Isaac human-VR dataset exists.
+    notes: The selected snapshot-backed/offline-RGB profile and committed-transition native row semantics are contract-only;
+      no admitted recording, materialized three-camera dataset, or Isaac human-VR dataset evidence exists.
   G1:
     state: unresolved
     evidence_ids: []
