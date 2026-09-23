@@ -1,0 +1,11 @@
+{
+  "run": "/data/ebulochkin/vla-runtime/evidence/20260924_live_camera_temporal_cost_audit/temporal-t0-r1",
+  "boundary": 5,
+  "columns": {
+    "observed": "000006.npz",
+    "N": "000313.npz",
+    "N-1": "000309.npz"
+  },
+  "full_resolution_payloads": "/data/ebulochkin/vla-runtime/evidence/20260924_live_camera_temporal_cost_audit/temporal-t0-r1/images",
+  "identity_and_hashes": "launch.json artifacts; classifications.jsonl RGB hashes and image_errors; deferred-phase.json native projections"
+}

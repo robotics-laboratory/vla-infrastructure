@@ -2009,6 +2009,34 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  vr_live_camera_temporal_cost_report:
+    kind: report
+    sha256: ab12ead6882759fc96159f07cd293de64e5cf69e53e50c131fa5d6913766d73c
+    path: docs/experiments/20260924_live_camera_temporal_cost_audit/REPORT.md
+    uri: null
+    description: Bounded current-branch live camera temporal/cost experiment. Failed hypotheses and setup
+      attempts retained; no physical acceptance, production promotion or gate binding.
+  vr_live_camera_temporal_cost_provenance:
+    kind: test_output
+    sha256: 8eb2f7c98925a878481342681647f54413f1e0ee02630caf5f77bd6e81bcfa9d
+    path: docs/experiments/20260924_live_camera_temporal_cost_audit/provenance.json
+    uri: null
+    description: Bounded current-branch live camera temporal/cost experiment. Failed hypotheses and setup
+      attempts retained; no physical acceptance, production promotion or gate binding.
+  vr_live_camera_temporal_cost_distributions:
+    kind: test_output
+    sha256: 7209beb729c1abe08f6203ed11f7f91c3143b8e4baf26c62e8b9513cb9fe37fb
+    path: docs/experiments/20260924_live_camera_temporal_cost_audit/pooled.json
+    uri: null
+    description: Bounded current-branch live camera temporal/cost experiment. Failed hypotheses and setup
+      attempts retained; no physical acceptance, production promotion or gate binding.
+  vr_live_camera_temporal_cost_raw_inventory:
+    kind: test_output
+    sha256: 0c0ffc9a2311746f56339f4518ebf8fa50d84515aa8fdc9542b105cd1012932c
+    path: /data/ebulochkin/vla-runtime/evidence/20260924_live_camera_temporal_cost_audit/artifact-inventory.json
+    uri: null
+    description: Bounded current-branch live camera temporal/cost experiment. Failed hypotheses and setup
+      attempts retained; no physical acceptance, production promotion or gate binding.
   vr_recording_lifecycle_raw:
     kind: test_output
     sha256: 39216fe1a30837074fb8f115b09a4ed26d31d77fd2e6a7e219ba227c95f08b24
@@ -3070,6 +3098,28 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  vr_live_camera_temporal_cost_audit:
+    kind: command_test
+    status: pass
+    summary: Completed bounded native-content and matched RECORD camera-cost audit. Current FFFT is N-1;
+      tested correct capture is supported but slower than 30 Hz. This PASS describes the audit, not production
+      temporal/performance acceptance.
+    timestamp: '2026-09-23T23:52:18.993226+00:00'
+    command: tools/camera_audit/launch.py in fresh processes; exact per-run commands and source hashes in
+      registered provenance; summarize.py; strict native SessionReader; declared core validation.
+    artifact_ids:
+    - vr_live_camera_temporal_cost_report
+    - vr_live_camera_temporal_cost_provenance
+    - vr_live_camera_temporal_cost_distributions
+    - vr_live_camera_temporal_cost_raw_inventory
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/experiments/20260924_live_camera_temporal_cost_audit
+    symbol: null
+    notes: Cost matrix measured at cc05a4c; primary T0/T2 content at 3325c86, moving/correct follow-up at
+      cc05a4c. Preview off, 120 Hz logical physics / 30 Hz logical control. Injected RECORD bypasses human
+      input and IK. T4 unresolved. No D0/S1/S2/D1 acceptance or binding changes.
   vr_recording_lifecycle_reconciliation:
     kind: command_test
     status: pass

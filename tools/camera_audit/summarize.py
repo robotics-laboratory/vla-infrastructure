@@ -222,7 +222,7 @@ def analyze(root, out):
     )
     (out / "pooled.json").write_text(json.dumps(pooled, indent=2) + "\n")
     with (out / "control-distributions.csv").open("w") as stream:
-        writer = csv.writer(stream)
+        writer = csv.writer(stream, lineterminator="\n")
         writer.writerow(["group", "run", "measured_index", "control_ms"])
         for key, runs in groups.items():
             for run in runs:
@@ -442,7 +442,12 @@ def analyze(root, out):
             x = pooled[key]["first_300_matched_ms"]["mean"]
             y = 100 * selected[temporal]["all_N"] / selected[temporal]["count"]
             ax.scatter(x, y)
-            ax.annotate(label, (x, y), xytext=(3, 5), textcoords="offset points")
+            ax.annotate(
+                label,
+                (x, y),
+                xytext=(3, -15 if label == "Tiled current" else 5),
+                textcoords="offset points",
+            )
     ax.axvline(1000 / 30, color="black", linestyle="--")
     ax.set(
         xlabel="Mean committed RECORD ms/control (300-control comparison)",

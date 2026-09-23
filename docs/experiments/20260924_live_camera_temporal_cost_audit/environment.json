@@ -11,5 +11,15 @@
   "physical_quest": false,
   "source_sha": "0f67ad49c8d129e5f2420f1f685088baf0d4d792",
   "branch": "experiment/vr-live-camera-temporal-cost-audit",
-  "core_python": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python"
+  "core_python": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+  "kit": "110.3.0+feature.371399.00c488ae.gl",
+  "kit_kernel": "210.3.2+release.14366.2926fc80.gl",
+  "replicator": "1.13.36",
+  "lab_git_sha": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d",
+  "host_ram_gib": 31.1,
+  "cpu_governor": "powersave",
+  "effective_renderer": "RealTimePathTracing",
+  "xr_resolution_scale": 0.4,
+  "simulator_python": "/data/vla-infrastructure/isaac61_production/env/bin/python",
+  "environment_versions_changed": false
 }

@@ -28,7 +28,10 @@
     "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.replicator.core-1.13.36+110.3.0.lx64.r.cp312/omni/replicator/core/scripts/distribution.py": "0c2d9d26336f74c5fa3ba1f05d0604c3397af4b3b2eedb5461f86a7a51cff348",
     "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.replicator.core-1.13.36+110.3.0.lx64.r.cp312/omni/replicator/core/scripts/create.py": "074b5b7e1b950c0ba03e48db9831c1919f2787d277fcfaeb78d884dcea136d89",
     "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.replicator.core-1.13.36+110.3.0.lx64.r.cp312/omni/replicator/core/scripts/annotators_default.py": "d506cf16dfad371f3f0968ee07a99e253401318a147759c3b9f388f9161efb65",
-    "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.kit.hydra_texture-1.6.2+00c488ae.lx64.r.cp312/omni/hydratexture/_hydra_texture.pyi": "002db0f9d5264512639f685bc90bf152f7d416b5394ba3d8d1cc349d842c5223"
+    "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.kit.hydra_texture-1.6.2+00c488ae.lx64.r.cp312/omni/hydratexture/_hydra_texture.pyi": "002db0f9d5264512639f685bc90bf152f7d416b5394ba3d8d1cc349d842c5223",
+    "/data/vla-infrastructure/isaac61_production/IsaacLab/apps/isaaclab.python.kit": "6a582b8461459f242564eb4aca43dbeb43ea865c711f77a5b935c6f25caab89c",
+    "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/renderers/render_context.py": "925288d266f0b1b980995c5de71f6f8f96db8b53e11b90ed5413571be92a3478",
+    "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.kit.profiler.window-2.5.1+00c488ae/omni/kit/profiler/window/profiler.py": "0c6b0edacd7ce88f2b01bd7bf139165458c7780b88ee67c70aa6d6327b6bc5ad"
   },
   "inspection": "step -> native PhysX simulate/fetch -> render -> forward -> Kit update; Camera extracts annotators, not completion proof; Replicator step 0.0 has wait_for_render and changes app async in capture settings",
   "external": [
@@ -68,5 +71,11 @@
       "claim": "User reports render versus postprocess phase difference",
       "version_scope": "context only: Isaac 5.0, not proof here"
     }
-  ]
+  ],
+  "additional_findings": {
+    "orchestrator_enable": "Lab base experience disables Orchestrator; enable explicitly for T2",
+    "camera_renderer": "KitVisualizer pumps app; Camera extraction does not itself prove current scene pixels",
+    "gpu_units": "Pinned Kit profiler consumes HydraEngineStats duration as milliseconds",
+    "native_source_limit": "Closed native Kit/Hydra internals unavailable; installed Python and API stubs audited"
+  }
 }

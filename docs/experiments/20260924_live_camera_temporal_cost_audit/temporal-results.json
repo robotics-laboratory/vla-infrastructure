@@ -1,0 +1,384 @@
+{
+  "T0": {
+    "runs": [
+      "temporal-t0-r1",
+      "temporal-t0-r2",
+      "temporal-t0-r3"
+    ],
+    "count": 900,
+    "histograms": {
+      "left_wrist": {
+        "0": 0,
+        "-1": 900,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "right_wrist": {
+        "0": 0,
+        "-1": 900,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "scene": {
+        "0": 0,
+        "-1": 900,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      }
+    },
+    "all_N": 0,
+    "all_N_minus_1": 900,
+    "any_N_minus_2_or_3": 0,
+    "unresolved": 0,
+    "cross_view_disagreement": 0
+  },
+  "T1": {
+    "runs": [
+      "temporal-t1"
+    ],
+    "count": 100,
+    "histograms": {
+      "left_wrist": {
+        "0": 0,
+        "-1": 100,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "right_wrist": {
+        "0": 0,
+        "-1": 100,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "scene": {
+        "0": 0,
+        "-1": 100,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      }
+    },
+    "all_N": 0,
+    "all_N_minus_1": 100,
+    "any_N_minus_2_or_3": 0,
+    "unresolved": 0,
+    "cross_view_disagreement": 0
+  },
+  "T2": {
+    "runs": [
+      "temporal-t2-r1",
+      "temporal-t2-r2",
+      "temporal-t2-r3"
+    ],
+    "count": 900,
+    "histograms": {
+      "left_wrist": {
+        "0": 900,
+        "-1": 0,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "right_wrist": {
+        "0": 900,
+        "-1": 0,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "scene": {
+        "0": 900,
+        "-1": 0,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      }
+    },
+    "all_N": 900,
+    "all_N_minus_1": 0,
+    "any_N_minus_2_or_3": 0,
+    "unresolved": 0,
+    "cross_view_disagreement": 0
+  },
+  "T3 app OFF": {
+    "runs": [
+      "temporal-t3"
+    ],
+    "count": 100,
+    "histograms": {
+      "left_wrist": {
+        "0": 0,
+        "-1": 100,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "right_wrist": {
+        "0": 0,
+        "-1": 100,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "scene": {
+        "0": 0,
+        "-1": 100,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      }
+    },
+    "all_N": 0,
+    "all_N_minus_1": 100,
+    "any_N_minus_2_or_3": 0,
+    "unresolved": 0,
+    "cross_view_disagreement": 0
+  },
+  "T3 low latency OFF": {
+    "runs": [
+      "temporal-t3-low-latency-off"
+    ],
+    "count": 100,
+    "histograms": {
+      "left_wrist": {
+        "0": 0,
+        "-1": 100,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "right_wrist": {
+        "0": 0,
+        "-1": 100,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "scene": {
+        "0": 0,
+        "-1": 100,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      }
+    },
+    "all_N": 0,
+    "all_N_minus_1": 100,
+    "any_N_minus_2_or_3": 0,
+    "unresolved": 0,
+    "cross_view_disagreement": 0
+  },
+  "T4 FSD OFF": {
+    "runs": [
+      "temporal-t4"
+    ],
+    "count": 100,
+    "histograms": {
+      "left_wrist": {
+        "0": 0,
+        "-1": 0,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 100
+      },
+      "right_wrist": {
+        "0": 0,
+        "-1": 0,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 100
+      },
+      "scene": {
+        "0": 0,
+        "-1": 0,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 100
+      }
+    },
+    "all_N": 0,
+    "all_N_minus_1": 0,
+    "any_N_minus_2_or_3": 0,
+    "unresolved": 100,
+    "cross_view_disagreement": 0
+  },
+  "T5 tiled": {
+    "runs": [
+      "temporal-t5"
+    ],
+    "count": 100,
+    "histograms": {
+      "left_wrist": {
+        "0": 0,
+        "-1": 100,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "right_wrist": {
+        "0": 0,
+        "-1": 100,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "scene": {
+        "0": 0,
+        "-1": 100,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      }
+    },
+    "all_N": 0,
+    "all_N_minus_1": 100,
+    "any_N_minus_2_or_3": 0,
+    "unresolved": 0,
+    "cross_view_disagreement": 0
+  },
+  "T6 two renders": {
+    "runs": [
+      "temporal-t6-double"
+    ],
+    "count": 100,
+    "histograms": {
+      "left_wrist": {
+        "0": 0,
+        "-1": 100,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "right_wrist": {
+        "0": 0,
+        "-1": 100,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "scene": {
+        "0": 0,
+        "-1": 100,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      }
+    },
+    "all_N": 0,
+    "all_N_minus_1": 100,
+    "any_N_minus_2_or_3": 0,
+    "unresolved": 0,
+    "cross_view_disagreement": 0
+  },
+  "T2 tiled": {
+    "runs": [
+      "temporal-t2-batch"
+    ],
+    "count": 100,
+    "histograms": {
+      "left_wrist": {
+        "0": 100,
+        "-1": 0,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "right_wrist": {
+        "0": 100,
+        "-1": 0,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "scene": {
+        "0": 100,
+        "-1": 0,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      }
+    },
+    "all_N": 100,
+    "all_N_minus_1": 0,
+    "any_N_minus_2_or_3": 0,
+    "unresolved": 0,
+    "cross_view_disagreement": 0
+  },
+  "T6 prime (moving)": {
+    "runs": [
+      "temporal-prime-moving-r1",
+      "temporal-prime-moving-r2",
+      "temporal-prime-moving-r3"
+    ],
+    "count": 900,
+    "histograms": {
+      "left_wrist": {
+        "0": 900,
+        "-1": 0,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "right_wrist": {
+        "0": 900,
+        "-1": 0,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "scene": {
+        "0": 900,
+        "-1": 0,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      }
+    },
+    "all_N": 900,
+    "all_N_minus_1": 0,
+    "any_N_minus_2_or_3": 0,
+    "unresolved": 0,
+    "cross_view_disagreement": 0
+  },
+  "T6 prime tiled": {
+    "runs": [
+      "temporal-prime-batch-moving",
+      "temporal-prime-batch-moving-r2",
+      "temporal-prime-batch-moving-r3"
+    ],
+    "count": 300,
+    "histograms": {
+      "left_wrist": {
+        "0": 300,
+        "-1": 0,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "right_wrist": {
+        "0": 300,
+        "-1": 0,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      },
+      "scene": {
+        "0": 300,
+        "-1": 0,
+        "-2": 0,
+        "-3": 0,
+        "unresolved": 0
+      }
+    },
+    "all_N": 300,
+    "all_N_minus_1": 0,
+    "any_N_minus_2_or_3": 0,
+    "unresolved": 0,
+    "cross_view_disagreement": 0
+  }
+}
