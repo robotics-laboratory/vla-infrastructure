@@ -437,7 +437,7 @@ def test_apply_rechecks_xr_and_processor_before_native_write(mutation):
     assert not env.applied
 
 
-def test_mimic_mapping_and_four_step_schedule_unchanged():
+def test_mimic_mapping_unchanged():
     current = (ROOT / "tools/run_isaac_s1.py").read_text()
     baseline = subprocess.check_output(
         ["git", "show", f"{BASE}:tools/run_isaac_s1.py"], cwd=ROOT, text=True
@@ -453,9 +453,10 @@ def test_mimic_mapping_and_four_step_schedule_unchanged():
             next(n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == name)
         )
 
-    for name in ("_with_mimics", "_apply", "_advance"):
+    for name in ("_with_mimics", "_apply"):
         assert method(current, name) == method(baseline, name)
-    # Actual loop test also asserts each invoked repeat below; no extra substep is added.
+    # test_isaac_vr_capture exercises the shared advance loop's RUN/DIAG default
+    # and RECORD's four integrations with only the final render enabled.
 
 
 def test_float32_label_overflow_rejects_before_application():

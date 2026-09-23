@@ -153,12 +153,15 @@ def environment(monkeypatch, baseline=False):
                      "native_state_to_d0": native_state_to_d0}
     Env = load_class("tools/run_isaac_s1.py", "BimanualPiperXIsaacEnvironment", env_namespace, baseline)
     env = object.__new__(Env)
+    env.render_only_final_substep = False
     env.sim = NS(step_count=0, render_generation=0,
+                 render_flags=[],
                  visualizers=[NS(pumps_app_update=lambda: True, _app_pumped_this_step=True)])
     env.sim.get_physics_step_count = lambda: env.sim.step_count
-    def step():
+    def step(render=True):
         env.sim.step_count += 1
-        env.sim.render_generation += 1
+        env.sim.render_flags.append(render)
+        env.sim.render_generation += int(render)
     env.sim.step = step
     def robot():
         obj = NS(data=NS(joint_pos=np.zeros((1, 7)), default_root_pose=NS(torch=torch.zeros((1, 7))),
@@ -204,6 +207,39 @@ def test_actual_environment_advance_reset_and_startup_sequence(monkeypatch):
         assert snapshot.state[6] == pytest.approx(target)
         assert env.sim.render_generation == target
     assert {camera.updates for camera in cameras} == {5}
+    assert all(env.sim.render_flags)  # Shared RUN/DIAG default remains unchanged.
+
+
+def test_record_advance_preserves_four_state_updates_with_one_final_render(monkeypatch):
+    env, cameras = environment(monkeypatch)
+    env.vr_runtime._validation_complete = True
+    env.reset(0)
+    env.camera.live_rgb_enabled = False
+    env.render_only_final_substep = True
+    env.sim.render_flags.clear()
+    before = env.sim.step_count
+    updates = [camera.updates for camera in cameras]
+    state_steps = []
+    update = env.robots[0].update
+
+    def observed_update(dt):
+        assert dt == 1 / 120
+        update(dt)
+        state_steps.append(env.sim.step_count)
+
+    env.robots[0].update = observed_update
+    for _ in range(2):
+        env._advance(4)
+    assert env.sim.render_flags == [False, False, False, True] * 2
+    assert state_steps == list(range(before + 1, before + 9))
+    assert env.capture_measured_state()[0] == before + 8
+    assert [camera.updates for camera in cameras] == updates
+    env.reset(0)
+    assert not env.camera.live_rgb_enabled
+    assert env.render_only_final_substep
+    env.sim.render_flags.clear()
+    env._advance(4)
+    assert env.sim.render_flags == [False, False, False, True]
 
 
 def test_baseline_phase_reproduction_and_bounded_synthetic_cost(monkeypatch):

@@ -424,6 +424,8 @@ class BimanualPiperXIsaacEnvironment:
         if self.home_d0.shape != (14,):
             raise ValueError(f"home_d0 must have shape (14,), got {self.home_d0.shape}")
         self.vr_runtime = vr_runtime
+        # RECORD opts in only after its state-recording resources are ready.
+        self.render_only_final_substep = False
         self.preview: Any = None
         self.joint_ids: list[list[int]] = []
         self.actuated_joint_ids: list[list[int]] = []
@@ -494,7 +496,7 @@ class BimanualPiperXIsaacEnvironment:
 
     def _advance(self, repeat: int) -> None:
         performance = getattr(self, "performance_logger", None)
-        for _ in range(repeat):
+        for substep in range(repeat):
             started_ns = time.perf_counter_ns() if performance is not None else 0
             for robot in self.robots:
                 robot.write_data_to_sim()
@@ -505,7 +507,7 @@ class BimanualPiperXIsaacEnvironment:
                 self.vr_runtime.before_render()
             if getattr(self, "preview", None) is not None:
                 self.preview.assert_valid()
-            self.sim.step()
+            self.sim.step(render=not self.render_only_final_substep or substep == repeat - 1)
             if performance is not None:
                 performance.add_nested("sim_step", time.perf_counter_ns() - started_ns)
                 started_ns = time.perf_counter_ns()

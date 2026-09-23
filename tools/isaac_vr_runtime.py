@@ -551,7 +551,11 @@ class VRRuntime:
 
     def disable_live_rgb(self) -> None:
         """Stop sensor updates and keep all canonical camera prims for replay."""
+        if self._feed_bound or self._display_visible:
+            raise RuntimeError("State-only RECORD requires unbound camera previews")
         self.camera_rig.live_rgb_enabled = False
+        if self.camera_rig.capture is not None:
+            self.camera_rig.capture.invalidate()
 
     def open(self, env) -> None:
         self._env = env

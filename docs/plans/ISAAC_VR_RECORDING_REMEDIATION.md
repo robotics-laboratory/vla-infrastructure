@@ -461,6 +461,64 @@ admission. The manifest correctly records `dataset_admissible=false` because the
 source is a no-client injected smoke with `operator_stopped`; VRR-080 and formal
 source/gate admission remain open.
 
+### Implementation checkpoint: RECORD rendering reconciliation (validation deferred)
+
+On `recording-fix`, the implementation based on `95f48a7` now suspends the
+existing dataset RenderProducts for exactly `left_wrist`, `right_wrist`, and
+`scene`, after stage snapshot, visual provenance, Recordable session and episode
+initialization. [The narrow adapter](../../tools/isaac_vr_camera_rendering.py)
+sets each owned Hydra texture's `updates_enabled = False`, detaches its live
+annotators (RGB is exposed as `rgba` at this pin), and checks suspension once.
+Camera objects, USD Camera prims, transforms/intrinsics, and CameraRecordables
+remain intact. No RenderProduct is destroyed; shared renderer and XR/operator
+products are untouched. No drawable observers, frame-info queries, or per-control
+resource/graph checks enter the production loop.
+
+The existing environment execution policy defaults to rendering every substep
+for RUN/DIAG and startup preflight. Successful RECORD setup selects only the
+final render in each `_advance` call. Ordinary four-step controls therefore use
+`False, False, False, True` through public `SimulationContext.step(render=...)`.
+Physics remains 120 Hz with four integrations per control; logical control,
+dataset FPS and action rate remain 30 Hz. XR/operator presentation retains the
+final pump. RECORD reset settling also retains a final pump; it does not clear
+the execution policy or re-enable live RGB. The pinned Camera reset refreshes
+pose/timestamps without recreating or enabling its render resources.
+
+Upstream audit: Isaac Lab 17.0.2 (`ae37b028`, materialization `0c2e2c64`),
+Isaac Sim 6.1 / Kit 110.3 and Replicator 1.13.36 already own physics stepping,
+Camera resources, Hydra update control, annotator detach and Recordable sampling.
+Installed source inspection shows that `step(render=False)` still calls the
+physics manager and increments its step identity. CameraRecordable uses prim
+intrinsics and the existing shared pose batch, independently of RGB readers.
+The remaining gap is RECORD lifecycle composition: one isolated private
+`Camera._render_data` accessor and one explicit render-policy flag. No dependency,
+environment, configuration or framework change is needed. Replicator's stale
+`is_attached` property is not used as proof; graph binding is inspected only once
+after detach. This is a source audit, not runtime evidence.
+
+Historical evidence belongs exclusively to
+`review/vr-recording-validation@e2e08e3`: `Camera.frame == 0` did not stop Hydra
+work. Suspension yielded `updates_enabled == false`, inactive RGB graph bindings
+and zero dataset drawable events. Its matched review benchmark improved from
+7.6263 to 12.2000 Hz (+59.97%). These are **not** performance measurements for
+`recording-fix`; no review recorder architecture or commits were imported.
+
+Current status: implementation pending validation. Runtime performance is
+**NOT YET MEASURED**, the one-pump RECORD cadence is **NOT YET QUALIFIED**, and
+physical Quest behavior is **NOT YET QUALIFIED**. No 30 Hz wall-time claim is made.
+The committed `O_t / A_t / O_(t+1)` ordering, Fabric capture, HDF schema, terminal
+successor, strict replay, asset closure, visual provenance and offline RGB /
+LeRobot materialization remain unchanged. The source profile remains
+`isaac_human_vr_offline_rgb_v1`. Prior completed evidence above retains its tested
+scope; VRR-070 stays `in_progress`, VRR-080 stays `blocked`, and no gate is promoted.
+
+Tests were added/updated for later use but **none were executed** because another
+validation workload occupies the machine. Deferred work: focused regression and
+governance checks; native RECORD/reset/strict-replay regression including camera
+prim/Recordable survival and persistent suspension; matched no-client benchmark
+with scoped Hydra/Kit-pump measurements; paired recorder benchmark; and physical
+Quest acceptance including controls, presentation, reset/reconnect and shutdown.
+
 ### Phase 0: select and declare the source profile
 
 The contract selects the additive Isaac snapshot/offline-RGB source profile

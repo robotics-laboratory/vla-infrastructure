@@ -39,6 +39,20 @@ def test_recording_runtime_declares_offline_profile_and_real_episode_identity():
     assert 'outcome="unclassified"' not in source
 
 
+def test_dataset_suspension_follows_snapshot_provenance_and_recordable_setup():
+    source = (ROOT / "tools/isaac_vr_recording.py").read_text(encoding="utf-8")
+    setup = source.index("def start_live_recording(")
+    snapshot = source.index("snapshot = Path(export_stage_snapshot(", setup)
+    provenance = source.index("visual_provenance = build_visual_provenance(", snapshot)
+    cameras = source.index("CameraRecordable(", provenance)
+    opened = source.index("storage, sampler = open_explicit_session(", cameras)
+    episode = source.index("start_explicit_episode(", opened)
+    suspension = source.index("suspend_dataset_camera_rendering(cameras, stage, camera_roles)", episode)
+    cadence = source.index("env.render_only_final_substep = True", suspension)
+    ready = source.index("return recording", cadence)
+    assert snapshot < provenance < cameras < opened < episode < suspension < cadence < ready
+
+
 def test_recording_gap_stops_before_unrecorded_native_advance():
     source = (ROOT / "tools/isaac_s2_runtime.py").read_text(encoding="utf-8")
     discard = source.index("recording.discard_observation(", source.index("if recording is not None and not eligible:"))

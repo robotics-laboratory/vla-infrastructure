@@ -725,7 +725,10 @@ def start_live_recording(
     )
     import omni.usd
     from tools.isaac_vr_decision import capture_state_snapshot
+    from tools.isaac_vr_camera_rendering import suspend_dataset_camera_rendering
 
+    if env.camera.live_rgb_enabled:
+        raise RuntimeError("State-only RECORD requires live RGB to be disabled before setup")
     _validate_session_metadata(session_metadata)
     repository = Path(__file__).resolve().parents[1]
     output_dir = prepare_private_output_dir(
@@ -842,7 +845,7 @@ def start_live_recording(
         "visual_provenance_sha256": visual_provenance["visual_provenance_sha256"],
     }
     _atomic_write_json(output_dir / "manifest.json", manifest)
-    return LiveRecording(
+    recording = LiveRecording(
         storage,
         sampler,
         recordables,
@@ -855,6 +858,15 @@ def start_live_recording(
         flush_every_frames=flush_every_frames,
         timing_observer=timing_observer,
     )
+    try:
+        # Snapshot, visual provenance and all Recordables have been initialized.
+        # Retain Camera/prim identity for Fabric sampling and offline replay RGB.
+        suspend_dataset_camera_rendering(cameras, stage, camera_roles)
+        env.render_only_final_substep = True
+    except Exception:
+        recording.close(outcome="failure", reason="dataset_camera_suspension_failed")
+        raise
+    return recording
 
 
 def _sanitize_exported_stage(snapshot: Path) -> Any:
