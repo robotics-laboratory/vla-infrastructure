@@ -187,6 +187,7 @@ class S2PerformanceLogger:
             "instrumentation_write": _distribution(
                 [float(row["instrumentation_write_ms"]) for row in records]
             ),
+            "unattributed": _distribution([float(row["unattributed_ms"]) for row in records]),
         }
 
     def close(self) -> dict[str, Any]:

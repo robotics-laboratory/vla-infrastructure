@@ -39,11 +39,13 @@ def resources(monkeypatch):
     # An unrelated operator resource must survive even though it shares the stage.
     for role in (*ROLES, "operator_xr"):
         path = f"/Render/{role}"
-        cameras[role] = NS(_render_data=NS(
-            spec=NS(camera_prim_paths=[f"/World/{role}"]),
-            render_product=NS(path=path, hydra_texture=NS(updates_enabled=True)),
-            annotators={"rgba": Annotator(path)},
-        ))
+        cameras[role] = NS(
+            _render_data=NS(
+                spec=NS(camera_prim_paths=[f"/World/{role}"]),
+                render_product=NS(path=path, hydra_texture=NS(updates_enabled=True)),
+                annotators={"rgba": Annotator(path)},
+            )
+        )
         prims[f"/World/{role}"] = NS(IsValid=lambda: True, GetTypeName=lambda: "Camera")
         prims[path] = NS(IsValid=lambda: True)
     return cameras, NS(GetPrimAtPath=prims.__getitem__), paths, prims
@@ -66,7 +68,9 @@ def test_suspend_exact_dataset_products_preserving_objects_prims_and_xr(resource
     assert prims == original_prims
 
 
-@pytest.mark.parametrize("fault", ["missing_role", "extra_role", "same_camera", "same_product", "wrong_prim"])
+@pytest.mark.parametrize(
+    "fault", ["missing_role", "extra_role", "same_camera", "same_product", "wrong_prim"]
+)
 def test_bad_bindings_rejected_before_any_suspension(resources, fault):
     cameras, stage, paths, _ = resources
     selected = {r: cameras[r] for r in ROLES}
@@ -77,12 +81,16 @@ def test_bad_bindings_rejected_before_any_suspension(resources, fault):
     elif fault == "same_camera":
         selected["scene"] = selected["left_wrist"]
     elif fault == "same_product":
-        selected["scene"]._render_data.render_product = selected["left_wrist"]._render_data.render_product
+        selected["scene"]._render_data.render_product = selected[
+            "left_wrist"
+        ]._render_data.render_product
     else:
         selected["scene"]._render_data.spec.camera_prim_paths = ["/World/operator_xr"]
     with pytest.raises(RuntimeError):
         suspend_dataset_camera_rendering(selected, stage, paths)
-    assert all(c._render_data.render_product.hydra_texture.updates_enabled for c in cameras.values())
+    assert all(
+        c._render_data.render_product.hydra_texture.updates_enabled for c in cameras.values()
+    )
 
 
 def test_still_bound_reader_fails_startup(resources):

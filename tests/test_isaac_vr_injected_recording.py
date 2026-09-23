@@ -5,6 +5,7 @@ import hashlib
 import sys
 
 import numpy as np
+import pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -109,19 +110,47 @@ class FakeRecording:
         self.promoted = successor
 
 
-def test_injected_transitions_are_distinct_dense_and_self_verifying():
+@pytest.mark.parametrize("count", [3, 330])
+def test_injected_transitions_are_distinct_dense_and_self_verifying(count):
     env = FakeEnvironment()
     recording = FakeRecording(env)
-    result = record_injected_transitions(recording, env, count=3)
+    result = record_injected_transitions(recording, env, count=count)
 
-    assert result["accepted_transactions"] == result["committed_frames"] == 3
-    assert len({tuple(action) for action in result["actions"]}) == 3
-    assert [int(row["frame_index"]) for row in recording.rows] == [0, 1, 2]
+    assert result["accepted_transactions"] == result["committed_frames"] == count
+    assert len({tuple(action) for action in result["actions"]}) == count
+    assert [int(row["frame_index"]) for row in recording.rows] == list(range(count))
     for current, following in zip(recording.rows, recording.rows[1:], strict=False):
         assert np.array_equal(
             current["successor_observation_state"],
             following["observation_state"],
         )
+
+
+def test_s2_profiling_preserves_causal_rows_and_logs_all_controls(tmp_path):
+    import json
+    from tools.isaac_s2_performance import S2PerformanceLogger
+
+    logger = S2PerformanceLogger(
+        tmp_path / "performance.jsonl", window_steps=2, warmup_steps=1, target_hz=30
+    )
+    env = FakeEnvironment()
+    recording = FakeRecording(env, timing_observer=logger.add_nested)
+    result = record_injected_transitions(recording, env, count=3, performance_logger=logger)
+    final = logger.close()
+    assert result["committed_frames"] == 3
+    assert final["control"]["samples"] == 2
+    rows = [json.loads(line) for line in logger.path.read_text().splitlines()]
+    steps = [row for row in rows if row["event"] == "performance_step"]
+    assert len(steps) == 3
+    for row in steps:
+        assert {
+            "observation_capture",
+            "injected_decision_apply",
+            "simulation_advance",
+            "successor_capture",
+            "causal_commit_and_record",
+        } <= row["stage_ms"].keys()
+        assert {"hdf_append_ms", "hdf_flush_ms"} <= row["nested_stage_ms"].keys()
 
 
 def test_injected_transitions_feed_the_real_benchmark_logger(tmp_path):

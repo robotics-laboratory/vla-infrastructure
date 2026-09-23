@@ -247,14 +247,19 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     args = parser.parse_args(invocation)
     args.invocation = invocation
     args.mode = {"diag": "diagnostic", "record": "record", "replay": "replay"}.get(args.mode, "run")
+    performance_flags = {"--performance-window-steps", "--performance-warmup-steps"}
+    args.performance_enabled = args.mode == "diagnostic" or (
+        args.mode == "record"
+        and any(item.split("=", 1)[0] in performance_flags for item in invocation)
+    )
     diagnostic_flags = {
         "--preview-isolation",
         "--preview-cameras",
         "--capture-preview-evidence",
         "--scene-preview",
-        "--performance-window-steps",
-        "--performance-warmup-steps",
     }
+    if args.mode != "record":
+        diagnostic_flags |= performance_flags
     used = [
         item.split("=", 1)[0] for item in invocation if item.split("=", 1)[0] in diagnostic_flags
     ]
@@ -439,6 +444,9 @@ def main(argv: list[str] | None = None) -> int:
             recording_dir = recording_parent / output_dir.name
         else:
             recording_dir = args.recording_dir
+            # Explicit operator paths may use a new private recordings root.
+            # Existing parent permissions remain subject to recorder validation.
+            recording_dir.parent.mkdir(parents=True, mode=0o700, exist_ok=True)
         if recording_dir.exists():
             raise RuntimeError(f"recording directory already exists: {recording_dir}")
         command.extend(["--s2-record", "--s2-recording-dir", str(recording_dir)])
@@ -473,7 +481,7 @@ def main(argv: list[str] | None = None) -> int:
             command.extend(["--s2-render-cameras", str(args.render_cameras)])
         if args.replay_report is not None:
             command.extend(["--s2-replay-report", str(args.replay_report)])
-    if args.mode == "diagnostic":
+    if args.performance_enabled:
         command.extend(
             [
                 "--s2-performance-log",
@@ -542,6 +550,9 @@ def main(argv: list[str] | None = None) -> int:
         stack=stack,
     )
     print(f"VR output: {output_dir}", flush=True)
+    print(f"VR result: {output_dir / 'result.json'}", flush=True)
+    if args.performance_enabled:
+        print(f"Performance JSONL: {output_dir / 'performance.jsonl'}", flush=True)
     if args.uses_cloudxr:
         print(f"Quest WebXR client: {config['cloudxr_web_client']['url']}", flush=True)
         print(f"Quest client setup: {config['cloudxr_web_client']['operator_setup']}", flush=True)
@@ -564,7 +575,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         log_context = (
             (output_dir / "stdout.log").open("w", encoding="utf-8")
-            if args.mode == "diagnostic"
+            if args.performance_enabled
             else nullcontext(None)
         )
         with log_context as log:
@@ -587,6 +598,12 @@ def main(argv: list[str] | None = None) -> int:
     finally:
         signal.signal(signal.SIGINT, previous_sigint)
     report_path = output_dir / "result.json"
+    print(f"VR output: {output_dir}", flush=True)
+    print(f"VR result: {report_path}", flush=True)
+    if args.mode == "record":
+        print(f"Recording directory: {recording_dir}", flush=True)
+    if args.performance_enabled:
+        print(f"Performance JSONL: {output_dir / 'performance.jsonl'}", flush=True)
     if not report_path.is_file():
         return return_code or 1
     report = json.loads(report_path.read_text(encoding="utf-8"))
@@ -594,7 +611,7 @@ def main(argv: list[str] | None = None) -> int:
         "exit_code": return_code,
         "clean_shutdown": return_code in (0, 130),
         "stop_requested": stop_requested,
-        "stdout_log": str(output_dir / "stdout.log") if args.mode == "diagnostic" else None,
+        "stdout_log": str(output_dir / "stdout.log") if args.performance_enabled else None,
         "launcher": str(Path(__file__).resolve()),
     }
     report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")

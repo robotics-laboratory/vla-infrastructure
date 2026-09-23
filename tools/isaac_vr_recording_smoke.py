@@ -13,6 +13,8 @@ from uuid import uuid4
 
 import yaml
 
+from isaac_s2_performance import S2PerformanceLogger
+
 
 def _canonical_sha256(payload: Any) -> str:
     encoded = json.dumps(payload, allow_nan=False, separators=(",", ":"), sort_keys=True)
@@ -132,6 +134,18 @@ def run_recording_lifecycle_smoke(
     benchmark_logger = None
     benchmark_sampler = None
     benchmark_shutdown = None
+    performance_path = getattr(args_cli, "s2_performance_log", None)
+    performance = (
+        S2PerformanceLogger(
+            Path(performance_path),
+            window_steps=args_cli.s2_performance_window_steps,
+            warmup_steps=args_cli.s2_performance_warmup_steps,
+            target_hz=30.0,
+        )
+        if performance_path is not None
+        else None
+    )
+    env.performance_logger = performance
     summary: dict[str, Any] = {}
     try:
         if experiment is not None:
@@ -144,16 +158,20 @@ def run_recording_lifecycle_smoke(
         benchmark_log = getattr(args_cli, "s2_recording_benchmark_log", None)
 
         def observe_recording_timing(name: str, elapsed_ns: int) -> None:
-            if benchmark_logger is None:
+            if benchmark_log is not None and benchmark_logger is None:
                 raise RuntimeError("recording timing arrived before benchmark logger startup")
-            benchmark_logger.add_stage(name, elapsed_ns)
+            if benchmark_logger is not None:
+                benchmark_logger.add_stage(name, elapsed_ns)
+            if performance is not None:
+                performance.add_nested(name, elapsed_ns)
 
         recording_options: dict[str, Any] = {}
         if benchmark_log is not None:
             recording_options = {
                 "flush_every_frames": int(args_cli.s2_recording_benchmark_flush_every_frames),
-                "timing_observer": observe_recording_timing,
             }
+        if benchmark_log is not None or performance is not None:
+            recording_options["timing_observer"] = observe_recording_timing
         recording = start_live_recording(
             args_cli.s2_recording_dir,
             env,
@@ -233,6 +251,7 @@ def run_recording_lifecycle_smoke(
                 count=injected_count,
                 benchmark_logger=benchmark_logger,
                 resource_sampler=benchmark_sampler,
+                performance_logger=performance,
             )
             summary = {
                 **injected,
@@ -292,10 +311,14 @@ def run_recording_lifecycle_smoke(
             )
         raise
     finally:
-        if benchmark_shutdown is not None:
-            benchmark_shutdown()
-        if experiment is not None:
-            experiment.close()
+        try:
+            if benchmark_shutdown is not None:
+                benchmark_shutdown()
+            if experiment is not None:
+                experiment.close()
+        finally:
+            if performance is not None:
+                summary["performance"] = performance.close()
     if getattr(args_cli, "report", None) is not None:
         Path(args_cli.report).write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary, sort_keys=True), flush=True)

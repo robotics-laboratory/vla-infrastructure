@@ -62,11 +62,13 @@ def _xr(tick: int) -> ResolvedXrInput:
 
 def _target(observation_state: tuple[float, ...], index: int) -> np.ndarray:
     target = np.asarray(observation_state, dtype=np.float64).copy()
-    magnitude = 0.25 * (index + 1)
+    # Keep the bounded validation sweep away from joint limits. Accumulating
+    # increasing deltas from the previous state saturates long benchmark runs.
+    magnitude = 0.25 + 0.25 * (index % 1000) / 1000
     target[0] += magnitude
     target[7] -= magnitude
-    target[6] = np.clip(target[6] + 2.0 + index, 5.0, 95.0)
-    target[13] = np.clip(target[13] - 2.0 - index, 5.0, 95.0)
+    target[6] = np.clip(target[6] + 2.0 + magnitude, 5.0, 95.0)
+    target[13] = np.clip(target[13] - 2.0 - magnitude, 5.0, 95.0)
     return target
 
 
@@ -77,6 +79,7 @@ def record_injected_transitions(
     count: int = 3,
     benchmark_logger: Any | None = None,
     resource_sampler: Any | None = None,
+    performance_logger: Any | None = None,
 ) -> dict[str, Any]:
     """Write distinct committed transitions through the production causal/writer APIs."""
     if count < 2:
@@ -84,16 +87,25 @@ def record_injected_transitions(
     if (benchmark_logger is None) is not (resource_sampler is None):
         raise ValueError("benchmark logger and resource sampler must be supplied together")
     validator = None
+    initial_state = None
     actions: list[list[float]] = []
     for index in range(count):
         tick = index + 1
         benchmark_started_ns = time.perf_counter_ns()
+        if performance_logger is not None:
+            performance_logger.begin_step()
+            stage_started_ns = time.perf_counter_ns()
         if benchmark_logger is not None:
             benchmark_logger.begin_step(tick)
             with benchmark_logger.stage("state_sampling_ms"):
                 token = recording.capture_observation()
         else:
             token = recording.capture_observation()
+        if performance_logger is not None:
+            performance_logger.add_stage(
+                "observation_capture", time.perf_counter_ns() - stage_started_ns
+            )
+            stage_started_ns = time.perf_counter_ns()
         xr = _xr(tick)
         if validator is None:
             validator = CausalTransactionValidator(
@@ -107,7 +119,9 @@ def record_injected_transitions(
                 ),
                 profile="isaac_human_vr_offline_rgb_v1",
             )
-        target = d0_action_to_native(_target(token.state, index))
+        if initial_state is None:
+            initial_state = token.state
+        target = d0_action_to_native(_target(initial_state, index))
         native = np.concatenate((target.left_rad_m, target.right_rad_m))
         command = _command((float(target.left_rad_m[6]), float(target.right_rad_m[6])))
         decision = SolvedControlDecision.from_native(
@@ -126,12 +140,27 @@ def record_injected_transitions(
                 target.saturated,
             )
         )
+        if performance_logger is not None:
+            performance_logger.add_stage(
+                "injected_decision_apply", time.perf_counter_ns() - stage_started_ns
+            )
+            stage_started_ns = time.perf_counter_ns()
         env._advance(4)
+        if performance_logger is not None:
+            performance_logger.add_stage(
+                "simulation_advance", time.perf_counter_ns() - stage_started_ns
+            )
+            stage_started_ns = time.perf_counter_ns()
         if benchmark_logger is not None:
             with benchmark_logger.stage("state_sampling_ms"):
                 successor = recording.capture_successor(token)
         else:
             successor = recording.capture_successor(token)
+        if performance_logger is not None:
+            performance_logger.add_stage(
+                "successor_capture", time.perf_counter_ns() - stage_started_ns
+            )
+            stage_started_ns = time.perf_counter_ns()
         committed = commit_recording_transition(
             validator,
             decision,
@@ -149,6 +178,10 @@ def record_injected_transitions(
         )
         recording.commit_transition(token, successor, row)
         actions.append([float(value) for value in decision.dataset_action])
+        if performance_logger is not None:
+            performance_logger.add_stage(
+                "causal_commit_and_record", time.perf_counter_ns() - stage_started_ns
+            )
         if benchmark_logger is not None:
             rejected = sum(int(value) for value in recording.rejections.values())
             benchmark_logger.end_step(
@@ -159,6 +192,8 @@ def record_injected_transitions(
                 deadline_missed=(time.perf_counter_ns() - benchmark_started_ns)
                 > (1_000_000_000 / float(benchmark_logger.identity["target_hz"])),
             )
+        if performance_logger is not None:
+            performance_logger.end_step(tick, source="deterministic_injected_xr_v1")
     assert validator is not None
     if validator.accepted_transactions != count or recording.committed_frames != count:
         raise RuntimeError("injected causal commits and HDF frames diverged")

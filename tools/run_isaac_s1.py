@@ -555,7 +555,8 @@ class BimanualPiperXIsaacEnvironment:
             raise RuntimeError("Three-camera capture belongs to the VR source view")
         return self.camera.capture.latest()
 
-    def reset(self, seed: int = 0) -> dict[str, np.ndarray]:
+    def _reset_native(self, seed: int) -> None:
+        """Reset shared native state and settle; do not construct an observation."""
         seed_reset(seed)
         for robot in self.robots:
             robot.write_root_pose_to_sim_index(root_pose=robot.data.default_root_pose.torch.clone())
@@ -576,9 +577,25 @@ class BimanualPiperXIsaacEnvironment:
             robot.reset()
         self.camera.reset()
         self.step_count = 0
-        # Candidate B's qualified native reset lifecycle uses 24 non-evidence
-        # renderer-settling ticks followed by one captured physics tick.
+        # These are 25 settling integrations, not control/dataset transitions.
+        # RUN/DIAG retain a pump per tick. RECORD retains its final-only policy
+        # (24 non-rendered ticks, then one pump), with dataset products suspended.
         self._advance(25)
+
+    def reset_recording_state(self, seed: int = 0) -> dict[str, np.ndarray]:
+        """Leave a settled state boundary for the recorder's next Fabric capture."""
+        if self.vr_runtime is None or self.camera.live_rgb_enabled:
+            raise RuntimeError("State-only reset requires RECORD's disabled live RGB path")
+        self._reset_native(seed)
+        # The recorder creates the immutable O_t and samples Fabric Recordables
+        # at this boundary. No synthetic camera capture or recording row here.
+        _, state = self.capture_measured_state()
+        return {"observation.state": np.asarray(state, dtype=np.float32)}
+
+    def reset(self, seed: int = 0) -> dict[str, np.ndarray]:
+        if self.vr_runtime is not None and not self.camera.live_rgb_enabled:
+            return self.reset_recording_state(seed)
+        self._reset_native(seed)
         if self.vr_runtime is not None:
             self.camera.capture.latest(require_eligible=False)
         if getattr(self, "preview", None) is not None:

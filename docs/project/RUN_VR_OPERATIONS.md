@@ -88,8 +88,10 @@ statistics and presentation counters. Bounded preview PPM capture is opt-in.
 
 RUN, DIAG and RECORD support `--stack`, `--profile`, `--cloudxr-mode`, `--state-root`,
 `--hud-on-start`, `--max-control-steps`, `--dry-run`, `--smoke` and `--xr-smoke`.
+RECORD also accepts `--performance-window-steps` and
+`--performance-warmup-steps`; supplying either enables the existing S2 timing
+logger without diagnostic camera observers or GPU subprocess sampling.
 Diagnostic-only flags fail in run mode with a `./run-vr diag ...` suggestion:
-`--performance-window-steps`, `--performance-warmup-steps`,
 `--capture-preview-evidence`, `--scene-preview`, `--preview-isolation` and
 `--preview-cameras`. Preview overrides are qualification experiments; physical
 acceptance uses canonical defaults. Select the asset lab explicitly:
@@ -116,7 +118,9 @@ Every run retains:
 - `result.json`: runtime result and process/shutdown status, when the child reaches
   reporting. Early failures may leave only manifest/config; nonzero exit remains fatal.
 
-DIAG also retains `stdout.log` and `performance.jsonl`. Optional bounded camera
+DIAG and explicitly profiled RECORD also retain `stdout.log` (combined stdout and
+stderr) and `performance.jsonl`. The launcher prints the run, recording, result
+and performance paths on exit. Optional bounded camera
 captures live under `camera_feed_diagnostics/`; scene snapshots use the supplied
 path. RUN does not create the diagnostic bundle. Retain a completed physical
 worksheet and observed shutdown facts alongside the manifest for human evidence.
@@ -128,6 +132,53 @@ If the CloudXR port is occupied, its owner must stop it normally. Use
 under the selected state root. If feeds fail freshness or partitions fail, fix the
 source/setup and restart; do not disable guards. Restart for camera teardown or XR
 recreation. Inspect `result.json` and use diagnostic mode for detailed investigation.
+
+## RECORD timing and state-only reset
+
+For a later physical Quest recording, connect the headset normally and stop with
+Ctrl-C. This command does not establish physical acceptance by itself:
+
+```sh
+export OMNI_KIT_ACCEPT_EULA=Y ISAACLAB_CXR_ACCEPT_EULA=1
+RECORDING="$HOME/.local/state/piper-x/recordings/physical-onepump-$(date +%Y%m%dT%H%M%S)"
+./run-vr record --recording-dir "$RECORDING" \
+  --performance-warmup-steps 60 --performance-window-steps 300
+```
+
+Summarize the printed performance path with
+`python tools/summarize_vr_performance.py <run-directory>/performance.jsonl`.
+For the default state root, this selects the newest profiled RECORD run by timestamp:
+
+```sh
+python tools/summarize_vr_performance.py "$(printf '%s\n' /data/$(id -un)/vla-runtime/isaac-isaac61/runs/*-record-*/performance.jsonl | sort | tail -n 1)"
+```
+
+The dependency-free readout rejects malformed, incomplete or unmeasured logs.
+It prints warmup-excluded control statistics, stage mean/p95, and separately
+labelled non-additive nested stages. These are host timings without added CUDA
+synchronization. Effective Hz excludes logging and inter-control work; the
+instrumentation-write statistic excludes summary/flush and timer overhead.
+Blackfire's separate paired recorder benchmark remains the resource and recorder
+overhead evidence owner. Unmeasured metrics must not be inferred as zero.
+
+RECORD's environment reset shares native seed/object/robot/home reset, camera
+bookkeeping and 25 physics settling integrations with RUN/DIAG. Once live RGB is
+disabled for RECORD, it returns only the measured state boundary: the recorder
+then captures immutable O_t through its existing Fabric/native path. It neither
+requires a live camera capture nor reads RGB. After RECORD setup, settling uses
+24 non-rendered steps and one final render/pump; this is not 25 control
+transitions. The three dataset RenderProducts remain suspended. Ordinary RECORD
+controls retain four integrations with F,F,F,T. Startup preflight before RECORD
+setup and RUN/DIAG retain their existing per-step rendering and RGB observations.
+No reset performance claim is made. A physical reset request still ends the
+current recording episode; it does not bridge a committed transaction across reset.
+
+Plain `record --smoke` checks only capture/discard/finalization and commits no
+rows. Use the existing `--smoke --injected-actions --recording-benchmark` path for
+bounded automated committed transitions, with `--benchmark-pair-id`,
+`--benchmark-warmup-steps` and `--benchmark-measured-steps`. Performance window
+size controls reporting, not run duration. The injected sweep stays bounded
+around the initial state so long benchmarks do not accumulate into joint limits.
 
 ## Feature development
 

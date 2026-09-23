@@ -50,6 +50,9 @@ def test_cli_modes_and_explicit_rollback(launcher):
         assert launcher.parse_args(["diag", *flag]).mode == "diagnostic"
     record = launcher.parse_args(["record"])
     assert record.mode == "record"
+    assert not record.performance_enabled
+    for flag in (["--performance-window-steps=300"], ["--performance-warmup-steps", "60"]):
+        assert launcher.parse_args(["record", *flag]).performance_enabled
     replay = launcher.parse_args(["replay", "--recording", "/tmp/session.hdf5", "--episode", "0"])
     assert (replay.mode, replay.recording, replay.episode) == (
         "replay",
@@ -284,18 +287,30 @@ def test_record_and_replay_child_commands(launcher, tmp_path, monkeypatch):
     assert not cloudxr_calls
 
 
-def test_physical_record_keeps_teleop_and_xr(launcher, tmp_path, monkeypatch):
+@pytest.mark.parametrize("profile", [False, True])
+def test_physical_record_keeps_teleop_and_xr(launcher, tmp_path, monkeypatch, profile):
     stack = launcher.STACKS["isaac61"]
     monkeypatch.setattr(launcher, "verify_stack", lambda _: stack)
     monkeypatch.setattr(launcher, "_git_output", lambda *a: "")
     monkeypatch.setattr(launcher, "configure_cloudxr", lambda *args, **kwargs: None)
-    assert launcher.main(["record", "--dry-run", "--state-root", str(tmp_path)]) == 0
+    flags = (
+        ["--performance-warmup-steps", "60", "--performance-window-steps", "300"] if profile else []
+    )
+    assert launcher.main(["record", *flags, "--dry-run", "--state-root", str(tmp_path)]) == 0
     manifest = max(
         (tmp_path / "runs").glob("*/run_manifest.json"), key=lambda p: p.stat().st_mtime_ns
     )
     command = json.loads(manifest.read_text())["launch"]["command"]
     assert "--s2-record" in command and "--s2-teleop" in command
     assert "--xr" in command and "--experience" in command
+    assert ("--s2-performance-log" in command) == profile
+    assert command[command.index("--s2-mode") + 1] == "run"
+    if profile:
+        assert command[command.index("--s2-performance-log") + 1] == str(
+            manifest.parent / "performance.jsonl"
+        )
+        assert command[command.index("--s2-performance-warmup-steps") + 1] == "60"
+        assert command[command.index("--s2-performance-window-steps") + 1] == "300"
 
 
 def test_injected_recording_smoke_selects_real_writer_without_xr(launcher, tmp_path, monkeypatch):
@@ -618,6 +633,41 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
     if decision_receipts:
         half = len(admitted) // 2
         assert admitted[:half] == admitted[half:] == list(range(1, half + 1))
+    else:
+        # Execute normal RECORD's logger branch without diagnostic observers.
+        import isaac_vr_recording
+
+        closed = []
+        record = NS(
+            committed_frames=0,
+            discarded_observations=0,
+            rejections={},
+            run_id="run",
+            session_id="session",
+            episode_id="episode_000000",
+            source_profile="isaac_human_vr_offline_rgb_v1",
+            capture_observation=lambda: NS(observation=env.current_capture),
+            discard_observation=lambda *a, **kw: None,
+            close=lambda **kw: closed.append(kw),
+        )
+        monkeypatch.setattr(isaac_vr_recording, "start_live_recording", lambda *a, **kw: record)
+        monkeypatch.setattr(runtime, "recording_portable_roots", lambda _: {})
+        composition.disable_live_rgb = lambda: None
+        args.s2_mode = "run"
+        args.s2_record = args.s2_teleop = True
+        args.s2_recording_dir = tmp_path / "recording"
+        args.s2_max_control_steps = 4
+        args.s2_reset_step = 0
+        args.s2_performance_log = tmp_path / "record-performance.jsonl"
+        args.report = tmp_path / "record-result.json"
+        gpu_calls.clear()
+        hash_calls.clear()
+        assert runtime.run_s2(env, args, NS(is_running=lambda: True)) == 0
+        assert not gpu_calls and not hash_calls
+        assert env.performance_logger.path == args.s2_performance_log
+        result = json.loads(args.report.read_text())
+        assert result["execution"]["performance"]["control"]["samples"] == 4
+        assert closed and result["recording"]["committed_frames"] == 0
 
 
 def test_current_doc_sources_and_contract():

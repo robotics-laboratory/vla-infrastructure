@@ -1,4 +1,5 @@
 """Exact producer-boundary tests without Isaac, RTX, or image entropy assumptions."""
+
 import ast
 from pathlib import Path
 from types import SimpleNamespace as NS
@@ -64,7 +65,9 @@ def test_alignment_identical_pixels_and_owned_freeze_without_acquisition():
         assert list(frozen) == ["observation.state", *(f"observation.images.{r}" for r in ROLES)]
         for role in ROLES:
             assert frozen[f"observation.images.{role}"].shape == (480, 640, 3)
-            assert not np.shares_memory(frozen[f"observation.images.{role}"], cameras[role].data.output["rgba"])
+            assert not np.shares_memory(
+                frozen[f"observation.images.{role}"], cameras[role].data.output["rgba"]
+            )
         assert {c.updates for c in cameras.values()} == {snapshot.capture_cycle}
         assert source.render == step
 
@@ -74,6 +77,7 @@ def test_alignment_identical_pixels_and_owned_freeze_without_acquisition():
 def test_no_partial_publication(role, fault):
     _, cameras, capture = bundle()
     assert capture.capture(1 / 30)
+
     def fail(camera):
         if fault == "raise":
             raise RuntimeError("extraction failed")
@@ -83,7 +87,10 @@ def test_no_partial_publication(role, fault):
         if fault == "old_receipt":
             return  # A retained old source buffer has no new completed generation.
         camera._data_generation_last_update = camera._data_generation
-        camera.data.output["rgba"] = np.zeros((0,) if fault == "empty" else (1, 480, 640, 4), dtype=np.float32)
+        camera.data.output["rgba"] = np.zeros(
+            (0,) if fault == "empty" else (1, 480, 640, 4), dtype=np.float32
+        )
+
     cameras[role].fault = fail
     assert capture.capture(1 / 30) is None
     assert capture.successful_capture_cycle == 1 and capture.failed_attempts == 1
@@ -94,10 +101,12 @@ def test_no_partial_publication(role, fault):
 @pytest.mark.parametrize("field", ["step", "render", "epoch"])
 def test_changed_producer_mid_extraction(field):
     source, cameras, capture = bundle()
+
     def change(camera):
         camera.frame += 1
         camera._data_generation_last_update = camera._data_generation
         setattr(source, field, getattr(source, field) + 1)
+
     cameras["right_wrist"].fault = change
     assert capture.capture(1 / 30) is None
     assert capture.successful_capture_cycle == 0
@@ -133,7 +142,13 @@ def test_state_binding_and_startup_admission():
 
 
 def load_class(path, name, namespace, baseline=False):
-    source = subprocess.check_output(["git", "show", f"b3577b4613d0669efcee72493b66e4148de745c3:{path}"], cwd=ROOT, text=True) if baseline else (ROOT / path).read_text()
+    source = (
+        subprocess.check_output(
+            ["git", "show", f"b3577b4613d0669efcee72493b66e4148de745c3:{path}"], cwd=ROOT, text=True
+        )
+        if baseline
+        else (ROOT / path).read_text()
+    )
     tree = ast.parse(source)
     cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == name)
     exec(compile(ast.Module(body=[cls], type_ignores=[]), str(path), "exec"), namespace)
@@ -143,40 +158,77 @@ def load_class(path, name, namespace, baseline=False):
 def environment(monkeypatch, baseline=False):
     # Execute production methods, replacing only external physics/renderer objects.
     monkeypatch.syspath_prepend(str(ROOT / "tools"))
-    namespace = {"Camera": Camera, "Any": object, "torch": torch, "_tensor": lambda x: x,
-                 "_BimanualCameraData": lambda x: NS(),
-                 "ThreeCameraCapture": ThreeCameraCapture, "ProducerBoundary": ProducerBoundary, "CAMERA_PERIOD": 1 / 30}
+    namespace = {
+        "Camera": Camera,
+        "Any": object,
+        "torch": torch,
+        "_tensor": lambda x: x,
+        "_BimanualCameraData": lambda x: NS(),
+        "ThreeCameraCapture": ThreeCameraCapture,
+        "ProducerBoundary": ProducerBoundary,
+        "CAMERA_PERIOD": 1 / 30,
+    }
     Rig = load_class("tools/isaac_vr_runtime.py", "VRCameraRig", namespace, baseline)
-    env_namespace = {"torch": torch, "np": np, "Any": object, "NativeBimanualTargets": object,
-                     "time": time, "PHYSICS_DT": 1 / 120, "seed_reset": lambda x: None,
-                     "d0_action_to_native": lambda x: x, "_cpu": lambda x: x,
-                     "native_state_to_d0": native_state_to_d0}
-    Env = load_class("tools/run_isaac_s1.py", "BimanualPiperXIsaacEnvironment", env_namespace, baseline)
+    env_namespace = {
+        "torch": torch,
+        "np": np,
+        "Any": object,
+        "NativeBimanualTargets": object,
+        "time": time,
+        "PHYSICS_DT": 1 / 120,
+        "seed_reset": lambda x: None,
+        "d0_action_to_native": lambda x: x,
+        "_cpu": lambda x: x,
+        "native_state_to_d0": native_state_to_d0,
+    }
+    Env = load_class(
+        "tools/run_isaac_s1.py", "BimanualPiperXIsaacEnvironment", env_namespace, baseline
+    )
     env = object.__new__(Env)
     env.render_only_final_substep = False
-    env.sim = NS(step_count=0, render_generation=0,
-                 render_flags=[],
-                 visualizers=[NS(pumps_app_update=lambda: True, _app_pumped_this_step=True)])
+    env.sim = NS(
+        step_count=0,
+        render_generation=0,
+        render_flags=[],
+        visualizers=[NS(pumps_app_update=lambda: True, _app_pumped_this_step=True)],
+    )
     env.sim.get_physics_step_count = lambda: env.sim.step_count
+
     def step(render=True):
         env.sim.step_count += 1
         env.sim.render_flags.append(render)
         env.sim.render_generation += int(render)
+
     env.sim.step = step
+
     def robot():
-        obj = NS(data=NS(joint_pos=np.zeros((1, 7)), default_root_pose=NS(torch=torch.zeros((1, 7))),
-                         default_root_vel=NS(torch=torch.zeros((1, 6)))),
-                 write_data_to_sim=lambda: None, reset=lambda: None,
-                 write_root_pose_to_sim_index=lambda **kw: None, write_root_velocity_to_sim_index=lambda **kw: None)
+        obj = NS(
+            data=NS(
+                joint_pos=np.zeros((1, 7)),
+                default_root_pose=NS(torch=torch.zeros((1, 7))),
+                default_root_vel=NS(torch=torch.zeros((1, 6))),
+            ),
+            write_data_to_sim=lambda: None,
+            reset=lambda: None,
+            write_root_pose_to_sim_index=lambda **kw: None,
+            write_root_velocity_to_sim_index=lambda **kw: None,
+        )
+
         def update(dt):
             obj.data.joint_pos[:] = env.sim.step_count / 1000
+
         obj.update = update
         return obj
+
     env.robots = [robot(), robot()]
     env.joint_ids = [list(range(7)), list(range(7))]
     env.physics_probe = robot()
-    env.vr_runtime = NS(before_render=lambda: None, update=lambda dt: None, reset_scene=lambda: None,
-                        _validation_complete=False)
+    env.vr_runtime = NS(
+        before_render=lambda: None,
+        update=lambda dt: None,
+        reset_scene=lambda: None,
+        _validation_complete=False,
+    )
     cameras = [Camera() for _ in ROLES]
     env.camera = Rig(tuple(cameras[:2]), cameras[2])
     env.home_d0 = np.zeros(14)
@@ -234,12 +286,33 @@ def test_record_advance_preserves_four_state_updates_with_one_final_render(monke
     assert state_steps == list(range(before + 1, before + 9))
     assert env.capture_measured_state()[0] == before + 8
     assert [camera.updates for camera in cameras] == updates
-    env.reset(0)
+    # RGB observation must never be reached by a state-only reset.
+    env.observation = lambda: pytest.fail("RECORD reset read live RGB")
+    epoch = env.camera.reset_epoch
+    env.sim.render_flags.clear()
+    observation = env.reset(0)
+    assert env.sim.step_count == before + 8 + 25
+    assert env.sim.render_flags == [False] * 24 + [True]
+    assert env.camera.reset_epoch == epoch + 1
+    assert set(observation) == {"observation.state"}
+    assert observation["observation.state"].dtype == np.float32
+    from tools.isaac_vr_decision import capture_state_snapshot
+
+    boundary = capture_state_snapshot(env)
+    assert boundary.physics_step == before + 8 + 25
+    np.testing.assert_array_equal(observation["observation.state"], boundary.state)
+    assert env.camera.capture._latest is None  # No fabricated camera boundary.
     assert not env.camera.live_rgb_enabled
     assert env.render_only_final_substep
     env.sim.render_flags.clear()
     env._advance(4)
     assert env.sim.render_flags == [False, False, False, True]
+
+
+def test_run_reset_cannot_use_record_state_only_path(monkeypatch):
+    env, _ = environment(monkeypatch)
+    with pytest.raises(RuntimeError, match="requires RECORD"):
+        env.reset_recording_state(0)
 
 
 def test_baseline_phase_reproduction_and_bounded_synthetic_cost(monkeypatch):
@@ -263,8 +336,10 @@ def test_baseline_phase_reproduction_and_bounded_synthetic_cost(monkeypatch):
         assert env.sim.render_generation - before_renders == 1200
         assert sum(c.updates for c in cameras) - before_updates == 900
         results["before" if baseline else "after"] = {
-            "alignment": alignment, "synthetic_control_mean_us": elapsed / 300 / 1000,
-            "physics_and_render_steps": 1200, "camera_updates": 900,
+            "alignment": alignment,
+            "synthetic_control_mean_us": elapsed / 300 / 1000,
+            "physics_and_render_steps": 1200,
+            "camera_updates": 900,
             "mandatory_rgb_cpu_copies": 0,
         }
     print("SYNTHETIC_CAPTURE_COMPARISON=" + json.dumps(results, sort_keys=True))
@@ -273,8 +348,10 @@ def test_baseline_phase_reproduction_and_bounded_synthetic_cost(monkeypatch):
 def test_scene_first_success_then_wrist_failure_still_all_or_none():
     _, cameras, capture = bundle()
     capture.cameras = {r: cameras[r] for r in ("scene", "left_wrist", "right_wrist")}
+
     def fail(camera):
         raise RuntimeError("wrist fails after scene completed")
+
     cameras["left_wrist"].fault = fail
     assert capture.capture(1 / 30) is None
     assert cameras["scene"].frame[0] == 1
@@ -294,11 +371,13 @@ def test_plain_s1_scheduler_retains_per_substep_camera_updates(monkeypatch):
 def test_state_changes_during_read_is_rejected(monkeypatch):
     env, _ = environment(monkeypatch)
     env.reset(0)
+
     class Changed:
         @property
         def joint_pos(self):
             env.sim.step_count += 1
             return np.zeros((1, 7))
+
     env.robots[0].data = Changed()
     with pytest.raises(RuntimeError, match="state generation"):
         env.capture_measured_state()

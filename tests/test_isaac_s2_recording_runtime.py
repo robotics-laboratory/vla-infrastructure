@@ -24,7 +24,9 @@ def test_recording_runtime_uses_exact_pre_action_and_successor_boundaries():
     successor = source.index("recording.capture_successor(recording_token)", advance)
     causal_commit = source.index("committed = commit_recording_transition(", successor)
     row = source.index("row = build_committed_transition_sample(", causal_commit)
-    persist = source.index("recording.commit_transition(recording_token, successor_token, row)", row)
+    persist = source.index(
+        "recording.commit_transition(recording_token, successor_token, row)", row
+    )
 
     assert capture < poll < apply < advance < successor < causal_commit < row < persist
 
@@ -47,7 +49,9 @@ def test_dataset_suspension_follows_snapshot_provenance_and_recordable_setup():
     cameras = source.index("CameraRecordable(", provenance)
     opened = source.index("storage, sampler = open_explicit_session(", cameras)
     episode = source.index("start_explicit_episode(", opened)
-    suspension = source.index("suspend_dataset_camera_rendering(cameras, stage, camera_roles)", episode)
+    suspension = source.index(
+        "suspend_dataset_camera_rendering(cameras, stage, camera_roles)", episode
+    )
     cadence = source.index("env.render_only_final_substep = True", suspension)
     ready = source.index("return recording", cadence)
     assert snapshot < provenance < cameras < opened < episode < suspension < cadence < ready
@@ -55,16 +59,16 @@ def test_dataset_suspension_follows_snapshot_provenance_and_recordable_setup():
 
 def test_recording_gap_stops_before_unrecorded_native_advance():
     source = (ROOT / "tools/isaac_s2_runtime.py").read_text(encoding="utf-8")
-    discard = source.index("recording.discard_observation(", source.index("if recording is not None and not eligible:"))
+    discard = source.index(
+        "recording.discard_observation(", source.index("if recording is not None and not eligible:")
+    )
     continuity_guard = source.index("if recording.committed_frames:", discard)
     stop = source.index("break", continuity_guard)
     native_apply = source.index("saturated_frames += int(ik.apply(solution))", stop)
     assert discard < continuity_guard < stop < native_apply
 
 
-def test_no_client_lifecycle_smoke_captures_and_finalizes_without_teleop(
-    tmp_path, monkeypatch
-):
+def test_no_client_lifecycle_smoke_captures_and_finalizes_without_teleop(tmp_path, monkeypatch):
     s2_config = tmp_path / "s2.yaml"
     s2_config.write_text(
         yaml.safe_dump(
