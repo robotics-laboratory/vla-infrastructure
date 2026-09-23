@@ -85,10 +85,11 @@ Retain `run_manifest.json`, generated config and exact source/config hashes.
 
 Experimental implementation -> `./run-vr diag` -> automated and physical
 qualification -> promote selected config/status -> `./run-vr` inherits the feature
--> future record consumer inherits the same base semantics.
+-> record consumer inherits the same base semantics.
 Promotion changes config/status, never copies Python implementation. There is one
 scene builder and control loop with mode-specific observers/side effects.
-Recording remains a later D1 task; no record command or dataset is created here.
+The state-only `./run-vr record` and snapshot `replay` commands are implemented.
+D1 source admission, conversion and demonstration qualification remain pending.
 
 ## Mandatory implementation discipline
 

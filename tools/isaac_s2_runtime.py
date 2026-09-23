@@ -329,6 +329,10 @@ def run_s2(env, args_cli, simulation_app) -> int:
     )
 
     ik.device, ik.processor = device, processor
+    if recording_requested:
+        if experiment is None:
+            raise RuntimeError("recording requires the VR runtime")
+        experiment.disable_live_rgb()
     reset_observation = env.reset(0)
     del reset_observation
     processor.reset()
@@ -367,6 +371,10 @@ def run_s2(env, args_cli, simulation_app) -> int:
     env.last_control_decision = None
     env.prepared_control_transaction = None
     recording = None
+    recording_epoch = None
+    recording_observation_id = 0
+    recording_outcome = "aborted"
+    recording_failure = None
 
     def record_sample(solution=None, *, observation_id: int, state_observation=None) -> None:
         if recording is None:
@@ -386,8 +394,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
             "observation_render_generation": np.int64(state_observation.producer.render_generation),
             "action_source_physics_step": np.int64(solution.observation_identity.producer.physics_step if valid else -1),
             "action_source_render_generation": np.int64(solution.observation_identity.producer.render_generation if valid else -1),
-            "control_reference_epoch": np.int64(solution.xr_identity.control_reference_epoch if solution and solution.xr_identity else -1),
-            "session_epoch": np.int64(solution.xr_identity.session_epoch if solution and solution.xr_identity else -1),
+            "control_reference_epoch": np.int64(recording_epoch[2] if recording_epoch is not None else -1),
+            "session_epoch": np.int64(recording_epoch[1] if recording_epoch is not None else -1),
             "observation_state": state,
             "dataset_action": np.asarray(solution.dataset_action if solution else np.zeros(14), dtype=np.float32),
             "native_preclip": np.asarray(solution.native_preclip if solution else np.zeros(14), dtype=np.float32),
@@ -425,9 +433,6 @@ def run_s2(env, args_cli, simulation_app) -> int:
         if recording_requested:
             # State-only recording keeps camera prims in the snapshot but never
             # schedules RGB extraction or camera-boundary capture.
-            if experiment is None:
-                raise RuntimeError("recording requires the VR runtime")
-            experiment.disable_live_rgb()
             from isaac_vr_recording import start_live_recording
             recording = start_live_recording(
                 args_cli.s2_recording_dir, env,
@@ -438,7 +443,6 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     "environment_pins": actual_versions,
                 },
             )
-            record_sample(observation_id=0)
         if experiment is not None and not recording_requested:
             # Pinned Candidate B requires camera-feed bind(env) before the XR
             # teleop session is entered. This also makes the panels available
@@ -518,6 +522,22 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     action = None  # Never reuse an action acquired before this reset.
                     observation = None
                     before_pose = ik.tcp_poses_base() if diagnostic else ()
+
+                if recording is not None:
+                    receipt = device.xr_receipt
+                    current_epoch = (env.camera.reset_epoch, receipt.session_epoch, receipt.reference_epoch,
+                                     bool(device.session_running))
+                    if current_epoch != recording_epoch:
+                        if recording_epoch is not None:
+                            if validator is not None:
+                                validator.break_observation_chain()
+                            recording.segment(reason="causal_epoch_changed")
+                            processor.session_inactive()
+                            ik.reset()
+                        recording_epoch = current_epoch
+                        recording_observation_id = 0
+                        observation = capture_state_only_observation(env)
+                        record_sample(observation_id=0, state_observation=observation)
 
                 session_started_ever |= device.session_running
                 display_button_value = 0.0
@@ -649,6 +669,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 if performance is not None:
                     performance.add_stage("ik_apply", time.perf_counter_ns() - stage_started_ns)
                     stage_started_ns = time.perf_counter_ns()
+                if recording is not None and not eligible and validator is not None:
+                    validator.break_observation_chain()
                 env._advance(4)
                 if recording is not None:
                     # A label becomes valid only after the native target has
@@ -657,12 +679,13 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     successor = capture_state_only_observation(env)
                     if eligible:
                         prepared = env.prepared_control_transaction
-                        if prepared is None:
+                        if prepared is None or validator is None:
                             raise RuntimeError("Missing prepared D0 transaction")
                         complete_recorded_transition(solution, validator, prepared, successor)
+                    recording_observation_id += 1
                     record_sample(
                         solution if eligible else None,
-                        observation_id=step,
+                        observation_id=recording_observation_id,
                         state_observation=successor,
                     )
                 if performance is not None:
@@ -714,7 +737,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         "runtime_bookkeeping", time.perf_counter_ns() - bookkeeping_started_ns
                     )
                     stage_started_ns = time.perf_counter_ns()
-                camera = {"valid": True, "strictly_advanced": False, "roles": {}}
+                camera: dict[str, Any] = {"valid": True, "strictly_advanced": False, "roles": {}}
                 if not recording_requested:
                     camera = camera_guard.sample(env)
                 if diagnostic:
@@ -780,7 +803,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     )
                     if window is not None:
                         print(json.dumps(window, sort_keys=True), flush=True)
+        recording_outcome = "completed" if control_steps == args_cli.s2_max_control_steps else "operator_stopped"
     except KeyboardInterrupt:
+        recording_outcome = "operator_stopped"
         interrupted = True
         print(
             json.dumps(
@@ -793,10 +818,14 @@ def run_s2(env, args_cli, simulation_app) -> int:
             ),
             flush=True,
         )
+    except Exception as exc:
+        recording_outcome = "runtime_failed"
+        recording_failure = {"exception_type": type(exc).__name__, "message": str(exc)[:500]}
+        raise
     finally:
         try:
             if recording is not None:
-                recording.close(outcome="operator_stopped" if interrupted else "unclassified")
+                recording.close(outcome=recording_outcome, failure=recording_failure)
             if experiment is not None:
                 experiment.close()
         finally:

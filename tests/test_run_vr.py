@@ -473,3 +473,41 @@ def test_current_doc_sources_and_contract():
 
     c["simulation"]["isaac"]["recorder"]["execution_profile"] = "isaac_vr"
     assert any("must be distinct" in e for e in validate_profiles(c))
+
+
+@pytest.mark.parametrize("mode", ["record", "replay"])
+def test_launcher_retains_record_stdout_and_honors_custom_replay_report(launcher, tmp_path, monkeypatch, mode):
+    import io
+
+    monkeypatch.setenv("OMNI_KIT_ACCEPT_EULA", "Y")
+    monkeypatch.setattr(launcher, "verify_stack", lambda _: launcher.STACKS["isaac61"])
+    monkeypatch.setattr(launcher, "configure_cloudxr", lambda *a, **kw: None)
+    monkeypatch.setattr(launcher, "_git_output", lambda *a: "")
+    custom_report = tmp_path / "custom_report.json"
+
+    class Process:
+        def __init__(self, command, **kwargs):
+            report = (custom_report if mode == "replay" else
+                      Path(command[command.index("--report") + 1]))
+            report.write_text(json.dumps({"frames_applied": 3}))
+            self.stdout = io.StringIO("forensic child output\n")
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def wait(self):
+            return 0
+
+    monkeypatch.setattr(launcher.subprocess, "Popen", Process)
+    argv = [mode, "--smoke", "--state-root", str(tmp_path)]
+    if mode == "replay":
+        argv += ["--recording", str(tmp_path / "session.hdf5"), "--replay-report", str(custom_report)]
+    assert launcher.main(argv) == 0
+    if mode == "record":
+        logs = list((tmp_path / "runs").glob("*/stdout.log"))
+        assert len(logs) == 1 and logs[0].read_text() == "forensic child output\n"
+    else:
+        assert json.loads(custom_report.read_text())["process"]["exit_code"] == 0

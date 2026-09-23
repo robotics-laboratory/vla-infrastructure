@@ -37,6 +37,9 @@ class ExplicitFrameSampler:
             raise ValueError("recordables must have non-empty unique groups")
         self._schemas = {recordable.group: recordable.describe_channels() for recordable in self.recordables}
         self.failed = False
+        self.pose_readers: dict[str, Any] = {}
+        self.complete_frames = 0
+        self.failure: dict[str, str] | None = None
 
     @property
     def schemas(self) -> dict[str, Any]:
@@ -58,15 +61,20 @@ class ExplicitFrameSampler:
                 from isaacsim.core.experimental.utils.backend import use_backend
                 with use_backend(self.pose_backend):
                     self._append_recordable_frames()
-        except Exception:
+            self.storage.advance_episode_frame()
+            self.complete_frames += 1
+        except Exception as exc:
             self.failed = True
+            self.failure = {"exception_type": type(exc).__name__, "message": str(exc)[:500]}
             raise
-        self.storage.advance_episode_frame()
 
     def _append_recordable_frames(self) -> None:
         for recordable in self.recordables:
             frame = recordable.sample()
             self._validate(recordable.group, frame)
+            if recordable.group in self.pose_readers:
+                positions, orientations = self.pose_readers[recordable.group]()
+                validate_world_pose(recordable.group, frame, positions, orientations)
             self.storage.append_frame(recordable.group, frame)
 
     def _validate(self, group: str, frame: Mapping[str, Any]) -> None:
@@ -81,6 +89,48 @@ class ExplicitFrameSampler:
                 raise TypeError(f"{group}/{name}: dtype {value.dtype} is incompatible with {descriptor.dtype}")
             if np.issubdtype(value.dtype, np.floating) and not np.isfinite(value).all():
                 raise ValueError(f"{group}/{name}: non-finite value")
+
+
+def validate_world_pose(group: str, frame: Mapping[str, Any], positions: Any, orientations: Any) -> None:
+    """Check an upstream sample against an independent, uncaught Fabric pose read.
+
+    Both reads occur at the same paused control boundary. 1e-5 m/component allows
+    float32 conversion roundoff; it is not an allowance for a stale physics frame.
+    Quaternion signs are equivalent. Zero translations remain legal.
+    """
+    plural = "positions" in frame
+    p = np.asarray(frame["positions" if plural else "position"]).reshape(-1, 3)
+    q = np.asarray(frame["orientations" if plural else "orientation"]).reshape(-1, 4)
+    expected_p = np.asarray(positions).reshape(-1, 3)
+    expected_q = np.asarray(orientations).reshape(-1, 4)
+    if (not p.size or p.shape != expected_p.shape or q.shape != expected_q.shape
+            or not all(np.isfinite(v).all() for v in (p, q, expected_p, expected_q))
+            or not np.allclose(np.linalg.norm(q, axis=1), 1, atol=1e-5, rtol=0)
+            or not np.allclose(np.linalg.norm(expected_q, axis=1), 1, atol=1e-5, rtol=0)):
+        raise ValueError(f"{group}: invalid required world pose")
+    quaternion_error = np.minimum(np.linalg.norm(q - expected_q, axis=1),
+                                  np.linalg.norm(q + expected_q, axis=1))
+    if not np.allclose(p, expected_p, atol=1e-5, rtol=0) or np.any(quaternion_error > 1e-5):
+        raise ValueError(f"{group}: world pose disagrees with independent Fabric state")
+
+
+def bind_required_pose_readers(sampler: ExplicitFrameSampler) -> None:
+    """Independent public wrappers propagate errors that built-ins may mask."""
+    from isaacsim.core.experimental.prims import XformPrim
+
+    for recordable in sampler.recordables:
+        if recordable.TYPE_ID not in {"articulation", "rigid_body"}:
+            continue
+        paths = recordable.pose_paths()
+        if not paths:
+            raise RuntimeError(f"{recordable.group}: missing required pose paths")
+        wrapper = XformPrim(paths)
+
+        def read(view=wrapper):
+            positions, orientations = view.get_world_poses()
+            return positions.numpy(), orientations.numpy()
+
+        sampler.pose_readers[recordable.group] = read
 
 
 def open_explicit_session(
@@ -148,20 +198,43 @@ class LiveRecording:
                  *, output_dir: Path, hdf5_path: Path, snapshot: Path) -> None:
         self.storage, self.sampler, self.recordables, self.d0 = storage, sampler, tuple(recordables), d0
         self.output_dir, self.hdf5_path, self.snapshot = output_dir, hdf5_path, snapshot
+        self.last_complete_observation: int | None = None
+        self.episode_index = 0
 
     def sample(self, d0_sample: Mapping[str, Any]) -> None:
         self.d0.set_sample(d0_sample)
         self.sampler.sample_frame()
+        self.last_complete_observation = int(d0_sample["observation_id"])
 
-    def close(self, *, outcome: str) -> None:
-        close_explicit_session(self.storage, self.recordables, metadata={"outcome": outcome})
+    def segment(self, *, reason: str) -> None:
+        for recordable in self.recordables:
+            recordable.on_episode_end()
+        self.storage.end_episode(success=None, metadata={"outcome": "completed", "boundary": reason})
+        self.episode_index = start_explicit_episode(
+            self.storage, self.sampler, self.recordables, {"outcome": "aborted"})
+        self.last_complete_observation = None
+
+    def close(self, *, outcome: str, failure: Mapping[str, Any] | None = None) -> None:
+        if outcome not in {"completed", "operator_stopped", "runtime_failed", "aborted"}:
+            raise ValueError(f"Unknown recording outcome: {outcome}")
+        if self.sampler.failed:
+            outcome = "runtime_failed"
+        metadata: dict[str, Any] = {
+            "outcome": outcome, "episode_index": self.episode_index,
+            "last_complete_observation": self.last_complete_observation,
+            "complete_frames": self.sampler.complete_frames,
+        }
+        failure = failure or self.sampler.failure
+        if failure is not None:
+            metadata["failure"] = dict(failure)
+        close_explicit_session(self.storage, self.recordables, metadata=metadata)
         manifest_path = self.output_dir / "manifest.json"
         manifest = json.loads(manifest_path.read_text())
         manifest["hdf5_sha256"] = hashlib.sha256(self.hdf5_path.read_bytes()).hexdigest()
-        manifest["outcome"] = outcome
+        manifest.update(metadata)
         manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
         (self.output_dir / "result.json").write_text(
-            json.dumps({"outcome": outcome, "hdf5": str(self.hdf5_path), "stage_snapshot": str(self.snapshot)},
+            json.dumps({**metadata, "hdf5": str(self.hdf5_path), "stage_snapshot": str(self.snapshot)},
                        indent=2, sort_keys=True) + "\n"
         )
 
@@ -211,10 +284,16 @@ def start_live_recording(output_dir: Path, env: Any, *, session_metadata: Mappin
         str(path), recordables=recordables, stage=stage, session_metadata=session_metadata,
         stage_snapshot=snapshot.name, pose_backend="fabric",
     )
-    start_explicit_episode(storage, sampler, recordables, {"outcome": "unclassified"})
+    try:
+        bind_required_pose_readers(sampler)
+        start_explicit_episode(storage, sampler, recordables, {"outcome": "aborted"})
+    except Exception:
+        close_explicit_session(storage, recordables, metadata={"outcome": "runtime_failed"})
+        raise
     repository = Path(__file__).resolve().parents[1]
     (output_dir / "manifest.json").write_text(json.dumps({
         "schema": "piper_x_isaac_vr_recording_manifest_v1",
+        "outcome": "aborted",
         "git_commit": subprocess.check_output(["git", "-C", str(repository), "rev-parse", "HEAD"], text=True).strip(),
         "dirty_status": subprocess.check_output(["git", "-C", str(repository), "status", "--porcelain=v1"], text=True),
         "session_metadata": dict(session_metadata), "stage_snapshot": snapshot.name,

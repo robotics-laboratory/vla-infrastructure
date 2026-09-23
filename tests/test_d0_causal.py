@@ -542,3 +542,27 @@ def test_new_reset_epoch_can_start_sequences_at_zero_with_new_sample_identities(
     complete(v, p, 0)
     v.commit(p, observation_payload=b"0", action_payload=b"1000")
     assert v.accepted_transactions == 2
+
+
+def test_chain_break_preserves_epoch_counts_ticks_and_consumed_identities():
+    v = validator()
+    p = prepare(v, 0)
+    complete(v, p, 0)
+    v.commit(p, observation_payload=b"0", action_payload=b"1000")
+    epoch, ids, ticks = v.epoch, set(v._ids), dict(v._ticks)
+    v.break_observation_chain()
+    assert v.epoch == epoch and v.accepted_transactions == 1
+    assert v._ids == ids and v._ticks == ticks
+    with pytest.raises(ValueError, match="tick_reuse"):
+        prepare(v, 0)
+    p = prepare(v, 3)
+    v.break_observation_chain()
+    with pytest.raises(ValueError, match="transaction_not_pending"):
+        complete(v, p, 3)
+    assert v.accepted_transactions == 1
+    with pytest.raises(ValueError, match="tick_reuse"):
+        prepare(v, 3)
+    p = prepare(v, 4)
+    complete(v, p, 4)
+    v.commit(p, observation_payload=b"4", action_payload=b"1004")
+    assert v.accepted_transactions == 2

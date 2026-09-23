@@ -498,6 +498,11 @@ class BimanualPiperXIsaacEnvironment:
         # Candidate B's qualified native reset lifecycle uses 24 non-evidence
         # renderer-settling ticks followed by one captured physics tick.
         self._advance(25)
+        if self.vr_runtime is not None and not self.camera.live_rgb_enabled:
+            # RECORD refreshes the same world/articulations and reset bookkeeping,
+            # but its post-reset boundary contains measured state only.
+            _, state = self.capture_measured_state()
+            return {"observation.state": np.asarray(state, dtype=np.float32)}
         if self.vr_runtime is not None:
             self.camera.capture.latest(require_eligible=False)
         if getattr(self, "preview", None) is not None:

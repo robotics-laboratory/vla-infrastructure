@@ -137,7 +137,7 @@ Keep long-lived implementation worktrees under `.worktrees/`; this branch uses
 `.worktrees/run-vr-primary`. Keep runtime state outside the checkout.
 
 Experimental shared implementation → `./run-vr diag` → automated + physical
-qualification → promote canonical config/status → `./run-vr` inherits it → future
+qualification → promote canonical config/status → `./run-vr` inherits it → the
 record consumer inherits the same base semantics. Promotion changes selection,
 not Python ownership. Never copy control loops or builders across modes.
 RECORD reuses that shared scene, XR, controller, processor, IK and native actuation
@@ -148,15 +148,44 @@ explicitly taken at O0 and after each four-substep control transition. RECORD is
 state-only: RGB extraction, preview panels, and the camera capture boundary are
 disabled. Camera prims remain in the exported USD snapshot, so replay can render
 RGB after state application without placing RGB on the acquisition path.
+RenderProducts and attached annotators still exist; disabled live extraction does
+not establish disabled dataset-camera rendering. RenderProduct optimization is a
+separate performance task.
+
+Reset preserves world/articulation reset and camera epoch bookkeeping without
+requiring RGB. Reset, XR session/reference changes and disconnect/reconnect split
+internal NVIDIA episodes, each starting with an invalid-action O0. `--episode`
+selects one such episode and is rejected outside replay. An inactive interval
+breaks successor continuity while preserving consumed identities and tick history.
+Every admitted edge requires exactly four physics steps in the same reset epoch.
+These internal segments do not classify saved demonstrations or implement user UX.
+
+Required articulation and rigid-object poses are compared with independent Fabric
+reads at the same boundary. The 1e-5 metre/quaternion-component tolerance covers
+float32 conversion roundoff, not a physics-step lag; quaternion sign is ignored.
+A corrupt/failed sample stops the writer. NVIDIA trims partial group appends to
+the shortest dataset at episode close; the project does not attempt rollback.
+Outcomes are `completed`, `operator_stopped`, `runtime_failed`, or `aborted`.
+Failure metadata includes exception type/message and the last complete observation.
+Failed prefixes remain forensic artifacts and are rejected by ordinary replay.
 
 `./run-vr replay --recording <session.hdf5> --episode 0` uses the unmodified NVIDIA
-`SessionReader` and `EpisodeReplayer` with the USD pose backend. It disables the S2
+`SessionReader` and `EpisodeReplayer` with the USD pose backend and strict replay
+policy. Before playback it requires manifest/snapshot hashes, the HDF5 hash when
+declared, coherent track schemas/lengths, finite state, exact D0 edges and one
+reset/session/reference epoch. All required targets must bind. It disables the S2
 decision loop, controller actuation and physics stepping. Add
 `--render-cameras <output-dir>` to write first/middle/last 640x480 RGB images for
-`left_wrist`, `right_wrist` and `scene` from synchronously rendered replay state.
+`left_wrist`, `right_wrist` and `scene`. The public Replicator coroutine is pumped
+through Kit updates with a 30-second timeout, exception propagation and a physics
+callback guard before annotator reads. Replay enables the orchestrator disabled by
+Isaac Lab, selects its async stopped-timeline capture path, requires a capture event,
+and waits within that deadline for fresh annotator buffers. Replay keeps one set
+of render products/annotators across the selected episode. Timeline delta is zero.
 The native record artifact is not yet a final D0 observation dataset; canonical
-three-camera images are produced at replay/materialization. Runtime round-trip
-qualification remains pending manual validation outside the agent execution host.
+three-camera images are produced at replay/materialization. Each round-trip report
+records its selected episode, state application, physics counters and image paths;
+physical Quest acceptance and D1 source qualification remain separate.
 
 For the bounded manual round-trip, choose a new private directory and run this
 exact command from the branch checkout (the second command writes the only
@@ -172,7 +201,8 @@ recording="$HOME/.local/state/piper-x/recordings/manual-$(date +%Y%m%dT%H%M%S)"
 ```
 
 Pass only when `session.hdf5`, `stage_snapshot.usd`, and
-`validation_report.json` exist; the report must show at least 30 applied frames,
+`validation_report.json` exist; select an episode with at least three frames for
+distinct first/middle/last captures. The report must show all selected frames,
 unchanged `physics_steps_before/after`, `native_action_replay: false`, valid D0
 observation/action indexing, and nine first/middle/last role images.
 
@@ -210,9 +240,9 @@ Native actuation never converts the float32 label back to radians.
 `env.last_control_decision` and `env.prepared_control_transaction` expose the latest
 eligible applied decision and validator preparation. They are cleared on each loop;
 RUN aborts pending validator work on the next loop and never claims a committed
-transition. A future recording consumer must freeze camera pixels at the existing
-observation boundary, bind the native write and successful successor, then commit.
-No episode buffer or recording storage is installed.
+transition. RECORD binds measured state, resolved XR, native write and the exact
+four-step successor before writing the admitted label through NVIDIA storage.
+It records no live pixels; replay materializes cameras from the stored scene state.
 
 Control tick IDs count eligible attempts and never restart on reset/recenter.
 Inactive sessions, invalid tracking, initial recovery and release/rebase frames

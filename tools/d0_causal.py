@@ -317,6 +317,11 @@ class CausalTransactionValidator:
         self.abort()
         return result
 
+    def break_observation_chain(self) -> None:
+        """End an unrecorded interval without forgetting consumed identities or ticks."""
+        self.abort()
+        self._expected_observation = None
+
     def abort(self) -> None:
         self._pending = None
         self._completion = None

@@ -79,3 +79,95 @@ def test_replay_guard_applies_order_without_physics_or_native_actions():
     with pytest.raises(RuntimeError, match="advanced physics"):
         calls = iter((42, 43))
         apply_replay_frames(Replayer(), 1, pump=lambda: None, physics_steps=lambda: next(calls))
+
+
+@pytest.mark.parametrize("group,plural", [("state/left_robot", True), ("state/right_robot", True), ("state/object_0", False)])
+@pytest.mark.parametrize("corrupt", ["fallback", "quaternion", "nonfinite", "read_error"])
+def test_required_world_pose_fails_closed(group, plural, corrupt):
+    from tools.isaac_vr_recording import validate_world_pose
+
+    positions = np.array([[0.25, 0.0, 0.75]], np.float32)
+    orientations = np.array([[1, 0, 0, 0]], np.float32)
+    keys = ("positions", "orientations") if plural else ("position", "orientation")
+    frame = dict(zip(keys, (positions.copy(), orientations.copy()) if plural else
+                     (positions[0].copy(), orientations[0].copy()), strict=True))
+    validate_world_pose(group, frame, positions, -orientations)  # Legal zeros and quaternion sign.
+    if corrupt == "fallback":
+        frame[keys[0]][...] = 0  # Upstream fallback is zero position + UNIT quaternion.
+    elif corrupt == "quaternion":
+        frame[keys[1]][...] = 0
+    elif corrupt == "nonfinite":
+        frame[keys[0]][...] = np.nan
+
+    recordable = SimpleNamespace(
+        group=group, sample=lambda: frame,
+        describe_channels=lambda: {k: SimpleNamespace(shape=v.shape, dtype="f4") for k, v in frame.items()},
+    )
+    storage = FakeStorage()
+    sampler = ExplicitFrameSampler(storage, [recordable])
+
+    def independent_read():
+        if corrupt == "read_error":
+            raise RuntimeError("Fabric read failed")
+        return positions, orientations
+
+    sampler.pose_readers[group] = independent_read
+    with pytest.raises((ValueError, RuntimeError)):
+        sampler.sample_frame()
+    assert sampler.failed and storage.advanced == 0 and not storage.frames
+
+
+def test_partial_append_closes_as_failed_with_complete_prefix_metadata(tmp_path):
+    import json
+    from tools.isaac_vr_recording import LiveRecording
+
+    storage = FakeStorage()
+    storage.end_episode = lambda **kw: metadata.append(kw["metadata"])
+    storage.close = lambda: None
+    a, b = FakeRecordable("A", 0), FakeRecordable("B", 1)
+    for rec in (a, b):
+        rec.on_episode_end = rec.on_session_close = lambda: None
+    sampler = ExplicitFrameSampler(storage, [a, b])
+    hdf5 = tmp_path / "session.hdf5"
+    hdf5.write_bytes(b"mock trimmed prefix")
+    (tmp_path / "manifest.json").write_text("{}")
+    metadata = []
+    recording = LiveRecording(storage, sampler, [a, b], SimpleNamespace(set_sample=lambda x: None),
+                              output_dir=tmp_path, hdf5_path=hdf5, snapshot=tmp_path / "stage_snapshot.usd")
+    recording.sample({"observation_id": 0})
+    original_append = storage.append_frame
+
+    def partial_append(group, frame):
+        if group == "B":
+            raise RuntimeError("injected append failure")
+        original_append(group, frame)
+
+    storage.append_frame = partial_append
+    with pytest.raises(RuntimeError, match="append failure") as error:
+        recording.sample({"observation_id": 1})
+    assert len(storage.frames) == 3 and storage.advanced == 1
+    recording.close(outcome="runtime_failed", failure={"exception_type": "RuntimeError", "message": str(error.value)})
+    assert metadata[0]["outcome"] == "runtime_failed"
+    assert metadata[0]["last_complete_observation"] == 0
+    assert metadata[0]["complete_frames"] == 1
+    assert json.loads((tmp_path / "manifest.json").read_text())["outcome"] == "runtime_failed"
+
+
+def test_native_episode_segmentation_uses_public_lifecycle(tmp_path):
+    from tools.isaac_vr_recording import LiveRecording
+    calls = []
+    storage = SimpleNamespace(
+        end_episode=lambda **kw: calls.append(("end", kw)),
+        begin_episode=lambda *a, **kw: calls.append(("begin", kw)) or 1,
+    )
+    recordable = FakeRecordable("state", 1)
+    recordable.on_episode_end = lambda: calls.append(("recordable_end",))
+    recordable.on_episode_start = lambda: calls.append(("recordable_start",))
+    sampler = ExplicitFrameSampler(storage, [recordable])
+    recording = LiveRecording(storage, sampler, [recordable], None, output_dir=tmp_path,
+                              hdf5_path=tmp_path / "session.hdf5", snapshot=tmp_path / "stage_snapshot.usd")
+    recording.last_complete_observation = 8
+    recording.segment(reason="reset")
+    assert [c[0] for c in calls] == ["recordable_end", "end", "begin", "recordable_start"]
+    assert calls[1][1]["metadata"] == {"outcome": "completed", "boundary": "reset"}
+    assert recording.episode_index == 1 and recording.last_complete_observation is None

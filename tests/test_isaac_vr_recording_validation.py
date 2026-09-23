@@ -1,4 +1,4 @@
-"""Current record/replay behavioral audit; known defects stay explicit strict xfails."""
+"""Behavioral regressions for current state-only record/replay correctness."""
 
 from __future__ import annotations
 
@@ -31,8 +31,10 @@ def record_loop(monkeypatch):
     from tools.isaac_vr_decision import XrInputReceipt
 
     events = NS(should_reset=False, is_active=True)
-    control = NS(inactive=set(), reconnect=set(), fail_step=None, interrupt_step=None, prime=False)
+    control = NS(inactive=set(), reconnect=set(), fail_step=None, interrupt_step=None, prime=False, reset_step=0, reference=set(), disconnected=set())
     rows, decisions, validators, outcomes, repeats = [], [], [], [], []
+    segments = [[]]
+    failures = []
 
     class Device:
         session_running = True
@@ -56,11 +58,14 @@ def record_loop(monkeypatch):
 
         def advance(self):
             self.index += 1
+            self.session_running = self.index not in control.disconnected
             if self.index == control.interrupt_step:
                 raise KeyboardInterrupt
             if self.index in control.reconnect:
                 self.session = object()
             receipt = self.xr_receipt
+            if self.index in control.reference:
+                receipt.reference_epoch += 1
             previous = receipt.update_epoch
             receipt.polled(self.session, self.index)
             receipt.transformed(((), ()), np.eye(4), False)
@@ -194,11 +199,22 @@ def record_loop(monkeypatch):
         d0.current = row
         sampler.sample_frame()
 
+    def segment(**kwargs):
+        segments.append([])
+
+    def write_sample(row):
+        sample(row)
+        segments[-1].append(copy.deepcopy(row))
+
+    def close(**kwargs):
+        outcomes.append(kwargs["outcome"])
+        failures.append(kwargs.get("failure"))
+
     module(
         monkeypatch,
         "isaac_vr_recording",
         start_live_recording=lambda *a, **kw: NS(
-            sample=sample, close=lambda **kw: outcomes.append(kw["outcome"])
+            sample=write_sample, close=close, segment=segment
         ),
     )
 
@@ -211,7 +227,7 @@ def record_loop(monkeypatch):
             s2_cloudxr_profile="standalone",
             xr=False,
             s2_max_control_steps=steps,
-            s2_reset_step=0,
+            s2_reset_step=control.reset_step,
             s2_require_session=False,
             s2_require_tracking=False,
             s2_performance_log=None,
@@ -232,6 +248,8 @@ def record_loop(monkeypatch):
         repeats=repeats,
         env=env,
         storage=storage,
+        segments=segments,
+        failures=failures,
     )
 
 
@@ -274,7 +292,8 @@ def test_failure_after_native_write_never_publishes_transition(record_loop):
     assert len(r.env.applied) == 2
     assert r.validators[0].accepted_transactions == 0
     assert len(r.rows) == 2 and not any(row["action_valid"] for row in r.rows)
-    assert r.outcomes == ["unclassified"]  # Current failure classification, not success.
+    assert r.outcomes == ["runtime_failed"]
+    assert r.failures == [{"exception_type": "RuntimeError", "message": "injected successor failure"}]
 
 
 def test_ctrl_c_finalizes_without_inventing_successor(record_loop):
@@ -285,9 +304,6 @@ def test_ctrl_c_finalizes_without_inventing_successor(record_loop):
     assert r.validators[0].accepted_transactions == 1
 
 
-@pytest.mark.xfail(
-    strict=True, reason="139a065: same-epoch inactive gap retains stale expected successor"
-)
 def test_resume_after_inactive_gap_can_record_again(record_loop):
     r = record_loop
     r.control.inactive = {3}
@@ -295,13 +311,24 @@ def test_resume_after_inactive_gap_can_record_again(record_loop):
     assert r.validators[0].accepted_transactions == 2
 
 
-def test_session_change_is_spliced_into_same_episode(record_loop):
+@pytest.mark.parametrize("boundary", ["session", "reference", "reset"])
+def test_epoch_change_segments_native_episode(record_loop, boundary):
     r = record_loop
-    r.control.reconnect = {3}
-    assert r.run(3) == 0
-    assert [row["session_epoch"] for row in r.rows if row["action_valid"]] == [1, 2]
-    assert len(r.validators) == 1 and r.validators[0].accepted_transactions == 2
-    assert r.storage.advanced == 4
+    if boundary == "session":
+        r.control.reconnect = {3}
+    elif boundary == "reference":
+        r.control.reference = {3}
+    else:
+        r.control.reset_step = 3
+    assert r.run(5) == 0
+    assert len(r.segments) == 2
+    new = r.segments[1]
+    assert new[0]["observation_id"] == 0 and not new[0]["action_valid"]
+    for key in ("reset_epoch", "session_epoch", "control_reference_epoch"):
+        assert len({int(row[key]) for row in new}) == 1
+    assert any(row["action_valid"] for row in new[1:])
+    assert len(r.validators) == 1
+    assert r.outcomes == ["completed"]
 
 
 def load_method(path, class_name, method, namespace):
@@ -313,9 +340,6 @@ def load_method(path, class_name, method, namespace):
     return namespace[method]
 
 
-@pytest.mark.xfail(
-    strict=True, raises=RuntimeError, reason="139a065: reset requires capture disabled by RECORD"
-)
 def test_record_reset_does_not_require_rgb(monkeypatch):
     from test_isaac_vr_capture import environment
 
@@ -323,21 +347,25 @@ def test_record_reset_does_not_require_rgb(monkeypatch):
     env.reset(0)
     env.camera.live_rgb_enabled = False
     env.camera.capture.invalidate()
-    env.reset(0)
+    state = env.reset(0)
+    assert state["observation.state"].shape == (14,)
+    assert env.camera.reset_epoch == 2
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=asyncio.InvalidStateError,
-    reason="139a065: asyncio Task.result called before Kit can pump it",
-)
 def test_optional_render_waits_for_async_capture(monkeypatch, tmp_path):
     from tools.isaac_vr_replay import _render_frame
 
+    emit_capture = fake_capture_events(monkeypatch)
     loop = asyncio.new_event_loop()
     tasks = []
+    reads = []
 
-    async def step():
+    def pixels():
+        reads.append(True)
+        return np.zeros((0,) if len(reads) <= 3 else (480, 640, 4), dtype=np.uint8)
+
+    async def step(**kwargs):
+        assert kwargs == {"delta_time": 0.0, "pause_timeline": True, "wait_for_render": True}
         await asyncio.sleep(0)
 
     def schedule(coro):
@@ -353,13 +381,19 @@ def test_optional_render_waits_for_async_capture(monkeypatch, tmp_path):
             get_annotator=lambda name: NS(
                 attach=lambda p: None,
                 detach=lambda: None,
-                get_data=lambda: np.zeros((480, 640, 4), dtype=np.uint8),
+                get_data=pixels,
             )
         ),
         orchestrator=NS(step_async=step),
     )
     engine = module(monkeypatch, "omni.kit.async_engine", run_coroutine=schedule)
-    kit = module(monkeypatch, "omni.kit", async_engine=engine)
+    def pump():
+        emit_capture()
+        loop.call_soon(loop.stop)
+        loop.run_forever()
+
+    app = module(monkeypatch, "omni.kit.app", get_app=lambda: NS(update=pump))
+    kit = module(monkeypatch, "omni.kit", async_engine=engine, app=app)
     replicator = module(monkeypatch, "omni.replicator", core=rep)
     module(monkeypatch, "omni", kit=kit, replicator=replicator)
     try:
@@ -466,11 +500,6 @@ def test_reset_crossing_and_reused_prepared_transaction_rejected():
 
 
 @pytest.mark.parametrize("substeps", [0, 3, 5])
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="139a065: completion helper trusts caller; it never enforces four substeps",
-)
 def test_completion_rejects_wrong_physics_distance(substeps):
     from dataclasses import replace
     from tools.isaac_vr_decision import complete_recorded_transition
@@ -500,6 +529,7 @@ def snapshot_replay(monkeypatch, tmp_path):
     sidecar = {
         "stage_snapshot_sha256": hashlib.sha256(snapshot.read_bytes()).hexdigest(),
         "camera_roles": roles,
+        "outcome": "completed",
     }
     (tmp_path / "manifest.json").write_text(json.dumps(sidecar))
     rows = [_empty_d0_sample() for _ in range(3)]
@@ -508,6 +538,8 @@ def snapshot_replay(monkeypatch, tmp_path):
             observation_id=np.int64(i),
             observation_physics_step=np.int64(20 + i * 4),
             reset_epoch=np.int64(1),
+            session_epoch=np.int64(1),
+            control_reference_epoch=np.int64(1),
             observation_render_generation=np.int64(i),
         )
     rows[1].update(
@@ -517,14 +549,32 @@ def snapshot_replay(monkeypatch, tmp_path):
         action_to_observation_id=np.int64(1),
         action_source_physics_step=np.int64(20),
         action_source_render_generation=np.int64(0),
+        control_tick_id=np.int64(1), deviceio_update_epoch=np.int64(1),
+        submitted_frame_id=np.int64(1), returned_frame_id=np.int64(1),
+        tracking_valid=np.ones(2, dtype=np.uint8),
     )
     groups = [
         "state/left_robot",
-        "state/right_robot",
+        "state/right_robot", "state/object_0", "state/object_1", "meta/time",
         *(f"state/camera/{r}" for r in roles),
         "d0/transition",
     ]
     events, renders = [], []
+    types = {g: ("articulation" if "robot" in g else "rigid_body" if "object" in g else
+                 "camera" if "camera" in g else "sim_time" if g == "meta/time" else
+                 "piper_x_d0_transition_v1") for g in groups}
+    tracks = [{"group": g, "type": types[g], "prim_path": f"/World/{g.replace('/', '_')}",
+               "link_paths": ["/World/link"]} for g in groups]
+    for track in tracks:
+        if track["group"].startswith("state/camera/"):
+            track["prim_path"] = roles[track["group"].split("/")[-1]]
+    sidecar["recordables"] = tracks
+    (tmp_path / "manifest.json").write_text(json.dumps(sidecar))
+    schemas = {g: (_d0_channels(lambda **kw: NS(**kw)) if g == "d0/transition" else
+                   {"marker": NS(shape=(), dtype="f4")}) for g in groups}
+    track_values = {g: {"marker": np.zeros(3, np.float32)} for g in groups if g != "d0/transition"}
+    module(monkeypatch, "isaacsim.replicator.episode_recorder.registry",
+           rehydrate=lambda track: NS(describe_channels=lambda: schemas[track["group"]]))
 
     class Reader:
         def __init__(self, path):
@@ -547,13 +597,20 @@ def snapshot_replay(monkeypatch, tmp_path):
             return 3
 
         def manifest(self):
-            return NS(tracks=[{"group": g, "type": "fake"} for g in groups])
+            return NS(tracks=[t for t in tracks if t["group"] in groups])
 
-        def read_group_all_frames(self, *a):
+        def episode_attrs(self, episode):
+            return {"user_metadata": {"outcome": "completed"}}
+
+        def read_group_all_frames(self, episode, group):
+            if group != "d0/transition":
+                return track_values[group]
             return {k: np.asarray([r[k] for r in rows]) for k in rows[0]}
 
     class Replayer:
-        def __init__(self, path, *, pose_backend):
+        def __init__(self, path, *, pose_backend, policy):
+            assert policy.strictness == "strict"
+            self.prepared_recordables = [NS(group=g) for g in groups]
             assert pose_backend == "usd" and "active_stage_open" in events
             events.append("replayer")
 
@@ -577,6 +634,7 @@ def snapshot_replay(monkeypatch, tmp_path):
         "isaacsim.replicator.episode_recorder",
         SessionReader=Reader,
         EpisodeReplayer=Replayer,
+        ReplayPolicy=lambda **kw: NS(**kw),
     )
     prepared = NS(
         GetPrimAtPath=lambda path: True,
@@ -593,7 +651,11 @@ def snapshot_replay(monkeypatch, tmp_path):
         get_physx_interface=lambda: NS(subscribe_physics_step_events=lambda cb: object()),
     )
     rep = module(
-        monkeypatch, "omni.replicator.core", orchestrator=NS(set_capture_on_play=lambda v: None)
+        monkeypatch, "omni.replicator.core", orchestrator=NS(set_capture_on_play=lambda v: None),
+        create=NS(render_product=lambda path, *a, **kw: NS(path=path, destroy=lambda: events.append("destroy"))),
+        AnnotatorRegistry=NS(get_annotator=lambda name: NS(
+            attach=lambda product: events.append(("attach", product.path)),
+            detach=lambda: events.append("detach"))),
     )
     module(
         monkeypatch,
@@ -610,7 +672,7 @@ def snapshot_replay(monkeypatch, tmp_path):
     module(monkeypatch, "carb", settings=settings)
     module(monkeypatch, "pxr", Usd=NS(Stage=NS(Open=lambda path: prepared)))
 
-    def materialize(paths, directory, frame):
+    def materialize(paths, directory, frame, **kwargs):
         renders.append((frame, paths))
         return [{"role": role, "frame": frame} for role in paths]
 
@@ -634,6 +696,9 @@ def snapshot_replay(monkeypatch, tmp_path):
         report=report,
         snapshot=snapshot,
         groups=groups,
+        tracks=tracks,
+        track_values=track_values,
+        manifest_path=tmp_path / "manifest.json",
     )
 
 
@@ -643,6 +708,8 @@ def test_snapshot_is_opened_before_replayer_and_materialization(snapshot_replay)
     assert (
         r.events.index("active_stage_open") < r.events.index("replayer") < r.events.index("prepare")
     )
+    assert ("/exts/omni.replicator.core/Orchestrator/enabled", True) in r.events
+    assert ("/omni/replicator/asyncRendering", True) in r.events
     assert r.events.count("pump") == 20
     assert [("apply", i) for i in range(3)] == [
         e for e in r.events if isinstance(e, tuple) and e[0] == "apply"
@@ -652,6 +719,8 @@ def test_snapshot_is_opened_before_replayer_and_materialization(snapshot_replay)
     ]
     assert [frame for frame, paths in r.renders] == [0, 1, 2]
     assert sum(len(paths) for frame, paths in r.renders) == 9
+    assert len([e for e in r.events if isinstance(e, tuple) and e[0] == "attach"]) == 3
+    assert r.events.count("detach") == r.events.count("destroy") == 3
 
 
 def test_snapshot_hash_mismatch_rejects_before_stage_open(snapshot_replay):
@@ -681,11 +750,6 @@ def test_replay_rejects_invalid_track_or_d0_index(snapshot_replay, mutation):
 
 
 @pytest.mark.parametrize("mutation", ["three_steps", "reset_splice"])
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="139a065: replay validates ordering but not exact physics distance or epoch continuity",
-)
 def test_replay_rejects_invalid_physics_or_epoch(snapshot_replay, mutation):
     r = snapshot_replay
     if mutation == "three_steps":
@@ -736,11 +800,6 @@ def test_record_replay_flags_reject_wrong_modes(monkeypatch, args):
         parse_args(args)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="139a065: --episode is accepted and ignored outside replay",
-)
 def test_episode_flag_rejects_record_mode(monkeypatch):
     monkeypatch.syspath_prepend(str(ROOT / "tools"))
     from launch_isaac_vr import parse_args
@@ -766,3 +825,103 @@ def test_actual_record_advance_is_four_substeps_without_camera_reads(monkeypatch
     successor = capture_state_only_observation(env)
     assert successor.producer.physics_step - source.producer.physics_step == 4
     assert [camera.updates for camera in cameras] == camera_updates
+
+
+@pytest.mark.parametrize("mutation", ["missing_hash", "hdf5_hash", "failed", "aborted", "missing_manifest",
+                                      "wrong_type", "short_track", "nan_world", "session_splice", "reference_splice",
+                                      "five_steps", "wrong_source", "unordered_ids"])
+def test_replay_fails_closed_before_stage_open(snapshot_replay, mutation):
+    import json
+    r = snapshot_replay
+    manifest = json.loads(r.manifest_path.read_text())
+    if mutation == "missing_hash":
+        del manifest["stage_snapshot_sha256"]
+    elif mutation == "hdf5_hash":
+        manifest["hdf5_sha256"] = "0" * 64
+    elif mutation in {"failed", "aborted"}:
+        manifest["outcome"] = "runtime_failed" if mutation == "failed" else "aborted"
+    elif mutation == "wrong_type":
+        r.tracks[0]["type"] = "camera"
+    elif mutation == "short_track":
+        r.track_values["state/right_robot"]["marker"] = np.zeros(2, np.float32)
+    elif mutation == "nan_world":
+        r.track_values["state/object_0"]["marker"][1] = np.nan
+    elif mutation == "session_splice":
+        r.rows[1]["session_epoch"] = np.int64(2)
+    elif mutation == "reference_splice":
+        r.rows[1]["control_reference_epoch"] = np.int64(2)
+    elif mutation == "five_steps":
+        r.rows[1]["action_source_physics_step"] = np.int64(19)
+    elif mutation == "wrong_source":
+        r.rows[0]["observation_physics_step"] = np.int64(19)
+    elif mutation == "unordered_ids":
+        r.rows[2]["observation_id"] = np.int64(1)
+    r.manifest_path.write_text(json.dumps(manifest))
+    if mutation == "missing_manifest":
+        r.manifest_path.unlink()
+    with pytest.raises((RuntimeError, FileNotFoundError)):
+        r.run()
+    assert "active_stage_open" not in r.events
+
+
+@pytest.mark.parametrize("fault", ["timeout", "exception", "physics", "no_capture"])
+def test_optional_render_failure_never_reads_annotators(monkeypatch, tmp_path, fault):
+    from tools import isaac_vr_replay as replay
+
+    emit_capture = fake_capture_events(monkeypatch)
+    state = NS(done=False, physics=0, cancelled=False)
+    async def step(**kwargs):
+        assert kwargs == {"delta_time": 0.0, "pause_timeline": True, "wait_for_render": True}
+        pass
+
+    def schedule(coro):
+        coro.close()
+        return NS(done=lambda: state.done, cancel=lambda: setattr(state, "cancelled", True),
+                  result=lambda: (_ for _ in ()).throw(RuntimeError("render failed")) if fault == "exception" else None)
+
+    def pump():
+        if fault != "no_capture":
+            emit_capture()
+        if fault != "timeout":
+            state.done = True
+        if fault == "physics":
+            state.physics += 1
+
+    rep = module(monkeypatch, "omni.replicator.core",
+                 create=NS(render_product=lambda *a, **kw: NS(destroy=lambda: None)),
+                 AnnotatorRegistry=NS(get_annotator=lambda name: NS(
+                     attach=lambda p: None, detach=lambda: None,
+                     get_data=lambda: pytest.fail("untrusted render read"))),
+                 orchestrator=NS(step_async=step))
+    engine = module(monkeypatch, "omni.kit.async_engine", run_coroutine=schedule)
+    app = module(monkeypatch, "omni.kit.app", get_app=lambda: NS(update=pump))
+    kit = module(monkeypatch, "omni.kit", app=app, async_engine=engine)
+    module(monkeypatch, "omni", kit=kit,
+           replicator=module(monkeypatch, "omni.replicator", core=rep))
+    times = iter([0, 1, 31])
+    monkeypatch.setattr(replay.time, "monotonic", lambda: next(times))
+    with pytest.raises((TimeoutError, RuntimeError)):
+        replay._render_frame({"scene": "/World/camera"}, tmp_path, 0, physics_steps=lambda: state.physics)
+    assert state.cancelled == (fault == "timeout")
+
+
+def fake_capture_events(monkeypatch):
+    callbacks = []
+    dispatcher = module(monkeypatch, "carb.eventdispatcher", get_eventdispatcher=lambda: NS(
+        observe_event=lambda **kw: callbacks.append(kw["on_event"]) or NS(reset=lambda: None)))
+    module(monkeypatch, "carb", eventdispatcher=dispatcher)
+    return lambda: [callback({"capture_id": 0}) for callback in callbacks]
+
+
+def test_disconnect_reconnect_requires_new_episode_baselines(record_loop):
+    r = record_loop
+    r.control.disconnected = {3}
+    assert r.run(6) == 0
+    assert len(r.segments) == 3
+    for segment in r.segments:
+        assert segment[0]["observation_id"] == 0
+        assert segment[0]["action_valid"] == 0
+        for key in ("reset_epoch", "session_epoch", "control_reference_epoch"):
+            assert len({int(row[key]) for row in segment}) == 1
+    assert not any(row["action_valid"] for row in r.segments[1])
+    assert any(row["action_valid"] for row in r.segments[2])

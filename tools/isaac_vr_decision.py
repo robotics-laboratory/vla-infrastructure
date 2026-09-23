@@ -190,6 +190,8 @@ class SolvedControlDecision:
         obs_bytes = payload(asdict(observation))
         action_bytes = b"action:<f4:[14]:deg/mm:" + self.canonical_d0_action
         xr_bytes = payload(asdict(xr))
+        names: tuple[str, ...]
+        source_payloads: tuple[bytes, ...]
         if isinstance(observation, StateOnlyObservation):
             names = (*STATE_ONLY_SIM_SOURCES, "xr.device_io_update", "xr.submitted_frame",
                      "xr.returned_frame", "xr.resolved_input")
@@ -236,6 +238,8 @@ def complete_recorded_transition(
         raise RuntimeError("Cannot complete an unqualified control decision")
     if successor.producer.reset_epoch != solution.observation_identity.producer.reset_epoch:
         raise RuntimeError("Transition crosses a reset epoch")
+    if successor.producer.physics_step != solution.observation_identity.producer.physics_step + 4:
+        raise RuntimeError("Transition requires exactly four physics steps")
     epoch = validator.epoch
     observation_payload = payload(asdict(solution.observation_identity))
     action_payload = b"action:<f4:[14]:deg/mm:" + solution.canonical_d0_action

@@ -240,6 +240,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("./run-vr replay requires --recording <session.hdf5>")
     if args.mode != "replay" and (args.recording is not None or args.render_cameras is not None or args.replay_report is not None):
         parser.error("--recording, --render-cameras and --replay-report require ./run-vr replay")
+    if args.mode != "replay" and any(item.split("=", 1)[0] == "--episode" for item in invocation):
+        parser.error("--episode requires ./run-vr replay")
     if args.episode < 0:
         parser.error("--episode must be nonnegative")
     if args.preview_isolation is None:
@@ -428,7 +430,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         log_context = (
             (output_dir / "stdout.log").open("w", encoding="utf-8")
-            if args.mode == "diagnostic"
+            if args.mode in ("diagnostic", "record")
             else nullcontext(None)
         )
         with log_context as log:
@@ -450,7 +452,8 @@ def main(argv: list[str] | None = None) -> int:
                 return_code = process.wait()
     finally:
         signal.signal(signal.SIGINT, previous_sigint)
-    report_path = output_dir / "result.json"
+    report_path = (args.replay_report if args.mode == "replay" and args.replay_report is not None
+                   else output_dir / "result.json")
     if not report_path.is_file():
         return return_code or 1
     report = json.loads(report_path.read_text(encoding="utf-8"))
@@ -458,7 +461,7 @@ def main(argv: list[str] | None = None) -> int:
         "exit_code": return_code,
         "clean_shutdown": return_code in (0, 130),
         "stop_requested": stop_requested,
-        "stdout_log": str(output_dir / "stdout.log") if args.mode == "diagnostic" else None,
+        "stdout_log": str(output_dir / "stdout.log") if args.mode in ("diagnostic", "record") else None,
         "launcher": str(Path(__file__).resolve()),
     }
     report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")

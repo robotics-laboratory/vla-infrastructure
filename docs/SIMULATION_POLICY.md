@@ -96,8 +96,9 @@ The shared S2 config owns processor/clutch/gripper/tracking semantics; the canon
 VR config owns selected operator scene, presentation, controls and validation.
 The optional external asset lab is experimental and loads its own manifest only
 when selected. A composition object does not imply experimental gate scope.
-Future recording must consume the same base runtime and preserve D0 temporal and
-action-label boundaries. No D1 recorder or recording execution profile is selected.
+State-only recording consumes the same base runtime and preserves D0 temporal and
+action-label boundaries through native NVIDIA HDF5 V2 storage. This implementation
+does not establish D1 dataset admission or select a qualified D1 source.
 
 ## Three-camera observation boundary
 
@@ -126,10 +127,12 @@ arrays at the unchanged boundary without acquisition, rendering or physics.
 Consumers run on the simulation thread and must freeze before its next advance.
 Identical pixel content is valid; producer association establishes freshness.
 
-Startup/reset requires a valid bundle. During ordinary RUN a rejected bundle is
+RUN/DIAG startup/reset requires a valid bundle. RECORD resets the same world,
+articulations and camera epoch bookkeeping, then returns measured state without
+RGB capture. During ordinary RUN a rejected bundle is
 unavailable to capture consumers while existing camera health guards retain their
-bounded-staleness policy. Diagnostic guards remain stricter. Future RECORD will
-define admission/abort behavior separately. The shared RTX pump and 120 Hz render
+bounded-staleness policy. Diagnostic guards remain stricter. RECORD enforces state-only
+four-step causal transitions, internal epoch segmentation and failed outcomes. The shared RTX pump and 120 Hz render
 cadence are unchanged; capture extraction occurs once per control boundary, even
 when previews are hidden. No per-tick three-camera CPU snapshot is required.
 
