@@ -153,7 +153,8 @@ class _BimanualDifferentialIk:
             native.append(np.concatenate((values, [arm_command.gripper_aperture_m])))
         check_observation(self.env, observation)
         return SolvedControlDecision.from_native(
-            tick, observation, xr, command, preclip, np.concatenate(native))
+            tick, observation, xr, command, preclip, np.concatenate(native)
+        )
 
     def apply(self, solution) -> bool:
         if solution.xr_identity is not None:
@@ -222,19 +223,28 @@ def run_s2(env, args_cli, simulation_app) -> int:
     diagnostic = getattr(args_cli, "s2_mode", "diagnostic") == "diagnostic"
     if recording_requested and (diagnostic or getattr(args_cli, "s2_recording_dir", None) is None):
         raise ValueError("recording requires run mode and --s2-recording-dir")
-    if not diagnostic and any(getattr(args_cli, name, False) for name in (
-        "s2_performance_log", "demo_display_toggle_smoke", "demo_backdrop_toggle_smoke",
-        "demo_recenter_smoke", "demo_scene_preview",
-    )):
+    if not diagnostic and any(
+        getattr(args_cli, name, False)
+        for name in (
+            "s2_performance_log",
+            "demo_display_toggle_smoke",
+            "demo_backdrop_toggle_smoke",
+            "demo_recenter_smoke",
+            "demo_scene_preview",
+        )
+    ):
         raise ValueError("Diagnostic-only flags require ./run-vr diag ...")
     experiment = getattr(env, "vr_runtime", None)
     experimental = experiment is not None and experiment.profile == "robosyn_asset_lab"
     if experimental and not diagnostic:
         raise ValueError("robosyn_asset_lab requires ./run-vr diag ...")
     camera_guard = CameraGuard(
-        0 if diagnostic else (
+        0
+        if diagnostic
+        else (
             experiment.config["validation"]["camera_max_stale_control_steps"]
-            if experiment is not None else 2
+            if experiment is not None
+            else 2
         )
     )
     expected = config["environment"]
@@ -411,7 +421,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
             from isaac_vr_recording import start_live_recording
 
             if experiment is not None:
-                experiment.disable_live_rgb()
+                experiment.prepare_recording_view()
             session_id = str(uuid4())
             episode_id = "episode_000000"
             recording = start_live_recording(
@@ -496,9 +506,10 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         flush=True,
                     )
                 host_reset = args_cli.s2_reset_step > 0 and control_steps == args_cli.s2_reset_step
-                environment_reset_requested = bool((
-                    action is not None and events.should_reset and not recenter_execution_reset
-                ) or host_reset)
+                environment_reset_requested = bool(
+                    (action is not None and events.should_reset and not recenter_execution_reset)
+                    or host_reset
+                )
                 if environment_reset_requested and recording is not None:
                     assert recording_token is not None
                     recording.discard_observation(
@@ -622,25 +633,27 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     )
                     stage_started_ns = time.perf_counter_ns()
                 xr = getattr(device, "xr_input", None)
-                eligible = (observation is not None and xr is not None and not xr.rebased
-                            and command.session_active and all(
-                                arm.tracking_valid and not arm.rebased
-                                for arm in (command.left, command.right)))
+                eligible = (
+                    observation is not None
+                    and xr is not None
+                    and not xr.rebased
+                    and command.session_active
+                    and all(
+                        arm.tracking_valid and not arm.rebased
+                        for arm in (command.left, command.right)
+                    )
+                )
                 if recording is not None and not eligible:
                     assert recording_token is not None
                     if xr is None:
                         rejection_reason = "xr_receipt_unavailable"
-                    elif xr.rebased or any(
-                        arm.rebased for arm in (command.left, command.right)
-                    ):
+                    elif xr.rebased or any(arm.rebased for arm in (command.left, command.right)):
                         rejection_reason = "control_reference_rebased"
                     elif not command.session_active:
                         rejection_reason = "teleop_session_inactive"
                     else:
                         rejection_reason = "tracking_invalid"
-                    recording.discard_observation(
-                        recording_token, reason=rejection_reason
-                    )
+                    recording.discard_observation(recording_token, reason=rejection_reason)
                     recording_token = None
                     # Once a transition has committed, advancing an unrecorded
                     # hold would destroy successor continuity. End this
@@ -651,8 +664,12 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 if eligible:
                     control_tick_id += 1  # Monotonic attempts; failures never reuse this ID.
                     device.validate_xr(xr)
-                solution = ik.solve(command, observation if eligible else None,
-                                    xr if eligible else None, control_tick_id if eligible else None)
+                solution = ik.solve(
+                    command,
+                    observation if eligible else None,
+                    xr if eligible else None,
+                    control_tick_id if eligible else None,
+                )
                 if eligible:
                     assert observation is not None and xr is not None
                     device.validate_xr(xr)
@@ -818,7 +835,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         right_transition=command.right.transition,
                         left_scale=command.left.translation_scale,
                         right_scale=command.right.translation_scale,
-                        environment_reset=bool(host_reset or (events.should_reset and not recenter_execution_reset)),
+                        environment_reset=bool(
+                            host_reset or (events.should_reset and not recenter_execution_reset)
+                        ),
                         navigation_rebased=recenter_execution_reset,
                         hud_visible=(
                             experiment.display_visible if experiment is not None else None
@@ -1016,9 +1035,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
             "motion_scale_observed": motion_scale_observed,
             "transitions": transition_counts,
             "maximum_rebase_or_clutch_tcp_motion_m": maximum_rebase_motion_m,
-            **(
-                {"performance": performance_summary} if performance_summary is not None else {}
-            ),
+            **({"performance": performance_summary} if performance_summary is not None else {}),
         },
         "cameras": {
             "left_wrist": "640x480 uint8 RGB HWC",
@@ -1039,8 +1056,12 @@ def run_s2(env, args_cli, simulation_app) -> int:
         report["recording"] = recording_summary
     if not diagnostic:
         report.pop("gpu")
-        for key in ("sensitivity_mode_frames", "motion_scale_observed", "transitions",
-                    "maximum_rebase_or_clutch_tcp_motion_m"):
+        for key in (
+            "sensitivity_mode_frames",
+            "motion_scale_observed",
+            "transitions",
+            "maximum_rebase_or_clutch_tcp_motion_m",
+        ):
             report["execution"].pop(key)
     if args_cli.report is not None:
         args_cli.report.write_text(

@@ -24,7 +24,9 @@ def test_recording_runtime_uses_exact_pre_action_and_successor_boundaries():
     successor = source.index("recording.capture_successor(recording_token)", advance)
     causal_commit = source.index("committed = commit_recording_transition(", successor)
     row = source.index("row = build_committed_transition_sample(", causal_commit)
-    persist = source.index("recording.commit_transition(recording_token, successor_token, row)", row)
+    persist = source.index(
+        "recording.commit_transition(recording_token, successor_token, row)", row
+    )
 
     assert capture < poll < apply < advance < successor < causal_commit < row < persist
 
@@ -39,18 +41,32 @@ def test_recording_runtime_declares_offline_profile_and_real_episode_identity():
     assert 'outcome="unclassified"' not in source
 
 
+def test_physical_recording_hides_backdrop_before_recorder_start():
+    source = (ROOT / "tools/isaac_s2_runtime.py").read_text(encoding="utf-8")
+    prepare = source.index("experiment.prepare_recording_view()")
+    start = source.index("recording = start_live_recording(", prepare)
+    assert prepare < start
+
+    runtime = (ROOT / "tools/isaac_vr_runtime.py").read_text(encoding="utf-8")
+    method = runtime.index("def prepare_recording_view(self)")
+    next_method = runtime.index("\n    def ", method + 1)
+    body = runtime[method:next_method]
+    assert "self.disable_live_rgb()" in body
+    assert "self._set_backdrop_visibility(False)" in body
+
+
 def test_recording_gap_stops_before_unrecorded_native_advance():
     source = (ROOT / "tools/isaac_s2_runtime.py").read_text(encoding="utf-8")
-    discard = source.index("recording.discard_observation(", source.index("if recording is not None and not eligible:"))
+    discard = source.index(
+        "recording.discard_observation(", source.index("if recording is not None and not eligible:")
+    )
     continuity_guard = source.index("if recording.committed_frames:", discard)
     stop = source.index("break", continuity_guard)
     native_apply = source.index("saturated_frames += int(ik.apply(solution))", stop)
     assert discard < continuity_guard < stop < native_apply
 
 
-def test_no_client_lifecycle_smoke_captures_and_finalizes_without_teleop(
-    tmp_path, monkeypatch
-):
+def test_no_client_lifecycle_smoke_captures_and_finalizes_without_teleop(tmp_path, monkeypatch):
     s2_config = tmp_path / "s2.yaml"
     s2_config.write_text(
         yaml.safe_dump(

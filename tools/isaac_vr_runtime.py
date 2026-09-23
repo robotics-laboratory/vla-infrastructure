@@ -29,7 +29,11 @@ if TYPE_CHECKING or __package__:
 else:
     from isaac_vr_config import load_composition
     from isaac_vr_capture import ProducerBoundary, ThreeCameraCapture
-CONVERTED_ROOT = Path(os.environ.get("ROBOSYN_VR_ASSET_CACHE", "/data/vla-infrastructure/assets/robosyn_vr_demo/converted"))
+CONVERTED_ROOT = Path(
+    os.environ.get(
+        "ROBOSYN_VR_ASSET_CACHE", "/data/vla-infrastructure/assets/robosyn_vr_demo/converted"
+    )
+)
 PHYSICS_DT = 1.0 / 120.0
 CAMERA_PERIOD = 1.0 / 30.0
 
@@ -210,9 +214,7 @@ class _FreshVisibleFeedUpdates:
             self._manager._publish_feed(feed)
             publication = self._publications.get(name, 0) + 1
             self._publications[name] = publication
-            capture_reason = (
-                snapshot_reason if name in self._snapshot_remaining else "scheduled"
-            )
+            capture_reason = snapshot_reason if name in self._snapshot_remaining else "scheduled"
             if self._diagnostics is not None:
                 self._diagnostics.capture(
                     feed,
@@ -364,7 +366,9 @@ class VRCameraRig:
         # A counter without a completed pump cannot attest fresh RTX pixels.
         pumps = [v for v in env.sim.visualizers if v.pumps_app_update()]
         if not pumps or not all(getattr(v, "_app_pumped_this_step", False) for v in pumps):
-            raise RuntimeError("No completed Kit RTX pump for this boundary; HEADLESS Kit is unsupported")
+            raise RuntimeError(
+                "No completed Kit RTX pump for this boundary; HEADLESS Kit is unsupported"
+            )
         return ProducerBoundary(
             self.reset_epoch, env.sim.get_physics_step_count(), env.sim.render_generation
         )
@@ -374,7 +378,9 @@ class VRCameraRig:
             return
         if self.capture is None:
             self.capture = ThreeCameraCapture(
-                dict(zip(("left_wrist", "right_wrist", "scene"), (*self.wrists, self.scene_camera))),
+                dict(
+                    zip(("left_wrist", "right_wrist", "scene"), (*self.wrists, self.scene_camera))
+                ),
                 lambda: self.producer_boundary(env),
                 env.capture_measured_state,
             )
@@ -432,7 +438,8 @@ class VRRuntime:
                 Path(diagnostic_root),
                 max_per_feed=int(config["diagnostics"]["camera_capture_limit_per_feed"]),
             )
-            if diagnostic and diagnostic_root is not None else None
+            if diagnostic and diagnostic_root is not None
+            else None
         )
         self._display_button_pressed = False
         self._display_toggle_count = 0
@@ -453,8 +460,10 @@ class VRRuntime:
                 max_update_hz=float(layout["max_update_hz"]),
                 label=label,
             )
-            for name, label in ([("left_wrist", "LEFT WRIST"), ("right_wrist", "RIGHT WRIST")]
-                                + ([("demo_scene", "SCENE")] if self.preview_scene else []))
+            for name, label in (
+                [("left_wrist", "LEFT WRIST"), ("right_wrist", "RIGHT WRIST")]
+                + ([("demo_scene", "SCENE")] if self.preview_scene else [])
+            )
         ]
         layout_cfg = XrCameraFeedLayoutCfg(
             mode=str(layout["mode"]),
@@ -487,7 +496,9 @@ class VRRuntime:
             presenter = self._feed_session._presenter
             if presenter is None:
                 raise RuntimeError("upstream XR camera feed presenter is unavailable")
-            self._feed_session._presenter = _CpuStagedFeedPresenter(presenter, self.preview_isolation)
+            self._feed_session._presenter = _CpuStagedFeedPresenter(
+                presenter, self.preview_isolation
+            )
 
     @property
     def xr_presentation(self) -> dict[str, Any]:
@@ -553,6 +564,11 @@ class VRRuntime:
         """Stop sensor updates and keep all canonical camera prims for replay."""
         self.camera_rig.live_rgb_enabled = False
 
+    def prepare_recording_view(self) -> None:
+        """Keep the headset connection controls visible for offline-RGB recording."""
+        self.disable_live_rgb()
+        self._set_backdrop_visibility(False)
+
     def open(self, env) -> None:
         self._env = env
         self._initial_capture = asdict(env.latest_observation_capture())
@@ -613,7 +629,8 @@ class VRRuntime:
                             ],
                             "upload_device": upload_image.device.type,
                             "panel_layout_pixels": [
-                                feed.panel._component.width * feed.panel._component.unit_to_pixel_scale,
+                                feed.panel._component.width
+                                * feed.panel._component.unit_to_pixel_scale,
                                 feed.panel._component.height
                                 * feed.panel._component.unit_to_pixel_scale,
                             ],
@@ -831,7 +848,9 @@ class VRRuntime:
                 "rgb_cpu_copies_for_capture": 0,
             },
             "profile": self.profile,
-            "preview_partition_topology": self.preview_isolation.report() if self.preview_isolation else {"enabled": False},
+            "preview_partition_topology": self.preview_isolation.report()
+            if self.preview_isolation
+            else {"enabled": False},
             "preview_feed_count": 3 if self.preview_scene else 2,
             "camera_frames_start": self._runtime_frames,
             "camera_frames_end": final,
@@ -1281,6 +1300,7 @@ def run_vr(
     isolation = None
     if args_cli.demo_preview_isolation == "scene-partitions":
         from isaac_preview_partitions import PreviewPartitions
+
         isolation = PreviewPartitions(sim.stage)
     config["vr_camera_feeds"]["include_scene_camera"] = bool(args_cli.demo_preview_scene)
     _spawn_static_scene(config)
@@ -1299,7 +1319,9 @@ def run_vr(
             self_collision=False,
             robot_type="Manipulator",
             run_multi_physics_conversion=False,
-            ros_package_paths=[{"name": "agx_arm_description", "path": "/data/vla-infrastructure/assets"}],
+            ros_package_paths=[
+                {"name": "agx_arm_description", "path": "/data/vla-infrastructure/assets"}
+            ],
             joint_drive=sim_utils.UrdfConverterCfg.JointDriveCfg(
                 drive_type="force",
                 target_type="position",
@@ -1345,7 +1367,9 @@ def run_vr(
             cfg.renderer_cfg.enable_scene_partitioning = False
     wrist_cameras = tuple(Camera(cfg) for cfg in wrist_camera_cfgs)
     scene_cfg = _camera_cfg(
-        "/World/RobosynDemo/SceneCamera", config["cameras"]["scene"], rgba=bool(args_cli.demo_preview_scene)
+        "/World/RobosynDemo/SceneCamera",
+        config["cameras"]["scene"],
+        rgba=bool(args_cli.demo_preview_scene),
     )
     if isolation:
         scene_cfg.renderer_cfg.enable_scene_partitioning = False
@@ -1386,7 +1410,11 @@ def run_vr(
         vr_runtime=runtime,
     )
     env.scene = SimpleNamespace(
-        sensors={"left_wrist": wrist_cameras[0], "right_wrist": wrist_cameras[1], "demo_scene": scene_camera}
+        sensors={
+            "left_wrist": wrist_cameras[0],
+            "right_wrist": wrist_cameras[1],
+            "demo_scene": scene_camera,
+        }
     )
     env.reset(0)
     env._advance(int(config["validation"]["settle_physics_steps"]) - 25)
