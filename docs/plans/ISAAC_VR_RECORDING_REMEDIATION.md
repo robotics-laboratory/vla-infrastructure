@@ -274,7 +274,8 @@ Status vocabulary:
 | VRR-070 | Benchmark production HDF recording against paired no-recording baseline | VRR-031, VRR-042, VRR-062 | `in_progress` (paired harness plus real state/HDF/resource hooks; supported render/XR telemetry and physical pairs pending) | Retained p50/p95/p99, drop/rejection, CPU/GPU/memory/disk metrics meet agreed budget |
 | VRR-080 | Execute physical Quest recording acceptance | VRR-062, VRR-070, S2 physical prerequisite | `blocked` | Human run records useful distinct actions without causal loss and retains required evidence |
 | VRR-090 | Implement LeRobot v3 materializer and full-read dataset QA | VRR-053, VRR-080 | `in_progress` (converter and full-read QA pass on the headless injected artifact; physical admissible source pending VRR-080) | All rows and video streams load, align, and pass schema/task/action/unit/outcome checks |
-| VRR-100 | Add multi-episode operator lifecycle and UX | VRR-090 | `deferred` | Repeated start/stop/reset creates independently finalized qualified episodes without restart |
+| VRR-100 | Add multi-episode operator lifecycle and UX | VRR-090 | `in_progress` (automatic gap segmentation implemented; physical validation and explicit start/stop/reset UX pending) | Repeated start/stop/reset creates independently finalized qualified episodes without restart |
+| VRR-101 | Reject clutch/processor holds and keep CloudXR alive across recording gaps | VRR-022, VRR-100 | `in_progress` (code and unit checks; physical Quest re-test pending) | Grip engage/hold/release, tracking and reference gaps produce no D0 row; prior episode finalizes before unrecorded physics; next episode resumes without XR reconnect |
 
 Execution order for the first repair milestone is:
 
@@ -590,8 +591,9 @@ After the native artifact and replay pass:
 - perform full read and DataLoader iteration over every state row and video stream;
 - retain representative visual and temporal QA before resolving D1.
 
-Multi-episode operator UX follows successful single-episode qualification; it is
-not part of the first correctness repair.
+Automatic episode segmentation is now required before physical single-session
+qualification because ordinary grip use ended the first two physical attempts.
+The full operator start/stop/reset UX remains a separate VRR-100 milestone.
 
 ## Acceptance gates for the first repair series
 

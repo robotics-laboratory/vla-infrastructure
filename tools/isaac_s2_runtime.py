@@ -22,6 +22,7 @@ from tools.isaac_vr_decision import (
     check_observation,
     commit_recording_transition,
     decision_epoch,
+    recordable_teleop_command,
 )
 from isaac_s1_runtime import NativeBimanualTargets, jsonable
 from isaac_s2_performance import S2PerformanceLogger
@@ -396,6 +397,31 @@ def run_s2(env, args_cli, simulation_app) -> int:
     recording_stop_reason: str | None = None
     recording_failure_reason: str | None = None
     recording_summary: dict[str, Any] | None = None
+    recording_episodes: list[dict[str, Any]] = []
+    recording_episode_index = 0
+
+    def finalize_recording(outcome: str, reason: str) -> None:
+        nonlocal recording, recording_summary
+        if recording is None:
+            return
+        active = recording
+        recording = None
+        summary = {
+            "committed_frames": active.committed_frames,
+            "discarded_observations": active.discarded_observations,
+            "outcome": outcome,
+            "reason": reason,
+            "rejections": dict(active.rejections),
+            "run_id": active.run_id,
+            "session_id": active.session_id,
+            "episode_id": active.episode_id,
+            "source_profile": active.source_profile,
+            "output_dir": str(active.output_dir),
+        }
+        active.close(outcome=outcome, reason=reason)
+        recording_summary = summary
+        recording_episodes.append(summary)
+        print(json.dumps({"event": "recording_episode_finalized", **summary}, sort_keys=True), flush=True)
 
     performance = (
         S2PerformanceLogger(
@@ -459,6 +485,30 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     stage_started_ns = time.perf_counter_ns()
                 env.last_control_decision = None
                 env.prepared_control_transaction = None
+                if recording_requested and recording is None:
+                    # A rejected tick after a commit closes only that episode.
+                    # Keep CloudXR and the simulation loop alive, and begin the
+                    # next independent episode at the next control boundary.
+                    recording_episode_index += 1
+                    episode_id = f"episode_{recording_episode_index:06d}"
+                    output_dir = Path(f"{args_cli.s2_recording_dir}-{episode_id}")
+                    recording = start_live_recording(
+                        output_dir,
+                        env,
+                        session_metadata=recording_session_metadata(
+                            config_path=config_path,
+                            environment_pins=actual_versions,
+                            run_id=run_id,
+                            session_id=session_id,
+                            episode_id=episode_id,
+                            execution_profile="isaac_vr_record",
+                            processor_revision=PROCESSOR_REVISION,
+                        ),
+                        portable_roots={
+                            **recording_portable_roots(args_cli),
+                            "recording": output_dir,
+                        },
+                    )
                 if validator is not None and recording is None:
                     # Ordinary RUN prepares receipts for observability only; it
                     # has no persistence/successor phase and must clear them.
@@ -637,11 +687,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     observation is not None
                     and xr is not None
                     and not xr.rebased
-                    and command.session_active
-                    and all(
-                        arm.tracking_valid and not arm.rebased
-                        for arm in (command.left, command.right)
-                    )
+                    and recordable_teleop_command(command)
                 )
                 if recording is not None and not eligible:
                     assert recording_token is not None
@@ -651,21 +697,34 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         rejection_reason = "control_reference_rebased"
                     elif not command.session_active:
                         rejection_reason = "teleop_session_inactive"
-                    else:
+                    elif any(not arm.tracking_valid for arm in (command.left, command.right)):
                         rejection_reason = "tracking_invalid"
+                    else:
+                        rejection_reason = "operator_hold"
                     recording.discard_observation(recording_token, reason=rejection_reason)
                     recording_token = None
-                    # Once a transition has committed, advancing an unrecorded
-                    # hold would destroy successor continuity. End this
-                    # single-episode artifact before any native write/physics.
+                    # An unrecorded native advance would break O_(t+1)->O_t
+                    # continuity. Finalize this episode before that advance,
+                    # but do not tear down CloudXR or the operator's session.
                     if recording.committed_frames:
-                        recording_stop_reason = rejection_reason
-                        break
+                        print(json.dumps({
+                            "event": "recording_episode_boundary",
+                            "reason": rejection_reason,
+                            "left_transition": command.left.transition,
+                            "right_transition": command.right.transition,
+                            "xr_rebased": xr.rebased if xr is not None else None,
+                            "step": control_steps,
+                        }, sort_keys=True), flush=True)
+                        finalize_recording("operator_stopped", rejection_reason)
+                        validator = None
                 if eligible:
                     control_tick_id += 1  # Monotonic attempts; failures never reuse this ID.
                     device.validate_xr(xr)
                 solution = ik.solve(
-                    command,
+                    # Do not execute a valid opposite-arm delta while the
+                    # bimanual recording decision is rejected (e.g. one grip
+                    # clutched). The gap between episodes is a safe hold.
+                    processor.session_inactive() if recording_requested and not eligible else command,
                     observation if eligible else None,
                     xr if eligible else None,
                     control_tick_id if eligible else None,
@@ -695,10 +754,23 @@ def run_s2(env, args_cli, simulation_app) -> int:
                                 recording_token, reason="causal_epoch_changed"
                             )
                             recording_token = None
-                            recording_stop_reason = "causal_epoch_changed"
-                            break
-                        validator.begin_epoch(epoch)
-                    env.prepared_control_transaction = solution.prepare(validator)
+                            print(json.dumps({
+                                "event": "recording_episode_boundary",
+                                "reason": "causal_epoch_changed",
+                                "left_transition": command.left.transition,
+                                "right_transition": command.right.transition,
+                                "xr_rebased": xr.rebased,
+                                "step": control_steps,
+                            }, sort_keys=True), flush=True)
+                            finalize_recording("operator_stopped", "causal_epoch_changed")
+                            validator = None
+                            eligible = False
+                            solution = ik.solve(processor.session_inactive(), None, None, None)
+                        else:
+                            validator.begin_epoch(epoch)
+                    if eligible:
+                        assert validator is not None
+                        env.prepared_control_transaction = solution.prepare(validator)
                 saturated_frames += int(ik.apply(solution))
                 if eligible:
                     env.last_control_decision = solution
@@ -879,18 +951,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     close_reason = recording_stop_reason or (
                         "keyboard_interrupt" if interrupted else "control_loop_completed"
                     )
-                recording_summary = {
-                    "committed_frames": recording.committed_frames,
-                    "discarded_observations": recording.discarded_observations,
-                    "outcome": recording_outcome,
-                    "reason": close_reason,
-                    "rejections": dict(recording.rejections),
-                    "run_id": recording.run_id,
-                    "session_id": recording.session_id,
-                    "episode_id": recording.episode_id,
-                    "source_profile": recording.source_profile,
-                }
-                recording.close(outcome=recording_outcome, reason=close_reason)
+                finalize_recording(recording_outcome, close_reason)
             if experiment is not None:
                 experiment.close()
         finally:
@@ -1054,6 +1115,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
         report["production_gate_status_changed"] = False
     if recording_summary is not None:
         report["recording"] = recording_summary
+    if recording_episodes:
+        report["recording_episodes"] = recording_episodes
     if not diagnostic:
         report.pop("gpu")
         for key in (

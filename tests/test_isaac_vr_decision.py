@@ -29,6 +29,7 @@ from tools.isaac_vr_decision import (
     check_observation,
     commit_recording_transition,
     decision_epoch,
+    recordable_teleop_command,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -275,6 +276,29 @@ def test_prepared_only_validator_and_processor_generation():
         solution.prepare(v)
     with pytest.raises(RuntimeError, match="eligible"):
         replace(solution, xr_identity=replace(xr, rebased=True)).prepare(v)
+
+
+def test_clutch_and_release_are_not_recordable_zero_actions():
+    ik, env = ik_fixture()
+    proc = BimanualS2TeleopProcessor()
+    proc.advance(sample(), sample())  # initial reference acquisition
+    r, _, xr = xr_receipt()
+    validator = CausalTransactionValidator(
+        "isaac", "human_vr", decision_epoch("test_run", env.observation, xr)
+    )
+    for tick, (left, right) in enumerate(
+        (
+            (sample(squeeze=1.0), sample()),
+            (sample(squeeze=1.0), sample(squeeze=1.0)),
+            (sample(), sample()),
+        ),
+        start=1,
+    ):
+        command = proc.advance(left, right)
+        assert not recordable_teleop_command(command)
+        with pytest.raises(RuntimeError, match="Tracking/rebase/hold"):
+            ik.solve(command, env.observation, xr, tick).prepare(validator)
+    assert recordable_teleop_command(proc.advance(sample(), sample()))
 
 
 def test_live_capture_identity_survives_equivalent_module_alias():

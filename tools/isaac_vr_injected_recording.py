@@ -31,7 +31,10 @@ def _command(grippers: tuple[float, float]) -> BimanualTeleopCommand:
             sensitivity_mode="normal",
             translation_scale=1.0,
             rotation_scale=1.0,
-            transition="deterministic_injected_xr",
+            # The production admission guard accepts motion decisions only;
+            # injection provenance is carried by the execution profile, not a
+            # processor hold/rebase transition masquerading as an action.
+            transition="motion",
         )
         for gripper in grippers
     )
