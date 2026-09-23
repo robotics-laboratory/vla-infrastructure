@@ -15,19 +15,35 @@ ROOT = Path(__file__).resolve().parents[2]
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--temporal", choices=("t0", "t1", "t2", "t3", "t4", "t5", "t6-sync-explicit"), default="t0"
+        "--temporal",
+        choices=(
+            "t0",
+            "t1",
+            "t2",
+            "t3",
+            "t4",
+            "t5",
+            "t6-sync-explicit",
+            "t6-double-render",
+            "t3-low-latency-off",
+        ),
+        default="t0",
     )
     parser.add_argument("--cost", choices=("c0", "c1", "c2", "c3", "c4"), default="c3")
     parser.add_argument("--batch", action="store_true")
     parser.add_argument("--probe", action="store_true")
+    parser.add_argument("--gpu-scopes", action="store_true")
+    parser.add_argument(
+        "--sentinel", action="store_true", help="Break four-state periodicity with declared holds"
+    )
     parser.add_argument("--mode", choices=("smoke", "xr-smoke", "physical"), default="smoke")
     parser.add_argument("--warmup", type=int, default=300)
     parser.add_argument("--measured", type=int, default=3000)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--state-root", type=Path, required=True)
     args = parser.parse_args()
-    if not args.probe and args.mode != "smoke":
-        parser.error("Cost runs use the existing no-client committed RECORD benchmark")
+    if not args.probe and args.mode == "physical":
+        parser.error("Physical cost work requires the human RECORD entrypoint")
     args.output.mkdir(parents=True, exist_ok=False, mode=0o700)
     sources = args.output / "sources"
     shutil.copytree(Path(__file__).parent, sources, ignore=shutil.ignore_patterns("__pycache__"))
@@ -43,11 +59,16 @@ def main():
         CAMERA_AUDIT_COST=args.cost,
         CAMERA_AUDIT_BATCH=str(int(args.batch or args.temporal == "t5")),
         CAMERA_AUDIT_PROBE=str(args.measured if args.probe else 0),
+        CAMERA_AUDIT_GPU_SCOPES=str(int(args.gpu_scopes)),
+        CAMERA_AUDIT_SENTINEL=str(int(args.sentinel)),
+        CAMERA_AUDIT_XR_COST=str(int(not args.probe and args.mode == "xr-smoke")),
+        CAMERA_AUDIT_WARMUP=str(args.warmup),
+        CAMERA_AUDIT_MEASURED=str(args.measured),
     )
-    ticks = 10 if args.probe else args.warmup + args.measured
+    ticks = 10 if args.probe or args.mode == "xr-smoke" else args.warmup + args.measured
     cmd = [
         "./run-vr",
-        "diag" if args.probe else "record",
+        "diag" if args.probe or args.mode == "xr-smoke" else "record",
         "--state-root",
         str(args.state_root),
         "--run-dir",
@@ -59,11 +80,11 @@ def main():
         "--performance-window-steps",
         str(ticks),
     ]
-    if not args.probe:
+    if not args.probe and args.mode == "smoke":
         cmd += ["--xr-resolution-scale", "0.4"]
     if args.mode != "physical":
         cmd.append("--" + args.mode)
-    if not args.probe:
+    if not args.probe and args.mode == "smoke":
         cmd += [
             "--injected-actions",
             "--recording-benchmark",

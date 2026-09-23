@@ -30,5 +30,43 @@
     "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.replicator.core-1.13.36+110.3.0.lx64.r.cp312/omni/replicator/core/scripts/annotators_default.py": "d506cf16dfad371f3f0968ee07a99e253401318a147759c3b9f388f9161efb65",
     "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.kit.hydra_texture-1.6.2+00c488ae.lx64.r.cp312/omni/hydratexture/_hydra_texture.pyi": "002db0f9d5264512639f685bc90bf152f7d416b5394ba3d8d1cc349d842c5223"
   },
-  "inspection": "step -> native PhysX simulate/fetch -> render -> forward -> Kit update; Camera extracts annotators, not completion proof; Replicator step 0.0 has wait_for_render and changes app async in capture settings"
+  "inspection": "step -> native PhysX simulate/fetch -> render -> forward -> Kit update; Camera extracts annotators, not completion proof; Replicator step 0.0 has wait_for_render and changes app async in capture settings",
+  "external": [
+    {
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/replicator_tutorials/tutorial_replicator_getting_started.html",
+      "retrieved_date": "2026-09-24 Europe/Moscow (2026-09-23 UTC)",
+      "claim": "wait_for_render blocks for capture; false may return previous frame; held delta_time supported",
+      "version_scope": "6.1 documentation; parameters verified locally"
+    },
+    {
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/replicator_tutorials/tutorial_replicator_sdg_workflows.html",
+      "retrieved_date": "2026-09-24 Europe/Moscow (2026-09-23 UTC)",
+      "claim": "Active RenderProducts continue rendering per application tick; disable via updates_enabled",
+      "version_scope": "6.1 documentation; local Hydra property verified"
+    },
+    {
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/usdrt.scenegraph/latest/fabricsd/fsd_vs_omnihydra.html",
+      "retrieved_date": "2026-09-24 Europe/Moscow (2026-09-23 UTC)",
+      "claim": "FSD consumes Fabric rather than the legacy mixed USD/Fabric path",
+      "version_scope": "contextual rolling docs; local Kit experience confirms selected FSD setting"
+    },
+    {
+      "url": "https://forums.developer.nvidia.com/t/usdskel-not-in-sync-when-the-scene-is-played/344617",
+      "retrieved_date": "2026-09-24 Europe/Moscow (2026-09-23 UTC)",
+      "claim": "NVIDIA reply attributes skeleton N versus skinned mesh N-1 to FSD ordering; proposes synchronous Replicator capture",
+      "version_scope": "context only: skeleton and Isaac 6.0, not our rigid bodies/6.1 measurement"
+    },
+    {
+      "url": "https://forums.developer.nvidia.com/t/camera-images-are-always-delayed-2-rendering-frames/251906",
+      "retrieved_date": "2026-09-24 Europe/Moscow (2026-09-23 UTC)",
+      "claim": "User reports two rendering-frame camera lag",
+      "version_scope": "context only: 2023 releases, not proof here"
+    },
+    {
+      "url": "https://forums.developer.nvidia.com/t/the-simulation-time-is-desynchronized-with-the-playback-time/346839",
+      "retrieved_date": "2026-09-24 Europe/Moscow (2026-09-23 UTC)",
+      "claim": "User reports render versus postprocess phase difference",
+      "version_scope": "context only: Isaac 5.0, not proof here"
+    }
+  ]
 }

@@ -14,7 +14,9 @@ class Imports(importlib.abc.MetaPathFinder):
         spec = importlib.machinery.PathFinder.find_spec(fullname, path)
         if spec is None:
             return None
-        loader = spec.loader
+        from typing import cast
+
+        loader = cast(importlib.abc.Loader, spec.loader)
 
         class Loader(importlib.abc.Loader):
             def create_module(self, spec):
@@ -47,6 +49,14 @@ class Imports(importlib.abc.MetaPathFinder):
                         from audit_runtime import install
 
                         install(env, args)
+                        if int(os.environ["CAMERA_AUDIT_PROBE"]) and not args.xr:
+                            import json
+
+                            env._camera_audit_run_probe()
+                            args.report.write_text(
+                                json.dumps({"experiment": True, "physical": False})
+                            )
+                            return 0
                         return original(env, args, app)
 
                     module.run_s2 = run
@@ -61,9 +71,13 @@ if os.environ.get("CAMERA_AUDIT_OUTPUT"):
     if "--kit_args" in sys.argv:
         index = sys.argv.index("--kit_args") + 1
         sys.argv[index] += " --/persistent/xr/profile/ar/render/resolutionMultiplier=0.4"
+        if os.environ.get("CAMERA_AUDIT_XR_COST") == "1":
+            sys.argv[index] += " --enable isaacsim.replicator.episode_recorder"
         candidate = os.environ["CAMERA_AUDIT_TEMPORAL"]
         if candidate in ("t3", "t6-sync-explicit"):
             sys.argv[index] += " --/app/asyncRendering=false"
+        if candidate == "t3-low-latency-off":
+            sys.argv[index] += " --/app/asyncRenderingLowLatency=false"
         if candidate == "t4":
             sys.argv[index] += " --/app/useFabricSceneDelegate=false"
     sys.meta_path.insert(0, Imports())

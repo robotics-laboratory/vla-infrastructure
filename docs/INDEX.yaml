@@ -2928,3 +2928,8 @@ documents:
   status: current
   owner: vr.performance
   mutable: true
+- path: docs/experiments/20260924_live_camera_temporal_cost_audit/environment.json
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true

@@ -18,6 +18,8 @@ SETTINGS = (
     "/persistent/xr/profile/ar/render/resolutionMultiplier",
     "/physics/updateToUsd",
     "/app/player/playSimulations",
+    "/exts/omni.replicator.core/Orchestrator/enabled",
+    "/omni/replicator/captureOnPlay",
 )
 
 
@@ -76,11 +78,20 @@ def install(env, args):
             )
         )
 
+    for flag in ("demo_display_toggle_smoke", "demo_backdrop_toggle_smoke", "demo_recenter_smoke"):
+        setattr(args, flag, False)
+
     def timed(obj, method, name):
+        if isinstance(obj, str):
+            from isaaclab.utils.string import string_to_callable
+
+            obj = string_to_callable(obj)
         original = getattr(obj, method)
 
         def call(*a, **kw):
             started = time.perf_counter_ns()
+            if name == "fabric_forward":
+                counts["forward"] += 1
             try:
                 return original(*a, **kw)
             finally:
@@ -105,7 +116,7 @@ def install(env, args):
 
     def step(*a, **kw):
         render = kw.get("render", True)
-        if candidate in ("t1", "t2", "t6-sync-explicit") and render:
+        if candidate in ("t1", "t2", "t6-sync-explicit", "t6-double-render") and render:
             kw["render"] = False
             pending[0] = True
         flags.append(kw.get("render", True))
@@ -122,6 +133,8 @@ def install(env, args):
             if candidate == "t2":
                 import omni.replicator.core as rep
 
+                rep.orchestrator.set_capture_on_play(False)
+                settings.set("/exts/omni.replicator.core/Orchestrator/enabled", True)
                 env.sim.forward()
                 previous = settings.get("/app/player/playSimulations")
                 settings.set_bool("/app/player/playSimulations", False)
@@ -137,9 +150,11 @@ def install(env, args):
                     logger.add_nested("replicator_barrier", time.perf_counter_ns() - started)
             else:
                 env.sim.render()
+                if candidate == "t6-double-render":
+                    env.sim.render()
             assert before == (env.sim.get_physics_step_count(), counts["native_physics"])
             assert state_before == env.capture_measured_state(), "Render changed native state"
-        if probe_count:
+        if probe_count or rig.live_rgb_enabled:
             return original_boundary(current_env)
         if level < 2:
             return None
@@ -179,6 +194,15 @@ def install(env, args):
         suspension.suspend_dataset_camera_rendering = lambda *a, **kw: None
     if level == 4:
         (out / "rgb").mkdir()
+    gpu_stats = None
+    if os.environ.get("CAMERA_AUDIT_GPU_SCOPES") == "1":
+        omni.kit.app.get_app().get_extension_manager().set_extension_enabled_immediate(
+            "omni.hydra.engine.stats", True
+        )
+        import omni.hydra.engine.stats
+
+        settings.set("/profiler/enabled", True)
+        gpu_stats = omni.hydra.engine.stats.HydraEngineStats()
     stream = (out / "mechanisms.jsonl").open("w")
     previous_end = S2PerformanceLogger.end_step
     previous_counts = dict(counts)
@@ -186,9 +210,21 @@ def install(env, args):
     previous_physics = [env.sim.get_physics_step_count()]
     previous_render = [env.sim.render_generation]
 
+    xr_cost_started = False
+    previous_cpu = time.process_time_ns()
+    previous_wall = time.perf_counter_ns()
+
     def end(logger, number, **state):
-        nonlocal previous_counts, previous_drawables
+        nonlocal previous_counts, previous_drawables, xr_cost_started, previous_cpu, previous_wall
+        observer_started = time.perf_counter_ns()
         result = previous_end(logger, number, **state)
+        cpu, wall = time.process_time_ns(), time.perf_counter_ns()
+        io = {
+            key: int(value)
+            for key, value in (
+                line.split(":") for line in Path("/proc/self/io").read_text().splitlines()
+            )
+        }
         row = {
             "tick": number,
             "physics": env.sim.get_physics_step_count(),
@@ -199,6 +235,13 @@ def install(env, args):
             "drawables": {k: drawables[k] - previous_drawables[k] for k in drawables},
             "render_flags": list(flags),
             "panels_bound": env.vr_runtime._feed_bound,
+            "resources": {
+                "process_cpu_percent": 100 * (cpu - previous_cpu) / (wall - previous_wall),
+                "rss_bytes": int(Path("/proc/self/statm").read_text().split()[1])
+                * os.sysconf("SC_PAGE_SIZE"),
+                "disk_read_bytes_cumulative": io["read_bytes"],
+                "disk_write_bytes_cumulative": io["write_bytes"],
+            },
             "products": {
                 r: str(getattr(c, "owner", c)._render_data.render_product.path)
                 for r, c in cameras.items()
@@ -215,12 +258,21 @@ def install(env, args):
                 for r, c in cameras.items()
             ],
         }
-        stream.write(json.dumps(row) + "\n")
+        if gpu_stats is not None:
+            row["gpu_scopes"] = gpu_stats.get_gpu_profiler_result()
+        row["observer_before_write_ms"] = (time.perf_counter_ns() - observer_started) / 1e6
+        stream.write(json.dumps(row, default=str) + "\n")
         stream.flush()
         previous_counts, previous_drawables = dict(counts), dict(drawables)
         previous_physics[0], previous_render[0] = row["physics"], row["render_generation"]
         flags.clear()
-        if number == args.s2_max_control_steps:
+        previous_cpu, previous_wall = cpu, wall
+        if number == args.s2_max_control_steps and not xr_cost_started:
+            if os.environ.get("CAMERA_AUDIT_XR_COST") == "1":
+                xr_cost_started = True
+                from xr_cost import run as run_cost
+
+                run_cost(env, args, out)
             if probe_count:
                 from audit_oracle import run
 
@@ -228,6 +280,13 @@ def install(env, args):
             (out / "settings-after.json").write_text(json.dumps(effective(), indent=2))
         return result
 
+    def run_probe():
+        from audit_oracle import run
+
+        run(env, out, probe_count, counts, drawables)
+        (out / "settings-after.json").write_text(json.dumps(effective(), indent=2))
+
+    env._camera_audit_run_probe = run_probe
     S2PerformanceLogger.end_step = end
     # Retain subscriptions for the process; no global GPU/frame-info polling.
     env._camera_audit_subscriptions = subscriptions
