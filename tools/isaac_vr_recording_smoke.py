@@ -148,6 +148,12 @@ def run_recording_lifecycle_smoke(
                 raise RuntimeError("recording timing arrived before benchmark logger startup")
             benchmark_logger.add_stage(name, elapsed_ns)
 
+        recording_options: dict[str, Any] = {}
+        if benchmark_log is not None:
+            recording_options = {
+                "flush_every_frames": int(args_cli.s2_recording_benchmark_flush_every_frames),
+                "timing_observer": observe_recording_timing,
+            }
         recording = start_live_recording(
             args_cli.s2_recording_dir,
             env,
@@ -161,12 +167,7 @@ def run_recording_lifecycle_smoke(
                 processor_revision=processor_revision,
             ),
             portable_roots=recording_portable_roots(args_cli),
-            flush_every_frames=(
-                int(args_cli.s2_recording_benchmark_flush_every_frames)
-                if benchmark_log is not None
-                else 64
-            ),
-            timing_observer=observe_recording_timing if benchmark_log is not None else None,
+            **recording_options,
         )
         if getattr(args_cli, "s2_injected_recording_smoke", False):
             from isaac_vr_injected_recording import (
