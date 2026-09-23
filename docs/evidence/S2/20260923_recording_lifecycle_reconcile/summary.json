@@ -1,0 +1,1730 @@
+{
+  "dataset_admissible": false,
+  "episodes": [
+    {
+      "committed_frames": 3,
+      "discarded_observations": 2,
+      "episode_id": "episode_000000",
+      "materialization": {
+        "command": [
+          "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_lerobot_materialize.py",
+          "orchestrate",
+          "--extract-python",
+          "/data/vla-infrastructure/isaac61_production/env/bin/python",
+          "--recording",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923/session.hdf5",
+          "--replay-report",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T163127199764Z-replay-dual_cube_to_matching_plates-hud-off/result.json",
+          "--output",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923/lerobot-v3",
+          "--repo-id",
+          "validation/lifecycle-episode_000000",
+          "--task-id",
+          "dual_cube_to_matching_plates",
+          "--portable-root",
+          "recording=/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923",
+          "--portable-root",
+          "isaac61_production=/data/vla-infrastructure/isaac61_production",
+          "--portable-root",
+          "project_assets=/data/vla-infrastructure/assets"
+        ],
+        "episode": "episode_000000",
+        "exit_code": 0
+      },
+      "materialization_manifest": "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923/lerobot-v3/isaac_vr_materialization_manifest.json",
+      "materialization_manifest_sha256": "079851dbf451942f1fa26b7890ec446e2c0481ac0a8fc61aee70145e91ce63af",
+      "outcome": "operator_stopped",
+      "output_dir": "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923",
+      "qa": {
+        "all_frames_read": 3,
+        "all_video_frames_decoded": 9,
+        "dataloader_batches": 2,
+        "dataloader_frames": 3
+      },
+      "reason": "operator_hold",
+      "rejections": {
+        "control_reference_rebased": 1,
+        "operator_hold": 1
+      },
+      "replay": {
+        "command": [
+          "/data/vla-infrastructure/isaac61_production/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/tools/launch_isaac_vr.py",
+          "replay",
+          "--recording",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923/session.hdf5",
+          "--episode",
+          "0",
+          "--render-cameras",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923/replay-renders-default"
+        ],
+        "episode": "episode_000000",
+        "exit_code": 0,
+        "report": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T163127199764Z-replay-dual_cube_to_matching_plates-hud-off/result.json"
+      },
+      "replay_report_sha256": "b3bc5b1bdbf5e8b129f5175b30bf44d1792fe5b8b1167ef0127ea1f2a26054d6",
+      "rgb_frames": 9,
+      "run_id": "2371131a-1f3c-4d6f-b249-f51dd9e478e3",
+      "session_id": "d9e26a48-4baf-4d17-bfd8-48f8066ded5d",
+      "source_profile": "isaac_human_vr_offline_rgb_v1"
+    },
+    {
+      "committed_frames": 2,
+      "discarded_observations": 3,
+      "episode_id": "episode_000001",
+      "materialization": {
+        "command": [
+          "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_lerobot_materialize.py",
+          "orchestrate",
+          "--extract-python",
+          "/data/vla-infrastructure/isaac61_production/env/bin/python",
+          "--recording",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000001/session.hdf5",
+          "--replay-report",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T163133567443Z-replay-dual_cube_to_matching_plates-hud-off/result.json",
+          "--output",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000001/lerobot-v3",
+          "--repo-id",
+          "validation/lifecycle-episode_000001",
+          "--task-id",
+          "dual_cube_to_matching_plates",
+          "--portable-root",
+          "recording=/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000001",
+          "--portable-root",
+          "isaac61_production=/data/vla-infrastructure/isaac61_production",
+          "--portable-root",
+          "project_assets=/data/vla-infrastructure/assets"
+        ],
+        "episode": "episode_000001",
+        "exit_code": 0
+      },
+      "materialization_manifest": "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000001/lerobot-v3/isaac_vr_materialization_manifest.json",
+      "materialization_manifest_sha256": "279a28baeacf3dd444256e1e9386b1513f7bafe8995916c4797f49cbcf51cb01",
+      "outcome": "operator_stopped",
+      "output_dir": "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000001",
+      "qa": {
+        "all_frames_read": 2,
+        "all_video_frames_decoded": 6,
+        "dataloader_batches": 1,
+        "dataloader_frames": 2
+      },
+      "reason": "tracking_invalid",
+      "rejections": {
+        "control_reference_rebased": 1,
+        "operator_hold": 1,
+        "tracking_invalid": 1
+      },
+      "replay": {
+        "command": [
+          "/data/vla-infrastructure/isaac61_production/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/tools/launch_isaac_vr.py",
+          "replay",
+          "--recording",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000001/session.hdf5",
+          "--episode",
+          "0",
+          "--render-cameras",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000001/replay-renders-default"
+        ],
+        "episode": "episode_000001",
+        "exit_code": 0,
+        "report": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T163133567443Z-replay-dual_cube_to_matching_plates-hud-off/result.json"
+      },
+      "replay_report_sha256": "059f043fe9cb5adaaaf095650e48448de44a0a660df00720a67f7f14eed3a5d3",
+      "rgb_frames": 6,
+      "run_id": "2371131a-1f3c-4d6f-b249-f51dd9e478e3",
+      "session_id": "d9e26a48-4baf-4d17-bfd8-48f8066ded5d",
+      "source_profile": "isaac_human_vr_offline_rgb_v1"
+    },
+    {
+      "committed_frames": 2,
+      "discarded_observations": 2,
+      "episode_id": "episode_000002",
+      "materialization": {
+        "command": [
+          "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_lerobot_materialize.py",
+          "orchestrate",
+          "--extract-python",
+          "/data/vla-infrastructure/isaac61_production/env/bin/python",
+          "--recording",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000002/session.hdf5",
+          "--replay-report",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T163139660524Z-replay-dual_cube_to_matching_plates-hud-off/result.json",
+          "--output",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000002/lerobot-v3",
+          "--repo-id",
+          "validation/lifecycle-episode_000002",
+          "--task-id",
+          "dual_cube_to_matching_plates",
+          "--portable-root",
+          "recording=/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000002",
+          "--portable-root",
+          "isaac61_production=/data/vla-infrastructure/isaac61_production",
+          "--portable-root",
+          "project_assets=/data/vla-infrastructure/assets"
+        ],
+        "episode": "episode_000002",
+        "exit_code": 0
+      },
+      "materialization_manifest": "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000002/lerobot-v3/isaac_vr_materialization_manifest.json",
+      "materialization_manifest_sha256": "76653a560f764c4945ee2bda771240240254976ebe94db498277c296840744ac",
+      "outcome": "operator_stopped",
+      "output_dir": "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000002",
+      "qa": {
+        "all_frames_read": 2,
+        "all_video_frames_decoded": 6,
+        "dataloader_batches": 1,
+        "dataloader_frames": 2
+      },
+      "reason": "control_reference_rebased",
+      "rejections": {
+        "control_reference_rebased": 2
+      },
+      "replay": {
+        "command": [
+          "/data/vla-infrastructure/isaac61_production/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/tools/launch_isaac_vr.py",
+          "replay",
+          "--recording",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000002/session.hdf5",
+          "--episode",
+          "0",
+          "--render-cameras",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000002/replay-renders-default"
+        ],
+        "episode": "episode_000002",
+        "exit_code": 0,
+        "report": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T163139660524Z-replay-dual_cube_to_matching_plates-hud-off/result.json"
+      },
+      "replay_report_sha256": "34fa84e28cbc61f649291edce1930558255fc0d915369edd15627507fa7300b2",
+      "rgb_frames": 6,
+      "run_id": "2371131a-1f3c-4d6f-b249-f51dd9e478e3",
+      "session_id": "d9e26a48-4baf-4d17-bfd8-48f8066ded5d",
+      "source_profile": "isaac_human_vr_offline_rgb_v1"
+    },
+    {
+      "committed_frames": 2,
+      "discarded_observations": 1,
+      "episode_id": "episode_000003",
+      "materialization": {
+        "command": [
+          "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_lerobot_materialize.py",
+          "orchestrate",
+          "--extract-python",
+          "/data/vla-infrastructure/isaac61_production/env/bin/python",
+          "--recording",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000003/session.hdf5",
+          "--replay-report",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T163146075316Z-replay-dual_cube_to_matching_plates-hud-off/result.json",
+          "--output",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000003/lerobot-v3",
+          "--repo-id",
+          "validation/lifecycle-episode_000003",
+          "--task-id",
+          "dual_cube_to_matching_plates",
+          "--portable-root",
+          "recording=/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000003",
+          "--portable-root",
+          "isaac61_production=/data/vla-infrastructure/isaac61_production",
+          "--portable-root",
+          "project_assets=/data/vla-infrastructure/assets"
+        ],
+        "episode": "episode_000003",
+        "exit_code": 0
+      },
+      "materialization_manifest": "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000003/lerobot-v3/isaac_vr_materialization_manifest.json",
+      "materialization_manifest_sha256": "8fbdda5bb4a5afe5ddd6ce08aac617c3e2bf667e2eadab36873ad721deb27eee",
+      "outcome": "operator_stopped",
+      "output_dir": "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000003",
+      "qa": {
+        "all_frames_read": 2,
+        "all_video_frames_decoded": 6,
+        "dataloader_batches": 1,
+        "dataloader_frames": 2
+      },
+      "reason": "causal_epoch_changed",
+      "rejections": {
+        "causal_epoch_changed": 1
+      },
+      "replay": {
+        "command": [
+          "/data/vla-infrastructure/isaac61_production/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/tools/launch_isaac_vr.py",
+          "replay",
+          "--recording",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000003/session.hdf5",
+          "--episode",
+          "0",
+          "--render-cameras",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000003/replay-renders-default"
+        ],
+        "episode": "episode_000003",
+        "exit_code": 0,
+        "report": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T163146075316Z-replay-dual_cube_to_matching_plates-hud-off/result.json"
+      },
+      "replay_report_sha256": "2362a176c66e886c515384e6a4c1aa318a2b2aad5fc0e15e07f55e1431fb69bc",
+      "rgb_frames": 6,
+      "run_id": "2371131a-1f3c-4d6f-b249-f51dd9e478e3",
+      "session_id": "d9e26a48-4baf-4d17-bfd8-48f8066ded5d",
+      "source_profile": "isaac_human_vr_offline_rgb_v1"
+    },
+    {
+      "committed_frames": 3,
+      "discarded_observations": 0,
+      "episode_id": "episode_000004",
+      "materialization": {
+        "command": [
+          "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_lerobot_materialize.py",
+          "orchestrate",
+          "--extract-python",
+          "/data/vla-infrastructure/isaac61_production/env/bin/python",
+          "--recording",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000004/session.hdf5",
+          "--replay-report",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T163152372774Z-replay-dual_cube_to_matching_plates-hud-off/result.json",
+          "--output",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000004/lerobot-v3",
+          "--repo-id",
+          "validation/lifecycle-episode_000004",
+          "--task-id",
+          "dual_cube_to_matching_plates",
+          "--portable-root",
+          "recording=/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000004",
+          "--portable-root",
+          "isaac61_production=/data/vla-infrastructure/isaac61_production",
+          "--portable-root",
+          "project_assets=/data/vla-infrastructure/assets"
+        ],
+        "episode": "episode_000004",
+        "exit_code": 0
+      },
+      "materialization_manifest": "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000004/lerobot-v3/isaac_vr_materialization_manifest.json",
+      "materialization_manifest_sha256": "227e31643455f40ee301017e74d4a03812c186f39e21eae4581403f5f44888f6",
+      "outcome": "operator_stopped",
+      "output_dir": "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000004",
+      "qa": {
+        "all_frames_read": 3,
+        "all_video_frames_decoded": 9,
+        "dataloader_batches": 2,
+        "dataloader_frames": 3
+      },
+      "reason": "control_loop_completed",
+      "rejections": {},
+      "replay": {
+        "command": [
+          "/data/vla-infrastructure/isaac61_production/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/tools/launch_isaac_vr.py",
+          "replay",
+          "--recording",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000004/session.hdf5",
+          "--episode",
+          "0",
+          "--render-cameras",
+          "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-segments-20260923-episode_000004/replay-renders-default"
+        ],
+        "episode": "episode_000004",
+        "exit_code": 0,
+        "report": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T163152372774Z-replay-dual_cube_to_matching_plates-hud-off/result.json"
+      },
+      "replay_report_sha256": "32a902e79ef18001631f75ff7560a4e02ce7cd39d76dd0aeeb28279465af3ec1",
+      "rgb_frames": 9,
+      "run_id": "2371131a-1f3c-4d6f-b249-f51dd9e478e3",
+      "session_id": "d9e26a48-4baf-4d17-bfd8-48f8066ded5d",
+      "source_profile": "isaac_human_vr_offline_rgb_v1"
+    }
+  ],
+  "local_start": "0cae8990159e978cd987a98402021931b5d6014a",
+  "mechanisms": {
+    "after_reset": {
+      "left_wrist": {
+        "annotator_bindings": {
+          "rgba": false
+        },
+        "camera_prim_valid": true,
+        "render_product": "/Render/OmniverseKit/HydraTextures/rp_1f40ec7e698c45d3903b83be97264a2b",
+        "render_product_valid": true,
+        "same_camera": true,
+        "updates_enabled": false
+      },
+      "right_wrist": {
+        "annotator_bindings": {
+          "rgba": false
+        },
+        "camera_prim_valid": true,
+        "render_product": "/Render/OmniverseKit/HydraTextures/rp_b06f83b4be25470f983396f2864bed7c",
+        "render_product_valid": true,
+        "same_camera": true,
+        "updates_enabled": false
+      },
+      "scene": {
+        "annotator_bindings": {
+          "rgba": false
+        },
+        "camera_prim_valid": true,
+        "render_product": "/Render/OmniverseKit/HydraTextures/rp_d349a75439e648f1b84d50460896fd03",
+        "render_product_valid": true,
+        "same_camera": true,
+        "updates_enabled": false
+      }
+    },
+    "after_setup": {
+      "left_wrist": {
+        "annotator_bindings": {
+          "rgba": false
+        },
+        "camera_prim_valid": true,
+        "render_product": "/Render/OmniverseKit/HydraTextures/rp_1f40ec7e698c45d3903b83be97264a2b",
+        "render_product_valid": true,
+        "same_camera": true,
+        "updates_enabled": false
+      },
+      "right_wrist": {
+        "annotator_bindings": {
+          "rgba": false
+        },
+        "camera_prim_valid": true,
+        "render_product": "/Render/OmniverseKit/HydraTextures/rp_b06f83b4be25470f983396f2864bed7c",
+        "render_product_valid": true,
+        "same_camera": true,
+        "updates_enabled": false
+      },
+      "scene": {
+        "annotator_bindings": {
+          "rgba": false
+        },
+        "camera_prim_valid": true,
+        "render_product": "/Render/OmniverseKit/HydraTextures/rp_d349a75439e648f1b84d50460896fd03",
+        "render_product_valid": true,
+        "same_camera": true,
+        "updates_enabled": false
+      }
+    },
+    "controls": [
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "kit_pumps": 1,
+        "physics": 4,
+        "render_flags": [
+          false,
+          false,
+          false,
+          true
+        ]
+      }
+    ],
+    "device_entered": true,
+    "device_exited_at": 20,
+    "drawable_events": {
+      "left_wrist": 0,
+      "right_wrist": 0,
+      "scene": 0
+    },
+    "episodes": [
+      {
+        "close_resources": {
+          "left_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_1f40ec7e698c45d3903b83be97264a2b",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "right_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_b06f83b4be25470f983396f2864bed7c",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "scene": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_d349a75439e648f1b84d50460896fd03",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          }
+        },
+        "committed_frames": 3,
+        "episode_id": "episode_000000",
+        "resources": {
+          "left_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_1f40ec7e698c45d3903b83be97264a2b",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "right_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_b06f83b4be25470f983396f2864bed7c",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "scene": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_d349a75439e648f1b84d50460896fd03",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          }
+        }
+      },
+      {
+        "close_resources": {
+          "left_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_1f40ec7e698c45d3903b83be97264a2b",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "right_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_b06f83b4be25470f983396f2864bed7c",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "scene": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_d349a75439e648f1b84d50460896fd03",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          }
+        },
+        "committed_frames": 2,
+        "episode_id": "episode_000001",
+        "resources": {
+          "left_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_1f40ec7e698c45d3903b83be97264a2b",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "right_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_b06f83b4be25470f983396f2864bed7c",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "scene": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_d349a75439e648f1b84d50460896fd03",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          }
+        }
+      },
+      {
+        "close_resources": {
+          "left_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_1f40ec7e698c45d3903b83be97264a2b",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "right_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_b06f83b4be25470f983396f2864bed7c",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "scene": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_d349a75439e648f1b84d50460896fd03",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          }
+        },
+        "committed_frames": 2,
+        "episode_id": "episode_000002",
+        "resources": {
+          "left_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_1f40ec7e698c45d3903b83be97264a2b",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "right_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_b06f83b4be25470f983396f2864bed7c",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "scene": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_d349a75439e648f1b84d50460896fd03",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          }
+        }
+      },
+      {
+        "close_resources": {
+          "left_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_1f40ec7e698c45d3903b83be97264a2b",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "right_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_b06f83b4be25470f983396f2864bed7c",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "scene": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_d349a75439e648f1b84d50460896fd03",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          }
+        },
+        "committed_frames": 2,
+        "episode_id": "episode_000003",
+        "resources": {
+          "left_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_1f40ec7e698c45d3903b83be97264a2b",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "right_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_b06f83b4be25470f983396f2864bed7c",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "scene": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_d349a75439e648f1b84d50460896fd03",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          }
+        }
+      },
+      {
+        "close_resources": {
+          "left_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_1f40ec7e698c45d3903b83be97264a2b",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "right_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_b06f83b4be25470f983396f2864bed7c",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "scene": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_d349a75439e648f1b84d50460896fd03",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          }
+        },
+        "committed_frames": 3,
+        "episode_id": "episode_000004",
+        "resources": {
+          "left_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_1f40ec7e698c45d3903b83be97264a2b",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "right_wrist": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_b06f83b4be25470f983396f2864bed7c",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          },
+          "scene": {
+            "annotator_bindings": {
+              "rgba": false
+            },
+            "camera_prim_valid": true,
+            "render_product": "/Render/OmniverseKit/HydraTextures/rp_d349a75439e648f1b84d50460896fd03",
+            "render_product_valid": true,
+            "same_camera": true,
+            "updates_enabled": false
+          }
+        }
+      }
+    ],
+    "native_applied_ticks": [
+      2,
+      3,
+      4,
+      8,
+      9,
+      12,
+      13,
+      15,
+      16,
+      18,
+      19,
+      20
+    ],
+    "reset": {
+      "epoch_after": 3,
+      "epoch_before": 2,
+      "observation_keys": [
+        "observation.state"
+      ],
+      "state_generation": 170
+    },
+    "scope": "no-client native validation",
+    "settling": [
+      {
+        "kit_pumps": 1,
+        "physics": 25,
+        "render_flags": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true
+        ]
+      }
+    ]
+  },
+  "mypy": {
+    "isaac_s2_runtime": {
+      "baseline": {
+        "errors": [
+          "tools/isaac_s2_runtime.py: error: Incompatible types in assignment (expression has type \"object\", variable has type \"ndarray[Any, Any] | None\")  [assignment]",
+          "tools/isaac_s2_runtime.py: error: No overload variant of \"int\" matches argument type \"object\"  [call-overload]",
+          "tools/isaac_s2_runtime.py: error: No overload variant of \"int\" matches argument type \"object\"  [call-overload]"
+        ],
+        "exit_code": 1
+      },
+      "current": {
+        "errors": [
+          "tools/isaac_s2_runtime.py: error: Incompatible types in assignment (expression has type \"object\", variable has type \"ndarray[Any, Any] | None\")  [assignment]",
+          "tools/isaac_s2_runtime.py: error: No overload variant of \"int\" matches argument type \"object\"  [call-overload]",
+          "tools/isaac_s2_runtime.py: error: No overload variant of \"int\" matches argument type \"object\"  [call-overload]"
+        ],
+        "exit_code": 1
+      },
+      "new_errors": []
+    },
+    "isaac_vr_decision": {
+      "baseline": {
+        "errors": [
+          "tools/isaac_vr_decision.py: error: Item \"StateSnapshotObservation\" of \"ObservationCapture | StateSnapshotObservation\" has no attribute \"producer\"  [union-attr]",
+          "tools/isaac_vr_decision.py: error: Item \"ObservationCapture\" of \"ObservationCapture | StateSnapshotObservation\" has no attribute \"reset_epoch\"  [union-attr]",
+          "tools/isaac_vr_decision.py: error: Item \"StateSnapshotObservation\" of \"ObservationCapture | StateSnapshotObservation\" has no attribute \"eligible\"  [union-attr]",
+          "tools/isaac_vr_decision.py: error: Incompatible types in assignment (expression has type \"tuple[str, str, str, str, str, str, str, str]\", variable has type \"tuple[str, str, str, str, str]\")  [assignment]",
+          "tools/isaac_vr_decision.py: error: Incompatible types in assignment (expression has type \"tuple[bytes, bytes, bytes, bytes, bytes, bytes, bytes, bytes]\", variable has type \"tuple[bytes, bytes, bytes, bytes, bytes]\")  [assignment]"
+        ],
+        "exit_code": 1
+      },
+      "current": {
+        "errors": [
+          "tools/isaac_vr_decision.py: error: Item \"StateSnapshotObservation\" of \"ObservationCapture | StateSnapshotObservation\" has no attribute \"producer\"  [union-attr]",
+          "tools/isaac_vr_decision.py: error: Item \"ObservationCapture\" of \"ObservationCapture | StateSnapshotObservation\" has no attribute \"reset_epoch\"  [union-attr]",
+          "tools/isaac_vr_decision.py: error: Item \"StateSnapshotObservation\" of \"ObservationCapture | StateSnapshotObservation\" has no attribute \"eligible\"  [union-attr]",
+          "tools/isaac_vr_decision.py: error: Incompatible types in assignment (expression has type \"tuple[str, str, str, str, str, str, str, str]\", variable has type \"tuple[str, str, str, str, str]\")  [assignment]",
+          "tools/isaac_vr_decision.py: error: Incompatible types in assignment (expression has type \"tuple[bytes, bytes, bytes, bytes, bytes, bytes, bytes, bytes]\", variable has type \"tuple[bytes, bytes, bytes, bytes, bytes]\")  [assignment]"
+        ],
+        "exit_code": 1
+      },
+      "new_errors": []
+    },
+    "isaac_vr_injected_recording": {
+      "baseline": {
+        "errors": [
+          "tools/isaac_vr_injected_recording.py: error: Item \"None\" of \"Any | None\" has no attribute \"sample\"  [union-attr]",
+          "tools/isaac_vr_injected_recording.py: error: Cannot find implementation or library stub for module named \"isaacsim.replicator.episode_recorder\"  [import-not-found]"
+        ],
+        "exit_code": 1
+      },
+      "current": {
+        "errors": [
+          "tools/isaac_vr_injected_recording.py: error: Item \"None\" of \"Any | None\" has no attribute \"sample\"  [union-attr]",
+          "tools/isaac_vr_injected_recording.py: error: Cannot find implementation or library stub for module named \"isaacsim.replicator.episode_recorder\"  [import-not-found]"
+        ],
+        "exit_code": 1
+      },
+      "new_errors": []
+    },
+    "isaac_vr_runtime": {
+      "baseline": {
+        "errors": [
+          "tools/isaac_s2_runtime.py: error: Incompatible types in assignment (expression has type \"object\", variable has type \"ndarray[Any, Any] | None\")  [assignment]",
+          "tools/isaac_s2_runtime.py: error: No overload variant of \"int\" matches argument type \"object\"  [call-overload]",
+          "tools/isaac_s2_runtime.py: error: No overload variant of \"int\" matches argument type \"object\"  [call-overload]",
+          "tools/isaac_vr_runtime.py: error: Cannot find implementation or library stub for module named \".isaac_vr_config\"  [import-not-found]",
+          "tools/isaac_vr_runtime.py: error: Cannot find implementation or library stub for module named \".isaac_vr_capture\"  [import-not-found]"
+        ],
+        "exit_code": 1
+      },
+      "current": {
+        "errors": [
+          "tools/isaac_s2_runtime.py: error: Incompatible types in assignment (expression has type \"object\", variable has type \"ndarray[Any, Any] | None\")  [assignment]",
+          "tools/isaac_s2_runtime.py: error: No overload variant of \"int\" matches argument type \"object\"  [call-overload]",
+          "tools/isaac_s2_runtime.py: error: No overload variant of \"int\" matches argument type \"object\"  [call-overload]",
+          "tools/isaac_vr_runtime.py: error: Cannot find implementation or library stub for module named \".isaac_vr_config\"  [import-not-found]",
+          "tools/isaac_vr_runtime.py: error: Cannot find implementation or library stub for module named \".isaac_vr_capture\"  [import-not-found]"
+        ],
+        "exit_code": 1
+      },
+      "new_errors": []
+    }
+  },
+  "native_result_sha256": "8e46d464d2ca01d50fc39c7d2f6ec8d69b6b2b12d15302a77ce2e1ed7a5be0d7",
+  "native_run": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T162830263348Z-record-dual_cube_to_matching_plates-hud-off",
+  "performance": {
+    "after_mean_ms": 23.942022136666665,
+    "after_pooled_hz": 41.767566427420626,
+    "before_mean_ms": 24.084575002222223,
+    "before_pooled_hz": 41.52035067705087,
+    "delta_hz_percent": 0.5954086281511062,
+    "delta_mean_ms": -0.14255286555555813,
+    "scope": "three 30-warmup + 300-measured no-client injected runs; existing profiler plus external counters; different time of day; not physical parity"
+  },
+  "performance_runs": [
+    {
+      "command": [
+        "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "/tmp/recording-lifecycle-reconcile/native_driver.py",
+        "/home/ebulochkin/vla_infrastructure",
+        "record",
+        "--smoke",
+        "--injected-actions",
+        "--recording-benchmark",
+        "--benchmark-pair-id",
+        "combined-onepump-1",
+        "--benchmark-warmup-steps",
+        "30",
+        "--benchmark-measured-steps",
+        "300",
+        "--benchmark-flush-every-frames",
+        "64",
+        "--max-control-steps",
+        "330",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "300",
+        "--recording-dir",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-candidate-1-20260923"
+      ],
+      "mechanisms_sha256": "5c5c685ce8c1d4fb9f8a28d0922e38031e3390b5dc0ab6f5681a08ade5bebd66",
+      "performance": {
+        "control": {
+          "max_ms": 34.52575,
+          "mean_ms": 23.87711032,
+          "p50_ms": 23.499947499999998,
+          "p90_ms": 24.788931200000004,
+          "p95_ms": 25.8428015,
+          "p99_ms": 30.60565787,
+          "samples": 300
+        },
+        "deadline_miss_fraction": 0.0033333333333333335,
+        "deadline_misses": 1,
+        "deadline_ms": 33.333333333333336,
+        "effective_hz": 41.88111486683452,
+        "event": "performance_summary",
+        "host_timing_only_no_added_cuda_synchronization": true,
+        "instrumentation_write": {
+          "max_ms": 0.040666,
+          "mean_ms": 0.016960066666666666,
+          "p50_ms": 0.0147835,
+          "p90_ms": 0.021806600000000023,
+          "p95_ms": 0.03503975000000001,
+          "p99_ms": 0.039116189999999995,
+          "samples": 300
+        },
+        "log_path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T162649217531Z-record-dual_cube_to_matching_plates-hud-off/performance.jsonl",
+        "monotonic_ns": 2407191799714765,
+        "nested_stages_not_additive": {
+          "camera_update": {
+            "max_ms": 0.008434,
+            "mean_ms": 0.0035398499999999998,
+            "p50_ms": 0.0034340000000000004,
+            "p90_ms": 0.0040532,
+            "p95_ms": 0.004270350000000001,
+            "p99_ms": 0.00478221,
+            "samples": 300
+          },
+          "experiment_update": {
+            "max_ms": 0.013659000000000001,
+            "mean_ms": 0.008376423333333332,
+            "p50_ms": 0.0081215,
+            "p90_ms": 0.009186900000000001,
+            "p95_ms": 0.01037925,
+            "p99_ms": 0.012600459999999997,
+            "samples": 300
+          },
+          "hdf_append_ms": {
+            "max_ms": 0.519954,
+            "mean_ms": 0.21442139333333335,
+            "p50_ms": 0.20655099999999998,
+            "p90_ms": 0.2156733,
+            "p95_ms": 0.22199065000000004,
+            "p99_ms": 0.5002490499999999,
+            "samples": 300
+          },
+          "hdf_flush_ms": {
+            "max_ms": 11.035611,
+            "mean_ms": 0.13008369,
+            "p50_ms": 0.0,
+            "p90_ms": 0.0,
+            "p95_ms": 0.0,
+            "p99_ms": 6.97690985,
+            "samples": 300
+          },
+          "kit_visualizer_step": {
+            "max_ms": 8.186401,
+            "mean_ms": 6.29033176,
+            "p50_ms": 6.1919995,
+            "p90_ms": 6.7028519000000015,
+            "p95_ms": 6.97414885,
+            "p99_ms": 7.37356509,
+            "samples": 300
+          },
+          "physics_probe_update": {
+            "max_ms": 0.009648,
+            "mean_ms": 0.005237923333333333,
+            "p50_ms": 0.005,
+            "p90_ms": 0.005968100000000001,
+            "p95_ms": 0.0065752000000000015,
+            "p99_ms": 0.009066849999999998,
+            "samples": 300
+          },
+          "physics_target_write": {
+            "max_ms": 1.2661120000000001,
+            "mean_ms": 0.6689917066666666,
+            "p50_ms": 0.6440079999999999,
+            "p90_ms": 0.6946981000000001,
+            "p95_ms": 0.8620288500000001,
+            "p99_ms": 1.16024263,
+            "samples": 300
+          },
+          "robot_update": {
+            "max_ms": 1.003063,
+            "mean_ms": 0.6175609266666667,
+            "p50_ms": 0.597465,
+            "p90_ms": 0.6775424999999999,
+            "p95_ms": 0.7692975499999999,
+            "p99_ms": 0.8864148799999997,
+            "samples": 300
+          },
+          "sim_step": {
+            "max_ms": 23.034989000000003,
+            "mean_ms": 18.712822126666666,
+            "p50_ms": 18.5620935,
+            "p90_ms": 19.433554,
+            "p95_ms": 19.67777685,
+            "p99_ms": 20.445127890000002,
+            "samples": 300
+          }
+        },
+        "schema": "piper_x_isaac_s2_performance_v1",
+        "stages": {
+          "causal_commit_and_record": {
+            "max_ms": 12.429592,
+            "mean_ms": 1.5653732733333334,
+            "p50_ms": 1.3980035000000002,
+            "p90_ms": 1.4602587999999999,
+            "p95_ms": 1.5975920000000001,
+            "p99_ms": 8.42115269,
+            "samples": 300
+          },
+          "injected_decision_apply": {
+            "max_ms": 1.53627,
+            "mean_ms": 0.8045036333333333,
+            "p50_ms": 0.7810284999999999,
+            "p90_ms": 0.8814921000000001,
+            "p95_ms": 0.9640181,
+            "p99_ms": 1.22448272,
+            "samples": 300
+          },
+          "observation_capture": {
+            "max_ms": 0.016572,
+            "mean_ms": 0.009456153333333333,
+            "p50_ms": 0.009226,
+            "p90_ms": 0.010178600000000001,
+            "p95_ms": 0.012032450000000002,
+            "p99_ms": 0.013943139999999996,
+            "samples": 300
+          },
+          "simulation_advance": {
+            "max_ms": 25.311358,
+            "mean_ms": 20.04229981,
+            "p50_ms": 19.8752915,
+            "p90_ms": 20.729179700000003,
+            "p95_ms": 21.222524650000004,
+            "p99_ms": 21.911107109999996,
+            "samples": 300
+          },
+          "successor_capture": {
+            "max_ms": 2.503675,
+            "mean_ms": 1.2719925933333334,
+            "p50_ms": 1.2186214999999998,
+            "p90_ms": 1.3603188,
+            "p95_ms": 1.4975429500000002,
+            "p99_ms": 2.3824242399999993,
+            "samples": 300
+          }
+        },
+        "step_first": 31,
+        "step_last": 330,
+        "total_logged_steps": 300,
+        "unattributed": {
+          "max_ms": 0.3135440000000038,
+          "mean_ms": 0.18348485666666675,
+          "p50_ms": 0.1771780000000014,
+          "p90_ms": 0.20471400000000065,
+          "p95_ms": 0.21584960000000353,
+          "p99_ms": 0.2688399400000015,
+          "samples": 300
+        },
+        "warmup_steps_excluded": 30
+      },
+      "run": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T162649217531Z-record-dual_cube_to_matching_plates-hud-off"
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "/tmp/recording-lifecycle-reconcile/native_driver.py",
+        "/home/ebulochkin/vla_infrastructure",
+        "record",
+        "--smoke",
+        "--injected-actions",
+        "--recording-benchmark",
+        "--benchmark-pair-id",
+        "combined-onepump-2",
+        "--benchmark-warmup-steps",
+        "30",
+        "--benchmark-measured-steps",
+        "300",
+        "--benchmark-flush-every-frames",
+        "64",
+        "--max-control-steps",
+        "330",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "300",
+        "--recording-dir",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-candidate-2-20260923"
+      ],
+      "mechanisms_sha256": "26d54b2f60506c19eaf08ba7a156938459432f43d9be0999f07c25e74c8bd474",
+      "performance": {
+        "control": {
+          "max_ms": 33.637874,
+          "mean_ms": 24.044398926666666,
+          "p50_ms": 23.6722225,
+          "p90_ms": 24.9819739,
+          "p95_ms": 26.088910650000003,
+          "p99_ms": 30.44903866,
+          "samples": 300
+        },
+        "deadline_miss_fraction": 0.006666666666666667,
+        "deadline_misses": 2,
+        "deadline_ms": 33.333333333333336,
+        "effective_hz": 41.58972753071987,
+        "event": "performance_summary",
+        "host_timing_only_no_added_cuda_synchronization": true,
+        "instrumentation_write": {
+          "max_ms": 0.051404,
+          "mean_ms": 0.01690811,
+          "p50_ms": 0.0149305,
+          "p90_ms": 0.020878800000000006,
+          "p95_ms": 0.033921900000000005,
+          "p99_ms": 0.041211349999999994,
+          "samples": 300
+        },
+        "log_path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T162710440514Z-record-dual_cube_to_matching_plates-hud-off/performance.jsonl",
+        "monotonic_ns": 2407212810536257,
+        "nested_stages_not_additive": {
+          "camera_update": {
+            "max_ms": 0.008291,
+            "mean_ms": 0.00339339,
+            "p50_ms": 0.003298,
+            "p90_ms": 0.003816,
+            "p95_ms": 0.0039381500000000005,
+            "p99_ms": 0.004473469999999978,
+            "samples": 300
+          },
+          "experiment_update": {
+            "max_ms": 0.013787,
+            "mean_ms": 0.00789346,
+            "p50_ms": 0.0076384999999999995,
+            "p90_ms": 0.009031700000000002,
+            "p95_ms": 0.009567100000000002,
+            "p99_ms": 0.012081969999999992,
+            "samples": 300
+          },
+          "hdf_append_ms": {
+            "max_ms": 0.596733,
+            "mean_ms": 0.21707158000000001,
+            "p50_ms": 0.209432,
+            "p90_ms": 0.2233227,
+            "p95_ms": 0.23211215000000004,
+            "p99_ms": 0.49472635,
+            "samples": 300
+          },
+          "hdf_flush_ms": {
+            "max_ms": 10.362385,
+            "mean_ms": 0.12591323333333332,
+            "p50_ms": 0.0,
+            "p90_ms": 0.0,
+            "p95_ms": 0.0,
+            "p99_ms": 6.659031109999999,
+            "samples": 300
+          },
+          "kit_visualizer_step": {
+            "max_ms": 9.41993,
+            "mean_ms": 6.364696726666667,
+            "p50_ms": 6.2734555,
+            "p90_ms": 6.744002699999999,
+            "p95_ms": 7.0425978,
+            "p99_ms": 7.506913089999999,
+            "samples": 300
+          },
+          "physics_probe_update": {
+            "max_ms": 0.009033,
+            "mean_ms": 0.004560203333333333,
+            "p50_ms": 0.004401,
+            "p90_ms": 0.005182000000000001,
+            "p95_ms": 0.005462150000000001,
+            "p99_ms": 0.008163509999999999,
+            "samples": 300
+          },
+          "physics_target_write": {
+            "max_ms": 1.100503,
+            "mean_ms": 0.6596473566666666,
+            "p50_ms": 0.6458360000000001,
+            "p90_ms": 0.6800068000000001,
+            "p95_ms": 0.7951122500000003,
+            "p99_ms": 0.9072956899999995,
+            "samples": 300
+          },
+          "robot_update": {
+            "max_ms": 0.9505460000000001,
+            "mean_ms": 0.6133141566666667,
+            "p50_ms": 0.5945685,
+            "p90_ms": 0.6726000999999999,
+            "p95_ms": 0.77215315,
+            "p99_ms": 0.8560057699999999,
+            "samples": 300
+          },
+          "sim_step": {
+            "max_ms": 22.977173,
+            "mean_ms": 18.873805896666667,
+            "p50_ms": 18.7043385,
+            "p90_ms": 19.5199175,
+            "p95_ms": 19.97864425,
+            "p99_ms": 21.17342797,
+            "samples": 300
+          }
+        },
+        "schema": "piper_x_isaac_s2_performance_v1",
+        "stages": {
+          "causal_commit_and_record": {
+            "max_ms": 11.722479,
+            "mean_ms": 1.5712466999999999,
+            "p50_ms": 1.411662,
+            "p90_ms": 1.5085658000000004,
+            "p95_ms": 1.6019944000000017,
+            "p99_ms": 8.1421368,
+            "samples": 300
+          },
+          "injected_decision_apply": {
+            "max_ms": 1.397229,
+            "mean_ms": 0.8113443333333333,
+            "p50_ms": 0.789037,
+            "p90_ms": 0.8887147000000001,
+            "p95_ms": 0.9751185,
+            "p99_ms": 1.1603817999999992,
+            "samples": 300
+          },
+          "observation_capture": {
+            "max_ms": 0.032632,
+            "mean_ms": 0.00977683,
+            "p50_ms": 0.009394,
+            "p90_ms": 0.0107003,
+            "p95_ms": 0.012832700000000002,
+            "p99_ms": 0.01428329,
+            "samples": 300
+          },
+          "simulation_advance": {
+            "max_ms": 24.575734,
+            "mean_ms": 20.1883642,
+            "p50_ms": 20.01621,
+            "p90_ms": 20.903146800000002,
+            "p95_ms": 21.388320199999995,
+            "p99_ms": 22.835735829999997,
+            "samples": 300
+          },
+          "successor_capture": {
+            "max_ms": 2.425942,
+            "mean_ms": 1.2784907533333334,
+            "p50_ms": 1.230972,
+            "p90_ms": 1.3722704000000003,
+            "p95_ms": 1.4876619000000002,
+            "p99_ms": 2.2868135499999998,
+            "samples": 300
+          }
+        },
+        "step_first": 31,
+        "step_last": 330,
+        "total_logged_steps": 300,
+        "unattributed": {
+          "max_ms": 0.4128700000000016,
+          "mean_ms": 0.18517611000000003,
+          "p50_ms": 0.17913900000000282,
+          "p90_ms": 0.20374310000000195,
+          "p95_ms": 0.21804465000000128,
+          "p99_ms": 0.26368402000000424,
+          "samples": 300
+        },
+        "warmup_steps_excluded": 30
+      },
+      "run": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T162710440514Z-record-dual_cube_to_matching_plates-hud-off"
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "/tmp/recording-lifecycle-reconcile/native_driver.py",
+        "/home/ebulochkin/vla_infrastructure",
+        "record",
+        "--smoke",
+        "--injected-actions",
+        "--recording-benchmark",
+        "--benchmark-pair-id",
+        "combined-onepump-3",
+        "--benchmark-warmup-steps",
+        "30",
+        "--benchmark-measured-steps",
+        "300",
+        "--benchmark-flush-every-frames",
+        "64",
+        "--max-control-steps",
+        "330",
+        "--performance-warmup-steps",
+        "30",
+        "--performance-window-steps",
+        "300",
+        "--recording-dir",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/lifecycle-reconcile-candidate-3-20260923"
+      ],
+      "mechanisms_sha256": "1324aec23b2830ebfd8e8bae8d5751d956e75a0876b0f1ddae86565ae6db76c5",
+      "performance": {
+        "control": {
+          "max_ms": 34.627677,
+          "mean_ms": 23.904557163333333,
+          "p50_ms": 23.574790999999998,
+          "p90_ms": 24.8220835,
+          "p95_ms": 26.1472211,
+          "p99_ms": 30.646409839999993,
+          "samples": 300
+        },
+        "deadline_miss_fraction": 0.0033333333333333335,
+        "deadline_misses": 1,
+        "deadline_ms": 33.333333333333336,
+        "effective_hz": 41.833027617590744,
+        "event": "performance_summary",
+        "host_timing_only_no_added_cuda_synchronization": true,
+        "instrumentation_write": {
+          "max_ms": 0.063298,
+          "mean_ms": 0.016797176666666667,
+          "p50_ms": 0.014671,
+          "p90_ms": 0.020787100000000006,
+          "p95_ms": 0.03480265000000001,
+          "p99_ms": 0.039591329999999994,
+          "samples": 300
+        },
+        "log_path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T162731530717Z-record-dual_cube_to_matching_plates-hud-off/performance.jsonl",
+        "monotonic_ns": 2407233883466811,
+        "nested_stages_not_additive": {
+          "camera_update": {
+            "max_ms": 0.008723,
+            "mean_ms": 0.0033971,
+            "p50_ms": 0.0032965,
+            "p90_ms": 0.0038093000000000003,
+            "p95_ms": 0.004026600000000001,
+            "p99_ms": 0.004368,
+            "samples": 300
+          },
+          "experiment_update": {
+            "max_ms": 0.011228,
+            "mean_ms": 0.0072327599999999995,
+            "p50_ms": 0.007063,
+            "p90_ms": 0.0080472,
+            "p95_ms": 0.0085648,
+            "p99_ms": 0.010169669999999992,
+            "samples": 300
+          },
+          "hdf_append_ms": {
+            "max_ms": 0.506675,
+            "mean_ms": 0.21371790333333332,
+            "p50_ms": 0.20685599999999998,
+            "p90_ms": 0.2185416,
+            "p95_ms": 0.22786920000000013,
+            "p99_ms": 0.48508605,
+            "samples": 300
+          },
+          "hdf_flush_ms": {
+            "max_ms": 10.895626,
+            "mean_ms": 0.12825519999999999,
+            "p50_ms": 0.0,
+            "p90_ms": 0.0,
+            "p95_ms": 0.0,
+            "p99_ms": 6.8441579799999985,
+            "samples": 300
+          },
+          "kit_visualizer_step": {
+            "max_ms": 7.892176,
+            "mean_ms": 6.330146523333334,
+            "p50_ms": 6.243142499999999,
+            "p90_ms": 6.7371084,
+            "p95_ms": 6.9184858,
+            "p99_ms": 7.55429997,
+            "samples": 300
+          },
+          "physics_probe_update": {
+            "max_ms": 0.009157,
+            "mean_ms": 0.00423073,
+            "p50_ms": 0.004082499999999999,
+            "p90_ms": 0.0049474,
+            "p95_ms": 0.0053917,
+            "p99_ms": 0.0062651399999999954,
+            "samples": 300
+          },
+          "physics_target_write": {
+            "max_ms": 1.080703,
+            "mean_ms": 0.6565858733333333,
+            "p50_ms": 0.6431735,
+            "p90_ms": 0.6733340000000001,
+            "p95_ms": 0.82172475,
+            "p99_ms": 0.9156654799999994,
+            "samples": 300
+          },
+          "robot_update": {
+            "max_ms": 0.8590329999999999,
+            "mean_ms": 0.6043238966666666,
+            "p50_ms": 0.586515,
+            "p90_ms": 0.6675916000000001,
+            "p95_ms": 0.74882405,
+            "p99_ms": 0.81961451,
+            "samples": 300
+          },
+          "sim_step": {
+            "max_ms": 21.119303000000002,
+            "mean_ms": 18.804844636666665,
+            "p50_ms": 18.673255,
+            "p90_ms": 19.464331200000004,
+            "p95_ms": 19.69014365,
+            "p99_ms": 20.625183229999998,
+            "samples": 300
+          }
+        },
+        "schema": "piper_x_isaac_s2_performance_v1",
+        "stages": {
+          "causal_commit_and_record": {
+            "max_ms": 12.22342,
+            "mean_ms": 1.5462147266666666,
+            "p50_ms": 1.3831764999999998,
+            "p90_ms": 1.4704451,
+            "p95_ms": 1.5804272000000033,
+            "p99_ms": 8.277606549999998,
+            "samples": 300
+          },
+          "injected_decision_apply": {
+            "max_ms": 1.383795,
+            "mean_ms": 0.7969018366666667,
+            "p50_ms": 0.778897,
+            "p90_ms": 0.8749202000000001,
+            "p95_ms": 0.9406554500000001,
+            "p99_ms": 1.0181434099999984,
+            "samples": 300
+          },
+          "observation_capture": {
+            "max_ms": 0.017947,
+            "mean_ms": 0.0096446,
+            "p50_ms": 0.009350500000000001,
+            "p90_ms": 0.010477500000000006,
+            "p95_ms": 0.01214560000000001,
+            "p99_ms": 0.01659931,
+            "samples": 300
+          },
+          "simulation_advance": {
+            "max_ms": 22.697152,
+            "mean_ms": 20.10562579,
+            "p50_ms": 19.968517,
+            "p90_ms": 20.8483672,
+            "p95_ms": 21.0701279,
+            "p99_ms": 22.09130097,
+            "samples": 300
+          },
+          "successor_capture": {
+            "max_ms": 2.299151,
+            "mean_ms": 1.2619950666666666,
+            "p50_ms": 1.2135799999999999,
+            "p90_ms": 1.3633741000000001,
+            "p95_ms": 1.4765843500000002,
+            "p99_ms": 2.24729394,
+            "samples": 300
+          }
+        },
+        "step_first": 31,
+        "step_last": 330,
+        "total_logged_steps": 300,
+        "unattributed": {
+          "max_ms": 0.2810760000000023,
+          "mean_ms": 0.18417514333333357,
+          "p50_ms": 0.17975400000000086,
+          "p90_ms": 0.20472760000000037,
+          "p95_ms": 0.211300600000002,
+          "p99_ms": 0.2552037699999992,
+          "samples": 300
+        },
+        "warmup_steps_excluded": 30
+      },
+      "run": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260923T162731530717Z-record-dual_cube_to_matching_plates-hud-off"
+    }
+  ],
+  "physical_verified": false,
+  "raw_archive": "/data/ebulochkin/vla-runtime/evidence/20260923_recording_lifecycle_reconcile/validation.tar.gz",
+  "remote": "a6f14c3fc1c5dd3facbdd39ea1320e77479a0e6d",
+  "schema": "recording_lifecycle_reconciliation_v1",
+  "source_sha256": {
+    "tests/test_isaac_s2_recording_runtime.py": "85d815c2985db192caa6b315807ae2531d3080d25dcffadb0e9482c892bbeef3",
+    "tests/test_isaac_vr_camera_rendering.py": "11af321bf6a2b26b06652d97368164014ebed5180e747bb40faf5f8f92695201",
+    "tests/test_isaac_vr_decision.py": "735e16047ef43dfc4e92311d5b6a00412592e4560e0f94d734fddc4e61f15ee6",
+    "tests/test_run_vr.py": "1e2d1429ccb8bc634386883c0e094552ad7e7e80d0426909fa06fa2694b2aac0",
+    "tools/isaac_s2_runtime.py": "eeae4548ba56700ed3553246fef90b49824d53484d93cbb7384aa49557380f83",
+    "tools/isaac_vr_decision.py": "c39dc7b1ef7d4938d0dfa5e7d5dc754409b4e3b439560c163e6bb4762729c8d3",
+    "tools/isaac_vr_injected_recording.py": "e2e0e544653d94fa15e8ab6d8866f18d86678e4672aabd8c684a2aafa8d9be86",
+    "tools/isaac_vr_runtime.py": "67c35f5f51f0eb9b0a2c9189501c3e34916489f61d13b9ed947b85ccf1e25fa6"
+  },
+  "tested_scope": "local start plus exact runtime/test hashes; external injected inputs and observers; no physical XR"
+}

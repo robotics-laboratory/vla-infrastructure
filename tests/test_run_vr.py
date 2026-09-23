@@ -645,6 +645,7 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
             run_id="run",
             session_id="session",
             episode_id="episode_000000",
+            output_dir=tmp_path / "recording",
             source_profile="isaac_human_vr_offline_rgb_v1",
             capture_observation=lambda: NS(observation=env.current_capture),
             discard_observation=lambda *a, **kw: None,
@@ -652,7 +653,7 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
         )
         monkeypatch.setattr(isaac_vr_recording, "start_live_recording", lambda *a, **kw: record)
         monkeypatch.setattr(runtime, "recording_portable_roots", lambda _: {})
-        composition.disable_live_rgb = lambda: None
+        composition.prepare_recording_view = lambda: None
         args.s2_mode = "run"
         args.s2_record = args.s2_teleop = True
         args.s2_recording_dir = tmp_path / "recording"

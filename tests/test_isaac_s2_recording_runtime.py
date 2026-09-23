@@ -1,11 +1,16 @@
 """Seam checks for the Kit-owned S2 recording transaction order."""
 
+import ast
 import json
 from pathlib import Path
 import sys
 from types import ModuleType, SimpleNamespace as NS
 
 import yaml
+import numpy as np
+
+from tools.isaac_s2_processor import BimanualS2TeleopProcessor, ControllerDeltaSample
+from tools.isaac_vr_decision import recordable_teleop_command
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
@@ -57,15 +62,105 @@ def test_dataset_suspension_follows_snapshot_provenance_and_recordable_setup():
     assert snapshot < provenance < cameras < opened < episode < suspension < cadence < ready
 
 
-def test_recording_gap_stops_before_unrecorded_native_advance():
+def test_physical_recording_hides_backdrop_before_recorder_start():
+    source = (ROOT / "tools/isaac_s2_runtime.py").read_text(encoding="utf-8")
+    prepare = source.index("experiment.prepare_recording_view()")
+    start = source.index("recording = start_live_recording(", prepare)
+    assert prepare < start
+
+    runtime = (ROOT / "tools/isaac_vr_runtime.py").read_text(encoding="utf-8")
+    method = runtime.index("def prepare_recording_view(self)")
+    next_method = runtime.index("\n    def ", method + 1)
+    body = runtime[method:next_method]
+    assert "self.disable_live_rgb()" in body
+    assert "self._set_backdrop_visibility(False)" in body
+
+
+def test_recording_gap_finalizes_episode_before_unrecorded_native_advance():
     source = (ROOT / "tools/isaac_s2_runtime.py").read_text(encoding="utf-8")
     discard = source.index(
         "recording.discard_observation(", source.index("if recording is not None and not eligible:")
     )
     continuity_guard = source.index("if recording.committed_frames:", discard)
-    stop = source.index("break", continuity_guard)
-    native_apply = source.index("saturated_frames += int(ik.apply(solution))", stop)
-    assert discard < continuity_guard < stop < native_apply
+    finalize = source.index(
+        'finalize_recording("operator_stopped", rejection_reason)', continuity_guard
+    )
+    native_apply = source.index("saturated_frames += int(ik.apply(solution))", finalize)
+    assert discard < continuity_guard < finalize < native_apply
+    assert "recording_episode_index += 1" in source
+    assert '"recording_episodes"' in source
+    assert '"left_transition": command.left.transition' in source
+
+
+def test_rejected_recording_tick_does_not_rearm_processor_or_apply_native_command():
+    source = (ROOT / "tools/isaac_s2_runtime.py").read_text(encoding="utf-8")
+    solution = source.index("solution = _solve_native_decision(")
+    gated_apply = source.index("if solution is not None:", solution)
+    native_apply = source.index("saturated_frames += int(ik.apply(solution))", gated_apply)
+    assert solution < gated_apply < native_apply
+
+    node = next(
+        node
+        for node in ast.parse(source).body
+        if isinstance(node, ast.FunctionDef) and node.name == "_solve_native_decision"
+    )
+    namespace = {}
+    exec(compile(ast.Module([node], []), "recording_solve_helper", "exec"), namespace)
+    solve = namespace["_solve_native_decision"]
+
+    class FakeIk:
+        def __init__(self):
+            self.calls = []
+
+        def solve(self, command, observation, xr, tick):
+            self.calls.append((command, observation, xr, tick))
+            return object()
+
+    ik = FakeIk()
+    processor = BimanualS2TeleopProcessor()
+    tracked = ControllerDeltaSample(np.ones(3), np.ones(3), True, True, 0.0, 0.0, 0.0)
+    clutched = ControllerDeltaSample(np.ones(3), np.ones(3), True, True, 1.0, 0.0, 0.0)
+    untracked = ControllerDeltaSample(np.ones(3), np.ones(3), False, False, 0.0, 0.0, 0.0)
+    sequence = (
+        (tracked, tracked),  # initial tracking rebase
+        (tracked, tracked),  # motion
+        (clutched, tracked),  # clutch engaged
+        (clutched, tracked),  # clutch held
+        (tracked, tracked),  # clutch release rebase
+        (tracked, tracked),  # motion resumes
+        (untracked, tracked),  # tracking loss
+        (tracked, tracked),  # tracking recovery rebase
+        (tracked, tracked),  # motion resumes again
+    )
+    decisions = []
+    for left, right in sequence:
+        command = processor.advance(left, right)
+        generation = processor.generation
+        eligible = recordable_teleop_command(command)
+        decisions.append(
+            solve(
+                ik,
+                command,
+                object(),
+                object(),
+                len(decisions) + 1,
+                recording_requested=True,
+                eligible=eligible,
+            )
+        )
+        assert processor.generation == generation
+    assert [decision is not None for decision in decisions] == [
+        False,
+        True,
+        False,
+        False,
+        False,
+        True,
+        False,
+        False,
+        True,
+    ]
+    assert len(ik.calls) == 3
 
 
 def test_no_client_lifecycle_smoke_captures_and_finalizes_without_teleop(tmp_path, monkeypatch):
@@ -154,3 +249,97 @@ def test_no_client_lifecycle_smoke_captures_and_finalizes_without_teleop(tmp_pat
     assert ("close", "aborted", "no_client_lifecycle_smoke") in calls
     result = json.loads(report.read_text())
     assert result["passed"] and not result["teleop_initialized"] and not result["xr_initialized"]
+
+
+def test_episode_restart_reuses_session_performance_stream(tmp_path, capsys):
+    """Execute production finalization/restart blocks with only storage replaced."""
+    from isaac_s2_performance import S2PerformanceLogger
+
+    source = (ROOT / "tools/isaac_s2_runtime.py").read_text()
+    tree = ast.parse(source)
+    run = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "run_s2")
+    finalize = next(
+        n for n in run.body if isinstance(n, ast.FunctionDef) and n.name == "finalize_recording"
+    )
+    # The harness namespace supplies the enclosing run_s2 locals.
+    finalize.body[0] = ast.Global(names=["recording", "recording_summary"])
+    restart = next(
+        n
+        for n in ast.walk(run)
+        if isinstance(n, ast.If)
+        and ast.unparse(n.test) == "recording_requested and recording is None"
+    )
+    closed, observers = [], []
+    log = S2PerformanceLogger(
+        tmp_path / "performance.jsonl", window_steps=2, warmup_steps=0, target_hz=30.0
+    )
+    output = tmp_path / "recording"
+
+    def start(path, env, *, session_metadata, portable_roots, timing_observer):
+        assert portable_roots["recording"] == path
+        observers.append(timing_observer)
+        return NS(
+            output_dir=path,
+            committed_frames=2,
+            discarded_observations=1,
+            rejections={"operator_hold": 1},
+            run_id="run",
+            session_id="session",
+            episode_id=session_metadata["episode_id"],
+            source_profile="isaac_human_vr_offline_rgb_v1",
+            close=lambda **kw: closed.append(kw),
+        )
+
+    namespace = dict(
+        recording=None,
+        recording_summary=None,
+        recording_episodes=[],
+        recording_episode_index=0,
+        recording_requested=True,
+        args_cli=NS(s2_recording_dir=output),
+        env=NS(),
+        config_path=ROOT / "config",
+        actual_versions={},
+        run_id="run",
+        session_id="session",
+        PROCESSOR_REVISION="test",
+        recording_options={"timing_observer": log.add_nested},
+        recording_portable_roots=lambda _: {},
+        recording_session_metadata=lambda **kw: kw,
+        start_live_recording=start,
+        Path=Path,
+        json=json,
+    )
+    namespace["recording"] = start(
+        output,
+        namespace["env"],
+        session_metadata={"episode_id": "episode_000000"},
+        portable_roots={"recording": output},
+        timing_observer=log.add_nested,
+    )
+    exec(
+        compile(ast.fix_missing_locations(ast.Module([finalize], [])), "finalize", "exec"),
+        namespace,
+    )
+    log.begin_step()
+    observers[0]("hdf_append_ms", 1000)
+    log.end_step(1)
+    namespace["finalize_recording"]("operator_stopped", "operator_hold")
+    exec(
+        compile(ast.fix_missing_locations(ast.Module([restart], [])), "restart", "exec"), namespace
+    )
+    assert namespace["recording"].output_dir == Path(f"{output}-episode_000001")
+    assert observers[0].__self__ is observers[1].__self__ is log
+    log.begin_step()
+    observers[1]("hdf_append_ms", 2000)
+    log.end_step(2)
+    namespace["finalize_recording"]("operator_stopped", "control_loop_completed")
+    assert len(closed) == len(namespace["recording_episodes"]) == 2
+    assert [e["episode_id"] for e in namespace["recording_episodes"]] == [
+        "episode_000000",
+        "episode_000001",
+    ]
+    assert log.close()["control"]["samples"] == 2
+    events = [json.loads(line) for line in log.path.read_text().splitlines()]
+    assert sum(e["event"] == "performance_summary" for e in events) == 1
+    assert sum(e["event"] == "performance_step" for e in events) == 2

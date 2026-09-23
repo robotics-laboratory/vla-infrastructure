@@ -274,7 +274,8 @@ Status vocabulary:
 | VRR-070 | Benchmark production HDF recording against paired no-recording baseline | VRR-031, VRR-042, VRR-062 | `in_progress` (paired harness plus real state/HDF/resource hooks; supported render/XR telemetry and physical pairs pending) | Retained p50/p95/p99, drop/rejection, CPU/GPU/memory/disk metrics meet agreed budget |
 | VRR-080 | Execute physical Quest recording acceptance | VRR-062, VRR-070, S2 physical prerequisite | `blocked` | Human run records useful distinct actions without causal loss and retains required evidence |
 | VRR-090 | Implement LeRobot v3 materializer and full-read dataset QA | VRR-053, VRR-080 | `in_progress` (converter and full-read QA pass on the headless injected artifact; physical admissible source pending VRR-080) | All rows and video streams load, align, and pass schema/task/action/unit/outcome checks |
-| VRR-100 | Add multi-episode operator lifecycle and UX | VRR-090 | `deferred` | Repeated start/stop/reset creates independently finalized qualified episodes without restart |
+| VRR-100 | Add multi-episode operator lifecycle and UX | VRR-090 | `in_progress` (automatic gap segmentation implemented; physical validation and explicit start/stop/reset UX pending) | Repeated start/stop/reset creates independently finalized qualified episodes without restart |
+| VRR-101 | Reject clutch/processor holds and keep CloudXR alive across recording gaps | VRR-022, VRR-100 | `in_progress` (processor recovery regression test passes; physical Quest re-test pending) | Grip engage/hold/release, tracking and reference gaps produce no D0 row; prior episode finalizes before unrecorded physics; next episode resumes without XR reconnect |
 
 Execution order for the first repair milestone is:
 
@@ -503,7 +504,7 @@ and zero dataset drawable events. Its matched review benchmark improved from
 7.6263 to 12.2000 Hz (+59.97%). These are **not** performance measurements for
 `recording-fix`; no review recorder architecture or commits were imported.
 
-Current status: implementation pending validation. Runtime performance is
+At the initial implementation checkpoint (before the reconciliation assay below), runtime performance was
 **NOT YET MEASURED**, the one-pump RECORD cadence is **NOT YET QUALIFIED**, and
 physical Quest behavior is **NOT YET QUALIFIED**. No 30 Hz wall-time claim is made.
 The committed `O_t / A_t / O_(t+1)` ordering, Fabric capture, HDF schema, terminal
@@ -512,12 +513,35 @@ LeRobot materialization remain unchanged. The source profile remains
 `isaac_human_vr_offline_rgb_v1`. Prior completed evidence above retains its tested
 scope; VRR-070 stays `in_progress`, VRR-080 stays `blocked`, and no gate is promoted.
 
-Tests were added/updated for later use but **none were executed** because another
+At that initial checkpoint tests were added/updated but **none were executed** because another
 validation workload occupies the machine. Deferred work: focused regression and
 governance checks; native RECORD/reset/strict-replay regression including camera
 prim/Recordable survival and persistent suspension; matched no-client benchmark
 with scoped Hydra/Kit-pump measurements; paired recorder benchmark; and physical
 Quest acceptance including controls, presentation, reset/reconnect and shutdown.
+
+### Lifecycle reconciliation on the local performance line
+
+The local `0cae899` line incorporates the lifecycle semantics of remote
+`420acb6`, `0dce238` and `a6f14c3`, preserving dataset RenderProduct suspension,
+four integrations with F,F,F,T, state-only reset and the existing S2 performance
+logger. Each sibling recorder receives the same session timing observer. Recording
+holds/rebases never become D0 rows or trigger native application; ordinary processor
+tracking recovery remains able to reach motion. RECORD preparation hides the
+backdrop without disabling XR/operator render resources.
+
+The operator-reported local incident committed 191 frames, then ended with
+`operator_stopped / control_reference_rebased`, teleop teardown, XR disabled and
+Quest `0xF22300`. This is regression context supplied by the operator, not a new
+physical observation or evidence of a codec/network root cause. The repaired gap
+path closes only the artifact. No general streaming-error fix is claimed.
+
+[The scoped automated reconciliation assay](../evidence/S2/20260923_recording_lifecycle_reconcile/README.md)
+retains source hashes, five independent episodes, replay/offline RGB/materializer
+results and three no-client performance runs. Physical Quest retest is still
+required. VRR-070 remains `in_progress`, VRR-080 `blocked`, VRR-100/101 `in_progress`,
+and [[gate:D1]] unresolved. Explicit environment reset retains the existing stop
+boundary; complete start/stop/reset operator UX remains pending.
 
 ### Phase 0: select and declare the source profile
 
@@ -648,8 +672,18 @@ After the native artifact and replay pass:
 - perform full read and DataLoader iteration over every state row and video stream;
 - retain representative visual and temporal QA before resolving D1.
 
-Multi-episode operator UX follows successful single-episode qualification; it is
-not part of the first correctness repair.
+Automatic episode segmentation is now required before physical single-session
+qualification because ordinary grip use ended the first two physical attempts.
+The full operator start/stop/reset UX remains a separate VRR-100 milestone.
+
+The first physical segmentation attempt on 2026-09-23 failed before committing a
+frame: the rejected-tick path called `processor.session_inactive()` every loop,
+continually rearming tracking rebase. The operator observed working grippers but
+no arm motion. That run was stopped and its incomplete artifact must not be used
+as dataset evidence. The correction skips native command application on rejected
+RECORD ticks without mutating processor state. A focused regression test covers
+motion → grip engage/hold → release → resumed motion; physical confirmation is
+still outstanding. Do not claim VRR-080 or VRR-101 complete from unit tests.
 
 ## Acceptance gates for the first repair series
 

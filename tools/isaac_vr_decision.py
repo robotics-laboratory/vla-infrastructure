@@ -22,6 +22,25 @@ from tools.isaac_vr_capture import ObservationCapture
 DECISION_REVISION = "piper_x_xr_preclip_decision_v1"
 
 
+def recordable_teleop_command(command: Any) -> bool:
+    """Only a fully tracked motion decision may enter a D0 episode.
+
+    Clutch, tracking recovery, sensitivity changes and other processor holds
+    remain operator/control events, not invented zero-action training rows.
+    A motion decision may still have a genuinely zero-valued native action.
+    """
+    return bool(
+        command.session_active
+        and all(
+            arm.tracking_valid
+            and not arm.rebased
+            and not arm.clutch_active
+            and arm.transition == "motion"
+            for arm in (command.left, command.right)
+        )
+    )
+
+
 def _is_live_observation(observation: Any) -> bool:
     """Recognize the live capture structurally across supported import aliases.
 
@@ -482,10 +501,8 @@ class SolvedControlDecision:
         ):
             raise RuntimeError("Decision has no eligible observation/XR receipt")
         command = self.cartesian_intent
-        if not command.session_active or any(
-            not arm.tracking_valid or arm.rebased for arm in (command.left, command.right)
-        ):
-            raise RuntimeError("Tracking/rebase decision is not D0 eligible")
+        if not recordable_teleop_command(command):
+            raise RuntimeError("Tracking/rebase/hold decision is not D0 eligible")
         epoch, tick = validator.epoch, self.control_tick_id
         if tick is None:
             raise RuntimeError("Decision has no eligible control tick")

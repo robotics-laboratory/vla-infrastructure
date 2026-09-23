@@ -568,6 +568,11 @@ class VRRuntime:
         if self.camera_rig.capture is not None:
             self.camera_rig.capture.invalidate()
 
+    def prepare_recording_view(self) -> None:
+        """Keep headset connection controls visible while dataset RGB is suspended."""
+        self.disable_live_rgb()
+        self._set_backdrop_visibility(False)
+
     def open(self, env) -> None:
         self._env = env
         self._initial_capture = asdict(env.latest_observation_capture())

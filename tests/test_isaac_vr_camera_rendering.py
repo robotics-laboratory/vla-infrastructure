@@ -98,3 +98,16 @@ def test_still_bound_reader_fails_startup(resources):
     cameras["scene"]._render_data.annotators["rgba"].detach = lambda paths: None
     with pytest.raises(RuntimeError, match="annotator is still bound"):
         suspend_dataset_camera_rendering({r: cameras[r] for r in ROLES}, stage, paths)
+
+
+def test_next_episode_suspension_keeps_dataset_disabled_and_xr_alive(resources):
+    cameras, stage, paths, prims = resources
+    selected = {role: cameras[role] for role in ROLES}
+    for _ in range(3):
+        suspend_dataset_camera_rendering(selected, stage, paths)
+        assert all(
+            not c._render_data.render_product.hydra_texture.updates_enabled
+            for c in selected.values()
+        )
+        assert cameras["operator_xr"]._render_data.render_product.hydra_texture.updates_enabled
+        assert all(prims[path].IsValid() for path in paths.values())

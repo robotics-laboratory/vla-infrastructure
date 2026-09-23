@@ -29,6 +29,7 @@ from tools.isaac_vr_decision import (
     check_observation,
     commit_recording_transition,
     decision_epoch,
+    recordable_teleop_command,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -277,6 +278,29 @@ def test_prepared_only_validator_and_processor_generation():
         replace(solution, xr_identity=replace(xr, rebased=True)).prepare(v)
 
 
+def test_clutch_and_release_are_not_recordable_zero_actions():
+    ik, env = ik_fixture()
+    proc = BimanualS2TeleopProcessor()
+    proc.advance(sample(), sample())  # initial reference acquisition
+    r, _, xr = xr_receipt()
+    validator = CausalTransactionValidator(
+        "isaac", "human_vr", decision_epoch("test_run", env.observation, xr)
+    )
+    for tick, (left, right) in enumerate(
+        (
+            (sample(squeeze=1.0), sample()),
+            (sample(squeeze=1.0), sample(squeeze=1.0)),
+            (sample(), sample()),
+        ),
+        start=1,
+    ):
+        command = proc.advance(left, right)
+        assert not recordable_teleop_command(command)
+        with pytest.raises(RuntimeError, match="Tracking/rebase/hold"):
+            ik.solve(command, env.observation, xr, tick).prepare(validator)
+    assert recordable_teleop_command(proc.advance(sample(), sample()))
+
+
 def test_live_capture_identity_survives_equivalent_module_alias():
     @dataclass(frozen=True)
     class ForeignObservationCapture:
@@ -469,3 +493,25 @@ def test_noneligible_run_solution_has_no_control_tick_identity():
     proc = BimanualS2TeleopProcessor()
     solution = ik.solve(proc.session_inactive())
     assert solution.control_tick_id is None
+
+
+def test_motion_admission_distinguishes_zero_motion_from_processor_holds():
+    processor = BimanualS2TeleopProcessor()
+    zero = sample(delta=0.0)
+    assert not recordable_teleop_command(processor.advance(zero, zero))
+    motion = processor.advance(zero, zero)
+    assert recordable_teleop_command(motion)
+    assert not np.any(motion.left.delta_pose) and not np.any(motion.right.delta_pose)
+    for transition in (
+        "clutch_engaged",
+        "clutch_held",
+        "clutch_release_rebased",
+        "tracking_lost",
+        "tracking_rebased",
+        "sensitivity_mode_changed",
+        "session_inactive",
+    ):
+        assert not recordable_teleop_command(
+            replace(motion, left=replace(motion.left, transition=transition))
+        )
+    assert not recordable_teleop_command(replace(motion, session_active=False))

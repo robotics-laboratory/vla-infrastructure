@@ -5,6 +5,20 @@ with diagnostics. `./run-vr record` writes a native NVIDIA Episode Recorder HDF5
 state/action/provenance artifact. It does not create a D1 dataset; S2 physical
 acceptance and D1 remain unresolved.
 
+In RECORD, a grip/clutch hold, tracking loss, or reference change is not an
+action row. After at least one committed transition, such a gap finalizes the
+current episode before the next physics step; the CloudXR session stays open and
+the next control boundary starts a new, independently finalized artifact in a
+sibling directory suffixed `-episode_000001`, `-episode_000002`, etc. The first
+episode remains at the requested output directory. The run report lists every
+directory in `recording_episodes`. These segments are independent episodes, not
+one continuous trajectory across the gap. The same session-level `performance.jsonl`
+and timing observer continue across every episode and gap; episode closure never
+closes or replaces that log. Rejected ticks keep the applied targets unchanged
+without rearming processor tracking. Clutch release and tracking recovery emit
+their natural rebase before the next motion decision can be recorded. A future no-physics pause/resume may
+avoid segmentation, but it requires separate XR/physics validation.
+
 ## Start and qualify
 
 From your implementation checkout, after accepting the NVIDIA Isaac Sim and

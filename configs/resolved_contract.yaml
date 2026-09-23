@@ -2009,6 +2009,28 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  vr_recording_lifecycle_raw:
+    kind: test_output
+    sha256: 39216fe1a30837074fb8f115b09a4ed26d31d77fd2e6a7e219ba227c95f08b24
+    path: /data/ebulochkin/vla-runtime/evidence/20260923_recording_lifecycle_reconcile/validation.tar.gz
+    uri: null
+    description: Exact injected validation adapters, tested runtime/test sources, failed
+      and passing attempts, core/static/type logs and native/performance/replay run
+      artifacts. No physical acceptance.
+  vr_recording_lifecycle_report:
+    kind: report
+    sha256: 3095c046f6daba55b5c637be7b0e1e19616b597bea9708160aa18be2445da87d
+    path: docs/evidence/S2/20260923_recording_lifecycle_reconcile/README.md
+    uri: null
+    description: Local performance-line lifecycle reconciliation; automated injected
+      native, replay, offline RGB and materializer validation; no physical acceptance.
+  vr_recording_lifecycle_summary:
+    kind: test_output
+    sha256: 20b60267f1b7b4c4a0e6a052470e894989a1bf958a4c9d99d04ef5dfc6e64bea
+    path: docs/evidence/S2/20260923_recording_lifecycle_reconcile/summary.json
+    uri: null
+    description: Local performance-line lifecycle reconciliation; automated injected
+      native, replay, offline RGB and materializer validation; no physical acceptance.
   vr_architecture_report:
     kind: report
     sha256: 70e013944f1d4aa7bfdbb8adcbad831a116347c63b07f811b99a7113df87aa52
@@ -3048,6 +3070,28 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  vr_recording_lifecycle_reconciliation:
+    kind: command_test
+    status: pass
+    summary: Five independent native episodes survive injected recording gaps; strict
+      replay, offline RGB and full-read materialization pass; one-pump suspension and
+      session telemetry preserved.
+    timestamp: '2026-09-23T16:39:19.085050+00:00'
+    command: External injected-device lifecycle_driver.py record --smoke --injected-actions;
+      three 30+300 no-client performance runs; exact commands/source hashes in registered
+      summary and raw archive.
+    artifact_ids:
+    - vr_recording_lifecycle_report
+    - vr_recording_lifecycle_summary
+    - vr_recording_lifecycle_raw
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/evidence/S2/20260923_recording_lifecycle_reconcile
+    symbol: null
+    notes: Tested 0cae899 plus exact runtime hashes in summary; no physical CloudXR
+      connection or hardware motion, no D1 admission, no gate acceptance/binding changes.
+      Environment reset UX remains deferred.
   vr_architecture_audit:
     timestamp: '2026-09-21T21:29:21.665273+00:00'
     artifact_ids:
