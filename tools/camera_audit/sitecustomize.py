@@ -9,7 +9,12 @@ import sys
 
 class Imports(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname, path=None, target=None):
-        if fullname not in ("isaac_demo_launch", "isaac_s2_runtime", "isaac_vr_runtime"):
+        if fullname not in (
+            "isaac_demo_launch",
+            "isaac_s2_runtime",
+            "isaac_vr_runtime",
+            "isaac_vr_injected_recording",
+        ):
             return None
         spec = importlib.machinery.PathFinder.find_spec(fullname, path)
         if spec is None:
@@ -42,6 +47,13 @@ class Imports(importlib.abc.MetaPathFinder):
                         from batched_camera import install_construction
 
                         install_construction(module, None)
+                elif fullname == "isaac_vr_injected_recording":
+                    original = module.record_injected_transitions
+
+                    def record(*args, **kwargs):
+                        return original(*args, require_distinct_actions=False, **kwargs)
+
+                    module.record_injected_transitions = record
                 else:
                     original = module.run_s2
 

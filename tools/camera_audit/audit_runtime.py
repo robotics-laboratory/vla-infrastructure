@@ -116,7 +116,10 @@ def install(env, args):
 
     def step(*a, **kw):
         render = kw.get("render", True)
-        if candidate in ("t1", "t2", "t6-sync-explicit", "t6-double-render") and render:
+        if (
+            candidate in ("t1", "t2", "t6-sync-explicit", "t6-double-render", "t6-prime-extraction")
+            and render
+        ):
             kw["render"] = False
             pending[0] = True
         flags.append(kw.get("render", True))
@@ -129,7 +132,9 @@ def install(env, args):
         if pending[0]:
             pending[0] = False
             before = env.sim.get_physics_step_count(), counts["native_physics"]
+            validation_started = time.perf_counter_ns()
             state_before = env.capture_measured_state()
+            validation_elapsed = time.perf_counter_ns() - validation_started
             if candidate == "t2":
                 import omni.replicator.core as rep
 
@@ -150,21 +155,54 @@ def install(env, args):
                     logger.add_nested("replicator_barrier", time.perf_counter_ns() - started)
             else:
                 env.sim.render()
-                if candidate == "t6-double-render":
+                if candidate == "t6-prime-extraction":
+                    for camera in owners:
+                        camera.update(0.0, force_recompute=True)
+                if candidate in ("t6-double-render", "t6-prime-extraction"):
                     env.sim.render()
             assert before == (env.sim.get_physics_step_count(), counts["native_physics"])
+            validation_started = time.perf_counter_ns()
             assert state_before == env.capture_measured_state(), "Render changed native state"
+            logger = getattr(env, "performance_logger", None)
+            if logger is not None:
+                logger.add_nested(
+                    "barrier_state_invariance_check",
+                    validation_elapsed + time.perf_counter_ns() - validation_started,
+                )
+
+        def sync_if_selected():
+            if candidate == "t6-cuda-barrier":
+                import torch
+
+                started = time.perf_counter_ns()
+                torch.cuda.synchronize(env.sim.device)
+                logger = getattr(env, "performance_logger", None)
+                if logger is not None:
+                    logger.add_nested("diagnostic_cuda_barrier", time.perf_counter_ns() - started)
+
+        if candidate == "t6-double-extract":
+            for camera in owners:
+                camera.update(0.0, force_recompute=True)
         if probe_count or rig.live_rgb_enabled:
-            return original_boundary(current_env)
+            result = original_boundary(current_env)
+            sync_if_selected()
+            return result
         if level < 2:
             return None
         # Leave the recorder's state-only source profile and lifecycle unchanged.
         capture = rig.capture.capture(1.0 / 30.0, eligible=True)
         if capture is None:
             raise RuntimeError(rig.capture.last_error)
+        sync_if_selected()
         if level >= 3:
             owned = {}
-            for role, buffer in rig.capture._buffers.items():
+            if hasattr(rig.capture, "_buffers"):
+                buffers = rig.capture._buffers
+            else:
+                buffers = {
+                    r: rig.capture._buffer[i : i + 1] for r, i in rig.capture._indices.items()
+                }
+            for role, buffer in buffers.items():
                 started = time.perf_counter_ns()
                 rgb = tensor(buffer)[0, ..., :3].detach().cpu().numpy()
                 env.performance_logger.add_nested(
@@ -252,7 +290,14 @@ def install(env, args):
             "cameras": [
                 {
                     "role": r,
-                    "frame": tensor(c.frame).tolist(),
+                    "frame": next(
+                        (
+                            v.frame
+                            for v in getattr(getattr(rig.capture, "_latest", None), "cameras", ())
+                            if v.role == r
+                        ),
+                        "UNMEASURED: no extraction",
+                    ),
                     "data_generation": c._data_generation,
                 }
                 for r, c in cameras.items()

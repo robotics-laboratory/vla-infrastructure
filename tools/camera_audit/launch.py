@@ -25,6 +25,9 @@ def main():
             "t5",
             "t6-sync-explicit",
             "t6-double-render",
+            "t6-prime-extraction",
+            "t6-double-extract",
+            "t6-cuda-barrier",
             "t3-low-latency-off",
         ),
         default="t0",
@@ -33,6 +36,7 @@ def main():
     parser.add_argument("--batch", action="store_true")
     parser.add_argument("--probe", action="store_true")
     parser.add_argument("--gpu-scopes", action="store_true")
+    parser.add_argument("--moving-wrists", action="store_true")
     parser.add_argument(
         "--sentinel", action="store_true", help="Break four-state periodicity with declared holds"
     )
@@ -60,6 +64,7 @@ def main():
         CAMERA_AUDIT_BATCH=str(int(args.batch or args.temporal == "t5")),
         CAMERA_AUDIT_PROBE=str(args.measured if args.probe else 0),
         CAMERA_AUDIT_GPU_SCOPES=str(int(args.gpu_scopes)),
+        CAMERA_AUDIT_MOVING_WRISTS=str(int(args.moving_wrists)),
         CAMERA_AUDIT_SENTINEL=str(int(args.sentinel)),
         CAMERA_AUDIT_XR_COST=str(int(not args.probe and args.mode == "xr-smoke")),
         CAMERA_AUDIT_WARMUP=str(args.warmup),
@@ -102,6 +107,8 @@ def main():
         "command": cmd,
         "cwd": str(ROOT),
         "started_unix": time.time(),
+        "started_monotonic_ns": time.perf_counter_ns(),
+        "timezone_seconds_west": time.timezone,
         "head": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         "dirty": subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True),
         "environment": {

@@ -46,6 +46,7 @@ def run(env, out: Path, count, counters, drawables):
     boundaries = []
     applying = False
     sentinel = os.environ.get("CAMERA_AUDIT_SENTINEL") == "1"
+    moving = os.environ.get("CAMERA_AUDIT_MOVING_WRISTS") == "1"
 
     def stimulus_slot(n):
         return (n - n // 11) % 4 if sentinel else n % 4
@@ -58,14 +59,37 @@ def run(env, out: Path, count, counters, drawables):
     # The old finger teleports can excite constraint corrections and move wrists.
     # Keep canonical articulation targets; move only the existing native cubes.
     robot_methods = []
-    for robot in env.robots:
+    for side, robot in enumerate(env.robots):
+        base_q = deferred_probe._host(robot.data.joint_pos)
         for obj, name in (
             (robot, "write_joint_position_to_sim_index"),
             (robot, "write_joint_velocity_to_sim_index"),
             (robot.actuators.target_command, "set_position_index"),
         ):
             robot_methods.append((obj, name, getattr(obj, name)))
-            setattr(obj, name, lambda *a, **kw: None)
+            if not moving:
+                setattr(obj, name, lambda *a, **kw: None)
+                continue
+            original_joint = getattr(obj, name)
+
+            def move_joint(*a, side=side, base_q=base_q, name=name, original=original_joint, **kw):
+                import torch
+
+                if "velocity" in name:
+                    return original(*a, **kw)
+                slot = stimulus_slot(tick[0] + int(applying))
+                q = base_q.copy()
+                q[0, env.joint_ids[side][0]] += (-0.12, -0.04, 0.04, 0.12)[slot]
+                aperture = (0.02, 0.04, 0.06, 0.08)[slot]
+                q[0, env.joint_ids[side][-1]] = aperture
+                q[0, env.actuated_joint_ids[side][-2]] = aperture / 2
+                q[0, env.actuated_joint_ids[side][-1]] = -aperture / 2
+                kw["position" if name.startswith("write") else "value"] = torch.as_tensor(
+                    q, device=env.sim.device
+                )
+                return original(*a, **kw)
+
+            setattr(obj, name, move_joint)
 
     from isaac_s1_runtime import quaternion_xyzw_to_matrix
 
@@ -124,6 +148,13 @@ def run(env, out: Path, count, counters, drawables):
                 deferred_probe._host(c.data.root_link_pose_w)
                 for c in env.vr_runtime.dynamic_assets[:2]
             ],
+        }
+        boundaries[-1]["native_snapshot"] = {
+            key: [v.tolist() for v in values]
+            for key, values in states[stimulus_slot(tick[0])].items()
+        }
+        boundaries[-1]["camera_positions"] = {
+            r: deferred_probe._host(c.data.pos_w).tolist() for r, c in capture.cameras.items()
         }
 
     def forward():
@@ -275,6 +306,7 @@ def run(env, out: Path, count, counters, drawables):
         "failure": None if min(separations.values()) >= 10 else "references_not_separated",
         "method": "native measured-state reference image MAE on reference-varying pixels; modulo four",
         "sentinel_holds_every_11": sentinel,
+        "moving_wrists_and_gripper": moving,
         "count": len(rows),
         "reference_separations": separations,
         "histograms": {

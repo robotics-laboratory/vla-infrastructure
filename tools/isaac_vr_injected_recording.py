@@ -83,6 +83,7 @@ def record_injected_transitions(
     benchmark_logger: Any | None = None,
     resource_sampler: Any | None = None,
     performance_logger: Any | None = None,
+    require_distinct_actions: bool = True,
 ) -> dict[str, Any]:
     """Write distinct committed transitions through the production causal/writer APIs."""
     if count < 2:
@@ -187,6 +188,7 @@ def record_injected_transitions(
             )
         if benchmark_logger is not None:
             rejected = sum(int(value) for value in recording.rejections.values())
+            assert resource_sampler is not None
             benchmark_logger.end_step(
                 resources=resource_sampler.sample(),
                 committed=int(recording.committed_frames),
@@ -200,7 +202,9 @@ def record_injected_transitions(
     assert validator is not None
     if validator.accepted_transactions != count or recording.committed_frames != count:
         raise RuntimeError("injected causal commits and HDF frames diverged")
-    if len({tuple(action) for action in actions}) != count:
+    # Long experiments may retain the original bounded sweep beyond its
+    # 1000-control period; repeated actions still require distinct causal rows.
+    if require_distinct_actions and len({tuple(action) for action in actions}) != count:
         raise RuntimeError("injected integration actions are not distinct")
     return {
         "actions": actions,

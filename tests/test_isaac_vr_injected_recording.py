@@ -126,6 +126,22 @@ def test_injected_transitions_are_distinct_dense_and_self_verifying(count):
         )
 
 
+def test_long_periodic_experiment_keeps_all_causal_rows_and_default_guard():
+    for strict in (True, False):
+        env = FakeEnvironment()
+        recording = FakeRecording(env)
+        if strict:
+            with pytest.raises(RuntimeError, match="actions are not distinct"):
+                record_injected_transitions(recording, env, count=1001)
+        else:
+            result = record_injected_transitions(
+                recording, env, count=1001, require_distinct_actions=False
+            )
+            assert result["accepted_transactions"] == result["committed_frames"] == 1001
+            assert result["actions"][0] == result["actions"][1000]
+        assert [int(row["frame_index"]) for row in recording.rows] == list(range(1001))
+
+
 def test_s2_profiling_preserves_causal_rows_and_logs_all_controls(tmp_path):
     import json
     from tools.isaac_s2_performance import S2PerformanceLogger
