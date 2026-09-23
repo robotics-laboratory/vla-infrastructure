@@ -1,4 +1,5 @@
 """In-memory Isaac human decision receipts; no acquisition clock or storage."""
+
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, replace
@@ -19,6 +20,26 @@ from tools.d0_causal import (
 from tools.isaac_vr_capture import ObservationCapture
 
 DECISION_REVISION = "piper_x_xr_preclip_decision_v1"
+
+
+def _is_live_observation(observation: Any) -> bool:
+    """Recognize the live capture structurally across supported import aliases.
+
+    Isaac's script entrypoint can load ``isaac_vr_capture`` while the shared
+    decision module is imported as ``tools.isaac_vr_decision``.  Those aliases
+    create distinct Python class objects even though they describe the same
+    frozen receipt, so runtime identity must not depend on ``isinstance``.
+    """
+
+    return hasattr(observation, "producer")
+
+
+def _observation_reset_epoch(
+    observation: ObservationCapture | StateSnapshotObservation,
+) -> int:
+    if _is_live_observation(observation):
+        return int(observation.producer.reset_epoch)
+    return int(observation.reset_epoch)
 
 
 def payload(value: Any) -> bytes:
@@ -61,18 +82,20 @@ def canonical_state_snapshot_payload(
         raise ValueError("scene_state_snapshot_id must be non-empty")
     digest = _sha256_hex(scene_state_snapshot_sha256, field="scene_state_snapshot_sha256")
     state_f32 = _float32_vector(state, size=14, field="observation_state")
-    return payload({
-        "capture_sequence": capture_sequence,
-        "physics_step": physics_step,
-        "reset_epoch": reset_epoch,
-        "scene_state_snapshot_id": scene_state_snapshot_id,
-        "scene_state_snapshot_sha256": digest,
-        "schema": "piper_x_scene_state_observation_v1",
-        "state": state_f32.tolist(),
-        "state_dtype": "<f4",
-        "state_generation": state_generation,
-        "state_units": "ordered_joint_degrees_gripper_millimetres",
-    })
+    return payload(
+        {
+            "capture_sequence": capture_sequence,
+            "physics_step": physics_step,
+            "reset_epoch": reset_epoch,
+            "scene_state_snapshot_id": scene_state_snapshot_id,
+            "scene_state_snapshot_sha256": digest,
+            "schema": "piper_x_scene_state_observation_v1",
+            "state": state_f32.tolist(),
+            "state_dtype": "<f4",
+            "state_generation": state_generation,
+            "state_units": "ordered_joint_degrees_gripper_millimetres",
+        }
+    )
 
 
 def canonical_action_payload(
@@ -85,15 +108,17 @@ def canonical_action_payload(
     if not processor_revision or not provenance_revision or processor_generation < 0:
         raise ValueError("invalid action processor identity")
     action_f32 = _float32_vector(dataset_action, size=14, field="dataset_action")
-    return payload({
-        "action": action_f32.tolist(),
-        "action_dtype": "<f4",
-        "action_units": "ordered_joint_degrees_gripper_millimetres",
-        "processor_generation": processor_generation,
-        "processor_revision": processor_revision,
-        "provenance_revision": provenance_revision,
-        "schema": "piper_x_dataset_action_v1",
-    })
+    return payload(
+        {
+            "action": action_f32.tolist(),
+            "action_dtype": "<f4",
+            "action_units": "ordered_joint_degrees_gripper_millimetres",
+            "processor_generation": processor_generation,
+            "processor_revision": processor_revision,
+            "provenance_revision": provenance_revision,
+            "schema": "piper_x_dataset_action_v1",
+        }
+    )
 
 
 def canonical_native_command_payload(
@@ -110,15 +135,17 @@ def canonical_native_command_payload(
         raise ValueError("native residual must be the exact stored float32 clipped-preclip delta")
     if not np.array_equal(saturation_u8, (residual_f32 != 0).astype(np.uint8)):
         raise ValueError("native saturation must match the exact stored float32 residual")
-    return payload({
-        "clipped": clipped_f32.tolist(),
-        "dtype": "<f4",
-        "preclip": preclip_f32.tolist(),
-        "residual": residual_f32.tolist(),
-        "saturation": saturation_u8.tolist(),
-        "schema": "piper_x_native_command_v1",
-        "units": "ordered_joint_radians_gripper_metres",
-    })
+    return payload(
+        {
+            "clipped": clipped_f32.tolist(),
+            "dtype": "<f4",
+            "preclip": preclip_f32.tolist(),
+            "residual": residual_f32.tolist(),
+            "saturation": saturation_u8.tolist(),
+            "schema": "piper_x_native_command_v1",
+            "units": "ordered_joint_radians_gripper_metres",
+        }
+    )
 
 
 def canonical_native_command_fields(*, preclip: Any, clipped: Any) -> dict[str, np.ndarray]:
@@ -163,16 +190,18 @@ def canonical_xr_payload_from_fields(
     if tracking.shape != (2,) or not np.isin(tracking, (0, 1)).all():
         raise ValueError("tracking_valid must be two boolean flags")
     transform = _float32_vector(world_transform, size=16, field="xr_world_transform")
-    return payload({
-        **counters,
-        "hands_sha256": _sha256_hex(hands_sha256, field="hands_sha256"),
-        "ran_synchronously": bool(ran_synchronously),
-        "rebased": bool(rebased),
-        "schema": "piper_x_resolved_xr_input_v1",
-        "tracking_valid": tracking.tolist(),
-        "world_transform": transform.tolist(),
-        "world_transform_dtype": "<f4",
-    })
+    return payload(
+        {
+            **counters,
+            "hands_sha256": _sha256_hex(hands_sha256, field="hands_sha256"),
+            "ran_synchronously": bool(ran_synchronously),
+            "rebased": bool(rebased),
+            "schema": "piper_x_resolved_xr_input_v1",
+            "tracking_valid": tracking.tolist(),
+            "world_transform": transform.tolist(),
+            "world_transform_dtype": "<f4",
+        }
+    )
 
 
 def canonical_xr_payload(xr: "ResolvedXrInput") -> bytes:
@@ -191,16 +220,18 @@ def canonical_xr_payload(xr: "ResolvedXrInput") -> bytes:
 
 
 def _payload_id(epoch: Epoch, role: str, tick: int) -> str:
-    return ":".join((
-        epoch.run_id,
-        epoch.episode_id,
-        epoch.source_id,
-        str(epoch.reset_epoch),
-        str(epoch.control_reference_epoch),
-        epoch.source_epoch,
-        role,
-        str(tick),
-    ))
+    return ":".join(
+        (
+            epoch.run_id,
+            epoch.episode_id,
+            epoch.source_id,
+            str(epoch.reset_epoch),
+            str(epoch.control_reference_epoch),
+            epoch.source_epoch,
+            role,
+            str(tick),
+        )
+    )
 
 
 @dataclass(frozen=True)
@@ -230,9 +261,10 @@ class StateSnapshotObservation:
     scene_state_snapshot_sha256: str | None = None
 
     def __post_init__(self) -> None:
-        if any(type(value) is not int or value < 0 for value in (
-            self.reset_epoch, self.physics_step, self.state_generation
-        )):
+        if any(
+            type(value) is not int or value < 0
+            for value in (self.reset_epoch, self.physics_step, self.state_generation)
+        ):
             raise ValueError("invalid state snapshot identity")
         if len(self.state) != 14 or not np.isfinite(self.state).all():
             raise ValueError("invalid state snapshot payload")
@@ -249,9 +281,7 @@ class StateSnapshotObservation:
                 or self.scene_state_snapshot_sha256 is None
             ):
                 raise ValueError("state snapshot recording binding must be complete")
-            _sha256_hex(
-                self.scene_state_snapshot_sha256, field="scene_state_snapshot_sha256"
-            )
+            _sha256_hex(self.scene_state_snapshot_sha256, field="scene_state_snapshot_sha256")
 
     @property
     def recording_bound(self) -> bool:
@@ -332,20 +362,35 @@ class XrInputReceipt:
         self.tracking_valid = tracking
 
     def resolve(self, info: Any, previous_update: int) -> ResolvedXrInput:
-        if (self.update_epoch != previous_update + 1 or self.hands is None
-                or not info.ran_synchronously or info.worker_exception is not None
-                or info.submitted_frame_id != self.frame or info.returned_frame_id != self.frame):
+        if (
+            self.update_epoch != previous_update + 1
+            or self.hands is None
+            or not info.ran_synchronously
+            or info.worker_exception is not None
+            or info.submitted_frame_id != self.frame
+            or info.returned_frame_id != self.frame
+        ):
             raise RuntimeError("XR update/request/result mismatch")
         return ResolvedXrInput(
-            self.session_epoch, self.reference_epoch, self.update_epoch, self.frame, self.frame,
-            True, self.hands, self.transform, self.rebased, self.tracking_valid,
+            self.session_epoch,
+            self.reference_epoch,
+            self.update_epoch,
+            self.frame,
+            self.frame,
+            True,
+            self.hands,
+            self.transform,
+            self.rebased,
+            self.tracking_valid,
         )
 
     def validate(self, xr: ResolvedXrInput) -> None:
-        if (xr.session_epoch != self.session_epoch
-                or xr.control_reference_epoch != self.reference_epoch
-                or xr.deviceio_update_epoch != self.update_epoch
-                or xr.deviceio_update_epoch <= self.last_consumed):
+        if (
+            xr.session_epoch != self.session_epoch
+            or xr.control_reference_epoch != self.reference_epoch
+            or xr.deviceio_update_epoch != self.update_epoch
+            or xr.deviceio_update_epoch <= self.last_consumed
+        ):
             raise RuntimeError("XR session/reference/update changed or reused")
 
 
@@ -365,9 +410,11 @@ def check_observation(
         ):
             raise RuntimeError("IK observation/state generation mismatch")
         return
-    if (env.latest_observation_capture() is not observation
-            or env._state_physics_step != observation.producer.physics_step
-            or env.sim.get_physics_step_count() != observation.producer.physics_step):
+    if (
+        env.latest_observation_capture() is not observation
+        or env._state_physics_step != observation.producer.physics_step
+        or env.sim.get_physics_step_count() != observation.producer.physics_step
+    ):
         raise RuntimeError("IK observation/state generation mismatch")
 
 
@@ -414,16 +461,25 @@ class SolvedControlDecision:
         if not np.isfinite(canonical).all():
             raise RuntimeError("Non-finite float32 D0 label")
         return cls(
-            tick, observation, xr, command, tuple(float(v) for v in preclip),
-            tuple(float(v) for v in clipped), canonical.tobytes(),
+            tick,
+            observation,
+            xr,
+            command,
+            tuple(float(v) for v in preclip),
+            tuple(float(v) for v in clipped),
+            canonical.tobytes(),
         )
 
     def prepare(self, validator: CausalTransactionValidator):
         """Bind the selected live-camera or immutable-state observation profile."""
         observation, xr = self.observation_identity, self.xr_identity
-        if (observation is None or xr is None or xr.rebased
-                or not all(xr.tracking_valid)
-                or (isinstance(observation, ObservationCapture) and not observation.eligible)):
+        if (
+            observation is None
+            or xr is None
+            or xr.rebased
+            or not all(xr.tracking_valid)
+            or (_is_live_observation(observation) and not observation.eligible)
+        ):
             raise RuntimeError("Decision has no eligible observation/XR receipt")
         command = self.cartesian_intent
         if not command.session_active or any(
@@ -433,14 +489,12 @@ class SolvedControlDecision:
         epoch, tick = validator.epoch, self.control_tick_id
         if tick is None:
             raise RuntimeError("Decision has no eligible control tick")
-        reset_epoch = (
-            observation.producer.reset_epoch
-            if isinstance(observation, ObservationCapture)
-            else observation.reset_epoch
-        )
-        if (epoch.reset_epoch != reset_epoch
-                or epoch.control_reference_epoch != xr.control_reference_epoch
-                or epoch.source_epoch != str(xr.session_epoch)):
+        reset_epoch = _observation_reset_epoch(observation)
+        if (
+            epoch.reset_epoch != reset_epoch
+            or epoch.control_reference_epoch != xr.control_reference_epoch
+            or epoch.source_epoch != str(xr.session_epoch)
+        ):
             raise RuntimeError("Decision epoch mismatch")
         obs_bytes = self.observation_payload
         action_bytes = self.action_payload
@@ -448,33 +502,68 @@ class SolvedControlDecision:
         if isinstance(observation, StateSnapshotObservation):
             if validator.profile != "isaac_human_vr_offline_rgb_v1":
                 raise RuntimeError("State snapshot observation requires offline-RGB profile")
-            sequences = [observation.state_generation, xr.deviceio_update_epoch,
-                         xr.submitted_frame_id, xr.returned_frame_id,
-                         xr.deviceio_update_epoch]
-            names = ("simulation.scene_state_snapshot", "xr.device_io_update",
-                     "xr.submitted_frame", "xr.returned_frame", "xr.resolved_input")
+            sequences = [
+                observation.state_generation,
+                xr.deviceio_update_epoch,
+                xr.submitted_frame_id,
+                xr.returned_frame_id,
+                xr.deviceio_update_epoch,
+            ]
+            names = (
+                "simulation.scene_state_snapshot",
+                "xr.device_io_update",
+                "xr.submitted_frame",
+                "xr.returned_frame",
+                "xr.resolved_input",
+            )
             source_payloads = (obs_bytes, xr_bytes, xr_bytes, xr_bytes, xr_bytes)
         else:
             if validator.profile != "isaac_human_vr_v4":
                 raise RuntimeError("Live camera observation requires live-camera profile")
-            sequences = [observation.producer.physics_step,
-                         *(c.data_generation for c in observation.cameras),
-                         xr.deviceio_update_epoch, xr.submitted_frame_id,
-                         xr.returned_frame_id, xr.deviceio_update_epoch]
-            names = ("simulation.state_generation", "camera.left_wrist", "camera.right_wrist",
-                     "camera.scene", "xr.device_io_update", "xr.submitted_frame",
-                     "xr.returned_frame", "xr.resolved_input")
-            source_payloads = (obs_bytes, obs_bytes, obs_bytes, obs_bytes,
-                               xr_bytes, xr_bytes, xr_bytes, xr_bytes)
+            sequences = [
+                observation.producer.physics_step,
+                *(c.data_generation for c in observation.cameras),
+                xr.deviceio_update_epoch,
+                xr.submitted_frame_id,
+                xr.returned_frame_id,
+                xr.deviceio_update_epoch,
+            ]
+            names = (
+                "simulation.state_generation",
+                "camera.left_wrist",
+                "camera.right_wrist",
+                "camera.scene",
+                "xr.device_io_update",
+                "xr.submitted_frame",
+                "xr.returned_frame",
+                "xr.resolved_input",
+            )
+            source_payloads = (
+                obs_bytes,
+                obs_bytes,
+                obs_bytes,
+                obs_bytes,
+                xr_bytes,
+                xr_bytes,
+                xr_bytes,
+                xr_bytes,
+            )
+
         def bind(name, data):
             return PayloadIdentity.bind(epoch, tick, _payload_id(epoch, name, tick), data)
+
         return validator.prepare(
-            bind("observation", obs_bytes), bind("action", action_bytes),
-            tuple(SourceIdentity(name, bind(name, source_payload), sequence)
-                  for name, sequence, source_payload in zip(
-                      names, sequences, source_payloads, strict=True
-                  )),
-            observation_payload=obs_bytes, action_payload=action_bytes, tracking_valid=True,
+            bind("observation", obs_bytes),
+            bind("action", action_bytes),
+            tuple(
+                SourceIdentity(name, bind(name, source_payload), sequence)
+                for name, sequence, source_payload in zip(
+                    names, sequences, source_payloads, strict=True
+                )
+            ),
+            observation_payload=obs_bytes,
+            action_payload=action_bytes,
+            tracking_valid=True,
         )
 
     @property
@@ -541,7 +630,9 @@ def commit_recording_transition(
         epoch, tick, _payload_id(epoch, "native", tick), native_command_payload
     )
     successor_identity = PayloadIdentity.bind(
-        epoch, tick + 1, _payload_id(epoch, "observation", tick + 1),
+        epoch,
+        tick + 1,
+        _payload_id(epoch, "observation", tick + 1),
         successor_payload,
     )
     completed = validator.complete_transition(
@@ -576,10 +667,12 @@ def decision_epoch(
     *,
     episode_id: str = "unrecorded",
 ) -> Epoch:
-    reset_epoch = (
-        observation.producer.reset_epoch
-        if isinstance(observation, ObservationCapture)
-        else observation.reset_epoch
+    reset_epoch = _observation_reset_epoch(observation)
+    return Epoch(
+        run_id,
+        episode_id,
+        "isaac_human_vr",
+        reset_epoch,
+        xr.control_reference_epoch,
+        str(xr.session_epoch),
     )
-    return Epoch(run_id, episode_id, "isaac_human_vr", reset_epoch,
-                 xr.control_reference_epoch, str(xr.session_epoch))
