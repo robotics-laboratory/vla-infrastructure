@@ -83,6 +83,7 @@ parser.add_argument(
     help="Write state/provenance through NVIDIA Episode Recorder HDF5 V2.",
 )
 parser.add_argument("--s2-recording-dir", type=Path)
+parser.add_argument("--s2-recordings-root", type=Path)
 parser.add_argument("--s2-injected-recording-smoke", action="store_true", help=argparse.SUPPRESS)
 parser.add_argument("--s2-recording-benchmark-log", type=Path, help=argparse.SUPPRESS)
 parser.add_argument("--s2-recording-benchmark-pair-id", help=argparse.SUPPRESS)
@@ -1067,6 +1068,15 @@ def main() -> int:
         )
     print("[S1] loading checked configuration", flush=True)
     config = yaml.safe_load(args_cli.config.read_text(encoding="utf-8"))
+    if config.get("xr_render") is not None:
+        import carb.settings
+        from isaac_vr_config import xr_render_readback
+
+        args_cli.xr_render_readback = xr_render_readback(config, carb.settings.get_settings())
+        manifest_path = args_cli.config.parent / "run_manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        manifest["xr_render_runtime"] = args_cli.xr_render_readback
+        manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     model = yaml.safe_load(MODEL_PATH.read_text(encoding="utf-8"))
     urdf_path = Path(config["asset"]["composed_urdf"])
     urdf_sha = materialize_gate_c_urdf(Path(config["asset"]["source_checkout"]), urdf_path)

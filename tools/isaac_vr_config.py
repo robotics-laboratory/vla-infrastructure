@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import math
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -16,6 +17,20 @@ else:
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "configs/isaac61_vr_runtime.yaml"
 ASSET_LAB_CONFIG = ROOT / "configs/experiments/robosyn_asset_lab.yaml"
+XR_RESOLUTION_SETTING = "/persistent/xr/profile/ar/render/resolutionMultiplier"
+
+
+def xr_render_readback(config: dict, settings) -> dict:
+    """Check Kit's host render-buffer scale; never change spatial/camera scale."""
+    requested = config.get("xr_render")
+    if requested is None:
+        return {}
+    effective = settings.get(XR_RESOLUTION_SETTING)
+    if effective is None or not math.isclose(
+        float(effective), requested["resolution_scale"], rel_tol=1e-6
+    ):
+        raise RuntimeError(f"XR resolution override not effective: {requested}; readback={effective}")
+    return {**requested, "effective_resolution_scale": float(effective)}
 
 
 def load_composition(profile: str) -> dict:

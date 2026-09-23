@@ -85,8 +85,10 @@ def recording_session_metadata(
     episode_id: str,
     execution_profile: str,
     processor_revision: str,
+    xr_render: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     return {
+        **({"xr_render": xr_render} if xr_render else {}),
         "run_id": run_id,
         "session_id": session_id,
         "episode_id": episode_id,
@@ -176,6 +178,7 @@ def run_recording_lifecycle_smoke(
             args_cli.s2_recording_dir,
             env,
             session_metadata=recording_session_metadata(
+                xr_render=getattr(args_cli, "xr_render_readback", None),
                 config_path=config_path,
                 environment_pins=environment_pins,
                 run_id=run_id,

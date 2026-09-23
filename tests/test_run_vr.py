@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import copy
+import ast
 import hashlib
 import importlib
 import json
+import io
 from pathlib import Path
 import sys
 from types import ModuleType, SimpleNamespace as NS
@@ -103,6 +105,126 @@ def test_cli_modes_and_explicit_rollback(launcher):
     for option in (["--smoke"], ["--xr-smoke"], ["--hud-on-start"], ["--cloudxr-mode", "existing"]):
         with pytest.raises(SystemExit):
             launcher.parse_args(["replay", "--recording", "/tmp/session.hdf5", *option])
+
+
+@pytest.mark.parametrize("value", ["nan", "inf", "0", "-0.4", "2.1"])
+def test_xr_scale_rejects_invalid_values(launcher, value):
+    with pytest.raises(SystemExit):
+        launcher.parse_args(["record", "--xr-resolution-scale", value])
+
+
+def test_manual_record_cli_constraints(launcher):
+    for options in (
+        ["--xr-resolution-scale", "0.4"],
+        ["record", "--stack", "legacy", "--xr-resolution-scale", "0.4"],
+        ["--recordings-root", "/tmp/episodes"],
+        ["record", "--recordings-root", "/tmp/episodes", "--recording-dir", "/tmp/episode"],
+        ["record", "--run-dir", "relative"],
+        ["record", "--recordings-root", str(ROOT / "recordings")],
+    ):
+        with pytest.raises(SystemExit):
+            launcher.parse_args(options)
+
+
+@pytest.mark.parametrize("dry_run", [False, True])
+def test_self_contained_record_bundle(launcher, tmp_path, monkeypatch, dry_run):
+    """Exercise launcher paths and log retention without starting Kit or Quest."""
+    monkeypatch.setattr(launcher, "verify_stack", lambda _: launcher.STACKS["isaac61"])
+    monkeypatch.setattr(launcher, "configure_cloudxr", lambda *a, **kw: None)
+    monkeypatch.setenv("OMNI_KIT_ACCEPT_EULA", "Y")
+    run = tmp_path / "run"
+    options = [
+        "record", "--state-root", str(run / "host"), "--run-dir", str(run),
+        "--recordings-root", str(tmp_path / "recordings"),
+        "--xr-resolution-scale", "0.4",
+        "--performance-warmup-steps", "60", "--performance-window-steps", "300",
+    ]
+
+    class Child:
+        def __init__(self, command, **kwargs):
+            assert not dry_run
+            assert kwargs["env"]["XDG_CACHE_HOME"] == str(run / "host/cache")
+            assert command[command.index("--s2-performance-log") + 1] == str(run / "performance.jsonl")
+            (run / "result.json").write_text('{}')
+            from isaac_s2_performance import S2PerformanceLogger
+            log = S2PerformanceLogger(
+                run / "performance.jsonl", warmup_steps=0, window_steps=1, target_hz=30.0
+            )
+            log.begin_step()
+            log.end_step(1)
+            log.close()
+            self.stdout = io.StringIO("record child output\n")
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def wait(self):
+            return 0
+
+    monkeypatch.setattr(launcher.subprocess, "Popen", Child)
+    monkeypatch.setattr(launcher, "_git_output", lambda *a: "")
+    assert launcher.main([*options, *(["--dry-run"] if dry_run else [])]) == 0
+    manifest = json.loads((run / "run_manifest.json").read_text())
+    runtime = yaml.safe_load((run / "runtime.yaml").read_text())
+    assert runtime["xr_render"]["resolution_scale"] == 0.4
+    assert runtime["xr_render"] == manifest["effective_control_config"]["xr_render"]
+    assert manifest["effective_control_config"]["xr_presentation"]["scale"] == 1.0
+    command = manifest["launch"]["command"]
+    assert command[command.index("--s2-recording-dir") + 1] == str(tmp_path / "recordings/episode_000000")
+    assert command[command.index("--s2-recordings-root") + 1] == str(tmp_path / "recordings")
+    assert f"--{isaac_vr_config.XR_RESOLUTION_SETTING}=0.4" in command[command.index("--kit_args") + 1]
+    baseline = yaml.safe_load((ROOT / "configs/isaac61_s1_runtime.yaml").read_text())
+    assert {k: v for k, v in runtime.items() if k not in ("asset", "xr_render")} == {
+        k: v for k, v in baseline.items() if k != "asset"
+    }
+    assert runtime["cameras"] == baseline["cameras"]
+    if dry_run:
+        # Execute the child's actual readback/persistence block without Kit startup.
+        carb = ModuleType("carb")
+        carb.settings = NS(get_settings=lambda: {isaac_vr_config.XR_RESOLUTION_SETTING: 0.4})
+        monkeypatch.setitem(sys.modules, "carb", carb)
+        monkeypatch.setitem(sys.modules, "carb.settings", carb.settings)
+        child_tree = ast.parse((ROOT / "tools/run_isaac_s1.py").read_text())
+        child_main = next(n for n in child_tree.body if isinstance(n, ast.FunctionDef) and n.name == "main")
+        readback = next(
+            n for n in child_main.body if isinstance(n, ast.If)
+            and ast.unparse(n.test) == "config.get('xr_render') is not None"
+        )
+        exec(compile(ast.Module([readback], []), "readback", "exec"), {
+            "config": runtime, "args_cli": NS(config=run / "runtime.yaml"), "json": json,
+        })
+        observed = json.loads((run / "run_manifest.json").read_text())["xr_render_runtime"]
+        assert observed["effective_resolution_scale"] == 0.4
+    if not dry_run:
+        assert (run / "stdout.log").read_text() == "record child output\n"
+        assert json.loads((run / "result.json").read_text())["process"]["exit_code"] == 0
+        assert (run / "performance.jsonl").is_file()
+    with pytest.raises(FileExistsError):
+        launcher.main([*options, "--dry-run"])
+
+
+def test_xr_render_readback_and_episode_provenance(launcher):
+    from isaac_vr_recording_smoke import recording_session_metadata
+
+    config = {"xr_render": {
+        "setting": isaac_vr_config.XR_RESOLUTION_SETTING, "profile": "ar", "resolution_scale": 0.4,
+    }}
+    report = isaac_vr_config.xr_render_readback(
+        config, {isaac_vr_config.XR_RESOLUTION_SETTING: 0.4000000059604645}
+    )
+    assert report["effective_resolution_scale"] == pytest.approx(0.4)
+    metadata = recording_session_metadata(
+        config_path=ROOT / "configs/isaac61_s2_runtime.yaml", environment_pins={},
+        run_id="run", session_id="session", episode_id="episode_000001",
+        execution_profile="isaac_vr_record", processor_revision="test", xr_render=report,
+    )
+    assert metadata["xr_render"] == report
+    for effective in (None, 1.0, float("nan")):
+        with pytest.raises(RuntimeError, match="not effective"):
+            isaac_vr_config.xr_render_readback(config, {isaac_vr_config.XR_RESOLUTION_SETTING: effective})
 
 
 def test_default_does_not_read_experimental_assets(monkeypatch):

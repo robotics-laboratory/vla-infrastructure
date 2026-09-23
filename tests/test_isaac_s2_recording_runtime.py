@@ -8,6 +8,7 @@ from types import ModuleType, SimpleNamespace as NS
 
 import yaml
 import numpy as np
+import pytest
 
 from tools.isaac_s2_processor import BimanualS2TeleopProcessor, ControllerDeltaSample
 from tools.isaac_vr_decision import recordable_teleop_command
@@ -251,7 +252,8 @@ def test_no_client_lifecycle_smoke_captures_and_finalizes_without_teleop(tmp_pat
     assert result["passed"] and not result["teleop_initialized"] and not result["xr_initialized"]
 
 
-def test_episode_restart_reuses_session_performance_stream(tmp_path, capsys):
+@pytest.mark.parametrize("numbered_root", [False, True])
+def test_episode_restart_reuses_session_performance_stream(tmp_path, capsys, numbered_root):
     """Execute production finalization/restart blocks with only storage replaced."""
     from isaac_s2_performance import S2PerformanceLogger
 
@@ -273,7 +275,8 @@ def test_episode_restart_reuses_session_performance_stream(tmp_path, capsys):
     log = S2PerformanceLogger(
         tmp_path / "performance.jsonl", window_steps=2, warmup_steps=0, target_hz=30.0
     )
-    output = tmp_path / "recording"
+    recordings_root = tmp_path / "recordings" if numbered_root else None
+    output = recordings_root / "episode_000000" if numbered_root else tmp_path / "recording"
 
     def start(path, env, *, session_metadata, portable_roots, timing_observer):
         assert portable_roots["recording"] == path
@@ -296,7 +299,7 @@ def test_episode_restart_reuses_session_performance_stream(tmp_path, capsys):
         recording_episodes=[],
         recording_episode_index=0,
         recording_requested=True,
-        args_cli=NS(s2_recording_dir=output),
+        args_cli=NS(s2_recording_dir=output, s2_recordings_root=recordings_root),
         env=NS(),
         config_path=ROOT / "config",
         actual_versions={},
@@ -328,18 +331,31 @@ def test_episode_restart_reuses_session_performance_stream(tmp_path, capsys):
     exec(
         compile(ast.fix_missing_locations(ast.Module([restart], [])), "restart", "exec"), namespace
     )
-    assert namespace["recording"].output_dir == Path(f"{output}-episode_000001")
+    assert namespace["recording"].output_dir == (
+        recordings_root / "episode_000001" if numbered_root else Path(f"{output}-episode_000001")
+    )
     assert observers[0].__self__ is observers[1].__self__ is log
     log.begin_step()
     observers[1]("hdf_append_ms", 2000)
     log.end_step(2)
     namespace["finalize_recording"]("operator_stopped", "control_loop_completed")
-    assert len(closed) == len(namespace["recording_episodes"]) == 2
+    exec(
+        compile(ast.fix_missing_locations(ast.Module([restart], [])), "restart", "exec"), namespace
+    )
+    assert namespace["recording"].output_dir == (
+        recordings_root / "episode_000002" if numbered_root else Path(f"{output}-episode_000002")
+    )
+    log.begin_step()
+    observers[2]("hdf_append_ms", 3000)
+    log.end_step(3)
+    namespace["finalize_recording"]("operator_stopped", "control_loop_completed")
+    assert len(closed) == len(namespace["recording_episodes"]) == 3
     assert [e["episode_id"] for e in namespace["recording_episodes"]] == [
         "episode_000000",
         "episode_000001",
+        "episode_000002",
     ]
-    assert log.close()["control"]["samples"] == 2
+    assert log.close()["control"]["samples"] == 3
     events = [json.loads(line) for line in log.path.read_text().splitlines()]
     assert sum(e["event"] == "performance_summary" for e in events) == 1
-    assert sum(e["event"] == "performance_step" for e in events) == 2
+    assert sum(e["event"] == "performance_step" for e in events) == 3

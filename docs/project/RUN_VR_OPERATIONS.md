@@ -10,7 +10,9 @@ action row. After at least one committed transition, such a gap finalizes the
 current episode before the next physics step; the CloudXR session stays open and
 the next control boundary starts a new, independently finalized artifact in a
 sibling directory suffixed `-episode_000001`, `-episode_000002`, etc. The first
-episode remains at the requested output directory. The run report lists every
+episode remains at the requested output directory. With `--recordings-root`, all
+episodes instead use `<root>/episode_000000`, `<root>/episode_000001`, etc.
+The run report lists every
 directory in `recording_episodes`. These segments are independent episodes, not
 one continuous trajectory across the gap. The same session-level `performance.jsonl`
 and timing observer continue across every episode and gap; episode closure never
@@ -105,6 +107,11 @@ RUN, DIAG and RECORD support `--stack`, `--profile`, `--cloudxr-mode`, `--state-
 RECORD also accepts `--performance-window-steps` and
 `--performance-warmup-steps`; supplying either enables the existing S2 timing
 logger without diagnostic camera observers or GPU subprocess sampling.
+`--recordings-root` selects the parent of numbered episodes and excludes
+`--recording-dir`. `--run-dir` selects an exact new run-bundle directory; without
+it, the existing timestamped directory under `<state-root>/runs/` is retained.
+`--xr-resolution-scale` is an explicit RECORD-only Isaac61 render-buffer override.
+It does not alter `xr_presentation.scale`, camera dimensions or offline RGB.
 Diagnostic-only flags fail in run mode with a `./run-vr diag ...` suggestion:
 `--capture-preview-evidence`, `--scene-preview`, `--preview-isolation` and
 `--preview-cameras`. Preview overrides are qualification experiments; physical
@@ -153,11 +160,68 @@ For a later physical Quest recording, connect the headset normally and stop with
 Ctrl-C. This command does not establish physical acceptance by itself:
 
 ```sh
-export OMNI_KIT_ACCEPT_EULA=Y ISAACLAB_CXR_ACCEPT_EULA=1
-RECORDING="$HOME/.local/state/piper-x/recordings/physical-onepump-$(date +%Y%m%dT%H%M%S)"
-./run-vr record --recording-dir "$RECORDING" \
+ROOT="/data/ebulochkin/vla-runtime/manual-record-04/$(date +%Y%m%dT%H%M%S)"
+./run-vr record \
+  --state-root "$ROOT/run/host" \
+  --run-dir "$ROOT/run" \
+  --recordings-root "$ROOT/recordings" \
+  --xr-resolution-scale 0.4 \
   --performance-warmup-steps 60 --performance-window-steps 300
 ```
+
+This uses the EULA acceptance established above. Choose a new timestamp for each
+launch, including dry-run: existing run bundles are never overwritten. The layout is:
+
+```text
+<ROOT>/
+  run/
+    performance.jsonl
+    result.json
+    stdout.log
+    run_manifest.json
+    runtime.yaml
+    host/                 # existing Kit/CloudXR, cache, asset and temporary state
+  recordings/
+    episode_000000/
+    episode_000001/
+    episode_000002/
+    ...
+```
+
+Every episode retains the normal native `session.hdf5`, `manifest.json`,
+`recording_state.json`, terminal successor (for committed episodes), stage snapshot,
+asset closure and visual provenance. Dry-run writes only config/provenance and
+private directories; it cannot produce episode, performance or result artifacts.
+
+### Pinned upstream XR resolution audit
+
+The Isaac Sim 6.1 / Kit 110.3 installation's
+`omni.kit.xr.core-109.1.0+00c488ae.lx64.r.cp312/include/omni/kit/xr/tokens/XRTokens.h`
+defines `XRProfileSettingTokens::renderResolutionMultiplier` as
+`profile/persistent/render/resolutionMultiplier` (lines 468–469).
+The bundled `omni.kit.xr.ui.window.profile-109.0.0+00c488ae` implementation,
+`omni/kit/xr/ui/window/profile/menu/xr_menu_resolution_frame.py` (lines 60–73),
+binds that token to the stereo render-buffer multiplier, range 0.1–2.0.
+Isaac Lab's pinned `apps/isaaclab.python.xr.openxr.kit` selects profile `ar`
+(line 75), yielding the exact Carb path
+`/persistent/xr/profile/ar/render/resolutionMultiplier`.
+This agrees with NVIDIA's [XR settings reference](https://docs.omniverse.nvidia.com/xr/omniverse-spatial-docs/latest/server/03-xr-settings.html#resolution-and-rendering).
+The CloudXR 6.2.1 transport remains unchanged.
+
+The launcher supplies this path as a Kit command-line override, records it and its
+requested value in `runtime.yaml` and `run_manifest.json`, then the child verifies
+the Carb readback before scene construction and again after entering the XR
+session. A mismatch fails the launch. The initial readback is retained as
+`xr_render_runtime` in the run manifest and `xr_render` in each episode's session
+metadata. Dry-run records configuration only; framebuffer dimensions and physical
+Quest performance still require the manual run. World/spatial scale stays 1.0.
+
+Reuse audit for this S2/D1 experiment: upstream Kit owns XR resolution; the existing
+launcher owns state/config/log paths; NVIDIA Episode Recorder and the existing S2
+loop own episode contents and segmentation. The only gaps are explicit CLI paths,
+the render setting override and readback provenance. These are configuration and
+small launch/runtime seams; environments, dependencies, processors and gate states
+are unchanged. No new output framework or gate acceptance evidence is introduced.
 
 Summarize the printed performance path with
 `python tools/summarize_vr_performance.py <run-directory>/performance.jsonl`.

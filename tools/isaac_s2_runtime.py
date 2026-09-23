@@ -479,6 +479,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 args_cli.s2_recording_dir,
                 env,
                 session_metadata=recording_session_metadata(
+                    xr_render=getattr(args_cli, "xr_render_readback", None),
                     config_path=config_path,
                     environment_pins=actual_versions,
                     run_id=run_id,
@@ -496,6 +497,13 @@ def run_s2(env, args_cli, simulation_app) -> int:
             # when X is first pressed after the headset connects.
             experiment.open(env)
         with device:
+            if getattr(args_cli, "xr_render_readback", None):
+                import carb.settings
+                from isaac_vr_config import xr_render_readback
+
+                xr_render_readback(
+                    yaml.safe_load(args_cli.config.read_text()), carb.settings.get_settings()
+                )
             for step in range(1, args_cli.s2_max_control_steps + 1):
                 if not simulation_app.is_running():
                     break
@@ -517,11 +525,16 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     # next independent episode at the next control boundary.
                     recording_episode_index += 1
                     episode_id = f"episode_{recording_episode_index:06d}"
-                    output_dir = Path(f"{args_cli.s2_recording_dir}-{episode_id}")
+                    recordings_root = getattr(args_cli, "s2_recordings_root", None)
+                    output_dir = (
+                        Path(recordings_root) / episode_id if recordings_root is not None
+                        else Path(f"{args_cli.s2_recording_dir}-{episode_id}")
+                    )
                     recording = start_live_recording(
                         output_dir,
                         env,
                         session_metadata=recording_session_metadata(
+                            xr_render=getattr(args_cli, "xr_render_readback", None),
                             config_path=config_path,
                             environment_pins=actual_versions,
                             run_id=run_id,

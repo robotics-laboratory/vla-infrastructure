@@ -15,13 +15,14 @@ import signal
 import sys
 from contextlib import nullcontext
 
-from isaac_vr_config import CONFIG_PATH, ASSET_LAB_CONFIG, load_composition
+from isaac_vr_config import CONFIG_PATH, ASSET_LAB_CONFIG, XR_RESOLUTION_SETTING, load_composition
 
 import yaml
 
 from isaac_demo_launch import (
     STACKS,
     configure_cloudxr,
+    private_directory,
     user_environment,
     verify_stack,
     write_runtime_config,
@@ -99,6 +100,7 @@ def _write_launch_manifest(
         ).hexdigest(),
         "processor_revision": s2["processor"]["revision"],
         "effective_control_config": {
+            "xr_render": yaml.safe_load((output_dir / "runtime.yaml").read_text()).get("xr_render"),
             "processor": {**s2["processor"], "sensitivity": config["teleop_tuning"]["sensitivity"]},
             "xr_presentation": config["xr_presentation"],
             "preview": {
@@ -177,6 +179,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--state-root", type=Path, help="Private directory owned by the current UID."
     )
+    parser.add_argument("--run-dir", type=Path, help="Exact new directory for the run bundle.")
+    parser.add_argument(
+        "--xr-resolution-scale", type=float,
+        help="RECORD host XR render-buffer multiplier (0.1–2.0); spatial scale is unchanged.",
+    )
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument(
         "--capture-preview-evidence",
@@ -212,6 +219,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--recording-dir",
         type=Path,
         help="Private explicit NVIDIA HDF5 V2 recording directory (record mode only).",
+    )
+    parser.add_argument(
+        "--recordings-root", type=Path,
+        help="RECORD parent for episode_000000, episode_000001, etc.; excludes --recording-dir.",
     )
     parser.add_argument(
         "--recording", type=Path, help="Episode Recorder HDF5 V2 input (replay only)."
@@ -328,6 +339,20 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("HUD measurement requires --xr-smoke or the default physical XR run")
     if args.recording_dir is not None and args.mode != "record":
         parser.error("--recording-dir requires ./run-vr record")
+    if args.recordings_root is not None:
+        if args.mode != "record" or args.recording_dir is not None:
+            parser.error("--recordings-root requires record and excludes --recording-dir")
+    if args.xr_resolution_scale is not None:
+        if args.mode != "record" or args.stack != "isaac61":
+            parser.error("--xr-resolution-scale requires record --stack isaac61")
+        if not 0.1 <= args.xr_resolution_scale <= 2.0:
+            parser.error("--xr-resolution-scale must be finite and between 0.1 and 2.0")
+    for path in (args.run_dir, args.recordings_root, args.recording_dir):
+        if path is not None and (
+            not path.is_absolute() or path.resolve().is_relative_to(ROOT)
+            or path != path.resolve()
+        ):
+            parser.error("Output paths must be absolute, outside the repository, without symlinks")
     if args.mode == "replay" and args.recording is None:
         parser.error("./run-vr replay requires --recording <session.hdf5>")
     if args.mode != "replay" and (
@@ -369,6 +394,9 @@ def main(argv: list[str] | None = None) -> int:
     }:
         raise RuntimeError("NVIDIA EULA acceptance is required: set OMNI_KIT_ACCEPT_EULA=Y")
 
+    if args.run_dir is not None:
+        args.run_dir.mkdir(parents=True, mode=0o700, exist_ok=False)
+        private_directory(args.run_dir)
     environment, state = user_environment(stack, args.stack, state_root=args.state_root)
     # A plain ``--smoke`` has no XR client and REPLAY is deliberately offline.
     # In both cases avoid not only reserving the WSS port in this process but also
@@ -382,8 +410,9 @@ def main(argv: list[str] | None = None) -> int:
         environment["ISAACLAB_CXR_SKIP_AUTOLAUNCH"] = "1"
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     hud_name = "hud-on" if args.hud_on_start else "hud-off"
-    output_dir = state / "runs" / f"{stamp}-{args.mode}-{args.profile}-{hud_name}"
-    output_dir.mkdir(parents=True, exist_ok=False)
+    output_dir = args.run_dir or state / "runs" / f"{stamp}-{args.mode}-{args.profile}-{hud_name}"
+    if args.run_dir is None:
+        output_dir.mkdir(parents=True, exist_ok=False)
     if args.capture_preview_evidence:
         environment["ROBOSYN_VR_CAMERA_DIAGNOSTICS_DIR"] = str(
             output_dir / "camera_feed_diagnostics"
@@ -392,6 +421,14 @@ def main(argv: list[str] | None = None) -> int:
     bounded = args.smoke or args.xr_smoke
     max_steps = args.max_control_steps
     kit_args = ["--portable-root", str(state / "kit")]
+    if args.xr_resolution_scale is not None:
+        runtime = yaml.safe_load(runtime_config.read_text())
+        runtime["xr_render"] = {
+            "profile": "ar", "setting": XR_RESOLUTION_SETTING,
+            "resolution_scale": args.xr_resolution_scale,
+        }
+        runtime_config.write_text(yaml.safe_dump(runtime, sort_keys=False))
+        kit_args.append(f"--{XR_RESOLUTION_SETTING}={args.xr_resolution_scale}")
     if args.mode in ("record", "replay"):
         # The custom Isaac Lab XR experience does not own this extension.
         # Activation must not depend on a cached extension graph.
@@ -437,7 +474,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.mode != "replay" and not (args.mode == "record" and args.smoke):
         command.append("--s2-teleop")
     if args.mode == "record":
-        if args.recording_dir is None:
+        if args.recordings_root is not None:
+            recording_parent = private_directory(args.recordings_root)
+            recording_dir = recording_parent / "episode_000000"
+            command.extend(["--s2-recordings-root", str(recording_parent)])
+        elif args.recording_dir is None:
             recording_parent = state / "recordings"
             recording_parent.mkdir(parents=True, mode=0o700, exist_ok=True)
             recording_parent.chmod(0o700)
