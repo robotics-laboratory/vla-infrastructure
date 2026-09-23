@@ -387,6 +387,24 @@ focused tests cover the hook integration, launcher contract, pairing,
 percentiles, threshold completeness, mutations, partial logs, artifact binding,
 ordering, measurement availability, and the physical-Quest guard.
 
+The real no-headset instrumentation checkpoint for commit
+`e8ef945cd117d49d13323c740fdcc0215158a4f5` is retained at
+`/data/blackfire/vla-runtime/isaac-isaac61/state/benchmark-no-headset-e8ef945/runs/20260923T003643236043Z-record-dual_cube_to_matching_plates-hud-off/recording-benchmark.jsonl`
+(SHA-256
+`3ff52bdc71eff2abbfa609c0b07f0760922af1a2460dbb70d8aecf65de442a3f`).
+The strict reader accepted all three contiguous samples. Both post-warmup
+samples measured the actual append and periodic-flush boundaries: append was
+`0.441765 ms` and `0.231647 ms`, while flush was `7.801146 ms` and
+`7.223841 ms`. Persistent NVML reported the RTX GPU metrics in both samples,
+and the final counters were three committed, zero rejected, and zero dropped.
+The completed log binds the 8,016,912-byte finalized HDF5 artifact at
+`/data/blackfire/vla-runtime/isaac-isaac61/recordings/20260923T-benchmark-no-headset-e8ef945/session.hdf5`
+by SHA-256
+`7d6e98d03798fbce2a7e00c55685cb734d2d6e04a082878f20863d8bda604c57`.
+Its identity records `headset_connected=false`, and render/XR remain
+`not_measured`, so this checkpoint validates instrumentation only and cannot be
+used as physical performance evidence.
+
 The no-headset mode is instrumentation QA only. Supported render/CloudXR timing
 telemetry, a reviewed complete threshold policy, and alternating paired physical
 Quest runs remain required before VRR-070 may move to `done`.
