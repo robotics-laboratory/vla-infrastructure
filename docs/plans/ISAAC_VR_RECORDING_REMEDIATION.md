@@ -260,7 +260,7 @@ Status vocabulary:
 | VRR-022 | Append only committed transitions and move rejection data to QA counters | VRR-021 | `done` (3 validator accepts = 3 HDF frames; zero discards in `20260922T233936232911Z`) | `N` validator commits equal `N` HDF frames; no invalid/held zero-action rows are admitted |
 | VRR-023 | Propagate run/session/episode/observation/action/native/transition/successor identities | VRR-002 | `done` (strict reader validation and hashed `terminal_successor.npz` in `20260922T233936232911Z`) | A reader can verify every row without process-local state or positional inference |
 | VRR-030 | Select Fabric explicitly for record-side pose sampling and forbid silent demotion | VRR-010 | `done` (shared-pose tests; real Fabric lifecycle smoke `20260922T225844486820Z`) | Manifest records requested/effective backend and a missing FSD path fails before episode start |
-| VRR-031 | Qualify moving robot/object/camera pose parity against Isaac Lab native tensors | VRR-030 | `blocked` | Retained moving assay passes fixed position/orientation thresholds for every required prim |
+| VRR-031 | Qualify moving robot/object/camera pose parity against Isaac Lab native tensors | VRR-030 | `done` (5-boundary real Kit assay `20260922T235305834853Z`; 13 pure tests) | Retained moving assay passes fixed position/orientation thresholds for every required prim |
 | VRR-040 | Close and hash snapshot asset dependencies | VRR-010 | `done` (asset-closure tests; real snapshot closure `20260922T225844486820Z`) | Snapshot sidecar enumerates every layer/asset with digest; unresolved dependency is fatal |
 | VRR-041 | Capture complete renderer, camera, and mutable visual provenance | VRR-001, VRR-040 | `done` (fresh replay `20260922T234647933300Z`; provenance/mutation tests) | Offline renderer inputs are versioned and complete enough to reproduce every canonical camera role |
 | VRR-042 | Add atomic lifecycle, periodic flush, streaming hashes, and incomplete-artifact state | VRR-022 | `done` (lifecycle/failure tests; real aborted close `20260922T225844486820Z`) | Crash/failure tests never produce a finalized artifact and do not require whole-HDF memory loading |
@@ -341,9 +341,27 @@ selective manifest verification pass.
 
 This evidence completes VRR-020 through VRR-023, VRR-041, VRR-050 through
 VRR-053, and VRR-060 through VRR-062. It does not make the artifact dataset
-admissible: moving Fabric/native pose parity (VRR-031), a paired performance
-benchmark (VRR-070), physical Quest acceptance (VRR-080), and downstream D1/
-LeRobot materialization (VRR-090) remain mandatory.
+admissible: a paired performance benchmark (VRR-070), physical Quest acceptance
+(VRR-080), and downstream D1/LeRobot materialization (VRR-090) remain mandatory.
+
+### Implementation checkpoint: moving Fabric/native pose parity
+
+VRR-031 is qualified by a bounded five-boundary real Kit assay retained at
+`/data/blackfire/vla-runtime/isaac-isaac61/runs/20260922T235305834853Z-record-dual_cube_to_matching_plates-hud-off/pose_parity.json`
+(SHA-256
+`bc33f9b613bffd76333e806127245d63743c34f46541b6883c31365fdda00b87`).
+It compares the same Fabric-backed Episode Recorder Recordables used by the
+production recorder against Isaac Lab native tensors for the physical
+`base_link` and every link of both robots, both task cubes, both wrist cameras,
+and the scene camera. The assay excludes non-physical articulation container
+Xforms and uses the native OpenGL camera quaternion matching USD Camera axes.
+
+All required groups moved beyond a fixed `5e-4 m` or `1e-3 rad` threshold. The
+maximum Fabric/native position error was `0.0 m` and orientation error was
+`2.995096332168847e-7 rad`, within the fixed `1e-5 m` and `2e-5 rad` parity
+thresholds. Backend requested/effective was Fabric and Episode Recorder was
+version 0.1.6. This closes moving pose parity only; it is not headset,
+performance, dataset-materialization, or D1 acceptance evidence.
 
 ### Phase 0: select and declare the source profile
 
