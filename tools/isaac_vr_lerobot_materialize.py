@@ -26,11 +26,19 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 from typing import Any
 from uuid import uuid4
 
 import numpy as np
+
+
+# Direct execution places only ``tools/`` on sys.path.  The pure D0 verifier
+# deliberately imports sibling modules through the repository ``tools`` package,
+# so both the project and pinned Isaac interpreters need the repository root.
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 
 BUNDLE_SCHEMA = "piper_x_isaac_vr_projection_bundle_v1"

@@ -6,6 +6,8 @@ import copy
 import hashlib
 import json
 from pathlib import Path
+import subprocess
+import sys
 
 import numpy as np
 from PIL import Image
@@ -16,6 +18,17 @@ from tools import isaac_vr_lerobot_materialize as materialize
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def test_direct_cli_bootstraps_repository_package_imports() -> None:
+    result = subprocess.run(
+        [sys.executable, str(Path(materialize.__file__).resolve()), "--help"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "orchestrate" in result.stdout
 
 
 def _source() -> dict[str, object]:
