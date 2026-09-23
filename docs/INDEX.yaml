@@ -2913,3 +2913,18 @@ documents:
   owner: data.collection.recording_lifecycle
   mutable: false
   gates: [S2, D1]
+- path: docs/experiments/20260924_live_camera_temporal_cost_audit/README.md
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+- path: docs/experiments/20260924_live_camera_temporal_cost_audit/REPORT.md
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+- path: docs/experiments/20260924_live_camera_temporal_cost_audit/source_audit.json
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
