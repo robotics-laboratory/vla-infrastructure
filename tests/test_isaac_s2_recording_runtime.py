@@ -1,11 +1,16 @@
 """Seam checks for the Kit-owned S2 recording transaction order."""
 
+import ast
 import json
 from pathlib import Path
 import sys
 from types import ModuleType, SimpleNamespace as NS
 
 import yaml
+import numpy as np
+
+from tools.isaac_s2_processor import BimanualS2TeleopProcessor, ControllerDeltaSample
+from tools.isaac_vr_decision import recordable_teleop_command
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
@@ -69,6 +74,67 @@ def test_recording_gap_finalizes_episode_before_unrecorded_native_advance():
     assert 'recording_episode_index += 1' in source
     assert '"recording_episodes"' in source
     assert '"left_transition": command.left.transition' in source
+
+
+def test_rejected_recording_tick_does_not_rearm_processor_or_apply_native_command():
+    source = (ROOT / "tools/isaac_s2_runtime.py").read_text(encoding="utf-8")
+    solution = source.index("solution = _solve_native_decision(")
+    gated_apply = source.index("if solution is not None:", solution)
+    native_apply = source.index("saturated_frames += int(ik.apply(solution))", gated_apply)
+    assert solution < gated_apply < native_apply
+
+    node = next(
+        node for node in ast.parse(source).body
+        if isinstance(node, ast.FunctionDef) and node.name == "_solve_native_decision"
+    )
+    namespace = {}
+    exec(compile(ast.Module([node], []), "recording_solve_helper", "exec"), namespace)
+    solve = namespace["_solve_native_decision"]
+
+    class FakeIk:
+        def __init__(self):
+            self.calls = []
+
+        def solve(self, command, observation, xr, tick):
+            self.calls.append((command, observation, xr, tick))
+            return object()
+
+    ik = FakeIk()
+    processor = BimanualS2TeleopProcessor()
+    tracked = ControllerDeltaSample(
+        np.ones(3), np.ones(3), True, True, 0.0, 0.0, 0.0
+    )
+    clutched = ControllerDeltaSample(
+        np.ones(3), np.ones(3), True, True, 1.0, 0.0, 0.0
+    )
+    untracked = ControllerDeltaSample(
+        np.ones(3), np.ones(3), False, False, 0.0, 0.0, 0.0
+    )
+    sequence = (
+        (tracked, tracked),  # initial tracking rebase
+        (tracked, tracked),  # motion
+        (clutched, tracked),  # clutch engaged
+        (clutched, tracked),  # clutch held
+        (tracked, tracked),  # clutch release rebase
+        (tracked, tracked),  # motion resumes
+        (untracked, tracked),  # tracking loss
+        (tracked, tracked),  # tracking recovery rebase
+        (tracked, tracked),  # motion resumes again
+    )
+    decisions = []
+    for left, right in sequence:
+        command = processor.advance(left, right)
+        generation = processor.generation
+        eligible = recordable_teleop_command(command)
+        decisions.append(solve(
+            ik, command, object(), object(), len(decisions) + 1,
+            recording_requested=True, eligible=eligible,
+        ))
+        assert processor.generation == generation
+    assert [decision is not None for decision in decisions] == [
+        False, True, False, False, False, True, False, False, True
+    ]
+    assert len(ik.calls) == 3
 
 
 def test_no_client_lifecycle_smoke_captures_and_finalizes_without_teleop(tmp_path, monkeypatch):

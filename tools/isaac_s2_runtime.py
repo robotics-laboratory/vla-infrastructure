@@ -54,6 +54,24 @@ ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "configs/isaac_s2_runtime.yaml"
 
 
+def _solve_native_decision(
+    ik, command, observation, xr, control_tick_id, *, recording_requested: bool, eligible: bool
+):
+    """Leave already-applied native targets untouched on rejected RECORD ticks.
+
+    Do not rearm the processor here: a clutch release or tracking recovery must
+    be allowed to progress to its next valid motion frame.
+    """
+    if recording_requested and not eligible:
+        return None
+    return ik.solve(
+        command,
+        observation if eligible else None,
+        xr if eligible else None,
+        control_tick_id if eligible else None,
+    )
+
+
 def _gpu_observation() -> dict[str, Any]:
     try:
         output = subprocess.check_output(
@@ -720,14 +738,14 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 if eligible:
                     control_tick_id += 1  # Monotonic attempts; failures never reuse this ID.
                     device.validate_xr(xr)
-                solution = ik.solve(
-                    # Do not execute a valid opposite-arm delta while the
-                    # bimanual recording decision is rejected (e.g. one grip
-                    # clutched). The gap between episodes is a safe hold.
-                    processor.session_inactive() if recording_requested and not eligible else command,
-                    observation if eligible else None,
-                    xr if eligible else None,
-                    control_tick_id if eligible else None,
+                solution = _solve_native_decision(
+                    ik,
+                    command,
+                    observation,
+                    xr,
+                    control_tick_id,
+                    recording_requested=recording_requested,
+                    eligible=eligible,
                 )
                 if eligible:
                     assert observation is not None and xr is not None
@@ -765,13 +783,14 @@ def run_s2(env, args_cli, simulation_app) -> int:
                             finalize_recording("operator_stopped", "causal_epoch_changed")
                             validator = None
                             eligible = False
-                            solution = ik.solve(processor.session_inactive(), None, None, None)
+                            solution = None
                         else:
                             validator.begin_epoch(epoch)
                     if eligible:
                         assert validator is not None
                         env.prepared_control_transaction = solution.prepare(validator)
-                saturated_frames += int(ik.apply(solution))
+                if solution is not None:
+                    saturated_frames += int(ik.apply(solution))
                 if eligible:
                     env.last_control_decision = solution
                 if performance is not None:
