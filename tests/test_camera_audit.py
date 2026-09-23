@@ -10,3 +10,9 @@ def test_classifier_rejects_ambiguity_and_accepts_separated_match():
     assert classify({"0": 1, "-1": 2, "-2": 50, "-3": 100}, 100) == "unresolved"
     assert classify({"0": 100, "-1": 1, "-2": 100, "-3": 200}, 100) == -1
     assert classify({"0": float("nan"), "-1": 1, "-2": 100, "-3": 200}, 100) == "unresolved"
+
+
+def test_classifier_rejects_nonfinite_reference_separation():
+    errors = {"0": 0.0, "-1": 100.0, "-2": 150.0, "-3": 200.0}
+    for separation in (float("nan"), float("inf"), -float("inf")):
+        assert classify(errors, separation) == "unresolved"

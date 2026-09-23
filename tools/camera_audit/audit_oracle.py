@@ -14,7 +14,7 @@ ROLES = ("left_wrist", "right_wrist", "scene")
 
 def classify(errors, separation):
     """Reject poor absolute matches as well as ambiguous nearest references."""
-    if set(errors) != {"0", "-1", "-2", "-3"} or separation < 10:
+    if set(errors) != {"0", "-1", "-2", "-3"} or not np.isfinite(separation) or separation < 10:
         return "unresolved"
     ordered = sorted(errors, key=errors.get)
     best, second = (errors[key] for key in ordered[:2])
