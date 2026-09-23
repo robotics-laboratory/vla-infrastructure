@@ -386,6 +386,8 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
         consume_backdrop_button=lambda *a, **k: None,
         consume_recenter_button=lambda *a, **k: False,
         performance_report=lambda *a: {},
+        suspend_dataset_camera_rendering=lambda *a: pytest.fail("RUN/DIAG suspended cameras"),
+        check_dataset_camera_rendering=lambda *a: pytest.fail("RUN/DIAG entered RECORD checks"),
     )
     admitted = []
     env = NS(

@@ -1,0 +1,78 @@
+Checks for dataset-camera render suspension at baseline c55f833 plus the exact runtime source hashes in results.json.
+Core environment: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env
+
+Focused
+COMMAND: python -m pytest -q tests/test_isaac_vr_recording_validation.py tests/test_isaac_vr_recording.py tests/test_isaac_vr_decision.py tests/test_isaac_vr_capture.py tests/test_run_vr.py tests/test_isaac_s2_performance.py
+........................................................................ [ 46%]
+........................................................................ [ 92%]
+............                                                             [100%]
+=============================== warnings summary ===============================
+tests/test_isaac_vr_decision.py::test_original_native_parity_and_preclip_precision[0.0--1.0]
+  actual_ik_wrapper:123: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+156 passed, 1 warning in 2.92s
+
+Core
+COMMAND: PYTHONPATH=packages/lerobot_robot_piperx/src HF_HOME=/tmp/vr-render-suspension/hf-cache python -m pytest -q (host permissions for local socket tests)
+........................................................................ [ 13%]
+........................................................................ [ 27%]
+........................................................................ [ 41%]
+............ssssssssssssssssssssssssss.................................. [ 54%]
+........................................................................ [ 68%]
+.................................................................... [ 81%]
+........................................................................ [ 95%]
+..........................                                               [100%]
+=============================== warnings summary ===============================
+../../../../../data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/cmeel.prefix/lib/python3.12/site-packages/hppfcl/__init__.py:3
+  /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/cmeel.prefix/lib/python3.12/site-packages/hppfcl/__init__.py:3: DeprecationWarning: Please update your 'hppfcl' imports to 'coal'
+    warnings.warn(
+
+tests/test_isaac_vr_decision.py::test_original_native_parity_and_preclip_precision[0.0--1.0]
+  actual_ik_wrapper:123: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+500 passed, 26 skipped, 2 warnings, 4 subtests passed in 28.51s
+
+COMMAND: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python -m ruff check tools/isaac_vr_camera_rendering.py tools/isaac_vr_runtime.py tools/isaac_s2_runtime.py tools/launch_isaac_vr.py tests/test_isaac_vr_recording_validation.py tests/test_run_vr.py
+All checks passed!
+EXIT: 0
+
+COMMAND: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python -m mypy --follow-imports=silent tools/isaac_vr_camera_rendering.py
+Success: no issues found in 1 source file
+EXIT: 0
+
+COMMAND: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python -m mypy --follow-imports=silent tools/isaac_s2_runtime.py
+Success: no issues found in 1 source file
+EXIT: 0
+
+COMMAND: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python -m mypy --follow-imports=silent tools/launch_isaac_vr.py
+Success: no issues found in 1 source file
+EXIT: 0
+
+COMMAND: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python -m mypy --explicit-package-bases --follow-imports=silent --ignore-missing-imports tools/isaac_vr_runtime.py
+Success: no issues found in 1 source file
+EXIT: 0
+
+COMMAND: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python tools/lint_docs.py --base c55f833fe4611fdcca31e15b5a9ad45dd97eee1d
+INDEX: 434 entries; classification {'current': 47, 'historical': 387}
+HISTORICAL PRESERVATION: PASS (384 frozen files vs c55f833fe4611fdcca31e15b5a9ad45dd97eee1d)
+KNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.
+DOC GOVERNANCE CHECKS: PASS
+EXIT: 0
+
+COMMAND: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python tools/lint_spec_references.py
+SPEC REFERENCE LINT OK
+EXIT: 0
+
+COMMAND: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python tools/validate_resolved_contract.py configs/resolved_contract.yaml
+CONTRACT STRUCTURALLY VALID
+CONTRACT SEMANTICALLY VALID
+FINAL RC NOT READY
+BLOCKERS: S2, D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0
+EXIT: 0
+
+COMMAND: git diff --check
+EXIT: 0
+
+Post-registration checks also passed: contract, spec references, docs historical preservation against c55f833, manifest (110 reviewed paths), and 108 governance/validator tests. Final staged diff verification is retained in the raw final-validation.txt.

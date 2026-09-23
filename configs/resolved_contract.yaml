@@ -1920,6 +1920,24 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  vr_record_camera_suspension_report:
+    kind: report
+    sha256: 6df249f2240ea859be88bfab72a70ee05ac572e90bde24fea369c18ce3115f72
+    path: docs/experiments/20260923_record_camera_suspension/REPORT.md
+    uri: null
+    description: Three matched no-client RECORD baselines and optimized repetitions, camera inactivity proof and native replay regression; no physical Quest or gate promotion.
+  vr_record_camera_suspension_results:
+    kind: test_output
+    sha256: c9d29895f683027da53bb337d77ca3be49da30c5e2c587b87b95e20d762c222f
+    path: docs/experiments/20260923_record_camera_suspension/results.json
+    uri: null
+    description: Three matched no-client RECORD baselines and optimized repetitions, camera inactivity proof and native replay regression; no physical Quest or gate promotion.
+  vr_record_camera_suspension_checks:
+    kind: test_output
+    sha256: 8a5fae75b138f77e36e6da18da7ccfb884c4cf467818f5903ded67b42e9b5702
+    path: docs/experiments/20260923_record_camera_suspension/checks.txt
+    uri: null
+    description: Three matched no-client RECORD baselines and optimized repetitions, camera inactivity proof and native replay regression; no physical Quest or gate promotion.
   vr_architecture_report:
     kind: report
     sha256: 70e013944f1d4aa7bfdbb8adcbad831a116347c63b07f811b99a7113df87aa52
@@ -2959,6 +2977,22 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  vr_record_camera_suspension_no_client:
+    timestamp: '2026-09-23T13:26:29.385274+00:00'
+    artifact_ids:
+    - vr_record_camera_suspension_report
+    - vr_record_camera_suspension_results
+    - vr_record_camera_suspension_checks
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/experiments/20260923_record_camera_suspension
+    symbol: VRRuntime.suspend_dataset_camera_rendering
+    kind: command_test
+    status: pass
+    summary: Three unchanged c55f833 baseline runs versus three identical optimized runtime source hashes; 300 measured controls each, dataset Hydra updates off, RGB graph bindings inactive, zero product drawable events across reset, native HDF5 camera metadata and zero-physics nine-image replay pass.
+    command: ./run-vr record --smoke --max-control-steps 330 --performance-warmup-steps 30 --performance-window-steps 300 --recording-dir <fresh>; replay --episode 2 --render-cameras <fresh>. Exact commands, baseline launcher shim and source hashes in results.json and retained raw evidence.
+    notes: No-client control rate improves 7.6263 to 12.2000 Hz; not physical headset FPS. RECORD GPU/VRAM telemetry unavailable. Failed development attempts retained. D0/S0/S1 scopes unchanged; S2/D1 remain unresolved.
   vr_architecture_audit:
     timestamp: '2026-09-21T21:29:21.665273+00:00'
     artifact_ids:
@@ -4583,6 +4617,7 @@ gates:
   S2:
     state: unresolved
     evidence_ids:
+    - vr_record_camera_suspension_no_client
     - vr_architecture_audit
     - vr_architecture_phase
     - vr_architecture_replay
@@ -4603,6 +4638,9 @@ gates:
     - gate_s2_physical_run1_failed
     - isaac1103_s2_automated
     artifact_ids:
+    - vr_record_camera_suspension_report
+    - vr_record_camera_suspension_results
+    - vr_record_camera_suspension_checks
     - vr_architecture_report
     - vr_architecture_long
     - vr_architecture_short

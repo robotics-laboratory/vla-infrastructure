@@ -375,6 +375,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     recording_observation_id = 0
     recording_outcome = "aborted"
     recording_failure = None
+    dataset_camera_rendering = None
 
     def record_sample(solution=None, *, observation_id: int, state_observation=None) -> None:
         if recording is None:
@@ -431,6 +432,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     )
     try:
         if recording_requested:
+            assert experiment is not None  # Validated before the state-only reset.
             # State-only recording keeps camera prims in the snapshot but never
             # schedules RGB extraction or camera-boundary capture.
             from isaac_vr_recording import start_live_recording
@@ -443,6 +445,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     "environment_pins": actual_versions,
                 },
             )
+            dataset_camera_rendering = experiment.suspend_dataset_camera_rendering(env.sim.stage)
+            print(json.dumps({"event": "dataset_camera_rendering_suspended",
+                              "state": dataset_camera_rendering}), flush=True)
         if experiment is not None and not recording_requested:
             # Pinned Candidate B requires camera-feed bind(env) before the XR
             # teleop session is entered. This also makes the panels available
@@ -738,6 +743,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     )
                     stage_started_ns = time.perf_counter_ns()
                 camera: dict[str, Any] = {"valid": True, "strictly_advanced": False, "roles": {}}
+                if recording_requested:
+                    assert experiment is not None
+                    dataset_camera_rendering = experiment.check_dataset_camera_rendering(control_steps)
                 if not recording_requested:
                     camera = camera_guard.sample(env)
                 if diagnostic:
@@ -989,6 +997,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
         report["composition"] = experiment.performance_report(elapsed, camera_advanced_frames)
         report["canonical_d0_changed"] = False
         report["production_gate_status_changed"] = False
+    if recording_requested:
+        report["dataset_camera_rendering"] = dataset_camera_rendering
     if not diagnostic:
         report.pop("gpu")
         for key in ("sensitivity_mode_frames", "motion_scale_observed", "transitions",

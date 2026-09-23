@@ -26,9 +26,11 @@ ROOT = Path(__file__).resolve().parents[1]
 if TYPE_CHECKING or __package__:
     from .isaac_vr_config import load_composition
     from .isaac_vr_capture import ProducerBoundary, ThreeCameraCapture
+    from .isaac_vr_camera_rendering import DatasetCameraSuspension
 else:
     from isaac_vr_config import load_composition
     from isaac_vr_capture import ProducerBoundary, ThreeCameraCapture
+    from isaac_vr_camera_rendering import DatasetCameraSuspension
 CONVERTED_ROOT = Path(os.environ.get("ROBOSYN_VR_ASSET_CACHE", "/data/vla-infrastructure/assets/robosyn_vr_demo/converted"))
 PHYSICS_DT = 1.0 / 120.0
 CAMERA_PERIOD = 1.0 / 30.0
@@ -421,6 +423,7 @@ class VRRuntime:
         self.pipeline_action_dim = 25
         self.validation: dict[str, Any] = {}
         self._env = None
+        self.dataset_camera_suspension: DatasetCameraSuspension | None = None
         self._display_visible = False
         self._feed_bound = False
         self._feed_bound_ever = False
@@ -555,6 +558,29 @@ class VRRuntime:
         if self.camera_rig.capture is not None:
             self.camera_rig.capture.invalidate()
 
+    def suspend_dataset_camera_rendering(self, stage) -> dict[str, Any]:
+        """After preflight/snapshot, retain state cameras and suspend their products."""
+        if self.camera_rig.live_rgb_enabled or self._feed_bound or self._display_visible:
+            raise RuntimeError("Dataset suspension requires state-only RECORD without previews")
+        if self.dataset_camera_suspension is None:
+            self.dataset_camera_suspension = DatasetCameraSuspension(
+                dict(zip(("left_wrist", "right_wrist", "scene"),
+                         (*self.camera_rig.wrists, self.camera_rig.scene_camera))),
+                stage, reset_epoch=self.camera_rig.reset_epoch,
+            )
+        return self.check_dataset_camera_rendering(
+            self.dataset_camera_suspension.report["control_steps_checked"]
+        )
+
+    def check_dataset_camera_rendering(self, control_steps: int) -> dict[str, Any]:
+        if self.dataset_camera_suspension is None:
+            raise RuntimeError("Dataset camera suspension was not established")
+        if self.camera_rig.live_rgb_enabled or self._feed_bound or self._display_visible:
+            raise RuntimeError("Live dataset capture/preview became active during RECORD")
+        return self.dataset_camera_suspension.check(
+            control_steps=control_steps, reset_epoch=self.camera_rig.reset_epoch,
+        )
+
     def open(self, env) -> None:
         self._env = env
         self._initial_capture = asdict(env.latest_observation_capture())
@@ -637,6 +663,8 @@ class VRRuntime:
             print("[DEMO] wrist camera panels prebound hidden before XR session", flush=True)
 
     def close(self) -> None:
+        if self.dataset_camera_suspension is not None:
+            self.dataset_camera_suspension.close()
         if self._feed_bound:
             if self._feed_updates is not None:
                 self._feed_update_report = dict(self._feed_updates.counters)

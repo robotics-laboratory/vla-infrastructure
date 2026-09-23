@@ -88,8 +88,9 @@ statistics and presentation counters. Bounded preview PPM capture is opt-in.
 
 RUN, DIAG and RECORD support `--stack`, `--profile`, `--cloudxr-mode`, `--state-root`,
 `--hud-on-start`, `--max-control-steps`, `--dry-run`, `--smoke` and `--xr-smoke`.
-Diagnostic-only flags fail in run mode with a `./run-vr diag ...` suggestion:
-`--performance-window-steps`, `--performance-warmup-steps`,
+RECORD also accepts `--performance-window-steps` and
+`--performance-warmup-steps`; these remain diagnostic-only in RUN.
+Diagnostic-only flags fail in RUN/RECORD with a `./run-vr diag ...` suggestion:
 `--capture-preview-evidence`, `--scene-preview`, `--preview-isolation` and
 `--preview-cameras`. Preview overrides are qualification experiments; physical
 acceptance uses canonical defaults. Select the asset lab explicitly:
@@ -145,12 +146,23 @@ path. It exports one `stage_snapshot.usd`, records static scene from that snapsh
 and stores articulated robots, dynamic cubes, camera pose/intrinsics, SimTime and
 the numeric D0 transition track through public NVIDIA Recordables. Each sample is
 explicitly taken at O0 and after each four-substep control transition. RECORD is
-state-only: RGB extraction, preview panels, and the camera capture boundary are
-disabled. Camera prims remain in the exported USD snapshot, so replay can render
-RGB after state application without placing RGB on the acquisition path.
-RenderProducts and attached annotators still exist; disabled live extraction does
-not establish disabled dataset-camera rendering. RenderProduct optimization is a
-separate performance task.
+state-only: after canonical image preflight, state-only reset, snapshot export and
+Recordable setup, the three canonical dataset camera RenderProduct updates are
+disabled during RECORD. Live RGB annotators/readback, extraction, preview panels,
+and the camera capture boundary are inactive. Camera prims, transforms, intrinsics
+and CameraRecordable metadata remain available. XR operator rendering remains
+separate; no viewport or global renderer settings are changed. Replay creates its
+own active products after applying the recorded state.
+
+`result.json` reports each dataset camera's prim/product identity, update flags,
+annotator graph binding and Camera counters before/after suspension and after the
+control interval. Texture-filtered Hydra drawable events must remain zero;
+unexpected rendering/readback fails recording closed. On the pinned Replicator,
+`is_attached` remains stale after detach, so the guard checks the public graph
+binding. Camera counters alone do not prove rendering stopped. Resets retain the
+suspension and reset camera bookkeeping without reattaching readers.
+The [bounded performance and replay evidence](../experiments/20260923_record_camera_suspension/REPORT.md)
+records the tested source scope and no-client limitations.
 
 Reset preserves world/articulation reset and camera epoch bookkeeping without
 requiring RGB. Reset, XR session/reference changes and disconnect/reconnect split
@@ -215,7 +227,7 @@ the machine sources and launch path above.
 
 ## Observation capture availability
 
-All three cameras publish one boundary after reset completion or four control
+In RUN/DIAG, all three cameras publish one boundary after reset completion or four control
 substeps. Scene capture remains active while previews are hidden. RUN keeps only
 the current GPU-backed images and immutable identity/state; it does not record
 actions or episodes. Consumers must use a successful current capture before the

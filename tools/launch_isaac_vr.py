@@ -36,6 +36,7 @@ PROVENANCE_INPUTS = (
     ROOT / "tools/isaac_vr_config.py",
     ROOT / "tools/isaac_vr_camera_guard.py",
     ROOT / "tools/isaac_vr_capture.py",
+    ROOT / "tools/isaac_vr_camera_rendering.py",
     ROOT / "tools/isaac_vr_decision.py",
     ROOT / "tools/isaac_s2_performance.py",
     ROOT / "tools/isaac_s2_processor.py",
@@ -219,6 +220,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--performance-window-steps",
         "--performance-warmup-steps",
     }
+    if args.mode == "record":
+        diagnostic_flags -= {"--performance-window-steps", "--performance-warmup-steps"}
     used = [
         item.split("=", 1)[0] for item in invocation if item.split("=", 1)[0] in diagnostic_flags
     ]

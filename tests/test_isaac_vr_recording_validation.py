@@ -8,7 +8,8 @@ import copy
 import importlib
 from pathlib import Path
 import sys
-from types import SimpleNamespace as NS
+from types import MethodType, SimpleNamespace as NS
+from typing import Any
 
 import numpy as np
 import pytest
@@ -17,6 +18,7 @@ import yaml
 
 from tools.d0_causal import CausalTransactionValidator
 from tools.isaac_vr_capture import ThreeCameraCapture
+from tools.isaac_vr_camera_rendering import DatasetCameraSuspension, ROLES
 from tools.isaac_vr_recording import ExplicitFrameSampler, _d0_channels
 from test_isaac_vr_decision import ik_fixture
 from test_run_vr import module
@@ -25,7 +27,62 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 @pytest.fixture
-def record_loop(monkeypatch):
+def rendering_resources(monkeypatch):
+    class AnnotatorRegistryError(Exception):
+        pass
+    module(monkeypatch, "omni.replicator.core.scripts.annotators",
+           AnnotatorRegistryError=AnnotatorRegistryError)
+    observers = []
+    def observe(**kwargs):
+        handle = NS(active=True)
+        handle.reset = lambda: setattr(handle, "active", False)
+        observers.append((kwargs, handle))
+        return handle
+    module(monkeypatch, "carb.eventdispatcher", get_eventdispatcher=lambda: NS(observe_event=observe))
+    hydra_module = module(monkeypatch, "omni.hydratexture", GLOBAL_EVENT_DRAWABLE_CHANGED="drawable")
+    module(monkeypatch, "omni", hydratexture=hydra_module)
+    prims = {}
+    cameras = {}
+    for role in ROLES:
+        prim, product = f"/World/{role}", f"/Render/{role}"
+        prims[prim] = NS(IsValid=lambda: True, GetTypeName=lambda: "Camera")
+        prims[product] = NS(IsValid=lambda: True)
+        texture = NS(updates_enabled=True, frame_number=160)
+        texture.get_name = lambda role=role: role
+        texture.get_event_key = lambda role=role: {"texture": role}
+        def frame_info(result_handle, t=texture):
+            assert result_handle != 0  # Kit requires a live drawable event handle.
+            return {"frame_number": t.frame_number}
+        texture.get_frame_info = frame_info
+        annotator = NS(is_attached=True, node_active=True, detaches=[])
+        def detach(paths, a=annotator):
+            a.detaches.append(paths)
+            a.node_active = False  # Pinned is_attached stays stale after detach.
+        def get_node(a=annotator):
+            if not a.node_active:
+                raise AnnotatorRegistryError("detached")
+            return NS(is_valid=lambda: True)
+        annotator.detach = detach
+        annotator.get_node = get_node
+        cameras[role] = NS(
+            frame=NS(torch=torch.zeros(1, dtype=torch.int64)),
+            _render_data=NS(spec=NS(camera_prim_paths=(prim,)),
+                            render_product=NS(path=product, hydra_texture=texture),
+                            annotators={"rgba": annotator}),
+        )
+    stage = NS(GetPrimAtPath=lambda p: prims.get(p, NS(IsValid=lambda: False)))
+    return NS(cameras=cameras, stage=stage, prims=prims, observers=observers)
+
+
+def bind_suspension(runtime):
+    for name in ("suspend_dataset_camera_rendering", "check_dataset_camera_rendering"):
+        method = load_method("tools/isaac_vr_runtime.py", "VRRuntime", name,
+                             {"Any": Any, "DatasetCameraSuspension": DatasetCameraSuspension})
+        setattr(runtime, name, MethodType(method, runtime))
+
+
+@pytest.fixture
+def record_loop(monkeypatch, rendering_resources):
     """Real loop, processor, solve/apply, validator and sampler; fake XR/physics IO."""
     monkeypatch.syspath_prepend(str(ROOT / "tools"))
     from tools.isaac_vr_decision import XrInputReceipt
@@ -130,7 +187,10 @@ def record_loop(monkeypatch):
                 self.advance(sample(), sample())
 
     monkeypatch.setattr(runtime, "BimanualS2TeleopProcessor", PrimableProcessor)
-    env.camera = NS(reset_epoch=0)
+    cameras = rendering_resources.cameras
+    env.camera = NS(reset_epoch=0, wrists=(cameras["left_wrist"], cameras["right_wrist"]),
+                    scene_camera=cameras["scene"], live_rgb_enabled=False)
+    env.sim.stage = rendering_resources.stage
     env.sim.render_generation = 0
     env.capture_measured_state = lambda: (env.step, (float(env.step),) * 14)
 
@@ -163,8 +223,11 @@ def record_loop(monkeypatch):
         recenter_control="right_thumbstick_click",
         pipeline_action_dim=25,
         disable_live_rgb=lambda: None,
+        camera_rig=env.camera, dataset_camera_suspension=None,
+        _feed_bound=False, _display_visible=False,
         close=lambda: None,
     )
+    bind_suspension(env.vr_runtime)
 
     def validator(*a, **kw):
         instance = CausalTransactionValidator(*a, **kw)
@@ -781,6 +844,117 @@ def test_record_disable_bypasses_capture_but_does_not_disable_products():
     assert rig.live_rgb_enabled is False
     assert all(p.updates_enabled and p.annotator_attached for p in products)
     assert capture.successful_capture_cycle == 0
+
+
+def test_suspension_exact_roles_prims_idempotence_and_xr_isolation(rendering_resources):
+    r = rendering_resources
+    xr = NS(updates_enabled=True, camera="/_xr/stage/xrCamera", quality="unchanged")
+    rig = NS(wrists=(r.cameras["left_wrist"], r.cameras["right_wrist"]),
+             scene_camera=r.cameras["scene"], reset_epoch=1, live_rgb_enabled=False)
+    runtime = NS(camera_rig=rig, dataset_camera_suspension=None,
+                 _feed_bound=False, _display_visible=False, xr=xr)
+    bind_suspension(runtime)
+    prims = dict(r.prims)
+    first = copy.deepcopy(runtime.suspend_dataset_camera_rendering(r.stage))
+    runtime.check_dataset_camera_rendering(330)
+    second = runtime.suspend_dataset_camera_rendering(r.stage)
+    assert second["control_steps_checked"] == 330
+    assert set(second["roles"]) == set(ROLES)
+    assert r.prims == prims
+    for role in ROLES:
+        assert first["roles"][role]["before"]["updates_enabled"]
+        state = second["roles"][role]["latest"]
+        assert state["camera_prim_exists"] and state["render_product_exists"]
+        assert not state["updates_enabled"] and state["annotators"] == {"rgba": False}
+        assert state["camera_frame"] == [0]
+        assert r.cameras[role]._render_data.annotators["rgba"].detaches == [[f"/Render/{role}"]]
+    assert len(r.observers) == 3
+    assert {o[0]["filter"]["texture"] for o in r.observers} == set(ROLES)
+    assert vars(xr) == dict(updates_enabled=True, camera="/_xr/stage/xrCamera", quality="unchanged")
+    runtime.dataset_camera_suspension.close()
+    assert all(not handle.active for _, handle in r.observers)
+    assert all(not c._render_data.render_product.hydra_texture.updates_enabled
+               for c in r.cameras.values())
+
+
+@pytest.mark.parametrize("fault", ["updates", "annotator", "camera_frame",
+                                   "hydra_event", "prim", "resources"])
+def test_suspension_fails_closed_on_activity_or_lost_identity(rendering_resources, fault):
+    r = rendering_resources
+    guard = DatasetCameraSuspension(r.cameras, r.stage, reset_epoch=1)
+    camera = r.cameras["scene"]
+    data = camera._render_data
+    if fault == "updates":
+        data.render_product.hydra_texture.updates_enabled = True
+    elif fault == "annotator":
+        data.annotators["rgba"].node_active = True
+    elif fault == "camera_frame":
+        camera.frame.torch += 1
+    elif fault == "hydra_event":
+        r.observers[-1][0]["on_event"]({"result_handle": 99})
+    elif fault == "prim":
+        del r.prims["/World/scene"]
+    else:
+        camera._render_data = copy.copy(data)
+    with pytest.raises(RuntimeError):
+        guard.check(control_steps=1, reset_epoch=1)
+
+
+def test_global_renderer_frame_advances_without_dataset_drawables(rendering_resources):
+    r = rendering_resources
+    guard = DatasetCameraSuspension(r.cameras, r.stage, reset_epoch=1)
+    for camera in r.cameras.values():
+        camera._render_data.render_product.hydra_texture.frame_number += 100
+    report = guard.check(control_steps=25, reset_epoch=1)
+    assert report["hydra_drawable_events_after_suspension"] == dict.fromkeys(ROLES, 0)
+
+
+@pytest.mark.parametrize("mutation", ["extra_xr", "missing", "same_camera", "same_product"])
+def test_suspension_rejects_wrong_camera_ownership(rendering_resources, mutation):
+    r = rendering_resources
+    if mutation == "extra_xr":
+        r.cameras["xr"] = NS()
+    elif mutation == "missing":
+        del r.cameras["scene"]
+    elif mutation == "same_camera":
+        r.cameras["scene"] = r.cameras["left_wrist"]
+    else:
+        r.cameras["scene"]._render_data.render_product.path = "/Render/left_wrist"
+    with pytest.raises(RuntimeError):
+        DatasetCameraSuspension(r.cameras, r.stage, reset_epoch=0)
+
+
+def test_actual_state_only_reset_after_suspension(monkeypatch, rendering_resources):
+    from test_isaac_vr_capture import environment
+    from tools.isaac_vr_decision import capture_state_only_observation
+
+    env, _ = environment(monkeypatch)
+    r = rendering_resources
+    env.camera.wrists = (r.cameras["left_wrist"], r.cameras["right_wrist"])
+    env.camera.scene_camera = r.cameras["scene"]
+    for c in r.cameras.values():
+        c.reset = lambda c=c: c.frame.torch.zero_()
+    env.camera.live_rgb_enabled = False
+    env.reset(0)
+    guard = DatasetCameraSuspension(r.cameras, r.stage, reset_epoch=env.camera.reset_epoch)
+    state = env.reset(0)
+    assert state["observation.state"].shape == (14,)
+    initial = capture_state_only_observation(env)
+    guard.check(control_steps=0, reset_epoch=env.camera.reset_epoch)
+    env._advance(4)
+    successor = capture_state_only_observation(env)
+    guard.check(control_steps=1, reset_epoch=env.camera.reset_epoch)
+    assert successor.producer.physics_step - initial.producer.physics_step == 4
+
+
+def test_record_performance_flags_are_admitted_without_preview_flags(monkeypatch):
+    monkeypatch.syspath_prepend(str(ROOT / "tools"))
+    from launch_isaac_vr import parse_args
+    args = parse_args(["record", "--performance-warmup-steps", "30",
+                       "--performance-window-steps", "300"])
+    assert (args.performance_warmup_steps, args.performance_window_steps) == (30, 300)
+    with pytest.raises(SystemExit):
+        parse_args(["record", "--preview-cameras", "2"])
 
 
 @pytest.mark.parametrize(

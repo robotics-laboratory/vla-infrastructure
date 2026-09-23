@@ -2892,3 +2892,21 @@ documents:
   owner: vr.performance
   mutable: false
   gates: [D0, S1, S2, D1]
+- path: docs/experiments/20260923_record_camera_suspension/REPORT.md
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [S2, D1]
+- path: docs/experiments/20260923_record_camera_suspension/results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [S2, D1]
+- path: docs/experiments/20260923_record_camera_suspension/checks.txt
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: [S2, D1]
