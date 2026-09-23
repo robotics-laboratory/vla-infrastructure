@@ -1,6 +1,7 @@
 """Deterministic injected-XR recorder seam tests without Kit."""
 
 from pathlib import Path
+import hashlib
 import sys
 
 import numpy as np
@@ -17,6 +18,10 @@ from isaac_vr_recording import (  # noqa: E402
     verify_committed_transition_sample,
 )
 from tools.isaac_vr_decision import StateSnapshotObservation  # noqa: E402
+from tools.isaac_vr_recording_benchmark import (  # noqa: E402
+    BenchmarkRunLogger,
+    read_benchmark_run,
+)
 
 
 class FakeEnvironment:
@@ -46,12 +51,14 @@ class FakeRecording:
     session_id = "injected-session"
     episode_id = "episode_000000"
 
-    def __init__(self, env):
+    def __init__(self, env, timing_observer=None):
         self.env = env
         self.committed_frames = 0
         self.sequence = 0
         self.promoted = None
         self.rows = []
+        self.rejections = {}
+        self.timing_observer = timing_observer
 
     def _token(self):
         digest = f"{self.sequence + 1:064x}"
@@ -95,6 +102,9 @@ class FakeRecording:
         verify_committed_transition_sample(canonical)
         assert int(canonical["frame_index"]) == self.committed_frames
         self.rows.append(canonical)
+        if self.timing_observer is not None:
+            self.timing_observer("hdf_append_ms", 10)
+            self.timing_observer("hdf_flush_ms", 20)
         self.committed_frames += 1
         self.promoted = successor
 
@@ -112,3 +122,61 @@ def test_injected_transitions_are_distinct_dense_and_self_verifying():
             current["successor_observation_state"],
             following["observation_state"],
         )
+
+
+def test_injected_transitions_feed_the_real_benchmark_logger(tmp_path):
+    digest = hashlib.sha256(b"fixture").hexdigest()
+    identity = {
+        "pair_id": "pair",
+        "condition": "recording",
+        "run_id": "run",
+        "git_commit": "a" * 40,
+        "dirty_status_sha256": digest,
+        "environment_sha256": digest,
+        "measurement_provenance_sha256": digest,
+        "scene_snapshot_sha256": digest,
+        "visual_provenance_sha256": digest,
+        "source_profile": "isaac_human_vr_offline_rgb_v1",
+        "quest_session_id": "not-applicable:no-headset-injected",
+        "target_hz": 30.0,
+        "warmup_steps": 1,
+        "measured_steps": 2,
+        "headset_connected": False,
+        "pair_order": 1,
+    }
+    logger = BenchmarkRunLogger(
+        tmp_path / "benchmark.jsonl",
+        identity,
+        unavailable_timing_metrics=("render_ms", "xr_ms"),
+    )
+    env = FakeEnvironment()
+    recording = FakeRecording(env, timing_observer=logger.add_stage)
+
+    class Resources:
+        def sample(self):
+            return {
+                "process_cpu_percent": 1.0,
+                "rss_bytes": 2,
+                "gpu_utilization_percent": 3.0,
+                "gpu_memory_bytes": 4,
+                "disk_read_bytes": 5,
+                "disk_write_bytes": 6,
+            }
+
+    result = record_injected_transitions(
+        recording,
+        env,
+        count=3,
+        benchmark_logger=logger,
+        resource_sampler=Resources(),
+    )
+    artifact = tmp_path / "session.hdf5"
+    artifact.write_bytes(b"hdf")
+    logger.close(recording_hdf5=artifact)
+
+    run = read_benchmark_run(tmp_path / "benchmark.jsonl")
+    assert result["committed_frames"] == 3
+    assert run.samples[-1]["counters"]["committed"] == 3
+    assert run.samples[-1]["timings_ms"]["hdf_append_ms"] > 0.0
+    assert run.samples[-1]["timings_ms"]["hdf_flush_ms"] > 0.0
+    assert run.samples[-1]["timing_measurement_status"]["render_ms"] == "not_measured"

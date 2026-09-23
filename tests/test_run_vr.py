@@ -51,7 +51,11 @@ def test_cli_modes_and_explicit_rollback(launcher):
     record = launcher.parse_args(["record"])
     assert record.mode == "record"
     replay = launcher.parse_args(["replay", "--recording", "/tmp/session.hdf5", "--episode", "0"])
-    assert (replay.mode, replay.recording, replay.episode) == ("replay", Path("/tmp/session.hdf5"), 0)
+    assert (replay.mode, replay.recording, replay.episode) == (
+        "replay",
+        Path("/tmp/session.hdf5"),
+        0,
+    )
     with pytest.raises(SystemExit):
         launcher.parse_args(["record", "--capture-preview-evidence"])
     with pytest.raises(SystemExit):
@@ -59,6 +63,38 @@ def test_cli_modes_and_explicit_rollback(launcher):
     with pytest.raises(SystemExit):
         launcher.parse_args(["--smoke", "--injected-actions"])
     assert launcher.parse_args(["record", "--smoke", "--injected-actions"]).injected_actions
+    with pytest.raises(SystemExit):
+        launcher.parse_args(["record", "--smoke", "--recording-benchmark"])
+    with pytest.raises(SystemExit):
+        launcher.parse_args(["record", "--smoke", "--injected-actions", "--recording-benchmark"])
+    benchmark = launcher.parse_args(
+        [
+            "record",
+            "--smoke",
+            "--injected-actions",
+            "--recording-benchmark",
+            "--benchmark-pair-id",
+            "pair-1",
+        ]
+    )
+    assert benchmark.recording_benchmark and benchmark.benchmark_measured_steps == 64
+    with pytest.raises(SystemExit):
+        launcher.parse_args(
+            [
+                "record",
+                "--smoke",
+                "--injected-actions",
+                "--recording-benchmark",
+                "--benchmark-pair-id",
+                "pair-1",
+                "--benchmark-warmup-steps",
+                "1",
+                "--benchmark-measured-steps",
+                "2",
+                "--benchmark-flush-every-frames",
+                "4",
+            ]
+        )
     with pytest.raises(SystemExit):
         launcher.parse_args(["replay"])
     for option in (["--smoke"], ["--xr-smoke"], ["--hud-on-start"], ["--cloudxr-mode", "existing"]):
@@ -204,7 +240,9 @@ def test_record_and_replay_child_commands(launcher, tmp_path, monkeypatch):
         lambda *args, **kwargs: cloudxr_calls.append((args, kwargs)),
     )
     assert launcher.main(["record", "--dry-run", "--smoke", "--state-root", str(tmp_path)]) == 0
-    record_manifest = max((tmp_path / "runs").glob("*/run_manifest.json"), key=lambda p: p.stat().st_mtime_ns)
+    record_manifest = max(
+        (tmp_path / "runs").glob("*/run_manifest.json"), key=lambda p: p.stat().st_mtime_ns
+    )
     record_command = json.loads(record_manifest.read_text())["launch"]["command"]
     assert "--s2-record" in record_command and "--s2-teleop" not in record_command
     assert "--xr" not in record_command and "--experience" not in record_command
@@ -216,18 +254,21 @@ def test_record_and_replay_child_commands(launcher, tmp_path, monkeypatch):
     assert "--s2-cloudxr-profile" not in record_command
     assert not cloudxr_calls
     hdf5 = tmp_path / "external" / "session.hdf5"
-    assert launcher.main(
-        [
-            "replay",
-            "--recording",
-            str(hdf5),
-            "--render-cameras",
-            str(tmp_path / "renders"),
-            "--dry-run",
-            "--state-root",
-            str(tmp_path),
-        ]
-    ) == 0
+    assert (
+        launcher.main(
+            [
+                "replay",
+                "--recording",
+                str(hdf5),
+                "--render-cameras",
+                str(tmp_path / "renders"),
+                "--dry-run",
+                "--state-root",
+                str(tmp_path),
+            ]
+        )
+        == 0
+    )
     replay_manifest = max(
         (tmp_path / "runs").glob("*/run_manifest.json"), key=lambda p: p.stat().st_mtime_ns
     )
@@ -257,9 +298,7 @@ def test_physical_record_keeps_teleop_and_xr(launcher, tmp_path, monkeypatch):
     assert "--xr" in command and "--experience" in command
 
 
-def test_injected_recording_smoke_selects_real_writer_without_xr(
-    launcher, tmp_path, monkeypatch
-):
+def test_injected_recording_smoke_selects_real_writer_without_xr(launcher, tmp_path, monkeypatch):
     stack = launcher.STACKS["isaac61"]
     monkeypatch.setattr(launcher, "verify_stack", lambda _: stack)
     monkeypatch.setattr(launcher, "_git_output", lambda *a: "")
@@ -285,6 +324,46 @@ def test_injected_recording_smoke_selects_real_writer_without_xr(
     assert "--s2-record" in command and "--s2-teleop" not in command
     assert "--xr" not in command and "--experience" not in command
     assert "--s2-cloudxr-profile" not in command
+
+
+def test_injected_recording_benchmark_emits_explicit_child_contract(
+    launcher, tmp_path, monkeypatch
+):
+    stack = launcher.STACKS["isaac61"]
+    monkeypatch.setattr(launcher, "verify_stack", lambda _: stack)
+    monkeypatch.setattr(launcher, "_git_output", lambda *a: "")
+    monkeypatch.setattr(launcher, "configure_cloudxr", lambda *args, **kwargs: None)
+    assert (
+        launcher.main(
+            [
+                "record",
+                "--smoke",
+                "--injected-actions",
+                "--recording-benchmark",
+                "--benchmark-pair-id",
+                "no-headset-pair",
+                "--benchmark-warmup-steps",
+                "1",
+                "--benchmark-measured-steps",
+                "2",
+                "--benchmark-flush-every-frames",
+                "1",
+                "--dry-run",
+                "--state-root",
+                str(tmp_path),
+            ]
+        )
+        == 0
+    )
+    manifest = max(
+        (tmp_path / "runs").glob("*/run_manifest.json"), key=lambda p: p.stat().st_mtime_ns
+    )
+    command = json.loads(manifest.read_text())["launch"]["command"]
+    assert command[command.index("--s2-recording-benchmark-pair-id") + 1] == "no-headset-pair"
+    assert command[command.index("--s2-recording-benchmark-warmup-steps") + 1] == "1"
+    assert command[command.index("--s2-recording-benchmark-measured-steps") + 1] == "2"
+    assert "--s2-recording-benchmark-log" in command
+    assert "--s2-teleop" not in command and "--xr" not in command
 
 
 def module(monkeypatch, name, **attrs):
@@ -337,9 +416,15 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
                 previous = self.xr_receipt.update_epoch
                 self.xr_receipt.polled(self.session_token, self.index)
                 self.xr_receipt.transformed(((), ()), np.eye(4), False)
-                self.xr_input = self.xr_receipt.resolve(NS(
-                    ran_synchronously=True, worker_exception=None,
-                    submitted_frame_id=self.index, returned_frame_id=self.index), previous)
+                self.xr_input = self.xr_receipt.resolve(
+                    NS(
+                        ran_synchronously=True,
+                        worker_exception=None,
+                        submitted_frame_id=self.index,
+                        returned_frame_id=self.index,
+                    ),
+                    previous,
+                )
             events.should_reset = self.index == 23
             events.is_active = self.index != 26
             if self.index in (14, 15):
@@ -474,7 +559,10 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
     )
     admitted = []
     env = NS(
-        step=20, _state_physics_step=20, reset_epoch=0, current_capture=capture(),
+        step=20,
+        _state_physics_step=20,
+        reset_epoch=0,
+        current_capture=capture(),
         latest_observation_capture=unavailable_capture,
         vr_runtime=composition,
         robots=robots,

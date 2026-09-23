@@ -12,6 +12,7 @@ from tools.isaac_vr_recording_benchmark import (
     read_benchmark_run,
     validate_paired_report,
 )
+from tools.isaac_vr_recording_smoke import _nvml_resource_sampler
 
 
 def _identity(condition: str, *, pair_id: str = "pair-1", headset: bool = True) -> dict:
@@ -36,14 +37,27 @@ def _identity(condition: str, *, pair_id: str = "pair-1", headset: bool = True) 
     }
 
 
-def _write_run(tmp_path, condition: str, *, pair_id: str = "pair-1", headset: bool = True):
+def _write_run(
+    tmp_path,
+    condition: str,
+    *,
+    pair_id: str = "pair-1",
+    headset: bool = True,
+    unavailable_timing_metrics=(),
+):
     path = tmp_path / f"{pair_id}-{condition}.jsonl"
-    logger = BenchmarkRunLogger(path, _identity(condition, pair_id=pair_id, headset=headset))
+    logger = BenchmarkRunLogger(
+        path,
+        _identity(condition, pair_id=pair_id, headset=headset),
+        unavailable_timing_metrics=unavailable_timing_metrics,
+    )
     for step in range(1, 5):
         logger.begin_step(step)
         logger.add_stage("state_sampling_ms", (1_000_000 if condition == "baseline" else 1_200_000))
-        logger.add_stage("render_ms", (4_000_000 if condition == "baseline" else 4_200_000))
-        logger.add_stage("xr_ms", (2_000_000 if condition == "baseline" else 2_100_000))
+        if "render_ms" not in unavailable_timing_metrics:
+            logger.add_stage("render_ms", (4_000_000 if condition == "baseline" else 4_200_000))
+        if "xr_ms" not in unavailable_timing_metrics:
+            logger.add_stage("xr_ms", (2_000_000 if condition == "baseline" else 2_100_000))
         if condition == "recording":
             logger.add_stage("hdf_append_ms", 500_000)
             if step == 4:
@@ -177,6 +191,86 @@ def test_headless_pair_is_analyzable_but_cannot_qualify(tmp_path) -> None:
     assert report["physical_quest_pair_count"] == 0
     assert report["qualification"]["status"] == "failed"
     assert report["qualification"]["threshold_status"] == "threshold_pending"
+
+
+def test_unavailable_render_and_xr_are_explicit_and_never_qualify(tmp_path) -> None:
+    unavailable = ("render_ms", "xr_ms")
+    paths = [
+        _write_run(
+            tmp_path,
+            "baseline",
+            headset=False,
+            unavailable_timing_metrics=unavailable,
+        ),
+        _write_run(
+            tmp_path,
+            "recording",
+            headset=False,
+            unavailable_timing_metrics=unavailable,
+        ),
+    ]
+
+    report = build_paired_report(paths, threshold_policy=_thresholds())
+
+    assert report["measurement_completeness"] == {
+        "complete": False,
+        "unavailable_timing_metrics": ["render_ms", "xr_ms"],
+    }
+    assert report["overhead"]["timings"]["render_ms"]["measurement_status"] == "not_measured"
+    assert report["qualification"]["status"] == "failed"
+    assert report["qualification"]["threshold_status"] == "not_evaluated"
+
+
+def test_unavailable_stage_cannot_receive_a_measurement(tmp_path) -> None:
+    logger = BenchmarkRunLogger(
+        tmp_path / "raw.jsonl",
+        _identity("recording"),
+        unavailable_timing_metrics=("render_ms",),
+    )
+    logger.begin_step(1)
+    with pytest.raises(ValueError, match="declared unavailable"):
+        logger.add_stage("render_ms", 1)
+
+
+def test_resource_sampler_uses_persistent_nvml_library_without_python_binding(
+    monkeypatch,
+) -> None:
+    calls = []
+
+    class Library:
+        def nvmlInit_v2(self):
+            calls.append("init")
+            return 0
+
+        def nvmlDeviceGetHandleByIndex_v2(self, index, handle):
+            assert index.value == 0
+            handle._obj.value = 123
+            return 0
+
+        def nvmlDeviceGetUtilizationRates(self, handle, utilization):
+            assert handle.value == 123
+            utilization._obj.gpu = 47
+            utilization._obj.memory = 9
+            return 0
+
+        def nvmlDeviceGetMemoryInfo(self, handle, memory):
+            assert handle.value == 123
+            memory._obj.used = 456
+            return 0
+
+        def nvmlShutdown(self):
+            calls.append("shutdown")
+            return 0
+
+    monkeypatch.setattr("tools.isaac_vr_recording_smoke.ctypes.CDLL", lambda _: Library())
+    sampler, shutdown = _nvml_resource_sampler()
+
+    sample = sampler.sample()
+    shutdown()
+
+    assert sample["gpu_utilization_percent"] == 47.0
+    assert sample["gpu_memory_bytes"] == 456
+    assert calls == ["init", "shutdown"]
 
 
 def test_baseline_cannot_claim_hdf_work(tmp_path) -> None:

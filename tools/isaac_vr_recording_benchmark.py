@@ -219,9 +219,26 @@ class BenchmarkRunLogger:
     observation from a missing measurement.
     """
 
-    def __init__(self, path: Path, identity: Mapping[str, Any]) -> None:
+    def __init__(
+        self,
+        path: Path,
+        identity: Mapping[str, Any],
+        *,
+        unavailable_timing_metrics: Iterable[str] = (),
+    ) -> None:
         self.path = path
         self.identity = validate_identity(identity)
+        unavailable = frozenset(unavailable_timing_metrics)
+        unknown = unavailable.difference(TIMING_METRICS)
+        if unknown:
+            raise ValueError(f"unknown unavailable timing metrics: {sorted(unknown)}")
+        if "control_loop_ms" in unavailable:
+            raise ValueError("control_loop_ms cannot be unavailable")
+        if self.identity["condition"] == "recording" and unavailable.intersection(
+            {"hdf_append_ms", "hdf_flush_ms"}
+        ):
+            raise ValueError("recording HDF operation timings cannot be unavailable")
+        self.unavailable_timing_metrics = unavailable
         path.parent.mkdir(parents=True, exist_ok=True)
         self._stream = path.open("x", encoding="utf-8")
         self._active_step: int | None = None
@@ -237,6 +254,7 @@ class BenchmarkRunLogger:
                 "identity": self.identity,
                 "clock": "time.perf_counter_ns",
                 "timing_semantics": "additive_host_wall_per_control_step",
+                "unavailable_timing_metrics": sorted(self.unavailable_timing_metrics),
                 "resource_semantics": (
                     "CPU is process CPU over the step interval; RSS/GPU are observations; "
                     "disk read/write are process-I/O byte deltas for that step"
@@ -280,6 +298,8 @@ class BenchmarkRunLogger:
             raise RuntimeError("begin_step() must precede add_stage()")
         if name not in self._timings:
             raise ValueError(f"unknown benchmark stage {name!r}")
+        if name in self.unavailable_timing_metrics:
+            raise ValueError(f"benchmark stage {name!r} is declared unavailable")
         if isinstance(elapsed_ns, bool) or not isinstance(elapsed_ns, int) or elapsed_ns < 0:
             raise ValueError("elapsed_ns must be a nonnegative integer")
         self._timings[name] += elapsed_ns / 1_000_000.0
@@ -326,6 +346,17 @@ class BenchmarkRunLogger:
                 "post_warmup": step > self.identity["warmup_steps"],
                 "monotonic_ns": time.monotonic_ns(),
                 "timings_ms": timings,
+                "timing_measurement_status": {
+                    name: (
+                        "not_measured"
+                        if name in self.unavailable_timing_metrics
+                        else "not_applicable_baseline"
+                        if self.identity["condition"] == "baseline"
+                        and name in {"hdf_append_ms", "hdf_flush_ms"}
+                        else "measured"
+                    )
+                    for name in TIMING_METRICS
+                },
                 "resources": normalized_resources,
                 "counters": counters,
                 "deadline_missed": deadline_missed,
@@ -379,6 +410,7 @@ class BenchmarkRun:
     path: Path
     sha256: str
     identity: dict[str, Any]
+    unavailable_timing_metrics: tuple[str, ...]
     samples: tuple[dict[str, Any], ...]
     completion: dict[str, Any]
 
@@ -457,6 +489,20 @@ def read_benchmark_run(path: Path) -> BenchmarkRun:
     if records[-1].get("event") != "benchmark_run_completed":
         raise ValueError(f"{path}: last record must be benchmark_run_completed")
     identity = validate_identity(records[0].get("identity", {}))
+    unavailable_raw = records[0].get("unavailable_timing_metrics")
+    if not isinstance(unavailable_raw, list) or any(
+        not isinstance(name, str) for name in unavailable_raw
+    ):
+        raise ValueError(f"{path}: unavailable timing metrics must be a string list")
+    unavailable = tuple(unavailable_raw)
+    if len(unavailable) != len(set(unavailable)) or set(unavailable).difference(TIMING_METRICS):
+        raise ValueError(f"{path}: invalid unavailable timing metrics")
+    if "control_loop_ms" in unavailable:
+        raise ValueError(f"{path}: control_loop_ms cannot be unavailable")
+    if identity["condition"] == "recording" and set(unavailable).intersection(
+        {"hdf_append_ms", "hdf_flush_ms"}
+    ):
+        raise ValueError(f"{path}: recording HDF timings cannot be unavailable")
     samples = records[1:-1]
     expected_steps = identity["warmup_steps"] + identity["measured_steps"]
     if len(samples) != expected_steps:
@@ -475,16 +521,30 @@ def read_benchmark_run(path: Path) -> BenchmarkRun:
             raise ValueError(f"{path}: timestamps are not strictly increasing")
         prior_monotonic_ns = monotonic_ns
         timings = sample.get("timings_ms")
+        timing_status = sample.get("timing_measurement_status")
         resources = sample.get("resources")
         counters = sample.get("counters")
         if not isinstance(timings, dict) or set(timings) != set(TIMING_METRICS):
             raise ValueError(f"{path}: incomplete timing sample")
+        if not isinstance(timing_status, dict) or set(timing_status) != set(TIMING_METRICS):
+            raise ValueError(f"{path}: incomplete timing measurement status")
         if not isinstance(resources, dict) or set(resources) != set(RESOURCE_METRICS):
             raise ValueError(f"{path}: incomplete resource sample")
         if not isinstance(counters, dict) or set(counters) != set(prior_counters):
             raise ValueError(f"{path}: incomplete counter sample")
         for name in TIMING_METRICS:
             _finite_number(timings[name], f"{path}:{index}:{name}", minimum=0.0)
+            expected_status = (
+                "not_measured"
+                if name in unavailable
+                else "not_applicable_baseline"
+                if identity["condition"] == "baseline" and name in {"hdf_append_ms", "hdf_flush_ms"}
+                else "measured"
+            )
+            if timing_status[name] != expected_status:
+                raise ValueError(f"{path}: incorrect timing status for {name}")
+            if expected_status != "measured" and timings[name] != 0.0:
+                raise ValueError(f"{path}: unavailable timing {name} must have zero placeholder")
         for name in RESOURCE_METRICS:
             _finite_number(resources[name], f"{path}:{index}:{name}", minimum=0.0)
         for name, value in counters.items():
@@ -532,6 +592,7 @@ def read_benchmark_run(path: Path) -> BenchmarkRun:
         path=path.resolve(),
         sha256=_sha256_file(path),
         identity=identity,
+        unavailable_timing_metrics=unavailable,
         samples=tuple(samples),
         completion=completion,
     )
@@ -549,6 +610,14 @@ def _condition_summary(runs: Sequence[BenchmarkRun]) -> dict[str, Any]:
     condition = runs[0].identity["condition"]
     timings: dict[str, Any] = {}
     for name in TIMING_METRICS:
+        statuses = {
+            sample["timing_measurement_status"][name]
+            for run in runs
+            for sample in _post_warmup(run)
+        }
+        if len(statuses) != 1:
+            raise ValueError(f"{condition} evidence has inconsistent timing status for {name}")
+        measurement_status = statuses.pop()
         values = [float(sample["timings_ms"][name]) for sample in samples]
         # HDF latency is an operation latency, not a zero-padded control-step
         # average.  Per-step disk growth is reported separately below.
@@ -556,7 +625,10 @@ def _condition_summary(runs: Sequence[BenchmarkRun]) -> dict[str, Any]:
             values = [value for value in values if value > 0.0]
             if not values:
                 raise ValueError(f"recording evidence has no measured {name} operation")
-        timings[name] = _distribution(values, suffix="_ms")
+        timings[name] = {
+            "measurement_status": measurement_status,
+            **_distribution(values, suffix="_ms"),
+        }
     resources = {
         name: _distribution([float(sample["resources"][name]) for sample in samples])
         for name in RESOURCE_METRICS
@@ -627,7 +699,12 @@ def _ratio(recording: float, baseline: float) -> float | None:
 def _overhead(baseline: Mapping[str, Any], recording: Mapping[str, Any]) -> dict[str, Any]:
     timings: dict[str, Any] = {}
     for name in ("control_loop_ms", "state_sampling_ms", "render_ms", "xr_ms"):
-        timings[name] = {}
+        baseline_status = baseline["timings"][name]["measurement_status"]
+        recording_status = recording["timings"][name]["measurement_status"]
+        measurement_status = (
+            "measured" if baseline_status == recording_status == "measured" else "not_measured"
+        )
+        timings[name] = {"measurement_status": measurement_status}
         for percentile in PERCENTILES:
             key = f"{percentile}_ms"
             base = float(baseline["timings"][name][key])
@@ -757,6 +834,9 @@ def build_paired_report(
         orders = {pair[condition].identity["pair_order"] for condition in CONDITIONS}
         if orders != {1, 2}:
             raise ValueError(f"pair {pair_id!r} must retain complementary pair_order values")
+        unavailable = {pair[condition].unavailable_timing_metrics for condition in CONDITIONS}
+        if len(unavailable) != 1:
+            raise ValueError(f"pair {pair_id!r} timing availability mismatch")
     baseline_runs = [pair["baseline"] for pair in by_pair.values()]
     recording_runs = [pair["recording"] for pair in by_pair.values()]
     baseline = _condition_summary(baseline_runs)
@@ -807,10 +887,29 @@ def build_paired_report(
         "recording": recording,
         "overhead": _overhead(baseline, recording),
     }
-    evaluated_thresholds = (
-        _evaluate_thresholds(report, threshold_policy) if threshold_policy is not None else None
+    unavailable_metrics = sorted(
+        {metric for run in runs for metric in run.unavailable_timing_metrics}
     )
-    if report["physical_quest_pair_count"] != report["pair_count"]:
+    report["measurement_completeness"] = {
+        "complete": not unavailable_metrics,
+        "unavailable_timing_metrics": unavailable_metrics,
+    }
+    evaluated_thresholds = (
+        _evaluate_thresholds(report, threshold_policy)
+        if threshold_policy is not None and not unavailable_metrics
+        else None
+    )
+    if unavailable_metrics:
+        report["qualification"] = {
+            "status": "failed",
+            "reason": "one or more required timing metrics were explicitly not measured",
+            "unavailable_timing_metrics": unavailable_metrics,
+            "threshold_status": "threshold_pending"
+            if threshold_policy is None
+            else "not_evaluated",
+            "required_threshold_paths": list(REQUIRED_THRESHOLD_PATHS),
+        }
+    elif report["physical_quest_pair_count"] != report["pair_count"]:
         report["qualification"] = {
             "status": "failed",
             "reason": "one or more pairs lack a connected physical Quest session",
@@ -859,6 +958,7 @@ def validate_paired_report(report: Mapping[str, Any]) -> None:
         "baseline",
         "recording",
         "overhead",
+        "measurement_completeness",
     ):
         if report.get(field) != rebuilt[field]:
             raise ValueError(f"paired benchmark derived field mismatch: {field}")

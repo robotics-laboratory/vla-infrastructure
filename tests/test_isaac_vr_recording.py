@@ -71,7 +71,10 @@ def test_explicit_frame_is_atomic_at_advance_boundary():
     )
     sampler.sample_frame()
     assert storage.advanced == 1
-    assert storage.frames == [("world", {"marker": np.int64(0)}), ("d0/transition", {"marker": np.int64(1000)})]
+    assert storage.frames == [
+        ("world", {"marker": np.int64(0)}),
+        ("d0/transition", {"marker": np.int64(1000)}),
+    ]
 
 
 def test_failed_recordable_never_advances_and_fails_closed():
@@ -98,8 +101,16 @@ def test_d0_schema_has_explicit_ot_action_successor_and_outcome_channels():
     assert channels["observation_state"].shape == channels["dataset_action"].shape == (14,)
     assert channels["successor_observation_state"].shape == (14,)
     assert sample["frame_index"] == -1 and sample["committed"] == 0
-    assert {"obs_id", "dataset_action_id", "native_command_id", "transition_id", "next_obs_id"} <= set(channels)
-    assert {"transition_outcome", "terminated", "success", "failure_code", "failure_reason"} <= set(channels)
+    assert {
+        "obs_id",
+        "dataset_action_id",
+        "native_command_id",
+        "transition_id",
+        "next_obs_id",
+    } <= set(channels)
+    assert {"transition_outcome", "terminated", "success", "failure_code", "failure_reason"} <= set(
+        channels
+    )
     for name, value in sample.items():
         assert np.asarray(value).shape == channels[name].shape
         assert np.asarray(value).dtype.kind in "biufS"
@@ -273,7 +284,10 @@ def test_row_payload_hashes_recompute_and_mutation_fails_closed():
     ("mutation", "digest_field"),
     [
         (lambda row: row["observation_state"].__setitem__(0, 9.0), "observation_payload_sha256"),
-        (lambda row: row["successor_observation_state"].__setitem__(0, 9.0), "successor_payload_sha256"),
+        (
+            lambda row: row["successor_observation_state"].__setitem__(0, 9.0),
+            "successor_payload_sha256",
+        ),
         (lambda row: row.update(processor_generation=6), "action_payload_sha256"),
         (
             lambda row: (
@@ -339,7 +353,9 @@ def test_fabric_context_failure_fails_closed_before_sampling():
     def unavailable():
         raise RuntimeError("FSD disabled")
 
-    sampler = ExplicitFrameSampler(FakeStorage(), (FakeRecordable("world", 1),), backend_context_factory=unavailable)
+    sampler = ExplicitFrameSampler(
+        FakeStorage(), (FakeRecordable("world", 1),), backend_context_factory=unavailable
+    )
     with pytest.raises(RuntimeError, match="FSD disabled"):
         sampler.capture_frame()
     with pytest.raises(RuntimeError, match="failed closed"):
@@ -386,14 +402,10 @@ def test_pose_participants_use_one_shared_batch_and_never_fallback_to_sample():
         pose_batch_factory=factory,
     )
     captured = sampler.capture_frame()
-    assert paths == [
-        "/World/robot/a", "/World/robot/b", "/World/objects/a", "/World/objects/b"
-    ]
+    assert paths == ["/World/robot/a", "/World/robot/b", "/World/objects/a", "/World/objects/b"]
     assert batch.calls == 1
     np.testing.assert_array_equal(captured["robot"]["positions"], np.arange(6).reshape(2, 3))
-    np.testing.assert_array_equal(
-        captured["objects"]["positions"], np.arange(6, 12).reshape(2, 3)
-    )
+    np.testing.assert_array_equal(captured["objects"]["positions"], np.arange(6, 12).reshape(2, 3))
 
 
 def test_shared_pose_batch_read_failure_is_terminal():
@@ -500,7 +512,7 @@ class Observation:
     state = tuple(float(value) + 0.1 for value in range(14))
 
 
-def make_live(tmp_path: Path):
+def make_live(tmp_path: Path, *, timing_observer=None):
     storage = FakeLifecycleStorage()
     world = FakeLifecycleRecordable("world", 7)
     d0 = FakeD0Recordable("d0/committed_transition", 0)
@@ -544,6 +556,7 @@ def make_live(tmp_path: Path):
         },
         observation_factory=observation_factory,
         flush_every_frames=1,
+        timing_observer=timing_observer,
     )
     return live, storage
 
@@ -588,6 +601,20 @@ def test_live_recording_buffers_ot_then_admits_only_committed_row(tmp_path):
     with pytest.raises(RuntimeError, match="no pending"):
         live.commit_transition(token, successor_token, row)
     assert live.capture_observation() is successor_token
+
+
+def test_live_recording_observes_real_append_and_flush_boundaries(tmp_path):
+    timings = []
+    live, _ = make_live(
+        tmp_path, timing_observer=lambda name, elapsed: timings.append((name, elapsed))
+    )
+    token = live.capture_observation()
+    successor = live.capture_successor(token)
+
+    live.commit_transition(token, successor, row_for_tokens(token, successor))
+
+    assert [name for name, _ in timings] == ["hdf_append_ms", "hdf_flush_ms"]
+    assert all(isinstance(elapsed, int) and elapsed >= 0 for _, elapsed in timings)
 
 
 def test_close_persists_full_terminal_successor_bound_to_last_row(tmp_path):
@@ -660,58 +687,84 @@ def test_runtime_builder_uses_causal_receipt_ids_hashes_and_token_snapshot(tmp_p
     token = live.capture_observation()
     successor_token = live.capture_successor(token)
     epoch = SimpleNamespace(
-        run_id="run", episode_id="episode", source_id="isaac_human_vr",
-        reset_epoch=0, control_reference_epoch=2, source_epoch="7",
+        run_id="run",
+        episode_id="episode",
+        source_id="isaac_human_vr",
+        reset_epoch=0,
+        control_reference_epoch=2,
+        source_epoch="7",
     )
     xr = SimpleNamespace(
-        session_epoch=7, control_reference_epoch=2, deviceio_update_epoch=3,
-        submitted_frame_id=4, returned_frame_id=4, ran_synchronously=True,
+        session_epoch=7,
+        control_reference_epoch=2,
+        deviceio_update_epoch=3,
+        submitted_frame_id=4,
+        returned_frame_id=4,
+        ran_synchronously=True,
         hands=(("left", (1.0, 2.0)), ("right", (3.0, 4.0))),
         world_transform=tuple(np.eye(4, dtype=np.float32).reshape(-1)),
-        rebased=False, tracking_valid=(True, True),
+        rebased=False,
+        tracking_valid=(True, True),
     )
     dataset_action = np.arange(14, dtype=np.float32) + 1000
     native_preclip = tuple(np.arange(14) / 10)
     native_clipped = tuple(np.arange(14) / 10)
     observation_sha = hashlib.sha256(token.observation.canonical_payload()).hexdigest()
     successor_sha = hashlib.sha256(successor_token.observation.canonical_payload()).hexdigest()
-    action_sha = hashlib.sha256(canonical_action_payload(
-        dataset_action,
-        processor_revision="processor-v1",
-        provenance_revision="provenance-v1",
-        processor_generation=5,
-    )).hexdigest()
-    native_sha = hashlib.sha256(canonical_native_command_payload(
-        preclip=native_preclip,
-        clipped=native_clipped,
-        residual=np.zeros(14),
-        saturation=np.zeros(14, dtype=np.uint8),
-    )).hexdigest()
-    xr_sha = hashlib.sha256(canonical_xr_payload_from_fields(
-        session_epoch=xr.session_epoch,
-        control_reference_epoch=xr.control_reference_epoch,
-        deviceio_update_epoch=xr.deviceio_update_epoch,
-        submitted_frame_id=xr.submitted_frame_id,
-        returned_frame_id=xr.returned_frame_id,
-        ran_synchronously=xr.ran_synchronously,
-        rebased=xr.rebased,
-        tracking_valid=xr.tracking_valid,
-        world_transform=xr.world_transform,
-        hands_sha256=canonical_hands_sha256(xr.hands),
-    )).hexdigest()
+    action_sha = hashlib.sha256(
+        canonical_action_payload(
+            dataset_action,
+            processor_revision="processor-v1",
+            provenance_revision="provenance-v1",
+            processor_generation=5,
+        )
+    ).hexdigest()
+    native_sha = hashlib.sha256(
+        canonical_native_command_payload(
+            preclip=native_preclip,
+            clipped=native_clipped,
+            residual=np.zeros(14),
+            saturation=np.zeros(14, dtype=np.uint8),
+        )
+    ).hexdigest()
+    xr_sha = hashlib.sha256(
+        canonical_xr_payload_from_fields(
+            session_epoch=xr.session_epoch,
+            control_reference_epoch=xr.control_reference_epoch,
+            deviceio_update_epoch=xr.deviceio_update_epoch,
+            submitted_frame_id=xr.submitted_frame_id,
+            returned_frame_id=xr.returned_frame_id,
+            ran_synchronously=xr.ran_synchronously,
+            rebased=xr.rebased,
+            tracking_valid=xr.tracking_valid,
+            world_transform=xr.world_transform,
+            hands_sha256=canonical_hands_sha256(xr.hands),
+        )
+    ).hexdigest()
 
     def identity(payload_id, digest, tick=0):
         return SimpleNamespace(
             epoch=epoch, control_tick_id=tick, payload_id=payload_id, sha256=digest
         )
+
     prepared = SimpleNamespace(
         observation=identity("obs:0", observation_sha),
         dataset_action=identity("action:0", action_sha),
         sources=(
-            SimpleNamespace(name="simulation.scene_state_snapshot", sample=identity("scene:0", observation_sha), sequence=10),
-            SimpleNamespace(name="xr.device_io_update", sample=identity("device:0", xr_sha), sequence=3),
-            SimpleNamespace(name="xr.submitted_frame", sample=identity("submitted:0", xr_sha), sequence=4),
-            SimpleNamespace(name="xr.returned_frame", sample=identity("returned:0", xr_sha), sequence=4),
+            SimpleNamespace(
+                name="simulation.scene_state_snapshot",
+                sample=identity("scene:0", observation_sha),
+                sequence=10,
+            ),
+            SimpleNamespace(
+                name="xr.device_io_update", sample=identity("device:0", xr_sha), sequence=3
+            ),
+            SimpleNamespace(
+                name="xr.submitted_frame", sample=identity("submitted:0", xr_sha), sequence=4
+            ),
+            SimpleNamespace(
+                name="xr.returned_frame", sample=identity("returned:0", xr_sha), sequence=4
+            ),
             SimpleNamespace(name="xr.resolved_input", sample=identity("xr:0", xr_sha), sequence=3),
         ),
     )
@@ -733,15 +786,16 @@ def test_runtime_builder_uses_causal_receipt_ids_hashes_and_token_snapshot(tmp_p
         saturation=tuple(False for _ in range(14)),
         processor_identity=("processor-v1", "provenance-v1", 5),
     )
-    row = build_committed_transition_sample(
-        live, token, successor_token, decision, committed
-    )
+    row = build_committed_transition_sample(live, token, successor_token, decision, committed)
     assert row["obs_id"] == b"obs:0"
     assert row["next_obs_id"] == b"obs:1"
     assert row["scene_state_snapshot_id"] == token.scene_state_snapshot_id.encode()
     assert bytes(row["scene_state_snapshot_sha256"]).hex() == token.scene_state_snapshot_sha256
     assert row["next_scene_state_snapshot_id"] == successor_token.scene_state_snapshot_id.encode()
-    assert bytes(row["next_scene_state_snapshot_sha256"]).hex() == successor_token.scene_state_snapshot_sha256
+    assert (
+        bytes(row["next_scene_state_snapshot_sha256"]).hex()
+        == successor_token.scene_state_snapshot_sha256
+    )
     np.testing.assert_array_equal(row["dataset_action"], np.arange(14) + 1000)
 
 

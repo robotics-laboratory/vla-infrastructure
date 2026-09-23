@@ -77,9 +77,21 @@ parser.add_argument(
     default="cloudxrjs",
 )
 parser.add_argument("--s2-max-control-steps", type=int, default=300)
-parser.add_argument("--s2-record", action="store_true", help="Write state/provenance through NVIDIA Episode Recorder HDF5 V2.")
+parser.add_argument(
+    "--s2-record",
+    action="store_true",
+    help="Write state/provenance through NVIDIA Episode Recorder HDF5 V2.",
+)
 parser.add_argument("--s2-recording-dir", type=Path)
 parser.add_argument("--s2-injected-recording-smoke", action="store_true", help=argparse.SUPPRESS)
+parser.add_argument("--s2-recording-benchmark-log", type=Path, help=argparse.SUPPRESS)
+parser.add_argument("--s2-recording-benchmark-pair-id", help=argparse.SUPPRESS)
+parser.add_argument(
+    "--s2-recording-benchmark-pair-order", type=int, choices=(1, 2), help=argparse.SUPPRESS
+)
+parser.add_argument("--s2-recording-benchmark-warmup-steps", type=int, help=argparse.SUPPRESS)
+parser.add_argument("--s2-recording-benchmark-measured-steps", type=int, help=argparse.SUPPRESS)
+parser.add_argument("--s2-recording-benchmark-flush-every-frames", type=int, help=argparse.SUPPRESS)
 parser.add_argument("--s2-replay-hdf5", type=Path)
 parser.add_argument("--s2-replay-episode", type=int, default=0)
 parser.add_argument("--s2-render-cameras", type=Path)
@@ -143,8 +155,11 @@ args_cli = parser.parse_args()
 if (args_cli.eval_socket is None) != (args_cli.eval_run_manifest is None):
     parser.error("--eval-socket and --eval-run-manifest must be provided together")
 if args_cli.eval_socket is not None and (
-    args_cli.s2_teleop or args_cli.vr_runtime or args_cli.combined_preview_test
-    or args_cli.production_preview or args_cli.xr
+    args_cli.s2_teleop
+    or args_cli.vr_runtime
+    or args_cli.combined_preview_test
+    or args_cli.production_preview
+    or args_cli.xr
 ):
     parser.error("EVAL endpoint cannot share a teleop/demo/preview/XR execution mode")
 if args_cli.s2_replay_hdf5 is not None and (
@@ -155,6 +170,41 @@ if args_cli.s2_injected_recording_smoke and (
     not args_cli.s2_record or args_cli.s2_teleop or args_cli.xr
 ):
     parser.error("injected recording smoke requires no-client --s2-record")
+benchmark_fields = (
+    args_cli.s2_recording_benchmark_log,
+    args_cli.s2_recording_benchmark_pair_id,
+    args_cli.s2_recording_benchmark_pair_order,
+    args_cli.s2_recording_benchmark_warmup_steps,
+    args_cli.s2_recording_benchmark_measured_steps,
+    args_cli.s2_recording_benchmark_flush_every_frames,
+)
+if any(value is not None for value in benchmark_fields):
+    if not all(value is not None for value in benchmark_fields):
+        parser.error("recording benchmark child arguments must be provided together")
+    if not args_cli.s2_injected_recording_smoke:
+        parser.error("recording benchmark requires injected recording smoke")
+    if args_cli.s2_recording_benchmark_warmup_steps < 0:
+        parser.error("recording benchmark warmup must be nonnegative")
+    if args_cli.s2_recording_benchmark_measured_steps < 1:
+        parser.error("recording benchmark measured steps must be positive")
+    if args_cli.s2_recording_benchmark_flush_every_frames < 1:
+        parser.error("recording benchmark flush interval must be positive")
+    if (
+        args_cli.s2_recording_benchmark_warmup_steps
+        + args_cli.s2_recording_benchmark_measured_steps
+        < 2
+    ):
+        parser.error("recording benchmark requires at least two total steps")
+    benchmark_total_steps = (
+        args_cli.s2_recording_benchmark_warmup_steps
+        + args_cli.s2_recording_benchmark_measured_steps
+    )
+    if (
+        benchmark_total_steps // args_cli.s2_recording_benchmark_flush_every_frames
+        <= args_cli.s2_recording_benchmark_warmup_steps
+        // args_cli.s2_recording_benchmark_flush_every_frames
+    ):
+        parser.error("recording benchmark must observe a periodic flush after warmup")
 if args_cli.s2_replay_hdf5 is None and (
     args_cli.s2_render_cameras is not None or args_cli.s2_replay_report is not None
 ):
@@ -163,13 +213,22 @@ if args_cli.s2_replay_hdf5 is None and (
 # Public upstream lifecycle composition keeps large CloudXR state in /data.
 # The same runtime is consumed by Kit and IsaacTeleop; shutdown stops XR first.
 owned_cloudxr = None
-if (args_cli.xr or args_cli.s2_teleop) and os.environ.get("VLA_CLOUDXR_INSTALL_DIR") and os.environ.get("ISAACLAB_CXR_SKIP_AUTOLAUNCH") != "1":
+if (
+    (args_cli.xr or args_cli.s2_teleop)
+    and os.environ.get("VLA_CLOUDXR_INSTALL_DIR")
+    and os.environ.get("ISAACLAB_CXR_SKIP_AUTOLAUNCH") != "1"
+):
     from isaacteleop.cloudxr import CloudXRLauncher
     from isaaclab_teleop import CLOUDXR_JS_ENV, CLOUDXR_STANDALONE_ENV
+
     owned_cloudxr = CloudXRLauncher(
         install_dir=os.environ["VLA_CLOUDXR_INSTALL_DIR"],
-        env_config=CLOUDXR_STANDALONE_ENV if args_cli.combined_preview_test or args_cli.s2_cloudxr_profile == "standalone" else CLOUDXR_JS_ENV,
-        accept_eula=os.environ.get("ISAACLAB_CXR_ACCEPT_EULA", "").upper() in ("1", "Y", "YES", "TRUE"))
+        env_config=CLOUDXR_STANDALONE_ENV
+        if args_cli.combined_preview_test or args_cli.s2_cloudxr_profile == "standalone"
+        else CLOUDXR_JS_ENV,
+        accept_eula=os.environ.get("ISAACLAB_CXR_ACCEPT_EULA", "").upper()
+        in ("1", "Y", "YES", "TRUE"),
+    )
     os.environ["ISAACLAB_CXR_SKIP_AUTOLAUNCH"] = "1"
 
 app_launcher = AppLauncher(args_cli)
@@ -308,8 +367,13 @@ def _camera(sim, arm_paths: tuple[str, str]) -> tuple[Camera, tuple[str, str], s
                 height=480,
                 width=640,
                 data_types=["rgb"],
-                renderer_cfg=(__import__("isaaclab_physx.renderers", fromlist=["IsaacRtxRendererCfg"]).IsaacRtxRendererCfg(enable_scene_partitioning=False)
-                              if args_cli.production_preview else CameraCfg().renderer_cfg),
+                renderer_cfg=(
+                    __import__(
+                        "isaaclab_physx.renderers", fromlist=["IsaacRtxRendererCfg"]
+                    ).IsaacRtxRendererCfg(enable_scene_partitioning=False)
+                    if args_cli.production_preview
+                    else CameraCfg().renderer_cfg
+                ),
                 update_latest_camera_pose=True,
                 spawn=sim_utils.PinholeCameraCfg(
                     focal_length=18.0,
@@ -435,9 +499,7 @@ class BimanualPiperXIsaacEnvironment:
             for robot in self.robots:
                 robot.write_data_to_sim()
             if performance is not None:
-                performance.add_nested(
-                    "physics_target_write", time.perf_counter_ns() - started_ns
-                )
+                performance.add_nested("physics_target_write", time.perf_counter_ns() - started_ns)
                 started_ns = time.perf_counter_ns()
             if self.vr_runtime is not None:
                 self.vr_runtime.before_render()
@@ -467,9 +529,7 @@ class BimanualPiperXIsaacEnvironment:
                 started_ns = time.perf_counter_ns() if performance is not None else 0
                 self.vr_runtime.update(PHYSICS_DT)
                 if performance is not None:
-                    performance.add_nested(
-                        "experiment_update", time.perf_counter_ns() - started_ns
-                    )
+                    performance.add_nested("experiment_update", time.perf_counter_ns() - started_ns)
 
         if self.vr_runtime is not None:
             started_ns = time.perf_counter_ns() if performance is not None else 0
@@ -480,8 +540,10 @@ class BimanualPiperXIsaacEnvironment:
     def capture_measured_state(self):
         """Read refreshed articulation buffers while the producer remains fixed."""
         before = self.sim.get_physics_step_count()
-        native = [_cpu(robot.data.joint_pos)[0, ids].copy()
-                  for robot, ids in zip(self.robots, self.joint_ids, strict=True)]
+        native = [
+            _cpu(robot.data.joint_pos)[0, ids].copy()
+            for robot, ids in zip(self.robots, self.joint_ids, strict=True)
+        ]
         if before != self.sim.get_physics_step_count() or before != self._state_physics_step:
             raise RuntimeError("Articulation state generation changed during capture")
         return before, tuple(float(value) for value in native_state_to_d0(*native))
@@ -1051,7 +1113,9 @@ def main() -> int:
             self_collision=False,
             robot_type="Manipulator",
             run_multi_physics_conversion=False,
-            ros_package_paths=[{"name": "agx_arm_description", "path": "/data/vla-infrastructure/assets"}],
+            ros_package_paths=[
+                {"name": "agx_arm_description", "path": "/data/vla-infrastructure/assets"}
+            ],
             joint_drive=sim_utils.UrdfConverterCfg.JointDriveCfg(
                 drive_type="force",
                 target_type="position",
@@ -1082,33 +1146,50 @@ def main() -> int:
         loaded_revision = subprocess.check_output(
             ["git", "-C", str(loaded_lab), "rev-parse", "HEAD"], text=True
         ).strip()
-        if (loaded_lab != Path(config["environment"]["isaac_lab_path"]).resolve()
-                or loaded_revision != config["environment"]["isaac_lab_commit"]
-                or importlib.metadata.version("isaacsim") != config["environment"]["isaac_sim_version"]
-                or importlib.metadata.version("isaaclab") != config["environment"]["isaac_lab_source_version"]
-                or __import__("omni.kit.app", fromlist=["get_app"]).get_app().get_kit_version() != config["environment"]["kit_version"]):
+        if (
+            loaded_lab != Path(config["environment"]["isaac_lab_path"]).resolve()
+            or loaded_revision != config["environment"]["isaac_lab_commit"]
+            or importlib.metadata.version("isaacsim") != config["environment"]["isaac_sim_version"]
+            or importlib.metadata.version("isaaclab")
+            != config["environment"]["isaac_lab_source_version"]
+            or __import__("omni.kit.app", fromlist=["get_app"]).get_app().get_kit_version()
+            != config["environment"]["kit_version"]
+        ):
             raise RuntimeError("loaded EVAL SDK differs from the selected runtime")
-        if (urdf_sha != contract["simulation"]["isaac"]["robot_asset"]["sha256"]
-                or model["model"]["commit"] != config["asset"]["source_commit"]
-                or config["d0_boundary"]["revision"] != D0_PROCESSOR_REVISION
-                or config["task"]["id"] != TASK_ID
-                or config["task"]["revision"] != TASK_REVISION
-                or config["task"]["horizon_control_steps"] != TASK_HORIZON):
-            raise RuntimeError("loaded EVAL asset/task/processor differs from the declared contract")
+        if (
+            urdf_sha != contract["simulation"]["isaac"]["robot_asset"]["sha256"]
+            or model["model"]["commit"] != config["asset"]["source_commit"]
+            or config["d0_boundary"]["revision"] != D0_PROCESSOR_REVISION
+            or config["task"]["id"] != TASK_ID
+            or config["task"]["revision"] != TASK_REVISION
+            or config["task"]["horizon_control_steps"] != TASK_HORIZON
+        ):
+            raise RuntimeError(
+                "loaded EVAL asset/task/processor differs from the declared contract"
+            )
         identity = {
             "environment_revision": loaded_revision,
             "PIPER_X_asset_model_revision": model["model"]["commit"],
             "processor_revision": D0_PROCESSOR_REVISION,
             "D0_contract_fingerprint": canonical_training_schema_fingerprint(contract),
-            "task_id": TASK_ID, "task_revision": TASK_REVISION, "horizon": TASK_HORIZON,
+            "task_id": TASK_ID,
+            "task_revision": TASK_REVISION,
+            "horizon": TASK_HORIZON,
         }
         provenance = {
-            "runtime_identity": identity, "asset_sha256": urdf_sha,
+            "runtime_identity": identity,
+            "asset_sha256": urdf_sha,
             "loaded_usd": converter.usd_path,
-            "module_files": {"isaaclab": str(Path(cast(str, isaaclab.__file__)).resolve()),
-                             "processor": str(Path(cast(str, __import__("isaac_s1_runtime").__file__)).resolve())},
-            "source_sha256": {name: hashlib.sha256((ROOT / "tools" / name).read_bytes()).hexdigest()
-                              for name in ("run_isaac_s1.py", "isaac_s1_runtime.py", "isaac_eval_rpc.py")},
+            "module_files": {
+                "isaaclab": str(Path(cast(str, isaaclab.__file__)).resolve()),
+                "processor": str(
+                    Path(cast(str, __import__("isaac_s1_runtime").__file__)).resolve()
+                ),
+            },
+            "source_sha256": {
+                name: hashlib.sha256((ROOT / "tools" / name).read_bytes()).hexdigest()
+                for name in ("run_isaac_s1.py", "isaac_s1_runtime.py", "isaac_eval_rpc.py")
+            },
             "acceptance_claim": False,
         }
         (args_cli.report.parent / "eval-runtime-provenance.json").write_text(
@@ -1127,9 +1208,11 @@ def main() -> int:
 
     if args_cli.combined_preview_test:
         from check_isaac_s1_preview import validate_combined
+
         return validate_combined(env, args_cli, simulation_app, urdf_sha)
     if args_cli.production_preview:
         from isaac_s1_preview import S1Preview
+
         env.preview = S1Preview(env)
 
     if args_cli.s2_teleop:
@@ -1210,8 +1293,19 @@ def main() -> int:
             "isaaclab_rl": importlib.metadata.version("isaaclab-rl"),
             "isaacteleop": importlib.metadata.version("isaacteleop"),
             "isaaclab_teleop": importlib.metadata.version("isaaclab-teleop"),
-            "module_files": {name: str(Path(cast(str, __import__(name, fromlist=["__file__"]).__file__)).resolve())
-                             for name in ("isaaclab", "isaaclab_rl", "isaaclab_teleop", "isaacteleop", "torch", "isaacsim")},
+            "module_files": {
+                name: str(
+                    Path(cast(str, __import__(name, fromlist=["__file__"]).__file__)).resolve()
+                )
+                for name in (
+                    "isaaclab",
+                    "isaaclab_rl",
+                    "isaaclab_teleop",
+                    "isaacteleop",
+                    "torch",
+                    "isaacsim",
+                )
+            },
             "headless": args_cli.headless,
             "upstream_override_conflicts": config["environment"]["upstream_override_conflicts"],
         },
@@ -1263,27 +1357,52 @@ def main() -> int:
         "cameras": camera_validation,
         "observed_camera_settings": {
             "update_period_s": camera.cfg.update_period,
-            "width": camera.cfg.width, "height": camera.cfg.height,
+            "width": camera.cfg.width,
+            "height": camera.cfg.height,
             "data_types": list(camera.cfg.data_types),
-            "usd": [{"prim_path": path, "parent": str(sim.stage.GetPrimAtPath(path).GetParent().GetPath()),
-                     **{name: (list(sim.stage.GetPrimAtPath(path).GetAttribute(name).Get())
-                               if name == "clippingRange" else sim.stage.GetPrimAtPath(path).GetAttribute(name).Get())
-                        for name in ("focalLength", "focusDistance", "horizontalAperture",
-                                     "verticalAperture", "clippingRange")}}
-                    for path in env.camera_prim_paths],
+            "usd": [
+                {
+                    "prim_path": path,
+                    "parent": str(sim.stage.GetPrimAtPath(path).GetParent().GetPath()),
+                    **{
+                        name: (
+                            list(sim.stage.GetPrimAtPath(path).GetAttribute(name).Get())
+                            if name == "clippingRange"
+                            else sim.stage.GetPrimAtPath(path).GetAttribute(name).Get()
+                        )
+                        for name in (
+                            "focalLength",
+                            "focusDistance",
+                            "horizontalAperture",
+                            "verticalAperture",
+                            "clippingRange",
+                        )
+                    },
+                }
+                for path in env.camera_prim_paths
+            ],
         },
         "observed_physx_joint_parameters": {
             side: {
                 "joint_names": list(robot.joint_names),
-                **{name: _cpu(getattr(robot.data, name)).tolist()
-                   for name in ("joint_stiffness", "joint_damping", "joint_effort_limits",
-                                "joint_velocity_limits")},
+                **{
+                    name: _cpu(getattr(robot.data, name)).tolist()
+                    for name in (
+                        "joint_stiffness",
+                        "joint_damping",
+                        "joint_effort_limits",
+                        "joint_velocity_limits",
+                    )
+                },
             }
             for side, robot in zip(("left", "right"), env.robots, strict=True)
         },
         "observed_drive_attributes": {
-            str(prim.GetPath()): {attr.GetName(): attr.Get() for attr in prim.GetAttributes()
-                                 if attr.GetName().startswith("drive:")}
+            str(prim.GetPath()): {
+                attr.GetName(): attr.Get()
+                for attr in prim.GetAttributes()
+                if attr.GetName().startswith("drive:")
+            }
             for prim in sim.stage.Traverse()
             if any(attr.GetName().startswith("drive:") for attr in prim.GetAttributes())
         },
@@ -1292,9 +1411,12 @@ def main() -> int:
     report["passed"] = bool(
         report["environment"]["python"] == "3.12.13"
         and report["environment"]["isaac_sim"] == config["environment"]["isaac_sim_version"]
-        and report["environment"]["isaac_lab_source_version"] == config["environment"]["isaac_lab_source_version"]
-        and ("kit_version" not in config["environment"]
-             or report["environment"]["kit"] == config["environment"]["kit_version"])
+        and report["environment"]["isaac_lab_source_version"]
+        == config["environment"]["isaac_lab_source_version"]
+        and (
+            "kit_version" not in config["environment"]
+            or report["environment"]["kit"] == config["environment"]["kit_version"]
+        )
         and report["environment"]["isaac_lab_runtime_commit"]
         == report["environment"]["isaac_lab_expected_commit"]
         and Path(report["environment"]["isaac_lab_source_file"]).is_relative_to(
@@ -1344,6 +1466,7 @@ if __name__ == "__main__":
         if owned_cloudxr is not None:
             if args_cli.xr:
                 from omni.kit.xr.core import XRCore
+
                 xr_core = XRCore.get_singleton()
                 xr_core.request_disable_profile()
                 for _ in range(120):

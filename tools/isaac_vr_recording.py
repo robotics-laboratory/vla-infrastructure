@@ -23,6 +23,7 @@ from pathlib import Path
 import shutil
 import stat
 import subprocess
+import time
 from typing import Any, ContextManager
 import zipfile
 
@@ -75,7 +76,9 @@ class ExplicitFrameSampler:
         if unknown_deferred:
             raise ValueError(f"unknown deferred recordable groups: {sorted(unknown_deferred)}")
         if pose_backend != POSE_BACKEND:
-            raise ValueError(f"recording pose backend must be {POSE_BACKEND!r}, got {pose_backend!r}")
+            raise ValueError(
+                f"recording pose backend must be {POSE_BACKEND!r}, got {pose_backend!r}"
+            )
         self.pose_backend = pose_backend
         self._backend_context_factory = backend_context_factory or _fabric_backend_context
         self._deferred_groups = frozenset(deferred_groups)
@@ -351,6 +354,7 @@ class LiveRecording:
         identity: Mapping[str, str],
         observation_factory: Callable[[], Any],
         flush_every_frames: int = 64,
+        timing_observer: Callable[[str, int], None] | None = None,
     ) -> None:
         if flush_every_frames < 1:
             raise ValueError("flush_every_frames must be positive")
@@ -362,6 +366,7 @@ class LiveRecording:
         self.episode_id = identity["episode_id"]
         self.source_profile = identity["source_profile"]
         self.flush_every_frames = flush_every_frames
+        self._timing_observer = timing_observer
         self.committed_frames = 0
         self.discarded_observations = 0
         self.rejections: Counter[str] = Counter()
@@ -389,9 +394,7 @@ class LiveRecording:
         self._pending = self._capture_new_observation()
         return self._pending[0]
 
-    def capture_successor(
-        self, token: RecordedObservationToken
-    ) -> RecordedObservationToken:
+    def capture_successor(self, token: RecordedObservationToken) -> RecordedObservationToken:
         """Capture full post-action O_(t+1) once, before causal completion/commit."""
         self._require_open()
         self._require_pending_token(token)
@@ -460,7 +463,14 @@ class LiveRecording:
             self._validate_identity_and_index(token, successor_token, canonical)
             frames = dict(pending)
             frames[self.d0.group] = canonical
-            self.sampler.append_captured_frame(frames)
+            append_started_ns = time.perf_counter_ns()
+            try:
+                self.sampler.append_captured_frame(frames)
+            finally:
+                if self._timing_observer is not None:
+                    self._timing_observer(
+                        "hdf_append_ms", time.perf_counter_ns() - append_started_ns
+                    )
             self.committed_frames += 1
             # Retain the most recent full successor independently of the
             # double buffer.  A later rejected tick may consume/discard the
@@ -469,7 +479,14 @@ class LiveRecording:
             # Exact O_(t+1) becomes the next O_t without sampling it again.
             self._promoted = (successor_token, successor)
             if self.committed_frames % self.flush_every_frames == 0:
-                self.storage.flush()
+                flush_started_ns = time.perf_counter_ns()
+                try:
+                    self.storage.flush()
+                finally:
+                    if self._timing_observer is not None:
+                        self._timing_observer(
+                            "hdf_flush_ms", time.perf_counter_ns() - flush_started_ns
+                        )
         except Exception as exc:
             self._failure_reason = f"transition_commit_failed:{type(exc).__name__}:{exc}"
             raise
@@ -552,7 +569,9 @@ class LiveRecording:
             manifest.update(
                 {
                     "artifact_state": (
-                        "finalized" if effective_outcome in {"success", "operator_stopped"} else "failed"
+                        "finalized"
+                        if effective_outcome in {"success", "operator_stopped"}
+                        else "failed"
                     ),
                     "committed_frames": self.committed_frames,
                     "discarded_observations": self.discarded_observations,
@@ -592,9 +611,7 @@ class LiveRecording:
             raise
         self._closed = True
 
-    def _take_pending(
-        self, token: RecordedObservationToken
-    ) -> dict[str, dict[str, Any]]:
+    def _take_pending(self, token: RecordedObservationToken) -> dict[str, dict[str, Any]]:
         if self._pending is None:
             raise RuntimeError("no pending observation capture")
         expected, frames = self._pending
@@ -614,9 +631,7 @@ class LiveRecording:
                 f"capture token mismatch: expected {expected.token_id}, got {token.token_id}"
             )
 
-    def _take_successor(
-        self, token: RecordedObservationToken
-    ) -> dict[str, dict[str, Any]]:
+    def _take_successor(self, token: RecordedObservationToken) -> dict[str, dict[str, Any]]:
         if self._successor is None:
             raise RuntimeError("no successor observation capture")
         expected, frames = self._successor
@@ -659,9 +674,17 @@ class LiveRecording:
             raise ValueError("committed scene snapshot identity differs from buffered observation")
         if bytes(sample["scene_state_snapshot_sha256"]).hex() != token.scene_state_snapshot_sha256:
             raise ValueError("committed scene snapshot digest differs from buffered observation")
-        if _decode_fixed_id(sample["next_scene_state_snapshot_id"]) != successor_token.scene_state_snapshot_id:
-            raise ValueError("committed successor snapshot identity differs from buffered successor")
-        if bytes(sample["next_scene_state_snapshot_sha256"]).hex() != successor_token.scene_state_snapshot_sha256:
+        if (
+            _decode_fixed_id(sample["next_scene_state_snapshot_id"])
+            != successor_token.scene_state_snapshot_id
+        ):
+            raise ValueError(
+                "committed successor snapshot identity differs from buffered successor"
+            )
+        if (
+            bytes(sample["next_scene_state_snapshot_sha256"]).hex()
+            != successor_token.scene_state_snapshot_sha256
+        ):
             raise ValueError("committed successor snapshot digest differs from buffered successor")
         if not np.array_equal(
             np.asarray(sample["successor_observation_state"], dtype=np.float32),
@@ -690,6 +713,7 @@ def start_live_recording(
     portable_roots: Mapping[str, str | os.PathLike[str]],
     min_free_bytes: int = 1 << 30,
     flush_every_frames: int = 64,
+    timing_observer: Callable[[str, int], None] | None = None,
 ) -> LiveRecording:
     """Configure upstream state tracks for committed snapshot-backed transitions."""
     from isaacsim.replicator.episode_recorder import (
@@ -829,6 +853,7 @@ def start_live_recording(
         identity=identity,
         observation_factory=lambda: capture_state_snapshot(env),
         flush_every_frames=flush_every_frames,
+        timing_observer=timing_observer,
     )
 
 
@@ -894,9 +919,7 @@ def write_asset_closure_sidecar(
     sidecar_path: Path,
     *,
     portable_roots: Mapping[str, str | os.PathLike[str]],
-    dependency_provider: Callable[
-        [str], tuple[Iterable[Any], Iterable[Any], Iterable[Any]]
-    ]
+    dependency_provider: Callable[[str], tuple[Iterable[Any], Iterable[Any], Iterable[Any]]]
     | None = None,
 ) -> dict[str, object]:
     """Traverse the saved stage and atomically persist its portable closure."""
@@ -917,7 +940,11 @@ def write_asset_closure_sidecar(
 
 def ensure_d0_recordable() -> type[Any]:
     """Register the provenance-only committed-transition V2 track inside Kit."""
-    from isaacsim.replicator.episode_recorder import ChannelDescriptor, Recordable, register_recordable
+    from isaacsim.replicator.episode_recorder import (
+        ChannelDescriptor,
+        Recordable,
+        register_recordable,
+    )
 
     @register_recordable
     class D0TransitionRecordable(Recordable):
@@ -1273,7 +1300,9 @@ def canonical_committed_transition(sample: Mapping[str, Any]) -> dict[str, Any]:
     if set(sample) != set(channels):
         missing = sorted(set(channels).difference(sample))
         extra = sorted(set(sample).difference(channels))
-        raise ValueError(f"committed transition channels mismatch; missing={missing}, extra={extra}")
+        raise ValueError(
+            f"committed transition channels mismatch; missing={missing}, extra={extra}"
+        )
     result: dict[str, Any] = {}
     id_fields = {
         "run_id",
@@ -1353,7 +1382,9 @@ def canonical_committed_transition(sample: Mapping[str, Any]) -> dict[str, Any]:
         "continued" if not terminated else "terminated_success" if success else "terminated_failure"
     )
     if outcome != expected_outcome:
-        raise ValueError(f"transition_outcome must be {expected_outcome!r} for termination/success flags")
+        raise ValueError(
+            f"transition_outcome must be {expected_outcome!r} for termination/success flags"
+        )
     if not terminated and success:
         raise ValueError("a non-terminated transition cannot be successful")
     failure_code = _decode_fixed_id(result["failure_code"])
@@ -1573,7 +1604,10 @@ def verify_terminal_successor_snapshot(
             if metadata_entry.file_size > 4 * 1024 * 1024:
                 raise ValueError("terminal successor metadata is unreasonably large")
             metadata = json.loads(archive.read(metadata_entry).decode("utf-8"))
-            if not isinstance(metadata, dict) or metadata.get("schema") != TERMINAL_SUCCESSOR_SCHEMA:
+            if (
+                not isinstance(metadata, dict)
+                or metadata.get("schema") != TERMINAL_SUCCESSOR_SCHEMA
+            ):
                 raise ValueError("terminal successor schema mismatch")
             if set(metadata) != {
                 "arrays",
@@ -1595,13 +1629,22 @@ def verify_terminal_successor_snapshot(
             prior_key: tuple[str, str] | None = None
             for index, descriptor in enumerate(descriptors):
                 if not isinstance(descriptor, dict) or set(descriptor) != {
-                    "channel", "dtype", "entry", "group", "shape"
+                    "channel",
+                    "dtype",
+                    "entry",
+                    "group",
+                    "shape",
                 }:
                     raise ValueError("terminal successor array descriptor is invalid")
                 group, channel = descriptor["group"], descriptor["channel"]
                 entry = descriptor["entry"]
                 key = (group, channel)
-                if not isinstance(group, str) or not group or not isinstance(channel, str) or not channel:
+                if (
+                    not isinstance(group, str)
+                    or not group
+                    or not isinstance(channel, str)
+                    or not channel
+                ):
                     raise ValueError("terminal successor group/channel must be non-empty strings")
                 if prior_key is not None and key <= prior_key:
                     raise ValueError("terminal successor descriptors are not uniquely sorted")
@@ -1618,7 +1661,10 @@ def verify_terminal_successor_snapshot(
                 value = np.lib.format.read_array(buffer, allow_pickle=False)
                 if buffer.tell() != len(payload) or value.dtype.hasobject:
                     raise ValueError("terminal successor array encoding is invalid")
-                if value.dtype.str != descriptor["dtype"] or list(value.shape) != descriptor["shape"]:
+                if (
+                    value.dtype.str != descriptor["dtype"]
+                    or list(value.shape) != descriptor["shape"]
+                ):
                     raise ValueError("terminal successor array dtype/shape differs from metadata")
                 frames.setdefault(group, {})[channel] = np.ascontiguousarray(value)
             if set(names) != expected_names:
@@ -1654,9 +1700,7 @@ def verify_terminal_successor_snapshot(
         verify_committed_transition_sample(canonical)
         if snapshot_id != _decode_fixed_id(canonical["next_scene_state_snapshot_id"]):
             raise ValueError("terminal successor identity differs from the last committed row")
-        if declared_snapshot_sha256 != _digest_hex(
-            canonical["next_scene_state_snapshot_sha256"]
-        ):
+        if declared_snapshot_sha256 != _digest_hex(canonical["next_scene_state_snapshot_sha256"]):
             raise ValueError("terminal successor digest differs from the last committed row")
         expected_state = np.asarray(canonical["successor_observation_state"], dtype=np.float32)
         if not np.array_equal(np.asarray(token.state, dtype=np.float32), expected_state):
@@ -1675,9 +1719,7 @@ def verify_terminal_successor_snapshot(
     return TerminalSuccessorSnapshot(token, frames, artifact_sha256)
 
 
-def _write_deterministic_zip_member(
-    archive: zipfile.ZipFile, name: str, payload: bytes
-) -> None:
+def _write_deterministic_zip_member(archive: zipfile.ZipFile, name: str, payload: bytes) -> None:
     info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
     info.compress_type = zipfile.ZIP_STORED
     info.create_system = 3

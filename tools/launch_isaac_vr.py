@@ -50,6 +50,9 @@ PROVENANCE_INPUTS = (
     ROOT / "tools/isaac_s2_runtime.py",
     ROOT / "tools/isaac_s2_upstream.py",
     ROOT / "tools/isaac_vr_recording.py",
+    ROOT / "tools/isaac_vr_recording_benchmark.py",
+    ROOT / "tools/isaac_vr_recording_smoke.py",
+    ROOT / "tools/isaac_vr_injected_recording.py",
     ROOT / "tools/isaac_vr_replay.py",
 )
 
@@ -158,7 +161,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     config = yaml.safe_load(CONFIG_PATH.read_text())
     defaults = config["operator"]
     parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
-    parser.add_argument("mode", nargs="?", choices=("run", "diag", "record", "replay"), default="run")
+    parser.add_argument(
+        "mode", nargs="?", choices=("run", "diag", "record", "replay"), default="run"
+    )
     parser.add_argument(
         "--profile",
         choices=("dual_cube_to_matching_plates", "robosyn_asset_lab"),
@@ -184,6 +189,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="With 'record --smoke', commit deterministic actions for recorder integration QA.",
     )
     parser.add_argument(
+        "--recording-benchmark",
+        action="store_true",
+        help="Instrument injected recording; emits non-qualifying no-headset raw evidence.",
+    )
+    parser.add_argument("--benchmark-pair-id")
+    parser.add_argument("--benchmark-pair-order", type=int, choices=(1, 2), default=1)
+    parser.add_argument("--benchmark-warmup-steps", type=int, default=10)
+    parser.add_argument("--benchmark-measured-steps", type=int, default=64)
+    parser.add_argument("--benchmark-flush-every-frames", type=int, default=64)
+    parser.add_argument(
         "--xr-smoke", action="store_true", help="Bounded no-client run with XR Kit enabled."
     )
     parser.add_argument(
@@ -193,17 +208,26 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--scene-preview", type=Path, help="Optional scene-camera PNG output.")
     parser.add_argument(
-        "--recording-dir", type=Path,
+        "--recording-dir",
+        type=Path,
         help="Private explicit NVIDIA HDF5 V2 recording directory (record mode only).",
     )
-    parser.add_argument("--recording", type=Path, help="Episode Recorder HDF5 V2 input (replay only).")
-    parser.add_argument("--episode", type=int, default=0, help="Episode index for replay (default: 0).")
+    parser.add_argument(
+        "--recording", type=Path, help="Episode Recorder HDF5 V2 input (replay only)."
+    )
+    parser.add_argument(
+        "--episode", type=int, default=0, help="Episode index for replay (default: 0)."
+    )
     parser.add_argument(
         "--render-cameras",
         type=Path,
         help="Optional all-frame replay RGB output directory.",
     )
-    parser.add_argument("--replay-report", type=Path, help="Machine-readable replay validation report (replay only).")
+    parser.add_argument(
+        "--replay-report",
+        type=Path,
+        help="Machine-readable replay validation report (replay only).",
+    )
     parser.add_argument(
         "--max-control-steps", type=int, help="Default:60 for smoke,18000 otherwise."
     )
@@ -245,6 +269,36 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("--smoke and --xr-smoke are mutually exclusive")
     if args.injected_actions and not (args.mode == "record" and args.smoke):
         parser.error("--injected-actions requires './run-vr record --smoke'")
+    benchmark_options = {
+        "--benchmark-pair-id",
+        "--benchmark-pair-order",
+        "--benchmark-warmup-steps",
+        "--benchmark-measured-steps",
+        "--benchmark-flush-every-frames",
+    }
+    used_benchmark_options = {
+        item.split("=", 1)[0] for item in invocation if item.split("=", 1)[0] in benchmark_options
+    }
+    if args.recording_benchmark and not (
+        args.mode == "record" and args.smoke and args.injected_actions
+    ):
+        parser.error("--recording-benchmark requires './run-vr record --smoke --injected-actions'")
+    if used_benchmark_options and not args.recording_benchmark:
+        parser.error("benchmark tuning options require --recording-benchmark")
+    if args.recording_benchmark and not args.benchmark_pair_id:
+        parser.error("--recording-benchmark requires --benchmark-pair-id")
+    if args.benchmark_warmup_steps < 0 or args.benchmark_measured_steps < 1:
+        parser.error("benchmark warmup must be nonnegative and measured steps positive")
+    if args.benchmark_warmup_steps + args.benchmark_measured_steps < 2:
+        parser.error("recording benchmark requires at least two total steps")
+    if args.benchmark_flush_every_frames < 1:
+        parser.error("benchmark flush interval must be positive")
+    benchmark_total_steps = args.benchmark_warmup_steps + args.benchmark_measured_steps
+    if args.recording_benchmark and (
+        benchmark_total_steps // args.benchmark_flush_every_frames
+        <= args.benchmark_warmup_steps // args.benchmark_flush_every_frames
+    ):
+        parser.error("recording benchmark must observe a periodic flush after warmup")
     if args.mode == "replay":
         replay_incompatible = {
             "--smoke",
@@ -270,7 +324,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("--recording-dir requires ./run-vr record")
     if args.mode == "replay" and args.recording is None:
         parser.error("./run-vr replay requires --recording <session.hdf5>")
-    if args.mode != "replay" and (args.recording is not None or args.render_cameras is not None or args.replay_report is not None):
+    if args.mode != "replay" and (
+        args.recording is not None
+        or args.render_cameras is not None
+        or args.replay_report is not None
+    ):
         parser.error("--recording, --render-cameras and --replay-report require ./run-vr replay")
     if args.episode < 0:
         parser.error("--episode must be nonnegative")
@@ -385,10 +443,31 @@ def main(argv: list[str] | None = None) -> int:
         command.extend(["--s2-record", "--s2-recording-dir", str(recording_dir)])
         if args.injected_actions:
             command.append("--s2-injected-recording-smoke")
+        if args.recording_benchmark:
+            benchmark_log = output_dir / "recording-benchmark.jsonl"
+            command.extend(
+                [
+                    "--s2-recording-benchmark-log",
+                    str(benchmark_log),
+                    "--s2-recording-benchmark-pair-id",
+                    args.benchmark_pair_id,
+                    "--s2-recording-benchmark-pair-order",
+                    str(args.benchmark_pair_order),
+                    "--s2-recording-benchmark-warmup-steps",
+                    str(args.benchmark_warmup_steps),
+                    "--s2-recording-benchmark-measured-steps",
+                    str(args.benchmark_measured_steps),
+                    "--s2-recording-benchmark-flush-every-frames",
+                    str(args.benchmark_flush_every_frames),
+                ]
+            )
+            print(f"Recording benchmark evidence: {benchmark_log}", flush=True)
         print(f"Recording directory: {recording_dir}", flush=True)
     if args.mode == "replay":
         assert args.recording is not None
-        command.extend(["--s2-replay-hdf5", str(args.recording), "--s2-replay-episode", str(args.episode)])
+        command.extend(
+            ["--s2-replay-hdf5", str(args.recording), "--s2-replay-episode", str(args.episode)]
+        )
         if args.render_cameras is not None:
             command.extend(["--s2-render-cameras", str(args.render_cameras)])
         if args.replay_report is not None:

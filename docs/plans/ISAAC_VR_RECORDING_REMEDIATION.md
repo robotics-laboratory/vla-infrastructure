@@ -271,9 +271,9 @@ Status vocabulary:
 | VRR-060 | Add deterministic temporal, epoch, failure, partial-write, and corruption unit tests | VRR-002 | `done` (marker, mutation, terminal-closure, and coverage suites) | Marker test `O_t=t`, `A_t=1000+t` and all negative mutations pass |
 | VRR-061 | Add real Kit SessionStorage/SessionReader record/replay integration | VRR-010, VRR-022, VRR-051 | `done` (record `20260922T233936232911Z`; fresh replay `20260922T234647933300Z`) | Non-mock HDF round-trip passes in a fresh process with retained manifest/report |
 | VRR-062 | Add deterministic injected-XR integration with distinct valid actions | VRR-021, VRR-061 | `done` (3 distinct non-zero actions survive public SessionReader validation in `20260922T233936232911Z`) | Multiple committed non-zero actions survive readback with exact source identities |
-| VRR-070 | Benchmark production HDF recording against paired no-recording baseline | VRR-031, VRR-042, VRR-062 | `in_progress` (paired evidence/report harness and 10 contract tests; production hooks and physical pairs pending) | Retained p50/p95/p99, drop/rejection, CPU/GPU/memory/disk metrics meet agreed budget |
+| VRR-070 | Benchmark production HDF recording against paired no-recording baseline | VRR-031, VRR-042, VRR-062 | `in_progress` (paired harness plus real state/HDF/resource hooks; supported render/XR telemetry and physical pairs pending) | Retained p50/p95/p99, drop/rejection, CPU/GPU/memory/disk metrics meet agreed budget |
 | VRR-080 | Execute physical Quest recording acceptance | VRR-062, VRR-070, S2 physical prerequisite | `blocked` | Human run records useful distinct actions without causal loss and retains required evidence |
-| VRR-090 | Implement LeRobot v3 materializer and full-read dataset QA | VRR-053, VRR-080 | `blocked` | All rows and video streams load, align, and pass schema/task/action/unit/outcome checks |
+| VRR-090 | Implement LeRobot v3 materializer and full-read dataset QA | VRR-053, VRR-080 | `in_progress` (converter and full-read QA pass on the headless injected artifact; physical admissible source pending VRR-080) | All rows and video streams load, align, and pass schema/task/action/unit/outcome checks |
 | VRR-100 | Add multi-episode operator lifecycle and UX | VRR-090 | `deferred` | Repeated start/stop/reset creates independently finalized qualified episodes without restart |
 
 Execution order for the first repair milestone is:
@@ -376,10 +376,61 @@ HDF bytes by SHA-256 and self-hash all derived statistics. Missing reviewed
 thresholds remain explicitly `threshold_pending`, and a headless pair is
 analyzable but cannot qualify the task.
 
-Ten pure tests cover pairing, percentiles, threshold completeness, mutations,
-partial logs, artifact binding, ordering, and the physical-Quest guard. The
-harness is not yet production evidence: honest per-boundary runtime hooks and
-paired physical Quest runs remain required before VRR-070 may move to `done`.
+The production recorder now exposes optional nanosecond observers around the
+actual Episode Recorder append and periodic flush calls. The injected no-client
+path can measure both state captures, control-loop duration, append, flush,
+process CPU/RSS, persistent-NVML GPU utilization/VRAM, disk I/O, causal counters,
+and deadline misses without importing XR or spawning `nvidia-smi` in the loop.
+Unsupported render/XR timings are explicitly `not_measured`; a raw run carrying
+that marker is structurally unable to qualify or evaluate thresholds. Sixty-nine
+focused tests cover the hook integration, launcher contract, pairing,
+percentiles, threshold completeness, mutations, partial logs, artifact binding,
+ordering, measurement availability, and the physical-Quest guard.
+
+The no-headset mode is instrumentation QA only. Supported render/CloudXR timing
+telemetry, a reviewed complete threshold policy, and alternating paired physical
+Quest runs remain required before VRR-070 may move to `done`.
+
+### Implementation checkpoint: identity-bound LeRobot v3 materialization
+
+VRR-090 now has an executable two-environment converter in
+`tools/isaac_vr_lerobot_materialize.py`. The pinned Isaac/h5py phase verifies
+the finalized native artifact, every complete D0 row, inter-row successor
+continuity, terminal successor, asset closure, and visual provenance before it
+emits a self-hashed projection bundle. The core/LeRobot 0.6.1 phase joins all
+three RGB roles by exact observation and snapshot identities, checks every
+camera/renderer/stage/asset/materialization/RGB digest, writes the canonical
+three-video LeRobot v3 schema, and performs a full frame/stream read plus
+DataLoader traversal. It uses the controlled task mapping revision
+`piper_x_task_labels_v1` and retains a per-frame state/action/image join ledger.
+
+Final post-hardening evidence uses the recording at
+`/data/blackfire/vla-runtime/isaac-isaac61/recordings/20260923T000506310931Z-record-dual_cube_to_matching_plates-hud-off`
+(HDF SHA-256
+`81918171c7d558340170846001525a266c472bce0bb3f3b12afa94197c44f4fd`)
+and strict replay report at
+`/data/blackfire/vla-runtime/isaac-isaac61/runs/20260923T001113338317Z-replay-dual_cube_to_matching_plates-hud-off/result.json`
+(SHA-256
+`35a864fa92a648041cf8e6eba6b7983694c3ae9f3bd9e34c4ec1beb01762ab07`).
+The replay applied all nine groups for all three frames, observed zero physics
+callbacks, and emitted nine private, unique, identity-bound RGB files.
+
+The resulting dataset is retained at
+`/data/blackfire/vla-runtime/isaac-isaac61/materialized/20260923T000506310931Z-lerobot-v3-final`.
+Its materialization manifest self-hash is
+`cff79321c9ebf7064038d10f2654fa3ee282a2ebbd9148b21e5913128c0e335c`
+(manifest file SHA-256
+`fbb9a81464b5c26476780012fc4f638eed13a8ab8f88818f6ea8599e9f688bd3`).
+All three rows and nine decoded streams have shape `3x480x640`, and two
+DataLoader batches cover all rows. Fourteen focused tests cover video write/read,
+shuffled non-positional joins, task substitution, incomplete/duplicate/corrupt
+inputs, visual identity substitution, report/image TOCTOU, atomic failure, and
+direct CLI execution across the two isolated environments.
+
+This proves converter implementation and full-read QA, not physical-source D1
+admission. The manifest correctly records `dataset_admissible=false` because the
+source is a no-client injected smoke with `operator_stopped`; VRR-080 and formal
+source/gate admission remain open.
 
 ### Phase 0: select and declare the source profile
 

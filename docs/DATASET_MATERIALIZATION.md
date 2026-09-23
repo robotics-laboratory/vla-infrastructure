@@ -26,6 +26,32 @@ materialized/merged LeRobotDataset v3
 
 Do not create a runtime multi-dataset abstraction merely to avoid materialization.
 
+## Isaac VR executable materialization path
+
+The snapshot/offline-RGB source intentionally spans two isolated environments:
+the pinned Isaac environment owns HDF5 extraction, while the core environment
+owns LeRobot 0.6.1. Run the repository orchestrator from the core environment
+and name the Isaac interpreter explicitly:
+
+```sh
+.venv/bin/python tools/isaac_vr_lerobot_materialize.py orchestrate \
+  --extract-python /path/to/pinned-isaac/bin/python \
+  --recording /private/recording/session.hdf5 \
+  --replay-report /private/replay/result.json \
+  --output /private/materialized/dataset \
+  --repo-id local/immutable-dataset-id \
+  --task-id dual_cube_to_matching_plates \
+  --portable-root recording=/private/recording \
+  --portable-root project_assets=/path/to/project/assets \
+  --portable-root isaac61_production=/path/to/isaac/runtime
+```
+
+Every output path must be new. The command fails before publication on a native
+row, terminal successor, closure, provenance, image identity, digest, task,
+video-decode, or DataLoader mismatch. It never promotes the result to an
+admissible dataset: the materialization manifest retains explicit admission
+blockers until physical source qualification and the owning D1 decision exist.
+
 ## Schema fingerprint
 
 Each projected source records the SHA-256 from the project implementation's
