@@ -271,7 +271,7 @@ Status vocabulary:
 | VRR-060 | Add deterministic temporal, epoch, failure, partial-write, and corruption unit tests | VRR-002 | `done` (marker, mutation, terminal-closure, and coverage suites) | Marker test `O_t=t`, `A_t=1000+t` and all negative mutations pass |
 | VRR-061 | Add real Kit SessionStorage/SessionReader record/replay integration | VRR-010, VRR-022, VRR-051 | `done` (record `20260922T233936232911Z`; fresh replay `20260922T234647933300Z`) | Non-mock HDF round-trip passes in a fresh process with retained manifest/report |
 | VRR-062 | Add deterministic injected-XR integration with distinct valid actions | VRR-021, VRR-061 | `done` (3 distinct non-zero actions survive public SessionReader validation in `20260922T233936232911Z`) | Multiple committed non-zero actions survive readback with exact source identities |
-| VRR-070 | Benchmark production HDF recording against paired no-recording baseline | VRR-031, VRR-042, VRR-062 | `blocked` | Retained p50/p95/p99, drop/rejection, CPU/GPU/memory/disk metrics meet agreed budget |
+| VRR-070 | Benchmark production HDF recording against paired no-recording baseline | VRR-031, VRR-042, VRR-062 | `in_progress` (paired evidence/report harness and 10 contract tests; production hooks and physical pairs pending) | Retained p50/p95/p99, drop/rejection, CPU/GPU/memory/disk metrics meet agreed budget |
 | VRR-080 | Execute physical Quest recording acceptance | VRR-062, VRR-070, S2 physical prerequisite | `blocked` | Human run records useful distinct actions without causal loss and retains required evidence |
 | VRR-090 | Implement LeRobot v3 materializer and full-read dataset QA | VRR-053, VRR-080 | `blocked` | All rows and video streams load, align, and pass schema/task/action/unit/outcome checks |
 | VRR-100 | Add multi-episode operator lifecycle and UX | VRR-090 | `deferred` | Repeated start/stop/reset creates independently finalized qualified episodes without restart |
@@ -362,6 +362,24 @@ maximum Fabric/native position error was `0.0 m` and orientation error was
 thresholds. Backend requested/effective was Fabric and Episode Recorder was
 version 0.1.6. This closes moving pose parity only; it is not headset,
 performance, dataset-materialization, or D1 acceptance evidence.
+
+### Implementation checkpoint: paired recording benchmark contract
+
+VRR-070 now has a fail-closed, simulator-independent raw JSONL and derived
+report contract in `tools/isaac_vr_recording_benchmark.py`. It requires paired
+baseline/recording runs with matching source, stage, visual, environment,
+measurement, Git, and Quest-session identities; complementary AB/BA order; and
+complete measurements for control/state/HDF append/HDF flush/render/XR latency,
+process CPU/RSS, GPU utilization/VRAM, disk I/O, committed/rejected/dropped
+boundaries, deadlines, and artifact bytes. Reports bind raw logs and finalized
+HDF bytes by SHA-256 and self-hash all derived statistics. Missing reviewed
+thresholds remain explicitly `threshold_pending`, and a headless pair is
+analyzable but cannot qualify the task.
+
+Ten pure tests cover pairing, percentiles, threshold completeness, mutations,
+partial logs, artifact binding, ordering, and the physical-Quest guard. The
+harness is not yet production evidence: honest per-boundary runtime hooks and
+paired physical Quest runs remain required before VRR-070 may move to `done`.
 
 ### Phase 0: select and declare the source profile
 
