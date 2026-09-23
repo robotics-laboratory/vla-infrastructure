@@ -405,6 +405,17 @@ Its identity records `headset_connected=false`, and render/XR remain
 `not_measured`, so this checkpoint validates instrumentation only and cannot be
 used as physical performance evidence.
 
+Final branch validation at
+`e675666552db905cedb85bca6b0c1c0fc9ca4646` also exercises the ordinary
+non-benchmark lifecycle adapter: benchmark-only recorder options are not passed
+when instrumentation is disabled. The focused lifecycle/recorder/benchmark/
+launcher selection passes 73 tests. The full lab suite passes 568 tests with 26
+skips; its remaining four failures all stop on `PermissionError` while reading
+the pre-existing external artifact
+`/data/ebulochkin/vla-runtime/evidence/20260921_vr_architecture_bakeoff/architecture-bakeoff.tar.gz`
+and are not recording-code failures. Documentation governance, spec-reference
+lint, Ruff, and the 110-file selective manifest verification pass.
+
 The no-headset mode is instrumentation QA only. Supported render/CloudXR timing
 telemetry, a reviewed complete threshold policy, and alternating paired physical
 Quest runs remain required before VRR-070 may move to `done`.
