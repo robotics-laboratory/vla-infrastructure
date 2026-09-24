@@ -42,7 +42,7 @@ class Facade:
     def make(self):
         self.lifecycle = RecordingLifecycle(
             seal=self.seals.append,
-            publish=self.saved.append,
+            publish=lambda demo_id, outcome: self.saved.append((demo_id, outcome)),
             reset=lambda: setattr(self, "resets", self.resets + 1),
         )
         return self.lifecycle
@@ -144,13 +144,19 @@ def test_stop_seals_and_menu_buttons_are_not_rows():
     assert lifecycle.state is RecordingState.REVIEW
 
 
-def test_save_and_discard_are_distinct_from_task_outcome(tmp_path):
+@pytest.mark.parametrize(
+    ("button", "outcome"),
+    [("x", "success"), ("y", "failure"), ("b", "incomplete")],
+)
+def test_save_requires_explicit_task_outcome_and_keeps_source(tmp_path, button, outcome):
     episode = tmp_path / "episode_000000"
     episode.mkdir()
     canonical = {
         "artifact_state": "finalized",
         "outcome": "operator_stopped",
         "dataset_admissible": False,
+        "schema": "piper_x_isaac_vr_recording_manifest_v2",
+        "transition_schema": "piper_x_committed_transition_v3",
     }
     manifest = episode / "manifest.json"
     manifest.write_text(json.dumps(canonical))
@@ -164,7 +170,7 @@ def test_save_and_discard_are_distinct_from_task_outcome(tmp_path):
     saved = []
     lifecycle = RecordingLifecycle(
         seal=recorder.seals.append,
-        publish=lambda demo_id: saved.append(
+        publish=lambda demo_id, task_outcome: saved.append(
             publish_saved_demo(
                 tmp_path / "saved_demos",
                 demo_id=demo_id,
@@ -175,6 +181,7 @@ def test_save_and_discard_are_distinct_from_task_outcome(tmp_path):
                 profile="isaac_human_vr_offline_rgb_v2",
                 start_tick=101,
                 stop_tick=105,
+                task_outcome=task_outcome,
             )
         ),
         reset=lambda: setattr(recorder, "resets", recorder.resets + 1),
@@ -188,24 +195,82 @@ def test_save_and_discard_are_distinct_from_task_outcome(tmp_path):
     press(lifecycle, "x")
     press(lifecycle, "y")
     press(lifecycle, "x")
+    assert lifecycle.state is RecordingState.CLASSIFY_OUTCOME
+    assert recorder.resets == 0 and saved == []
+    assert not list((tmp_path / "saved_demos").glob("*.json"))
+    press(lifecycle, button)
     document = json.loads(saved[0].read_text())
-    assert document["classification"] == "saved"
+    assert document["save_classification"] == "saved"
+    assert document["task_outcome"] == outcome
+    assert document["lifecycle_disposition"] == "saved_and_classified"
+    assert document["source_manifest_schema"] == canonical["schema"]
+    assert document["committed_row_schema"] == canonical["transition_schema"]
+    assert document["source_profile"] == "isaac_human_vr_offline_rgb_v2"
+    assert (document["start_control_tick"], document["stop_control_tick"]) == (101, 105)
     assert document["technical_episodes"] == [
         {"episode_id": "episode_000000", "output_dir": str(episode)},
         {"episode_id": "episode_000001", "output_dir": str(second)},
     ]
-    assert "success" not in document and "dataset_admissible" not in document
+    assert "dataset_admissible" not in document
     assert manifest.read_bytes() == before and second_manifest.read_bytes() == second_before
     assert lifecycle.state is RecordingState.WAITING and recorder.resets == 1
     press(lifecycle, "x")
+    assert lifecycle.demo_id != document["demo_id"]
+
+
+def test_discard_skips_classification(tmp_path):
+    recorder = Facade()
+    lifecycle = RecordingLifecycle(
+        seal=recorder.seals.append,
+        publish=lambda *_: pytest.fail("discard published saved demo"),
+        reset=lambda: setattr(recorder, "resets", recorder.resets + 1),
+        discard=lambda demo_id: publish_unsaved_demo(
+            tmp_path, demo_id=demo_id, classification="discarded", episodes=[]
+        ),
+    )
+    press(lifecycle, "x")
     press(lifecycle, "y")
-    discarded_id = lifecycle.demo_id
+    demo_id = lifecycle.demo_id
     press(lifecycle, "b")
-    assert len(saved) == 1 and manifest.read_bytes() == before
-    assert lifecycle.state is RecordingState.WAITING and recorder.resets == 2
-    disposition = json.loads((tmp_path / "discarded_demos" / f"{discarded_id}.json").read_text())
+    assert lifecycle.state is RecordingState.WAITING and recorder.resets == 1
+    disposition = json.loads((tmp_path / "discarded_demos" / f"{demo_id}.json").read_text())
     assert disposition["classification"] == "discarded"
-    assert "success" not in disposition and "dataset_admissible" not in disposition
+    assert "task_outcome" not in disposition
+    assert not (tmp_path / "saved_demos").exists()
+
+
+def test_held_save_button_cannot_classify_or_start_next_demo():
+    recorder = Facade()
+    lifecycle = recorder.make()
+    press(lifecycle, "x")
+    press(lifecycle, "y")
+    assert lifecycle.buttons(x=True, y=False, b=False) == "save"
+    assert lifecycle.state is RecordingState.CLASSIFY_OUTCOME
+    assert lifecycle.buttons(x=True, y=False, b=False) is None
+    assert lifecycle.state is RecordingState.CLASSIFY_OUTCOME and recorder.saved == []
+    lifecycle.buttons(x=False, y=False, b=False)
+    assert lifecycle.buttons(x=True, y=False, b=False) == "success"
+    assert lifecycle.state is RecordingState.WAITING and len(recorder.saved) == 1
+    assert lifecycle.buttons(x=True, y=False, b=False) is None
+    assert lifecycle.demo_id is None
+
+
+def test_disconnect_during_outcome_classification_is_forensic(tmp_path):
+    lifecycle = RecordingLifecycle(
+        seal=lambda _: None,
+        publish=lambda *_: pytest.fail("interruption published saved demo"),
+        reset=lambda: None,
+        interrupted=lambda demo_id: publish_unsaved_demo(
+            tmp_path, demo_id=demo_id, classification="interrupted", episodes=[]
+        ),
+    )
+    press(lifecycle, "x")
+    press(lifecycle, "y")
+    press(lifecycle, "x")
+    lifecycle.disconnect()
+    assert lifecycle.state is RecordingState.INTERRUPTED
+    assert not (tmp_path / "saved_demos").exists()
+    assert list((tmp_path / "interrupted_demos").glob("*.json"))
 
 
 def test_disconnect_never_publishes_and_exits_recording():
@@ -223,7 +288,7 @@ def test_disconnect_never_publishes_and_exits_recording():
 def test_disconnect_disposition_is_forensic_not_saved(tmp_path):
     lifecycle = RecordingLifecycle(
         seal=lambda _: None,
-        publish=lambda _: pytest.fail("disconnect published saved demo"),
+        publish=lambda *_: pytest.fail("disconnect published saved demo"),
         reset=lambda: None,
         interrupted=lambda demo_id: publish_unsaved_demo(
             tmp_path, demo_id=demo_id, classification="interrupted", episodes=[]
@@ -246,7 +311,7 @@ def test_finalize_and_save_fail_closed(tmp_path):
     def broken_seal(_):
         raise OSError("storage failed")
 
-    lifecycle = RecordingLifecycle(seal=broken_seal, publish=lambda _: None, reset=lambda: None)
+    lifecycle = RecordingLifecycle(seal=broken_seal, publish=lambda *_: None, reset=lambda: None)
     press(lifecycle, "x")
     with pytest.raises(OSError, match="storage failed"):
         lifecycle.buttons(x=False, y=True, b=False)
@@ -259,19 +324,54 @@ def test_finalize_and_save_fail_closed(tmp_path):
     )
     lifecycle = RecordingLifecycle(
         seal=lambda _: None,
-        publish=lambda demo_id: publish_saved_demo(
+        publish=lambda demo_id, task_outcome: publish_saved_demo(
             tmp_path / "saved_demos",
             demo_id=demo_id,
             episodes=[{"episode_id": "episode", "output_dir": str(episode)}],
             profile="isaac_human_vr_offline_rgb_v2",
             start_tick=1,
             stop_tick=2,
+            task_outcome=task_outcome,
         ),
         reset=lambda: None,
     )
     press(lifecycle, "x")
     press(lifecycle, "y")
+    press(lifecycle, "x")
     with pytest.raises(RuntimeError, match="not conservatively finalized"):
-        lifecycle.buttons(x=True, y=False, b=False)
+        lifecycle.buttons(x=False, y=True, b=False)
     assert lifecycle.state is RecordingState.FAILED
+    assert not list((tmp_path / "saved_demos").glob("*.json"))
+
+
+def test_publication_failure_keeps_canonical_artifact_and_fails_lifecycle(tmp_path, monkeypatch):
+    episode = tmp_path / "episode"
+    episode.mkdir()
+    manifest = episode / "manifest.json"
+    manifest.write_text(json.dumps({
+        "artifact_state": "finalized", "outcome": "operator_stopped",
+        "schema": "piper_x_isaac_vr_recording_manifest_v2",
+        "transition_schema": "piper_x_committed_transition_v3",
+    }))
+    before = manifest.read_bytes()
+    resets = []
+    lifecycle = RecordingLifecycle(
+        seal=lambda _: None,
+        publish=lambda demo_id, task_outcome: publish_saved_demo(
+            tmp_path / "saved_demos", demo_id=demo_id,
+            episodes=[{"episode_id": "episode", "output_dir": str(episode)}],
+            profile="isaac_human_vr_offline_rgb_v2", start_tick=1, stop_tick=2,
+            task_outcome=task_outcome,
+        ),
+        reset=lambda: resets.append(True),
+    )
+    press(lifecycle, "x")
+    press(lifecycle, "y")
+    press(lifecycle, "x")
+    monkeypatch.setattr("tools.isaac_vr_episode_lifecycle.os.link", lambda *_: (_ for _ in ()).throw(OSError("publication failed")))
+    with pytest.raises(OSError, match="publication failed"):
+        lifecycle.buttons(x=False, y=True, b=False)
+    assert lifecycle.state is RecordingState.FAILED
+    assert "publication failed" in lifecycle.error
+    assert not resets and manifest.read_bytes() == before
     assert not list((tmp_path / "saved_demos").glob("*.json"))

@@ -102,7 +102,8 @@ def test_record_lifecycle_gates_episode_opening_and_menu_ticks():
     eligibility = source.index("eligible = (", lifecycle_input)
     assert poll < lifecycle_input < eligibility < start_episode
     assert "lifecycle.admits_recording and eligible and recording is None" in source
-    assert "if event not in (\"stop\", \"save\", \"discard\")" in source
+    assert '"success", "failure", "incomplete")' in source
+    assert "RecordingState.CLASSIFY_OUTCOME" in source
     assert "lifecycle.disconnect()" in source
     assert '"isaac_human_vr_offline_rgb_v2"' in source
     assert 'recenter_control="right_thumbstick_click"' in source

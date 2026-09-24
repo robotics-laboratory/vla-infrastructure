@@ -8,18 +8,26 @@ acceptance and D1 remain unresolved.
 RECORD starts in `WAITING` with no demonstration or episode. On the existing
 single controller pipeline, press **X** (left primary) to Start, **Y** (left
 secondary) to Stop, then **X** to Save or **B** (right secondary) to Discard.
-Each press is a rising edge; release X before using it for Save. Stop seals the
+After Save, explicitly classify the saved task with **X** for success, **Y** for
+failure, or **B** for incomplete. Each press is a rising edge; release a button
+before using it in another state. In particular, holding X after Save cannot
+select success. Stop seals the
 source recording before review while XR input stays live. The state and button
 mapping are printed as `human_recording_state` events and the final state is
 included in the run report. Physical Quest visibility of these events or a
 headset menu has not been qualified. A saved demonstration gets a separate
-`saved_demos/<demo_id>.json` index beside the recording directory; it lists
-ordered technical episode directories without changing their manifests. Save
-means operator retention only: neither task success nor dataset admission.
+`saved_demos/<demo_id>.json` index beside the recording directory only after
+task outcome selection. It records separate `save_classification: saved` and
+`task_outcome: success|failure|incomplete`, ordered technical episode directories,
+the source profile, committed row/schema identity, control boundaries and a
+`saved_and_classified` lifecycle disposition without changing canonical episode manifests.
+Save means operator retention only; a saved failure or incomplete demo remains
+saved. None of these outcomes establishes dataset admission.
 Discard leaves canonical episode artifacts for forensic inspection, writes a
 separate `discarded_demos/<demo_id>.json` disposition, and publishes no saved
 index. An interrupted active demonstration similarly gets an
-`interrupted_demos/<demo_id>.json` disposition. Save/Discard runs a state-only
+`interrupted_demos/<demo_id>.json` disposition, including when review or outcome
+classification is interrupted. Discard and completed classification run a state-only
 scene/device/processor/IK reset
 and returns to `WAITING`; another Start creates a new causal scope. Disconnect
 seals an active episode conservatively and never saves the demonstration.

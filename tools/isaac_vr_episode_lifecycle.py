@@ -14,6 +14,7 @@ class RecordingState(str, Enum):
     WAITING = "waiting"
     RECORDING = "recording"
     REVIEW = "review"
+    CLASSIFY_OUTCOME = "classify_outcome"
     RESETTING = "resetting"
     FAILED = "failed"
     INTERRUPTED = "interrupted"
@@ -26,7 +27,7 @@ class RecordingLifecycle:
         self,
         *,
         seal: Callable[[str], None],
-        publish: Callable[[str], None],
+        publish: Callable[[str, str], None],
         reset: Callable[[], None],
         discard: Callable[[str], None] | None = None,
         interrupted: Callable[[str], None] | None = None,
@@ -58,18 +59,25 @@ class RecordingLifecycle:
             return "stop"
         if self.state is RecordingState.REVIEW:
             if edges["x"]:
-                self._finish(save=True)
+                self.state = RecordingState.CLASSIFY_OUTCOME
                 return "save"
             if edges["b"]:
-                self._finish(save=False)
+                self._finish(outcome=None)
                 return "discard"
+        if self.state is RecordingState.CLASSIFY_OUTCOME:
+            for button, outcome in (("x", "success"), ("y", "failure"), ("b", "incomplete")):
+                if edges[button]:
+                    self._finish(outcome=outcome)
+                    return outcome
         return None
 
     def disconnect(self) -> None:
         self.interrupt("xr_disconnect")
 
     def interrupt(self, reason: str) -> None:
-        if self.state not in (RecordingState.RECORDING, RecordingState.REVIEW):
+        if self.state not in (
+            RecordingState.RECORDING, RecordingState.REVIEW, RecordingState.CLASSIFY_OUTCOME
+        ):
             return
         if self.state is RecordingState.RECORDING:
             self._seal(reason)
@@ -85,8 +93,11 @@ class RecordingLifecycle:
     def external_reset(self) -> None:
         if self.state is RecordingState.RECORDING:
             self._seal("environment_reset_requested")
-        if self.state in (RecordingState.REVIEW, RecordingState.RESETTING):
-            self._finish(save=False)
+            self._finish(outcome=None)
+        elif self.state is RecordingState.REVIEW:
+            self._finish(outcome=None)
+        elif self.state is RecordingState.CLASSIFY_OUTCOME:
+            self.interrupt("environment_reset_requested")
 
     def fail(self, exc: Exception) -> None:
         self.error = f"{type(exc).__name__}: {exc}"
@@ -101,16 +112,16 @@ class RecordingLifecycle:
             self.fail(exc)
             raise
 
-    def _finish(self, *, save: bool) -> None:
+    def _finish(self, *, outcome: str | None) -> None:
         self.state = RecordingState.RESETTING
         try:
-            self.reset()
-            if save:
+            if outcome is not None:
                 assert self.demo_id is not None
-                self.publish(self.demo_id)
+                self.publish(self.demo_id, outcome)
             elif self.discard is not None:
                 assert self.demo_id is not None
                 self.discard(self.demo_id)
+            self.reset()
         except Exception as exc:
             self.fail(exc)
             raise
@@ -126,22 +137,37 @@ def publish_saved_demo(
     profile: str,
     start_tick: int,
     stop_tick: int,
+    task_outcome: str,
 ) -> Path:
-    """Publish a separate user classification without editing canonical manifests."""
+    """Atomically publish a classified demo without editing canonical manifests."""
+    if task_outcome not in {"success", "failure", "incomplete"}:
+        raise ValueError("task outcome must be success, failure, or incomplete")
     root.mkdir(parents=True, exist_ok=True)
     destination = root / f"{demo_id}.json"
     if destination.exists():
         raise FileExistsError(destination)
+    source_schema = None
+    row_schema = None
     for episode in episodes:
         manifest = Path(episode["output_dir"]) / "manifest.json"
         value = json.loads(manifest.read_text(encoding="utf-8"))
         if value["artifact_state"] != "finalized" or value["outcome"] != "operator_stopped":
             raise RuntimeError(f"episode is not conservatively finalized: {manifest}")
+        identity = (value["schema"], value["transition_schema"])
+        if source_schema is not None and identity != (source_schema, row_schema):
+            raise RuntimeError(f"technical episode schema differs: {manifest}")
+        source_schema, row_schema = identity
+    if source_schema is None:
+        raise RuntimeError("saved demonstration has no technical episodes")
     document = {
-        "schema": "piper_x_isaac_vr_human_demo_v1",
+        "schema": "piper_x_isaac_vr_human_demo_v2",
         "demo_id": demo_id,
-        "classification": "saved",
+        "save_classification": "saved",
+        "task_outcome": task_outcome,
+        "lifecycle_disposition": "saved_and_classified",
         "source_profile": profile,
+        "source_manifest_schema": source_schema,
+        "committed_row_schema": row_schema,
         "start_control_tick": start_tick,
         "stop_control_tick": stop_tick,
         "technical_episodes": [

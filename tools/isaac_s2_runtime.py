@@ -506,7 +506,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
             or Path(args_cli.s2_recording_dir).parent
         )
 
-    def save_demo(demo_id: str) -> None:
+    def save_demo(demo_id: str, task_outcome: str) -> None:
         publish_saved_demo(
             demo_index_root() / "saved_demos",
             demo_id=demo_id,
@@ -514,6 +514,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
             profile="isaac_human_vr_offline_rgb_v2",
             start_tick=demo_start_tick,
             stop_tick=demo_stop_tick,
+            task_outcome=task_outcome,
         )
 
     def classify_unsaved(demo_id: str, classification: str) -> None:
@@ -537,7 +538,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 interrupted=lambda demo_id: classify_unsaved(demo_id, "interrupted"),
             )
             print(json.dumps({"event": "human_recording_state", "state": "waiting", "buttons":
-                {"start": "X", "stop": "Y", "save": "X", "discard": "B"}}), flush=True)
+                {"start": "X", "stop": "Y", "save": "X", "discard": "B",
+                 "success": "X", "failure": "Y", "incomplete": "B"}}), flush=True)
         if experiment is not None and not recording_requested:
             # Pinned Candidate B requires camera-feed bind(env) before the XR
             # teleop session is entered. This also makes the panels available
@@ -597,7 +599,10 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     stage_started_ns = time.perf_counter_ns()
                 events = poll_control_events(device)
                 if lifecycle is not None:
-                    if lifecycle.state in (RecordingState.RECORDING, RecordingState.REVIEW) and not device.session_running:
+                    if lifecycle.state in (
+                        RecordingState.RECORDING, RecordingState.REVIEW,
+                        RecordingState.CLASSIFY_OUTCOME,
+                    ) and not device.session_running:
                         lifecycle.disconnect()
                         print(json.dumps({"event": "human_recording_state", "state": lifecycle.state.value,
                             "demo_id": lifecycle.demo_id}), flush=True)
@@ -626,18 +631,25 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         print(json.dumps({"event": "human_recording_state", "state": lifecycle.state.value,
                             "demo_id": lifecycle.demo_id, "input": event}), flush=True)
                     if (
-                        lifecycle.state in (RecordingState.WAITING, RecordingState.REVIEW)
+                        lifecycle.state in (
+                            RecordingState.WAITING, RecordingState.REVIEW,
+                            RecordingState.CLASSIFY_OUTCOME,
+                        )
                         and (args_cli.s2_reset_step == control_steps or
                              (events.should_reset and not device.navigation_reset_applied))
                     ):
-                        if lifecycle.state is RecordingState.REVIEW:
+                        if lifecycle.state in (
+                            RecordingState.REVIEW, RecordingState.CLASSIFY_OUTCOME
+                        ):
                             lifecycle.external_reset()
                         else:
                             reset_demo()
                         continue
-                    if lifecycle.state is RecordingState.REVIEW or event in ("save", "discard"):
+                    if lifecycle.state in (
+                        RecordingState.REVIEW, RecordingState.CLASSIFY_OUTCOME
+                    ) or event in ("save", "discard", "success", "failure", "incomplete"):
                         # Keep XR input/rendering alive; no IK or D0 on menu ticks.
-                        if event not in ("stop", "save", "discard"):
+                        if event not in ("stop", "save", "discard", "success", "failure", "incomplete"):
                             env._advance(4)
                         continue
                 if performance is not None:
@@ -1119,7 +1131,10 @@ def run_s2(env, args_cli, simulation_app) -> int:
     finally:
         try:
             try:
-                if lifecycle is not None and lifecycle.state is RecordingState.RECORDING and recording_failure_reason is None:
+                if lifecycle is not None and lifecycle.state in (
+                    RecordingState.RECORDING, RecordingState.REVIEW,
+                    RecordingState.CLASSIFY_OUTCOME,
+                ) and recording_failure_reason is None:
                     lifecycle.interrupt(
                         "keyboard_interrupt" if interrupted else "control_loop_completed"
                     )

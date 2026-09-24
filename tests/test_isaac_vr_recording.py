@@ -686,6 +686,8 @@ def _session_fixture(tmp_path, monkeypatch):
         dependency_provider=lambda _: ((), (), ()),
     )
     (first_dir / "manifest.json").write_text(json.dumps({
+        "schema": "piper_x_isaac_vr_recording_manifest_v2",
+        "transition_schema": "piper_x_committed_transition_v3",
         "artifact_state": "in_progress", "committed_frames": 0,
         "stage_snapshot": "stage_snapshot.usd", "stage_snapshot_sha256": static_digest,
         "asset_closure": "asset_closure.json",
@@ -743,10 +745,11 @@ def test_human_save_indexes_current_recording_session_without_mutating_manifest(
 
     lifecycle = RecordingLifecycle(
         seal=seal,
-        publish=lambda demo_id: saved.append(publish_saved_demo(
+        publish=lambda demo_id, task_outcome: saved.append(publish_saved_demo(
             tmp_path / "saved_demos", demo_id=demo_id,
             episodes=[{"episode_id": first.episode_id, "output_dir": str(first.output_dir)}],
             profile=first.source_profile, start_tick=120, stop_tick=125,
+            task_outcome=task_outcome,
         )),
         reset=lambda: None,
     )
@@ -761,6 +764,9 @@ def test_human_save_indexes_current_recording_session_without_mutating_manifest(
     assert lifecycle.state is RecordingState.REVIEW
     manifest = first.output_dir / "manifest.json"
     before = manifest.read_bytes()
+    lifecycle.buttons(x=False, y=False, b=False)
+    lifecycle.buttons(x=True, y=False, b=False)
+    assert lifecycle.state is RecordingState.CLASSIFY_OUTCOME and not saved
     lifecycle.buttons(x=False, y=False, b=False)
     lifecycle.buttons(x=True, y=False, b=False)
     assert lifecycle.state is RecordingState.WAITING
