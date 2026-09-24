@@ -85,6 +85,7 @@ parser.add_argument(
 parser.add_argument("--s2-recording-dir", type=Path)
 parser.add_argument("--s2-recordings-root", type=Path)
 parser.add_argument("--s2-injected-recording-smoke", action="store_true", help=argparse.SUPPRESS)
+parser.add_argument("--s2-rgb-e2e-assay", action="store_true", help=argparse.SUPPRESS)
 parser.add_argument("--s2-recording-benchmark-log", type=Path, help=argparse.SUPPRESS)
 parser.add_argument("--s2-recording-benchmark-pair-id", help=argparse.SUPPRESS)
 parser.add_argument(
@@ -171,6 +172,8 @@ if args_cli.s2_injected_recording_smoke and (
     not args_cli.s2_record or args_cli.s2_teleop or args_cli.xr
 ):
     parser.error("injected recording smoke requires no-client --s2-record")
+if args_cli.s2_rgb_e2e_assay and not args_cli.s2_injected_recording_smoke:
+    parser.error("RGB end-to-end assay requires injected recording smoke")
 benchmark_fields = (
     args_cli.s2_recording_benchmark_log,
     args_cli.s2_recording_benchmark_pair_id,

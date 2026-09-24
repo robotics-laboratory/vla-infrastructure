@@ -110,6 +110,27 @@ def box_iou(left: tuple[float, ...], right: tuple[float, ...]) -> float:
     return intersection / union if union > 0 else 0.0
 
 
+def compare_static_relative(
+    expected_dynamic: Projection,
+    expected_static: Projection,
+    observed_dynamic: tuple[float, float, float, float] | None,
+    observed_static: tuple[float, float, float, float] | None,
+) -> dict[str, float | bool | None]:
+    """Compare a recorded dynamic witness against an independent world landmark."""
+    if (
+        expected_dynamic.center is None or expected_static.center is None
+        or observed_dynamic is None or observed_static is None
+    ):
+        return {"pass": False, "relative_error_px": None}
+    expected = np.subtract(expected_dynamic.center, expected_static.center)
+    dynamic = ((observed_dynamic[0] + observed_dynamic[2]) / 2,
+               (observed_dynamic[1] + observed_dynamic[3]) / 2)
+    static = ((observed_static[0] + observed_static[2]) / 2,
+              (observed_static[1] + observed_static[3]) / 2)
+    error = float(np.linalg.norm(expected - np.subtract(dynamic, static)))
+    return {"pass": error <= CENTER_TOLERANCE_PX, "relative_error_px": round(error, 3)}
+
+
 def compare_geometry(
     expected: Projection,
     observed: tuple[float, float, float, float] | None,

@@ -126,6 +126,19 @@ def test_injected_transitions_are_distinct_dense_and_self_verifying(count):
         )
 
 
+def test_rgb_e2e_injection_commits_clutch_and_distinct_native_states():
+    env = FakeEnvironment()
+    recording = FakeRecording(env)
+    result = record_injected_transitions(recording, env, count=6, rgb_e2e_assay=True)
+    assert result["committed_frames"] == 6
+    assert bytes(recording.rows[2]["left_transition"]).rstrip(b"\0") == b"clutch_held"
+    assert bytes(recording.rows[2]["right_transition"]).rstrip(b"\0") == b"motion"
+    assert np.array_equal(
+        recording.rows[2]["dataset_action"][:7], recording.rows[2]["observation_state"][:7]
+    )
+    assert len({tuple(row["observation_state"]) for row in recording.rows}) >= 4
+
+
 def test_long_periodic_experiment_keeps_all_causal_rows_and_default_guard():
     for strict in (True, False):
         env = FakeEnvironment()

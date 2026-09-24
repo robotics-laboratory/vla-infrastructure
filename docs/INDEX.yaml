@@ -3328,3 +3328,13 @@ documents:
   status: historical
   owner: vr.offline_rgb_alignment
   mutable: false
+- path: docs/experiments/20260925_current_v2_v3_rgb_e2e/REPORT.md
+  kind: experiment
+  status: historical
+  owner: vr.current_rgb_e2e
+  mutable: false
+- path: docs/experiments/20260925_current_v2_v3_rgb_e2e/summary.json
+  kind: experiment
+  status: historical
+  owner: vr.current_rgb_e2e
+  mutable: false

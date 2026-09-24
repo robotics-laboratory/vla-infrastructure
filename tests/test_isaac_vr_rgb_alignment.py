@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
+from tools.isaac_vr_rgb_alignment_assay import validate_current_identity
 from tools.isaac_vr_rgb_alignment import (
     CENTER_TOLERANCE_PX,
     IMAGE_HEIGHT,
@@ -11,6 +13,7 @@ from tools.isaac_vr_rgb_alignment import (
     MIN_MASK_PIXELS,
     box_iou,
     compare_geometry,
+    compare_static_relative,
     mask_bounds,
     project_cube,
 )
@@ -83,3 +86,43 @@ def test_frozen_geometry_at_known_moving_witness_fails() -> None:
     assert first.bounds is not None and moved.bounds is not None
     assert compare_geometry(first, first.bounds)["pass"]
     assert not compare_geometry(moved, first.bounds)["pass"]
+
+
+def test_static_world_relative_reference_rejects_common_camera_object_shift() -> None:
+    cube = projection(0.0)
+    plate = projection(0.25)
+    assert cube.bounds is not None and plate.bounds is not None
+    assert compare_static_relative(cube, plate, cube.bounds, plate.bounds)["pass"]
+    shifted_cube = projection(0.20, camera_x=0.20)
+    assert shifted_cube.bounds is not None
+    # Cube-camera projection alone is invariant under the shared offset;
+    # the independently anchored plate is not.
+    assert compare_geometry(cube, shifted_cube.bounds)["pass"]
+    assert not compare_static_relative(cube, plate, shifted_cube.bounds,
+                                       projection(0.25, camera_x=0.20).bounds)["pass"]
+
+
+def test_current_integration_selects_exact_episode_and_row() -> None:
+    identity = {
+        "source_profile": "isaac_human_vr_offline_rgb_v2",
+        "row_schema": "piper_x_committed_transition_v3",
+        "technical_episode_id": "episode_000000", "frame_index": 1,
+        "obs_id": "obs:1", "transition_id": "transition:1",
+        "scene_state_snapshot_id": "snapshot:1", "source_native_state_digest": "b" * 64,
+    }
+    arrays = {
+        "frame_index": np.array([0, 1]),
+        "obs_id": np.array(["obs:0", "obs:1"]),
+        "transition_id": np.array(["transition:0", "transition:1"]),
+        "scene_state_snapshot_id": np.array(["snapshot:0", "snapshot:1"]),
+        "scene_state_snapshot_sha256": np.array(["a" * 64, "b" * 64]),
+    }
+    source = {"episode_id": "episode_000000"}
+    validate_current_identity(identity, arrays, source, 1)
+    for bad_identity, bad_source in (
+        ({**identity, "obs_id": "obs:0"}, source),
+        (identity, {"episode_id": "episode_000001"}),
+        ({**identity, "frame_index": 0}, source),
+    ):
+        with pytest.raises(ValueError):
+            validate_current_identity(bad_identity, arrays, bad_source, 1)

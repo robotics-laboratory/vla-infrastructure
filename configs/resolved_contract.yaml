@@ -2164,6 +2164,49 @@ artifacts:
     uri: null
     description: Preserved invalid assay attempt with cubes below table and unclipped expected edge boxes;
       not a production-renderer failure.
+  vr_current_rgb_e2e_report:
+    kind: report
+    sha256: 27f45811c10b5d331a1d33bc82c30e8a780c9564041f92abaa2d2f34db2afef3
+    path: docs/experiments/20260925_current_v2_v3_rgb_e2e/REPORT.md
+    uri: null
+    description: Bounded current recorder V2/V3 single-episode RGB identity and geometry experiment;
+      no physical Quest or dataset admission claim.
+  vr_current_rgb_e2e_summary:
+    kind: test_output
+    sha256: be342251177df42f0b69bf9e68a09451d2573160c5b7c04592943d54e24ad81c
+    path: docs/experiments/20260925_current_v2_v3_rgb_e2e/summary.json
+    uri: null
+    description: Per-row source/projection/replay/render identity and geometry oracle result.
+  vr_current_rgb_e2e_source:
+    kind: test_output
+    sha256: 1e646b7dc4fe5ce265c4c36fec5e9ff90d3a2eba2415d9547e600621a5a12b2a
+    path: /data/ebulochkin/vla-runtime/evidence/20260925_current_v2_v3_rgb_e2e/state-h/recordings/source/session.hdf5
+    uri: null
+    description: Finalized current V2/V3 six-row source written through RecordingSession; immutable after finalization.
+  vr_current_rgb_e2e_projection:
+    kind: test_output
+    sha256: f8ca953474d8aa28f803bce26636fa832f577f1908cccbd8b32ce697e8f14a55
+    path: /data/ebulochkin/vla-runtime/evidence/20260925_current_v2_v3_rgb_e2e/projection-h/manifest.json
+    uri: null
+    description: Verified current projection bundle manifest bound to the final V2/V3 source.
+  vr_current_rgb_e2e_replay:
+    kind: test_output
+    sha256: 2ed84688b157c731c835627997db559bf909cf06ff67f5424abd1e347baf06a9
+    path: /data/ebulochkin/vla-runtime/evidence/20260925_current_v2_v3_rgb_e2e/replay-run-h/result.json
+    uri: null
+    description: Production strict replay report for six rows, three cameras and zero physics callbacks.
+  vr_current_rgb_e2e_preliminary_source:
+    kind: test_output
+    sha256: 13e2a91b31aa6f538ef624aa873f251163b484ec86e20012f00902c1835d0e00
+    path: /data/ebulochkin/vla-runtime/evidence/20260925_current_v2_v3_rgb_e2e/state-e/recordings/source/session.hdf5
+    uri: null
+    description: Preserved first finalized V2/V3 source whose cubes were outside both wrist views.
+  vr_current_rgb_e2e_preliminary_result:
+    kind: test_output
+    sha256: 056a82f6dba2cc4287a7d9a04cf021204acd1cf1b3ce6a7ade084d6b2d77d266
+    path: /data/ebulochkin/vla-runtime/evidence/20260925_current_v2_v3_rgb_e2e/assay-f/current_summary.json
+    uri: null
+    description: Preserved incomplete-coverage FAIL with no wrong-row geometric rejection.
   vr_architecture_report:
     kind: report
     sha256: 70e013944f1d4aa7bfdbb8adcbad831a116347c63b07f811b99a7113df87aa52
@@ -3226,6 +3269,31 @@ evidence:
     notes: Experimental working tree based on e11887c7; source archived V1 HDF was modified only in
       assay-only synthetic copies and D0 no-op type mapped to V3 for current replay registry. No gate
       binding/state change, genuine V2 end-to-end artifact proof, physical acceptance or dataset admission.
+  vr_current_v2_v3_rgb_e2e_assay:
+    kind: command_test
+    status: pass
+    summary: Current V2/V3 recorder-generated six-row source passed strict extraction, replay and bounded
+      three-camera geometry; a committed clutch row, static world reference and wrong-row rejection were observed.
+    timestamp: '2026-09-24T23:00:06+00:00'
+    command: Pinned Isaac ./run-vr record --smoke --injected-actions --rgb-e2e-assay, current
+      projection extraction, ./run-vr replay, then tools/isaac_vr_rgb_alignment_assay.py
+      --current-projection. Exact paths and commands are in REPORT.md.
+    artifact_ids:
+    - vr_current_rgb_e2e_report
+    - vr_current_rgb_e2e_summary
+    - vr_current_rgb_e2e_source
+    - vr_current_rgb_e2e_projection
+    - vr_current_rgb_e2e_replay
+    - vr_current_rgb_e2e_preliminary_source
+    - vr_current_rgb_e2e_preliminary_result
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/experiments/20260925_current_v2_v3_rgb_e2e
+    symbol: null
+    notes: Working tree based on 9800afa; current injected/no-client input uses RecordingSession
+      and an immutable post-finalization source. One technical episode only. No gate binding,
+      physical Quest acceptance, live Differential IK qualification or dataset admission.
   vr_record_runtime_optimization_audit:
     kind: command_test
     status: pass

@@ -18,7 +18,6 @@ import shutil
 import sys
 from typing import Any
 
-import h5py
 import numpy as np
 
 if __package__ in {None, ""}:
@@ -28,6 +27,7 @@ from tools.isaac_vr_rgb_alignment import (
     CENTER_TOLERANCE_PX,
     MIN_BOX_IOU,
     compare_geometry,
+    compare_static_relative,
     mask_bounds,
     project_cube,
 )
@@ -60,6 +60,7 @@ def _digest(path: Path) -> str:
 
 def prepare_assay_hdf(source: Path, output: Path) -> tuple[Path, Path]:
     """Create two clearly marked synthetic HDF state streams from real tracks."""
+    import h5py
     output.mkdir(parents=True, exist_ok=False)
     result = []
     for name, states in (("primary", PRIMARY_STATES), ("reset", (RESET_STATE,))):
@@ -106,6 +107,7 @@ def prepare_assay_hdf(source: Path, output: Path) -> tuple[Path, Path]:
 
 
 def _recorded_state(hdf_path: Path, frame: int) -> dict[str, Any]:
+    import h5py
     with h5py.File(hdf_path) as handle:
         episode = next(iter(handle["episodes"].values()))
         objects = [
@@ -200,6 +202,26 @@ def _evaluate_frame(
             rows.append(row)
             evidence[role][obj["path"]] = {"expected": expected, "observed": observed}
     return rows, evidence
+
+
+def validate_current_identity(
+    identity: dict[str, Any], arrays: dict[str, np.ndarray],
+    projection_source: dict[str, Any], frame: int,
+) -> None:
+    """Require the exact source episode and row in the extracted projection."""
+    if identity["source_profile"] != "isaac_human_vr_offline_rgb_v2" or identity["row_schema"] != "piper_x_committed_transition_v3":
+        raise ValueError("current source is not V2/V3")
+    if (projection_source["episode_id"] != identity["technical_episode_id"] or
+            int(arrays["frame_index"][frame]) != frame or
+            identity["frame_index"] != frame):
+        raise ValueError("projection episode/frame selection differs from source")
+    for field, projected in (
+        ("obs_id", "obs_id"), ("transition_id", "transition_id"),
+        ("scene_state_snapshot_id", "scene_state_snapshot_id"),
+        ("source_native_state_digest", "scene_state_snapshot_sha256"),
+    ):
+        if str(arrays[projected][frame]) != identity[field]:
+            raise ValueError(f"projection row {frame} lost {field}")
 
 
 def run_native(args: argparse.Namespace, app: Any) -> dict[str, Any]:
@@ -327,12 +349,244 @@ def run_native(args: argparse.Namespace, app: Any) -> dict[str, Any]:
     }
 
 
+def run_current(args: argparse.Namespace, app: Any) -> dict[str, Any]:
+    """Add diagnostic geometry to a separately completed production replay."""
+    import omni.replicator.core as rep
+    import yaml
+    from isaacsim.replicator.episode_recorder import (
+        EpisodeReplayer, ReplayPolicy, SessionReader,
+    )
+    from tools.isaac_vr_lerobot_materialize import (
+        _extract_hdf_rows, _decode_text, verify_projection_bundle,
+    )
+    from tools.isaac_vr_recording import _captured_frame_sha256, ensure_d0_recordable
+    from tools.isaac_vr_replay import (
+        ReplayCameraMaterializer, ReplayRuntimeGuard, _bind_render_identity,
+        _open_verified_snapshot, _validate_session, verify_recording_artifact,
+    )
+
+    source = args.recording.resolve()
+    static_config = Path(__file__).resolve().parents[1] / "configs/isaac61_vr_runtime.yaml"
+    task = yaml.safe_load(static_config.read_text())["profiles"]["dual_cube_to_matching_plates"]
+    plate_world = np.asarray(task["left_plate"]["position_m"], dtype=np.float64)
+    before = _digest(source)
+    roots = {
+        "recording": source.parent,
+        "isaac61_production": Path("/data/vla-infrastructure/isaac61_production"),
+        "project_assets": Path("/data/vla-infrastructure/assets"),
+    }
+    artifact = verify_recording_artifact(source, portable_roots=roots)
+    if artifact.manifest["session_metadata"]["source_profile"] != "isaac_human_vr_offline_rgb_v2":
+        raise ValueError("current assay requires a finalized V2 source")
+    if artifact.manifest["transition_schema"] != "piper_x_committed_transition_v3":
+        raise ValueError("current assay requires committed V3 rows")
+    projection, arrays = verify_projection_bundle(args.projection)
+    if projection["source"]["recording_sha256"] != before:
+        raise ValueError("projection and immutable source differ")
+    if projection["source"]["recording"] != str(source):
+        raise ValueError("projection refers to another source path")
+    replay_report = json.loads(args.replay_report.read_text())
+    if (replay_report["recording_sha256"] != before or
+            replay_report["physics_callbacks"] != 0 or not replay_report["strict_policy"]):
+        raise ValueError("production strict replay report does not bind source safely")
+    selected, native_rows = _extract_hdf_rows(source, None)
+    with SessionReader(str(source)) as reader:
+        session = _validate_session(reader, artifact, 0)
+    if (selected != session.episode_name or
+            projection["source"]["episode"] != selected or
+            replay_report["episode"] != selected or
+            len(native_rows) != len(arrays["frame_index"])):
+        raise ValueError("source, projection and replay episode selection differ")
+    rendered_index = {(int(item["frame"]), item["role"]): item
+                      for item in replay_report["renders"]}
+    if len(rendered_index) != session.frames * len(ROLES):
+        raise ValueError("production replay coverage is incomplete")
+    frames = sorted({0, 2, session.frames - 2, session.frames - 1})
+    if session.frames < 5:
+        raise ValueError("current assay needs at least five committed rows")
+    clutch = [index for index, row in enumerate(native_rows)
+              if _decode_text(row["left_transition"]).startswith("clutch") or
+              _decode_text(row["right_transition"]).startswith("clutch")]
+    if not clutch or clutch[0] not in frames:
+        raise ValueError("selected source rows lack committed clutch provenance")
+    import h5py
+
+    with h5py.File(source, "r") as handle:
+        episode_group = handle[f"episodes/{selected}"]
+        for frame in frames:
+            captured = {
+                group: {
+                    name: np.asarray(dataset[frame])
+                    for name, dataset in episode_group[group].items()
+                }
+                for group in (str(track["group"]) for track in session.tracks)
+                if group != "d0/committed_transition"
+            }
+            if _captured_frame_sha256(captured) != bytes(
+                native_rows[frame]["scene_state_snapshot_sha256"]
+            ).hex():
+                raise ValueError(f"committed row {frame} does not digest its saved native tracks")
+    guard = ReplayRuntimeGuard()
+    guard.configure()
+    _open_verified_snapshot(artifact, app)
+    guard.start_monitoring()
+    ensure_d0_recordable()
+    materializer = ReplayCameraMaterializer(artifact.camera_paths, args.output / "current_rgb")
+    replayer = None
+    annotators = {}
+    checked = []
+    static_checks = []
+    wrong_row_failures = []
+    try:
+        materializer.open()
+        for role, product in materializer.products.items():
+            annotator = rep.AnnotatorRegistry.get_annotator(
+                "instance_id_segmentation", init_params={"colorize": False}
+            )
+            annotator.attach(product)
+            annotators[role] = annotator
+        replayer = EpisodeReplayer(
+            str(source), policy=ReplayPolicy(strictness="strict"), pose_backend="usd"
+        )
+        replayer.prepare_episode(session.episode_name)
+        recorded_groups = {str(track["group"]) for track in session.tracks}
+        if {item.group for item in replayer.prepared_recordables} != recorded_groups:
+            raise ValueError("assay strict replay did not prepare all native tracks")
+        for frame in frames:
+            replayer.apply_frame(frame)
+            app.update()
+            renders = materializer.render(frame)
+            _bind_render_identity(renders, frame=frame, session=session, artifact=artifact)
+            state = _recorded_state(source, frame)
+            geometry, evidence = _evaluate_frame(state, renders, annotators, label=f"current:{frame}")
+            native = native_rows[frame]
+            identity = {
+                "source_profile": projection["source"]["source_profile"],
+                "row_schema": artifact.manifest["transition_schema"],
+                "row_revision": "isaac_vr_committed_transition_row_v2",
+                "technical_episode_id": _decode_text(native["episode_id"]),
+                "frame_index": frame,
+                "transition_id": _decode_text(native["transition_id"]),
+                "obs_id": _decode_text(native["obs_id"]),
+                "scene_state_snapshot_id": _decode_text(native["scene_state_snapshot_id"]),
+                "source_native_state_digest": bytes(native["scene_state_snapshot_sha256"]).hex(),
+                "projection_bundle_identity": projection["manifest_sha256"],
+                "left_transition": _decode_text(native["left_transition"]),
+                "right_transition": _decode_text(native["right_transition"]),
+            }
+            validate_current_identity(identity, arrays, projection["source"], frame)
+            for render in renders:
+                role = render["role"]
+                official = rendered_index[(frame, role)]
+                for field in ("obs_id", "scene_state_snapshot_id", "scene_state_snapshot_sha256",
+                              "camera_configuration_sha256", "camera_prim_path"):
+                    if render[field] != official[field]:
+                        raise ValueError(f"production replay row {frame} lost {field}")
+                for item in (row for row in geometry if row["role"] == role):
+                    expected_bounds = item["expected_bounds_px"]
+                    observed_bounds = item["observed_bounds_px"]
+                    item.update(identity)
+                    item.update({
+                        "camera_role": role,
+                        "replay_render_identity": official["rgb_sha256"],
+                        "camera_configuration_sha256": render["camera_configuration_sha256"],
+                        "expected_witness_position_px": None if expected_bounds is None else
+                            [(expected_bounds[0] + expected_bounds[2]) / 2,
+                             (expected_bounds[1] + expected_bounds[3]) / 2],
+                        "observed_witness_position_px": None if observed_bounds is None else
+                            [(observed_bounds[0] + observed_bounds[2]) / 2,
+                             (observed_bounds[1] + observed_bounds[3]) / 2],
+                    })
+                    checked.append(item)
+            if frame == frames[0]:
+                camera = state["cameras"]["scene"]
+                cube = state["objects"][0]
+                kwargs = (np.asarray(camera["position"]), np.asarray(camera["orientation"]),
+                          float(camera["focal_length"]), float(camera["horizontal_aperture"]),
+                          float(camera["vertical_aperture"]))
+                expected_cube = evidence["scene"][cube["path"]]["expected"]
+                expected_plate = project_cube(
+                    plate_world, np.array([1, 0, 0, 0]),
+                    *kwargs, edge_m=0.008,
+                )
+                observed_plate = mask_bounds(_mask_for_path(
+                    annotators["scene"].get_data(), "/World/RobosynDemo/LeftPlate"
+                ))
+                static_checks.append(compare_static_relative(
+                    expected_cube, expected_plate,
+                    evidence["scene"][cube["path"]]["observed"], observed_plate,
+                ))
+                static_checks[-1].update({"frame_index": frame, "camera_role": "scene",
+                                         "landmark": "/World/RobosynDemo/LeftPlate"})
+            for other in range(session.frames):
+                if other == frame:
+                    continue
+                wrong = _recorded_state(source, other)
+                for role in ("left_wrist", "right_wrist"):
+                    camera = wrong["cameras"][role]
+                    for obj in wrong["objects"]:
+                        expected = project_cube(
+                            np.asarray(obj["position_m"]), np.asarray(obj["orientation_wxyz"]),
+                            np.asarray(camera["position"]), np.asarray(camera["orientation"]),
+                            float(camera["focal_length"]), float(camera["horizontal_aperture"]),
+                            float(camera["vertical_aperture"]),
+                        )
+                        observed = evidence[role][obj["path"]]["observed"]
+                        if expected.visibility == "in_frame" and observed is not None:
+                            verdict = compare_geometry(expected, observed)
+                            if not verdict["pass"]:
+                                wrong_row_failures.append({"frame_index": frame,
+                                    "wrong_expected_frame_index": other, "camera_role": role,
+                                    "object": obj["path"], **verdict})
+            guard.assert_quiescent()
+    finally:
+        for annotator in annotators.values():
+            annotator.detach()
+        materializer.close()
+        if replayer is not None:
+            replayer.close()
+        guard.close()
+    if _digest(source) != before:
+        raise ValueError("source HDF changed during current assay")
+    visible_by_role = {
+        role: sum(
+            item["expected_visibility"] == "in_frame" and
+            item["observed_bounds_px"] is not None
+            for item in checked if item["role"] == role
+        ) for role in ROLES
+    }
+    return {
+        "schema": "piper_x_current_v2_v3_rgb_e2e_assay_v1",
+        "source_recording": str(source), "source_recording_sha256": before,
+        "source_profile": artifact.manifest["session_metadata"]["source_profile"],
+        "row_schema": artifact.manifest["transition_schema"],
+        "row_revision": "isaac_vr_committed_transition_row_v2",
+        "committed_rows": session.committed_count, "selected_rows": frames,
+        "projection_bundle_identity": projection["manifest_sha256"],
+        "static_reference_config": str(static_config),
+        "static_reference_config_sha256": _digest(static_config),
+        "production_replay_report": str(args.replay_report),
+        "rows": checked, "static_world_reference": static_checks,
+        "visible_witness_checks_by_role": visible_by_role,
+        "wrong_row_negative_controls": wrong_row_failures,
+        "physics_callbacks": len(guard.physics_callbacks),
+        "pass": all(item["pass"] for item in checked) and
+            all(item["pass"] for item in static_checks) and
+            all(visible_by_role.values()) and bool(wrong_row_failures) and
+            not guard.physics_callbacks,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--recording", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--restart", action="store_true")
+    parser.add_argument("--current-projection", type=Path, dest="projection")
+    parser.add_argument("--replay-report", type=Path)
     args = parser.parse_args()
+    if bool(args.projection) != bool(args.replay_report):
+        parser.error("current integration requires both --current-projection and --replay-report")
     if args.restart and not (args.output / "synthetic_inputs/synthetic_primary.hdf5").is_file():
         parser.error("restart requires a previous primary assay in --output")
     from isaaclab.app import AppLauncher
@@ -342,7 +596,7 @@ def main() -> int:
     status = 1
     try:
         try:
-            result = run_native(args, app)
+            result = run_current(args, app) if args.projection else run_native(args, app)
         except Exception as exc:
             args.output.mkdir(parents=True, exist_ok=True)
             failure = {"pass": False, "error_type": type(exc).__name__, "error": str(exc), "stage": "native_assay"}
@@ -350,7 +604,8 @@ def main() -> int:
                 json.dumps(failure, indent=2, sort_keys=True) + "\n"
             )
             raise
-        destination = args.output / ("restart_summary.json" if args.restart else "summary.json")
+        destination = args.output / ("current_summary.json" if args.projection else
+                                     "restart_summary.json" if args.restart else "summary.json")
         destination.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
         print("ALIGNMENT_RESULT=" + json.dumps({"pass": result["pass"], "physics_callbacks": result["physics_callbacks"], "rows": len(result["rows"]), "summary": str(destination)}), flush=True)
         status = 0 if result["pass"] else 1

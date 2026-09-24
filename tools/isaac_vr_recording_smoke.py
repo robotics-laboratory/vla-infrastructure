@@ -21,6 +21,25 @@ def _canonical_sha256(payload: Any) -> str:
     return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
 
 
+def _place_rgb_assay_witnesses(env: Any) -> None:
+    """Place live task cubes through Isaac's rigid-body API before recording opens."""
+    experiment = env.vr_runtime
+    if experiment is None or experiment.profile != "dual_cube_to_matching_plates":
+        raise ValueError("RGB assay requires the current dual-cube native scene")
+    for asset, position in zip(
+        experiment.dynamic_assets,
+        ((0.82, 0.13, 0.86), (0.87, -0.13, 0.87)),
+        strict=True,
+    ):
+        pose = asset.data.default_root_pose.torch.clone()
+        pose[0, :3] = pose.new_tensor(position)
+        asset.write_root_pose_to_sim_index(root_pose=pose)
+        asset.write_root_velocity_to_sim_index(
+            root_velocity=asset.data.default_root_vel.torch.clone()
+        )
+    env._advance(4)
+
+
 def _nvml_resource_sampler():
     """Create the benchmark sampler without spawning a process in the control loop."""
     from isaac_vr_recording_benchmark import ProcessResourceSampler
@@ -133,6 +152,7 @@ def run_recording_lifecycle_smoke(
     }
     experiment = getattr(env, "vr_runtime", None)
     recording = None
+    recording_session = None
     benchmark_logger = None
     benchmark_sampler = None
     benchmark_shutdown = None
@@ -152,6 +172,8 @@ def run_recording_lifecycle_smoke(
     try:
         if experiment is not None:
             experiment.disable_live_rgb()
+        if getattr(args_cli, "s2_rgb_e2e_assay", False):
+            _place_rgb_assay_witnesses(env)
         # The caller has already reset, settled and validated this exact scene.
         # A second reset would invalidate the accepted three-camera boundary and
         # make this lifecycle probe exercise renderer startup instead of storage.
@@ -190,13 +212,18 @@ def run_recording_lifecycle_smoke(
             portable_roots=recording_portable_roots(args_cli),
             **recording_options,
         )
+        if getattr(args_cli, "s2_rgb_e2e_assay", False):
+            from isaac_vr_recording import RecordingSession
+
+            recording_session = RecordingSession(recording)
         if getattr(args_cli, "s2_injected_recording_smoke", False):
             from isaac_vr_injected_recording import (
                 record_injected_transitions,
                 validate_injected_recording,
             )
 
-            injected_count = 3
+            rgb_e2e_assay = bool(getattr(args_cli, "s2_rgb_e2e_assay", False))
+            injected_count = 6 if rgb_e2e_assay else 3
             if benchmark_log is not None:
                 from isaac_vr_recording_benchmark import BenchmarkRunLogger
 
@@ -255,6 +282,7 @@ def run_recording_lifecycle_smoke(
                 benchmark_logger=benchmark_logger,
                 resource_sampler=benchmark_sampler,
                 performance_logger=performance,
+                rgb_e2e_assay=rgb_e2e_assay,
             )
             summary = {
                 **injected,
@@ -271,11 +299,10 @@ def run_recording_lifecycle_smoke(
                 "xr_initialized": False,
             }
             hdf5_path = recording.hdf5_path
-            recording.close(
-                outcome="operator_stopped",
-                reason="deterministic_injected_xr_completed",
-            )
+            owner = recording_session if recording_session is not None else recording
+            owner.close(outcome="operator_stopped", reason="deterministic_injected_xr_completed")
             recording = None
+            recording_session = None
             if benchmark_logger is not None:
                 benchmark_logger.close(recording_hdf5=hdf5_path)
                 summary["benchmark"] = {
@@ -308,10 +335,8 @@ def run_recording_lifecycle_smoke(
             recording = None
     except Exception as exc:
         if recording is not None:
-            recording.close(
-                outcome="failure",
-                reason=f"recording_lifecycle_smoke_failed:{type(exc).__name__}:{exc}",
-            )
+            owner = recording_session if recording_session is not None else recording
+            owner.close(outcome="failure", reason=f"recording_lifecycle_smoke_failed:{type(exc).__name__}:{exc}")
         raise
     finally:
         try:

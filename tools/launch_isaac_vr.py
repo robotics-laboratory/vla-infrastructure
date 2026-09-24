@@ -196,6 +196,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="With 'record --smoke', commit deterministic actions for recorder integration QA.",
     )
+    parser.add_argument("--rgb-e2e-assay", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument(
         "--recording-benchmark",
         action="store_true",
@@ -286,6 +287,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("--smoke and --xr-smoke are mutually exclusive")
     if args.injected_actions and not (args.mode == "record" and args.smoke):
         parser.error("--injected-actions requires './run-vr record --smoke'")
+    if args.rgb_e2e_assay and not args.injected_actions:
+        parser.error("--rgb-e2e-assay requires --injected-actions")
     benchmark_options = {
         "--benchmark-pair-id",
         "--benchmark-pair-order",
@@ -493,6 +496,8 @@ def main(argv: list[str] | None = None) -> int:
         command.extend(["--s2-record", "--s2-recording-dir", str(recording_dir)])
         if args.injected_actions:
             command.append("--s2-injected-recording-smoke")
+        if args.rgb_e2e_assay:
+            command.append("--s2-rgb-e2e-assay")
         if args.recording_benchmark:
             benchmark_log = output_dir / "recording-benchmark.jsonl"
             command.extend(
