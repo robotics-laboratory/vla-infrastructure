@@ -91,6 +91,7 @@ DEMO_PIPELINE_ACTION_DIM = 25
 DEMO_DISPLAY_BUTTON_INDEX = 22
 DEMO_BACKDROP_BUTTON_INDEX = 23
 DEMO_RECENTER_BUTTON_INDEX = 24
+RECORD_STOP_BUTTON_INDEX = 25
 
 
 def _gf_row_matrix_to_numpy_transform(matrix: Any) -> np.ndarray:
@@ -280,6 +281,7 @@ def build_piper_x_bimanual_pipeline(
     display_control: str | None = None,
     backdrop_control: str | None = None,
     recenter_control: str | None = None,
+    record_stop_control: str | None = None,
     receipt: XrInputReceipt | None = None,
 ) -> OutputCombiner:
     """Build the one-source bimanual controller pipeline used by S2.
@@ -370,6 +372,15 @@ def build_piper_x_bimanual_pipeline(
         connected["demo_recenter"] = recenter.connect(
             {recenter_side: transformed.output(recenter_side)}
         )
+    if record_stop_control is not None:
+        if record_stop_control != "left_secondary_click":
+            raise ValueError(f"unsupported recording stop control: {record_stop_control}")
+        stop = ControllerButtonRetargeter(
+            ControllersSource.LEFT, "secondary_click", "piper_x_record_stop_button"
+        )
+        connected["record_stop"] = stop.connect(
+            {ControllersSource.LEFT: transformed.output(ControllersSource.LEFT)}
+        )
     left_delta_names = [f"left_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]
     right_delta_names = [f"right_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]
     left_state_names = [
@@ -402,6 +413,9 @@ def build_piper_x_bimanual_pipeline(
     if recenter_control is not None:
         input_config["demo_recenter"] = ["demo_recenter_button"]
         output_order += ["demo_recenter_button"]
+    if record_stop_control is not None:
+        input_config["record_stop"] = ["record_stop_button"]
+        output_order += ["record_stop_button"]
     reorderer = TensorReorderer(
         input_config=input_config,
         output_order=output_order,
@@ -420,6 +434,8 @@ def build_piper_x_bimanual_pipeline(
         reorder_inputs["demo_backdrop"] = connected["demo_backdrop"].output("button")
     if recenter_control is not None:
         reorder_inputs["demo_recenter"] = connected["demo_recenter"].output("button")
+    if record_stop_control is not None:
+        reorder_inputs["record_stop"] = connected["record_stop"].output("button")
     packed = reorderer.connect(reorder_inputs)
     return OutputCombiner({"action": packed.output("output")})
 

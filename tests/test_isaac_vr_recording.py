@@ -729,6 +729,45 @@ def _session_fixture(tmp_path, monkeypatch):
     return RecordingSession(first, stage_getter=lambda: stage), first_storage, events
 
 
+def test_human_save_indexes_current_recording_session_without_mutating_manifest(tmp_path, monkeypatch):
+    from tools.isaac_vr_episode_lifecycle import RecordingLifecycle, RecordingState, publish_saved_demo
+
+    session, storage, _ = _session_fixture(tmp_path, monkeypatch)
+    first = session.active_episode
+    assert first is not None
+    saved = []
+
+    def seal(reason):
+        session.end_episode(outcome="operator_stopped", reason=reason)
+        session.close()
+
+    lifecycle = RecordingLifecycle(
+        seal=seal,
+        publish=lambda demo_id: saved.append(publish_saved_demo(
+            tmp_path / "saved_demos", demo_id=demo_id,
+            episodes=[{"episode_id": first.episode_id, "output_dir": str(first.output_dir)}],
+            profile=first.source_profile, start_tick=120, stop_tick=125,
+        )),
+        reset=lambda: None,
+    )
+    assert not storage.frames
+    lifecycle.buttons(x=True, y=False, b=False)
+    lifecycle.buttons(x=False, y=False, b=False)
+    token = first.capture_observation()
+    successor = first.capture_successor(token)
+    first.commit_transition(token, successor, row_for_tokens(token, successor))
+    assert first.committed_frames == 1 and storage.advanced == 1
+    lifecycle.buttons(x=False, y=True, b=False)
+    assert lifecycle.state is RecordingState.REVIEW
+    manifest = first.output_dir / "manifest.json"
+    before = manifest.read_bytes()
+    lifecycle.buttons(x=False, y=False, b=False)
+    lifecycle.buttons(x=True, y=False, b=False)
+    assert lifecycle.state is RecordingState.WAITING
+    assert manifest.read_bytes() == before
+    assert json.loads(saved[0].read_text())["technical_episodes"][0]["episode_id"] == first.episode_id
+
+
 def test_technical_gap_reuses_static_bundle_and_seals_independent_episodes(tmp_path, monkeypatch):
     session, first_storage, events = _session_fixture(tmp_path, monkeypatch)
     first = session.active_episode

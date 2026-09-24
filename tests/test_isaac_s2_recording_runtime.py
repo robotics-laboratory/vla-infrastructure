@@ -40,7 +40,7 @@ def test_recording_runtime_declares_offline_profile_and_real_episode_identity():
     source = (ROOT / "tools/isaac_s2_runtime.py").read_text(encoding="utf-8")
     metadata_source = (ROOT / "tools/isaac_vr_recording_smoke.py").read_text(encoding="utf-8")
     assert '"source_profile": "isaac_human_vr_offline_rgb_v2"' in metadata_source
-    assert 'episode_id = "episode_000000"' in source
+    assert 'episode_id = f"episode_{recording_episode_index:06d}"' in source
     assert "recording.episode_id if recording is not None" in source
     assert "recording.sample(" not in source
     assert 'outcome="unclassified"' not in source
@@ -92,6 +92,23 @@ def test_recording_gap_finalizes_episode_before_unrecorded_native_advance():
     assert source.count("recording = start_live_recording(") == 1
     assert '"recording_episodes"' in source
     assert '"left_transition": command.left.transition' in source
+
+
+def test_record_lifecycle_gates_episode_opening_and_menu_ticks():
+    source = (ROOT / "tools/isaac_s2_runtime.py").read_text(encoding="utf-8")
+    poll = source.index("action = device.advance()")
+    lifecycle_input = source.index("event = lifecycle.buttons(", poll)
+    start_episode = source.index("recording = start_live_recording(", lifecycle_input)
+    eligibility = source.index("eligible = (", lifecycle_input)
+    assert poll < lifecycle_input < eligibility < start_episode
+    assert "lifecycle.admits_recording and eligible and recording is None" in source
+    assert "if event not in (\"stop\", \"save\", \"discard\")" in source
+    assert "lifecycle.disconnect()" in source
+    assert '"isaac_human_vr_offline_rgb_v2"' in source
+    assert 'recenter_control="right_thumbstick_click"' in source
+    upstream = (ROOT / "tools/isaac_s2_upstream.py").read_text(encoding="utf-8")
+    assert "RECORD_STOP_BUTTON_INDEX = 25" in upstream
+    assert 'record_stop_control="left_secondary_click"' in source
 
 
 def test_record_admission_keeps_safe_solve_and_opposite_arm_motion():

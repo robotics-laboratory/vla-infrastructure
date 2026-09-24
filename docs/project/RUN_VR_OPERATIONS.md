@@ -5,6 +5,25 @@ with diagnostics. `./run-vr record` writes a native NVIDIA Episode Recorder HDF5
 state/action/provenance artifact. It does not create a D1 dataset; S2 physical
 acceptance and D1 remain unresolved.
 
+RECORD starts in `WAITING` with no demonstration or episode. On the existing
+single controller pipeline, press **X** (left primary) to Start, **Y** (left
+secondary) to Stop, then **X** to Save or **B** (right secondary) to Discard.
+Each press is a rising edge; release X before using it for Save. Stop seals the
+source recording before review while XR input stays live. The state and button
+mapping are printed as `human_recording_state` events and the final state is
+included in the run report. Physical Quest visibility of these events or a
+headset menu has not been qualified. A saved demonstration gets a separate
+`saved_demos/<demo_id>.json` index beside the recording directory; it lists
+ordered technical episode directories without changing their manifests. Save
+means operator retention only: neither task success nor dataset admission.
+Discard leaves canonical episode artifacts for forensic inspection, writes a
+separate `discarded_demos/<demo_id>.json` disposition, and publishes no saved
+index. An interrupted active demonstration similarly gets an
+`interrupted_demos/<demo_id>.json` disposition. Save/Discard runs a state-only
+scene/device/processor/IK reset
+and returns to `WAITING`; another Start creates a new causal scope. Disconnect
+seals an active episode conservatively and never saves the demonstration.
+
 In RECORD, tracked intentional clutch engagement, hold and release rebase are
 causal action rows in the same technical episode as motion. Both arms may have
 different transitions in one row. The recorded action is the processed IK
@@ -13,11 +32,14 @@ tracking recovery rebase, sensitivity switches, session/reference changes and
 missing XR receipts remain gaps. After at least one committed transition, a gap
 finalizes the current episode before the next physics step; the CloudXR session
 stays open and the next control boundary starts a new, independently finalized
-artifact in a sibling directory suffixed `-episode_000001`, `-episode_000002`,
-etc. The first episode remains at the requested output directory. With
-`--recordings-root`, all episodes instead use `<root>/episode_000000`,
-`<root>/episode_000001`, etc. The run report lists every directory in
-`recording_episodes`. These segments are independent episodes. The same
+artifact in a sibling directory suffixed `-<demo_id>-episode_000001`, etc.
+The first episode of the first demonstration remains at the requested output
+directory; later demonstrations use unique sibling directories. With
+`--recordings-root`, the first episode remains `<root>/episode_000000`; later
+episodes use `<root>/<demo_id>/episode_000001`, etc.
+The run report lists every directory in `recording_episodes`. These segments
+are independent technical episodes inside one Start-to-Stop demonstration.
+Tracking gaps do not open review. The same
 session-level `performance.jsonl` and timing observer continue across every
 episode and gap; episode closure never closes or replaces that log. Rejected
 tracking ticks still apply the safe processed command, including motion from

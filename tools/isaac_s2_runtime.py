@@ -19,6 +19,7 @@ import yaml
 from tools.isaac_vr_decision import (
     CausalTransactionValidator,
     SolvedControlDecision,
+    capture_state_snapshot,
     check_observation,
     commit_recording_transition,
     decision_epoch,
@@ -39,6 +40,7 @@ from isaac_s2_upstream import (
     DEMO_BACKDROP_BUTTON_INDEX,
     DEMO_DISPLAY_BUTTON_INDEX,
     DEMO_RECENTER_BUTTON_INDEX,
+    RECORD_STOP_BUTTON_INDEX,
     PIPELINE_ACTION_DIM,
     build_piper_x_bimanual_pipeline,
     create_piper_x_teleop_device,
@@ -47,6 +49,10 @@ from isaac_vr_recording_smoke import (
     recording_portable_roots,
     recording_session_metadata,
     run_recording_lifecycle_smoke,
+)
+from isaac_vr_episode_lifecycle import (
+    RecordingLifecycle, RecordingState, publish_saved_demo, publish_unsaved_demo,
+    technical_episode_output_dir,
 )
 
 
@@ -350,6 +356,15 @@ def run_s2(env, args_cli, simulation_app) -> int:
         pipeline_kwargs["backdrop_control"] = experiment.backdrop_control
         pipeline_kwargs["recenter_control"] = experiment.recenter_control
         pipeline_action_dim = experiment.pipeline_action_dim
+    if recording_requested:
+        # X, Y and B travel through the existing single ControllersSource.
+        pipeline_kwargs.update(
+            display_control="left_primary_click",
+            backdrop_control="right_secondary_click",
+            recenter_control="right_thumbstick_click",
+            record_stop_control="left_secondary_click",
+        )
+        pipeline_action_dim = RECORD_STOP_BUTTON_INDEX + 1
     teleop_cfg = IsaacTeleopCfg(
         xr_cfg=XrCfg(
             anchor_pos=anchor_position,
@@ -413,6 +428,10 @@ def run_s2(env, args_cli, simulation_app) -> int:
     recording_summary: dict[str, Any] | None = None
     recording_episodes: list[dict[str, Any]] = []
     recording_episode_index = 0
+    demo_episodes: list[dict[str, Any]] = []
+    demo_start_tick = 0
+    demo_stop_tick = 0
+    lifecycle: RecordingLifecycle | None = None
 
     def finalize_recording(outcome: str, reason: str) -> None:
         nonlocal recording, recording_summary
@@ -437,6 +456,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
             recording = None
         recording_summary = summary
         recording_episodes.append(summary)
+        demo_episodes.append(summary)
         print(
             json.dumps({"event": "recording_episode_finalized", **summary}, sort_keys=True),
             flush=True,
@@ -456,6 +476,52 @@ def run_s2(env, args_cli, simulation_app) -> int:
     env.performance_logger = performance
     interrupted = False
 
+    def seal_demo(reason: str) -> None:
+        nonlocal recording, recording_session, validator, recording_token
+        if recording is not None:
+            finalize_recording(
+                "operator_stopped" if reason == "explicit_stop" else "aborted", reason
+            )
+        if recording_session is not None:
+            session = recording_session
+            recording_session = None
+            session.close(outcome="aborted", reason=reason)
+        recording_token = None
+        if validator is not None:
+            validator.abort()
+            validator = None
+
+    def reset_demo() -> None:
+        nonlocal previous_camera_indices
+        env.reset(0)
+        processor.reset()
+        ik.reset()
+        camera_guard.reset()
+        previous_camera_indices = None
+        device.reset(pause=False)
+
+    def demo_index_root() -> Path:
+        return Path(
+            getattr(args_cli, "s2_recordings_root", None)
+            or Path(args_cli.s2_recording_dir).parent
+        )
+
+    def save_demo(demo_id: str) -> None:
+        publish_saved_demo(
+            demo_index_root() / "saved_demos",
+            demo_id=demo_id,
+            episodes=demo_episodes,
+            profile="isaac_human_vr_offline_rgb_v2",
+            start_tick=demo_start_tick,
+            stop_tick=demo_stop_tick,
+        )
+
+    def classify_unsaved(demo_id: str, classification: str) -> None:
+        publish_unsaved_demo(
+            demo_index_root(), demo_id=demo_id,
+            classification=classification, episodes=demo_episodes,
+        )
+
     print(
         f"[S2] CloudXR {actual_versions['cloudxr']} profile={args_cli.s2_cloudxr_profile} "
         f"kit_xr_bridge={bool(args_cli.xr)}",
@@ -463,32 +529,15 @@ def run_s2(env, args_cli, simulation_app) -> int:
     )
     try:
         if recording_requested:
-            from isaac_vr_recording import RecordingSession, start_live_recording
-
             if experiment is not None:
                 experiment.prepare_recording_view()
-            session_id = str(uuid4())
-            episode_id = "episode_000000"
-            recording_options: dict[str, Any] = {}
-            if performance is not None:
-                recording_options["timing_observer"] = performance.add_nested
-            recording = start_live_recording(
-                args_cli.s2_recording_dir,
-                env,
-                session_metadata=recording_session_metadata(
-                    xr_render=getattr(args_cli, "xr_render_readback", None),
-                    config_path=config_path,
-                    environment_pins=actual_versions,
-                    run_id=run_id,
-                    session_id=session_id,
-                    episode_id=episode_id,
-                    execution_profile="isaac_vr_record",
-                    processor_revision=PROCESSOR_REVISION,
-                ),
-                portable_roots=recording_portable_roots(args_cli),
-                **recording_options,
+            lifecycle = RecordingLifecycle(
+                seal=seal_demo, publish=save_demo, reset=reset_demo,
+                discard=lambda demo_id: classify_unsaved(demo_id, "discarded"),
+                interrupted=lambda demo_id: classify_unsaved(demo_id, "interrupted"),
             )
-            recording_session = RecordingSession(recording)
+            print(json.dumps({"event": "human_recording_state", "state": "waiting", "buttons":
+                {"start": "X", "stop": "Y", "save": "X", "discard": "B"}}), flush=True)
         if experiment is not None and not recording_requested:
             # Pinned Candidate B requires camera-feed bind(env) before the XR
             # teleop session is entered. This also makes the panels available
@@ -517,18 +566,6 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     stage_started_ns = time.perf_counter_ns()
                 env.last_control_decision = None
                 env.prepared_control_transaction = None
-                if recording_requested and recording is None:
-                    # A rejected tick after a commit closes only that episode.
-                    # Keep CloudXR and the simulation loop alive, and begin the
-                    # next independent episode at the next control boundary.
-                    recording_episode_index += 1
-                    episode_id = f"episode_{recording_episode_index:06d}"
-                    recordings_root = getattr(args_cli, "s2_recordings_root", None)
-                    output_dir = (
-                        Path(recordings_root) / episode_id if recordings_root is not None
-                        else Path(f"{args_cli.s2_recording_dir}-{episode_id}")
-                    )
-                    recording = recording_session.start_episode(output_dir, episode_id)
                 if validator is not None and recording is None:
                     # Ordinary RUN prepares receipts for observability only; it
                     # has no persistence/successor phase and must clear them.
@@ -540,6 +577,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     # returns the exact O_(t+1) promoted by the prior commit.
                     recording_token = recording.capture_observation()
                     observation = recording_token.observation
+                elif lifecycle is not None and lifecycle.admits_recording:
+                    observation = capture_state_snapshot(env)
                 elif getattr(env, "vr_runtime", None) is not None:
                     try:
                         observation = env.latest_observation_capture()
@@ -557,6 +596,50 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     )
                     stage_started_ns = time.perf_counter_ns()
                 events = poll_control_events(device)
+                if lifecycle is not None:
+                    if lifecycle.state in (RecordingState.RECORDING, RecordingState.REVIEW) and not device.session_running:
+                        lifecycle.disconnect()
+                        print(json.dumps({"event": "human_recording_state", "state": lifecycle.state.value,
+                            "demo_id": lifecycle.demo_id}), flush=True)
+                    if lifecycle.state is RecordingState.INTERRUPTED:
+                        break
+                    buttons = np.zeros(3, dtype=np.float32)
+                    if action is not None:
+                        if tuple(action.shape) != (pipeline_action_dim,):
+                            raise RuntimeError(f"unexpected S2 pipeline action shape: {tuple(action.shape)}")
+                        values = action.detach().cpu().numpy()
+                        buttons[:] = values[[DEMO_DISPLAY_BUTTON_INDEX, RECORD_STOP_BUTTON_INDEX,
+                                              DEMO_BACKDROP_BUTTON_INDEX]]
+                        if not np.isfinite(buttons).all():
+                            raise RuntimeError("Non-finite recording buttons")
+                    previous_state = lifecycle.state
+                    event = lifecycle.buttons(x=buttons[0] >= 0.5, y=buttons[1] >= 0.5,
+                                              b=buttons[2] >= 0.5)
+                    if event == "start":
+                        demo_start_tick = control_steps
+                        demo_episodes = []
+                        recording_episode_index = 0
+                        session_id = str(uuid4())
+                    elif event == "stop":
+                        demo_stop_tick = control_steps
+                    if event is not None or lifecycle.state != previous_state:
+                        print(json.dumps({"event": "human_recording_state", "state": lifecycle.state.value,
+                            "demo_id": lifecycle.demo_id, "input": event}), flush=True)
+                    if (
+                        lifecycle.state in (RecordingState.WAITING, RecordingState.REVIEW)
+                        and (args_cli.s2_reset_step == control_steps or
+                             (events.should_reset and not device.navigation_reset_applied))
+                    ):
+                        if lifecycle.state is RecordingState.REVIEW:
+                            lifecycle.external_reset()
+                        else:
+                            reset_demo()
+                        continue
+                    if lifecycle.state is RecordingState.REVIEW or event in ("save", "discard"):
+                        # Keep XR input/rendering alive; no IK or D0 on menu ticks.
+                        if event not in ("stop", "save", "discard"):
+                            env._advance(4)
+                        continue
                 if performance is not None:
                     performance.add_stage(
                         "control_events", time.perf_counter_ns() - stage_started_ns
@@ -591,8 +674,11 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         recording_token, reason="environment_reset_requested"
                     )
                     recording_token = None
-                    recording_stop_reason = "environment_reset_requested"
-                    break
+                if environment_reset_requested and lifecycle is not None:
+                    lifecycle.external_reset()
+                    action = None
+                    observation = None
+                    continue
                 if environment_reset_requested:
                     env.reset(0)
                     processor.reset()
@@ -709,6 +795,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     stage_started_ns = time.perf_counter_ns()
                 xr = getattr(device, "xr_input", None)
                 eligible = (
+                    (lifecycle is None or lifecycle.admits_recording)
+                    and
                     observation is not None
                     and xr is not None
                     and not xr.rebased
@@ -716,6 +804,41 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     and all(xr.tracking_valid)
                     and recordable_teleop_command(command)
                 )
+                if lifecycle is not None and lifecycle.admits_recording and eligible and recording is None:
+                    # First technical episode and every subsequent gap segment
+                    # open only at a valid pre-action boundary.
+                    from isaac_vr_recording import RecordingSession, start_live_recording
+
+                    episode_id = f"episode_{recording_episode_index:06d}"
+                    recordings_root = getattr(args_cli, "s2_recordings_root", None)
+                    output_dir = technical_episode_output_dir(
+                        first_dir=Path(args_cli.s2_recording_dir),
+                        recordings_root=Path(recordings_root) if recordings_root is not None else None,
+                        demo_id=str(lifecycle.demo_id), episode_index=recording_episode_index,
+                        prior_episodes=bool(recording_episodes), repository=ROOT,
+                    )
+                    if recording_session is None:
+                        recording_options: dict[str, Any] = {}
+                        if performance is not None:
+                            recording_options["timing_observer"] = performance.add_nested
+                        roots = recording_portable_roots(args_cli)
+                        roots["recording"] = output_dir
+                        recording = start_live_recording(
+                            output_dir, env,
+                            session_metadata=recording_session_metadata(
+                                xr_render=getattr(args_cli, "xr_render_readback", None),
+                                config_path=config_path, environment_pins=actual_versions,
+                                run_id=run_id, session_id=session_id, episode_id=episode_id,
+                                execution_profile="isaac_vr_record",
+                                processor_revision=PROCESSOR_REVISION,
+                            ), portable_roots=roots, **recording_options,
+                        )
+                        recording_session = RecordingSession(recording)
+                    else:
+                        recording = recording_session.start_episode(output_dir, episode_id)
+                    recording_episode_index += 1
+                    recording_token = recording.capture_observation()
+                    observation = recording_token.observation
                 if recording is not None and not eligible:
                     assert recording_token is not None
                     if xr is None:
@@ -988,10 +1111,18 @@ def run_s2(env, args_cli, simulation_app) -> int:
         )
     except Exception as exc:
         recording_failure_reason = f"{type(exc).__name__}: {exc}"
+        if lifecycle is not None:
+            lifecycle.fail(exc)
+            print(json.dumps({"event": "human_recording_state", "state": "failed",
+                "error": lifecycle.error, "demo_id": lifecycle.demo_id}), flush=True)
         raise
     finally:
         try:
             try:
+                if lifecycle is not None and lifecycle.state is RecordingState.RECORDING and recording_failure_reason is None:
+                    lifecycle.interrupt(
+                        "keyboard_interrupt" if interrupted else "control_loop_completed"
+                    )
                 if recording is not None:
                     if recording_failure_reason is not None:
                         recording_outcome = "failure"
@@ -1179,6 +1310,13 @@ def run_s2(env, args_cli, simulation_app) -> int:
         report["recording"] = recording_summary
     if recording_episodes:
         report["recording_episodes"] = recording_episodes
+    if lifecycle is not None:
+        report["human_recording"] = {
+            "state": lifecycle.state.value,
+            "demo_id": lifecycle.demo_id,
+            "error": lifecycle.error,
+            "saved_index_root": str(demo_index_root() / "saved_demos"),
+        }
     if not diagnostic:
         report.pop("gpu")
         for key in (
