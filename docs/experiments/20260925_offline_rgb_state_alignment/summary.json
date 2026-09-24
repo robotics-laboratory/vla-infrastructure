@@ -1,0 +1,1214 @@
+{
+  "camera_roles": {
+    "left_wrist": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+    "right_wrist": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+    "scene": "/World/RobosynDemo/SceneCamera"
+  },
+  "pass": true,
+  "physics_callbacks": 0,
+  "positive_controls": {
+    "lagged_identity": true,
+    "wrong_camera_role": true,
+    "wrong_transform": true
+  },
+  "renderer_configuration_sha256": "eb02a3964d51912e2dd2df60d75dbe1e2b301231f3db5880e2a54bb42bbe1b85",
+  "restart": false,
+  "rows": [
+    {
+      "center_error_px": 0.343,
+      "expected_bounds_px": [
+        190.5891104808307,
+        261.1026583738496,
+        290.72921474559945,
+        386.9822939258321
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9923,
+      "mask_pixels": 9131,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        191.0,
+        261.0,
+        291.0,
+        387.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9935,
+      "rgb_sha256": "344fbd61f82486fda933e48ad245cba69b5b5811e2a830d6f370eec343fa65ee",
+      "role": "left_wrist",
+      "state": "primary:0"
+    },
+    {
+      "center_error_px": 0.155,
+      "expected_bounds_px": [
+        535.98084979851,
+        128.21176156509088,
+        638.856822731989,
+        215.05206041061868
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9954,
+      "mask_pixels": 6195,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        536.0,
+        128.0,
+        639.0,
+        215.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9997,
+      "rgb_sha256": "344fbd61f82486fda933e48ad245cba69b5b5811e2a830d6f370eec343fa65ee",
+      "role": "left_wrist",
+      "state": "primary:0"
+    },
+    {
+      "center_error_px": 0.89,
+      "expected_bounds_px": [
+        0.0,
+        174.33195844044985,
+        61.49576011750298,
+        270.9581884949336
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9744,
+      "mask_pixels": 4198,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        0.0,
+        176.0,
+        61.0,
+        271.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9969,
+      "rgb_sha256": "99e062c77b9e40d9444950bb02f51c35692cc3fa916b01a738cb2883df68841a",
+      "role": "right_wrist",
+      "state": "primary:0"
+    },
+    {
+      "center_error_px": 0.33,
+      "expected_bounds_px": [
+        375.8418489364615,
+        196.7855533352855,
+        466.63362430945523,
+        306.81516767312183
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9907,
+      "mask_pixels": 7321,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        376.0,
+        197.0,
+        467.0,
+        307.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9981,
+      "rgb_sha256": "99e062c77b9e40d9444950bb02f51c35692cc3fa916b01a738cb2883df68841a",
+      "role": "right_wrist",
+      "state": "primary:0"
+    },
+    {
+      "center_error_px": 0.654,
+      "expected_bounds_px": [
+        216.84928409984428,
+        162.65268421137668,
+        244.8370410273043,
+        198.61640984003077
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9352,
+      "mask_pixels": 533,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        217.0,
+        163.0,
+        245.0,
+        197.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9644,
+      "rgb_sha256": "95e2e5540cca1876a47157aa7a60dce252f3e845bd940b2f295d84cfbe7b4974",
+      "role": "scene",
+      "state": "primary:0"
+    },
+    {
+      "center_error_px": 0.214,
+      "expected_bounds_px": [
+        369.81993536030194,
+        132.02693363544597,
+        398.8211297098485,
+        166.20569117129003
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.981,
+      "mask_pixels": 868,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        370.0,
+        132.0,
+        399.0,
+        166.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9988,
+      "rgb_sha256": "95e2e5540cca1876a47157aa7a60dce252f3e845bd940b2f295d84cfbe7b4974",
+      "role": "scene",
+      "state": "primary:0"
+    },
+    {
+      "center_error_px": 0.316,
+      "expected_bounds_px": [
+        389.1544853170077,
+        69.2605680104302,
+        472.4744103845162,
+        151.6701278093093
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9854,
+      "mask_pixels": 5392,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        389.0,
+        69.0,
+        472.0,
+        152.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9883,
+      "rgb_sha256": "e7fc96458913db1d1be0c188a435be0cb40b31aebe05c1f157fe7653ed57f4af",
+      "role": "left_wrist",
+      "state": "primary:1"
+    },
+    {
+      "center_error_px": 0.116,
+      "expected_bounds_px": [
+        120.86878525174708,
+        232.23655144121585,
+        227.13263122565485,
+        362.5306781945816
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9922,
+      "mask_pixels": 10056,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        121.0,
+        232.0,
+        227.0,
+        363.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9996,
+      "rgb_sha256": "e7fc96458913db1d1be0c188a435be0cb40b31aebe05c1f157fe7653ed57f4af",
+      "role": "left_wrist",
+      "state": "primary:1"
+    },
+    {
+      "center_error_px": 0.506,
+      "expected_bounds_px": [
+        275.41033754155944,
+        83.83581451940557,
+        353.49394562450163,
+        171.71081081688672
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9834,
+      "mask_pixels": 5626,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        275.0,
+        84.0,
+        353.0,
+        172.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9867,
+      "rgb_sha256": "7655cacc0ed5f8be51224501563202d82c169609ff766dda40ad356b07b052b3",
+      "role": "right_wrist",
+      "state": "primary:1"
+    },
+    {
+      "center_error_px": 2.255,
+      "expected_bounds_px": [
+        0.0,
+        133.28897013019133,
+        27.1704561430912,
+        227.2186367085816
+      ],
+      "expected_visibility": "partial_out_of_frame",
+      "iou": 0.7617,
+      "mask_pixels": 1145,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        0.0,
+        142.0,
+        27.0,
+        214.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9991,
+      "rgb_sha256": "7655cacc0ed5f8be51224501563202d82c169609ff766dda40ad356b07b052b3",
+      "role": "right_wrist",
+      "state": "primary:1"
+    },
+    {
+      "center_error_px": 0.161,
+      "expected_bounds_px": [
+        315.3503675767718,
+        97.69134098024281,
+        340.697020367006,
+        130.98924046554566
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9657,
+      "mask_pixels": 787,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        315.0,
+        98.0,
+        341.0,
+        131.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9492,
+      "rgb_sha256": "48eb71e9e010797723dcb4de7f4bb06be799f6ee75aefb4761673386616575d2",
+      "role": "scene",
+      "state": "primary:1"
+    },
+    {
+      "center_error_px": 1.727,
+      "expected_bounds_px": [
+        196.09436336197172,
+        149.97034167925116,
+        225.67692968201814,
+        186.2586162546699
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.8729,
+      "mask_pixels": 707,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        197.0,
+        150.0,
+        226.0,
+        183.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9972,
+      "rgb_sha256": "48eb71e9e010797723dcb4de7f4bb06be799f6ee75aefb4761673386616575d2",
+      "role": "scene",
+      "state": "primary:1"
+    },
+    {
+      "center_error_px": 0.167,
+      "expected_bounds_px": [
+        569.3330200820733,
+        130.9359749572693,
+        640.0,
+        232.09239295252607
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9938,
+      "mask_pixels": 5477,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        569.0,
+        131.0,
+        640.0,
+        232.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9869,
+      "rgb_sha256": "68a979d480c80ff658397b84c85cc5d810af6260010bdae1a700d695ca8dd662",
+      "role": "left_wrist",
+      "state": "primary:2"
+    },
+    {
+      "center_error_px": 0.348,
+      "expected_bounds_px": [
+        245.14996436375728,
+        123.95238544260906,
+        317.4718032098985,
+        209.36255597952203
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9867,
+      "mask_pixels": 4964,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        245.0,
+        124.0,
+        317.0,
+        209.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9992,
+      "rgb_sha256": "68a979d480c80ff658397b84c85cc5d810af6260010bdae1a700d695ca8dd662",
+      "role": "left_wrist",
+      "state": "primary:2"
+    },
+    {
+      "center_error_px": 0.526,
+      "expected_bounds_px": [
+        315.32570107787114,
+        196.2921569115532,
+        427.319242703158,
+        323.53792058490967
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9878,
+      "mask_pixels": 10510,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        315.0,
+        196.0,
+        427.0,
+        323.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9927,
+      "rgb_sha256": "174df43414ba8de6839e0d7fc52f6d46eb7d2ab698386d900dbd9a6d18905038",
+      "role": "right_wrist",
+      "state": "primary:2"
+    },
+    {
+      "center_error_px": 0.188,
+      "expected_bounds_px": [
+        145.08228111325138,
+        97.08817000021938,
+        224.29455003773091,
+        173.90990500337534
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.993,
+      "mask_pixels": 4641,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        145.0,
+        97.0,
+        224.0,
+        174.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9989,
+      "rgb_sha256": "174df43414ba8de6839e0d7fc52f6d46eb7d2ab698386d900dbd9a6d18905038",
+      "role": "right_wrist",
+      "state": "primary:2"
+    },
+    {
+      "center_error_px": 0.306,
+      "expected_bounds_px": [
+        359.2636841755835,
+        133.8879843813133,
+        395.26523713378435,
+        174.41906739003974
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9726,
+      "mask_pixels": 1037,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        359.0,
+        134.0,
+        395.0,
+        174.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9817,
+      "rgb_sha256": "9f5212dd95db5f5c46ecd3647bf895bcdee9ecb8f4922542292621d5eaa148c5",
+      "role": "scene",
+      "state": "primary:2"
+    },
+    {
+      "center_error_px": 0.136,
+      "expected_bounds_px": [
+        253.7611359305609,
+        112.56047587986451,
+        278.13966092987147,
+        145.18653215417964
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9656,
+      "mask_pixels": 714,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        254.0,
+        113.0,
+        278.0,
+        145.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 1.0,
+      "rgb_sha256": "9f5212dd95db5f5c46ecd3647bf895bcdee9ecb8f4922542292621d5eaa148c5",
+      "role": "scene",
+      "state": "primary:2"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        133.23789357607973,
+        450.96626716944945,
+        274.1538962200656,
+        480.0
+      ],
+      "expected_visibility": "partial_out_of_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": null,
+      "pass": true,
+      "reason": "partial_out_of_frame_unseen",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "5567772d743b48295ee28fb96775186806b0f70dbab1f7010448d89cd293dad7",
+      "role": "left_wrist",
+      "state": "primary:3"
+    },
+    {
+      "center_error_px": 0.338,
+      "expected_bounds_px": [
+        481.942542399241,
+        117.52147368371304,
+        574.8444413721297,
+        200.8376838956538
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9901,
+      "mask_pixels": 5581,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        482.0,
+        118.0,
+        575.0,
+        201.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9989,
+      "rgb_sha256": "5567772d743b48295ee28fb96775186806b0f70dbab1f7010448d89cd293dad7",
+      "role": "left_wrist",
+      "state": "primary:3"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": null,
+      "expected_visibility": "out_of_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": null,
+      "pass": true,
+      "reason": "expected_out_of_frame",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "6344178fc557f73aecdc115cfaf8b3cc53f987c3a8da96f0b900630c0f3cb507",
+      "role": "right_wrist",
+      "state": "primary:3"
+    },
+    {
+      "center_error_px": 0.39,
+      "expected_bounds_px": [
+        339.5960811348515,
+        163.75200555325438,
+        421.62828206578024,
+        262.3275694241806
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9848,
+      "mask_pixels": 6256,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        340.0,
+        164.0,
+        422.0,
+        262.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9997,
+      "rgb_sha256": "6344178fc557f73aecdc115cfaf8b3cc53f987c3a8da96f0b900630c0f3cb507",
+      "role": "right_wrist",
+      "state": "primary:3"
+    },
+    {
+      "center_error_px": 7.647,
+      "expected_bounds_px": [
+        186.77553935527106,
+        206.80329991478857,
+        219.06695752317546,
+        245.90325653188964
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.6043,
+      "mask_pixels": 642,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        187.0,
+        222.0,
+        219.0,
+        246.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 1.0,
+      "rgb_sha256": "5659ab9e9a962caf0e60d1a7de49a3b04961bb5efc1f7a218b13c80fa834fa3b",
+      "role": "scene",
+      "state": "primary:3"
+    },
+    {
+      "center_error_px": 0.123,
+      "expected_bounds_px": [
+        350.7247444786634,
+        123.22310454552239,
+        378.04179452643575,
+        156.69902541042978
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9733,
+      "mask_pixels": 819,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        351.0,
+        123.0,
+        378.0,
+        157.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9976,
+      "rgb_sha256": "5659ab9e9a962caf0e60d1a7de49a3b04961bb5efc1f7a218b13c80fa834fa3b",
+      "role": "scene",
+      "state": "primary:3"
+    },
+    {
+      "center_error_px": 0.18,
+      "expected_bounds_px": [
+        165.06899863090123,
+        150.57466056432833,
+        249.5841067264207,
+        250.5238406551836
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9849,
+      "mask_pixels": 6271,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        165.0,
+        151.0,
+        250.0,
+        250.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9855,
+      "rgb_sha256": "059f18429c1003c8087621ef8406be2b6eebadac14f117858a3dffe60a51ba22",
+      "role": "left_wrist",
+      "state": "primary:4"
+    },
+    {
+      "center_error_px": 0.43,
+      "expected_bounds_px": [
+        603.0643485186213,
+        145.37399109941367,
+        640.0,
+        243.48356634347206
+      ],
+      "expected_visibility": "partial_out_of_frame",
+      "iou": 0.8549,
+      "mask_pixels": 1952,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        603.0,
+        152.0,
+        640.0,
+        236.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9995,
+      "rgb_sha256": "059f18429c1003c8087621ef8406be2b6eebadac14f117858a3dffe60a51ba22",
+      "role": "left_wrist",
+      "state": "primary:4"
+    },
+    {
+      "center_error_px": 0.326,
+      "expected_bounds_px": [
+        35.87988615298906,
+        94.02507883867361,
+        129.7444331951224,
+        174.50713053956872
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9894,
+      "mask_pixels": 5421,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        36.0,
+        94.0,
+        130.0,
+        174.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9889,
+      "rgb_sha256": "ce4dc26dfc071ccd149bffcbbe321165a2a44b8517f5bccb6ab0bd50f4d21d6d",
+      "role": "right_wrist",
+      "state": "primary:4"
+    },
+    {
+      "center_error_px": 0.393,
+      "expected_bounds_px": [
+        365.9040297172836,
+        235.1883223581993,
+        471.75916269015784,
+        366.52287395849874
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9914,
+      "mask_pixels": 10005,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        366.0,
+        235.0,
+        472.0,
+        366.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9998,
+      "rgb_sha256": "ce4dc26dfc071ccd149bffcbbe321165a2a44b8517f5bccb6ab0bd50f4d21d6d",
+      "role": "right_wrist",
+      "state": "primary:4"
+    },
+    {
+      "center_error_px": 0.353,
+      "expected_bounds_px": [
+        217.47518897617988,
+        121.75726239954983,
+        244.02055270986156,
+        155.74735974280094
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9654,
+      "mask_pixels": 815,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        218.0,
+        122.0,
+        244.0,
+        156.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9755,
+      "rgb_sha256": "b0019a6f3ae9c24ed8ac8520bd1f1595a631645c42a2d44a8812896b5d3203fd",
+      "role": "scene",
+      "state": "primary:4"
+    },
+    {
+      "center_error_px": 0.485,
+      "expected_bounds_px": [
+        380.6251262735971,
+        143.78062043811275,
+        411.65884689522017,
+        179.5637760825312
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9597,
+      "mask_pixels": 909,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        381.0,
+        144.0,
+        412.0,
+        180.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9989,
+      "rgb_sha256": "b0019a6f3ae9c24ed8ac8520bd1f1595a631645c42a2d44a8812896b5d3203fd",
+      "role": "scene",
+      "state": "primary:4"
+    },
+    {
+      "center_error_px": 0.736,
+      "expected_bounds_px": [
+        582.964034562615,
+        90.15673893776855,
+        640.0,
+        180.37217283200062
+      ],
+      "expected_visibility": "partial_out_of_frame",
+      "iou": 0.9748,
+      "mask_pixels": 3708,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        583.0,
+        92.0,
+        640.0,
+        180.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9922,
+      "rgb_sha256": "ab558a71321e92c39e0ab7486f2031ddf168389a06f50930dbbbf9e1cdca8a58",
+      "role": "left_wrist",
+      "state": "primary:5"
+    },
+    {
+      "center_error_px": 0.159,
+      "expected_bounds_px": [
+        263.03860807705007,
+        114.80047763806407,
+        338.26613597070536,
+        202.2886651228965
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9904,
+      "mask_pixels": 5331,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        263.0,
+        115.0,
+        338.0,
+        202.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9992,
+      "rgb_sha256": "ab558a71321e92c39e0ab7486f2031ddf168389a06f50930dbbbf9e1cdca8a58",
+      "role": "left_wrist",
+      "state": "primary:5"
+    },
+    {
+      "center_error_px": 0.451,
+      "expected_bounds_px": [
+        102.04295980731138,
+        116.37983800933821,
+        207.8784214756728,
+        216.72125300437
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9895,
+      "mask_pixels": 7831,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        102.0,
+        117.0,
+        208.0,
+        217.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9914,
+      "rgb_sha256": "bd6d1948662530146b360330a4972b66597b740539340a26a3d3a9fd795d885a",
+      "role": "right_wrist",
+      "state": "primary:5"
+    },
+    {
+      "center_error_px": 0.578,
+      "expected_bounds_px": [
+        0.0,
+        62.8709128940819,
+        43.575895311328225,
+        133.12616237842389
+      ],
+      "expected_visibility": "partial_out_of_frame",
+      "iou": 0.9692,
+      "mask_pixels": 2191,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        0.0,
+        64.0,
+        43.0,
+        133.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9995,
+      "rgb_sha256": "bd6d1948662530146b360330a4972b66597b740539340a26a3d3a9fd795d885a",
+      "role": "right_wrist",
+      "state": "primary:5"
+    },
+    {
+      "center_error_px": 0.38,
+      "expected_bounds_px": [
+        336.3903099347149,
+        150.72913173424553,
+        366.33235882016027,
+        188.5091129035352
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9563,
+      "mask_pixels": 1012,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        336.0,
+        151.0,
+        366.0,
+        188.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9545,
+      "rgb_sha256": "17dcd4f7191d7c663d9b913e1494da44be4ebc4a8b4714130cee70f45fe4dae6",
+      "role": "scene",
+      "state": "primary:5"
+    },
+    {
+      "center_error_px": 0.245,
+      "expected_bounds_px": [
+        203.65437735282435,
+        139.00990215501753,
+        232.08505853564284,
+        174.40409230338042
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9733,
+      "mask_pixels": 897,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        204.0,
+        139.0,
+        232.0,
+        174.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9989,
+      "rgb_sha256": "17dcd4f7191d7c663d9b913e1494da44be4ebc4a8b4714130cee70f45fe4dae6",
+      "role": "scene",
+      "state": "primary:5"
+    },
+    {
+      "center_error_px": 0.463,
+      "expected_bounds_px": [
+        474.32275954275184,
+        64.70407991496918,
+        559.5891912123026,
+        140.13948214980414
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9837,
+      "mask_pixels": 4792,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        474.0,
+        65.0,
+        559.0,
+        140.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9898,
+      "rgb_sha256": "e36f3706d21d4867bb0613bfec92150f101c4c9fa7538cca1e03663e6df0915e",
+      "role": "left_wrist",
+      "state": "primary:6"
+    },
+    {
+      "center_error_px": 0.045,
+      "expected_bounds_px": [
+        161.48347130675444,
+        203.79100055439852,
+        259.4665080132153,
+        323.13522615218153
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9871,
+      "mask_pixels": 8471,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        162.0,
+        204.0,
+        259.0,
+        323.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9998,
+      "rgb_sha256": "e36f3706d21d4867bb0613bfec92150f101c4c9fa7538cca1e03663e6df0915e",
+      "role": "left_wrist",
+      "state": "primary:6"
+    },
+    {
+      "center_error_px": 0.078,
+      "expected_bounds_px": [
+        390.8598112033384,
+        108.15370635064463,
+        469.2655691478702,
+        198.93911007667913
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9925,
+      "mask_pixels": 5414,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        391.0,
+        108.0,
+        469.0,
+        199.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9841,
+      "rgb_sha256": "3a5714692d9ddfb635f4528bfce348ef49d402150f3413be02fe0bcd8891b659",
+      "role": "right_wrist",
+      "state": "primary:6"
+    },
+    {
+      "center_error_px": 0.392,
+      "expected_bounds_px": [
+        0.0,
+        125.6608871085091,
+        66.62989302161589,
+        216.8735202728954
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9855,
+      "mask_pixels": 4538,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        0.0,
+        126.0,
+        66.0,
+        217.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9996,
+      "rgb_sha256": "3a5714692d9ddfb635f4528bfce348ef49d402150f3413be02fe0bcd8891b659",
+      "role": "right_wrist",
+      "state": "primary:6"
+    },
+    {
+      "center_error_px": 0.479,
+      "expected_bounds_px": [
+        358.42155149360167,
+        97.6290720085805,
+        385.53276324409853,
+        130.2798297152774
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9464,
+      "mask_pixels": 785,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        358.0,
+        98.0,
+        385.0,
+        130.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9809,
+      "rgb_sha256": "badff3711c6c692e824b55c6e6ab5554c89d0b508a166ef976b1b7dce5897050",
+      "role": "scene",
+      "state": "primary:6"
+    },
+    {
+      "center_error_px": 0.24,
+      "expected_bounds_px": [
+        209.6349565089421,
+        142.17918028723489,
+        237.88437438711162,
+        177.83173427275906
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9737,
+      "mask_pixels": 910,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        210.0,
+        142.0,
+        238.0,
+        178.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9967,
+      "rgb_sha256": "badff3711c6c692e824b55c6e6ab5554c89d0b508a166ef976b1b7dce5897050",
+      "role": "scene",
+      "state": "primary:6"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": null,
+      "expected_visibility": "out_of_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": null,
+      "pass": true,
+      "reason": "expected_out_of_frame",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "cc8d28dffa86da598e0980fd4709c1c786db7ca0df19cb73f4f00abbbce10aff",
+      "role": "left_wrist",
+      "state": "reset_first:0"
+    },
+    {
+      "center_error_px": 0.273,
+      "expected_bounds_px": [
+        166.2129228607731,
+        108.30575522816142,
+        244.92135537469744,
+        199.2241209759811
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9905,
+      "mask_pixels": 5415,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        166.0,
+        108.0,
+        245.0,
+        199.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9972,
+      "rgb_sha256": "cc8d28dffa86da598e0980fd4709c1c786db7ca0df19cb73f4f00abbbce10aff",
+      "role": "left_wrist",
+      "state": "reset_first:0"
+    },
+    {
+      "center_error_px": 0.236,
+      "expected_bounds_px": [
+        399.5896349571465,
+        268.50728816993376,
+        515.1307058253716,
+        413.11159668674986
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9912,
+      "mask_pixels": 12070,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        400.0,
+        269.0,
+        515.0,
+        413.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9966,
+      "rgb_sha256": "bdbbe25ab457d5cd1081d1abf2b2a099f485a09cf09898bff41a87f4096f291a",
+      "role": "right_wrist",
+      "state": "reset_first:0"
+    },
+    {
+      "center_error_px": 0.426,
+      "expected_bounds_px": [
+        84.93373864849326,
+        64.41306893444775,
+        169.72243677143106,
+        139.80817696446138
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9857,
+      "mask_pixels": 4772,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        85.0,
+        65.0,
+        170.0,
+        140.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9998,
+      "rgb_sha256": "bdbbe25ab457d5cd1081d1abf2b2a099f485a09cf09898bff41a87f4096f291a",
+      "role": "right_wrist",
+      "state": "reset_first:0"
+    },
+    {
+      "center_error_px": 4.468,
+      "expected_bounds_px": [
+        394.5235880823483,
+        150.30078834354856,
+        426.8779395074273,
+        186.61605322903333
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.7433,
+      "mask_pixels": 591,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        395.0,
+        150.0,
+        427.0,
+        178.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9763,
+      "rgb_sha256": "f0615926f23d1647ed52964b9cc45af505ffff5c2b5255118348b917c24bf3f3",
+      "role": "scene",
+      "state": "reset_first:0"
+    },
+    {
+      "center_error_px": 0.223,
+      "expected_bounds_px": [
+        223.54663578236512,
+        104.07958330540285,
+        249.16802839410582,
+        137.26286609387236
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9658,
+      "mask_pixels": 767,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        224.0,
+        104.0,
+        249.0,
+        137.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 1.0,
+      "rgb_sha256": "f0615926f23d1647ed52964b9cc45af505ffff5c2b5255118348b917c24bf3f3",
+      "role": "scene",
+      "state": "reset_first:0"
+    }
+  ],
+  "schema": "piper_x_offline_rgb_state_alignment_assay_v1",
+  "source_profile": "isaac_human_vr_offline_rgb_v1",
+  "source_recording": "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/recorder-pair-current-20260923-v2/session.hdf5",
+  "source_recording_sha256": "b5f1b4b29da9dc833ff255364cebb795aaf0a10c2cd51ff6afa60931eb70e06f",
+  "stage_snapshot_sha256": "5b4f8313665a1c33b27576d7e3ce1e65f2c01cfbb0bbf76091573579cf06d547",
+  "states": [
+    "primary:0",
+    "primary:1",
+    "primary:2",
+    "primary:3",
+    "primary:4",
+    "primary:5",
+    "primary:6",
+    "reset_first:0"
+  ],
+  "thresholds": {
+    "center_px": 24.0,
+    "minimum_iou": 0.2,
+    "minimum_rgb_color_fraction": 0.3
+  },
+  "visual_provenance_sha256": "374b30a2e1ee131f9f3656463c12220bfb57dac4e0c778230a5a1d7597082b65"
+}

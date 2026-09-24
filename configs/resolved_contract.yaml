@@ -2137,6 +2137,33 @@ artifacts:
     uri: null
     description: Local performance-line lifecycle reconciliation; automated injected
       native, replay, offline RGB and materializer validation; no physical acceptance.
+  vr_offline_rgb_alignment_report:
+    kind: report
+    sha256: 6a04f6fb9c3eeddc4b8d406cee73ee1dea5e1be40eed00e541fe723dd2fe5a82
+    path: docs/experiments/20260925_offline_rgb_state_alignment/REPORT.md
+    uri: null
+    description: Bounded production offline RGB spatial qualification using two synthetic native cube tracks;
+      no genuine V2 source, physical Quest acceptance, dataset admission or gate promotion.
+  vr_offline_rgb_alignment_summary:
+    kind: test_output
+    sha256: 531c8efaf3ddcb7d3d30265424522e87359d7cb4f077208eedb78b7a494f4f85
+    path: docs/experiments/20260925_offline_rgb_state_alignment/summary.json
+    uri: null
+    description: Per-state three-camera expected and observed geometry, color checks, negative controls and
+      zero-physics native result.
+  vr_offline_rgb_alignment_restart:
+    kind: test_output
+    sha256: 478cb7e3bf92feb0f5dc9c7dc1bd67d389bdf92ddf9edd3380681ebda6090c89
+    path: docs/experiments/20260925_offline_rgb_state_alignment/restart_summary.json
+    uri: null
+    description: Short full-process reopen/restart geometry check on first and terminal states.
+  vr_offline_rgb_alignment_preliminary_invalid:
+    kind: test_output
+    sha256: 43188830e783dfe04f9326a7fb388246186b129e522f067679f909fd71188895
+    path: docs/experiments/20260925_offline_rgb_state_alignment/preliminary_invalid_summary.json
+    uri: null
+    description: Preserved invalid assay attempt with cubes below table and unclipped expected edge boxes;
+      not a production-renderer failure.
   vr_architecture_report:
     kind: report
     sha256: 70e013944f1d4aa7bfdbb8adcbad831a116347c63b07f811b99a7113df87aa52
@@ -3176,6 +3203,29 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  vr_offline_rgb_state_alignment_assay:
+    kind: command_test
+    status: pass
+    summary: Unchanged production ReplayCameraMaterializer spatially aligned both dynamic cube witnesses
+      with requested synthetic native states in scene and both wrist roles; 48/48 primary and 12/12 restart
+      comparisons passed, all three deliberately wrong controls failed, and physics callbacks remained zero.
+    timestamp: '2026-09-24T22:02:23+00:00'
+    command: Pinned Isaac Python tools/isaac_vr_rgb_alignment_assay.py --recording
+      recorder-pair-current-20260923-v2/session.hdf5 --output fresh-private-directory;
+      repeat with --restart. Exact absolute command and environment in REPORT.md.
+    artifact_ids:
+    - vr_offline_rgb_alignment_report
+    - vr_offline_rgb_alignment_summary
+    - vr_offline_rgb_alignment_restart
+    - vr_offline_rgb_alignment_preliminary_invalid
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/experiments/20260925_offline_rgb_state_alignment
+    symbol: null
+    notes: Experimental working tree based on e11887c7; source archived V1 HDF was modified only in
+      assay-only synthetic copies and D0 no-op type mapped to V3 for current replay registry. No gate
+      binding/state change, genuine V2 end-to-end artifact proof, physical acceptance or dataset admission.
   vr_record_runtime_optimization_audit:
     kind: command_test
     status: pass

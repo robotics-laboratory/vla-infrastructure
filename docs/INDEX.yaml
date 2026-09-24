@@ -3308,3 +3308,23 @@ documents:
   status: historical
   owner: vr.physics_rtf
   mutable: false
+- path: docs/experiments/20260925_offline_rgb_state_alignment/REPORT.md
+  kind: experiment
+  status: historical
+  owner: vr.offline_rgb_alignment
+  mutable: false
+- path: docs/experiments/20260925_offline_rgb_state_alignment/summary.json
+  kind: experiment
+  status: historical
+  owner: vr.offline_rgb_alignment
+  mutable: false
+- path: docs/experiments/20260925_offline_rgb_state_alignment/restart_summary.json
+  kind: experiment
+  status: historical
+  owner: vr.offline_rgb_alignment
+  mutable: false
+- path: docs/experiments/20260925_offline_rgb_state_alignment/preliminary_invalid_summary.json
+  kind: experiment
+  status: historical
+  owner: vr.offline_rgb_alignment
+  mutable: false

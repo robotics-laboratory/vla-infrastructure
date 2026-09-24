@@ -759,10 +759,12 @@ def _validated_image_join(
             raise MaterializationError(
                 f"replay images use inconsistent camera configurations for {role}"
             )
-    if frames > 1:
-        frozen = [role for role, hashes in per_role_hashes.items() if len(hashes) == 1]
-        if frozen:
-            raise MaterializationError(f"replay RGB streams are frozen: {frozen}")
+    # Equal PNG digests are a useful QA lead, not evidence of stale geometry:
+    # a static camera facing an unchanged scene may legitimately repeat bytes.
+    # The separate spatial alignment assay supplies an independent moving
+    # witness when liveness is actually required.
+    frozen = [role for role, hashes in per_role_hashes.items() if frames > 1 and len(hashes) == 1]
+    report["_identical_rgb_digest_roles"] = frozen
     if _sha256_stable(report_path) != report_sha256:
         raise MaterializationError("replay report changed while its images were verified")
     report["_verified_file_sha256"] = report_sha256
@@ -1008,6 +1010,7 @@ def materialize_projection(
                 }
             )
         report_sha256 = report.pop("_verified_file_sha256")
+        identical_digest_roles = report.pop("_identical_rgb_digest_roles")
         blocking_reasons = ["source_admission_requires_external_physical_vr_qualification"]
         if bundle_manifest["source"].get("outcome") != "success":
             blocking_reasons.append("source_outcome_is_not_success")
@@ -1061,7 +1064,7 @@ def materialize_projection(
                 "required_identity_fields": list(IMAGE_IDENTITY_FIELDS),
             },
             "projection_image_join_ledger": join_ledger,
-            "qa": qa,
+            "qa": {**qa, "identical_rgb_digest_roles": identical_digest_roles},
             "files": _dataset_file_digests(temporary),
         }
         manifest["manifest_sha256"] = _canonical_sha256(manifest)

@@ -1,0 +1,1149 @@
+{
+  "camera_roles": {
+    "left_wrist": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+    "right_wrist": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/S1WristCamera",
+    "scene": "/World/RobosynDemo/SceneCamera"
+  },
+  "pass": false,
+  "physics_callbacks": 0,
+  "positive_controls": {
+    "lagged_identity": true,
+    "wrong_camera_role": true,
+    "wrong_transform": true
+  },
+  "renderer_configuration_sha256": "eb02a3964d51912e2dd2df60d75dbe1e2b301231f3db5880e2a54bb42bbe1b85",
+  "restart": false,
+  "rows": [
+    {
+      "center_error_px": 2.559,
+      "expected_bounds_px": [
+        195.983540575904,
+        288.5424283551547,
+        291.9258707542409,
+        410.5738446376098
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9497,
+      "mask_pixels": 7953,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        196.0,
+        289.0,
+        292.0,
+        405.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9951,
+      "rgb_sha256": "834387374abc55da3fd40efcf59542fd8415f1c002bc945ac767bc1f1ce4a9e7",
+      "role": "left_wrist",
+      "state": "primary:0"
+    },
+    {
+      "center_error_px": 8.477,
+      "expected_bounds_px": [
+        523.7037640671724,
+        176.07951174838462,
+        618.7111056700967,
+        259.49036262890723
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.7593,
+      "mask_pixels": 4096,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        528.0,
+        176.0,
+        618.0,
+        243.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 1.0,
+      "rgb_sha256": "834387374abc55da3fd40efcf59542fd8415f1c002bc945ac767bc1f1ce4a9e7",
+      "role": "left_wrist",
+      "state": "primary:0"
+    },
+    {
+      "center_error_px": 20.865,
+      "expected_bounds_px": [
+        -43.030071777548244,
+        199.50265905989005,
+        69.65595896240154,
+        293.92847211298096
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.5624,
+      "mask_pixels": 4390,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        0.0,
+        200.0,
+        68.0,
+        288.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9968,
+      "rgb_sha256": "85b0cceb895990fe77dd1c93329aeadcb7812e14502c5bcf1d282d71f510fa18",
+      "role": "right_wrist",
+      "state": "primary:0"
+    },
+    {
+      "center_error_px": 8.136,
+      "expected_bounds_px": [
+        371.8483119829408,
+        249.41771796998628,
+        455.96762834969695,
+        353.81057474286996
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.8217,
+      "mask_pixels": 5167,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        373.0,
+        250.0,
+        456.0,
+        337.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9994,
+      "rgb_sha256": "85b0cceb895990fe77dd1c93329aeadcb7812e14502c5bcf1d282d71f510fa18",
+      "role": "right_wrist",
+      "state": "primary:0"
+    },
+    {
+      "center_error_px": 5.098,
+      "expected_bounds_px": [
+        218.48541941042123,
+        172.3708634354674,
+        245.95508452131838,
+        207.80885188003379
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.7016,
+      "mask_pixels": 277,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        219.0,
+        172.0,
+        246.0,
+        198.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9531,
+      "rgb_sha256": "cfcb36d2722befddf9201765192dad324860d8115c4b43273d3a692973a2e1d6",
+      "role": "scene",
+      "state": "primary:0"
+    },
+    {
+      "center_error_px": 3.296,
+      "expected_bounds_px": [
+        368.421031574876,
+        151.17471785945284,
+        396.48253692603464,
+        184.41632953689492
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.7725,
+      "mask_pixels": 634,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        369.0,
+        151.0,
+        396.0,
+        178.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9984,
+      "rgb_sha256": "cfcb36d2722befddf9201765192dad324860d8115c4b43273d3a692973a2e1d6",
+      "role": "scene",
+      "state": "primary:0"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        380.26980703662923,
+        184.9017282870746,
+        450.9314315535364,
+        260.07738641109773
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "5cac7e32d4ecf2ca42aad077280d604ebeb054044ec05756411d54cf18cccb57",
+      "role": "left_wrist",
+      "state": "primary:1"
+    },
+    {
+      "center_error_px": 0.27,
+      "expected_bounds_px": [
+        129.5496557409373,
+        262.1017337854271,
+        231.09987556459924,
+        388.3085985966405
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9914,
+      "mask_pixels": 9221,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        130.0,
+        262.0,
+        231.0,
+        388.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 1.0,
+      "rgb_sha256": "5cac7e32d4ecf2ca42aad077280d604ebeb054044ec05756411d54cf18cccb57",
+      "role": "left_wrist",
+      "state": "primary:1"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        282.03803674767454,
+        203.06094820971887,
+        348.7334969987662,
+        282.68401550249047
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "df3d3a0aace37f4371b21b84083204f76d8075e4b91deaa1dfe3975557fedbfe",
+      "role": "right_wrist",
+      "state": "primary:1"
+    },
+    {
+      "center_error_px": 39.579,
+      "expected_bounds_px": [
+        -79.49905121573494,
+        159.58929598253914,
+        36.34200548454061,
+        251.47661214135087
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.2672,
+      "mask_pixels": 1837,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        0.0,
+        166.0,
+        36.0,
+        245.0
+      ],
+      "pass": false,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 1.0,
+      "rgb_sha256": "df3d3a0aace37f4371b21b84083204f76d8075e4b91deaa1dfe3975557fedbfe",
+      "role": "right_wrist",
+      "state": "primary:1"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        315.6653011606003,
+        144.91094553673707,
+        339.2597235550473,
+        176.06975367830398
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "1c668e079ea5d6dbb112294d4762ecbfe030aada0b01c419b56106c4c00347d5",
+      "role": "scene",
+      "state": "primary:1"
+    },
+    {
+      "center_error_px": 6.371,
+      "expected_bounds_px": [
+        198.07973919156606,
+        159.98058614324447,
+        227.0933824937657,
+        195.73371654981972
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.6208,
+      "mask_pixels": 445,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        199.0,
+        160.0,
+        227.0,
+        183.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9978,
+      "rgb_sha256": "1c668e079ea5d6dbb112294d4762ecbfe030aada0b01c419b56106c4c00347d5",
+      "role": "scene",
+      "state": "primary:1"
+    },
+    {
+      "center_error_px": 9.246,
+      "expected_bounds_px": [
+        564.9488889617242,
+        145.06392511569368,
+        658.5417361999953,
+        245.09599991438003
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.8002,
+      "mask_pixels": 5773,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        565.0,
+        145.0,
+        640.0,
+        245.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9875,
+      "rgb_sha256": "14ae9c0a3d1200f2947ead919fa73f149f862526954eff80014a924c73a20531",
+      "role": "left_wrist",
+      "state": "primary:2"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        253.5532018401268,
+        213.7657749053953,
+        317.7511408628731,
+        292.7306426553457
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "14ae9c0a3d1200f2947ead919fa73f149f862526954eff80014a924c73a20531",
+      "role": "left_wrist",
+      "state": "primary:2"
+    },
+    {
+      "center_error_px": 0.154,
+      "expected_bounds_px": [
+        315.42801173852166,
+        211.87678440761903,
+        424.8412019846552,
+        337.27234920933734
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9915,
+      "mask_pixels": 10043,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        315.0,
+        212.0,
+        425.0,
+        337.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9943,
+      "rgb_sha256": "2461c297679ac6f4c9719a6d4a738cf95a84a0b51a7365f9432431faf4e87f92",
+      "role": "right_wrist",
+      "state": "primary:2"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        163.92517858441306,
+        182.70345752320168,
+        233.70815877313805,
+        254.35026836796155
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "2461c297679ac6f4c9719a6d4a738cf95a84a0b51a7365f9432431faf4e87f92",
+      "role": "right_wrist",
+      "state": "primary:2"
+    },
+    {
+      "center_error_px": 0.213,
+      "expected_bounds_px": [
+        358.9644121492461,
+        138.97424495615664,
+        394.6758999756811,
+        179.25573751457893
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9832,
+      "mask_pixels": 1018,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        359.0,
+        139.0,
+        395.0,
+        179.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9804,
+      "rgb_sha256": "68161cef821dd0f17506ea0e7bd555562767024ad84ebc34cd8d3c0525eda6e2",
+      "role": "scene",
+      "state": "primary:2"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        257.3262838203642,
+        149.28429469747624,
+        280.38719028609717,
+        180.2441779911062
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "68161cef821dd0f17506ea0e7bd555562767024ad84ebc34cd8d3c0525eda6e2",
+      "role": "scene",
+      "state": "primary:2"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        133.23789357607973,
+        450.96626716944945,
+        274.1538962200656,
+        644.148134218711
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "13f0b4fd3f9d993af762f7ddc6f8c9ffc8c6d152ad0fdb199893b842199d5b23",
+      "role": "left_wrist",
+      "state": "primary:3"
+    },
+    {
+      "center_error_px": 13.279,
+      "expected_bounds_px": [
+        470.9434334700557,
+        175.39523521055196,
+        555.6939284717363,
+        254.80192805183637
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.6264,
+      "mask_pixels": 2803,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        476.0,
+        175.0,
+        555.0,
+        229.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9989,
+      "rgb_sha256": "13f0b4fd3f9d993af762f7ddc6f8c9ffc8c6d152ad0fdb199893b842199d5b23",
+      "role": "left_wrist",
+      "state": "primary:3"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        -288.2403973925452,
+        258.940353225935,
+        -115.84860404864804,
+        380.5610440703516
+      ],
+      "expected_visibility": "out_of_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": null,
+      "pass": true,
+      "reason": "expected_out_of_frame",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "101527c730fe42506e76133317598bdfbe70509b484ee868ba5da17087ab3008",
+      "role": "right_wrist",
+      "state": "primary:3"
+    },
+    {
+      "center_error_px": 13.465,
+      "expected_bounds_px": [
+        338.0120366810355,
+        225.95221140877877,
+        413.28933178093683,
+        318.96812214008696
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.6975,
+      "mask_pixels": 3483,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        339.0,
+        226.0,
+        413.0,
+        292.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 1.0,
+      "rgb_sha256": "101527c730fe42506e76133317598bdfbe70509b484ee868ba5da17087ab3008",
+      "role": "right_wrist",
+      "state": "primary:3"
+    },
+    {
+      "center_error_px": 7.647,
+      "expected_bounds_px": [
+        186.77553935527106,
+        206.80329991478857,
+        219.06695752317546,
+        245.90325653188964
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.6043,
+      "mask_pixels": 642,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        187.0,
+        222.0,
+        219.0,
+        246.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 1.0,
+      "rgb_sha256": "8aee1a765a647c4e0bcb6d793064d2991a9f6f79f876ff36deaf2ad26faa2ea0",
+      "role": "scene",
+      "state": "primary:3"
+    },
+    {
+      "center_error_px": 5.524,
+      "expected_bounds_px": [
+        349.67383289038423,
+        146.84079192614882,
+        375.94710817970787,
+        179.19989507716247
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.6401,
+      "mask_pixels": 478,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        350.0,
+        147.0,
+        376.0,
+        168.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9833,
+      "rgb_sha256": "8aee1a765a647c4e0bcb6d793064d2991a9f6f79f876ff36deaf2ad26faa2ea0",
+      "role": "scene",
+      "state": "primary:3"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        186.91127431949832,
+        259.3868334845265,
+        259.37055528711824,
+        349.46559925209965
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "0d80bed3791cb4e4c18ba71c8eadcf68955bad6bbd897becb8048863b24572a8",
+      "role": "left_wrist",
+      "state": "primary:4"
+    },
+    {
+      "center_error_px": 36.534,
+      "expected_bounds_px": [
+        593.8915917791699,
+        172.21939859876164,
+        713.0256988084966,
+        268.0836367750445
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.3665,
+      "mask_pixels": 2741,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        594.0,
+        177.0,
+        640.0,
+        268.0
+      ],
+      "pass": false,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 1.0,
+      "rgb_sha256": "0d80bed3791cb4e4c18ba71c8eadcf68955bad6bbd897becb8048863b24572a8",
+      "role": "left_wrist",
+      "state": "primary:4"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        71.37573921814666,
+        193.4923595388114,
+        151.3864028834899,
+        267.6391092675392
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "db4bf049be37c4b3e9d05e5cbacb3250d89928e3e6ce04b454096d48515f1eba",
+      "role": "right_wrist",
+      "state": "primary:4"
+    },
+    {
+      "center_error_px": 0.215,
+      "expected_bounds_px": [
+        363.9292394175594,
+        265.1286228296493,
+        465.0989918310068,
+        392.3001068508511
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.995,
+      "mask_pixels": 9180,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        364.0,
+        265.0,
+        465.0,
+        392.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9999,
+      "rgb_sha256": "db4bf049be37c4b3e9d05e5cbacb3250d89928e3e6ce04b454096d48515f1eba",
+      "role": "right_wrist",
+      "state": "primary:4"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        224.06178854187363,
+        163.79857315763843,
+        248.62677061923802,
+        195.77173105536457
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "624f4fa54d23242ec64356feacbfbf46a737c812d519e1fb7156a9185ddab553",
+      "role": "scene",
+      "state": "primary:4"
+    },
+    {
+      "center_error_px": 0.119,
+      "expected_bounds_px": [
+        379.72394139569764,
+        153.75335032738036,
+        410.21436739749674,
+        189.01607649176884
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9766,
+      "mask_pixels": 770,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        380.0,
+        154.0,
+        410.0,
+        189.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 1.0,
+      "rgb_sha256": "624f4fa54d23242ec64356feacbfbf46a737c812d519e1fb7156a9185ddab553",
+      "role": "scene",
+      "state": "primary:4"
+    },
+    {
+      "center_error_px": 13.132,
+      "expected_bounds_px": [
+        553.3169844549793,
+        189.52613453292156,
+        650.7202865973042,
+        272.6593045812994
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.5394,
+      "mask_pixels": 3020,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        562.0,
+        190.0,
+        640.0,
+        246.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9911,
+      "rgb_sha256": "2d710442df4db51e8ce4365671fd97b26bc00e2958e665ceffc88b7d2b7dae2f",
+      "role": "left_wrist",
+      "state": "primary:5"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        271.00647193788296,
+        227.96139318946342,
+        335.59593157578706,
+        307.151586591765
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "2d710442df4db51e8ce4365671fd97b26bc00e2958e665ceffc88b7d2b7dae2f",
+      "role": "left_wrist",
+      "state": "primary:5"
+    },
+    {
+      "center_error_px": 13.448,
+      "expected_bounds_px": [
+        131.75924984503564,
+        220.58396133933013,
+        221.5186882395435,
+        312.1113641395201
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.67,
+      "mask_pixels": 3663,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        132.0,
+        221.0,
+        218.0,
+        285.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9842,
+      "rgb_sha256": "6da92b448eabae75391d26eca6c1ab18c0f20486f03a4e22d0913ed7522d9493",
+      "role": "right_wrist",
+      "state": "primary:5"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        -2.645167572155003,
+        164.99228873219704,
+        74.81365987876902,
+        229.9617728630866
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "6da92b448eabae75391d26eca6c1ab18c0f20486f03a4e22d0913ed7522d9493",
+      "role": "right_wrist",
+      "state": "primary:5"
+    },
+    {
+      "center_error_px": 5.698,
+      "expected_bounds_px": [
+        335.4104501124475,
+        190.41593104153492,
+        363.3948581286621,
+        225.97890492897773
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.6595,
+      "mask_pixels": 583,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        336.0,
+        190.0,
+        363.0,
+        215.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9657,
+      "rgb_sha256": "179e8a14cb7c76a3fe400f0c124427a2041c783506b3f7fe528cd5166bedf400",
+      "role": "scene",
+      "state": "primary:5"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        212.2149247122788,
+        185.88515665872094,
+        238.17871638186745,
+        218.87138319369154
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "179e8a14cb7c76a3fe400f0c124427a2041c783506b3f7fe528cd5166bedf400",
+      "role": "scene",
+      "state": "primary:5"
+    },
+    {
+      "center_error_px": 12.678,
+      "expected_bounds_px": [
+        460.90127623121674,
+        143.3397208656478,
+        536.7410718913112,
+        214.44453605074096
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.608,
+      "mask_pixels": 2230,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        466.0,
+        143.0,
+        537.0,
+        190.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9843,
+      "rgb_sha256": "c61814f3636eef716fa4fb71b0bd80acaf579e02e8403095a27336255eca860b",
+      "role": "left_wrist",
+      "state": "primary:6"
+    },
+    {
+      "center_error_px": 0.328,
+      "expected_bounds_px": [
+        170.95820810487064,
+        246.52351852112457,
+        263.0198288659409,
+        360.8215034023425
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9936,
+      "mask_pixels": 7532,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        171.0,
+        247.0,
+        263.0,
+        361.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 1.0,
+      "rgb_sha256": "c61814f3636eef716fa4fb71b0bd80acaf579e02e8403095a27336255eca860b",
+      "role": "left_wrist",
+      "state": "primary:6"
+    },
+    {
+      "center_error_px": 13.598,
+      "expected_bounds_px": [
+        383.45797326565594,
+        194.35106816427069,
+        453.457686313831,
+        278.76545160639034
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.6511,
+      "mask_pixels": 2806,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        386.0,
+        194.0,
+        453.0,
+        252.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9808,
+      "rgb_sha256": "b6261c33c2ea2c88f93e6c2131880e68225b48caa6f39a666a7da20c469d4a55",
+      "role": "right_wrist",
+      "state": "primary:6"
+    },
+    {
+      "center_error_px": 13.943,
+      "expected_bounds_px": [
+        -27.976361529704434,
+        163.96516669475866,
+        78.09223802541237,
+        252.31496062690914
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.7325,
+      "mask_pixels": 5243,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        0.0,
+        164.0,
+        78.0,
+        252.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9996,
+      "rgb_sha256": "b6261c33c2ea2c88f93e6c2131880e68225b48caa6f39a666a7da20c469d4a55",
+      "role": "right_wrist",
+      "state": "primary:6"
+    },
+    {
+      "center_error_px": 5.338,
+      "expected_bounds_px": [
+        356.6446952749944,
+        130.74677635345148,
+        382.34109619270333,
+        161.92829653174442
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.624,
+      "mask_pixels": 440,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        357.0,
+        131.0,
+        382.0,
+        151.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9795,
+      "rgb_sha256": "a8d7e5f80efd34e2ffe91176962b1a9e8af90be4b34e73ae74368a05866a639e",
+      "role": "scene",
+      "state": "primary:6"
+    },
+    {
+      "center_error_px": 1.952,
+      "expected_bounds_px": [
+        212.2216341065993,
+        157.01018556588394,
+        239.69091429032022,
+        191.8933127636721
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.8731,
+      "mask_pixels": 601,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": [
+        212.0,
+        157.0,
+        240.0,
+        188.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9933,
+      "rgb_sha256": "a8d7e5f80efd34e2ffe91176962b1a9e8af90be4b34e73ae74368a05866a639e",
+      "role": "scene",
+      "state": "primary:6"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        640.3964598936744,
+        167.81502945379583,
+        771.3876589589001,
+        267.84450398372803
+      ],
+      "expected_visibility": "out_of_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": null,
+      "pass": true,
+      "reason": "expected_out_of_frame",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "e2907de9d7b67ab5c3c0c27438115f2f16dbbdd112d05dd4703e88a95dec1b54",
+      "role": "left_wrist",
+      "state": "reset_first:0"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        186.5529558592393,
+        215.98505532972632,
+        254.71582931414457,
+        298.833039702886
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "e2907de9d7b67ab5c3c0c27438115f2f16dbbdd112d05dd4703e88a95dec1b54",
+      "role": "left_wrist",
+      "state": "reset_first:0"
+    },
+    {
+      "center_error_px": 0.215,
+      "expected_bounds_px": [
+        397.70377295872026,
+        284.19772032158573,
+        510.4016549323328,
+        426.2201246841887
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.9909,
+      "mask_pixels": 11503,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        398.0,
+        284.0,
+        510.0,
+        426.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9966,
+      "rgb_sha256": "0376588518f296b805be6eff0c182b91291aa4a9e9b92f64fe66df9d041cba85",
+      "role": "right_wrist",
+      "state": "reset_first:0"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        112.9582289120952,
+        162.9285263144517,
+        186.10642168871925,
+        232.83855983807646
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "0376588518f296b805be6eff0c182b91291aa4a9e9b92f64fe66df9d041cba85",
+      "role": "right_wrist",
+      "state": "reset_first:0"
+    },
+    {
+      "center_error_px": 6.369,
+      "expected_bounds_px": [
+        393.9578463247216,
+        155.34595769197807,
+        426.0166527415797,
+        191.39126786438243
+      ],
+      "expected_visibility": "in_frame",
+      "iou": 0.6488,
+      "mask_pixels": 440,
+      "object": "/World/RobosynDemo/LeftCube",
+      "observed_bounds_px": [
+        394.0,
+        155.0,
+        426.0,
+        179.0
+      ],
+      "pass": true,
+      "reason": "spatial_comparison",
+      "rgb_color_fraction_in_mask": 0.9841,
+      "rgb_sha256": "683e3b69d0ae2f28f12fa66db797b127f256e7eb479e03eaf0a74482a28772da",
+      "role": "scene",
+      "state": "reset_first:0"
+    },
+    {
+      "center_error_px": null,
+      "expected_bounds_px": [
+        229.60941470933886,
+        146.31848281554986,
+        253.48863938729426,
+        177.57700685405277
+      ],
+      "expected_visibility": "in_frame",
+      "iou": null,
+      "mask_pixels": 0,
+      "object": "/World/RobosynDemo/RightCube",
+      "observed_bounds_px": null,
+      "pass": false,
+      "reason": "missing_visible_witness",
+      "rgb_color_fraction_in_mask": null,
+      "rgb_sha256": "683e3b69d0ae2f28f12fa66db797b127f256e7eb479e03eaf0a74482a28772da",
+      "role": "scene",
+      "state": "reset_first:0"
+    }
+  ],
+  "schema": "piper_x_offline_rgb_state_alignment_assay_v1",
+  "source_profile": "isaac_human_vr_offline_rgb_v1",
+  "source_recording": "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/recorder-pair-current-20260923-v2/session.hdf5",
+  "source_recording_sha256": "b5f1b4b29da9dc833ff255364cebb795aaf0a10c2cd51ff6afa60931eb70e06f",
+  "stage_snapshot_sha256": "5b4f8313665a1c33b27576d7e3ce1e65f2c01cfbb0bbf76091573579cf06d547",
+  "states": [
+    "primary:0",
+    "primary:1",
+    "primary:2",
+    "primary:3",
+    "primary:4",
+    "primary:5",
+    "primary:6",
+    "reset_first:0"
+  ],
+  "thresholds": {
+    "center_px": 24.0,
+    "minimum_iou": 0.2,
+    "minimum_rgb_color_fraction": 0.3
+  },
+  "visual_provenance_sha256": "374b30a2e1ee131f9f3656463c12220bfb57dac4e0c778230a5a1d7597082b65"
+}

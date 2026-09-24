@@ -281,6 +281,7 @@ def test_materializes_v3_videos_and_full_reads_every_stream(tmp_path: Path) -> N
         "all_video_frames_decoded": 6,
         "dataloader_batches": 1,
         "dataloader_frames": 2,
+        "identical_rgb_digest_roles": [],
     }
     assert len(result["projection_image_join_ledger"]) == 2
     first_ledger = result["projection_image_join_ledger"][0]
@@ -337,3 +338,20 @@ def test_replay_report_mutation_during_image_verification_is_rejected(
     monkeypatch.setattr(materialize, "_load_rgb", mutating_load)
     with pytest.raises(materialize.MaterializationError, match="report changed"):
         materialize._validated_image_join(report, bundle_manifest, loaded)
+
+
+def test_static_identical_rgb_is_qa_flag_not_geometry_failure(tmp_path: Path) -> None:
+    bundle, arrays = _bundle(tmp_path)
+    report_path = _report(tmp_path, arrays)
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    for role in materialize.CAMERA_ROLES:
+        first = next(item for item in report["renders"] if item["role"] == role and item["frame"] == 0)
+        second = next(item for item in report["renders"] if item["role"] == role and item["frame"] == 1)
+        Path(second["path"]).write_bytes(Path(first["path"]).read_bytes())
+        second["sha256"] = first["sha256"]
+        second["rgb_sha256"] = first["rgb_sha256"]
+    report_path.write_text(json.dumps(report), encoding="utf-8")
+    bundle_manifest, loaded = materialize.verify_projection_bundle(bundle)
+    joined, verified = materialize._validated_image_join(report_path, bundle_manifest, loaded)
+    assert len(joined) == 6
+    assert verified["_identical_rgb_digest_roles"] == list(materialize.CAMERA_ROLES)
