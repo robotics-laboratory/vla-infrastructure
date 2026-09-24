@@ -2009,6 +2009,30 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  vr_record_runtime_optimization_report:
+    kind: report
+    sha256: 4e62bfbec0f6e430789d362b5822883007c40fba7e394f4fe14d6257d8d26345
+    path: docs/experiments/20260924_vr_record_runtime_optimization_audit/REPORT.md
+    uri: null
+    description: Bounded no-client XR RECORD runtime optimization audit; no production or gate selection.
+  vr_record_runtime_optimization_provenance:
+    kind: test_output
+    sha256: aa2bb2b511e67171c03a2d3801794b463e5778266fc4f1250319e8c753f25c0b
+    path: docs/experiments/20260924_vr_record_runtime_optimization_audit/provenance.json
+    uri: null
+    description: Exact source, process, effective-setting and validation provenance for the bounded audit.
+  vr_record_runtime_optimization_results:
+    kind: test_output
+    sha256: a8f3ff6e4923e10f5f920a7b1c70e597405b6b3651731d24e7bd6315eca10be7
+    path: docs/experiments/20260924_vr_record_runtime_optimization_audit/results.json
+    uri: null
+    description: Untrimmed selected cohort distributions and retained run summaries for the bounded audit.
+  vr_record_runtime_optimization_raw_inventory:
+    kind: test_output
+    sha256: 97c9a8997b10ddc3e905d17057230dc288d80bd3a1e001357f64474158ed1192
+    path: /data/ebulochkin/vla-runtime/evidence/20260924_vr_record_runtime_optimization_audit/artifact-inventory.json
+    uri: null
+    description: Independent SHA-256 inventory of all raw run files and completed launch artifact checks.
   vr_live_camera_temporal_cost_report:
     kind: report
     sha256: ab12ead6882759fc96159f07cd293de64e5cf69e53e50c131fa5d6913766d73c
@@ -3098,6 +3122,27 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  vr_record_runtime_optimization_audit:
+    kind: command_test
+    status: pass
+    summary: Completed bounded no-client XR RECORD runtime audit. Combined P-core affinity plus HDF 128
+      reduced matched mean and p99 but missed research p99 target and worsened p99.9; no physical acceptance.
+    timestamp: '2026-09-24T14:59:31+00:00'
+    command: Fresh-process camera_audit XR RECORD cohorts, 300 warmup and 300/1000/3000 measured controls;
+      exact commands, source hashes, effective readbacks, strict SessionReader and validation logs in provenance.
+    artifact_ids:
+    - vr_record_runtime_optimization_report
+    - vr_record_runtime_optimization_provenance
+    - vr_record_runtime_optimization_results
+    - vr_record_runtime_optimization_raw_inventory
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/experiments/20260924_vr_record_runtime_optimization_audit
+    symbol: null
+    notes: No gate binding/state, dataset semantics, production selector or physics frequency changed. Physical
+      Quest presentation/tracking/manipulation and performance governor remain unmeasured. All 27 selected
+      processes passed physics/render/HDF invariants; no outlier removal.
   vr_live_camera_temporal_cost_audit:
     kind: command_test
     status: pass

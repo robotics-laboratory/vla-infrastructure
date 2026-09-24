@@ -1,0 +1,30 @@
+{
+  "schema": "vr_record_runtime_optimization_cohorts_v1",
+  "rule": "All post-warmup controls from every listed fresh process; no outlier removal. Screening and long cohorts must not be treated as matched lengths.",
+  "final_id": "OPT-COMBINED",
+  "groups": [
+    {"id": "R0", "label": "R0 default, H64", "scope": "finalist 3 x 3000", "runs": ["final-default-r1b", "final-default-r2", "final-default-r3"]},
+    {"id": "R0-render-screen", "label": "RTX baseline screen", "scope": "screen 2 x 300", "runs": ["baseline-r4-short", "renderer-r0-image"]},
+    {"id": "R1", "label": "RTX Minimal screen", "scope": "screen 2 x 300", "runs": ["minimal-r2", "renderer-r1-image"]},
+    {"id": "XR-none", "label": "Foveation none", "scope": "screen 2 x 300", "runs": ["fov-none-r1", "fov-none-r2"]},
+    {"id": "XR-05", "label": "XR scale 0.5", "scope": "screen 2 x 300", "runs": ["xr-scale05-r1", "xr-scale05-r2"]},
+    {"id": "XR-06", "label": "XR scale 0.6", "scope": "screen 2 x 300", "runs": ["xr-scale06-r1", "xr-scale06-r2"]},
+    {"id": "H0", "label": "HDF 64 matched", "scope": "flush 3 x 3000", "runs": ["long-h0-r1", "long-h0-r2", "long-h0-r3"]},
+    {"id": "H128", "label": "HDF 128", "scope": "finalist 3 x 3000", "runs": ["long-h128-r1", "long-h128-r2", "long-h128-r3"]},
+    {"id": "S1", "label": "State batch", "scope": "screen 2 x 300", "runs": ["state-batch-r1", "state-batch-r2"]},
+    {"id": "CPU-P", "label": "P cores, H64", "scope": "finalist 3 x 3000", "runs": ["final-pcore-r1", "final-pcore-r2", "final-pcore-r3"]},
+    {"id": "OPT-COMBINED", "label": "P cores, H128", "scope": "finalist 3 x 3000", "runs": ["final-combined-r1", "final-combined-r2", "final-combined-r3"]}
+  ],
+  "run_classification": {
+    "flush128-r1": "excluded_competing_user_cpu_workload",
+    "baseline-r5-short": "excluded_competing_user_cpu_workload",
+    "baseline-r6-idle": "excluded_competing_user_cpu_workload",
+    "minimal-r1": "invalid_renderer_readback",
+    "minimal-r1b": "invalid_renderer_readback",
+    "xr-baseline-r1": "invalid_persisted_foveation_none",
+    "final-default-r1": "failed_setup_unrelated_cloudxr_port_owner",
+    "abort-h128-sigkill": "abort_assay_threshold_parser_failed_run_completed_not_selected",
+    "abort-h128-sigkill-r2": "interrupted_launcher_and_exact_descendant_cleanup_unfinalized",
+    "abort-h128-kit-sigkill": "failed_setup_unrelated_cloudxr_port_owner"
+  }
+}

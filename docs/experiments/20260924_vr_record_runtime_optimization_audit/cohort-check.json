@@ -1,0 +1,583 @@
+{
+  "schema": "vr_record_runtime_cohort_check_v1",
+  "passed": true,
+  "selected_runs": 27,
+  "pins_sha256": {
+    "configs/isaac61_s1_runtime.yaml": "5da72ca0cfba86241d8f834eb8ee9369c002236dba699f0f3a36b35fc8c0e171",
+    "configs/isaac61_s2_runtime.yaml": "8bf47ae99191b9f63317e5f5ff5aa557f533b6a1890df14d8c45e60b15a02977",
+    "configs/isaac61_vr_runtime.yaml": "309697428a2281972ca9780f579cf43377fd247e2e3c73d9886441e8c5f65643",
+    "tools/run_isaac_s1.py": "91d8092cd3eb1c9578d61af76c3792e80caf75061bb42bee205308431b4305ca",
+    "tools/isaac_s2_runtime.py": "ae6eb2d7c7cc89355ae97635286dec2bafe05b6eddb228869e8e8094a25d4105",
+    "tools/isaac_vr_recording.py": "e330bb1515210e93658e8f32fa09aefa2c3bbf26f60d71a6f9e53911d641e7cf",
+    "tools/isaac_vr_injected_recording.py": "c94e34ce293618608a5e0fe7851d1f06eea6dcda4037d38014c644c84164bcc5"
+  },
+  "runs": [
+    {
+      "run": "final-default-r1b",
+      "group": "R0",
+      "checked_controls": 3000,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 3300,
+      "launch_sha256": "8aed489494e94b0668bbf0c666095df5fd09ca20abe071fb2a37aee293f4862d"
+    },
+    {
+      "run": "final-default-r2",
+      "group": "R0",
+      "checked_controls": 3000,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 3300,
+      "launch_sha256": "b65f9f12f3a1c50127e1bbbfc82df1d2a9a392724af69b54445090557ce23f8a"
+    },
+    {
+      "run": "final-default-r3",
+      "group": "R0",
+      "checked_controls": 3000,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 3300,
+      "launch_sha256": "c68f59f077a652eebee76cfae10ab3c159bc988f26b033a0d04b76d68d9f55bb"
+    },
+    {
+      "run": "baseline-r4-short",
+      "group": "R0-render-screen",
+      "checked_controls": 300,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "pinned source default, no runtime readback",
+      "committed_frames": 600,
+      "launch_sha256": "db13c9f84b8e53701fffe8de319e0cd1305f2304b8151261e7498d2ec717dcf7"
+    },
+    {
+      "run": "renderer-r0-image",
+      "group": "R0-render-screen",
+      "checked_controls": 300,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 600,
+      "launch_sha256": "687fbfbf456abb14999d623b6a40697e78c704d7dee6bd679f34bf47a1941bb9"
+    },
+    {
+      "run": "minimal-r2",
+      "group": "R1",
+      "checked_controls": 300,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "MinimalRendering",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "pinned source default, no runtime readback",
+      "committed_frames": 600,
+      "launch_sha256": "48644d32009b56ba6e263f5596477d1e369d01ae135a19a07c512852ac561fe9"
+    },
+    {
+      "run": "renderer-r1-image",
+      "group": "R1",
+      "checked_controls": 300,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "MinimalRendering",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 600,
+      "launch_sha256": "f84d7a40255f2902330c23d406736388b33a55bb348e6ea97c516e6f519071b8"
+    },
+    {
+      "run": "fov-none-r1",
+      "group": "XR-none",
+      "checked_controls": 300,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "none",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 600,
+      "launch_sha256": "fe5f7659af313eb0b76609445010f51d6eb49e1eedfdb4ccdec2caf471ad354a"
+    },
+    {
+      "run": "fov-none-r2",
+      "group": "XR-none",
+      "checked_controls": 300,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "none",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 600,
+      "launch_sha256": "de44bbd2eeec08be1edca869fef4ad6a39a68a5ce27ce626a1532227bca1ea2d"
+    },
+    {
+      "run": "xr-scale05-r1",
+      "group": "XR-05",
+      "checked_controls": 300,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.5,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [1024 x 896] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 600,
+      "launch_sha256": "945f1520b214be546892af3ef6748abc00b9a8f24182bc9fe3bdc23e909311f7"
+    },
+    {
+      "run": "xr-scale05-r2",
+      "group": "XR-05",
+      "checked_controls": 300,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.5,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [1024 x 896] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 600,
+      "launch_sha256": "0511d124612e92a5f51fa4a08ad39cd658a6a18e6089aa6543a373a7f0bc410d"
+    },
+    {
+      "run": "xr-scale06-r1",
+      "group": "XR-06",
+      "checked_controls": 300,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.6,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [1228 x 1075] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 600,
+      "launch_sha256": "b6be440fc759de723797c0e67190fbbc9f07f64ff01a600de20721554fcbbc9d"
+    },
+    {
+      "run": "xr-scale06-r2",
+      "group": "XR-06",
+      "checked_controls": 300,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.6,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [1228 x 1075] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 600,
+      "launch_sha256": "ea5e3700aaed978cd4f6ad9c25ec81fee6f1c7f639717dd00ed171b01ac69616"
+    },
+    {
+      "run": "long-h0-r1",
+      "group": "H0",
+      "checked_controls": 3000,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 3300,
+      "launch_sha256": "f793d63bb1d6dc4742d828000a04216c855512f9ea9c6de15da2caebafaed479"
+    },
+    {
+      "run": "long-h0-r2",
+      "group": "H0",
+      "checked_controls": 3000,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 3300,
+      "launch_sha256": "eb99964a783b09fa7bdea42c75fa85c6abf12851c1106b5f09d942dcb51c100f"
+    },
+    {
+      "run": "long-h0-r3",
+      "group": "H0",
+      "checked_controls": 3000,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 3300,
+      "launch_sha256": "2fabb668453b58c5eabd2ddd30db808658fc1c345749b45cd2621dbfe1e66bc9"
+    },
+    {
+      "run": "long-h128-r1",
+      "group": "H128",
+      "checked_controls": 3000,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 128,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 3300,
+      "launch_sha256": "a58f562a8f8e2524e567b4cf85329cc9d60dfdac5cb57d828ca8f5bfca25043e"
+    },
+    {
+      "run": "long-h128-r2",
+      "group": "H128",
+      "checked_controls": 3000,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 128,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 3300,
+      "launch_sha256": "bf8beec1e4f0053ae7d7f374f7c11bb89e1f72fc75c4c5088f373ca278d22aeb"
+    },
+    {
+      "run": "long-h128-r3",
+      "group": "H128",
+      "checked_controls": 3000,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 128,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 3300,
+      "launch_sha256": "d0072256d87d7578f725aa9d9ba7224993ec226117a04ba4dfc9968d0ddea1da"
+    },
+    {
+      "run": "state-batch-r1",
+      "group": "S1",
+      "checked_controls": 300,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 600,
+      "launch_sha256": "c1812a9200d1b56413bd3c65aecc375292280f062ed380f66e6d3ae07084b55b"
+    },
+    {
+      "run": "state-batch-r2",
+      "group": "S1",
+      "checked_controls": 300,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 600,
+      "launch_sha256": "a94ab80e0bb28d147e8b9dde18bedaaa0103d5999c508ac391d25072eb92523b"
+    },
+    {
+      "run": "final-pcore-r1",
+      "group": "CPU-P",
+      "checked_controls": 3000,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 3300,
+      "launch_sha256": "136b46b8b99d89e802c3efc48e4673146ba49374a753a3a4efe60a04fdb650a6"
+    },
+    {
+      "run": "final-pcore-r2",
+      "group": "CPU-P",
+      "checked_controls": 3000,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 3300,
+      "launch_sha256": "0c257f772002944bb47156b63c8ec831482e5e9f01d29017b7f0175cd875b40d"
+    },
+    {
+      "run": "final-pcore-r3",
+      "group": "CPU-P",
+      "checked_controls": 3000,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 64,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 3300,
+      "launch_sha256": "a329db6638d1f645a9a8532005a68b382510c1eea2bf7125429822cb99227949"
+    },
+    {
+      "run": "final-combined-r1",
+      "group": "OPT-COMBINED",
+      "checked_controls": 3000,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 128,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 3300,
+      "launch_sha256": "096c34ac1e3413f294ed0eba8e80843bc7ad23225f79588e71a580252c87a486"
+    },
+    {
+      "run": "final-combined-r2",
+      "group": "OPT-COMBINED",
+      "checked_controls": 3000,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 128,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 3300,
+      "launch_sha256": "d9743a89354d5c6d02aad0c70084fe7c27a82463dfc1c70c6c91ce63a5a37b15"
+    },
+    {
+      "run": "final-combined-r3",
+      "group": "OPT-COMBINED",
+      "checked_controls": 3000,
+      "native_physics_per_control": 4,
+      "kit_pumps_per_control": 1,
+      "render_flags": "F,F,F,T",
+      "dataset_render_products_enabled": 0,
+      "preview_panels_ever_bound_in_window": false,
+      "renderer_effective": "RealTimePathTracing",
+      "xr_readback": {
+        "profile/persistent/renderQuality": "performance",
+        "profile/persistent/render/resolutionMultiplier": 0.4,
+        "profile/persistent/foveation/mode": "warped",
+        "status/renderResolution": "2 x [819 x 716] "
+      },
+      "flush_every_effective": 128,
+      "flush_evidence": "runtime readback",
+      "committed_frames": 3300,
+      "launch_sha256": "a04e235c3d3e2fbb7ccf8d10864ce0e1cbaa6d385bd47a51ef72a5c9aafd3f7d"
+    }
+  ]
+}
