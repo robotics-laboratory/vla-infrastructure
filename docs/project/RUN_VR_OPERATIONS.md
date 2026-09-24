@@ -16,8 +16,9 @@ The run report lists every
 directory in `recording_episodes`. These segments are independent episodes, not
 one continuous trajectory across the gap. The same session-level `performance.jsonl`
 and timing observer continue across every episode and gap; episode closure never
-closes or replaces that log. Rejected ticks keep the applied targets unchanged
-without rearming processor tracking. Clutch release and tracking recovery emit
+closes or replaces that log. Rejected clutch/tracking ticks still apply the safe
+processed command, including motion from the opposite valid arm, without rearming
+processor tracking or recording a row. Clutch release and tracking recovery emit
 their natural rebase before the next motion decision can be recorded. A future no-physics pause/resume may
 avoid segmentation, but it requires separate XR/physics validation.
 

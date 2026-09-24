@@ -93,7 +93,7 @@ def test_recording_gap_finalizes_episode_before_unrecorded_native_advance():
     assert '"left_transition": command.left.transition' in source
 
 
-def test_rejected_recording_tick_does_not_rearm_processor_or_apply_native_command():
+def test_record_admission_keeps_safe_solve_and_opposite_arm_motion():
     source = (ROOT / "tools/isaac_s2_runtime.py").read_text(encoding="utf-8")
     solution = source.index("solution = _solve_native_decision(")
     gated_apply = source.index("if solution is not None:", solution)
@@ -112,10 +112,14 @@ def test_rejected_recording_tick_does_not_rearm_processor_or_apply_native_comman
     class FakeIk:
         def __init__(self):
             self.calls = []
+            self.applied = []
 
         def solve(self, command, observation, xr, tick):
             self.calls.append((command, observation, xr, tick))
-            return object()
+            return NS(command=command, observation=observation, xr=xr, tick=tick)
+
+        def apply(self, solution):
+            self.applied.append(solution)
 
     ik = FakeIk()
     processor = BimanualS2TeleopProcessor()
@@ -134,23 +138,33 @@ def test_rejected_recording_tick_does_not_rearm_processor_or_apply_native_comman
         (tracked, tracked),  # motion resumes again
     )
     decisions = []
+    eligibility = []
+    control_tick_id = 0
     for left, right in sequence:
         command = processor.advance(left, right)
         generation = processor.generation
         eligible = recordable_teleop_command(command)
-        decisions.append(
-            solve(
-                ik,
-                command,
-                object(),
-                object(),
-                len(decisions) + 1,
-                recording_requested=True,
-                eligible=eligible,
-            )
+        eligibility.append(eligible)
+        if eligible:
+            control_tick_id += 1
+        observation, xr = object(), object()
+        decision = solve(
+            ik,
+            command,
+            observation,
+            xr,
+            control_tick_id,
+            recording_requested=True,
+            eligible=eligible,
         )
+        decisions.append(decision)
+        ik.apply(decision)
         assert processor.generation == generation
-    assert [decision is not None for decision in decisions] == [
+        assert decision.command is command
+        assert (decision.observation, decision.xr, decision.tick) == (
+            (observation, xr, control_tick_id) if eligible else (None, None, None)
+        )
+    assert eligibility == [
         False,
         True,
         False,
@@ -161,7 +175,45 @@ def test_rejected_recording_tick_does_not_rearm_processor_or_apply_native_comman
         False,
         True,
     ]
-    assert len(ik.calls) == 3
+    assert len(ik.calls) == len(ik.applied) == len(sequence)
+    assert control_tick_id == 3
+    for decision in decisions[1:]:
+        assert np.any(decision.command.right.delta_pose)
+    for index in (0, 2, 3, 4, 6, 7):
+        np.testing.assert_array_equal(decisions[index].command.left.delta_pose, np.zeros(6))
+
+
+def test_run_and_rejected_record_have_same_safe_decision():
+    source = (ROOT / "tools/isaac_s2_runtime.py").read_text(encoding="utf-8")
+    node = next(
+        node
+        for node in ast.parse(source).body
+        if isinstance(node, ast.FunctionDef) and node.name == "_solve_native_decision"
+    )
+    namespace = {}
+    exec(compile(ast.Module([node], []), "recording_solve_helper", "exec"), namespace)
+    solve = namespace["_solve_native_decision"]
+
+    class FakeIk:
+        def __init__(self):
+            self.calls = []
+
+        def solve(self, command, observation, xr, tick):
+            self.calls.append((command, observation, xr, tick))
+            return self.calls[-1]
+
+    processor = BimanualS2TeleopProcessor()
+    tracked = ControllerDeltaSample(np.ones(3), np.ones(3), True, True, 0.0, 0.0, 0.0)
+    clutched = ControllerDeltaSample(np.ones(3), np.ones(3), True, True, 1.0, 0.0, 0.0)
+    processor.advance(tracked, tracked)
+    command = processor.advance(clutched, tracked)
+    assert not recordable_teleop_command(command)
+    ik = FakeIk()
+    run = solve(ik, command, object(), object(), 7, recording_requested=False, eligible=False)
+    record = solve(ik, command, object(), object(), 7, recording_requested=True, eligible=False)
+    assert run == record == (command, None, None, None)
+    assert len(ik.calls) == 2
+    assert np.any(run[0].right.delta_pose)
 
 
 def test_no_client_lifecycle_smoke_captures_and_finalizes_without_teleop(tmp_path, monkeypatch):

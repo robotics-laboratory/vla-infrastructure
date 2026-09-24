@@ -57,13 +57,7 @@ CONFIG_PATH = ROOT / "configs/isaac_s2_runtime.yaml"
 def _solve_native_decision(
     ik, command, observation, xr, control_tick_id, *, recording_requested: bool, eligible: bool
 ):
-    """Leave already-applied native targets untouched on rejected RECORD ticks.
-
-    Do not rearm the processor here: a clutch release or tracking recovery must
-    be allowed to progress to its next valid motion frame.
-    """
-    if recording_requested and not eligible:
-        return None
+    """Solve safe teleoperation; bind causal identities only for eligible ticks."""
     return ik.solve(
         command,
         observation if eligible else None,
