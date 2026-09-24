@@ -28,6 +28,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from types import MappingProxyType
 from typing import Any
 from uuid import uuid4
 
@@ -617,7 +618,8 @@ def _validated_image_join(
     report_path: Path,
     bundle_manifest: Mapping[str, Any],
     arrays: Mapping[str, np.ndarray],
-) -> tuple[dict[tuple[str, str, str], dict[str, Any]], dict[str, Any]]:
+) -> tuple[Mapping[tuple[str, str, str], Mapping[str, Any]], dict[str, Any]]:
+    """Validate all image identities and file digests without decoding pixels."""
     report_path = report_path.expanduser().resolve()
     report_sha256 = _sha256_stable(report_path)
     report = _load_json_object(report_path, label="replay report")
@@ -654,7 +656,7 @@ def _validated_image_join(
     if camera_paths != {role: expected_cameras[role]["prim_path"] for role in CAMERA_ROLES}:
         raise MaterializationError("replay report camera paths differ from recorded provenance")
 
-    joined: dict[tuple[str, str, str], dict[str, Any]] = {}
+    joined: dict[tuple[str, str, str], Mapping[str, Any]] = {}
     per_role_hashes = {role: set() for role in CAMERA_ROLES}
     for index, raw in enumerate(renders):
         if not isinstance(raw, dict):
@@ -718,8 +720,25 @@ def _validated_image_join(
         ):
             raise MaterializationError(f"replay render {index} has no materialization revision")
         image_path = Path(raw.get("path", "")).expanduser().resolve()
-        image = _load_rgb(image_path, raw["rgb_sha256"])
-        joined[key] = {**raw, "image": image, "path": str(image_path)}
+        if not image_path.is_file():
+            raise MaterializationError(f"materialized RGB file is missing: {image_path}")
+        actual_sha256 = _sha256_stable(image_path)
+        if actual_sha256 != raw["rgb_sha256"]:
+            raise MaterializationError(
+                f"materialized RGB digest mismatch for {image_path}: "
+                f"expected {raw['rgb_sha256']}, got {actual_sha256}"
+            )
+        joined[key] = MappingProxyType(
+            {
+                **{field: raw[field] for field in IMAGE_IDENTITY_FIELDS},
+                "frame": raw.get("frame"),
+                "role": raw["role"],
+                "path": str(image_path),
+                "dtype": raw["dtype"],
+                "shape": tuple(raw["shape"]),
+                "sha256": raw["sha256"],
+            }
+        )
         per_role_hashes[role].add(raw["rgb_sha256"])
 
     expected_keys: set[tuple[str, str, str]] = set()
@@ -768,7 +787,33 @@ def _validated_image_join(
     if _sha256_stable(report_path) != report_sha256:
         raise MaterializationError("replay report changed while its images were verified")
     report["_verified_file_sha256"] = report_sha256
-    return joined, report
+    return MappingProxyType(joined), report
+
+
+def _add_projection_frame(
+    dataset: Any,
+    frame: int,
+    arrays: Mapping[str, np.ndarray],
+    images: Mapping[tuple[str, str, str], Mapping[str, Any]],
+    task: str,
+) -> None:
+    """Decode only this frame's three RGB images, then release caller references."""
+    obs_id = str(arrays["obs_id"][frame])
+    snapshot_sha256 = str(arrays["scene_state_snapshot_sha256"][frame])
+    sample: dict[str, Any] = {
+        "observation.state": np.array(arrays["observation_state"][frame], copy=True),
+        "action": np.array(arrays["action"][frame], copy=True),
+        "task": task,
+    }
+    for role in CAMERA_ROLES:
+        entry = images[(obs_id, snapshot_sha256, role)]
+        sample[f"observation.images.{role}"] = _load_rgb(
+            Path(entry["path"]), entry["rgb_sha256"]
+        )
+    dataset.add_frame(sample)
+    # With the pinned synchronous LeRobot writer, add_frame has persisted each
+    # image to a temporary PNG and retains only its path in episode_buffer.
+    del sample
 
 
 def canonical_lerobot_features() -> dict[str, dict[str, Any]]:
@@ -960,18 +1005,7 @@ def materialize_projection(
         )
         temporary.chmod(0o700)
         for frame in range(frames):
-            obs_id = str(arrays["obs_id"][frame])
-            snapshot_sha256 = str(arrays["scene_state_snapshot_sha256"][frame])
-            sample: dict[str, Any] = {
-                "observation.state": np.array(arrays["observation_state"][frame], copy=True),
-                "action": np.array(arrays["action"][frame], copy=True),
-                "task": task,
-            }
-            for role in CAMERA_ROLES:
-                sample[f"observation.images.{role}"] = np.array(
-                    images[(obs_id, snapshot_sha256, role)]["image"], copy=True
-                )
-            dataset.add_frame(sample)
+            _add_projection_frame(dataset, frame, arrays, images, task)
         dataset.save_episode(parallel_encoding=False)
         dataset.finalize()
         qa = _qa_lerobot_dataset(
@@ -1070,6 +1104,8 @@ def materialize_projection(
         manifest["manifest_sha256"] = _canonical_sha256(manifest)
         _write_json(temporary / MATERIALIZATION_MANIFEST, manifest)
         verify_materialization_manifest(temporary)
+        if _sha256_stable(report_path) != report_sha256:
+            raise MaterializationError("replay report changed during materialization")
         _publish_directory(temporary, target)
     except BaseException:
         shutil.rmtree(temporary, ignore_errors=True)
