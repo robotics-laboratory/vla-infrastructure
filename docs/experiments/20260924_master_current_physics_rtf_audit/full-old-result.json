@@ -1,0 +1,102 @@
+{
+  "cameras": {
+    "left_wrist": "640x480 uint8 RGB HWC",
+    "right_wrist": "640x480 uint8 RGB HWC",
+    "strictly_advanced_bimanual_frames": 330,
+    "valid_bimanual_frames": 330
+  },
+  "environment": {
+    "cloudxr": "6.2.1",
+    "cloudxr_profile": "standalone",
+    "isaac_lab_commit": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d",
+    "isaac_lab_package": "17.0.2",
+    "isaac_lab_release": "release/3.0.0",
+    "isaac_sim": "6.1.0.0",
+    "isaaclab_teleop": "0.9.0",
+    "isaacteleop": "1.4.98rc1",
+    "kit_xr_bridge": false,
+    "python": "3.12.13"
+  },
+  "execution": {
+    "control_hz": 11.579128418055767,
+    "control_steps": 330,
+    "physics_hz": 46.31651367222307,
+    "saturated_frames": 0,
+    "stopped_by_user": false,
+    "tracking_valid_frames": {
+      "left": 0,
+      "right": 0
+    },
+    "wall_seconds": 28.49955437798053
+  },
+  "gate": "S2",
+  "mode": "run",
+  "passed": true,
+  "physical_human_gate": "required_not_implied_by_runtime_smoke",
+  "process": {
+    "clean_shutdown": true,
+    "exit_code": 0,
+    "launcher": "/home/ebulochkin/vla_infrastructure/tools/launch_isaac_vr.py",
+    "stdout_log": null,
+    "stop_requested": false
+  },
+  "processor": {
+    "clutch": "independent squeeze > 0.5; release discards one delta",
+    "gripper": "independent analog trigger [0,1] maps linearly and monotonically from 0.1 m open to 0.0 m closed",
+    "revision": "piper_x_isaac_s2_bimanual_relative_v3",
+    "sensitivity": {
+      "center": {
+        "rotation_scale": 4.0,
+        "translation_scale": 4.0
+      },
+      "control_mode": "slider",
+      "input_control": "thumbstick_x",
+      "input_range": [
+        -1.0,
+        1.0
+      ],
+      "mapping": "Piecewise linear and clamped; left is slower, center keeps the previous normal speed, right is faster.",
+      "maximum": {
+        "rotation_scale": 6.0,
+        "translation_scale": 6.0
+      },
+      "minimum": {
+        "rotation_scale": 2.0,
+        "translation_scale": 2.0
+      },
+      "quest_control": "each controller's own horizontal thumbstick axis",
+      "scope": "independent per arm"
+    },
+    "source_timestamp_threshold": null,
+    "tracking_recovery": "unusable pose invalidates upstream SE(3) baseline and smoothing; first recovered frame emits zero delta"
+  },
+  "runtime_path": "Quest -> CloudXR/isaacteleop -> isaaclab_teleop -> one ControllersSource -> S2 processor -> DifferentialIKController -> accepted S1 native actuation",
+  "session": {
+    "action_frames": 330,
+    "demo_backdrop_toggle_smoke_met": true,
+    "demo_display_toggle_smoke_met": true,
+    "demo_recenter_smoke_met": true,
+    "require_physical_tracking": false,
+    "require_session": false,
+    "single_controller_source": true,
+    "started_ever": true
+  },
+  "status": "runtime_smoke_passed_physical_human_gate_required",
+  "xr_presentation": {
+    "anchor_pos_m": [
+      -0.05,
+      0.0,
+      -0.1
+    ],
+    "anchor_rot_xyzw": [
+      0.0,
+      0.0,
+      -0.7071067811865475,
+      0.7071067811865476
+    ],
+    "authoritative_scene_geometry_changed": false,
+    "controller_transform_source": "XRCore.get_physical_to_virtual_world_transform",
+    "near_plane_m": 0.1,
+    "selected_vr_scene_geometry_applied": true
+  }
+}

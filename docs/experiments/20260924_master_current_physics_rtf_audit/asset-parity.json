@@ -1,0 +1,41 @@
+{
+  "composed_urdf_sha256": "103af50b99b17e4ff962b7f563459672ad89556661de79cbd30c1792fea92a6f",
+  "conversion_root_current": "/tmp/vr-physics-rtf-20260924/current/assets/converted/103af50b99b17e4ff962b7f563459672ad89556661de79cbd30c1792fea92a6f",
+  "conversion_root_old": "/tmp/vr-physics-rtf-20260924/old/assets/converted/103af50b99b17e4ff962b7f563459672ad89556661de79cbd30c1792fea92a6f",
+  "converter_asset_hash": {
+    "current": "b069be76b26513d5686ad5515aa37d47",
+    "old": "b069be76b26513d5686ad5515aa37d47"
+  },
+  "materialized_urdf_sha256": {
+    "current": "103af50b99b17e4ff962b7f563459672ad89556661de79cbd30c1792fea92a6f",
+    "old": "103af50b99b17e4ff962b7f563459672ad89556661de79cbd30c1792fea92a6f"
+  },
+  "missing_or_different_payloads": [
+    "piper_x_gate_c/payloads/base.usda",
+    "piper_x_gate_c/payloads/geometries.usd"
+  ],
+  "usd_payload_sha256": {
+    "current": {
+      "piper_x_gate_c/payloads/Physics/mujoco.usda": "c4bfa84a0d47269aeb7578bc89f69761b4a463fb0bad7e6939c5f65d6217ac94",
+      "piper_x_gate_c/payloads/Physics/physics.usda": "e9eb3fbbe7077f011ea922c35511894df495f354da544b146c05b073c57faad2",
+      "piper_x_gate_c/payloads/Physics/physx.usda": "ce0612b71062609e87edb26159eec5aa0c881594699cb07b4ac895453869be15",
+      "piper_x_gate_c/payloads/base.usda": "41cb6a4261205d0aff8a10740ad0c482b27a97de3d61d18bc7da3ada1d727a66",
+      "piper_x_gate_c/payloads/geometries.usd": "9e9d4f1a39f7e0395852162066aa13cea0503dc08e2a2323f6a42856aff6c910",
+      "piper_x_gate_c/payloads/instances.usda": "c61a6d7fb2af610b754272cbfbd19e15bcd446141561e406a822a537a828c167",
+      "piper_x_gate_c/payloads/materials.usda": "cab16df6992d331a8c30f5a6d96e64b936d2dd3c8b175952e116d1d5eb59214f",
+      "piper_x_gate_c/payloads/robot.usda": "f2282c9417d51b4139f82d27c24cf99e5edd1b7a5fe8ecfc3ec4d19ce1e109f0",
+      "piper_x_gate_c/piper_x_gate_c.usda": "53917025e4c6c8f4e15de39c000b846a7acde9debe3ce32c293cca1d0b851937"
+    },
+    "old": {
+      "piper_x_gate_c/payloads/Physics/mujoco.usda": "c4bfa84a0d47269aeb7578bc89f69761b4a463fb0bad7e6939c5f65d6217ac94",
+      "piper_x_gate_c/payloads/Physics/physics.usda": "e9eb3fbbe7077f011ea922c35511894df495f354da544b146c05b073c57faad2",
+      "piper_x_gate_c/payloads/Physics/physx.usda": "ce0612b71062609e87edb26159eec5aa0c881594699cb07b4ac895453869be15",
+      "piper_x_gate_c/payloads/base.usda": "2764dba5aac891680c2c2af6640ca7380597f9d36ebbf1bfed95e8076e000082",
+      "piper_x_gate_c/payloads/geometries.usd": "14c099be59c3995a3b065ec21d13650e2da108f4fc9b0549cf5b1c649eab2b35",
+      "piper_x_gate_c/payloads/instances.usda": "c61a6d7fb2af610b754272cbfbd19e15bcd446141561e406a822a537a828c167",
+      "piper_x_gate_c/payloads/materials.usda": "cab16df6992d331a8c30f5a6d96e64b936d2dd3c8b175952e116d1d5eb59214f",
+      "piper_x_gate_c/payloads/robot.usda": "f2282c9417d51b4139f82d27c24cf99e5edd1b7a5fe8ecfc3ec4d19ce1e109f0",
+      "piper_x_gate_c/piper_x_gate_c.usda": "53917025e4c6c8f4e15de39c000b846a7acde9debe3ce32c293cca1d0b851937"
+    }
+  }
+}

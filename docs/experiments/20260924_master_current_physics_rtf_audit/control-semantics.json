@@ -1,0 +1,114 @@
+{
+  "current": {
+    "30": {
+      "first_arm_delta_m": 0.006666666666666667,
+      "gripper_target_m_each_tick": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "input_pose_change_m": 0.1,
+      "input_samples_per_second": 30,
+      "sum_arm_delta_m": 0.2
+    },
+    "8": {
+      "first_arm_delta_m": 0.025,
+      "gripper_target_m_each_tick": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "input_pose_change_m": 0.1,
+      "input_samples_per_second": 8,
+      "sum_arm_delta_m": 0.2
+    }
+  },
+  "old": {
+    "30": {
+      "first_arm_delta_m": 0.006666666666666667,
+      "gripper_target_m_each_tick": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "input_pose_change_m": 0.1,
+      "input_samples_per_second": 30,
+      "sum_arm_delta_m": 0.2
+    },
+    "8": {
+      "first_arm_delta_m": 0.025,
+      "gripper_target_m_each_tick": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "input_pose_change_m": 0.1,
+      "input_samples_per_second": 8,
+      "sum_arm_delta_m": 0.2
+    }
+  }
+}

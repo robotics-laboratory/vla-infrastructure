@@ -1,0 +1,87 @@
+{
+  "assay": {
+    "client": "none",
+    "current_record_render_schedule": "FFFT",
+    "current_state_root": "/tmp/vr-physics-rtf-20260924/current",
+    "native_sample_rate_hz": 120,
+    "old_render_schedule": "TTTT",
+    "old_state_root": "/tmp/vr-physics-rtf-20260924/old",
+    "rate_measured_controls": 300,
+    "rate_warmup_controls": 30,
+    "repetitions_per_trajectory": 3
+  },
+  "asset_source_sha256": {
+    "/data/vla-infrastructure/assets/agx_arm_urdf/piper_x/urdf/piper_x_description.urdf": "34126caac7d5b37bc2409f337ac246afbe0bb8cd47fc9f16df5038f19bd21e3a",
+    "/data/vla-infrastructure/assets/agx_arm_urdf/piper_x/urdf/piper_x_with_gripper_description.xacro": "0ee3f52f9acf3060a7f3e439c6e5e46b6a53d4fa509dd495045548be6b7f90cd"
+  },
+  "bundle_sha256": {
+    "REPORT.md": "7191fd0ab7a7d387288a6228987e244043ecd2a905bafcb311673638df1243af",
+    "asset-parity.json": "0738c4e1a65ac6ebda200df9fadbefb35d475a694121d941675383d8345a9673",
+    "bounce-sim.svg": "3605c0a9abdeae741dc203498050340e98d9babe3b7bb4aa9e34ae78d4b14489",
+    "bounce-wall.svg": "d86c5f1fc0325068a947112c24a72063063f6ab34deb36d440f106d358b9193b",
+    "control-semantics.json": "dfdef3d806fcf699d3798597f962832a4631d9e662884e1a79c466ae13151106",
+    "cube-vz-sim.svg": "e3d57e5583bbe89e31d0e978582cc0bde554a199e83bce7d289b3d315a345851",
+    "cube-z-sim.svg": "32b9df80d64be22c7b56e67418565a095aa1e4630bf3925c1af6cb2a6dec100f",
+    "cube-z-wall.svg": "318982e5991455e7a7a3be74939df5f8478c491bec4df8f07b9ef2f1637511ba",
+    "full-loop-rates.json": "5530ba66253df8117a4dc9ce24cb2c4347162b220839aeb73fcd0249d83850d0",
+    "gripper-sim.svg": "8336ae0dcdbf12a65942ba3970e54a784ca3be051d1e96081754611331a55e4f",
+    "gripper-wall.svg": "5c9da11289dbf527880be31a202070b97accdb897c5d4da47ce2675bcc64826f",
+    "rate-comparison.svg": "7515c364f03757e7efda349d179c058b9af577798281a4f9308e7a6cfa6ad04b",
+    "results.json": "69d6c459d31b235634d34944b7a072db735f60871d177a98ad8eaf98f12138c2",
+    "runtime-current.json": "66eedfe645ce4f6a59158f6ebfca45b536c5690e0fb97b1a41a6164e6d416a51",
+    "runtime-diff.json": "c1e5b89a69b6302bca040d4db6a148e345ee6f06e5de13056d5695332f89aac6",
+    "runtime-old.json": "cc6ddacf9af279406826d9421608b2d533ecf8807f931067d32d039bce4941a8",
+    "tcp-sim.svg": "f02f55e13ce64b678113b776bfdc77334cef9ac3a7e65d50e7869a46d56a99cb"
+  },
+  "checkpoints": {
+    "current": {
+      "revision": "a36bc5cc302eefef19fe4f94063a3f6179aaf1aa",
+      "root": "/home/ebulochkin/vla_infrastructure/.worktrees/vr-record-runtime-optimization-audit"
+    },
+    "old": {
+      "revision": "76b93ee6562ac1da2e21551d1aff5454cfd7a859",
+      "root": "/home/ebulochkin/vla_infrastructure"
+    }
+  },
+  "physical_human_evidence": false,
+  "remote": "git@github.com:robotics-laboratory/vla-infrastructure.git",
+  "remote_verification": "git ls-remote origin refs/heads/master refs/heads/experiment/vr-record-runtime-optimization-audit matched both expected SHAs before worktree creation; exact command time not retained",
+  "retained_native_samples": {
+    "current": {
+      "compressed_bytes": 570605,
+      "path": "/data/ebulochkin/vla_physics_rtf_20260924/samples-current.json.gz",
+      "sha256": "d076027b640621ae1583a90949e04f92aeb9dd525ee5f82c9d1659ba74dd86db",
+      "uncompressed_bytes": 3124183
+    },
+    "old": {
+      "compressed_bytes": 572064,
+      "path": "/data/ebulochkin/vla_physics_rtf_20260924/samples-old.json.gz",
+      "sha256": "dab5b1fe5b304b84663194077f8e45b48fe7b071aebcfd9eea4f614a9085514a",
+      "uncompressed_bytes": 3123986
+    },
+    "old-attempt1": {
+      "compressed_bytes": 609285,
+      "path": "/data/ebulochkin/vla_physics_rtf_20260924/samples-old-attempt1.json.gz",
+      "sha256": "ccbecca11b77dd74f220a63bca80bd781cc3bc9252e6e786aade43f767a58393",
+      "uncompressed_bytes": 3151598
+    }
+  },
+  "source_sha256": {
+    "current": {
+      "configs/isaac61_s2_runtime.yaml": "8bf47ae99191b9f63317e5f5ff5aa557f533b6a1890df14d8c45e60b15a02977",
+      "configs/isaac61_vr_runtime.yaml": "309697428a2281972ca9780f579cf43377fd247e2e3c73d9886441e8c5f65643",
+      "tools/isaac_s2_processor.py": "9e0b388717ed632d110c06e7be7ac6773936ed28c17d18a6a8d13194960e4054",
+      "tools/isaac_s2_upstream.py": "3db9641735a48350e39b8b9d4a9f4188bb5914c4f899b5c103bc383c71d1fe81",
+      "tools/isaac_vr_runtime.py": "67c35f5f51f0eb9b0a2c9189501c3e34916489f61d13b9ed947b85ccf1e25fa6",
+      "tools/run_isaac_s1.py": "91d8092cd3eb1c9578d61af76c3792e80caf75061bb42bee205308431b4305ca"
+    },
+    "old": {
+      "configs/isaac61_s2_runtime.yaml": "1eb6016096353c902247b3c8ca51f6c7cc9cd5e73b4c1dd7a8d50ab664e55b93",
+      "configs/isaac61_vr_runtime.yaml": "148baa3da2fdb37d56ef6fb3e310ec3497df4ed3736bf7e8125358c5cea4ec41",
+      "tools/isaac_s2_processor.py": "b75f86884e0b2a80886425229aae901ba3aad5fa6d4de2ec86bff8cd41fc053c",
+      "tools/isaac_s2_upstream.py": "fd194502bbc53ec5f209568824a0665438944d6dc59bf27c0b703c30997efbce",
+      "tools/isaac_vr_runtime.py": "209a6c95417d4893be2ab4f5d46594da60b17bce56d037af5df53013d60f68b4",
+      "tools/run_isaac_s1.py": "f2ad1420304838d3639799b5f3a82104800a8591f8b7b3b5ce299b209bf81cc7"
+    }
+  }
+}

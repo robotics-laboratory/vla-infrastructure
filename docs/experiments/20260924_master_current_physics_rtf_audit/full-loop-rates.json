@@ -1,0 +1,51 @@
+{
+  "comparison_limit": "OLD full run held without tracking; CURRENT used deterministic injected actions and Episode Recorder. The native assay is the matched-command causal comparison.",
+  "current_full_no_client_record": {
+    "accepted_transactions": 330,
+    "committed_frames": 330,
+    "control_hz": 41.857331491492616,
+    "controls": 330,
+    "measured_controls": 300,
+    "measured_wall_seconds": 7.167203195,
+    "passed": true,
+    "physics_hz": 167.42932596597046,
+    "retained_files": {
+      "benchmark_jsonl": {
+        "bytes": 247597,
+        "path": "/data/ebulochkin/vla_physics_rtf_20260924/full-current-recording-benchmark.jsonl",
+        "sha256": "c7487f07bb0a426e901f4d9e001d388d7fb474d7cb7822a36fdbd0521d93dcd4"
+      },
+      "launch_log": {
+        "bytes": 139484,
+        "path": "/data/ebulochkin/vla_physics_rtf_20260924/full-current-full-current.log",
+        "sha256": "06ec635278db220b06a6a0f4618f7e4ff11474fee70084ca3f40249b61d7e6ae"
+      },
+      "recording_hdf5": {
+        "bytes": 8016912,
+        "path": "/data/ebulochkin/vla_physics_rtf_20260924/full-current-session.hdf5",
+        "sha256": "e15bbf6c2fe708f7b7287641c8c26b517d38b237e1f52bb2929b75f37d0407a3"
+      },
+      "result_json": {
+        "bytes": 150307,
+        "path": "/data/ebulochkin/vla_physics_rtf_20260924/full-current-result.json",
+        "sha256": "ed631aa874ca682028ecf8a28d08d8a00f423597218c49c36e2b5a8db505edf2"
+      }
+    },
+    "rtf": 1.3952443830497538,
+    "teleop_initialized": false,
+    "warmup_controls": 30,
+    "xr_initialized": false
+  },
+  "old_full_no_client_run": {
+    "control_hz": 11.579128418055767,
+    "controls": 330,
+    "physics_hz": 46.31651367222307,
+    "result_path": "/home/ebulochkin/vla_infrastructure/.worktrees/vr-master-current-physics-rtf-audit/docs/experiments/20260924_master_current_physics_rtf_audit/full-old-result.json",
+    "rtf": 0.38597094726852554,
+    "tracking_valid_frames": {
+      "left": 0,
+      "right": 0
+    },
+    "wall_seconds": 28.49955437798053
+  }
+}

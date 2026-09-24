@@ -1,0 +1,12 @@
+{
+  "difference_count": 1,
+  "differences": [
+    {
+      "added": [
+        "NewtonSceneAPI"
+      ],
+      "path": "/physics_scenes/0/api_schemas",
+      "removed": []
+    }
+  ]
+}

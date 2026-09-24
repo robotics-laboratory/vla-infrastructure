@@ -1,0 +1,3121 @@
+{
+  "physics_dt_s": 0.008333333333333333,
+  "physics_materials": [
+    {
+      "api_schemas": [
+        "PhysicsMaterialAPI"
+      ],
+      "attributes": {
+        "physics:density": 0.0,
+        "physics:dynamicFriction": 0.5,
+        "physics:restitution": 0.0,
+        "physics:staticFriction": 0.5
+      },
+      "path": "/physicsScene/defaultMaterial",
+      "relationships": {},
+      "type": "Material"
+    },
+    {
+      "api_schemas": [
+        "PhysicsMaterialAPI"
+      ],
+      "attributes": {
+        "physics:density": 0.0,
+        "physics:dynamicFriction": 0.5,
+        "physics:restitution": 0.0,
+        "physics:staticFriction": 0.5
+      },
+      "path": "/World/Ground/physicsMaterial",
+      "relationships": {},
+      "type": "Material"
+    },
+    {
+      "api_schemas": [
+        "PhysicsMaterialAPI"
+      ],
+      "attributes": {
+        "physics:density": 0.0,
+        "physics:dynamicFriction": 0.6000000238418579,
+        "physics:restitution": 0.0,
+        "physics:staticFriction": 0.800000011920929
+      },
+      "path": "/World/RobosynDemo/Table/geometry/material",
+      "relationships": {},
+      "type": "Material"
+    },
+    {
+      "api_schemas": [
+        "PhysicsMaterialAPI"
+      ],
+      "attributes": {
+        "physics:density": 0.0,
+        "physics:dynamicFriction": 0.6000000238418579,
+        "physics:restitution": 0.0,
+        "physics:staticFriction": 0.800000011920929
+      },
+      "path": "/World/RobosynDemo/LeftCube/geometry/material",
+      "relationships": {},
+      "type": "Material"
+    },
+    {
+      "api_schemas": [
+        "PhysicsMaterialAPI"
+      ],
+      "attributes": {
+        "physics:density": 0.0,
+        "physics:dynamicFriction": 0.6000000238418579,
+        "physics:restitution": 0.0,
+        "physics:staticFriction": 0.800000011920929
+      },
+      "path": "/World/RobosynDemo/RightCube/geometry/material",
+      "relationships": {},
+      "type": "Material"
+    }
+  ],
+  "physics_prims": {
+    "/World/LeftPiper/Geometry/world/base_link": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxArticulationAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsArticulationRootAPI",
+        "NewtonArticulationRootAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          -0.004736411850899458,
+          2.568291347415652e-05,
+          0.04145151749253273
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.0008793938322924078,
+          0.002691171830520034,
+          0.002826124429702759
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 1.0199999809265137,
+        "physics:principalAxes": "(0.525074, -0.52202547, -0.47658396, -0.47397724)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxArticulation:articulationEnabled": true,
+        "physxArticulation:enabledSelfCollisions": true,
+        "physxArticulation:sleepThreshold": 4.999999873689376e-05,
+        "physxArticulation:solverPositionIterationCount": 8,
+        "physxArticulation:solverVelocityIterationCount": 2,
+        "physxArticulation:stabilizationThreshold": 9.999999747378752e-06,
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/LeftPiper/Geometry/world/base_link",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/LeftPiper/Geometry/world/base_link/link1": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.0005300000193528831,
+          -0.00039000000106170774,
+          -0.0031500000040978193
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.00040835977415554225,
+          0.0004575198399834335,
+          0.0005012003821320832
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.7099999785423279,
+        "physics:principalAxes": "(0.5554258, 0.4363742, 0.4868595, 0.5138556)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/LeftPiper/Geometry/world/base_link/link1",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.21855999529361725,
+          -0.008589999750256538,
+          0.0022700000554323196
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.0010683302534744143,
+          0.06755820661783218,
+          0.0676841214299202
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 1.159999966621399,
+        "physics:principalAxes": "(0.66947156, 0.7427093, -0.009235616, -0.010269348)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.2013999968767166,
+          -0.00418000016361475,
+          -0.0014100000262260437
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.0003319538664072752,
+          0.03356991708278656,
+          0.033606357872486115
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.6700000166893005,
+        "physics:principalAxes": "(0.69093364, 0.72290385, -0.0014746689, -0.0043055112)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.05900000035762787,
+          -0.058309998363256454,
+          0.0020000000949949026
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.0001956847554538399,
+          0.0030750129371881485,
+          0.0031024122145026922
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.38999998569488525,
+        "physics:principalAxes": "(0.5462451, 0.7783446, -0.2524703, -0.17903847)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          4.999999873689376e-05,
+          -0.01281999982893467,
+          -0.004290000069886446
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.00017735651636030525,
+          0.0001942926610354334,
+          0.0002266008232254535
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.3499999940395355,
+        "physics:principalAxes": "(0.51187855, 0.48587972, 0.51292986, 0.48867598)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.0,
+          0.0,
+          -0.0035000001080334187
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.00031151436269283295,
+          0.001386229763738811,
+          0.0015211559366434813
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.007000000216066837,
+        "physics:principalAxes": "(-0.7063237, -0.0052933814, 0.70784944, -0.005294514)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.0011516909580677748,
+          0.0007824280182830989,
+          0.004798050969839096
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          9.935389243764803e-06,
+          1.050800256052753e-05,
+          1.965287265193183e-05
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.03999999910593033,
+        "physics:principalAxes": "(1, 0, 0, 0)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          -0.00018380716210231185,
+          8.050331234699115e-05,
+          0.032143667340278625
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.00039431819459423423,
+          0.0007144694682210684,
+          0.0009294423507526517
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.44999998807907104,
+        "physics:principalAxes": "(0.7119662, 0.00062179874, -0.7022132, 0.0004933253)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          1.0000000116860974e-07,
+          1.0000000116860974e-07,
+          1.0000000116860974e-07
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.0010000000474974513,
+        "physics:principalAxes": "(1, 0, 0, 0)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.0006512318504974246,
+          -0.04919298738241196,
+          0.009722587652504444
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          5.088598300062586e-06,
+          7.367825310211629e-05,
+          7.745314360363409e-05
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.02500000037252903,
+        "physics:principalAxes": "(-0.10930237, 0.70415515, 0.70100594, 0.028446993)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.0006512318504974246,
+          -0.04919298738241196,
+          0.009722587652504444
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          5.088598300062586e-06,
+          7.367825310211629e-05,
+          7.745314360363409e-05
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.02500000037252903,
+        "physics:principalAxes": "(-0.10930237, 0.70415515, 0.70100594, 0.028446993)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/LeftPiper/Physics/flange_joint": {
+      "api_schemas": [],
+      "attributes": {
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          -8.271806125530277e-25,
+          0.0,
+          1.3877787807814457e-17
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)"
+      },
+      "path": "/World/LeftPiper/Physics/flange_joint",
+      "relationships": {
+        "physics:body0": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6"
+        ],
+        "physics:body1": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link"
+        ]
+      },
+      "type": "PhysicsFixedJoint"
+    },
+    "/World/LeftPiper/Physics/gripper": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "PhysicsDriveAPI:linear",
+        "PhysicsJointStateAPI:linear"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          0.0,
+          -1.3877787807814457e-17
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": 0.0,
+        "physics:upperLimit": 0.10000000149011612
+      },
+      "path": "/World/LeftPiper/Physics/gripper",
+      "relationships": {
+        "physics:body0": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+        ],
+        "physics:body1": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link"
+        ]
+      },
+      "type": "PhysicsPrismaticJoint"
+    },
+    "/World/LeftPiper/Physics/gripper_base_joint": {
+      "api_schemas": [],
+      "attributes": {
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          0.0,
+          0.0044999998062849045
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(0.70710677, -5.551115e-17, -8.746473e-17, 0.70710677)",
+        "physics:localRot1": "(1, 0, 0, 0)"
+      },
+      "path": "/World/LeftPiper/Physics/gripper_base_joint",
+      "relationships": {
+        "physics:body0": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link"
+        ],
+        "physics:body1": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+        ]
+      },
+      "type": "PhysicsFixedJoint"
+    },
+    "/World/LeftPiper/Physics/gripper_joint1": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "NewtonMimicAPI",
+        "PhysicsDriveAPI:linear",
+        "PhysicsJointStateAPI:linear"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          -3.308722450212111e-24,
+          0.1379999965429306
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(0.70710677, 0.70710677, -7.391798e-17, -5.551115e-17)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": 0.0,
+        "physics:upperLimit": 0.05000000074505806
+      },
+      "path": "/World/LeftPiper/Physics/gripper_joint1",
+      "relationships": {
+        "physics:body0": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+        ],
+        "physics:body1": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1"
+        ]
+      },
+      "type": "PhysicsPrismaticJoint"
+    },
+    "/World/LeftPiper/Physics/gripper_joint2": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "NewtonMimicAPI",
+        "PhysicsDriveAPI:linear",
+        "PhysicsJointStateAPI:linear"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          -3.308722450212111e-24,
+          0.1379999965429306
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(-1.8946853e-8, 1.8946853e-8, -0.70710677, 0.70710677)",
+        "physics:localRot1": "(0, -1, 0, 0)",
+        "physics:lowerLimit": -0.05000000074505806,
+        "physics:upperLimit": 0.0
+      },
+      "path": "/World/LeftPiper/Physics/gripper_joint2",
+      "relationships": {
+        "physics:body0": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+        ],
+        "physics:body1": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2"
+        ]
+      },
+      "type": "PhysicsPrismaticJoint"
+    },
+    "/World/LeftPiper/Physics/joint1": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "PhysicsDriveAPI:angular",
+        "PhysicsJointStateAPI:angular"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          0.0,
+          0.12300000339746475
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(2.6794897e-8, 0, 0, 1)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -150.0,
+        "physics:upperLimit": 150.0
+      },
+      "path": "/World/LeftPiper/Physics/joint1",
+      "relationships": {
+        "physics:body0": [
+          "/World/LeftPiper/Geometry/world/base_link"
+        ],
+        "physics:body1": [
+          "/World/LeftPiper/Geometry/world/base_link/link1"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    "/World/LeftPiper/Physics/joint2": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "PhysicsDriveAPI:angular",
+        "PhysicsJointStateAPI:angular"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(0.7054777, 0.7054777, -0.04797094, 0.047970977)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": 0.0,
+        "physics:upperLimit": 180.0
+      },
+      "path": "/World/LeftPiper/Physics/joint2",
+      "relationships": {
+        "physics:body0": [
+          "/World/LeftPiper/Geometry/world/base_link/link1"
+        ],
+        "physics:body1": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    "/World/LeftPiper/Physics/joint3": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "PhysicsDriveAPI:angular",
+        "PhysicsJointStateAPI:angular"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.2850300073623657,
+          0.0,
+          8.271806125530277e-25
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(-0.1511746, -1.110223e-16, -2.220446e-16, -0.9885071)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -170.0,
+        "physics:upperLimit": 0.0
+      },
+      "path": "/World/LeftPiper/Physics/joint3",
+      "relationships": {
+        "physics:body0": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2"
+        ],
+        "physics:body1": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    "/World/LeftPiper/Physics/joint4": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "PhysicsDriveAPI:angular",
+        "PhysicsJointStateAPI:angular"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.2736400067806244,
+          0.0,
+          8.271806125530277e-25
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(0.99918735, -1.4311469e-17, 4.8572257e-17, 0.04030681)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -89.0,
+        "physics:upperLimit": 89.0
+      },
+      "path": "/World/LeftPiper/Physics/joint4",
+      "relationships": {
+        "physics:body0": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3"
+        ],
+        "physics:body1": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    "/World/LeftPiper/Physics/joint5": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "PhysicsDriveAPI:angular",
+        "PhysicsJointStateAPI:angular"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.07466000318527222,
+          -2.7755575615628914e-17,
+          -1.6543612251060553e-24
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(0.5, -0.5, 0.5, 0.5)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -89.0,
+        "physics:upperLimit": 89.0
+      },
+      "path": "/World/LeftPiper/Physics/joint5",
+      "relationships": {
+        "physics:body0": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4"
+        ],
+        "physics:body1": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    "/World/LeftPiper/Physics/joint6": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "PhysicsDriveAPI:angular",
+        "PhysicsJointStateAPI:angular"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          -0.03500000014901161,
+          2.7755575615628914e-17
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(0.70710677, 0.70710677, 0, 1.179612e-16)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -120.0,
+        "physics:upperLimit": 120.0
+      },
+      "path": "/World/LeftPiper/Physics/joint6",
+      "relationships": {
+        "physics:body0": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5"
+        ],
+        "physics:body1": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    "/World/LeftPiper/Physics/world_to_base_link": {
+      "api_schemas": [],
+      "attributes": {
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)"
+      },
+      "path": "/World/LeftPiper/Physics/world_to_base_link",
+      "relationships": {
+        "physics:body0": [
+          "/World/LeftPiper"
+        ],
+        "physics:body1": [
+          "/World/LeftPiper/Geometry/world/base_link"
+        ]
+      },
+      "type": "PhysicsFixedJoint"
+    },
+    "/World/RightPiper/Geometry/world/base_link": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxArticulationAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsArticulationRootAPI",
+        "NewtonArticulationRootAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          -0.004736411850899458,
+          2.568291347415652e-05,
+          0.04145151749253273
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.0008793938322924078,
+          0.002691171830520034,
+          0.002826124429702759
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 1.0199999809265137,
+        "physics:principalAxes": "(0.525074, -0.52202547, -0.47658396, -0.47397724)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxArticulation:articulationEnabled": true,
+        "physxArticulation:enabledSelfCollisions": true,
+        "physxArticulation:sleepThreshold": 4.999999873689376e-05,
+        "physxArticulation:solverPositionIterationCount": 8,
+        "physxArticulation:solverVelocityIterationCount": 2,
+        "physxArticulation:stabilizationThreshold": 9.999999747378752e-06,
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/RightPiper/Geometry/world/base_link",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/RightPiper/Geometry/world/base_link/link1": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.0005300000193528831,
+          -0.00039000000106170774,
+          -0.0031500000040978193
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.00040835977415554225,
+          0.0004575198399834335,
+          0.0005012003821320832
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.7099999785423279,
+        "physics:principalAxes": "(0.5554258, 0.4363742, 0.4868595, 0.5138556)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/RightPiper/Geometry/world/base_link/link1",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/RightPiper/Geometry/world/base_link/link1/link2": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.21855999529361725,
+          -0.008589999750256538,
+          0.0022700000554323196
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.0010683302534744143,
+          0.06755820661783218,
+          0.0676841214299202
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 1.159999966621399,
+        "physics:principalAxes": "(0.66947156, 0.7427093, -0.009235616, -0.010269348)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/RightPiper/Geometry/world/base_link/link1/link2",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.2013999968767166,
+          -0.00418000016361475,
+          -0.0014100000262260437
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.0003319538664072752,
+          0.03356991708278656,
+          0.033606357872486115
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.6700000166893005,
+        "physics:principalAxes": "(0.69093364, 0.72290385, -0.0014746689, -0.0043055112)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.05900000035762787,
+          -0.058309998363256454,
+          0.0020000000949949026
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.0001956847554538399,
+          0.0030750129371881485,
+          0.0031024122145026922
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.38999998569488525,
+        "physics:principalAxes": "(0.5462451, 0.7783446, -0.2524703, -0.17903847)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          4.999999873689376e-05,
+          -0.01281999982893467,
+          -0.004290000069886446
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.00017735651636030525,
+          0.0001942926610354334,
+          0.0002266008232254535
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.3499999940395355,
+        "physics:principalAxes": "(0.51187855, 0.48587972, 0.51292986, 0.48867598)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.0,
+          0.0,
+          -0.0035000001080334187
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.00031151436269283295,
+          0.001386229763738811,
+          0.0015211559366434813
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.007000000216066837,
+        "physics:principalAxes": "(-0.7063237, -0.0052933814, 0.70784944, -0.005294514)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.0011516909580677748,
+          0.0007824280182830989,
+          0.004798050969839096
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          9.935389243764803e-06,
+          1.050800256052753e-05,
+          1.965287265193183e-05
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.03999999910593033,
+        "physics:principalAxes": "(1, 0, 0, 0)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          -0.00018380716210231185,
+          8.050331234699115e-05,
+          0.032143667340278625
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.00039431819459423423,
+          0.0007144694682210684,
+          0.0009294423507526517
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.44999998807907104,
+        "physics:principalAxes": "(0.7119662, 0.00062179874, -0.7022132, 0.0004933253)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          1.0000000116860974e-07,
+          1.0000000116860974e-07,
+          1.0000000116860974e-07
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.0010000000474974513,
+        "physics:principalAxes": "(1, 0, 0, 0)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.0006512318504974246,
+          -0.04919298738241196,
+          0.009722587652504444
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          5.088598300062586e-06,
+          7.367825310211629e-05,
+          7.745314360363409e-05
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.02500000037252903,
+        "physics:principalAxes": "(-0.10930237, 0.70415515, 0.70100594, 0.028446993)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2": {
+      "api_schemas": [
+        "PhysxRigidBodyAPI",
+        "PhysxContactReportAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysicsMassAPI",
+        "NewtonMassAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          0.0006512318504974246,
+          -0.04919298738241196,
+          0.009722587652504444
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          5.088598300062586e-06,
+          7.367825310211629e-05,
+          7.745314360363409e-05
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.02500000037252903,
+        "physics:principalAxes": "(-0.10930237, 0.70415515, 0.70100594, 0.028446993)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxContactReport:threshold": 0.0,
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": true,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 0.0,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+      "relationships": {
+        "physics:simulationOwner": [],
+        "physxContactReport:reportPairs": []
+      },
+      "type": "Xform"
+    },
+    "/World/RightPiper/Physics/flange_joint": {
+      "api_schemas": [],
+      "attributes": {
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          -8.271806125530277e-25,
+          0.0,
+          1.3877787807814457e-17
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)"
+      },
+      "path": "/World/RightPiper/Physics/flange_joint",
+      "relationships": {
+        "physics:body0": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6"
+        ],
+        "physics:body1": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link"
+        ]
+      },
+      "type": "PhysicsFixedJoint"
+    },
+    "/World/RightPiper/Physics/gripper": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "PhysicsDriveAPI:linear",
+        "PhysicsJointStateAPI:linear"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          0.0,
+          -1.3877787807814457e-17
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": 0.0,
+        "physics:upperLimit": 0.10000000149011612
+      },
+      "path": "/World/RightPiper/Physics/gripper",
+      "relationships": {
+        "physics:body0": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+        ],
+        "physics:body1": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link"
+        ]
+      },
+      "type": "PhysicsPrismaticJoint"
+    },
+    "/World/RightPiper/Physics/gripper_base_joint": {
+      "api_schemas": [],
+      "attributes": {
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          0.0,
+          0.0044999998062849045
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(0.70710677, -5.551115e-17, -8.746473e-17, 0.70710677)",
+        "physics:localRot1": "(1, 0, 0, 0)"
+      },
+      "path": "/World/RightPiper/Physics/gripper_base_joint",
+      "relationships": {
+        "physics:body0": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link"
+        ],
+        "physics:body1": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+        ]
+      },
+      "type": "PhysicsFixedJoint"
+    },
+    "/World/RightPiper/Physics/gripper_joint1": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "NewtonMimicAPI",
+        "PhysicsDriveAPI:linear",
+        "PhysicsJointStateAPI:linear"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          -3.308722450212111e-24,
+          0.1379999965429306
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(0.70710677, 0.70710677, -7.391798e-17, -5.551115e-17)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": 0.0,
+        "physics:upperLimit": 0.05000000074505806
+      },
+      "path": "/World/RightPiper/Physics/gripper_joint1",
+      "relationships": {
+        "physics:body0": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+        ],
+        "physics:body1": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1"
+        ]
+      },
+      "type": "PhysicsPrismaticJoint"
+    },
+    "/World/RightPiper/Physics/gripper_joint2": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "NewtonMimicAPI",
+        "PhysicsDriveAPI:linear",
+        "PhysicsJointStateAPI:linear"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          -3.308722450212111e-24,
+          0.1379999965429306
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(-1.8946853e-8, 1.8946853e-8, -0.70710677, 0.70710677)",
+        "physics:localRot1": "(0, -1, 0, 0)",
+        "physics:lowerLimit": -0.05000000074505806,
+        "physics:upperLimit": 0.0
+      },
+      "path": "/World/RightPiper/Physics/gripper_joint2",
+      "relationships": {
+        "physics:body0": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base"
+        ],
+        "physics:body1": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2"
+        ]
+      },
+      "type": "PhysicsPrismaticJoint"
+    },
+    "/World/RightPiper/Physics/joint1": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "PhysicsDriveAPI:angular",
+        "PhysicsJointStateAPI:angular"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          0.0,
+          0.12300000339746475
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(2.6794897e-8, 0, 0, 1)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -150.0,
+        "physics:upperLimit": 150.0
+      },
+      "path": "/World/RightPiper/Physics/joint1",
+      "relationships": {
+        "physics:body0": [
+          "/World/RightPiper/Geometry/world/base_link"
+        ],
+        "physics:body1": [
+          "/World/RightPiper/Geometry/world/base_link/link1"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    "/World/RightPiper/Physics/joint2": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "PhysicsDriveAPI:angular",
+        "PhysicsJointStateAPI:angular"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(0.7054777, 0.7054777, -0.04797094, 0.047970977)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": 0.0,
+        "physics:upperLimit": 180.0
+      },
+      "path": "/World/RightPiper/Physics/joint2",
+      "relationships": {
+        "physics:body0": [
+          "/World/RightPiper/Geometry/world/base_link/link1"
+        ],
+        "physics:body1": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    "/World/RightPiper/Physics/joint3": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "PhysicsDriveAPI:angular",
+        "PhysicsJointStateAPI:angular"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.2850300073623657,
+          0.0,
+          8.271806125530277e-25
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(-0.1511746, -1.110223e-16, -2.220446e-16, -0.9885071)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -170.0,
+        "physics:upperLimit": 0.0
+      },
+      "path": "/World/RightPiper/Physics/joint3",
+      "relationships": {
+        "physics:body0": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2"
+        ],
+        "physics:body1": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    "/World/RightPiper/Physics/joint4": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "PhysicsDriveAPI:angular",
+        "PhysicsJointStateAPI:angular"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.2736400067806244,
+          0.0,
+          8.271806125530277e-25
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(0.99918735, -1.4311469e-17, 4.8572257e-17, 0.04030681)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -89.0,
+        "physics:upperLimit": 89.0
+      },
+      "path": "/World/RightPiper/Physics/joint4",
+      "relationships": {
+        "physics:body0": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3"
+        ],
+        "physics:body1": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    "/World/RightPiper/Physics/joint5": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "PhysicsDriveAPI:angular",
+        "PhysicsJointStateAPI:angular"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.07466000318527222,
+          -2.7755575615628914e-17,
+          -1.6543612251060553e-24
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(0.5, -0.5, 0.5, 0.5)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -89.0,
+        "physics:upperLimit": 89.0
+      },
+      "path": "/World/RightPiper/Physics/joint5",
+      "relationships": {
+        "physics:body0": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4"
+        ],
+        "physics:body1": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    "/World/RightPiper/Physics/joint6": {
+      "api_schemas": [
+        "NewtonJointAPI",
+        "PhysicsDriveAPI:angular",
+        "PhysicsJointStateAPI:angular"
+      ],
+      "attributes": {
+        "physics:axis": "Z",
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          -0.03500000014901161,
+          2.7755575615628914e-17
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(0.70710677, 0.70710677, 0, 1.179612e-16)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -120.0,
+        "physics:upperLimit": 120.0
+      },
+      "path": "/World/RightPiper/Physics/joint6",
+      "relationships": {
+        "physics:body0": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5"
+        ],
+        "physics:body1": [
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    "/World/RightPiper/Physics/world_to_base_link": {
+      "api_schemas": [],
+      "attributes": {
+        "physics:breakForce": "inf",
+        "physics:breakTorque": "inf",
+        "physics:collisionEnabled": false,
+        "physics:excludeFromArticulation": false,
+        "physics:jointEnabled": true,
+        "physics:localPos0": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localPos1": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)"
+      },
+      "path": "/World/RightPiper/Physics/world_to_base_link",
+      "relationships": {
+        "physics:body0": [
+          "/World/RightPiper"
+        ],
+        "physics:body1": [
+          "/World/RightPiper/Geometry/world/base_link"
+        ]
+      },
+      "type": "PhysicsFixedJoint"
+    },
+    "/World/RobosynDemo/LeftCube": {
+      "api_schemas": [
+        "PhysicsMassAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysxRigidBodyAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          "-inf",
+          "-inf",
+          "-inf"
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.03500000014901161,
+        "physics:principalAxes": "(0, 0, 0, 0)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": false,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 4.999999873689376e-05,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/RobosynDemo/LeftCube",
+      "relationships": {
+        "physics:simulationOwner": []
+      },
+      "type": "Xform"
+    },
+    "/World/RobosynDemo/LeftCube/geometry/material": {
+      "api_schemas": [
+        "PhysicsMaterialAPI"
+      ],
+      "attributes": {
+        "physics:density": 0.0,
+        "physics:dynamicFriction": 0.6000000238418579,
+        "physics:restitution": 0.0,
+        "physics:staticFriction": 0.800000011920929
+      },
+      "path": "/World/RobosynDemo/LeftCube/geometry/material",
+      "relationships": {},
+      "type": "Material"
+    },
+    "/World/RobosynDemo/LeftCube/geometry/mesh": {
+      "api_schemas": [
+        "PhysicsCollisionAPI",
+        "MaterialBindingAPI"
+      ],
+      "attributes": {
+        "physics:collisionEnabled": true
+      },
+      "path": "/World/RobosynDemo/LeftCube/geometry/mesh",
+      "relationships": {
+        "material:binding": [
+          "/World/RobosynDemo/LeftCube/geometry/material"
+        ],
+        "material:binding:physics": [
+          "/World/RobosynDemo/LeftCube/geometry/material"
+        ],
+        "physics:simulationOwner": []
+      },
+      "type": "Cube"
+    },
+    "/World/RobosynDemo/RightCube": {
+      "api_schemas": [
+        "PhysicsMassAPI",
+        "PhysicsRigidBodyAPI",
+        "PhysxRigidBodyAPI"
+      ],
+      "attributes": {
+        "physics:angularVelocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:centerOfMass": [
+          "-inf",
+          "-inf",
+          "-inf"
+        ],
+        "physics:density": 0.0,
+        "physics:diagonalInertia": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physics:kinematicEnabled": false,
+        "physics:mass": 0.03500000014901161,
+        "physics:principalAxes": "(0, 0, 0, 0)",
+        "physics:rigidBodyEnabled": true,
+        "physics:startsAsleep": false,
+        "physics:velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "physxRigidBody:angularDamping": 0.05000000074505806,
+        "physxRigidBody:cfmScale": 0.02500000037252903,
+        "physxRigidBody:contactSlopCoefficient": 0.0,
+        "physxRigidBody:disableGravity": false,
+        "physxRigidBody:enableCCD": false,
+        "physxRigidBody:enableGyroscopicForces": true,
+        "physxRigidBody:enableSpeculativeCCD": false,
+        "physxRigidBody:linearDamping": 0.0,
+        "physxRigidBody:lockedPosAxis": 0,
+        "physxRigidBody:lockedRotAxis": 0,
+        "physxRigidBody:maxAngularVelocity": 5729.580078125,
+        "physxRigidBody:maxContactImpulse": "inf",
+        "physxRigidBody:maxDepenetrationVelocity": 1.0,
+        "physxRigidBody:maxLinearVelocity": "inf",
+        "physxRigidBody:retainAccelerations": false,
+        "physxRigidBody:sleepThreshold": 4.999999873689376e-05,
+        "physxRigidBody:solveContact": true,
+        "physxRigidBody:solverPositionIterationCount": 16,
+        "physxRigidBody:solverVelocityIterationCount": 1,
+        "physxRigidBody:stabilizationThreshold": 9.999999747378752e-06
+      },
+      "path": "/World/RobosynDemo/RightCube",
+      "relationships": {
+        "physics:simulationOwner": []
+      },
+      "type": "Xform"
+    },
+    "/World/RobosynDemo/RightCube/geometry/material": {
+      "api_schemas": [
+        "PhysicsMaterialAPI"
+      ],
+      "attributes": {
+        "physics:density": 0.0,
+        "physics:dynamicFriction": 0.6000000238418579,
+        "physics:restitution": 0.0,
+        "physics:staticFriction": 0.800000011920929
+      },
+      "path": "/World/RobosynDemo/RightCube/geometry/material",
+      "relationships": {},
+      "type": "Material"
+    },
+    "/World/RobosynDemo/RightCube/geometry/mesh": {
+      "api_schemas": [
+        "PhysicsCollisionAPI",
+        "MaterialBindingAPI"
+      ],
+      "attributes": {
+        "physics:collisionEnabled": true
+      },
+      "path": "/World/RobosynDemo/RightCube/geometry/mesh",
+      "relationships": {
+        "material:binding": [
+          "/World/RobosynDemo/RightCube/geometry/material"
+        ],
+        "material:binding:physics": [
+          "/World/RobosynDemo/RightCube/geometry/material"
+        ],
+        "physics:simulationOwner": []
+      },
+      "type": "Cube"
+    },
+    "/World/RobosynDemo/Table/geometry/material": {
+      "api_schemas": [
+        "PhysicsMaterialAPI"
+      ],
+      "attributes": {
+        "physics:density": 0.0,
+        "physics:dynamicFriction": 0.6000000238418579,
+        "physics:restitution": 0.0,
+        "physics:staticFriction": 0.800000011920929
+      },
+      "path": "/World/RobosynDemo/Table/geometry/material",
+      "relationships": {},
+      "type": "Material"
+    },
+    "/World/RobosynDemo/Table/geometry/mesh": {
+      "api_schemas": [
+        "PhysicsCollisionAPI",
+        "MaterialBindingAPI"
+      ],
+      "attributes": {
+        "physics:collisionEnabled": true
+      },
+      "path": "/World/RobosynDemo/Table/geometry/mesh",
+      "relationships": {
+        "material:binding": [
+          "/World/RobosynDemo/Table/geometry/material"
+        ],
+        "material:binding:physics": [
+          "/World/RobosynDemo/Table/geometry/material"
+        ],
+        "physics:simulationOwner": []
+      },
+      "type": "Cube"
+    }
+  },
+  "physics_scenes": [
+    {
+      "api_schemas": [
+        "NewtonSceneAPI",
+        "PhysxSceneAPI",
+        "MaterialBindingAPI"
+      ],
+      "attributes": {
+        "physics:gravityDirection": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "physics:gravityMagnitude": 9.8100004196167,
+        "physxScene:bounceThreshold": 0.5,
+        "physxScene:broadphaseType": "GPU",
+        "physxScene:collisionSystem": "PCM",
+        "physxScene:disableSleeping": false,
+        "physxScene:enableCCD": false,
+        "physxScene:enableEnhancedDeterminism": false,
+        "physxScene:enableExternalForcesEveryIteration": true,
+        "physxScene:enableGPUDynamics": true,
+        "physxScene:enableSceneQuerySupport": false,
+        "physxScene:enableStabilization": false,
+        "physxScene:frictionCorrelationDistance": 0.02500000037252903,
+        "physxScene:frictionOffsetThreshold": 0.03999999910593033,
+        "physxScene:frictionType": "patch",
+        "physxScene:gpuCollisionStackSize": 67108864,
+        "physxScene:gpuFoundLostAggregatePairsCapacity": 33554432,
+        "physxScene:gpuFoundLostPairsCapacity": 2097152,
+        "physxScene:gpuHeapCapacity": 67108864,
+        "physxScene:gpuMaxDeformableSurfaceContacts": 1048576,
+        "physxScene:gpuMaxDeformableVolumeContacts": 1048576,
+        "physxScene:gpuMaxNumPartitions": 8,
+        "physxScene:gpuMaxParticleContacts": 1048576,
+        "physxScene:gpuMaxRigidContactCount": 8388608,
+        "physxScene:gpuMaxRigidPatchCount": 163840,
+        "physxScene:gpuMaxSoftBodyContacts": 1048576,
+        "physxScene:gpuTempBufferCapacity": 16777216,
+        "physxScene:gpuTotalAggregatePairsCapacity": 2097152,
+        "physxScene:invertCollisionGroupFilter": false,
+        "physxScene:maxBiasCoefficient": "inf",
+        "physxScene:maxPositionIterationCount": 255,
+        "physxScene:maxVelocityIterationCount": 255,
+        "physxScene:minPositionIterationCount": 1,
+        "physxScene:minVelocityIterationCount": 0,
+        "physxScene:reportKinematicKinematicPairs": false,
+        "physxScene:reportKinematicStaticPairs": false,
+        "physxScene:solveArticulationContactLast": false,
+        "physxScene:solverType": "TGS",
+        "physxScene:timeStepsPerSecond": 120,
+        "physxScene:updateType": "Synchronous"
+      },
+      "path": "/physicsScene",
+      "relationships": {
+        "material:binding:physics": [
+          "/physicsScene/defaultMaterial"
+        ]
+      },
+      "type": "PhysicsScene"
+    }
+  ],
+  "physx_tensor_views": {
+    "cubes": [
+      {
+        "get_angular_dampings": {
+          "availability": "not_exposed"
+        },
+        "get_coms": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "get_contact_offsets": [
+          [
+            0.0013625002466142178
+          ]
+        ],
+        "get_inertias": [
+          [
+            9.333332855021581e-06,
+            0.0,
+            0.0,
+            0.0,
+            9.333332855021581e-06,
+            0.0,
+            0.0,
+            0.0,
+            9.333332855021581e-06
+          ]
+        ],
+        "get_linear_dampings": {
+          "availability": "not_exposed"
+        },
+        "get_masses": [
+          [
+            0.03500000014901161
+          ]
+        ],
+        "get_max_depenetration_velocities": {
+          "availability": "not_exposed"
+        },
+        "get_rest_offsets": [
+          [
+            0.0
+          ]
+        ],
+        "get_sleep_thresholds": {
+          "availability": "not_exposed"
+        }
+      },
+      {
+        "get_angular_dampings": {
+          "availability": "not_exposed"
+        },
+        "get_coms": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "get_contact_offsets": [
+          [
+            0.0013625002466142178
+          ]
+        ],
+        "get_inertias": [
+          [
+            9.333332855021581e-06,
+            0.0,
+            0.0,
+            0.0,
+            9.333332855021581e-06,
+            0.0,
+            0.0,
+            0.0,
+            9.333332855021581e-06
+          ]
+        ],
+        "get_linear_dampings": {
+          "availability": "not_exposed"
+        },
+        "get_masses": [
+          [
+            0.03500000014901161
+          ]
+        ],
+        "get_max_depenetration_velocities": {
+          "availability": "not_exposed"
+        },
+        "get_rest_offsets": [
+          [
+            0.0
+          ]
+        ],
+        "get_sleep_thresholds": {
+          "availability": "not_exposed"
+        }
+      }
+    ],
+    "robots": [
+      {
+        "get_dof_armatures": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "get_dof_dampings": [
+          [
+            40.0,
+            40.0,
+            40.0,
+            40.0,
+            40.0,
+            40.0,
+            40.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "get_dof_friction_coefficients": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "get_dof_masses": {
+          "availability": "not_exposed"
+        },
+        "get_dof_max_forces": [
+          [
+            100.0,
+            100.0,
+            100.0,
+            100.0,
+            100.0,
+            100.0,
+            2.0,
+            1.0,
+            1.0
+          ]
+        ],
+        "get_dof_max_velocities": [
+          [
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            3.0,
+            3.0,
+            3.0
+          ]
+        ],
+        "get_dof_stiffnesses": [
+          [
+            400.0,
+            400.0,
+            400.0,
+            400.0,
+            400.0,
+            400.0,
+            400.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "get_max_efforts": {
+          "availability": "not_exposed"
+        }
+      },
+      {
+        "get_dof_armatures": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "get_dof_dampings": [
+          [
+            40.0,
+            40.0,
+            40.0,
+            40.0,
+            40.0,
+            40.0,
+            40.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "get_dof_friction_coefficients": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "get_dof_masses": {
+          "availability": "not_exposed"
+        },
+        "get_dof_max_forces": [
+          [
+            100.0,
+            100.0,
+            100.0,
+            100.0,
+            100.0,
+            100.0,
+            2.0,
+            1.0,
+            1.0
+          ]
+        ],
+        "get_dof_max_velocities": [
+          [
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            3.0,
+            3.0,
+            3.0
+          ]
+        ],
+        "get_dof_stiffnesses": [
+          [
+            400.0,
+            400.0,
+            400.0,
+            400.0,
+            400.0,
+            400.0,
+            400.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "get_max_efforts": {
+          "availability": "not_exposed"
+        }
+      }
+    ]
+  },
+  "robot_joint_names": [
+    [
+      "joint1",
+      "joint2",
+      "joint3",
+      "joint4",
+      "joint5",
+      "joint6",
+      "gripper",
+      "gripper_joint1",
+      "gripper_joint2"
+    ],
+    [
+      "joint1",
+      "joint2",
+      "joint3",
+      "joint4",
+      "joint5",
+      "joint6",
+      "gripper",
+      "gripper_joint1",
+      "gripper_joint2"
+    ]
+  ]
+}

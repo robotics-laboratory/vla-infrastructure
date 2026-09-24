@@ -1,0 +1,14 @@
+{
+  "cwd": "/home/ebulochkin/vla_infrastructure/.worktrees/vr-record-runtime-optimization-audit",
+  "command": [
+    "./run-vr",
+    "record",
+    "--smoke",
+    "--max-control-steps",
+    "1",
+    "--state-root",
+    "/tmp/vr-physics-rtf-20260924/current"
+  ],
+  "source_sha": "a36bc5cc302eefef19fe4f94063a3f6179aaf1aa",
+  "state_root": "/tmp/vr-physics-rtf-20260924/current"
+}
