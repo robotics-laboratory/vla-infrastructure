@@ -51,7 +51,7 @@ REQUIRED_TRACK_TYPES = {
     "state/camera/left_wrist": "camera",
     "state/camera/right_wrist": "camera",
     "state/camera/scene": "camera",
-    "d0/committed_transition": "piper_x_committed_transition_v2",
+    "d0/committed_transition": "piper_x_committed_transition_v3",
 }
 # Version 1 encoded O_n beside A_(n-1), so it is deliberately unsupported.
 SUPPORTED_RECORDING_SCHEMAS = frozenset({"piper_x_isaac_vr_recording_manifest_v2"})
@@ -161,12 +161,16 @@ def verify_recording_artifact(
         or manifest.get("pose_backend_effective") != "fabric"
     ):
         raise ValueError("recording did not prove the required Fabric pose backend")
-    if manifest.get("transition_schema") != "piper_x_committed_transition_v2":
-        raise ValueError("recording manifest has an unsupported transition schema")
+    profile_schemas = {
+        "isaac_human_vr_offline_rgb_v1": "piper_x_committed_transition_v2",
+        "isaac_human_vr_offline_rgb_v2": "piper_x_committed_transition_v3",
+    }
     session_metadata = manifest.get("session_metadata")
     if (
         not isinstance(session_metadata, dict)
-        or session_metadata.get("source_profile") != "isaac_human_vr_offline_rgb_v1"
+        or manifest.get("transition_schema") != profile_schemas.get(
+            session_metadata.get("source_profile")
+        )
     ):
         raise ValueError("recording manifest has an unsupported source profile")
 
@@ -328,9 +332,11 @@ def _validate_session(reader: Any, artifact: ReplayArtifact, episode: int) -> Re
     if missing:
         raise RuntimeError(f"recording missing required tracks: {sorted(missing)}")
     track_types = {str(track.get("group")): track.get("type") for track in tracks}
+    expected_types = dict(REQUIRED_TRACK_TYPES)
+    expected_types["d0/committed_transition"] = artifact.manifest["transition_schema"]
     mismatched_types = {
         group: {"expected": expected, "actual": track_types.get(group)}
-        for group, expected in REQUIRED_TRACK_TYPES.items()
+        for group, expected in expected_types.items()
         if track_types.get(group) != expected
     }
     if mismatched_types:
@@ -372,7 +378,8 @@ def _validate_session(reader: Any, artifact: ReplayArtifact, episode: int) -> Re
             canonical_committed_transition,
             verify_committed_transition_sample,
         )
-    expected_channels = set(_empty_d0_sample())
+    schema_version = 2 if artifact.manifest["transition_schema"].endswith("_v2") else 3
+    expected_channels = set(_empty_d0_sample(schema_version=schema_version))
     if set(d0) != expected_channels:
         missing_channels = expected_channels - set(d0)
         extra_channels = set(d0) - expected_channels

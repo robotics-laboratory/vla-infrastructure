@@ -53,9 +53,9 @@ def test_offline_rgb_profile_is_additive_selected_and_not_accepted_evidence() ->
         "openxr_query_time": "optional_when_explicitly_exposed_by_source",
     }
 
-    profile = profiles["isaac_human_vr_offline_rgb_v1"]
+    profile = profiles["isaac_human_vr_offline_rgb_v2"]
     assert data["simulation"]["isaac"]["recorder"]["source_profile"] == (
-        "isaac_human_vr_offline_rgb_v1"
+        "isaac_human_vr_offline_rgb_v2"
     )
     assert profile["runtime_binding_status"] == "pending_D1_implementation_and_evidence"
     assert profile["dataset_admissible_before_materialization_and_D1_evidence"] is False
@@ -67,7 +67,7 @@ def test_offline_rgb_profile_is_additive_selected_and_not_accepted_evidence() ->
 
 def test_offline_rgb_profile_names_all_online_and_materialized_identities() -> None:
     profile = contract()["dataset"]["temporal_semantics"]["source_profiles"][
-        "isaac_human_vr_offline_rgb_v1"
+        "isaac_human_vr_offline_rgb_v2"
     ]
 
     assert profile["required_source_identities"] == [
@@ -115,8 +115,8 @@ def test_offline_rgb_profile_names_all_online_and_materialized_identities() -> N
 def test_native_hdf_row_is_one_committed_o_a_successor_transaction() -> None:
     row = contract()["dataset"]["temporal_semantics"]["native_recording_row"]
 
-    assert row["revision"] == "isaac_vr_committed_transition_row_v1"
-    assert row["applies_to_profile"] == "isaac_human_vr_offline_rgb_v1"
+    assert row["revision"] == "isaac_vr_committed_transition_row_v2"
+    assert row["applies_to_profile"] == "isaac_human_vr_offline_rgb_v2"
     assert row["admission"] == (
         "only_after_successful_transition_successor_observation_and_causal_commit"
     )
@@ -153,7 +153,7 @@ def test_d1_requires_selected_profile_and_row_semantics() -> None:
     assert "simulation.isaac.recorder.source_profile" in paths
     assert (
         "dataset.temporal_semantics.source_profiles."
-        "isaac_human_vr_offline_rgb_v1.persistence_call_phase"
+        "isaac_human_vr_offline_rgb_v2.persistence_call_phase"
     ) in paths
     assert "dataset.temporal_semantics.native_recording_row.revision" in paths
     assert "dataset.temporal_semantics.native_recording_row.admission" in paths
@@ -167,13 +167,13 @@ def test_d1_requires_selected_profile_and_row_semantics() -> None:
         (("native_recording_row", "invalid_tick_policy"), "append_zero_fill"),
         (("native_recording_row", "terminal_state_policy"), "append_actionless_terminal"),
         (
-            ("source_profiles", "isaac_human_vr_offline_rgb_v1", "materialized_camera_join"),
+            ("source_profiles", "isaac_human_vr_offline_rgb_v2", "materialized_camera_join"),
             "list_position",
         ),
         (
             (
                 "source_profiles",
-                "isaac_human_vr_offline_rgb_v1",
+                "isaac_human_vr_offline_rgb_v2",
                 "dataset_admissible_before_materialization_and_D1_evidence",
             ),
             True,

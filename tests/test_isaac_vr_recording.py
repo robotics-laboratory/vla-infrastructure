@@ -119,10 +119,10 @@ def test_d0_schema_has_explicit_ot_action_successor_and_outcome_channels():
         assert np.asarray(value).dtype.kind in "biufS"
 
 
-def committed_sample(*, frame_index=0, committed=1, successor_step=14, outcome="continued"):
+def committed_sample(*, frame_index=0, committed=1, successor_step=14, outcome="continued", schema_version=3):
     digest = hashlib.sha256(b"fixture").hexdigest()
     sample = {
-        "schema_version": 2,
+        "schema_version": schema_version,
         "frame_index": frame_index,
         "run_id": "run",
         "session_id": "session",
@@ -189,6 +189,9 @@ def committed_sample(*, frame_index=0, committed=1, successor_step=14, outcome="
         "xr_hands_sha256": digest,
         "committed": committed,
     }
+    if schema_version == 3:
+        sample["left_transition"] = "motion"
+        sample["right_transition"] = "motion"
     return sample
 
 
@@ -221,6 +224,8 @@ def seal_sample(row):
             processor_revision=row["processor_revision"],
             provenance_revision=row["processor_provenance_revision"],
             processor_generation=row["processor_generation"],
+            arm_transitions=(row["left_transition"], row["right_transition"])
+            if row["schema_version"] == 3 else None,
         )
     ).hexdigest()
     row["native_command_sha256"] = hashlib.sha256(
@@ -281,6 +286,18 @@ def test_row_payload_hashes_recompute_and_mutation_fails_closed():
     row["dataset_action"][3] += np.float32(0.25)
     with pytest.raises(ValueError, match="action_payload_sha256"):
         verify_committed_transition_sample(row)
+
+
+def test_per_arm_clutch_provenance_is_bound_to_action_digest():
+    row = committed_sample()
+    row["left_transition"] = "clutch_held"
+    sealed = canonical_committed_transition(seal_sample(row))
+    verify_committed_transition_sample(sealed)
+    assert bytes(sealed["left_transition"]).rstrip(b"\0") == b"clutch_held"
+    assert bytes(sealed["right_transition"]).rstrip(b"\0") == b"motion"
+    sealed["left_transition"] = np.asarray(b"motion", dtype="S256")
+    with pytest.raises(ValueError, match="action_payload_sha256"):
+        verify_committed_transition_sample(sealed)
 
 
 @pytest.mark.parametrize(
@@ -555,7 +572,7 @@ def make_live(tmp_path: Path, *, timing_observer=None):
             "run_id": "run",
             "session_id": "session",
             "episode_id": "episode",
-            "source_profile": "isaac_human_vr_offline_rgb_v1",
+            "source_profile": "isaac_human_vr_offline_rgb_v2",
         },
         observation_factory=observation_factory,
         flush_every_frames=1,
@@ -677,7 +694,7 @@ def _session_fixture(tmp_path, monkeypatch):
         "visual_provenance_sha256": static_digest,
         "session_metadata": {
             "run_id": "run", "session_id": "session", "episode_id": "episode",
-            "source_profile": "isaac_human_vr_offline_rgb_v1",
+            "source_profile": "isaac_human_vr_offline_rgb_v2",
         },
     }))
     events = []
@@ -837,6 +854,7 @@ def test_runtime_builder_uses_causal_receipt_ids_hashes_and_token_snapshot(tmp_p
             processor_revision="processor-v1",
             provenance_revision="provenance-v1",
             processor_generation=5,
+            arm_transitions=("clutch_held", "motion"),
         )
     ).hexdigest()
     native_sha = hashlib.sha256(
@@ -905,6 +923,10 @@ def test_runtime_builder_uses_causal_receipt_ids_hashes_and_token_snapshot(tmp_p
         residual=tuple(np.zeros(14)),
         saturation=tuple(False for _ in range(14)),
         processor_identity=("processor-v1", "provenance-v1", 5),
+        cartesian_intent=SimpleNamespace(
+            left=SimpleNamespace(transition="clutch_held"),
+            right=SimpleNamespace(transition="motion"),
+        ),
     )
     row = build_committed_transition_sample(live, token, successor_token, decision, committed)
     assert row["obs_id"] == b"obs:0"
@@ -975,7 +997,7 @@ def test_hdf_session_metadata_binds_snapshot_and_asset_closure():
             "run_id": "run",
             "session_id": "session",
             "episode_id": "episode",
-            "source_profile": "isaac_human_vr_offline_rgb_v1",
+            "source_profile": "isaac_human_vr_offline_rgb_v2",
         },
         stage_snapshot="stage_snapshot.usd",
         stage_snapshot_sha256=digest,

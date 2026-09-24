@@ -424,7 +424,9 @@ def verify_projection_bundle(bundle: Path) -> tuple[dict[str, Any], dict[str, np
         "terminal_successor_sha256",
     ):
         _require_sha256(source.get(field), field=f"projection.source.{field}")
-    if source.get("source_profile") != "isaac_human_vr_offline_rgb_v1":
+    if source.get("source_profile") not in {
+        "isaac_human_vr_offline_rgb_v1", "isaac_human_vr_offline_rgb_v2"
+    }:
         raise MaterializationError("projection source profile is unsupported")
     visual_identity = source.get("visual_identity")
     if not isinstance(visual_identity, dict):

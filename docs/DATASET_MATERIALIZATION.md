@@ -123,7 +123,7 @@ Task/hardware thresholds remain resolved experimental values rather than guessed
 
 Use semantic replay/inspection where applicable. Do not require pixel-perfect replay from nondeterministic physics resets.
 
-For the selected Isaac human snapshot/offline-RGB profile, replay is materialization,
+For the selected Isaac human snapshot/offline-RGB V2 profile and readable V1 artifacts, replay is materialization,
 not evidence that live camera pixels existed during teleoperation. Each of the three
 canonical RGB outputs must be rendered from the exact immutable `O_t` scene-state
 snapshot named by the committed native row. The materializer records and verifies

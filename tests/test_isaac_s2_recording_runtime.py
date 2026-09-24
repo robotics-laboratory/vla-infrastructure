@@ -39,7 +39,7 @@ def test_recording_runtime_uses_exact_pre_action_and_successor_boundaries():
 def test_recording_runtime_declares_offline_profile_and_real_episode_identity():
     source = (ROOT / "tools/isaac_s2_runtime.py").read_text(encoding="utf-8")
     metadata_source = (ROOT / "tools/isaac_vr_recording_smoke.py").read_text(encoding="utf-8")
-    assert '"source_profile": "isaac_human_vr_offline_rgb_v1"' in metadata_source
+    assert '"source_profile": "isaac_human_vr_offline_rgb_v2"' in metadata_source
     assert 'episode_id = "episode_000000"' in source
     assert "recording.episode_id if recording is not None" in source
     assert "recording.sample(" not in source
@@ -170,20 +170,102 @@ def test_record_admission_keeps_safe_solve_and_opposite_arm_motion():
     assert eligibility == [
         False,
         True,
-        False,
-        False,
-        False,
+        True,
+        True,
+        True,
         True,
         False,
         False,
         True,
     ]
     assert len(ik.calls) == len(ik.applied) == len(sequence)
-    assert control_tick_id == 3
+    assert control_tick_id == 6
     for decision in decisions[1:]:
         assert np.any(decision.command.right.delta_pose)
     for index in (0, 2, 3, 4, 6, 7):
         np.testing.assert_array_equal(decisions[index].command.left.delta_pose, np.zeros(6))
+
+
+def test_clutch_rows_keep_one_episode_and_tracking_gap_starts_another():
+    processor = BimanualS2TeleopProcessor()
+    motion = ControllerDeltaSample(np.ones(3), np.ones(3), True, True, 0.0, 0.0, 0.0)
+    clutch = ControllerDeltaSample(np.ones(3), np.ones(3), True, True, 1.0, 0.0, 0.0)
+    lost = ControllerDeltaSample(np.ones(3), np.ones(3), False, False, 0.0, 0.0, 0.0)
+
+    class FakeIk:
+        def __init__(self):
+            self.applied = []
+
+        def solve(self, command, observation, xr, tick):
+            return NS(command=command, observation=observation, xr=xr, tick=tick,
+                      native_target=tuple(command.left.delta_pose) + tuple(command.right.delta_pose))
+
+        def apply(self, decision):
+            self.applied.append(decision)
+
+    node = next(node for node in ast.parse(
+        (ROOT / "tools/isaac_s2_runtime.py").read_text()
+    ).body if isinstance(node, ast.FunctionDef) and node.name == "_solve_native_decision")
+    namespace = {}
+    exec(compile(ast.Module([node], []), "recording_solve_helper", "exec"), namespace)
+    solve = namespace["_solve_native_decision"]
+    ik = FakeIk()
+    rows = []
+    boundaries = []
+    discarded = []
+    episode = 0
+    physics_step = 0
+    tick = 0
+    sequence = (
+        (motion, motion),  # initial tracking rebase
+        (motion, motion),
+        (clutch, motion),
+        (clutch, motion),
+        (clutch, motion),
+        (motion, motion),  # intentional clutch release rebase
+        (motion, motion),
+        (clutch, clutch),  # both hands intentional clutch
+        (clutch, clutch),
+        (motion, motion),
+        (motion, motion),
+        (lost, motion),
+        (motion, motion),  # tracking recovery rebase
+        (motion, motion),
+    )
+    for left, right in sequence:
+        observation = physics_step
+        command = processor.advance(left, right)
+        eligible = recordable_teleop_command(command)
+        if eligible:
+            tick += 1
+        else:
+            discarded.append((command.left.transition, command.right.transition))
+            if any(row["episode"] == episode for row in rows):
+                boundaries.append((episode, command.left.transition))
+                episode += 1
+        decision = solve(ik, command, observation, object(), tick,
+                         recording_requested=True, eligible=eligible)
+        ik.apply(decision)
+        physics_step += 4
+        if eligible:
+            rows.append({"episode": episode, "frame": sum(r["episode"] == episode for r in rows),
+                         "ot": observation, "ot1": physics_step, "decision": decision,
+                         "left": command.left.transition, "right": command.right.transition})
+
+    first = [row for row in rows if row["episode"] == 0]
+    assert [row["left"] for row in first[:6]] == [
+        "motion", "clutch_engaged", "clutch_held", "clutch_held",
+        "clutch_release_rebased", "motion",
+    ]
+    assert [row["frame"] for row in first] == list(range(len(first)))
+    assert all(a["ot1"] == b["ot"] for a, b in zip(first, first[1:]))
+    assert any(row["left"] == row["right"] == "clutch_held" for row in first)
+    assert any(row["left"] == "clutch_held" and row["right"] == "motion" and
+               np.any(row["decision"].native_target[6:]) for row in first)
+    assert [reason for _, reason in boundaries] == ["tracking_lost"]
+    assert [left for left, _ in discarded] == ["tracking_rebased", "tracking_lost", "tracking_rebased"]
+    assert rows[-1]["episode"] == 1 and rows[-1]["frame"] == 0
+    assert len(ik.applied) == len(sequence)
 
 
 def test_run_and_rejected_record_have_same_safe_decision():
@@ -210,11 +292,12 @@ def test_run_and_rejected_record_have_same_safe_decision():
     clutched = ControllerDeltaSample(np.ones(3), np.ones(3), True, True, 1.0, 0.0, 0.0)
     processor.advance(tracked, tracked)
     command = processor.advance(clutched, tracked)
-    assert not recordable_teleop_command(command)
+    assert recordable_teleop_command(command)
     ik = FakeIk()
-    run = solve(ik, command, object(), object(), 7, recording_requested=False, eligible=False)
-    record = solve(ik, command, object(), object(), 7, recording_requested=True, eligible=False)
-    assert run == record == (command, None, None, None)
+    run = solve(ik, command, object(), object(), 7, recording_requested=False, eligible=True)
+    record = solve(ik, command, object(), object(), 7, recording_requested=True, eligible=True)
+    assert run[0] is record[0] is command
+    assert run[1:] != (None, None, None) and record[1:] != (None, None, None)
     assert len(ik.calls) == 2
     assert np.any(run[0].right.delta_pose)
 

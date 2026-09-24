@@ -16,7 +16,9 @@ SIM_SOURCES = ("simulation.state_generation", *(f"camera.{role}" for role in CAM
 OFFLINE_RGB_SIM_SOURCES = ("simulation.scene_state_snapshot",)
 XR_SOURCES = ("xr.device_io_update", "xr.submitted_frame", "xr.returned_frame", "xr.resolved_input")
 AUTOMATED = frozenset(("scripted_expert", "planner", "datagen", "policy_generated"))
-ISAAC_HUMAN_PROFILES = frozenset(("isaac_human_vr_v4", "isaac_human_vr_offline_rgb_v1"))
+ISAAC_HUMAN_PROFILES = frozenset((
+    "isaac_human_vr_v4", "isaac_human_vr_offline_rgb_v1", "isaac_human_vr_offline_rgb_v2"
+))
 
 
 def select_temporal_profile(
@@ -197,7 +199,7 @@ class CausalTransactionValidator:
             expected += XR_SOURCES
             if tracking_valid is not True:
                 self._reject("tracking_invalid")
-        elif self.profile == "isaac_human_vr_offline_rgb_v1":
+        elif self.profile in {"isaac_human_vr_offline_rgb_v1", "isaac_human_vr_offline_rgb_v2"}:
             expected = OFFLINE_RGB_SIM_SOURCES + XR_SOURCES
             if tracking_valid is not True:
                 self._reject("tracking_invalid")

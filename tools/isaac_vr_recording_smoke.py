@@ -92,7 +92,7 @@ def recording_session_metadata(
         "run_id": run_id,
         "session_id": session_id,
         "episode_id": episode_id,
-        "source_profile": "isaac_human_vr_offline_rgb_v1",
+        "source_profile": "isaac_human_vr_offline_rgb_v2",
         "task": "dual_cube_to_matching_plates",
         "execution_profile": execution_profile,
         "live_rgb": False,

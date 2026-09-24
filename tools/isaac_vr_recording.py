@@ -31,7 +31,7 @@ import numpy as np
 
 
 POSE_BACKEND = "fabric"
-TRANSITION_SCHEMA = "piper_x_committed_transition_v2"
+TRANSITION_SCHEMA = "piper_x_committed_transition_v3"
 REQUIRED_SESSION_METADATA = ("run_id", "session_id", "episode_id", "source_profile")
 FINAL_OUTCOMES = {"success", "operator_stopped", "aborted", "failure"}
 _ID_BYTES = 256
@@ -349,7 +349,7 @@ class TerminalSuccessorSnapshot:
 
 
 class LiveRecording:
-    """Owner of one live V2 session and one pending pre-action observation."""
+    """Owner of one native HDF V2 session and one pending pre-action observation."""
 
     def __init__(
         self,
@@ -375,6 +375,8 @@ class LiveRecording:
         self.session_id = identity["session_id"]
         self.episode_id = identity["episode_id"]
         self.source_profile = identity["source_profile"]
+        if self.source_profile != "isaac_human_vr_offline_rgb_v2":
+            raise ValueError("live recorder requires clutch-aware offline-RGB V2 profile")
         self.flush_every_frames = flush_every_frames
         self._timing_observer = timing_observer
         self.committed_frames = 0
@@ -907,6 +909,8 @@ def start_live_recording(
     if env.camera.live_rgb_enabled:
         raise RuntimeError("State-only RECORD requires live RGB to be disabled before setup")
     _validate_session_metadata(session_metadata)
+    if session_metadata["source_profile"] != "isaac_human_vr_offline_rgb_v2":
+        raise ValueError("live recorder requires clutch-aware offline-RGB V2 profile")
     repository = Path(__file__).resolve().parents[1]
     output_dir = prepare_private_output_dir(
         output_dir, repository=repository, min_free_bytes=min_free_bytes
@@ -1128,7 +1132,7 @@ def write_asset_closure_sidecar(
 
 
 def ensure_d0_recordable() -> type[Any]:
-    """Register the provenance-only committed-transition V2 track inside Kit."""
+    """Register the provenance-only committed-transition V3 track inside Kit."""
     from isaacsim.replicator.episode_recorder import (
         ChannelDescriptor,
         Recordable,
@@ -1161,7 +1165,7 @@ def ensure_d0_recordable() -> type[Any]:
     return D0TransitionRecordable
 
 
-def _d0_channels(ChannelDescriptor: Any) -> dict[str, Any]:
+def _d0_channels(ChannelDescriptor: Any, *, schema_version: int = 3) -> dict[str, Any]:
     def scalar(dtype: str = "i8", **attrs: Any) -> Any:
         return ChannelDescriptor(shape=(), dtype=dtype, **attrs)
 
@@ -1174,7 +1178,7 @@ def _d0_channels(ChannelDescriptor: Any) -> dict[str, Any]:
     def digest() -> Any:
         return ChannelDescriptor(shape=(_HASH_BYTES,), dtype="u1", attrs={"encoding": "sha256"})
 
-    return {
+    channels = {
         "schema_version": scalar("u2"),
         "frame_index": scalar(),
         "run_id": fixed_id(),
@@ -1242,6 +1246,12 @@ def _d0_channels(ChannelDescriptor: Any) -> dict[str, Any]:
         "xr_hands_sha256": digest(),
         "committed": scalar("u1"),
     }
+    if schema_version == 3:
+        channels["left_transition"] = fixed_id()
+        channels["right_transition"] = fixed_id()
+    elif schema_version != 2:
+        raise ValueError("unsupported committed transition schema version")
+    return channels
 
 
 def canonical_transition_outcome_payload(
@@ -1300,6 +1310,10 @@ def verify_committed_transition_sample(sample: Mapping[str, Any]) -> None:
         processor_revision=_decode_fixed_id(sample["processor_revision"]),
         provenance_revision=_decode_fixed_id(sample["processor_provenance_revision"]),
         processor_generation=int(sample["processor_generation"]),
+        arm_transitions=(
+            _decode_fixed_id(sample["left_transition"]),
+            _decode_fixed_id(sample["right_transition"]),
+        ) if int(sample["schema_version"]) == 3 else None,
     )
     native_payload = canonical_native_command_payload(
         preclip=sample["native_preclip"],
@@ -1402,7 +1416,7 @@ def build_committed_transition_sample(
     )
     result = canonical_committed_transition(
         {
-            "schema_version": 2,
+            "schema_version": 3,
             "frame_index": recording.committed_frames,
             "run_id": recording.run_id,
             "session_id": recording.session_id,
@@ -1425,6 +1439,8 @@ def build_committed_transition_sample(
             "processor_revision": processor_revision,
             "processor_provenance_revision": provenance_revision,
             "processor_generation": processor_generation,
+            "left_transition": decision.cartesian_intent.left.transition,
+            "right_transition": decision.cartesian_intent.right.transition,
             "native_command_id": completed.native_command.payload_id,
             "native_command_sha256": completed.native_command.sha256,
             "native_preclip": native_fields["preclip"],
@@ -1485,7 +1501,8 @@ def build_committed_transition_sample(
 
 def canonical_committed_transition(sample: Mapping[str, Any]) -> dict[str, Any]:
     """Validate and canonicalize one admitted ``(O_t, A_t, O_t+1)`` row."""
-    channels = _d0_channels(_Descriptor)
+    version = int(sample.get("schema_version", -1))
+    channels = _d0_channels(_Descriptor, schema_version=version)
     if set(sample) != set(channels):
         missing = sorted(set(channels).difference(sample))
         extra = sorted(set(sample).difference(channels))
@@ -1505,6 +1522,8 @@ def canonical_committed_transition(sample: Mapping[str, Any]) -> dict[str, Any]:
         "action_source_id",
         "processor_revision",
         "processor_provenance_revision",
+        "left_transition",
+        "right_transition",
         "native_command_id",
         "transition_id",
         "transition_outcome",
@@ -1531,8 +1550,15 @@ def canonical_committed_transition(sample: Mapping[str, Any]) -> dict[str, Any]:
             if np.issubdtype(value.dtype, np.floating) and not np.isfinite(value).all():
                 raise ValueError(f"{name}: non-finite value")
             result[name] = value
-    if int(result["schema_version"]) != 2:
-        raise ValueError("schema_version must be 2")
+    if int(result["schema_version"]) != version:
+        raise ValueError("schema_version mismatch")
+    if version == 3 and any(
+        _decode_fixed_id(result[field]) not in {
+            "motion", "clutch_engaged", "clutch_held", "clutch_release_rebased"
+        }
+        for field in ("left_transition", "right_transition")
+    ):
+        raise ValueError("unsupported recorded arm transition")
     if int(result["committed"]) != 1:
         raise ValueError("only causally committed transitions may be admitted")
     if int(result["frame_index"]) < 0 or int(result["control_tick_id"]) < 0:
@@ -1604,16 +1630,16 @@ def canonical_committed_transition(sample: Mapping[str, Any]) -> dict[str, Any]:
     return result
 
 
-def _empty_d0_sample() -> dict[str, Any]:
+def _empty_d0_sample(*, schema_version: int = 3) -> dict[str, Any]:
     """Return a deliberately non-admissible shape fixture for schema tooling/tests."""
     result: dict[str, Any] = {}
-    for name, descriptor in _d0_channels(_Descriptor).items():
+    for name, descriptor in _d0_channels(_Descriptor, schema_version=schema_version).items():
         dtype = np.dtype(descriptor.dtype)
         if dtype.kind == "S":
             result[name] = np.asarray(b"", dtype=dtype)
         else:
             result[name] = np.zeros(descriptor.shape, dtype=dtype)
-    result["schema_version"] = np.uint16(2)
+    result["schema_version"] = np.uint16(schema_version)
     result["frame_index"] = np.int64(-1)
     result["committed"] = np.uint8(0)
     return result

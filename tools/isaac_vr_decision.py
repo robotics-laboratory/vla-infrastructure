@@ -20,22 +20,20 @@ from tools.d0_causal import (
 from tools.isaac_vr_capture import ObservationCapture
 
 DECISION_REVISION = "piper_x_xr_preclip_decision_v1"
+RECORDABLE_ARM_TRANSITIONS = frozenset(
+    {"motion", "clutch_engaged", "clutch_held", "clutch_release_rebased"}
+)
 
 
 def recordable_teleop_command(command: Any) -> bool:
-    """Only a fully tracked motion decision may enter a D0 episode.
-
-    Clutch, tracking recovery, sensitivity changes and other processor holds
-    remain operator/control events, not invented zero-action training rows.
-    A motion decision may still have a genuinely zero-valued native action.
-    """
+    """Admit known, tracked motion and intentional clutch transitions per arm."""
     return bool(
         command.session_active
         and all(
             arm.tracking_valid
-            and not arm.rebased
-            and not arm.clutch_active
-            and arm.transition == "motion"
+            and arm.transition in RECORDABLE_ARM_TRANSITIONS
+            and arm.rebased == (arm.transition == "clutch_release_rebased")
+            and arm.clutch_active == (arm.transition in {"clutch_engaged", "clutch_held"})
             for arm in (command.left, command.right)
         )
     )
@@ -123,21 +121,28 @@ def canonical_action_payload(
     processor_revision: str,
     provenance_revision: str,
     processor_generation: int,
+    arm_transitions: tuple[str, str] | None = None,
 ) -> bytes:
     if not processor_revision or not provenance_revision or processor_generation < 0:
         raise ValueError("invalid action processor identity")
     action_f32 = _float32_vector(dataset_action, size=14, field="dataset_action")
-    return payload(
-        {
-            "action": action_f32.tolist(),
-            "action_dtype": "<f4",
-            "action_units": "ordered_joint_degrees_gripper_millimetres",
-            "processor_generation": processor_generation,
-            "processor_revision": processor_revision,
-            "provenance_revision": provenance_revision,
-            "schema": "piper_x_dataset_action_v1",
-        }
-    )
+    fields = {
+        "action": action_f32.tolist(),
+        "action_dtype": "<f4",
+        "action_units": "ordered_joint_degrees_gripper_millimetres",
+        "processor_generation": processor_generation,
+        "processor_revision": processor_revision,
+        "provenance_revision": provenance_revision,
+        "schema": "piper_x_dataset_action_v1",
+    }
+    if arm_transitions is not None:
+        if len(arm_transitions) != 2 or any(
+            transition not in RECORDABLE_ARM_TRANSITIONS for transition in arm_transitions
+        ):
+            raise ValueError("invalid recorded arm transitions")
+        fields["schema"] = "piper_x_dataset_action_v2"
+        fields["arm_transitions"] = list(arm_transitions)
+    return payload(fields)
 
 
 def canonical_native_command_payload(
@@ -496,13 +501,18 @@ class SolvedControlDecision:
             observation is None
             or xr is None
             or xr.rebased
+            or not xr.ran_synchronously
             or not all(xr.tracking_valid)
             or (_is_live_observation(observation) and not observation.eligible)
         ):
             raise RuntimeError("Decision has no eligible observation/XR receipt")
         command = self.cartesian_intent
         if not recordable_teleop_command(command):
-            raise RuntimeError("Tracking/rebase/hold decision is not D0 eligible")
+            raise RuntimeError("Processor decision is not D0 eligible")
+        if validator.profile == "isaac_human_vr_offline_rgb_v1" and any(
+            arm.transition != "motion" for arm in (command.left, command.right)
+        ):
+            raise RuntimeError("Motion-only offline-RGB V1 profile rejects clutch")
         epoch, tick = validator.epoch, self.control_tick_id
         if tick is None:
             raise RuntimeError("Decision has no eligible control tick")
@@ -514,10 +524,12 @@ class SolvedControlDecision:
         ):
             raise RuntimeError("Decision epoch mismatch")
         obs_bytes = self.observation_payload
-        action_bytes = self.action_payload
+        action_bytes = self.action_payload_for_profile(validator.profile)
         xr_bytes = canonical_xr_payload(xr)
         if isinstance(observation, StateSnapshotObservation):
-            if validator.profile != "isaac_human_vr_offline_rgb_v1":
+            if validator.profile not in {
+                "isaac_human_vr_offline_rgb_v1", "isaac_human_vr_offline_rgb_v2"
+            }:
                 raise RuntimeError("State snapshot observation requires offline-RGB profile")
             sequences = [
                 observation.state_generation,
@@ -593,12 +605,21 @@ class SolvedControlDecision:
 
     @property
     def action_payload(self) -> bytes:
+        return self.action_payload_for_profile("isaac_human_vr_offline_rgb_v2")
+
+    def action_payload_for_profile(self, profile: str) -> bytes:
         processor_revision, provenance_revision, generation = self.processor_identity
         return canonical_action_payload(
             self.dataset_action,
             processor_revision=processor_revision,
             provenance_revision=provenance_revision,
             processor_generation=generation,
+            arm_transitions=(
+                (self.cartesian_intent.left.transition, self.cartesian_intent.right.transition)
+                if isinstance(self.observation_identity, StateSnapshotObservation)
+                and profile == "isaac_human_vr_offline_rgb_v2"
+                else None
+            ),
         )
 
 
@@ -660,7 +681,7 @@ def commit_recording_transition(
         successful=True,
     )
     observation_payload = decision.observation_payload
-    action_payload = decision.action_payload
+    action_payload = decision.action_payload_for_profile(validator.profile)
     validator.commit(
         prepared,
         observation_payload=observation_payload,

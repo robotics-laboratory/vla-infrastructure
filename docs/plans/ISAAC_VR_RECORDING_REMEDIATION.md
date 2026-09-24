@@ -275,7 +275,7 @@ Status vocabulary:
 | VRR-080 | Execute physical Quest recording acceptance | VRR-062, VRR-070, S2 physical prerequisite | `blocked` | Human run records useful distinct actions without causal loss and retains required evidence |
 | VRR-090 | Implement LeRobot v3 materializer and full-read dataset QA | VRR-053, VRR-080 | `in_progress` (converter and full-read QA pass on the headless injected artifact; physical admissible source pending VRR-080) | All rows and video streams load, align, and pass schema/task/action/unit/outcome checks |
 | VRR-100 | Add multi-episode operator lifecycle and UX | VRR-090 | `in_progress` (automatic gap segmentation implemented; physical validation and explicit start/stop/reset UX pending) | Repeated start/stop/reset creates independently finalized qualified episodes without restart |
-| VRR-101 | Reject clutch/processor holds and keep CloudXR alive across recording gaps | VRR-022, VRR-100 | `in_progress` (processor recovery regression test passes; physical Quest re-test pending) | Grip engage/hold/release, tracking and reference gaps produce no D0 row; prior episode finalizes before unrecorded physics; next episode resumes without XR reconnect |
+| VRR-101 | Record intentional clutch transitions and keep CloudXR alive across genuine recording gaps | VRR-022, VRR-100 | `in_progress` (CPU clutch continuity regression passes; physical Quest re-test pending) | Tracked grip engage/hold/release are committed causal rows in one episode; tracking and reference gaps still finalize the prior episode before unrecorded physics; the next episode resumes without XR reconnect |
 
 Execution order for the first repair milestone is:
 

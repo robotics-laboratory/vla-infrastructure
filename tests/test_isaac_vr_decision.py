@@ -259,7 +259,7 @@ def test_prepared_only_validator_and_processor_generation():
     r, _, xr = xr_receipt()
     epoch = decision_epoch("test_run", env.observation, xr)
     v = CausalTransactionValidator("isaac", "human_vr", epoch)
-    with pytest.raises(RuntimeError, match="Tracking/rebase"):
+    with pytest.raises(RuntimeError, match="not D0 eligible"):
         ik.solve(first, env.observation, xr, 1).prepare(v)
     command = proc.advance(sample(), sample())
     solution = ik.solve(command, env.observation, xr, 2)
@@ -278,14 +278,11 @@ def test_prepared_only_validator_and_processor_generation():
         replace(solution, xr_identity=replace(xr, rebased=True)).prepare(v)
 
 
-def test_clutch_and_release_are_not_recordable_zero_actions():
+def test_clutch_and_release_are_recordable_without_inventing_zero_actions():
     ik, env = ik_fixture()
     proc = BimanualS2TeleopProcessor()
     proc.advance(sample(), sample())  # initial reference acquisition
     r, _, xr = xr_receipt()
-    validator = CausalTransactionValidator(
-        "isaac", "human_vr", decision_epoch("test_run", env.observation, xr)
-    )
     for tick, (left, right) in enumerate(
         (
             (sample(squeeze=1.0), sample()),
@@ -295,10 +292,33 @@ def test_clutch_and_release_are_not_recordable_zero_actions():
         start=1,
     ):
         command = proc.advance(left, right)
-        assert not recordable_teleop_command(command)
-        with pytest.raises(RuntimeError, match="Tracking/rebase/hold"):
-            ik.solve(command, env.observation, xr, tick).prepare(validator)
+        assert recordable_teleop_command(command)
+        decision = ik.solve(command, env.observation, xr, tick)
+        assert decision.cartesian_intent is command
+        assert decision.native_preclip == tuple(float(value) for value in decision.native_preclip)
+        if command.left.clutch_active or command.right.clutch_active:
+            assert any(arm.transition.startswith("clutch_") for arm in (command.left, command.right))
     assert recordable_teleop_command(proc.advance(sample(), sample()))
+
+
+def test_legacy_offline_profile_rejects_clutch_decisions():
+    ik, env = ik_fixture()
+    env.camera = NS(reset_epoch=2)
+    env.capture_measured_state = lambda: (env.step, tuple(float(i) for i in range(14)))
+    observation = bind_snapshot(capture_state_snapshot(env), 0)
+    proc = BimanualS2TeleopProcessor()
+    proc.advance(sample(), sample())
+    command = proc.advance(sample(squeeze=1.0), sample())
+    receipt, _, xr = xr_receipt()
+    ik.device = NS(validate_xr=receipt.validate, xr_receipt=receipt)
+    ik.processor = proc
+    validator = CausalTransactionValidator(
+        "isaac", "human_vr", decision_epoch("run", observation, xr),
+        profile="isaac_human_vr_offline_rgb_v1",
+    )
+    assert recordable_teleop_command(command)
+    with pytest.raises(RuntimeError, match="Motion-only offline-RGB V1"):
+        ik.solve(command, observation, xr, 1).prepare(validator)
 
 
 def test_live_capture_identity_survives_equivalent_module_alias():
@@ -347,7 +367,7 @@ def test_state_snapshot_offline_profile_prepare_and_identity():
     receipt, _, xr = xr_receipt()
     epoch = decision_epoch("run", observation, xr, episode_id="episode_000000")
     validator = CausalTransactionValidator(
-        "isaac", "human_vr", epoch, profile="isaac_human_vr_offline_rgb_v1"
+        "isaac", "human_vr", epoch, profile="isaac_human_vr_offline_rgb_v2"
     )
     ik.device = NS(validate_xr=receipt.validate, xr_receipt=receipt)
     ik.processor = proc
@@ -367,7 +387,9 @@ def test_state_snapshot_offline_profile_prepare_and_identity():
     assert prepared.sources[0].sample.sha256 != prepared.sources[-1].sample.sha256
     assert prepared.observation.sha256
     assert prepared.observation.sha256 == sha256(observation.canonical_payload()).hexdigest()
-    assert prepared.dataset_action.sha256 == sha256(decision.action_payload).hexdigest()
+    assert prepared.dataset_action.sha256 == sha256(
+        decision.action_payload_for_profile(validator.profile)
+    ).hexdigest()
     assert {source.sample.sha256 for source in prepared.sources[1:]} == {
         sha256(canonical_xr_payload(xr)).hexdigest()
     }
@@ -495,17 +517,23 @@ def test_noneligible_run_solution_has_no_control_tick_identity():
     assert solution.control_tick_id is None
 
 
-def test_motion_admission_distinguishes_zero_motion_from_processor_holds():
+def test_recording_admission_distinguishes_intentional_clutch_from_unknown_holds():
     processor = BimanualS2TeleopProcessor()
     zero = sample(delta=0.0)
     assert not recordable_teleop_command(processor.advance(zero, zero))
     motion = processor.advance(zero, zero)
     assert recordable_teleop_command(motion)
     assert not np.any(motion.left.delta_pose) and not np.any(motion.right.delta_pose)
+    for transition, clutch_active, rebased in (
+        ("clutch_engaged", True, False),
+        ("clutch_held", True, False),
+        ("clutch_release_rebased", False, True),
+    ):
+        assert recordable_teleop_command(replace(
+            motion, left=replace(motion.left, transition=transition,
+                                 clutch_active=clutch_active, rebased=rebased)
+        ))
     for transition in (
-        "clutch_engaged",
-        "clutch_held",
-        "clutch_release_rebased",
         "tracking_lost",
         "tracking_rebased",
         "sensitivity_mode_changed",

@@ -284,7 +284,7 @@ D1:
   - simulation.isaac.recorder.execution_profile
   - simulation.isaac.recorder.source_profile
   - simulation.isaac.recorder.conversion_revision
-  - dataset.temporal_semantics.source_profiles.isaac_human_vr_offline_rgb_v1.persistence_call_phase
+  - dataset.temporal_semantics.source_profiles.isaac_human_vr_offline_rgb_v2.persistence_call_phase
   - dataset.temporal_semantics.native_recording_row.revision
   - dataset.temporal_semantics.native_recording_row.admission
   - dataset.cameras.scene.feature_key

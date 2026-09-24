@@ -99,7 +99,7 @@ when selected. A composition object does not imply experimental gate scope.
 Recording consumes the same base runtime and preserves D0 temporal and action-label
 boundaries. The selected `isaac_vr_record` execution profile writes a native
 snapshot/state/action/provenance artifact under the additive
-`isaac_human_vr_offline_rgb_v1` source profile. This contract selection neither
+`isaac_human_vr_offline_rgb_v2` source profile. This contract selection neither
 admits the current implementation nor resolves D1; canonical RGB and final
 LeRobotDataset v3 samples require verified offline materialization.
 

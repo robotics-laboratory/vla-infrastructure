@@ -121,6 +121,9 @@ def test_offline_rgb_profile_requires_explicit_isaac_human_selection():
     assert select_temporal_profile(
         "isaac", "human_vr", requested="isaac_human_vr_offline_rgb_v1"
     ) == "isaac_human_vr_offline_rgb_v1"
+    assert select_temporal_profile(
+        "isaac", "human_vr", requested="isaac_human_vr_offline_rgb_v2"
+    ) == "isaac_human_vr_offline_rgb_v2"
     with pytest.raises(ValueError, match="not valid"):
         select_temporal_profile(
             "real", "human_vr", requested="isaac_human_vr_offline_rgb_v1"

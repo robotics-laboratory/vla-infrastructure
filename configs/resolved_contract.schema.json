@@ -457,6 +457,7 @@
           "enum": [
             "isaac_human_vr_v4",
             "isaac_human_vr_offline_rgb_v1",
+            "isaac_human_vr_offline_rgb_v2",
             "isaac_automated_v4",
             "real_human_vr_physical_v4"
           ]
@@ -3303,8 +3304,8 @@
             },
             "native_recording_row": {
               "const": {
-                "revision": "isaac_vr_committed_transition_row_v1",
-                "applies_to_profile": "isaac_human_vr_offline_rgb_v1",
+                "revision": "isaac_vr_committed_transition_row_v2",
+                "applies_to_profile": "isaac_human_vr_offline_rgb_v2",
                 "admission": "only_after_successful_transition_successor_observation_and_causal_commit",
                 "cardinality": "one_hdf_row_per_committed_causal_transaction",
                 "hdf_row_index": "dense_zero_based_committed_order_independent_of_control_tick_id",
@@ -3319,6 +3320,7 @@
                     "identity_field": "dataset_action_id",
                     "phase": "deterministic_label_output_t_before_native_mapping_or_clipping",
                     "payload": "canonical_float32_action_14",
+                    "per_arm_transition_provenance": "left_transition_and_right_transition_bound_into_action_payload_sha256",
                     "units": "ordered_joint_degrees_and_gripper_millimetres_from_action_contract"
                   },
                   "native_command_t": {
@@ -3425,6 +3427,65 @@
                   "persistence_call_phase": "after_successful_transition_successor_observation_and_causal_commit",
                   "source_action": "post-DifferentialIK desired joint target BEFORE native clipping, converted to canonical deg/mm",
                   "native_row_semantics_revision": "isaac_vr_committed_transition_row_v1",
+                  "runtime_binding_status": "pending_D1_implementation_and_evidence",
+                  "dataset_admissible_before_materialization_and_D1_evidence": false,
+                  "host_timestamps": "optional_QA_provenance_not_XR_physical_acquisition_time",
+                  "openxr_query_time": "optional_when_explicitly_exposed_by_source"
+                },
+                "isaac_human_vr_offline_rgb_v2": {
+                  "runtime": "isaac",
+                  "source_classes": [
+                    "human_vr"
+                  ],
+                  "physical_timing_required": false,
+                  "observation_mode": "immutable_pre_action_scene_state_snapshot_with_offline_rgb_materialization",
+                  "required_source_identities": [
+                    "simulation.scene_state_snapshot",
+                    "xr.device_io_update",
+                    "xr.submitted_frame",
+                    "xr.returned_frame",
+                    "xr.resolved_input"
+                  ],
+                  "scene_state_snapshot_identity_fields": [
+                    "run_id",
+                    "episode_id",
+                    "source_id",
+                    "reset_epoch",
+                    "control_reference_epoch",
+                    "source_epoch",
+                    "control_tick_id",
+                    "obs_id",
+                    "scene_state_snapshot_id",
+                    "scene_state_snapshot_sha256",
+                    "simulation_state_generation",
+                    "physics_step"
+                  ],
+                  "materialized_required_source_identities": [
+                    "offline_rgb.left_wrist",
+                    "offline_rgb.right_wrist",
+                    "offline_rgb.scene"
+                  ],
+                  "materialized_camera_identity_fields": [
+                    "obs_id",
+                    "scene_state_snapshot_id",
+                    "scene_state_snapshot_sha256",
+                    "camera_role",
+                    "camera_prim_path",
+                    "camera_configuration_sha256",
+                    "renderer_configuration_sha256",
+                    "stage_snapshot_sha256",
+                    "asset_closure_sha256",
+                    "materialization_revision",
+                    "rgb_sha256"
+                  ],
+                  "materialized_camera_join": "exact_obs_id_and_scene_state_snapshot_sha256_positional_join_forbidden",
+                  "recording_arm_transitions": ["motion", "clutch_engaged", "clutch_held", "clutch_release_rebased"],
+                  "recording_gap_transitions": ["tracking_lost", "tracking_invalid", "tracking_rebased", "sensitivity_switched_normal", "sensitivity_switched_precise", "session_inactive"],
+                  "source_epoch_semantics": "XR session epoch",
+                  "tracking_valid_required": true,
+                  "persistence_call_phase": "after_successful_transition_successor_observation_and_causal_commit",
+                  "source_action": "post-DifferentialIK desired joint target BEFORE native clipping, converted to canonical deg/mm",
+                  "native_row_semantics_revision": "isaac_vr_committed_transition_row_v2",
                   "runtime_binding_status": "pending_D1_implementation_and_evidence",
                   "dataset_admissible_before_materialization_and_D1_evidence": false,
                   "host_timestamps": "optional_QA_provenance_not_XR_physical_acquisition_time",
@@ -4333,7 +4394,7 @@
                   "type": ["string", "null"]
                 },
                 "source_profile": {
-                  "const": "isaac_human_vr_offline_rgb_v1"
+                  "const": "isaac_human_vr_offline_rgb_v2"
                 }
               }
             },

@@ -160,11 +160,25 @@ def _verify(recording: Path):
     )
 
 
+def test_recording_profile_and_transition_schema_are_paired(tmp_path):
+    old = _verify(_artifact(tmp_path))
+    assert old.manifest["session_metadata"]["source_profile"] == "isaac_human_vr_offline_rgb_v1"
+    manifest = json.loads(old.manifest_path.read_text())
+    manifest["session_metadata"]["source_profile"] = "isaac_human_vr_offline_rgb_v2"
+    old.manifest_path.write_text(json.dumps(manifest))
+    with pytest.raises(ValueError, match="unsupported source profile"):
+        _verify(old.recording)
+    manifest["transition_schema"] = "piper_x_committed_transition_v3"
+    old.manifest_path.write_text(json.dumps(manifest))
+    new = _verify(old.recording)
+    assert new.manifest["session_metadata"]["source_profile"] == "isaac_human_vr_offline_rgb_v2"
+
+
 def _canonical_d0_arrays() -> dict[str, np.ndarray]:
-    first = committed_sample()
+    first = committed_sample(schema_version=2)
     first["episode_id"] = "episode_000000"
     seal_sample(first)
-    second = committed_sample(frame_index=1, successor_step=18)
+    second = committed_sample(frame_index=1, successor_step=18, schema_version=2)
     second.update(
         {
             "episode_id": "episode_000000",
@@ -265,7 +279,7 @@ def test_artifact_verifier_requires_sidecar_digest_and_explicit_root_binding(tmp
 def test_session_validator_requires_every_row_committed_and_every_track(tmp_path):
     artifact = _verify(_artifact(tmp_path))
     tracks = [
-        {"group": group, "type": replay.REQUIRED_TRACK_TYPES[group]}
+        {"group": group, "type": ("piper_x_committed_transition_v2" if group == "d0/committed_transition" else replay.REQUIRED_TRACK_TYPES[group])}
         for group in replay.REQUIRED_TRACKS
     ]
 

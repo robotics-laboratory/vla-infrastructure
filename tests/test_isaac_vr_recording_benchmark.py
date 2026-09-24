@@ -27,7 +27,7 @@ def _identity(condition: str, *, pair_id: str = "pair-1", headset: bool = True) 
         "measurement_provenance_sha256": digest,
         "scene_snapshot_sha256": digest,
         "visual_provenance_sha256": digest,
-        "source_profile": "isaac_human_vr_offline_rgb_v1",
+        "source_profile": "isaac_human_vr_offline_rgb_v2",
         "quest_session_id": f"quest-{pair_id}",
         "target_hz": 30.0,
         "warmup_steps": 1,

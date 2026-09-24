@@ -92,6 +92,19 @@ def _bundle(tmp_path: Path, frames: int = 2) -> tuple[Path, dict[str, np.ndarray
     return path, arrays
 
 
+def test_clutch_profile_projection_preserves_exact_row_count_and_order(tmp_path: Path) -> None:
+    arrays = _arrays(3)
+    source = _source()
+    source["source_profile"] = "isaac_human_vr_offline_rgb_v2"
+    bundle = tmp_path / "clutch_profile"
+    materialize._write_projection_bundle(bundle, arrays, source)
+    manifest, loaded = materialize.verify_projection_bundle(bundle)
+    assert manifest["source"]["source_profile"] == "isaac_human_vr_offline_rgb_v2"
+    assert manifest["frames"] == 3
+    np.testing.assert_array_equal(loaded["frame_index"], [0, 1, 2])
+    np.testing.assert_array_equal(loaded["action"], arrays["action"])
+
+
 def _report(tmp_path: Path, arrays: dict[str, np.ndarray]) -> Path:
     images = tmp_path / "rgb"
     images.mkdir()

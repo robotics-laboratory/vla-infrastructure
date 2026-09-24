@@ -5,22 +5,26 @@ with diagnostics. `./run-vr record` writes a native NVIDIA Episode Recorder HDF5
 state/action/provenance artifact. It does not create a D1 dataset; S2 physical
 acceptance and D1 remain unresolved.
 
-In RECORD, a grip/clutch hold, tracking loss, or reference change is not an
-action row. After at least one committed transition, such a gap finalizes the
-current episode before the next physics step; the CloudXR session stays open and
-the next control boundary starts a new, independently finalized artifact in a
-sibling directory suffixed `-episode_000001`, `-episode_000002`, etc. The first
-episode remains at the requested output directory. With `--recordings-root`, all
-episodes instead use `<root>/episode_000000`, `<root>/episode_000001`, etc.
-The run report lists every
-directory in `recording_episodes`. These segments are independent episodes, not
-one continuous trajectory across the gap. The same session-level `performance.jsonl`
-and timing observer continue across every episode and gap; episode closure never
-closes or replaces that log. Rejected clutch/tracking ticks still apply the safe
-processed command, including motion from the opposite valid arm, without rearming
-processor tracking or recording a row. Clutch release and tracking recovery emit
-their natural rebase before the next motion decision can be recorded. A future no-physics pause/resume may
-avoid segmentation, but it requires separate XR/physics validation.
+In RECORD, tracked intentional clutch engagement, hold and release rebase are
+causal action rows in the same technical episode as motion. Both arms may have
+different transitions in one row. The recorded action is the processed IK
+solution actually applied, with per-arm transition provenance. Tracking loss,
+tracking recovery rebase, sensitivity switches, session/reference changes and
+missing XR receipts remain gaps. After at least one committed transition, a gap
+finalizes the current episode before the next physics step; the CloudXR session
+stays open and the next control boundary starts a new, independently finalized
+artifact in a sibling directory suffixed `-episode_000001`, `-episode_000002`,
+etc. The first episode remains at the requested output directory. With
+`--recordings-root`, all episodes instead use `<root>/episode_000000`,
+`<root>/episode_000001`, etc. The run report lists every directory in
+`recording_episodes`. These segments are independent episodes. The same
+session-level `performance.jsonl` and timing observer continue across every
+episode and gap; episode closure never closes or replaces that log. Rejected
+tracking ticks still apply the safe processed command, including motion from
+the opposite valid arm, without rearming processor tracking or recording a row.
+Tracking recovery emits its natural rebase before the next motion decision can
+be recorded. A future no-physics pause/resume may avoid segmentation, but it
+requires separate XR/physics validation.
 
 ## Start and qualify
 

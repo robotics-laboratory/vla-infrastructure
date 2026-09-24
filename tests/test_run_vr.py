@@ -768,12 +768,24 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
             session_id="session",
             episode_id="episode_000000",
             output_dir=tmp_path / "recording",
-            source_profile="isaac_human_vr_offline_rgb_v1",
+            source_profile="isaac_human_vr_offline_rgb_v2",
             capture_observation=lambda: NS(observation=env.current_capture),
             discard_observation=lambda *a, **kw: None,
             close=lambda **kw: closed.append(kw),
         )
         monkeypatch.setattr(isaac_vr_recording, "start_live_recording", lambda *a, **kw: record)
+        class FakeRecordingSession:
+            def __init__(self, first):
+                self.active_episode = first
+
+            def end_episode(self, *, outcome, reason):
+                self.active_episode.close(outcome=outcome, reason=reason)
+                self.active_episode = None
+
+            def close(self, **_):
+                pass
+
+        monkeypatch.setattr(isaac_vr_recording, "RecordingSession", FakeRecordingSession)
         monkeypatch.setattr(runtime, "recording_portable_roots", lambda _: {})
         composition.prepare_recording_view = lambda: None
         args.s2_mode = "run"

@@ -68,8 +68,8 @@ and video lookup. It never proves physical acquisition or simulation capture.
   desired joint target **before native clipping**, converted to canonical deg/mm.
   Its accepted D0 evidence remains scoped to this profile; it is not evidence for
   the additive offline-RGB profile below. The runtime binding remains pending D1.
-- `isaac_human_vr_offline_rgb_v1`: the selected recording profile uses an
-  immutable pre-action scene-state snapshot as the online observation source.
+- `isaac_human_vr_offline_rgb_v1`: the previous motion-only recording profile
+  uses an immutable pre-action scene-state snapshot as the online observation source.
   Online admission requires the snapshot identity plus the exact XR DeviceIO,
   submitted-frame, returned-frame and resolved-input identities used by the
   post-DifferentialIK preclip action. The scene snapshot identity binds run,
@@ -84,6 +84,15 @@ and video lookup. It never proves physical acquisition or simulation capture.
   forbidden. This declaration is pending implementation and D1 evidence, and a
   native state recording remains `dataset_admissible=false` until the three
   camera roles are materialized and the D1 requirements pass.
+- `isaac_human_vr_offline_rgb_v2`: the selected recording revision retains
+  the V1 snapshot, XR, action-label and offline RGB identities. Admission adds
+  tracked per-arm `motion`, `clutch_engaged`, `clutch_held` and
+  `clutch_release_rebased` transitions. The last is intentional rebase after
+  known clutch history; `tracking_rebased` follows an unknown tracking interval
+  and remains a gap. Each committed row records both arm transitions bound to
+  its action digest. Tracking loss/invalidity, XR receipt or identity loss,
+  session/reference epoch changes, reset and sensitivity switches remain gaps.
+  D1 and physical acceptance remain pending for this revision.
 - `isaac_automated_v4`: the same simulation/camera/transition identities, with
   generator decision/revision/state and seed when applicable. No XR is synthesized.
 - `real_human_vr_physical_v4`: causal identity plus strict physical timing for state,
@@ -139,7 +148,8 @@ native field -> action_t
 native field -> outcome_t / termination / success
 ```
 
-For `isaac_human_vr_offline_rgb_v1`, one admitted native HDF row is exactly one
+For both `isaac_human_vr_offline_rgb_v1` and
+`isaac_human_vr_offline_rgb_v2`, one admitted native HDF row is exactly one
 completed causal transaction `(O_t, A_t, O_(t+1))`. The row is appended only after
 successful native transition, successor observation, causal completion and commit:
 
@@ -154,7 +164,7 @@ successful native transition, successor observation, causal completion and commi
 - `O_(t+1)` stores the post-transition canonical state and successor identity.
 
 The HDF row index is a dense zero-based commit order, not a control-tick identity;
-control ticks may have gaps. An invalid, held, tracking-invalid, reset-crossing or
+control ticks may have gaps. An invalid, untrusted, tracking-invalid, reset-crossing or
 failed tick appends no row and only increments reasoned episode QA. A genuine
 committed zero action remains valid and is never inferred from value alone. The
 last admitted action still requires a successor observation and terminal outcome

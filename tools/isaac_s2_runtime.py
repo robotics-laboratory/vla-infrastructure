@@ -712,12 +712,16 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     observation is not None
                     and xr is not None
                     and not xr.rebased
+                    and xr.ran_synchronously
+                    and all(xr.tracking_valid)
                     and recordable_teleop_command(command)
                 )
                 if recording is not None and not eligible:
                     assert recording_token is not None
                     if xr is None:
                         rejection_reason = "xr_receipt_unavailable"
+                    elif not xr.ran_synchronously or not all(xr.tracking_valid):
+                        rejection_reason = "xr_tracking_untrusted"
                     elif xr.rebased or any(arm.rebased for arm in (command.left, command.right)):
                         rejection_reason = "control_reference_rebased"
                     elif not command.session_active:

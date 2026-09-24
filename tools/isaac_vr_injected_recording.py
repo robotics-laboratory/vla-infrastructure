@@ -121,7 +121,7 @@ def record_injected_transitions(
                     xr,
                     episode_id=recording.episode_id,
                 ),
-                profile="isaac_human_vr_offline_rgb_v1",
+                profile="isaac_human_vr_offline_rgb_v2",
             )
         if initial_state is None:
             initial_state = token.state
