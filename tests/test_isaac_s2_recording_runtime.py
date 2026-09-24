@@ -8,7 +8,6 @@ from types import ModuleType, SimpleNamespace as NS
 
 import yaml
 import numpy as np
-import pytest
 
 from tools.isaac_s2_processor import BimanualS2TeleopProcessor, ControllerDeltaSample
 from tools.isaac_vr_decision import recordable_teleop_command
@@ -89,6 +88,8 @@ def test_recording_gap_finalizes_episode_before_unrecorded_native_advance():
     native_apply = source.index("saturated_frames += int(ik.apply(solution))", finalize)
     assert discard < continuity_guard < finalize < native_apply
     assert "recording_episode_index += 1" in source
+    assert "recording = recording_session.start_episode(output_dir, episode_id)" in source
+    assert source.count("recording = start_live_recording(") == 1
     assert '"recording_episodes"' in source
     assert '"left_transition": command.left.transition' in source
 
@@ -99,6 +100,8 @@ def test_record_admission_keeps_safe_solve_and_opposite_arm_motion():
     gated_apply = source.index("if solution is not None:", solution)
     native_apply = source.index("saturated_frames += int(ik.apply(solution))", gated_apply)
     assert solution < gated_apply < native_apply
+    epoch_gap = source.index('finalize_recording("operator_stopped", "causal_epoch_changed")')
+    assert "solution = None" not in source[epoch_gap:native_apply]
 
     node = next(
         node
@@ -304,110 +307,10 @@ def test_no_client_lifecycle_smoke_captures_and_finalizes_without_teleop(tmp_pat
     assert result["passed"] and not result["teleop_initialized"] and not result["xr_initialized"]
 
 
-@pytest.mark.parametrize("numbered_root", [False, True])
-def test_episode_restart_reuses_session_performance_stream(tmp_path, capsys, numbered_root):
-    """Execute production finalization/restart blocks with only storage replaced."""
-    from isaac_s2_performance import S2PerformanceLogger
-
+def test_runtime_closes_static_session_once_after_episode_finalization():
     source = (ROOT / "tools/isaac_s2_runtime.py").read_text()
-    tree = ast.parse(source)
-    run = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "run_s2")
-    finalize = next(
-        n for n in run.body if isinstance(n, ast.FunctionDef) and n.name == "finalize_recording"
+    assert source.count("recording_session = RecordingSession(recording)") == 1
+    assert source.count("recording_session.close(") == 1
+    assert source.index("finalize_recording(recording_outcome, close_reason)") < source.index(
+        "recording_session.close("
     )
-    # The harness namespace supplies the enclosing run_s2 locals.
-    finalize.body[0] = ast.Global(names=["recording", "recording_summary"])
-    restart = next(
-        n
-        for n in ast.walk(run)
-        if isinstance(n, ast.If)
-        and ast.unparse(n.test) == "recording_requested and recording is None"
-    )
-    closed, observers = [], []
-    log = S2PerformanceLogger(
-        tmp_path / "performance.jsonl", window_steps=2, warmup_steps=0, target_hz=30.0
-    )
-    recordings_root = tmp_path / "recordings" if numbered_root else None
-    output = recordings_root / "episode_000000" if numbered_root else tmp_path / "recording"
-
-    def start(path, env, *, session_metadata, portable_roots, timing_observer):
-        assert portable_roots["recording"] == path
-        observers.append(timing_observer)
-        return NS(
-            output_dir=path,
-            committed_frames=2,
-            discarded_observations=1,
-            rejections={"operator_hold": 1},
-            run_id="run",
-            session_id="session",
-            episode_id=session_metadata["episode_id"],
-            source_profile="isaac_human_vr_offline_rgb_v1",
-            close=lambda **kw: closed.append(kw),
-        )
-
-    namespace = dict(
-        recording=None,
-        recording_summary=None,
-        recording_episodes=[],
-        recording_episode_index=0,
-        recording_requested=True,
-        args_cli=NS(s2_recording_dir=output, s2_recordings_root=recordings_root),
-        env=NS(),
-        config_path=ROOT / "config",
-        actual_versions={},
-        run_id="run",
-        session_id="session",
-        PROCESSOR_REVISION="test",
-        recording_options={"timing_observer": log.add_nested},
-        recording_portable_roots=lambda _: {},
-        recording_session_metadata=lambda **kw: kw,
-        start_live_recording=start,
-        Path=Path,
-        json=json,
-    )
-    namespace["recording"] = start(
-        output,
-        namespace["env"],
-        session_metadata={"episode_id": "episode_000000"},
-        portable_roots={"recording": output},
-        timing_observer=log.add_nested,
-    )
-    exec(
-        compile(ast.fix_missing_locations(ast.Module([finalize], [])), "finalize", "exec"),
-        namespace,
-    )
-    log.begin_step()
-    observers[0]("hdf_append_ms", 1000)
-    log.end_step(1)
-    namespace["finalize_recording"]("operator_stopped", "operator_hold")
-    exec(
-        compile(ast.fix_missing_locations(ast.Module([restart], [])), "restart", "exec"), namespace
-    )
-    assert namespace["recording"].output_dir == (
-        recordings_root / "episode_000001" if numbered_root else Path(f"{output}-episode_000001")
-    )
-    assert observers[0].__self__ is observers[1].__self__ is log
-    log.begin_step()
-    observers[1]("hdf_append_ms", 2000)
-    log.end_step(2)
-    namespace["finalize_recording"]("operator_stopped", "control_loop_completed")
-    exec(
-        compile(ast.fix_missing_locations(ast.Module([restart], [])), "restart", "exec"), namespace
-    )
-    assert namespace["recording"].output_dir == (
-        recordings_root / "episode_000002" if numbered_root else Path(f"{output}-episode_000002")
-    )
-    log.begin_step()
-    observers[2]("hdf_append_ms", 3000)
-    log.end_step(3)
-    namespace["finalize_recording"]("operator_stopped", "control_loop_completed")
-    assert len(closed) == len(namespace["recording_episodes"]) == 3
-    assert [e["episode_id"] for e in namespace["recording_episodes"]] == [
-        "episode_000000",
-        "episode_000001",
-        "episode_000002",
-    ]
-    assert log.close()["control"]["samples"] == 3
-    events = [json.loads(line) for line in log.path.read_text().splitlines()]
-    assert sum(e["event"] == "performance_summary" for e in events) == 1
-    assert sum(e["event"] == "performance_step" for e in events) == 3

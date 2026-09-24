@@ -406,6 +406,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     env.last_control_decision = None
     env.prepared_control_transaction = None
     recording = None
+    recording_session = None
     recording_token = None
     recording_stop_reason: str | None = None
     recording_failure_reason: str | None = None
@@ -418,7 +419,6 @@ def run_s2(env, args_cli, simulation_app) -> int:
         if recording is None:
             return
         active = recording
-        recording = None
         summary = {
             "committed_frames": active.committed_frames,
             "discarded_observations": active.discarded_observations,
@@ -431,7 +431,10 @@ def run_s2(env, args_cli, simulation_app) -> int:
             "source_profile": active.source_profile,
             "output_dir": str(active.output_dir),
         }
-        active.close(outcome=outcome, reason=reason)
+        try:
+            recording_session.end_episode(outcome=outcome, reason=reason)
+        finally:
+            recording = None
         recording_summary = summary
         recording_episodes.append(summary)
         print(
@@ -460,7 +463,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     )
     try:
         if recording_requested:
-            from isaac_vr_recording import start_live_recording
+            from isaac_vr_recording import RecordingSession, start_live_recording
 
             if experiment is not None:
                 experiment.prepare_recording_view()
@@ -485,6 +488,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 portable_roots=recording_portable_roots(args_cli),
                 **recording_options,
             )
+            recording_session = RecordingSession(recording)
         if experiment is not None and not recording_requested:
             # Pinned Candidate B requires camera-feed bind(env) before the XR
             # teleop session is entered. This also makes the panels available
@@ -524,25 +528,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         Path(recordings_root) / episode_id if recordings_root is not None
                         else Path(f"{args_cli.s2_recording_dir}-{episode_id}")
                     )
-                    recording = start_live_recording(
-                        output_dir,
-                        env,
-                        session_metadata=recording_session_metadata(
-                            xr_render=getattr(args_cli, "xr_render_readback", None),
-                            config_path=config_path,
-                            environment_pins=actual_versions,
-                            run_id=run_id,
-                            session_id=session_id,
-                            episode_id=episode_id,
-                            execution_profile="isaac_vr_record",
-                            processor_revision=PROCESSOR_REVISION,
-                        ),
-                        portable_roots={
-                            **recording_portable_roots(args_cli),
-                            "recording": output_dir,
-                        },
-                        **recording_options,
-                    )
+                    recording = recording_session.start_episode(output_dir, episode_id)
                 if validator is not None and recording is None:
                     # Ordinary RUN prepares receipts for observability only; it
                     # has no persistence/successor phase and must clear them.
@@ -742,9 +728,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         rejection_reason = "operator_hold"
                     recording.discard_observation(recording_token, reason=rejection_reason)
                     recording_token = None
-                    # An unrecorded native advance would break O_(t+1)->O_t
-                    # continuity. Finalize this episode before that advance,
-                    # but do not tear down CloudXR or the operator's session.
+                    # Seal this causal segment before unrecorded physics. The
+                    # static recording session and CloudXR remain open.
                     if recording.committed_frames:
                         print(
                             json.dumps(
@@ -815,8 +800,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
                             )
                             finalize_recording("operator_stopped", "causal_epoch_changed")
                             validator = None
+                            # The solved command remains safe to apply; only its
+                            # recording admission is rejected for this tick.
                             eligible = False
-                            solution = None
                         else:
                             validator.begin_epoch(epoch)
                     if eligible:
@@ -1001,19 +987,29 @@ def run_s2(env, args_cli, simulation_app) -> int:
         raise
     finally:
         try:
-            if recording is not None:
-                if recording_failure_reason is not None:
-                    recording_outcome = "failure"
-                    close_reason = recording_failure_reason
-                elif recording.committed_frames == 0:
-                    recording_outcome = "aborted"
-                    close_reason = recording_stop_reason or "no_committed_transitions"
-                else:
-                    recording_outcome = "operator_stopped"
-                    close_reason = recording_stop_reason or (
-                        "keyboard_interrupt" if interrupted else "control_loop_completed"
+            try:
+                if recording is not None:
+                    if recording_failure_reason is not None:
+                        recording_outcome = "failure"
+                        close_reason = recording_failure_reason
+                    elif recording.committed_frames == 0:
+                        recording_outcome = "aborted"
+                        close_reason = recording_stop_reason or "no_committed_transitions"
+                    else:
+                        recording_outcome = "operator_stopped"
+                        close_reason = recording_stop_reason or (
+                            "keyboard_interrupt" if interrupted else "control_loop_completed"
+                        )
+                    if recording_session is None:
+                        recording.close(outcome=recording_outcome, reason=close_reason)
+                    else:
+                        finalize_recording(recording_outcome, close_reason)
+            finally:
+                if recording_session is not None:
+                    recording_session.close(
+                        outcome="failure" if recording_failure_reason else "aborted",
+                        reason=recording_failure_reason or "session_closed",
                     )
-                finalize_recording(recording_outcome, close_reason)
             if experiment is not None:
                 experiment.close()
         finally:

@@ -214,6 +214,8 @@ def open_explicit_session(
     deferred_groups: Sequence[str] = (),
     backend_context_factory: Callable[[], ContextManager[None]] | None = None,
     pose_batch_factory: Callable[[Sequence[str]], Any] | None = None,
+    recordables_already_open: bool = False,
+    sampler: ExplicitFrameSampler | None = None,
 ) -> tuple[Any, ExplicitFrameSampler]:
     """Open NVIDIA V2 storage and invoke the public Recordable lifecycle."""
     from isaacsim.replicator.episode_recorder import SessionStorage, build_manifest
@@ -223,9 +225,10 @@ def open_explicit_session(
     storage.open()
     opened: list[Any] = []
     try:
-        for recordable in recordables:
-            recordable.on_session_open(stage)
-            opened.append(recordable)
+        if not recordables_already_open:
+            for recordable in recordables:
+                recordable.on_session_open(stage)
+                opened.append(recordable)
         for key, value in session_metadata.items():
             storage.set_root_attr(key, value)
         storage.set_root_attr("transition_schema", TRANSITION_SCHEMA)
@@ -245,6 +248,11 @@ def open_explicit_session(
                 session_metadata=dict(session_metadata),
             )
         )
+        if sampler is not None:
+            if sampler.failed or sampler.recordables != tuple(recordables):
+                raise RuntimeError("cannot reuse a failed or mismatched recording sampler")
+            sampler.storage = storage
+            return storage, sampler
         return storage, ExplicitFrameSampler(
             storage,
             recordables,
@@ -287,8 +295,9 @@ def close_explicit_session(
     *,
     success: bool | None,
     metadata: Mapping[str, Any],
+    close_recordables: bool = True,
 ) -> None:
-    """Finalize once and release public Recordable handles in lifecycle order."""
+    """End one episode and storage file; optionally release session-owned handles."""
     errors: list[Exception] = []
     for recordable in recordables:
         try:
@@ -299,11 +308,12 @@ def close_explicit_session(
         storage.end_episode(success=success, metadata=metadata)
     except Exception as exc:
         errors.append(exc)
-    for recordable in reversed(recordables):
-        try:
-            recordable.on_session_close()
-        except Exception as exc:
-            errors.append(exc)
+    if close_recordables:
+        for recordable in reversed(recordables):
+            try:
+                recordable.on_session_close()
+            except Exception as exc:
+                errors.append(exc)
     try:
         storage.close()
     except Exception as exc:
@@ -509,6 +519,16 @@ class LiveRecording:
         )
 
     def close(self, *, outcome: str, reason: str | None = None) -> None:
+        """Close a standalone recording and its Recordable session handles."""
+        self._finish(outcome=outcome, reason=reason, close_recordables=True)
+
+    def end(self, *, outcome: str, reason: str | None = None) -> None:
+        """Seal one technical episode while retaining session-owned handles."""
+        self._finish(outcome=outcome, reason=reason, close_recordables=False)
+
+    def _finish(
+        self, *, outcome: str, reason: str | None, close_recordables: bool
+    ) -> None:
         """Finalize metadata atomically; failures can never produce a finalized marker."""
         self._require_open()
         if outcome not in FINAL_OUTCOMES:
@@ -544,6 +564,7 @@ class LiveRecording:
                     "discarded_observations": self.discarded_observations,
                     "rejections": dict(self.rejections),
                 },
+                close_recordables=close_recordables,
             )
             terminal_successor: dict[str, Any] | None = None
             if self.committed_frames:
@@ -703,6 +724,162 @@ class LiveRecording:
     def _require_open(self) -> None:
         if self._closed:
             raise RuntimeError("recording is already closed")
+
+
+class RecordingSession:
+    """Keep immutable scene preparation and Recordable handles across segments.
+
+    Each segment still has its own NVIDIA storage file because the current
+    replay artifact binds one HDF session manifest and terminal successor to
+    one episode ID. Only the per-episode HDF and finalization are repeated.
+    """
+
+    def __init__(
+        self, first_episode: LiveRecording, *,
+        stage_getter: Callable[[], Any] | None = None,
+    ) -> None:
+        if stage_getter is None:
+            import omni.usd
+
+            def stage_getter() -> Any:
+                return omni.usd.get_context().get_stage()
+        stage = stage_getter()
+        if stage is None:
+            raise RuntimeError("recording session requires the original USD stage")
+        self._stage = stage
+        self._stage_getter = stage_getter
+        self._first_dir = first_episode.output_dir
+        self._static_manifest = json.loads((self._first_dir / "manifest.json").read_text())
+        self._recordables = first_episode.recordables
+        self._sampler = first_episode.sampler
+        self._d0 = first_episode.d0
+        self._observation_factory = first_episode._observation_factory
+        self._flush_every_frames = first_episode.flush_every_frames
+        self._timing_observer = first_episode._timing_observer
+        self.active_episode: LiveRecording | None = first_episode
+        self._closed = False
+
+    def start_episode(self, output_dir: Path, episode_id: str) -> LiveRecording:
+        """Start a new causal scope using the session's immutable artifact bundle."""
+        if self._closed or self.active_episode is not None:
+            raise RuntimeError("recording session must be open and between episodes")
+        if self._stage_getter() is not self._stage:
+            raise RuntimeError("USD stage changed during recording session")
+        output_dir = prepare_private_output_dir(
+            output_dir, repository=Path(__file__).resolve().parents[1], min_free_bytes=1 << 30
+        )
+        try:
+            self._link_static_artifacts(output_dir)
+            manifest = json.loads(json.dumps(self._static_manifest))
+            metadata = manifest["session_metadata"]
+            metadata["episode_id"] = episode_id
+            manifest["artifact_state"] = "in_progress"
+            manifest["committed_frames"] = 0
+            _atomic_write_json(output_dir / "recording_state.json", {
+                "artifact_state": "in_progress", "committed_frames": 0, "outcome": None,
+            })
+            path = output_dir / "session.hdf5"
+            storage, sampler = open_explicit_session(
+                str(path),
+                recordables=self._recordables,
+                stage=self._stage,
+                session_metadata=metadata,
+                stage_snapshot=manifest["stage_snapshot"],
+                deferred_groups=(self._d0.group,),
+                recordables_already_open=True,
+                sampler=self._sampler,
+            )
+            try:
+                start_explicit_episode(storage, sampler, self._recordables, {
+                    "artifact_state": "in_progress", "episode_id": episode_id, "outcome": None,
+                })
+            except Exception:
+                close_explicit_session(
+                    storage, self._recordables, success=False,
+                    metadata={"outcome": "failure", "reason": "episode_start_failed"},
+                    close_recordables=False,
+                )
+                raise
+            _atomic_write_json(output_dir / "manifest.json", manifest)
+            identity = {key: str(metadata[key]) for key in REQUIRED_SESSION_METADATA}
+            episode = LiveRecording(
+                storage, sampler, self._recordables, self._d0,
+                output_dir=output_dir, hdf5_path=path,
+                snapshot=output_dir / manifest["stage_snapshot"], identity=identity,
+                observation_factory=self._observation_factory,
+                flush_every_frames=self._flush_every_frames,
+                timing_observer=self._timing_observer,
+            )
+            self.active_episode = episode
+            return episode
+        except Exception as exc:
+            _atomic_write_json(output_dir / "recording_state.json", {
+                "artifact_state": "failed", "committed_frames": 0,
+                "outcome": "failure", "reason": f"episode_start_failed:{type(exc).__name__}:{exc}",
+            })
+            raise
+
+    def _link_static_artifacts(self, output_dir: Path) -> None:
+        """Give each existing replay artifact its own path to immutable inputs."""
+        closure = json.loads((self._first_dir / "asset_closure.json").read_text())
+        if closure["stage_snapshot_path"] != f"recording/{self._static_manifest['stage_snapshot']}":
+            raise RuntimeError("recording closure is not rooted at its session snapshot")
+        for entry in closure["entries"]:
+            portable = Path(entry["path"])
+            if (
+                portable.is_absolute()
+                or len(portable.parts) < 2
+                or any(part in {"", ".", ".."} for part in portable.parts)
+            ):
+                raise RuntimeError("recording closure contains an unsafe static artifact path")
+            if portable.parts[0] != "recording":
+                continue
+            relative = Path(*portable.parts[1:])
+            source = self._first_dir / relative
+            if source.is_symlink() or not source.is_file():
+                raise RuntimeError(f"recording static artifact is not a regular file: {source}")
+            target = output_dir / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                os.link(source, target)
+            except OSError:
+                shutil.copy2(source, target)
+        for name in ("asset_closure.json", "stage_snapshot.sidecar.json"):
+            source = self._first_dir / name
+            if source.is_file():
+                shutil.copy2(source, output_dir / name)
+
+    def end_episode(self, *, outcome: str, reason: str) -> None:
+        if self._closed or self.active_episode is None:
+            raise RuntimeError("recording session has no active episode")
+        episode = self.active_episode
+        try:
+            episode.end(outcome=outcome, reason=reason)
+        finally:
+            self.active_episode = None
+
+    def close(self, *, outcome: str = "operator_stopped", reason: str = "session_closed") -> None:
+        """Seal the last episode and release session handles exactly once."""
+        if self._closed:
+            return
+        errors: list[Exception] = []
+        try:
+            if self.active_episode is not None:
+                try:
+                    self.end_episode(outcome=outcome, reason=reason)
+                except Exception as exc:
+                    errors.append(exc)
+            for recordable in reversed(self._recordables):
+                try:
+                    recordable.on_session_close()
+                except Exception as exc:
+                    errors.append(exc)
+        finally:
+            self._closed = True
+        if len(errors) == 1:
+            raise errors[0]
+        if errors:
+            raise ExceptionGroup("recording session close failed", errors)
 
 
 def start_live_recording(

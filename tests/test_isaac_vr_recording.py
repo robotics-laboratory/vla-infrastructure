@@ -13,6 +13,7 @@ import pytest
 from tools.isaac_vr_recording import (
     ExplicitFrameSampler,
     LiveRecording,
+    RecordingSession,
     _d0_channels,
     _empty_d0_sample,
     build_committed_transition_sample,
@@ -27,6 +28,8 @@ from tools.isaac_vr_recording import (
     write_terminal_successor_snapshot,
     write_asset_closure_sidecar,
 )
+import tools.isaac_vr_recording as recording_module
+from tools.isaac_vr_asset_closure import verify_asset_closure_manifest
 from tools.isaac_vr_decision import (
     StateSnapshotObservation,
     canonical_action_payload,
@@ -653,6 +656,123 @@ def test_close_persists_full_terminal_successor_bound_to_last_row(tmp_path):
             expected_artifact_sha256=terminal["sha256"],
             committed_transition=mismatched_row,
         )
+
+
+def _session_fixture(tmp_path, monkeypatch):
+    first_dir = tmp_path / "episode_000000"
+    first_dir.mkdir()
+    first, first_storage = make_live(first_dir)
+    static_digest = hashlib.sha256(b"usd").hexdigest()
+    closure = write_asset_closure_sidecar(
+        first.snapshot, first_dir / "asset_closure.json",
+        portable_roots={"recording": first_dir},
+        dependency_provider=lambda _: ((), (), ()),
+    )
+    (first_dir / "manifest.json").write_text(json.dumps({
+        "artifact_state": "in_progress", "committed_frames": 0,
+        "stage_snapshot": "stage_snapshot.usd", "stage_snapshot_sha256": static_digest,
+        "asset_closure": "asset_closure.json",
+        "asset_closure_sha256": closure["asset_closure_sha256"],
+        "visual_provenance": {"camera_roles": []},
+        "visual_provenance_sha256": static_digest,
+        "session_metadata": {
+            "run_id": "run", "session_id": "session", "episode_id": "episode",
+            "source_profile": "isaac_human_vr_offline_rgb_v1",
+        },
+    }))
+    events = []
+    for recordable in first.recordables:
+        recordable.on_episode_start = lambda: events.append("episode_start")
+        recordable.on_episode_end = lambda: events.append("episode_end")
+        recordable.on_session_close = lambda: events.append("session_close")
+
+    def prepare(path, **_):
+        path.mkdir()
+        return path
+
+    def open_segment(path, *, recordables, recordables_already_open, sampler, **_):
+        assert recordables_already_open and recordables == first.recordables
+        events.append("storage_open")
+        Path(path).write_bytes(b"hdf")
+        storage = FakeLifecycleStorage()
+        sampler.storage = storage
+        return storage, sampler
+
+    def start_segment(storage, sampler, recordables, metadata):
+        assert metadata["episode_id"] == "episode_000001"
+        events.append("storage_episode_start")
+        for recordable in recordables:
+            recordable.on_episode_start()
+        return 0
+
+    monkeypatch.setattr(recording_module, "prepare_private_output_dir", prepare)
+    monkeypatch.setattr(recording_module, "open_explicit_session", open_segment)
+    monkeypatch.setattr(recording_module, "start_explicit_episode", start_segment)
+    stage = object()
+    return RecordingSession(first, stage_getter=lambda: stage), first_storage, events
+
+
+def test_technical_gap_reuses_static_bundle_and_seals_independent_episodes(tmp_path, monkeypatch):
+    session, first_storage, events = _session_fixture(tmp_path, monkeypatch)
+    first = session.active_episode
+    token = first.capture_observation()
+    successor = first.capture_successor(token)
+    first.commit_transition(token, successor, row_for_tokens(token, successor))
+    first.discard_observation(first.capture_observation(), reason="control_reference_rebased")
+    session.end_episode(outcome="operator_stopped", reason="control_reference_rebased")
+    assert first_storage.advanced == 1 and first_storage.closed
+    assert events.count("session_close") == 0
+
+    second = session.start_episode(tmp_path / "episode_000001", "episode_000001")
+    assert second.storage is not first_storage
+    assert second.sampler is first.sampler
+    assert second.recordables == first.recordables
+    assert second.episode_id != first.episode_id
+    assert second.committed_frames == 0
+    next_token = second.capture_observation()
+    assert next_token.capture_sequence == 0
+    assert next_token.physics_step > successor.physics_step
+    assert next_token.scene_state_snapshot_id.startswith("run:episode_000001:")
+    next_successor = second.capture_successor(next_token)
+    row = row_for_tokens(next_token, next_successor)
+    row["episode_id"] = "episode_000001"
+    second.commit_transition(next_token, next_successor, seal_sample(row))
+    assert second.storage.advanced == 1
+    session.close(outcome="operator_stopped", reason="control_loop_completed")
+    session.close()
+    assert events.count("storage_open") == 1  # only the next per-segment HDF
+    assert events.count("storage_episode_start") == 1
+    assert events.count("episode_end") == 4  # two Recordables x two episodes
+    assert events.count("session_close") == 2  # each handle released once
+    for name in ("episode_000000", "episode_000001"):
+        artifact = tmp_path / name
+        manifest = json.loads((artifact / "manifest.json").read_text())
+        assert manifest["committed_frames"] == 1
+        assert manifest["terminal_successor"]["file"] == "terminal_successor.npz"
+        assert (artifact / "stage_snapshot.usd").read_bytes() == b"usd"
+        assert manifest["stage_snapshot_sha256"] == hashlib.sha256(b"usd").hexdigest()
+        verified_closure = verify_asset_closure_manifest(
+            artifact / "asset_closure.json",
+            portable_roots={"recording": artifact},
+            expected_stage_snapshot=artifact / "stage_snapshot.usd",
+        )
+        assert verified_closure["asset_closure_sha256"] == manifest["asset_closure_sha256"]
+
+
+def test_session_failure_does_not_publish_finalized_marker(tmp_path, monkeypatch):
+    session, _, events = _session_fixture(tmp_path, monkeypatch)
+    first = session.active_episode
+    token = first.capture_observation()
+    successor = first.capture_successor(token)
+    first.commit_transition(token, successor, row_for_tokens(token, successor))
+    first.recordables[0].on_episode_end = lambda: (_ for _ in ()).throw(
+        RuntimeError("episode end failed")
+    )
+    with pytest.raises(RuntimeError, match="episode end failed"):
+        session.close(outcome="operator_stopped", reason="control_loop_completed")
+    marker = json.loads((first.output_dir / "recording_state.json").read_text())
+    assert marker["artifact_state"] == "failed"
+    assert events.count("session_close") == 2
 
 
 def test_terminal_successor_writer_is_deterministic_and_detects_tampering(tmp_path):
