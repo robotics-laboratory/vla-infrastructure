@@ -16,6 +16,8 @@ SETTINGS = (
     "/rtx/rendermode",
     "/rtx/minimal/mode",
     "/persistent/xr/profile/ar/render/resolutionMultiplier",
+    "/persistent/xr/profile/ar/renderQuality",
+    "/persistent/xr/profile/ar/foveation/mode",
     "/physics/updateToUsd",
     "/app/player/playSimulations",
     "/exts/omni.replicator.core/Orchestrator/enabled",

@@ -33,6 +33,14 @@ def main():
         default="t0",
     )
     parser.add_argument("--cost", choices=("c0", "c1", "c2", "c3", "c4"), default="c3")
+    parser.add_argument("--renderer", choices=("baseline", "minimal"), default="baseline")
+    parser.add_argument("--xr-quality", choices=("baseline", "performance"), default="baseline")
+    parser.add_argument("--xr-scale", type=float, default=0.4)
+    parser.add_argument("--foveation", choices=("baseline", "none", "warped"), default="baseline")
+    parser.add_argument("--flush-every", type=int, choices=(64, 128, 256), default=64)
+    parser.add_argument("--state-breakdown", action="store_true")
+    parser.add_argument("--state-batch", action="store_true")
+    parser.add_argument("--operator-screenshot", action="store_true")
     parser.add_argument("--batch", action="store_true")
     parser.add_argument("--probe", action="store_true")
     parser.add_argument("--gpu-scopes", action="store_true")
@@ -46,6 +54,8 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--state-root", type=Path, required=True)
     args = parser.parse_args()
+    if not 0.1 <= args.xr_scale <= 1.0:
+        parser.error("--xr-scale must be between 0.1 and 1.0")
     if not args.probe and args.mode == "physical":
         parser.error("Physical cost work requires the human RECORD entrypoint")
     args.output.mkdir(parents=True, exist_ok=False, mode=0o700)
@@ -69,6 +79,14 @@ def main():
         CAMERA_AUDIT_XR_COST=str(int(not args.probe and args.mode == "xr-smoke")),
         CAMERA_AUDIT_WARMUP=str(args.warmup),
         CAMERA_AUDIT_MEASURED=str(args.measured),
+        CAMERA_AUDIT_RENDERER=args.renderer,
+        CAMERA_AUDIT_XR_QUALITY=args.xr_quality,
+        CAMERA_AUDIT_XR_SCALE=str(args.xr_scale),
+        CAMERA_AUDIT_FOVEATION=args.foveation,
+        CAMERA_AUDIT_FLUSH_EVERY=str(args.flush_every),
+        CAMERA_AUDIT_STATE_BREAKDOWN=str(int(args.state_breakdown)),
+        CAMERA_AUDIT_STATE_BATCH=str(int(args.state_batch)),
+        CAMERA_AUDIT_OPERATOR_SCREENSHOT=str(int(args.operator_screenshot)),
     )
     ticks = 10 if args.probe or args.mode == "xr-smoke" else args.warmup + args.measured
     cmd = [
@@ -86,7 +104,7 @@ def main():
         str(ticks),
     ]
     if not args.probe and args.mode == "smoke":
-        cmd += ["--xr-resolution-scale", "0.4"]
+        cmd += ["--xr-resolution-scale", str(args.xr_scale)]
     if args.mode != "physical":
         cmd.append("--" + args.mode)
     if not args.probe and args.mode == "smoke":

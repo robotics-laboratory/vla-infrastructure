@@ -14,6 +14,8 @@ class Imports(importlib.abc.MetaPathFinder):
             "isaac_s2_runtime",
             "isaac_vr_runtime",
             "isaac_vr_injected_recording",
+            "isaaclab_physx.renderers.isaac_rtx_renderer_utils",
+            "isaaclab_physx.renderers.isaac_rtx_renderer",
         ):
             return None
         spec = importlib.machinery.PathFinder.find_spec(fullname, path)
@@ -29,7 +31,35 @@ class Imports(importlib.abc.MetaPathFinder):
 
             def exec_module(self, module):
                 loader.exec_module(module)
-                if fullname == "isaac_demo_launch":
+                if fullname == "isaaclab_physx.renderers.isaac_rtx_renderer_utils":
+                    if os.environ.get("CAMERA_AUDIT_RENDERER") == "minimal":
+                        original = module.apply_isaac_rtx_determinism_settings
+
+                        def select_minimal(*args, **kwargs):
+                            result = original(*args, **kwargs)
+                            import carb.settings
+
+                            settings = carb.settings.get_settings()
+                            settings.set("/rtx/rendermode", "MinimalRendering")
+                            settings.set("/rtx/minimal/mode", 2)
+                            return result
+
+                        module.apply_isaac_rtx_determinism_settings = select_minimal
+                elif fullname == "isaaclab_physx.renderers.isaac_rtx_renderer":
+                    if os.environ.get("CAMERA_AUDIT_RENDERER") == "minimal":
+                        original = module.IsaacRtxRenderer.__init__
+
+                        def select_before_products(self, *args, **kwargs):
+                            result = original(self, *args, **kwargs)
+                            import carb.settings
+
+                            settings = carb.settings.get_settings()
+                            settings.set("/rtx/rendermode", "MinimalRendering")
+                            settings.set("/rtx/minimal/mode", 2)
+                            return result
+
+                        module.IsaacRtxRenderer.__init__ = select_before_products
+                elif fullname == "isaac_demo_launch":
                     original = module.user_environment
 
                     def environment(*args, **kwargs):
@@ -82,7 +112,18 @@ if os.environ.get("CAMERA_AUDIT_OUTPUT"):
     sys.path.append(str(root / "docs/experiments/20260921_vr_architecture_bakeoff"))
     if "--kit_args" in sys.argv:
         index = sys.argv.index("--kit_args") + 1
-        sys.argv[index] += " --/persistent/xr/profile/ar/render/resolutionMultiplier=0.4"
+        sys.argv[index] += (
+            " --/persistent/xr/profile/ar/render/resolutionMultiplier="
+            + os.environ.get("CAMERA_AUDIT_XR_SCALE", "0.4")
+        )
+        if os.environ.get("CAMERA_AUDIT_RENDERER") == "minimal":
+            # Kit startup settings, before XR and RenderProducts attach.
+            sys.argv[index] += " --/rtx/rendermode=MinimalRendering --/rtx/minimal/mode=2"
+        if os.environ.get("CAMERA_AUDIT_XR_QUALITY") == "performance":
+            sys.argv[index] += " --/persistent/xr/profile/ar/renderQuality=performance"
+        foveation = os.environ.get("CAMERA_AUDIT_FOVEATION", "baseline")
+        if foveation != "baseline":
+            sys.argv[index] += " --/persistent/xr/profile/ar/foveation/mode=" + foveation
         if os.environ.get("CAMERA_AUDIT_XR_COST") == "1":
             sys.argv[index] += " --enable isaacsim.replicator.episode_recorder"
         candidate = os.environ["CAMERA_AUDIT_TEMPORAL"]
