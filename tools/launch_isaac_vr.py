@@ -137,6 +137,7 @@ def _write_launch_manifest(
             "hud_on_start": bool(args.hud_on_start),
             "smoke": bool(args.smoke),
             "xr_smoke": bool(args.xr_smoke),
+            "no_client_audit": bool(args.no_client_audit),
             "cloudxr_initialized": bool(getattr(args, "uses_cloudxr", False)),
             "max_control_steps": int(command[command.index("--s2-max-control-steps") + 1]),
         },
@@ -194,7 +195,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--injected-actions",
         action="store_true",
-        help="With 'record --smoke', commit deterministic actions for recorder integration QA.",
+        help="Deterministic native targets for no-client recording QA or matched audit.",
+    )
+    parser.add_argument("--audit-clutch", action="store_true", help="Include V2/V3 clutch rows in a no-client RECORD audit.")
+    parser.add_argument("--audit-gaps", type=int, default=0, help="Controlled tracking-invalid technical gaps (5–10).")
+    parser.add_argument("--audit-lifecycle-cycles", type=int, default=0, help="Bounded Start/Stop/Save/classify/reset cycles (3–5).")
+    parser.add_argument(
+        "--injected-count", type=int, default=3,
+        help="Number of deterministic no-client recording transitions (with --injected-actions).",
     )
     parser.add_argument("--rgb-e2e-assay", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument(
@@ -209,6 +217,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--benchmark-flush-every-frames", type=int, default=64)
     parser.add_argument(
         "--xr-smoke", action="store_true", help="Bounded no-client run with XR Kit enabled."
+    )
+    parser.add_argument(
+        "--no-client-audit", action="store_true",
+        help="With --xr-smoke, use production CloudXR profile without requiring a client.",
     )
     parser.add_argument(
         "--hud-on-start",
@@ -261,16 +273,18 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     args.mode = {"diag": "diagnostic", "record": "record", "replay": "replay"}.get(args.mode, "run")
     performance_flags = {"--performance-window-steps", "--performance-warmup-steps"}
     args.performance_enabled = args.mode == "diagnostic" or (
-        args.mode == "record"
+        args.mode in {"run", "record"}
         and any(item.split("=", 1)[0] in performance_flags for item in invocation)
     )
+    if args.no_client_audit and not args.performance_enabled:
+        parser.error("--no-client-audit requires explicit performance warmup/window options")
     diagnostic_flags = {
         "--preview-isolation",
         "--preview-cameras",
         "--capture-preview-evidence",
         "--scene-preview",
     }
-    if args.mode != "record":
+    if args.mode == "replay":
         diagnostic_flags |= performance_flags
     used = [
         item.split("=", 1)[0] for item in invocation if item.split("=", 1)[0] in diagnostic_flags
@@ -285,8 +299,40 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("--max-control-steps must be positive")
     if args.smoke and args.xr_smoke:
         parser.error("--smoke and --xr-smoke are mutually exclusive")
-    if args.injected_actions and not (args.mode == "record" and args.smoke):
-        parser.error("--injected-actions requires './run-vr record --smoke'")
+    if args.no_client_audit and not (args.smoke or args.xr_smoke):
+        parser.error("--no-client-audit requires --smoke or --xr-smoke")
+    if args.no_client_audit and args.mode == "run" and args.smoke:
+        parser.error("XR-off RUN cannot initialize the S2 teleop device; use --xr-smoke")
+    if args.no_client_audit and not args.injected_actions:
+        parser.error("--no-client-audit requires --injected-actions")
+    if args.injected_actions and not (
+        (args.mode == "record" and args.smoke)
+        or (args.no_client_audit and args.mode in {"run", "record"})
+    ):
+        parser.error("--injected-actions requires record --smoke or no-client audit")
+    if args.audit_clutch and not (args.no_client_audit and args.mode == "record" and args.xr_smoke):
+        parser.error("--audit-clutch requires record --xr-smoke --no-client-audit")
+    selected_audits = sum(bool(value) for value in (
+        args.audit_clutch, args.audit_gaps, args.audit_lifecycle_cycles
+    ))
+    if selected_audits > 1:
+        parser.error("select only one clutch, gap, or lifecycle audit")
+    if args.audit_gaps and not (
+        args.no_client_audit and args.mode == "record" and args.xr_smoke
+        and 5 <= args.audit_gaps <= 10 and args.recordings_root is not None
+    ):
+        parser.error("5–10 audit gaps require record --no-client-audit --recordings-root")
+    if args.audit_lifecycle_cycles and not (
+        args.no_client_audit and args.mode == "record" and args.xr_smoke
+        and 3 <= args.audit_lifecycle_cycles <= 5 and args.recordings_root is not None
+    ):
+        parser.error("3–5 lifecycle cycles require record --no-client-audit --recordings-root")
+    if args.audit_gaps and args.injected_count < 2 * (args.audit_gaps + 1):
+        parser.error("audit gaps require at least two committed rows per segment")
+    if args.injected_count < 2 or (
+        args.injected_count != 3 and not args.injected_actions
+    ):
+        parser.error("--injected-count requires --injected-actions and at least two steps")
     if args.rgb_e2e_assay and not args.injected_actions:
         parser.error("--rgb-e2e-assay requires --injected-actions")
     benchmark_options = {
@@ -370,7 +416,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         args.preview_isolation = defaults["stacks"][args.stack]["preview_isolation"]
     if args.preview_cameras is None:
         args.preview_cameras = defaults["stacks"][args.stack]["preview_cameras"]
-    if args.mode == "replay" or (args.mode == "record" and args.smoke):
+    if args.mode == "replay" or args.no_client_audit or (args.mode == "record" and args.smoke):
         # Preview partitions belong to the live XR composition. Offline replay
         # restores recorded provenance, while no-client record smoke exercises
         # storage without constructing an XRSceneView.
@@ -495,7 +541,20 @@ def main(argv: list[str] | None = None) -> int:
             raise RuntimeError(f"recording directory already exists: {recording_dir}")
         command.extend(["--s2-record", "--s2-recording-dir", str(recording_dir)])
         if args.injected_actions:
-            command.append("--s2-injected-recording-smoke")
+            if args.mode == "record":
+                command.append("--s2-injected-recording-smoke")
+            command.extend(["--s2-injected-count", str(args.injected_count)])
+        if args.no_client_audit:
+            audit_kind = (
+                "clutch" if args.audit_clutch else
+                "gap" if args.audit_gaps else
+                "lifecycle" if args.audit_lifecycle_cycles else "steady"
+            )
+            command.extend(["--s2-current-record-audit", audit_kind])
+            if args.audit_gaps:
+                command.extend(["--s2-audit-gaps", str(args.audit_gaps)])
+            if args.audit_lifecycle_cycles:
+                command.extend(["--s2-audit-lifecycle-cycles", str(args.audit_lifecycle_cycles)])
         if args.rgb_e2e_assay:
             command.append("--s2-rgb-e2e-assay")
         if args.recording_benchmark:
@@ -527,6 +586,9 @@ def main(argv: list[str] | None = None) -> int:
             command.extend(["--s2-render-cameras", str(args.render_cameras)])
         if args.replay_report is not None:
             command.extend(["--s2-replay-report", str(args.replay_report)])
+    if args.no_client_audit and args.mode == "run":
+        command.extend(["--s2-injected-count", str(args.injected_count)])
+        command.extend(["--s2-current-record-audit", "steady"])
     if args.performance_enabled:
         command.extend(
             [
@@ -542,7 +604,7 @@ def main(argv: list[str] | None = None) -> int:
         command += ["--viz", "kit"]
     if not args.smoke and args.mode != "replay":
         command += ["--experience", str(stack["lab"] / "apps/isaaclab.python.xr.openxr.kit")]
-    if args.preview_cameras == 3 and args.mode not in ("record", "replay"):
+    if args.preview_cameras == 3 and args.mode not in ("record", "replay") and not args.no_client_audit:
         command.append("--demo-preview-scene")
     if args.hud_on_start:
         command.append("--demo-hud-on-start")
@@ -555,10 +617,15 @@ def main(argv: list[str] | None = None) -> int:
         command.extend(["--no-s2-require-session", "--s2-reset-step", "0"])
     elif bounded:
         if not (args.mode == "record" and args.smoke):
-            command.extend(["--s2-cloudxr-profile", "standalone"])
+            command.extend([
+                "--s2-cloudxr-profile",
+                "cloudxrjs" if args.no_client_audit else "standalone",
+            ])
         command.extend(
             [
-                "--s2-require-session" if args.xr_smoke else "--no-s2-require-session",
+                "--s2-require-session"
+                if args.xr_smoke and not args.no_client_audit
+                else "--no-s2-require-session",
                 "--s2-reset-step",
                 "30",
             ]

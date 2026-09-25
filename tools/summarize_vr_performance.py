@@ -38,6 +38,15 @@ def summarize(path: Path) -> str:
 
     lines = [f"performance: {path}", f"samples: {len(measured)}"]
     lines.append(f"effective_hz: {number(summary['effective_hz'])}")
+    wall = summary.get("wall_control")
+    if wall is not None:
+        lines.append(f"wall_effective_hz: {number(summary['effective_wall_hz'])}")
+        lines.append(f"wall_rtf: {number(summary['wall_rtf'])}")
+        lines.append(
+            f"wall_deadline_miss_fraction: {number(summary['wall_deadline_miss_fraction'])}"
+        )
+        for field in ("mean_ms", "p50_ms", "p90_ms", "p95_ms", "p99_ms", "p99_9_ms", "max_ms"):
+            lines.append(f"wall_{field}: {number(wall[field])}")
     for field in ("mean_ms", "p50_ms", "p90_ms", "p95_ms", "p99_ms", "max_ms"):
         lines.append(f"{field}: {number(control[field])}")
     lines.append(f"deadline_miss_fraction: {number(summary['deadline_miss_fraction'])}")
@@ -56,9 +65,9 @@ def summarize(path: Path) -> str:
             else f"{name}: not_measured"
         )
     lines.append(
-        "Host timings; effective_hz excludes log writes and inter-control work. "
-        "Instrumentation write excludes summary/flush and timer overhead. "
-        "Unlisted measurements are not_measured."
+        "Body timings exclude log writes and inter-control work. Wall timings are "
+        "start-to-start and exclude the interval crossing warmup. Nested stages "
+        "are non-additive. Unlisted measurements are not_measured."
     )
     return "\n".join(lines)
 

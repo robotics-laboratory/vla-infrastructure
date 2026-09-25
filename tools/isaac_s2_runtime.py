@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from functools import partial
+from contextlib import nullcontext
 import hashlib
 import importlib.metadata
 import json
@@ -48,6 +49,7 @@ from isaac_s2_upstream import (
 from isaac_vr_recording_smoke import (
     recording_portable_roots,
     recording_session_metadata,
+    run_injected_lifecycle_audit,
     run_recording_lifecycle_smoke,
 )
 from isaac_vr_episode_lifecycle import (
@@ -252,8 +254,6 @@ def run_s2(env, args_cli, simulation_app) -> int:
         )
     ):
         raise ValueError("Diagnostic-only flags require ./run-vr diag ...")
-    if not diagnostic and not recording_requested and args_cli.s2_performance_log is not None:
-        raise ValueError("Performance logging requires diagnostic or record mode")
     experiment = getattr(env, "vr_runtime", None)
     experimental = experiment is not None and experiment.profile == "robosyn_asset_lab"
     if experimental and not diagnostic:
@@ -387,6 +387,66 @@ def run_s2(env, args_cli, simulation_app) -> int:
     del reset_observation
     processor.reset()
     ik.reset()
+    if getattr(args_cli, "s2_current_record_audit", None) is not None:
+        # The existing no-client injected receipt seam supplies controlled
+        # targets while the ordinary S2 device/Kit context remains active.
+        # It makes no physical-XR or human-IK claim.
+        if experiment is not None:
+            if recording_requested:
+                experiment.prepare_recording_view()
+            else:
+                experiment.open(env)
+        with device:
+            if recording_requested:
+                if args_cli.s2_current_record_audit == "lifecycle":
+                    return run_injected_lifecycle_audit(
+                        env, args_cli, default_config_path=CONFIG_PATH,
+                        processor_revision=PROCESSOR_REVISION, audit_device=device,
+                    )
+                return run_recording_lifecycle_smoke(
+                    env, args_cli, default_config_path=CONFIG_PATH,
+                    processor_revision=PROCESSOR_REVISION, audit_device=device,
+                )
+            from isaac_vr_injected_recording import run_injected_controls
+
+            if args_cli.s2_performance_log is None:
+                raise RuntimeError("matched no-client RUN requires the performance log")
+            audit_performance = S2PerformanceLogger(
+                args_cli.s2_performance_log,
+                window_steps=args_cli.s2_performance_window_steps,
+                warmup_steps=args_cli.s2_performance_warmup_steps,
+                target_hz=30.0,
+            )
+            try:
+                audit_result = run_injected_controls(
+                    env, count=args_cli.s2_injected_count,
+                    performance_logger=audit_performance,
+                    input_pump=device.advance,
+                )
+            finally:
+                audit_summary = audit_performance.close()
+                if experiment is not None:
+                    experiment.close()
+            audit_result["performance"] = audit_summary
+            audit_result.update({
+                "mode": "matched_injected_run_no_client",
+                "passed": True,
+                "teleop_initialized": True,
+                "kit_xr_bridge_configured": bool(args_cli.xr),
+                "cloudxr_profile": args_cli.s2_cloudxr_profile,
+                "session_running_at_end": bool(device.session_running),
+                "xr_input_available_at_end": getattr(device, "xr_input", None) is not None,
+                "input_pump_calls": args_cli.s2_injected_count,
+                "processor_executed": False,
+                "ik_executed": False,
+                "xr_receipt": "none",
+            })
+            if args_cli.report is not None:
+                Path(args_cli.report).write_text(
+                    json.dumps(audit_result, indent=2) + "\n", encoding="utf-8"
+                )
+            print(json.dumps(audit_result, sort_keys=True), flush=True)
+            return 0
     started = time.perf_counter()
     gpu_start = _gpu_observation() if diagnostic else None
     gpu_samples = [gpu_start]
@@ -432,6 +492,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     demo_start_tick = 0
     demo_stop_tick = 0
     lifecycle: RecordingLifecycle | None = None
+    demo_start_requested_ns: int | None = None
 
     def finalize_recording(outcome: str, reason: str) -> None:
         nonlocal recording, recording_summary
@@ -451,7 +512,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
             "output_dir": str(active.output_dir),
         }
         try:
-            recording_session.end_episode(outcome=outcome, reason=reason)
+            with (performance.boundary("technical_episode_end", reason=reason)
+                  if performance is not None else nullcontext()):
+                recording_session.end_episode(outcome=outcome, reason=reason)
         finally:
             recording = None
         recording_summary = summary
@@ -476,29 +539,41 @@ def run_s2(env, args_cli, simulation_app) -> int:
     env.performance_logger = performance
     interrupted = False
 
+    def observe_recording_timing(name: str, elapsed_ns: int) -> None:
+        if performance is None:
+            return
+        if name in {"hdf_append_ms", "hdf_flush_ms"}:
+            performance.add_nested(name, elapsed_ns)
+        else:
+            performance.record_boundary(name, elapsed_ns)
+
     def seal_demo(reason: str) -> None:
         nonlocal recording, recording_session, validator, recording_token
-        if recording is not None:
-            finalize_recording(
-                "operator_stopped" if reason == "explicit_stop" else "aborted", reason
-            )
-        if recording_session is not None:
-            session = recording_session
-            recording_session = None
-            session.close(outcome="aborted", reason=reason)
-        recording_token = None
-        if validator is not None:
-            validator.abort()
-            validator = None
+        with (performance.boundary("demo_stop_seal", reason=reason)
+              if performance is not None else nullcontext()):
+            if recording is not None:
+                finalize_recording(
+                    "operator_stopped" if reason == "explicit_stop" else "aborted", reason
+                )
+            if recording_session is not None:
+                session = recording_session
+                recording_session = None
+                session.close(outcome="aborted", reason=reason)
+            recording_token = None
+            if validator is not None:
+                validator.abort()
+                validator = None
 
     def reset_demo() -> None:
         nonlocal previous_camera_indices
-        env.reset(0)
-        processor.reset()
-        ik.reset()
-        camera_guard.reset()
-        previous_camera_indices = None
-        device.reset(pause=False)
+        with (performance.boundary("demo_reset") if performance is not None
+              else nullcontext()):
+            env.reset(0)
+            processor.reset()
+            ik.reset()
+            camera_guard.reset()
+            previous_camera_indices = None
+            device.reset(pause=False)
 
     def demo_index_root() -> Path:
         return Path(
@@ -507,21 +582,26 @@ def run_s2(env, args_cli, simulation_app) -> int:
         )
 
     def save_demo(demo_id: str, task_outcome: str) -> None:
-        publish_saved_demo(
-            demo_index_root() / "saved_demos",
-            demo_id=demo_id,
-            episodes=demo_episodes,
-            profile="isaac_human_vr_offline_rgb_v2",
-            start_tick=demo_start_tick,
-            stop_tick=demo_stop_tick,
-            task_outcome=task_outcome,
-        )
+        with (performance.boundary("demo_save_publication", task_outcome=task_outcome)
+              if performance is not None else nullcontext()):
+            publish_saved_demo(
+                demo_index_root() / "saved_demos",
+                demo_id=demo_id,
+                episodes=demo_episodes,
+                profile="isaac_human_vr_offline_rgb_v2",
+                start_tick=demo_start_tick,
+                stop_tick=demo_stop_tick,
+                task_outcome=task_outcome,
+            )
 
     def classify_unsaved(demo_id: str, classification: str) -> None:
-        publish_unsaved_demo(
-            demo_index_root(), demo_id=demo_id,
-            classification=classification, episodes=demo_episodes,
-        )
+        with (performance.boundary("demo_classification_publication",
+                                   classification=classification)
+              if performance is not None else nullcontext()):
+            publish_unsaved_demo(
+                demo_index_root(), demo_id=demo_id,
+                classification=classification, episodes=demo_episodes,
+            )
 
     print(
         f"[S2] CloudXR {actual_versions['cloudxr']} profile={args_cli.s2_cloudxr_profile} "
@@ -621,6 +701,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     event = lifecycle.buttons(x=buttons[0] >= 0.5, y=buttons[1] >= 0.5,
                                               b=buttons[2] >= 0.5)
                     if event == "start":
+                        demo_start_requested_ns = time.perf_counter_ns()
                         demo_start_tick = control_steps
                         demo_episodes = []
                         recording_episode_index = 0
@@ -832,22 +913,32 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     if recording_session is None:
                         recording_options: dict[str, Any] = {}
                         if performance is not None:
-                            recording_options["timing_observer"] = performance.add_nested
+                            recording_options["timing_observer"] = observe_recording_timing
                         roots = recording_portable_roots(args_cli)
                         roots["recording"] = output_dir
-                        recording = start_live_recording(
-                            output_dir, env,
-                            session_metadata=recording_session_metadata(
-                                xr_render=getattr(args_cli, "xr_render_readback", None),
-                                config_path=config_path, environment_pins=actual_versions,
-                                run_id=run_id, session_id=session_id, episode_id=episode_id,
-                                execution_profile="isaac_vr_record",
-                                processor_revision=PROCESSOR_REVISION,
-                            ), portable_roots=roots, **recording_options,
-                        )
+                        with (performance.boundary("recording_session_preparation")
+                              if performance is not None else nullcontext()):
+                            recording = start_live_recording(
+                                output_dir, env,
+                                session_metadata=recording_session_metadata(
+                                    xr_render=getattr(args_cli, "xr_render_readback", None),
+                                    config_path=config_path, environment_pins=actual_versions,
+                                    run_id=run_id, session_id=session_id, episode_id=episode_id,
+                                    execution_profile="isaac_vr_record",
+                                    processor_revision=PROCESSOR_REVISION,
+                                ), portable_roots=roots, **recording_options,
+                            )
                         recording_session = RecordingSession(recording)
                     else:
-                        recording = recording_session.start_episode(output_dir, episode_id)
+                        with (performance.boundary("technical_episode_open")
+                              if performance is not None else nullcontext()):
+                            recording = recording_session.start_episode(output_dir, episode_id)
+                    if performance is not None and demo_start_requested_ns is not None:
+                        performance.record_boundary(
+                            "start_to_first_recording_ready",
+                            time.perf_counter_ns() - demo_start_requested_ns,
+                        )
+                        demo_start_requested_ns = None
                     recording_episode_index += 1
                     recording_token = recording.capture_observation()
                     observation = recording_token.observation

@@ -38,6 +38,7 @@ def _distribution(values: list[float]) -> dict[str, float | int]:
             "p90_ms": 0.0,
             "p95_ms": 0.0,
             "p99_ms": 0.0,
+            "p99_9_ms": 0.0,
             "max_ms": 0.0,
         }
     return {
@@ -47,6 +48,7 @@ def _distribution(values: list[float]) -> dict[str, float | int]:
         "p90_ms": _percentile(values, 0.90),
         "p95_ms": _percentile(values, 0.95),
         "p99_ms": _percentile(values, 0.99),
+        "p99_9_ms": _percentile(values, 0.999),
         "max_ms": max(values),
     }
 
@@ -80,10 +82,13 @@ class S2PerformanceLogger:
         self.target_period_ms = 1000.0 / target_hz
         self._stream = path.open("w", encoding="utf-8")
         self._step_started_ns: int | None = None
+        self._previous_step_started_ns: int | None = None
+        self._start_interval_ms: float | None = None
         self._stage_ms: dict[str, float] = {}
         self._nested_ms: dict[str, float] = {}
         self._all_steps: list[dict[str, Any]] = []
         self._window_steps: list[dict[str, Any]] = []
+        self._boundary_events: list[dict[str, Any]] = []
         self._closed = False
         self._final_summary: dict[str, Any] | None = None
         self._write(
@@ -103,7 +108,16 @@ class S2PerformanceLogger:
         self._stream.write(json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n")
 
     def begin_step(self) -> None:
-        self._step_started_ns = time.perf_counter_ns()
+        # Lifecycle/menu/reset branches can continue before end_step(). The
+        # next start still forms a wall interval, but that incomplete body is
+        # intentionally absent from the steady body distribution.
+        now = time.perf_counter_ns()
+        self._start_interval_ms = (
+            (now - self._previous_step_started_ns) / 1_000_000.0
+            if self._previous_step_started_ns is not None else None
+        )
+        self._previous_step_started_ns = now
+        self._step_started_ns = now
         self._stage_ms = {}
         self._nested_ms = {}
 
@@ -124,6 +138,26 @@ class S2PerformanceLogger:
         elapsed_ms = elapsed_ns / 1_000_000.0
         self._nested_ms[name] = self._nested_ms.get(name, 0.0) + elapsed_ms
 
+    def record_boundary(self, name: str, elapsed_ns: int, **state: Any) -> None:
+        """Persist a boundary outside the steady control distribution."""
+        if elapsed_ns < 0:
+            raise ValueError("boundary duration cannot be negative")
+        record = {
+            "event": "performance_boundary", "schema": SCHEMA_VERSION,
+            "name": name, "elapsed_ms": elapsed_ns / 1_000_000.0,
+            "monotonic_ns": time.monotonic_ns(), **state,
+        }
+        self._write(record)
+        self._boundary_events.append(record)
+
+    @contextmanager
+    def boundary(self, name: str, **state: Any) -> Iterator[None]:
+        started_ns = time.perf_counter_ns()
+        try:
+            yield
+        finally:
+            self.record_boundary(name, time.perf_counter_ns() - started_ns, **state)
+
     def end_step(self, step: int, **state: Any) -> dict[str, Any] | None:
         if self._step_started_ns is None:
             raise RuntimeError("begin_step() must be called before end_step()")
@@ -134,10 +168,15 @@ class S2PerformanceLogger:
             "step": step,
             "monotonic_ns": time.monotonic_ns(),
             "total_ms": total_ms,
+            "start_to_start_ms": self._start_interval_ms,
             "stage_ms": dict(self._stage_ms),
             "nested_stage_ms": dict(self._nested_ms),
             "unattributed_ms": max(0.0, total_ms - sum(self._stage_ms.values())),
             "deadline_missed": total_ms > self.target_period_ms,
+            "wall_deadline_missed": (
+                self._start_interval_ms > self.target_period_ms
+                if self._start_interval_ms is not None else None
+            ),
             "post_warmup": step > self.warmup_steps,
             **state,
         }
@@ -162,6 +201,12 @@ class S2PerformanceLogger:
         stage_names = sorted({name for row in records for name in row["stage_ms"]})
         nested_names = sorted({name for row in records for name in row["nested_stage_ms"]})
         total_ms = [float(row["total_ms"]) for row in records]
+        wall_ms = [
+            float(row["start_to_start_ms"])
+            for row in records
+            if row["start_to_start_ms"] is not None
+            and int(row["step"]) > self.warmup_steps + 1
+        ]
         misses = sum(bool(row["deadline_missed"]) for row in records)
         return {
             "event": event,
@@ -170,6 +215,15 @@ class S2PerformanceLogger:
             "step_first": int(records[0]["step"]) if records else None,
             "step_last": int(records[-1]["step"]) if records else None,
             "control": _distribution(total_ms),
+            "wall_control": _distribution(wall_ms),
+            "effective_wall_hz": 1000.0 / statistics.fmean(wall_ms) if wall_ms else 0.0,
+            "wall_rtf": (1000.0 / statistics.fmean(wall_ms) / self.target_hz)
+            if wall_ms else 0.0,
+            "wall_deadline_misses": sum(value > self.target_period_ms for value in wall_ms),
+            "wall_deadline_miss_fraction": (
+                sum(value > self.target_period_ms for value in wall_ms) / len(wall_ms)
+                if wall_ms else 0.0
+            ),
             "effective_hz": (1000.0 / statistics.fmean(total_ms)) if total_ms else 0.0,
             "deadline_ms": self.target_period_ms,
             "deadline_misses": misses,
@@ -201,6 +255,11 @@ class S2PerformanceLogger:
                 "warmup_steps_excluded": self.warmup_steps,
                 "total_logged_steps": len(self._all_steps),
                 "host_timing_only_no_added_cuda_synchronization": True,
+                "boundaries": {
+                    name: _distribution([float(row["elapsed_ms"])
+                                         for row in self._boundary_events if row["name"] == name])
+                    for name in sorted({row["name"] for row in self._boundary_events})
+                },
             }
         )
         self._write(self._final_summary)

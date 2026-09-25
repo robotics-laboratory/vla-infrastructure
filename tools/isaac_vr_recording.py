@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from collections import Counter
 from collections.abc import Callable, Iterable, Mapping, Sequence
+from contextlib import contextmanager
 from dataclasses import dataclass
 import hashlib
 import io
@@ -38,6 +39,21 @@ _ID_BYTES = 256
 _HASH_BYTES = 32
 TERMINAL_SUCCESSOR_SCHEMA = "piper_x_terminal_successor_v1"
 TERMINAL_SUCCESSOR_FILENAME = "terminal_successor.npz"
+
+
+@contextmanager
+def _timed_boundary(
+    observer: Callable[[str, int], None] | None, name: str
+):
+    """Observe an existing finalization scope without changing its ordering."""
+    if observer is None:
+        yield
+        return
+    started_ns = time.perf_counter_ns()
+    try:
+        yield
+    finally:
+        observer(name, time.perf_counter_ns() - started_ns)
 
 
 def _fabric_backend_context() -> ContextManager[None]:
@@ -555,38 +571,42 @@ class LiveRecording:
             effective_reason = reason
         success = True if effective_outcome == "success" else False
         try:
-            close_explicit_session(
-                self.storage,
-                self.recordables,
-                success=success,
-                metadata={
-                    "outcome": effective_outcome,
-                    "reason": effective_reason,
-                    "committed_frames": self.committed_frames,
-                    "discarded_observations": self.discarded_observations,
-                    "rejections": dict(self.rejections),
-                },
-                close_recordables=close_recordables,
-            )
+            with _timed_boundary(self._timing_observer, "hdf_close"):
+                close_explicit_session(
+                    self.storage,
+                    self.recordables,
+                    success=success,
+                    metadata={
+                        "outcome": effective_outcome,
+                        "reason": effective_reason,
+                        "committed_frames": self.committed_frames,
+                        "discarded_observations": self.discarded_observations,
+                        "rejections": dict(self.rejections),
+                    },
+                    close_recordables=close_recordables,
+                )
             terminal_successor: dict[str, Any] | None = None
             if self.committed_frames:
                 if self._terminal_successor is None:
                     raise RuntimeError("committed recording lacks its terminal successor buffer")
                 successor_token, successor_frames, last_transition = self._terminal_successor
                 terminal_path = self.output_dir / TERMINAL_SUCCESSOR_FILENAME
-                terminal_successor = write_terminal_successor_snapshot(
-                    terminal_path,
-                    successor_token,
-                    successor_frames,
-                )
+                with _timed_boundary(self._timing_observer, "terminal_successor_write"):
+                    terminal_successor = write_terminal_successor_snapshot(
+                        terminal_path,
+                        successor_token,
+                        successor_frames,
+                    )
                 # Read the just-written artifact through the same strict path
                 # used by replay before advertising it in the final manifest.
-                verify_terminal_successor_snapshot(
-                    terminal_path,
-                    expected_artifact_sha256=terminal_successor["sha256"],
-                    committed_transition=last_transition,
-                )
-            hdf5_hash = sha256_file(self.hdf5_path)
+                with _timed_boundary(self._timing_observer, "terminal_successor_verify"):
+                    verify_terminal_successor_snapshot(
+                        terminal_path,
+                        expected_artifact_sha256=terminal_successor["sha256"],
+                        committed_transition=last_transition,
+                    )
+            with _timed_boundary(self._timing_observer, "hdf_sha256"):
+                hdf5_hash = sha256_file(self.hdf5_path)
             manifest_path = self.output_dir / "manifest.json"
             manifest = json.loads(manifest_path.read_text())
             manifest.update(
@@ -605,7 +625,8 @@ class LiveRecording:
                     "terminal_successor": terminal_successor,
                 }
             )
-            _atomic_write_json(manifest_path, manifest)
+            with _timed_boundary(self._timing_observer, "manifest_publication"):
+                _atomic_write_json(manifest_path, manifest)
             state = {
                 "artifact_state": manifest["artifact_state"],
                 "committed_frames": self.committed_frames,
@@ -617,9 +638,10 @@ class LiveRecording:
                 "stage_snapshot": str(self.snapshot),
                 "terminal_successor": terminal_successor,
             }
-            _atomic_write_json(self.output_dir / "result.json", state)
-            # This marker is deliberately written last.
-            _atomic_write_json(self.output_dir / "recording_state.json", state)
+            with _timed_boundary(self._timing_observer, "result_publication"):
+                _atomic_write_json(self.output_dir / "result.json", state)
+                # This marker is deliberately written last.
+                _atomic_write_json(self.output_dir / "recording_state.json", state)
         except Exception as exc:
             _atomic_write_json(
                 self.output_dir / "recording_state.json",

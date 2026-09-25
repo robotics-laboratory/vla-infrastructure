@@ -37,6 +37,9 @@ def test_summary_uses_final_warmup_excluded_distribution(tmp_path, capsys):
         assert field + ":" in output
     assert "simulation_advance:" in output and "sim_step:" in output
     assert "NON-ADDITIVE" in output
+    assert "wall_effective_hz:" in output
+    assert "wall_p99_9_ms:" in output
+    assert "wall_deadline_miss_fraction:" in output
 
 
 @pytest.mark.parametrize(

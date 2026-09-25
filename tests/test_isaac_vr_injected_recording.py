@@ -3,6 +3,7 @@
 from pathlib import Path
 import hashlib
 import sys
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -33,6 +34,10 @@ class FakeEnvironment:
             dtype=np.float32,
         )
         self.pending = None
+        self.vr_runtime = SimpleNamespace(config={"scene": {"candidate_home_d0_per_arm": {
+            "left": [-20.0, 90.0, -50.0, 0.0, 0.0, 0.0, 50.0],
+            "right": [-20.0, 90.0, -50.0, 0.0, 0.0, 0.0, 50.0],
+        }}})
 
     def _apply(self, targets):
         self.pending = targets
@@ -124,6 +129,22 @@ def test_injected_transitions_are_distinct_dense_and_self_verifying(count):
             current["successor_observation_state"],
             following["observation_state"],
         )
+
+
+def test_audit_clutch_rows_hold_left_target_without_segment_split():
+    env = FakeEnvironment()
+    recording = FakeRecording(env)
+    result = record_injected_transitions(
+        recording, env, count=108, fixed_input=True, clutch_pattern=True,
+        require_distinct_actions=False,
+    )
+    assert result["left_transition_counts"] == {
+        "motion": 102, "clutch_engaged": 1, "clutch_held": 4,
+        "clutch_release_rebased": 1,
+    }
+    assert len(recording.rows) == 108
+    for row in recording.rows[100:106]:
+        assert np.array_equal(row["dataset_action"][:7], row["observation_state"][:7])
 
 
 def test_rgb_e2e_injection_commits_clutch_and_distinct_native_states():

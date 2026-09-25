@@ -3338,3 +3338,13 @@ documents:
   status: historical
   owner: vr.current_rgb_e2e
   mutable: false
+- path: docs/experiments/20260925_current_record_performance/REPORT.md
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+- path: docs/experiments/20260925_current_record_performance/results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false

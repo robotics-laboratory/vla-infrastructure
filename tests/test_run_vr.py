@@ -38,10 +38,19 @@ def test_cli_modes_and_explicit_rollback(launcher):
     assert launcher.parse_args(["--stack", "legacy"]).preview_isolation == "off"
     assert launcher.parse_args(["--hud-on-start"]).mode == "run"
     assert launcher.parse_args(["--smoke"]).mode == "run"
+    assert launcher.parse_args([
+        "--xr-smoke", "--no-client-audit", "--injected-actions",
+        "--performance-warmup-steps", "100",
+    ]).no_client_audit
+    with pytest.raises(SystemExit):
+        launcher.parse_args(["--no-client-audit"])
+    with pytest.raises(SystemExit):
+        launcher.parse_args([
+            "run", "--smoke", "--no-client-audit", "--injected-actions",
+            "--performance-warmup-steps", "100",
+        ])
     for flag in (
         ["--capture-preview-evidence"],
-        ["--performance-window-steps=10"],
-        ["--performance-warmup-steps", "0"],
         ["--scene-preview", "/tmp/out.png"],
         ["--preview-cameras", "2"],
         ["--preview-isolation", "off"],
@@ -50,6 +59,9 @@ def test_cli_modes_and_explicit_rollback(launcher):
         with pytest.raises(SystemExit):
             launcher.parse_args(flag)
         assert launcher.parse_args(["diag", *flag]).mode == "diagnostic"
+    for flag in (["--performance-window-steps=10"], ["--performance-warmup-steps", "0"]):
+        assert launcher.parse_args(flag).performance_enabled
+        assert launcher.parse_args(["diag", *flag]).performance_enabled
     record = launcher.parse_args(["record"])
     assert record.mode == "record"
     assert not record.performance_enabled
@@ -68,6 +80,11 @@ def test_cli_modes_and_explicit_rollback(launcher):
     with pytest.raises(SystemExit):
         launcher.parse_args(["--smoke", "--injected-actions"])
     assert launcher.parse_args(["record", "--smoke", "--injected-actions"]).injected_actions
+    assert launcher.parse_args(
+        ["record", "--smoke", "--injected-actions", "--injected-count", "3101"]
+    ).injected_count == 3101
+    with pytest.raises(SystemExit):
+        launcher.parse_args(["record", "--smoke", "--injected-count", "3101"])
     with pytest.raises(SystemExit):
         launcher.parse_args(["record", "--smoke", "--recording-benchmark"])
     with pytest.raises(SystemExit):

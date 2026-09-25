@@ -1,0 +1,3445 @@
+{
+  "base_commit": "ad4114c8b7a5fb670fe9bd41405922380c6b9152",
+  "branch": "experiment/vr-current-record-performance",
+  "date_utc": "2026-09-25",
+  "evidence_root": "/data/ebulochkin/p25",
+  "interpretation_limits": [
+    "A0 XR-off RUN is unavailable in the supported S2 stack.",
+    "A1 RUN renders every physics substep; B1 RECORD renders only the final substep. Their difference is not pure recorder overhead.",
+    "Injected no-client workloads bypass the processor, bimanual IK and real XR receipt path.",
+    "p99.9 at 3000 intervals is supported by approximately three upper-tail samples.",
+    "GPU/CPU host samples span startup and shutdown as well as controls."
+  ],
+  "invalid_and_feasibility_registry": [
+    {
+      "id": "A0",
+      "path": "/data/ebulochkin/vla-runtime/current-record-perf-feasibility/a0-run-xr-off",
+      "reason": "RUN S2 creates IsaacTeleopDevice; without XR runtime it aborts before control: NV_CXR_RUNTIME_DIR is not set; no artificial XR-off RUN created."
+    },
+    {
+      "id": "A1_attempt_1",
+      "path": "/data/ebulochkin/vla-runtime/current-record-perf-feasibility/a1-run-xr-on-no-client",
+      "reason": "CloudXR EULA environment omitted; failed before controls."
+    },
+    {
+      "id": "A1_attempt_2",
+      "path": "/data/ebulochkin/vla-runtime/current-record-perf-feasibility/a1-run-xr-on-no-client-02",
+      "reason": "CloudXR IPC Unix socket path exceeded 108 bytes; failed before controls."
+    },
+    {
+      "id": "B0_attempt_1",
+      "path": "/data/ebulochkin/p25/b0",
+      "reason": "Audit CLI guard incorrectly required teleop for supported XR-off RECORD smoke; rejected before startup, then corrected."
+    },
+    {
+      "id": "recorder_feasibility_1",
+      "path": "/data/ebulochkin/vla-runtime/current-record-perf-feasibility/run",
+      "reason": "Output parent permissions rejected before control."
+    },
+    {
+      "id": "recorder_feasibility_2",
+      "path": "/data/ebulochkin/vla-runtime/current-record-perf-feasibility/private-02",
+      "reason": "In-progress child CLI lacked s2_injected_count; source mutated during setup."
+    },
+    {
+      "id": "recorder_feasibility_3_noncohort",
+      "path": "/data/ebulochkin/vla-runtime/current-record-perf-feasibility/private-03",
+      "reason": "Three-row HDF correctness smoke passed, but source mutated during execution; excluded from performance cohort."
+    }
+  ],
+  "logical_control_dt_ms": 33.333333333333336,
+  "measured_start_to_start_intervals_steady": 3000,
+  "physics_hz": 120,
+  "schema": "piper_x_current_record_performance_experiment_v1",
+  "substeps_per_control": 4,
+  "valid_runs": [
+    {
+      "cohort": "A1",
+      "command": "./run-vr run --xr-smoke --no-client-audit --injected-actions --injected-count 3101 --max-control-steps 3101 --state-root /data/ebulochkin/p25/a1/host --run-dir /data/ebulochkin/p25/a1/run --performance-warmup-steps 100 --performance-window-steps 500",
+      "committed_frames": null,
+      "discarded_observations": null,
+      "expected_gaps": null,
+      "hdf_output_bytes": 0,
+      "hdf_readback": [],
+      "host": {
+        "after": {
+          "cpu_frequency_mhz": {
+            "max": 5300.0,
+            "mean": 2382.337375,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 58.0
+          },
+          "data_disk_free_bytes": 24893718528,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 45, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            4.10107421875,
+            4.15869140625,
+            3.43212890625
+          ],
+          "wall_time_utc": "2026-09-25T00:14:21Z"
+        },
+        "before": {
+          "cpu_frequency_mhz": {
+            "max": 5300.0,
+            "mean": 2494.316375,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 49.0
+          },
+          "data_disk_free_bytes": 25545433088,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 57, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            0.18994140625,
+            1.49609375,
+            2.0146484375
+          ],
+          "wall_time_utc": "2026-09-25T00:04:45Z"
+        },
+        "gpu_samples": {
+          "full_process_including_startup_shutdown": true,
+          "graphics_clock_mhz": {
+            "max": 2745.0,
+            "mean": 1773.75
+          },
+          "sample_interval_s": 10,
+          "samples": 56,
+          "temperature_c": {
+            "max": 63.0,
+            "mean": 56.660714285714285
+          },
+          "utilization_percent": {
+            "max": 67.0,
+            "mean": 26.875
+          },
+          "vram_mib": {
+            "max": 6620.0,
+            "mean": 4581.017857142857
+          }
+        },
+        "peak_rss_kib": 15984692,
+        "whole_process_cpu_busy_fraction_all_cores": 0.1965595757410301
+      },
+      "ik": false,
+      "input_targets_sha256": "e84980063820927b1e02b510d1784085efc2e144231ce7655a3f1ae001659802",
+      "launcher_command": [
+        "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/tools/run_isaac_s1.py",
+        "--config",
+        "/data/ebulochkin/p25/a1/run/runtime.yaml",
+        "--s2-config",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/configs/isaac61_s2_runtime.yaml",
+        "--vr-runtime",
+        "--s2-mode",
+        "run",
+        "--demo-profile",
+        "dual_cube_to_matching_plates",
+        "--device",
+        "cuda:0",
+        "--kit_args",
+        "--portable-root /data/ebulochkin/p25/a1/host/kit --enable omni.kit.scene_view.xr --enable omni.kit.scene_view.xr_utils",
+        "--demo-preview-isolation",
+        "off",
+        "--report",
+        "/data/ebulochkin/p25/a1/run/result.json",
+        "--s2-max-control-steps",
+        "3101",
+        "--s2-teleop",
+        "--s2-injected-count",
+        "3101",
+        "--s2-current-record-audit",
+        "steady",
+        "--s2-performance-log",
+        "/data/ebulochkin/p25/a1/run/performance.jsonl",
+        "--s2-performance-window-steps",
+        "500",
+        "--s2-performance-warmup-steps",
+        "100",
+        "--viz",
+        "kit",
+        "--experience",
+        "/data/vla-infrastructure/isaac61_production/IsaacLab/apps/isaaclab.python.xr.openxr.kit",
+        "--s2-cloudxr-profile",
+        "cloudxrjs",
+        "--no-s2-require-session",
+        "--s2-reset-step",
+        "30",
+        "--xr"
+      ],
+      "left_transition_counts": null,
+      "lifecycle_events": null,
+      "mode": "RUN",
+      "performance": {
+        "boundaries": {},
+        "control": {
+          "max_ms": 124.402469,
+          "mean_ms": 85.90749247884038,
+          "p50_ms": 85.363672,
+          "p90_ms": 89.773198,
+          "p95_ms": 91.285625,
+          "p99_9_ms": 100.049331,
+          "p99_ms": 94.829015,
+          "samples": 3001
+        },
+        "effective_wall_hz": 11.635567072200375,
+        "nested_stages_not_additive": {},
+        "stages": {
+          "injected_decision_apply": {
+            "max_ms": 2.767857,
+            "mean_ms": 0.5302445484838387,
+            "p95_ms": 0.557986,
+            "samples": 3001
+          },
+          "observation_capture": {
+            "max_ms": 0.384026,
+            "mean_ms": 0.18973804465178273,
+            "p95_ms": 0.200407,
+            "samples": 3001
+          },
+          "runtime_bookkeeping": {
+            "max_ms": 0.0,
+            "mean_ms": 0.0,
+            "p95_ms": 0.0,
+            "samples": 3001
+          },
+          "simulation_advance": {
+            "max_ms": 123.663415,
+            "mean_ms": 85.14196962145951,
+            "p95_ms": 90.512893,
+            "samples": 3001
+          },
+          "teleop_advance": {
+            "max_ms": 0.066767,
+            "mean_ms": 0.037959254248583804,
+            "p95_ms": 0.042106,
+            "samples": 3001
+          }
+        },
+        "total_logged_steps": 3001,
+        "wall_control": {
+          "max_ms": 124.433014,
+          "mean_ms": 85.94338323133333,
+          "p50_ms": 85.39793399999999,
+          "p90_ms": 89.8051342,
+          "p95_ms": 91.3174257,
+          "p99_9_ms": 101.09217276300016,
+          "p99_ms": 94.88811285999994,
+          "samples": 3000
+        },
+        "wall_deadline_miss_fraction": 1.0,
+        "wall_deadline_misses": 3000,
+        "wall_rtf": 0.38785223574001254,
+        "warmup_steps_excluded": 100
+      },
+      "processor": false,
+      "quest_client": false,
+      "raw_files": [
+        {
+          "bytes": 927,
+          "path": "/data/ebulochkin/p25/a1/host-before.json",
+          "sha256": "6b696cc840056a720393c05f55f5b8089e25bd37e2dd8d68f6b6f8a6117e3db7"
+        },
+        {
+          "bytes": 931,
+          "path": "/data/ebulochkin/p25/a1/host-after.json",
+          "sha256": "7bd68524cc4e60cbef1c4ac87869dfc1d01b1ed135fe299472cd93ae8a8d05ac"
+        },
+        {
+          "bytes": 2412,
+          "path": "/data/ebulochkin/p25/a1/gpu-samples.csv",
+          "sha256": "ac91304d03c9935159e49a05b3a852d3ecfaec2e687a58fa2a86e13f51d4858f"
+        },
+        {
+          "bytes": 1002,
+          "path": "/data/ebulochkin/p25/a1/time.txt",
+          "sha256": "05668b3c6251aebcf646a52459d63f55db0433d5a02b58fa95399258291c8ad3"
+        },
+        {
+          "bytes": 15712,
+          "path": "/data/ebulochkin/p25/a1/run/run_manifest.json",
+          "sha256": "c81d267b9b5d62e1dccb332ad9f2ed1fba33964d9fbeb24e59d57b76611d050b"
+        },
+        {
+          "bytes": 6754,
+          "path": "/data/ebulochkin/p25/a1/run/runtime.yaml",
+          "sha256": "f463041c84a78d12a4813294bd5729080f48379112f7d9fadd87835d24fdb449"
+        },
+        {
+          "bytes": 3933,
+          "path": "/data/ebulochkin/p25/a1/run/result.json",
+          "sha256": "2279a5b1b4e1ef409833cbf8fcb3ec0c2a39b889578bc049519f6eb55fb5a7f2"
+        },
+        {
+          "bytes": 1572375,
+          "path": "/data/ebulochkin/p25/a1/run/performance.jsonl",
+          "sha256": "0f2d0facae5557f535da015e15ae6fe695fc6401946afac87f4932f187ffde8f"
+        },
+        {
+          "bytes": 38429,
+          "path": "/data/ebulochkin/p25/a1/run/stdout.log",
+          "sha256": "7c3db6e2cd680bd932f300291387938177cf1b261d727399c26bb96104e47da9"
+        }
+      ],
+      "record_writer": false,
+      "result_flags": {
+        "cloudxr_profile": "cloudxrjs",
+        "input_pump_calls": 3101,
+        "kit_xr_bridge": null,
+        "kit_xr_bridge_configured": true,
+        "session_running_at_end": false,
+        "xr_initialized": null,
+        "xr_input_available_at_end": false
+      },
+      "run_manifest_sha256": "c81d267b9b5d62e1dccb332ad9f2ed1fba33964d9fbeb24e59d57b76611d050b",
+      "run_slug": "a1",
+      "source_profile": null,
+      "source_sha256": {
+        "tools/isaac_s2_performance.py": "06ea8e0fee9cfbf1159bf2102fd9c0743014772ba97dd5e9566fb9693ae03c3b",
+        "tools/isaac_s2_runtime.py": "34bdac29a19197eee98c1b99269628634de859bddf43cf016e0c298be673d6b8",
+        "tools/isaac_vr_injected_recording.py": "c6014506748d0d71635f2196648eecdd01be6fba8145bc901a121be0f3e4184e",
+        "tools/isaac_vr_recording.py": "2123bdb5036896e3b320796bdc3822714c358ecce80b8159b36b0eb40304b441",
+        "tools/isaac_vr_recording_smoke.py": "a0c8dde3ec894e5797c31a2e7340e1582e37b0baaa5afc4c4292b8339ac5b1f5",
+        "tools/launch_isaac_vr.py": "e8f599f015f395f21d3ab5c8f7d8df78f06912e96a0073f2b19beb7cd1479525",
+        "tools/run_isaac_s1.py": "8348e45743b3635d35d8a8cacfbc3de83d607809ba842a472c46dc430d838089"
+      },
+      "status": "VALID",
+      "technical_episodes": null,
+      "xr": "on_no_client",
+      "xr_receipt": "none"
+    },
+    {
+      "cohort": "B1",
+      "command": "./run-vr record --xr-smoke --no-client-audit --injected-actions --injected-count 3101 --max-control-steps 3101 --state-root /data/ebulochkin/p25/b1/host --run-dir /data/ebulochkin/p25/b1/run --recordings-root /data/ebulochkin/p25/b1/recordings --performance-warmup-steps 100 --performance-window-steps 500",
+      "committed_frames": 3101,
+      "discarded_observations": 0,
+      "expected_gaps": null,
+      "hdf_output_bytes": 33315472,
+      "hdf_readback": [
+        {
+          "artifact_state": "finalized",
+          "bytes": 33315472,
+          "committed_frames": 3101,
+          "discarded_observations": 0,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/b1/recordings/episode_000000/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "04b86d50a7213c9ec2784df8ae7177b89c160f02c1f6c07ea2605b306e010a80",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/b1/recordings/episode_000000/session.hdf5",
+          "sha256": "5ab88c93c94c6465d3547b9a86d53bb46f1e38c4cf0ec2995fa89488c41e8260",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "36b25e64386b66559fb6209d59bd28dea06147491e93bdf0615cf3413d401e87",
+          "transition_schema": "piper_x_committed_transition_v3"
+        }
+      ],
+      "host": {
+        "after": {
+          "cpu_frequency_mhz": {
+            "max": 5304.365,
+            "mean": 3004.513958333333,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 50.0
+          },
+          "data_disk_free_bytes": 24193081344,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 57, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            4.7724609375,
+            4.90087890625,
+            4.162109375
+          ],
+          "wall_time_utc": "2026-09-25T00:21:20Z"
+        },
+        "before": {
+          "cpu_frequency_mhz": {
+            "max": 5200.0,
+            "mean": 3007.724,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 57.0
+          },
+          "data_disk_free_bytes": 24893710336,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 43, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            2.484375,
+            3.759765625,
+            3.32177734375
+          ],
+          "wall_time_utc": "2026-09-25T00:14:53Z"
+        },
+        "gpu_samples": {
+          "full_process_including_startup_shutdown": true,
+          "graphics_clock_mhz": {
+            "max": 2745.0,
+            "mean": 1242.6315789473683
+          },
+          "sample_interval_s": 10,
+          "samples": 38,
+          "temperature_c": {
+            "max": 60.0,
+            "mean": 49.23684210526316
+          },
+          "utilization_percent": {
+            "max": 44.0,
+            "mean": 9.236842105263158
+          },
+          "vram_mib": {
+            "max": 6446.0,
+            "mean": 3744.5
+          }
+        },
+        "peak_rss_kib": 16765540,
+        "whole_process_cpu_busy_fraction_all_cores": 0.2289913877335732
+      },
+      "ik": false,
+      "input_targets_sha256": "e84980063820927b1e02b510d1784085efc2e144231ce7655a3f1ae001659802",
+      "launcher_command": [
+        "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/tools/run_isaac_s1.py",
+        "--config",
+        "/data/ebulochkin/p25/b1/run/runtime.yaml",
+        "--s2-config",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/configs/isaac61_s2_runtime.yaml",
+        "--vr-runtime",
+        "--s2-mode",
+        "run",
+        "--demo-profile",
+        "dual_cube_to_matching_plates",
+        "--device",
+        "cuda:0",
+        "--kit_args",
+        "--portable-root /data/ebulochkin/p25/b1/host/kit --enable isaacsim.replicator.episode_recorder --enable omni.kit.scene_view.xr --enable omni.kit.scene_view.xr_utils",
+        "--demo-preview-isolation",
+        "off",
+        "--report",
+        "/data/ebulochkin/p25/b1/run/result.json",
+        "--s2-max-control-steps",
+        "3101",
+        "--s2-teleop",
+        "--s2-recordings-root",
+        "/data/ebulochkin/p25/b1/recordings",
+        "--s2-record",
+        "--s2-recording-dir",
+        "/data/ebulochkin/p25/b1/recordings/episode_000000",
+        "--s2-injected-recording-smoke",
+        "--s2-injected-count",
+        "3101",
+        "--s2-current-record-audit",
+        "steady",
+        "--s2-performance-log",
+        "/data/ebulochkin/p25/b1/run/performance.jsonl",
+        "--s2-performance-window-steps",
+        "500",
+        "--s2-performance-warmup-steps",
+        "100",
+        "--viz",
+        "kit",
+        "--experience",
+        "/data/vla-infrastructure/isaac61_production/IsaacLab/apps/isaaclab.python.xr.openxr.kit",
+        "--s2-cloudxr-profile",
+        "cloudxrjs",
+        "--no-s2-require-session",
+        "--s2-reset-step",
+        "30",
+        "--xr"
+      ],
+      "left_transition_counts": {
+        "motion": 3101
+      },
+      "lifecycle_events": null,
+      "mode": "RECORD",
+      "performance": {
+        "boundaries": {
+          "hdf_close": {
+            "max_ms": 11.798683,
+            "mean_ms": 11.798683,
+            "p95_ms": 11.798683,
+            "samples": 1
+          },
+          "hdf_sha256": {
+            "max_ms": 16.028223,
+            "mean_ms": 16.028223,
+            "p95_ms": 16.028223,
+            "samples": 1
+          },
+          "manifest_publication": {
+            "max_ms": 52.847285,
+            "mean_ms": 52.847285,
+            "p95_ms": 52.847285,
+            "samples": 1
+          },
+          "recording_session_preparation": {
+            "max_ms": 455.996982,
+            "mean_ms": 455.996982,
+            "p95_ms": 455.996982,
+            "samples": 1
+          },
+          "result_publication": {
+            "max_ms": 5.84996,
+            "mean_ms": 5.84996,
+            "p95_ms": 5.84996,
+            "samples": 1
+          },
+          "terminal_successor_verify": {
+            "max_ms": 2.424814,
+            "mean_ms": 2.424814,
+            "p95_ms": 2.424814,
+            "samples": 1
+          },
+          "terminal_successor_write": {
+            "max_ms": 9.034568,
+            "mean_ms": 9.034568,
+            "p95_ms": 9.034568,
+            "samples": 1
+          }
+        },
+        "control": {
+          "max_ms": 43.929981,
+          "mean_ms": 26.5024098967011,
+          "p50_ms": 25.902491,
+          "p90_ms": 28.373319,
+          "p95_ms": 29.212588,
+          "p99_9_ms": 39.063741,
+          "p99_ms": 33.309787,
+          "samples": 3001
+        },
+        "effective_wall_hz": 37.67955341222067,
+        "nested_stages_not_additive": {
+          "camera_update": {
+            "max_ms": 0.024626,
+            "mean_ms": 0.0036451376207930685,
+            "p95_ms": 0.0045249999999999995,
+            "samples": 3001
+          },
+          "experiment_update": {
+            "max_ms": 0.016612000000000002,
+            "mean_ms": 0.008247676441186272,
+            "p95_ms": 0.010656,
+            "samples": 3001
+          },
+          "hdf_append_ms": {
+            "max_ms": 0.707535,
+            "mean_ms": 0.24990339786737756,
+            "p95_ms": 0.51775,
+            "samples": 3001
+          },
+          "hdf_flush_ms": {
+            "max_ms": 14.114579,
+            "mean_ms": 0.13137677907364212,
+            "p95_ms": 0.0,
+            "samples": 3001
+          },
+          "physics_probe_update": {
+            "max_ms": 0.017026,
+            "mean_ms": 0.005344984005331556,
+            "p95_ms": 0.007163000000000001,
+            "samples": 3001
+          },
+          "physics_target_write": {
+            "max_ms": 2.1225880000000004,
+            "mean_ms": 0.6954161352882373,
+            "p95_ms": 0.98162,
+            "samples": 3001
+          },
+          "robot_update": {
+            "max_ms": 2.639948,
+            "mean_ms": 0.6577938590469844,
+            "p95_ms": 0.817017,
+            "samples": 3001
+          },
+          "sim_step": {
+            "max_ms": 31.931278,
+            "mean_ms": 21.091368943018992,
+            "p95_ms": 22.220993999999997,
+            "samples": 3001
+          }
+        },
+        "stages": {
+          "causal_commit_and_record": {
+            "max_ms": 17.108408,
+            "mean_ms": 1.7286861952682437,
+            "p95_ms": 2.811363,
+            "samples": 3001
+          },
+          "injected_decision_apply": {
+            "max_ms": 1.96338,
+            "mean_ms": 0.8147680063312229,
+            "p95_ms": 1.220993,
+            "samples": 3001
+          },
+          "observation_capture": {
+            "max_ms": 0.008096,
+            "mean_ms": 0.0012036957680773076,
+            "p95_ms": 0.001572,
+            "samples": 3001
+          },
+          "runtime_bookkeeping": {
+            "max_ms": 0.086017,
+            "mean_ms": 0.006392602132622459,
+            "p95_ms": 0.00966,
+            "samples": 3001
+          },
+          "simulation_advance": {
+            "max_ms": 33.981155,
+            "mean_ms": 22.486672534155282,
+            "p95_ms": 24.052441,
+            "samples": 3001
+          },
+          "successor_capture": {
+            "max_ms": 2.705846,
+            "mean_ms": 1.4196201696101298,
+            "p95_ms": 2.275857,
+            "samples": 3001
+          },
+          "teleop_advance": {
+            "max_ms": 1.059468,
+            "mean_ms": 0.03623026191269577,
+            "p95_ms": 0.046157,
+            "samples": 3001
+          }
+        },
+        "total_logged_steps": 3001,
+        "wall_control": {
+          "max_ms": 43.973987,
+          "mean_ms": 26.539592682000002,
+          "p50_ms": 25.934019,
+          "p90_ms": 28.43636,
+          "p95_ms": 29.274342649999994,
+          "p99_9_ms": 39.12319589100007,
+          "p99_ms": 33.380312669999995,
+          "samples": 3000
+        },
+        "wall_deadline_miss_fraction": 0.010666666666666666,
+        "wall_deadline_misses": 32,
+        "wall_rtf": 1.255985113740689,
+        "warmup_steps_excluded": 100
+      },
+      "processor": false,
+      "quest_client": false,
+      "raw_files": [
+        {
+          "bytes": 921,
+          "path": "/data/ebulochkin/p25/b1/host-before.json",
+          "sha256": "a8f968a0292c6a7319de8d62a8e262b73fe55657444594d5d6b73de4a3e5be2f"
+        },
+        {
+          "bytes": 936,
+          "path": "/data/ebulochkin/p25/b1/host-after.json",
+          "sha256": "4985227674f81cffe9baed4f49dce58aa69140f4b3523288eedd2c184f50982e"
+        },
+        {
+          "bytes": 1618,
+          "path": "/data/ebulochkin/p25/b1/gpu-samples.csv",
+          "sha256": "c83cb430605a14d7fbed5f8db07e7e4f958ccd2495aa9a2e48cfdda23ce949b0"
+        },
+        {
+          "bytes": 1058,
+          "path": "/data/ebulochkin/p25/b1/time.txt",
+          "sha256": "136b864a0209cc389f55655413205bd1ceea9a5cdb05482ee7c747f44c6be4ca"
+        },
+        {
+          "bytes": 16108,
+          "path": "/data/ebulochkin/p25/b1/run/run_manifest.json",
+          "sha256": "01775cb6a540e0fdc76ed9358497099b22c95eed8a3889cf73571a76f3b49a6d"
+        },
+        {
+          "bytes": 6754,
+          "path": "/data/ebulochkin/p25/b1/run/runtime.yaml",
+          "sha256": "f67ad898005469e57bdba386f41617de647d11e22e0665ed98183a5d92606ff2"
+        },
+        {
+          "bytes": 1034062,
+          "path": "/data/ebulochkin/p25/b1/run/result.json",
+          "sha256": "7ef2346c8a61e317c6b6cee3f243152239dee6904f5d704112a69736ca8aff03"
+        },
+        {
+          "bytes": 2437215,
+          "path": "/data/ebulochkin/p25/b1/run/performance.jsonl",
+          "sha256": "6b63bb9b4da746814fd347ec38b35039acf010c91bf482848334e1c1c07cd93c"
+        },
+        {
+          "bytes": 756431,
+          "path": "/data/ebulochkin/p25/b1/run/stdout.log",
+          "sha256": "902862cb07d00cb41535468b01e3988400c2e688d9d84575a21b52f52537729c"
+        }
+      ],
+      "record_writer": true,
+      "result_flags": {
+        "cloudxr_profile": "cloudxrjs",
+        "input_pump_calls": 3101,
+        "kit_xr_bridge": true,
+        "kit_xr_bridge_configured": null,
+        "session_running_at_end": false,
+        "xr_initialized": true,
+        "xr_input_available_at_end": false
+      },
+      "run_manifest_sha256": "01775cb6a540e0fdc76ed9358497099b22c95eed8a3889cf73571a76f3b49a6d",
+      "run_slug": "b1",
+      "source_profile": "isaac_human_vr_offline_rgb_v2",
+      "source_sha256": {
+        "tools/isaac_s2_performance.py": "06ea8e0fee9cfbf1159bf2102fd9c0743014772ba97dd5e9566fb9693ae03c3b",
+        "tools/isaac_s2_runtime.py": "34bdac29a19197eee98c1b99269628634de859bddf43cf016e0c298be673d6b8",
+        "tools/isaac_vr_injected_recording.py": "c6014506748d0d71635f2196648eecdd01be6fba8145bc901a121be0f3e4184e",
+        "tools/isaac_vr_recording.py": "2123bdb5036896e3b320796bdc3822714c358ecce80b8159b36b0eb40304b441",
+        "tools/isaac_vr_recording_smoke.py": "a0c8dde3ec894e5797c31a2e7340e1582e37b0baaa5afc4c4292b8339ac5b1f5",
+        "tools/launch_isaac_vr.py": "e8f599f015f395f21d3ab5c8f7d8df78f06912e96a0073f2b19beb7cd1479525",
+        "tools/run_isaac_s1.py": "8348e45743b3635d35d8a8cacfbc3de83d607809ba842a472c46dc430d838089"
+      },
+      "status": "VALID",
+      "technical_episodes": null,
+      "xr": "on_no_client",
+      "xr_receipt": "synthetic"
+    },
+    {
+      "cohort": "E",
+      "command": "./run-vr record --xr-smoke --no-client-audit --audit-lifecycle-cycles 4 --injected-actions --injected-count 6 --max-control-steps 24 --state-root /data/ebulochkin/p25/e/host --run-dir /data/ebulochkin/p25/e/run --recordings-root /data/ebulochkin/p25/e/recordings --performance-warmup-steps 0 --performance-window-steps 30",
+      "committed_frames": null,
+      "discarded_observations": null,
+      "expected_gaps": null,
+      "hdf_output_bytes": 34183744,
+      "hdf_readback": [
+        {
+          "artifact_state": "finalized",
+          "bytes": 8545936,
+          "committed_frames": 6,
+          "discarded_observations": 0,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/e/recordings/episode_000000/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "15c91952073054bdd406eace93f6d7074602d7f83058b0e453118df71965b464",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/e/recordings/episode_000000/session.hdf5",
+          "sha256": "2f62f68f6323c06748daa437db212c613974f54d030d525eeb4c163968b0eb8a",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "86d7cc1065b0de1691ff2642e62cdd7143e1c911ba6b7b8e3d7777bbddd5eb1e",
+          "transition_schema": "piper_x_committed_transition_v3"
+        },
+        {
+          "artifact_state": "finalized",
+          "bytes": 8545936,
+          "committed_frames": 6,
+          "discarded_observations": 0,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/e/recordings/92810d7d76104ff48f7fffdb00da6612/episode_000000/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "65b477385f9b089f9aa28fff32ee9ea102a56a5538037c57a025caef28359276",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/e/recordings/92810d7d76104ff48f7fffdb00da6612/episode_000000/session.hdf5",
+          "sha256": "e149b44b0cdeb3c667cf28f80d06e4037e15400b8c6731c05b26d8d36819a998",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "0fcc2529ed0885f14f230548f8dc5ed587b02fbc3923d09b15f8f438d0183f51",
+          "transition_schema": "piper_x_committed_transition_v3"
+        },
+        {
+          "artifact_state": "finalized",
+          "bytes": 8545936,
+          "committed_frames": 6,
+          "discarded_observations": 0,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/e/recordings/a72acf57631d4417aab5d9f3b7232b21/episode_000000/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "4655f4902b3feb7c3710e9362be3c2b3f278e2407b9eaacf479de4a6a32f6a00",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/e/recordings/a72acf57631d4417aab5d9f3b7232b21/episode_000000/session.hdf5",
+          "sha256": "36cb4dcf7b351c5dda9e88a4e81a99a6604d7e79c89d41cccf7991a101447252",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "7099829a0e1b5c81eaa028600029f518ff4aeed80551c714ad7fc672b85d1508",
+          "transition_schema": "piper_x_committed_transition_v3"
+        },
+        {
+          "artifact_state": "finalized",
+          "bytes": 8545936,
+          "committed_frames": 6,
+          "discarded_observations": 0,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/e/recordings/18a5594ba44d40b68a6b1ac56b579ac0/episode_000000/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "e5366faad2b7b88f4cdb1284f6a85288ff10fcbbabb4dc2ab065664de71e6ef7",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/e/recordings/18a5594ba44d40b68a6b1ac56b579ac0/episode_000000/session.hdf5",
+          "sha256": "8ba8a7f40e8cb520208383640bcde5fcde1d259e5385be8dec3630bb48f6739e",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "fc0f461366a6d7b6d52cc030dd3b7c58135257eb8498fa108b0a3a18c42203fe",
+          "transition_schema": "piper_x_committed_transition_v3"
+        }
+      ],
+      "host": {
+        "after": {
+          "cpu_frequency_mhz": {
+            "max": 5275.949,
+            "mean": 2671.350625,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 53.0
+          },
+          "data_disk_free_bytes": 23458336768,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 48, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            1.4541015625,
+            4.40576171875,
+            4.37109375
+          ],
+          "wall_time_utc": "2026-09-25T00:27:17Z"
+        },
+        "before": {
+          "cpu_frequency_mhz": {
+            "max": 4936.243,
+            "mean": 2592.220041666667,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 49.0
+          },
+          "data_disk_free_bytes": 24193073152,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 57, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            3.02685546875,
+            4.46337890625,
+            4.0390625
+          ],
+          "wall_time_utc": "2026-09-25T00:21:46Z"
+        },
+        "gpu_samples": {
+          "full_process_including_startup_shutdown": true,
+          "graphics_clock_mhz": {
+            "max": 2730.0,
+            "mean": 852.7272727272727
+          },
+          "sample_interval_s": 10,
+          "samples": 33,
+          "temperature_c": {
+            "max": 60.0,
+            "mean": 57.54545454545455
+          },
+          "utilization_percent": {
+            "max": 4.0,
+            "mean": 0.12121212121212122
+          },
+          "vram_mib": {
+            "max": 6426.0,
+            "mean": 2662.4848484848485
+          }
+        },
+        "peak_rss_kib": 16854896,
+        "whole_process_cpu_busy_fraction_all_cores": 0.23686382012167084
+      },
+      "ik": false,
+      "input_targets_sha256": null,
+      "launcher_command": [
+        "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/tools/run_isaac_s1.py",
+        "--config",
+        "/data/ebulochkin/p25/e/run/runtime.yaml",
+        "--s2-config",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/configs/isaac61_s2_runtime.yaml",
+        "--vr-runtime",
+        "--s2-mode",
+        "run",
+        "--demo-profile",
+        "dual_cube_to_matching_plates",
+        "--device",
+        "cuda:0",
+        "--kit_args",
+        "--portable-root /data/ebulochkin/p25/e/host/kit --enable isaacsim.replicator.episode_recorder --enable omni.kit.scene_view.xr --enable omni.kit.scene_view.xr_utils",
+        "--demo-preview-isolation",
+        "off",
+        "--report",
+        "/data/ebulochkin/p25/e/run/result.json",
+        "--s2-max-control-steps",
+        "24",
+        "--s2-teleop",
+        "--s2-recordings-root",
+        "/data/ebulochkin/p25/e/recordings",
+        "--s2-record",
+        "--s2-recording-dir",
+        "/data/ebulochkin/p25/e/recordings/episode_000000",
+        "--s2-injected-recording-smoke",
+        "--s2-injected-count",
+        "6",
+        "--s2-current-record-audit",
+        "lifecycle",
+        "--s2-audit-lifecycle-cycles",
+        "4",
+        "--s2-performance-log",
+        "/data/ebulochkin/p25/e/run/performance.jsonl",
+        "--s2-performance-window-steps",
+        "30",
+        "--s2-performance-warmup-steps",
+        "0",
+        "--viz",
+        "kit",
+        "--experience",
+        "/data/vla-infrastructure/isaac61_production/IsaacLab/apps/isaaclab.python.xr.openxr.kit",
+        "--s2-cloudxr-profile",
+        "cloudxrjs",
+        "--no-s2-require-session",
+        "--s2-reset-step",
+        "30",
+        "--xr"
+      ],
+      "left_transition_counts": null,
+      "lifecycle_events": [
+        {
+          "cycle": 1,
+          "demo_id": "989ee10cbcad42d5b4a81db8fcb8b4fc",
+          "outcome": "success",
+          "state_after": "waiting"
+        },
+        {
+          "cycle": 2,
+          "demo_id": "92810d7d76104ff48f7fffdb00da6612",
+          "outcome": "failure",
+          "state_after": "waiting"
+        },
+        {
+          "cycle": 3,
+          "demo_id": "a72acf57631d4417aab5d9f3b7232b21",
+          "outcome": "incomplete",
+          "state_after": "waiting"
+        },
+        {
+          "cycle": 4,
+          "demo_id": "18a5594ba44d40b68a6b1ac56b579ac0",
+          "outcome": "discard",
+          "state_after": "waiting"
+        }
+      ],
+      "mode": "LIFECYCLE",
+      "performance": {
+        "boundaries": {
+          "demo_classification_publication": {
+            "max_ms": 3.157299,
+            "mean_ms": 2.887856333333333,
+            "p95_ms": 3.1406492999999998,
+            "samples": 3
+          },
+          "demo_discard_publication": {
+            "max_ms": 0.153119,
+            "mean_ms": 0.153119,
+            "p95_ms": 0.153119,
+            "samples": 1
+          },
+          "demo_reset": {
+            "max_ms": 99.004558,
+            "mean_ms": 96.927574,
+            "p95_ms": 98.99712895,
+            "samples": 4
+          },
+          "demo_save_selection": {
+            "max_ms": 0.002058,
+            "mean_ms": 0.0018113333333333332,
+            "p95_ms": 0.0020241,
+            "samples": 3
+          },
+          "demo_stop_seal": {
+            "max_ms": 91.575132,
+            "mean_ms": 86.877154,
+            "p95_ms": 90.9244977,
+            "samples": 4
+          },
+          "hdf_close": {
+            "max_ms": 14.210042,
+            "mean_ms": 13.661661500000001,
+            "p95_ms": 14.145507499999999,
+            "samples": 4
+          },
+          "hdf_sha256": {
+            "max_ms": 4.135618,
+            "mean_ms": 3.9885165000000002,
+            "p95_ms": 4.11034165,
+            "samples": 4
+          },
+          "manifest_publication": {
+            "max_ms": 59.818056,
+            "mean_ms": 54.6939465,
+            "p95_ms": 58.86056685,
+            "samples": 4
+          },
+          "next_start_after_reset": {
+            "max_ms": 0.025892,
+            "mean_ms": 0.02209733333333333,
+            "p95_ms": 0.025346099999999996,
+            "samples": 3
+          },
+          "recording_session_preparation": {
+            "max_ms": 407.910065,
+            "mean_ms": 370.107473,
+            "p95_ms": 401.21966539999994,
+            "samples": 4
+          },
+          "result_publication": {
+            "max_ms": 5.311398,
+            "mean_ms": 5.0940104999999996,
+            "p95_ms": 5.3014794,
+            "samples": 4
+          },
+          "start_to_first_recording_ready": {
+            "max_ms": 415.87794,
+            "mean_ms": 379.99114375,
+            "p95_ms": 409.47565245,
+            "samples": 4
+          },
+          "terminal_successor_verify": {
+            "max_ms": 2.720541,
+            "mean_ms": 2.016416,
+            "p95_ms": 2.5823146499999994,
+            "samples": 4
+          },
+          "terminal_successor_write": {
+            "max_ms": 5.047203,
+            "mean_ms": 4.3186175,
+            "p95_ms": 4.938839549999999,
+            "samples": 4
+          }
+        },
+        "control": {
+          "max_ms": 273.144594,
+          "mean_ms": 39.45936429166667,
+          "p50_ms": 26.649736,
+          "p90_ms": 35.0755073,
+          "p95_ms": 55.83558179999994,
+          "p99_9_ms": 268.23007238100007,
+          "p99_ms": 223.9993778099999,
+          "samples": 24
+        },
+        "effective_wall_hz": 8.893407853687894,
+        "nested_stages_not_additive": {
+          "hdf_append_ms": {
+            "max_ms": 0.528123,
+            "mean_ms": 0.23891016666666667,
+            "p95_ms": 0.27648779999999984,
+            "samples": 24
+          }
+        },
+        "stages": {
+          "causal_commit_and_record": {
+            "max_ms": 2.854584,
+            "mean_ms": 1.5814344166666665,
+            "p95_ms": 2.386043949999998,
+            "samples": 24
+          },
+          "injected_decision_apply": {
+            "max_ms": 1.033828,
+            "mean_ms": 0.8066389166666666,
+            "p95_ms": 0.8306899999999999,
+            "samples": 24
+          },
+          "observation_capture": {
+            "max_ms": 199.099201,
+            "mean_ms": 8.902750625,
+            "p95_ms": 5.0237733,
+            "samples": 24
+          },
+          "runtime_bookkeeping": {
+            "max_ms": 0.009917,
+            "mean_ms": 0.0064831666666666675,
+            "p95_ms": 0.0072736,
+            "samples": 24
+          },
+          "simulation_advance": {
+            "max_ms": 69.960156,
+            "mean_ms": 26.69284233333333,
+            "p95_ms": 50.95905144999994,
+            "samples": 24
+          },
+          "successor_capture": {
+            "max_ms": 2.686446,
+            "mean_ms": 1.4208370833333335,
+            "p95_ms": 2.2279497499999987,
+            "samples": 24
+          },
+          "teleop_advance": {
+            "max_ms": 0.055442,
+            "mean_ms": 0.038049208333333334,
+            "p95_ms": 0.04166485,
+            "samples": 24
+          }
+        },
+        "total_logged_steps": 24,
+        "wall_control": {
+          "max_ms": 590.968447,
+          "mean_ms": 112.44283591304348,
+          "p50_ms": 26.816201,
+          "p90_ms": 512.1856738000002,
+          "p95_ms": 581.619371,
+          "p99_9_ms": 590.7864285039999,
+          "p99_ms": 589.14826204,
+          "samples": 23
+        },
+        "wall_deadline_miss_fraction": 0.34782608695652173,
+        "wall_deadline_misses": 8,
+        "wall_rtf": 0.29644692845626314,
+        "warmup_steps_excluded": 0
+      },
+      "processor": false,
+      "quest_client": false,
+      "raw_files": [
+        {
+          "bytes": 935,
+          "path": "/data/ebulochkin/p25/e/host-before.json",
+          "sha256": "16b47b8c60604734746176cca3b4f47b07cba94ea3a5b868bc02c09d765ef8cf"
+        },
+        {
+          "bytes": 929,
+          "path": "/data/ebulochkin/p25/e/host-after.json",
+          "sha256": "af58a6cd1e06e1d2902d0dbe5a98002fe0a9c22418d7634023cd970e70061e10"
+        },
+        {
+          "bytes": 1388,
+          "path": "/data/ebulochkin/p25/e/gpu-samples.csv",
+          "sha256": "c54325a6d676e7a1a777034220bd1cdb650d752fb65d468d14e0e098d3c8a46e"
+        },
+        {
+          "bytes": 1073,
+          "path": "/data/ebulochkin/p25/e/time.txt",
+          "sha256": "758b6ae6ec2f24d3b3ccc042ca6fe13066958ac3de06147388a704a71dc0781c"
+        },
+        {
+          "bytes": 16186,
+          "path": "/data/ebulochkin/p25/e/run/run_manifest.json",
+          "sha256": "1fcd74375ab846586bb406a000c4d8760a68a8472c6a2e215ccb406d2672986c"
+        },
+        {
+          "bytes": 6752,
+          "path": "/data/ebulochkin/p25/e/run/runtime.yaml",
+          "sha256": "3bca55e7be1565b3113368dc84d44e2e9ab0a279c90c76f884d6c9d169f416e5"
+        },
+        {
+          "bytes": 30688,
+          "path": "/data/ebulochkin/p25/e/run/result.json",
+          "sha256": "8d56c3c3ba3e10bcc6d22976fc829197743407f5c0a7514e5708d6d137c12d46"
+        },
+        {
+          "bytes": 28507,
+          "path": "/data/ebulochkin/p25/e/run/performance.jsonl",
+          "sha256": "2363afc56fa3d82d109d1fafe8fb19cff73d1a0393382967e9e3d5351fef15a8"
+        },
+        {
+          "bytes": 59283,
+          "path": "/data/ebulochkin/p25/e/run/stdout.log",
+          "sha256": "e8252d6c0ea103ba2399fea45baefff189068f44aa40e0c2633fd3dcecd8eb6f"
+        }
+      ],
+      "record_writer": true,
+      "result_flags": {
+        "cloudxr_profile": "cloudxrjs",
+        "input_pump_calls": null,
+        "kit_xr_bridge": null,
+        "kit_xr_bridge_configured": true,
+        "session_running_at_end": false,
+        "xr_initialized": null,
+        "xr_input_available_at_end": null
+      },
+      "run_manifest_sha256": "1fcd74375ab846586bb406a000c4d8760a68a8472c6a2e215ccb406d2672986c",
+      "run_slug": "e",
+      "source_profile": "isaac_human_vr_offline_rgb_v2",
+      "source_sha256": {
+        "tools/isaac_s2_performance.py": "06ea8e0fee9cfbf1159bf2102fd9c0743014772ba97dd5e9566fb9693ae03c3b",
+        "tools/isaac_s2_runtime.py": "34bdac29a19197eee98c1b99269628634de859bddf43cf016e0c298be673d6b8",
+        "tools/isaac_vr_injected_recording.py": "c6014506748d0d71635f2196648eecdd01be6fba8145bc901a121be0f3e4184e",
+        "tools/isaac_vr_recording.py": "2123bdb5036896e3b320796bdc3822714c358ecce80b8159b36b0eb40304b441",
+        "tools/isaac_vr_recording_smoke.py": "a0c8dde3ec894e5797c31a2e7340e1582e37b0baaa5afc4c4292b8339ac5b1f5",
+        "tools/launch_isaac_vr.py": "e8f599f015f395f21d3ab5c8f7d8df78f06912e96a0073f2b19beb7cd1479525",
+        "tools/run_isaac_s1.py": "8348e45743b3635d35d8a8cacfbc3de83d607809ba842a472c46dc430d838089"
+      },
+      "status": "VALID",
+      "technical_episodes": [
+        {
+          "committed_frames": 6,
+          "episode_id": "episode_000000",
+          "output_dir": "/data/ebulochkin/p25/e/recordings/episode_000000"
+        },
+        {
+          "committed_frames": 6,
+          "episode_id": "episode_000000",
+          "output_dir": "/data/ebulochkin/p25/e/recordings/92810d7d76104ff48f7fffdb00da6612/episode_000000"
+        },
+        {
+          "committed_frames": 6,
+          "episode_id": "episode_000000",
+          "output_dir": "/data/ebulochkin/p25/e/recordings/a72acf57631d4417aab5d9f3b7232b21/episode_000000"
+        },
+        {
+          "committed_frames": 6,
+          "episode_id": "episode_000000",
+          "output_dir": "/data/ebulochkin/p25/e/recordings/18a5594ba44d40b68a6b1ac56b579ac0/episode_000000"
+        }
+      ],
+      "xr": "on_no_client",
+      "xr_receipt": "synthetic"
+    },
+    {
+      "cohort": "B0",
+      "command": "./run-vr record --smoke --no-client-audit --injected-actions --injected-count 3101 --max-control-steps 3101 --state-root /data/ebulochkin/p25/b0-02/host --run-dir /data/ebulochkin/p25/b0-02/run --recordings-root /data/ebulochkin/p25/b0-02/recordings --performance-warmup-steps 100 --performance-window-steps 500",
+      "committed_frames": 3101,
+      "discarded_observations": 0,
+      "expected_gaps": null,
+      "hdf_output_bytes": 33315472,
+      "hdf_readback": [
+        {
+          "artifact_state": "finalized",
+          "bytes": 33315472,
+          "committed_frames": 3101,
+          "discarded_observations": 0,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/b0-02/recordings/episode_000000/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "f1e9b4396f5e5d5eef0e32cf460fe4b455a29a6e14573b77fdea337b1155cc71",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/b0-02/recordings/episode_000000/session.hdf5",
+          "sha256": "656a93a2d85c71eb7c3fc2c092f73948b36947718ff94114e1838dbe75103c6c",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "373475febf7288f6bd3c8d3f47c8729fe567914e075cb81f90e5be87915a6c43",
+          "transition_schema": "piper_x_committed_transition_v3"
+        }
+      ],
+      "host": {
+        "after": {
+          "cpu_frequency_mhz": {
+            "max": 5301.101,
+            "mean": 2158.9895416666664,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 51.0
+          },
+          "data_disk_free_bytes": 22776274944,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 57, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            1.935546875,
+            3.6513671875,
+            4.14599609375
+          ],
+          "wall_time_utc": "2026-09-25T00:34:47Z"
+        },
+        "before": {
+          "cpu_frequency_mhz": {
+            "max": 5300.0,
+            "mean": 2695.8845416666663,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 53.0
+          },
+          "data_disk_free_bytes": 23458230272,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 42, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            0.56787109375,
+            3.42626953125,
+            4.02685546875
+          ],
+          "wall_time_utc": "2026-09-25T00:28:40Z"
+        },
+        "gpu_samples": {
+          "full_process_including_startup_shutdown": true,
+          "graphics_clock_mhz": {
+            "max": 2745.0,
+            "mean": 1051.25
+          },
+          "sample_interval_s": 10,
+          "samples": 36,
+          "temperature_c": {
+            "max": 60.0,
+            "mean": 48.72222222222222
+          },
+          "utilization_percent": {
+            "max": 59.0,
+            "mean": 12.944444444444445
+          },
+          "vram_mib": {
+            "max": 5239.0,
+            "mean": 1890.388888888889
+          }
+        },
+        "peak_rss_kib": 15948676,
+        "whole_process_cpu_busy_fraction_all_cores": 0.2006925103671603
+      },
+      "ik": false,
+      "input_targets_sha256": "e84980063820927b1e02b510d1784085efc2e144231ce7655a3f1ae001659802",
+      "launcher_command": [
+        "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/tools/run_isaac_s1.py",
+        "--config",
+        "/data/ebulochkin/p25/b0-02/run/runtime.yaml",
+        "--s2-config",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/configs/isaac61_s2_runtime.yaml",
+        "--vr-runtime",
+        "--s2-mode",
+        "run",
+        "--demo-profile",
+        "dual_cube_to_matching_plates",
+        "--device",
+        "cuda:0",
+        "--kit_args",
+        "--portable-root /data/ebulochkin/p25/b0-02/host/kit --enable isaacsim.replicator.episode_recorder",
+        "--demo-preview-isolation",
+        "off",
+        "--report",
+        "/data/ebulochkin/p25/b0-02/run/result.json",
+        "--s2-max-control-steps",
+        "3101",
+        "--s2-recordings-root",
+        "/data/ebulochkin/p25/b0-02/recordings",
+        "--s2-record",
+        "--s2-recording-dir",
+        "/data/ebulochkin/p25/b0-02/recordings/episode_000000",
+        "--s2-injected-recording-smoke",
+        "--s2-injected-count",
+        "3101",
+        "--s2-current-record-audit",
+        "steady",
+        "--s2-performance-log",
+        "/data/ebulochkin/p25/b0-02/run/performance.jsonl",
+        "--s2-performance-window-steps",
+        "500",
+        "--s2-performance-warmup-steps",
+        "100",
+        "--viz",
+        "kit",
+        "--no-s2-require-session",
+        "--s2-reset-step",
+        "30"
+      ],
+      "left_transition_counts": {
+        "motion": 3101
+      },
+      "lifecycle_events": null,
+      "mode": "RECORD",
+      "performance": {
+        "boundaries": {
+          "hdf_close": {
+            "max_ms": 10.776679,
+            "mean_ms": 10.776679,
+            "p95_ms": 10.776679,
+            "samples": 1
+          },
+          "hdf_sha256": {
+            "max_ms": 18.755003,
+            "mean_ms": 18.755003,
+            "p95_ms": 18.755003,
+            "samples": 1
+          },
+          "manifest_publication": {
+            "max_ms": 63.553112,
+            "mean_ms": 63.553112,
+            "p95_ms": 63.553112,
+            "samples": 1
+          },
+          "recording_session_preparation": {
+            "max_ms": 399.665795,
+            "mean_ms": 399.665795,
+            "p95_ms": 399.665795,
+            "samples": 1
+          },
+          "result_publication": {
+            "max_ms": 5.380703,
+            "mean_ms": 5.380703,
+            "p95_ms": 5.380703,
+            "samples": 1
+          },
+          "terminal_successor_verify": {
+            "max_ms": 2.579474,
+            "mean_ms": 2.579474,
+            "p95_ms": 2.579474,
+            "samples": 1
+          },
+          "terminal_successor_write": {
+            "max_ms": 8.119893,
+            "mean_ms": 8.119893,
+            "p95_ms": 8.119893,
+            "samples": 1
+          }
+        },
+        "control": {
+          "max_ms": 36.595958,
+          "mean_ms": 23.7228078023992,
+          "p50_ms": 23.404859,
+          "p90_ms": 24.6365,
+          "p95_ms": 25.661475,
+          "p99_9_ms": 33.634138,
+          "p99_ms": 30.559975,
+          "samples": 3001
+        },
+        "effective_wall_hz": 42.09073509023364,
+        "nested_stages_not_additive": {
+          "camera_update": {
+            "max_ms": 0.023178,
+            "mean_ms": 0.0034310286571142953,
+            "p95_ms": 0.004123,
+            "samples": 3001
+          },
+          "experiment_update": {
+            "max_ms": 0.027915,
+            "mean_ms": 0.00857725258247251,
+            "p95_ms": 0.010572000000000002,
+            "samples": 3001
+          },
+          "hdf_append_ms": {
+            "max_ms": 1.243324,
+            "mean_ms": 0.21850770309896703,
+            "p95_ms": 0.229563,
+            "samples": 3001
+          },
+          "hdf_flush_ms": {
+            "max_ms": 8.81491,
+            "mean_ms": 0.11315685738087304,
+            "p95_ms": 0.0,
+            "samples": 3001
+          },
+          "physics_probe_update": {
+            "max_ms": 0.015973,
+            "mean_ms": 0.005041737087637454,
+            "p95_ms": 0.0063999999999999994,
+            "samples": 3001
+          },
+          "physics_target_write": {
+            "max_ms": 1.445994,
+            "mean_ms": 0.6668920329890037,
+            "p95_ms": 0.870152,
+            "samples": 3001
+          },
+          "robot_update": {
+            "max_ms": 1.129089,
+            "mean_ms": 0.618270503832056,
+            "p95_ms": 0.776171,
+            "samples": 3001
+          },
+          "sim_step": {
+            "max_ms": 28.14686,
+            "mean_ms": 18.788520993668776,
+            "p95_ms": 19.866054,
+            "samples": 3001
+          }
+        },
+        "stages": {
+          "causal_commit_and_record": {
+            "max_ms": 11.542917,
+            "mean_ms": 1.5455652862379206,
+            "p95_ms": 1.570237,
+            "samples": 3001
+          },
+          "injected_decision_apply": {
+            "max_ms": 1.970489,
+            "mean_ms": 0.7850859800066644,
+            "p95_ms": 0.930265,
+            "samples": 3001
+          },
+          "observation_capture": {
+            "max_ms": 0.011891,
+            "mean_ms": 0.0012200519826724425,
+            "p95_ms": 0.001513,
+            "samples": 3001
+          },
+          "runtime_bookkeeping": {
+            "max_ms": 0.029819,
+            "mean_ms": 0.00603858413862046,
+            "p95_ms": 0.007471,
+            "samples": 3001
+          },
+          "simulation_advance": {
+            "max_ms": 30.009178,
+            "mean_ms": 20.11409499266911,
+            "p95_ms": 21.251941,
+            "samples": 3001
+          },
+          "successor_capture": {
+            "max_ms": 2.507645,
+            "mean_ms": 1.2624814228590469,
+            "p95_ms": 1.441163,
+            "samples": 3001
+          },
+          "teleop_advance": {
+            "max_ms": 0.000655,
+            "mean_ms": 0.00016982005998000666,
+            "p95_ms": 0.000238,
+            "samples": 3001
+          }
+        },
+        "total_logged_steps": 3001,
+        "wall_control": {
+          "max_ms": 36.643504,
+          "mean_ms": 23.758197566666663,
+          "p50_ms": 23.432979,
+          "p90_ms": 24.687569699999997,
+          "p95_ms": 25.742667599999994,
+          "p99_9_ms": 34.71966335100005,
+          "p99_ms": 30.600989779999995,
+          "samples": 3000
+        },
+        "wall_deadline_miss_fraction": 0.002,
+        "wall_deadline_misses": 6,
+        "wall_rtf": 1.4030245030077881,
+        "warmup_steps_excluded": 100
+      },
+      "processor": false,
+      "quest_client": false,
+      "raw_files": [
+        {
+          "bytes": 938,
+          "path": "/data/ebulochkin/p25/b0-02/host-before.json",
+          "sha256": "d6e7a692adf7b632d5d8b5e78d7e27d28e42c05829fe4459022b7891c57e5343"
+        },
+        {
+          "bytes": 937,
+          "path": "/data/ebulochkin/p25/b0-02/host-after.json",
+          "sha256": "9f19d25c09337df02b2b7a6a1e5af27dea324e3b7742e77b6eb29e78520581ae"
+        },
+        {
+          "bytes": 1506,
+          "path": "/data/ebulochkin/p25/b0-02/gpu-samples.csv",
+          "sha256": "e92eeae008327ed2d9648ec310cd21643a5ac361476d3be99dafe6232774c6ff"
+        },
+        {
+          "bytes": 1063,
+          "path": "/data/ebulochkin/p25/b0-02/time.txt",
+          "sha256": "9204a5d6de0d09d3bef0fb61fa6a8158d710c8081fe88573419a58836829ca3b"
+        },
+        {
+          "bytes": 15875,
+          "path": "/data/ebulochkin/p25/b0-02/run/run_manifest.json",
+          "sha256": "88d190121dd7be986b37ddb62cd0fc0b1c6876847eeb8bf3e3802d5c16371635"
+        },
+        {
+          "bytes": 6760,
+          "path": "/data/ebulochkin/p25/b0-02/run/runtime.yaml",
+          "sha256": "739896aa88916a92d919f98fe09d0af48b20bfc355e9d7fb43b8a985e347a7c6"
+        },
+        {
+          "bytes": 1034037,
+          "path": "/data/ebulochkin/p25/b0-02/run/result.json",
+          "sha256": "9294c77195a9960acab5338307a823b0192c33cee08d36635c79b47f68645760"
+        },
+        {
+          "bytes": 2435048,
+          "path": "/data/ebulochkin/p25/b0-02/run/performance.jsonl",
+          "sha256": "4befdc77579064dcfc3d6cc816b8ca73ae278cca27a3d93099dd2c093604d331"
+        },
+        {
+          "bytes": 742123,
+          "path": "/data/ebulochkin/p25/b0-02/run/stdout.log",
+          "sha256": "d27ea0d1b35a7e72e82efac45902387e0bdbefd877aff83724ee7d33a447ed20"
+        }
+      ],
+      "record_writer": true,
+      "result_flags": {
+        "cloudxr_profile": "cloudxrjs",
+        "input_pump_calls": 0,
+        "kit_xr_bridge": false,
+        "kit_xr_bridge_configured": null,
+        "session_running_at_end": false,
+        "xr_initialized": false,
+        "xr_input_available_at_end": false
+      },
+      "run_manifest_sha256": "88d190121dd7be986b37ddb62cd0fc0b1c6876847eeb8bf3e3802d5c16371635",
+      "run_slug": "b0-02",
+      "source_profile": "isaac_human_vr_offline_rgb_v2",
+      "source_sha256": {
+        "tools/isaac_s2_performance.py": "06ea8e0fee9cfbf1159bf2102fd9c0743014772ba97dd5e9566fb9693ae03c3b",
+        "tools/isaac_s2_runtime.py": "34bdac29a19197eee98c1b99269628634de859bddf43cf016e0c298be673d6b8",
+        "tools/isaac_vr_injected_recording.py": "c6014506748d0d71635f2196648eecdd01be6fba8145bc901a121be0f3e4184e",
+        "tools/isaac_vr_recording.py": "2123bdb5036896e3b320796bdc3822714c358ecce80b8159b36b0eb40304b441",
+        "tools/isaac_vr_recording_smoke.py": "a0c8dde3ec894e5797c31a2e7340e1582e37b0baaa5afc4c4292b8339ac5b1f5",
+        "tools/launch_isaac_vr.py": "e8f599f015f395f21d3ab5c8f7d8df78f06912e96a0073f2b19beb7cd1479525",
+        "tools/run_isaac_s1.py": "dc63f04701b7a541f6a7cce8ffdc303dc3686ab1fe2f348894e85b635654f0f3"
+      },
+      "status": "VALID",
+      "technical_episodes": null,
+      "xr": "off",
+      "xr_receipt": "synthetic"
+    },
+    {
+      "cohort": "C",
+      "command": "./run-vr record --xr-smoke --no-client-audit --audit-clutch --injected-actions --injected-count 3101 --max-control-steps 3101 --state-root /data/ebulochkin/p25/c/host --run-dir /data/ebulochkin/p25/c/run --recordings-root /data/ebulochkin/p25/c/recordings --performance-warmup-steps 100 --performance-window-steps 500",
+      "committed_frames": 3101,
+      "discarded_observations": 0,
+      "expected_gaps": null,
+      "hdf_output_bytes": 33315472,
+      "hdf_readback": [
+        {
+          "artifact_state": "finalized",
+          "bytes": 33315472,
+          "committed_frames": 3101,
+          "discarded_observations": 0,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/c/recordings/episode_000000/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "f45ea7a1431ccbd8e7bb3a8498a268c31f6f83d031e0a7713da0317922565d2c",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/c/recordings/episode_000000/session.hdf5",
+          "sha256": "5f3929af5159fc4468a9d9a097751e8c282c0a2399d58a7a6a0ac65fcb3a4755",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "4c2f4b92a5fb63c0a47318acc62c20edbccec69da931679756c7a98b3de67d88",
+          "transition_schema": "piper_x_committed_transition_v3"
+        }
+      ],
+      "host": {
+        "after": {
+          "cpu_frequency_mhz": {
+            "max": 5295.216,
+            "mean": 2812.532333333333,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 58.0
+          },
+          "data_disk_free_bytes": 22075629568,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 46, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            2.9140625,
+            4.62646484375,
+            4.66943359375
+          ],
+          "wall_time_utc": "2026-09-25T00:41:30Z"
+        },
+        "before": {
+          "cpu_frequency_mhz": {
+            "max": 5272.462,
+            "mean": 2460.663791666667,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 46.0
+          },
+          "data_disk_free_bytes": 22776266752,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 57, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            1.458984375,
+            3.4296875,
+            4.06201171875
+          ],
+          "wall_time_utc": "2026-09-25T00:35:08Z"
+        },
+        "gpu_samples": {
+          "full_process_including_startup_shutdown": true,
+          "graphics_clock_mhz": {
+            "max": 2745.0,
+            "mean": 1289.6052631578948
+          },
+          "sample_interval_s": 10,
+          "samples": 38,
+          "temperature_c": {
+            "max": 61.0,
+            "mean": 57.05263157894737
+          },
+          "utilization_percent": {
+            "max": 43.0,
+            "mean": 8.763157894736842
+          },
+          "vram_mib": {
+            "max": 6426.0,
+            "mean": 3582.1052631578946
+          }
+        },
+        "peak_rss_kib": 16440820,
+        "whole_process_cpu_busy_fraction_all_cores": 0.23201933922143037
+      },
+      "ik": false,
+      "input_targets_sha256": "8e8329d66d3b3e1cac4dac4c863c22a13bc1b34fe9113f4493d73b604495350b",
+      "launcher_command": [
+        "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/tools/run_isaac_s1.py",
+        "--config",
+        "/data/ebulochkin/p25/c/run/runtime.yaml",
+        "--s2-config",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/configs/isaac61_s2_runtime.yaml",
+        "--vr-runtime",
+        "--s2-mode",
+        "run",
+        "--demo-profile",
+        "dual_cube_to_matching_plates",
+        "--device",
+        "cuda:0",
+        "--kit_args",
+        "--portable-root /data/ebulochkin/p25/c/host/kit --enable isaacsim.replicator.episode_recorder --enable omni.kit.scene_view.xr --enable omni.kit.scene_view.xr_utils",
+        "--demo-preview-isolation",
+        "off",
+        "--report",
+        "/data/ebulochkin/p25/c/run/result.json",
+        "--s2-max-control-steps",
+        "3101",
+        "--s2-teleop",
+        "--s2-recordings-root",
+        "/data/ebulochkin/p25/c/recordings",
+        "--s2-record",
+        "--s2-recording-dir",
+        "/data/ebulochkin/p25/c/recordings/episode_000000",
+        "--s2-injected-recording-smoke",
+        "--s2-injected-count",
+        "3101",
+        "--s2-current-record-audit",
+        "clutch",
+        "--s2-performance-log",
+        "/data/ebulochkin/p25/c/run/performance.jsonl",
+        "--s2-performance-window-steps",
+        "500",
+        "--s2-performance-warmup-steps",
+        "100",
+        "--viz",
+        "kit",
+        "--experience",
+        "/data/vla-infrastructure/isaac61_production/IsaacLab/apps/isaaclab.python.xr.openxr.kit",
+        "--s2-cloudxr-profile",
+        "cloudxrjs",
+        "--no-s2-require-session",
+        "--s2-reset-step",
+        "30",
+        "--xr"
+      ],
+      "left_transition_counts": {
+        "clutch_engaged": 11,
+        "clutch_held": 40,
+        "clutch_release_rebased": 10,
+        "motion": 3040
+      },
+      "lifecycle_events": null,
+      "mode": "RECORD_CLUTCH",
+      "performance": {
+        "boundaries": {
+          "hdf_close": {
+            "max_ms": 11.547215,
+            "mean_ms": 11.547215,
+            "p95_ms": 11.547215,
+            "samples": 1
+          },
+          "hdf_sha256": {
+            "max_ms": 16.557068,
+            "mean_ms": 16.557068,
+            "p95_ms": 16.557068,
+            "samples": 1
+          },
+          "manifest_publication": {
+            "max_ms": 54.62094,
+            "mean_ms": 54.62094,
+            "p95_ms": 54.62094,
+            "samples": 1
+          },
+          "recording_session_preparation": {
+            "max_ms": 425.191594,
+            "mean_ms": 425.191594,
+            "p95_ms": 425.191594,
+            "samples": 1
+          },
+          "result_publication": {
+            "max_ms": 4.747175,
+            "mean_ms": 4.747175,
+            "p95_ms": 4.747175,
+            "samples": 1
+          },
+          "terminal_successor_verify": {
+            "max_ms": 2.567368,
+            "mean_ms": 2.567368,
+            "p95_ms": 2.567368,
+            "samples": 1
+          },
+          "terminal_successor_write": {
+            "max_ms": 5.122229,
+            "mean_ms": 5.122229,
+            "p95_ms": 5.122229,
+            "samples": 1
+          }
+        },
+        "control": {
+          "max_ms": 84.715355,
+          "mean_ms": 26.606238503165613,
+          "p50_ms": 25.959018,
+          "p90_ms": 28.413749,
+          "p95_ms": 29.152163,
+          "p99_9_ms": 38.718178,
+          "p99_ms": 34.088737,
+          "samples": 3001
+        },
+        "effective_wall_hz": 37.5304402622031,
+        "nested_stages_not_additive": {
+          "camera_update": {
+            "max_ms": 0.019854999999999998,
+            "mean_ms": 0.003588497834055315,
+            "p95_ms": 0.0044009999999999995,
+            "samples": 3001
+          },
+          "experiment_update": {
+            "max_ms": 0.022564,
+            "mean_ms": 0.008642734755081639,
+            "p95_ms": 0.010851,
+            "samples": 3001
+          },
+          "hdf_append_ms": {
+            "max_ms": 3.142405,
+            "mean_ms": 0.2546755528157281,
+            "p95_ms": 0.521558,
+            "samples": 3001
+          },
+          "hdf_flush_ms": {
+            "max_ms": 11.778872,
+            "mean_ms": 0.1296737627457514,
+            "p95_ms": 0.0,
+            "samples": 3001
+          },
+          "physics_probe_update": {
+            "max_ms": 0.0129,
+            "mean_ms": 0.005597962345884705,
+            "p95_ms": 0.00727,
+            "samples": 3001
+          },
+          "physics_target_write": {
+            "max_ms": 2.543835,
+            "mean_ms": 0.6960925328223926,
+            "p95_ms": 0.997158,
+            "samples": 3001
+          },
+          "robot_update": {
+            "max_ms": 3.621861,
+            "mean_ms": 0.6622673245584805,
+            "p95_ms": 0.8226709999999999,
+            "samples": 3001
+          },
+          "sim_step": {
+            "max_ms": 78.220566,
+            "mean_ms": 21.13231487370876,
+            "p95_ms": 22.310626,
+            "samples": 3001
+          }
+        },
+        "stages": {
+          "causal_commit_and_record": {
+            "max_ms": 13.547905,
+            "mean_ms": 1.7462556641119626,
+            "p95_ms": 2.829596,
+            "samples": 3001
+          },
+          "injected_decision_apply": {
+            "max_ms": 1.971875,
+            "mean_ms": 0.828710061646118,
+            "p95_ms": 1.229718,
+            "samples": 3001
+          },
+          "observation_capture": {
+            "max_ms": 0.423318,
+            "mean_ms": 0.0014214011996001334,
+            "p95_ms": 0.001688,
+            "samples": 3001
+          },
+          "runtime_bookkeeping": {
+            "max_ms": 0.016696,
+            "mean_ms": 0.006399476507830723,
+            "p95_ms": 0.009778,
+            "samples": 3001
+          },
+          "simulation_advance": {
+            "max_ms": 81.285355,
+            "mean_ms": 22.53379337054315,
+            "p95_ms": 24.231649,
+            "samples": 3001
+          },
+          "successor_capture": {
+            "max_ms": 4.535911,
+            "mean_ms": 1.4447001276241254,
+            "p95_ms": 2.291759,
+            "samples": 3001
+          },
+          "teleop_advance": {
+            "max_ms": 1.049871,
+            "mean_ms": 0.036118964011996005,
+            "p95_ms": 0.046634,
+            "samples": 3001
+          }
+        },
+        "total_logged_steps": 3001,
+        "wall_control": {
+          "max_ms": 84.736977,
+          "mean_ms": 26.645037815,
+          "p50_ms": 25.988770000000002,
+          "p90_ms": 28.475198099999997,
+          "p95_ms": 29.2621721,
+          "p99_9_ms": 39.573734545000164,
+          "p99_ms": 34.18346258999997,
+          "samples": 3000
+        },
+        "wall_deadline_miss_fraction": 0.013666666666666667,
+        "wall_deadline_misses": 41,
+        "wall_rtf": 1.25101467540677,
+        "warmup_steps_excluded": 100
+      },
+      "processor": false,
+      "quest_client": false,
+      "raw_files": [
+        {
+          "bytes": 933,
+          "path": "/data/ebulochkin/p25/c/host-before.json",
+          "sha256": "1014a84e2ae9f77380eea4cf6fc2ea7e1bff4488995a96ba5ecd85f398b59b9e"
+        },
+        {
+          "bytes": 935,
+          "path": "/data/ebulochkin/p25/c/host-after.json",
+          "sha256": "871210c7b6221a03f4c53c0d5c29698f198ed5a4cd32aa1a4264e9e64a8fbd3a"
+        },
+        {
+          "bytes": 1618,
+          "path": "/data/ebulochkin/p25/c/gpu-samples.csv",
+          "sha256": "65962d29ea369fd6c6f5cf9658ebd5e8877acc40a088ca67e98737caaa147b42"
+        },
+        {
+          "bytes": 1070,
+          "path": "/data/ebulochkin/p25/c/time.txt",
+          "sha256": "99c5c81343d8f9633cacb65485eb1f06ba17cfac4e732f5619a5656890d84567"
+        },
+        {
+          "bytes": 16130,
+          "path": "/data/ebulochkin/p25/c/run/run_manifest.json",
+          "sha256": "ee346da9973fa6bd861df3a6da7e3aa34feaf7e9870157b9b6663040229c7c14"
+        },
+        {
+          "bytes": 6752,
+          "path": "/data/ebulochkin/p25/c/run/runtime.yaml",
+          "sha256": "e7be31cfc5bd6dd71041affe2f37b706f164a47c74ea5cbe25e11c6cdee224aa"
+        },
+        {
+          "bytes": 1039227,
+          "path": "/data/ebulochkin/p25/c/run/result.json",
+          "sha256": "11b1be07474c21b29f73a9bff1b5368401c52f72f6ee4de875ce671c13eadc5f"
+        },
+        {
+          "bytes": 2435589,
+          "path": "/data/ebulochkin/p25/c/run/performance.jsonl",
+          "sha256": "79f7d11043cc2d73aff572b88bd9d8bbc71744bd708a1f517c70618a4a342c5b"
+        },
+        {
+          "bytes": 761519,
+          "path": "/data/ebulochkin/p25/c/run/stdout.log",
+          "sha256": "495e76e8dc15663c6e4590c905c9a1cbca687326c23a380b04de050682ecb43d"
+        }
+      ],
+      "record_writer": true,
+      "result_flags": {
+        "cloudxr_profile": "cloudxrjs",
+        "input_pump_calls": 3101,
+        "kit_xr_bridge": true,
+        "kit_xr_bridge_configured": null,
+        "session_running_at_end": false,
+        "xr_initialized": true,
+        "xr_input_available_at_end": false
+      },
+      "run_manifest_sha256": "ee346da9973fa6bd861df3a6da7e3aa34feaf7e9870157b9b6663040229c7c14",
+      "run_slug": "c",
+      "source_profile": "isaac_human_vr_offline_rgb_v2",
+      "source_sha256": {
+        "tools/isaac_s2_performance.py": "06ea8e0fee9cfbf1159bf2102fd9c0743014772ba97dd5e9566fb9693ae03c3b",
+        "tools/isaac_s2_runtime.py": "34bdac29a19197eee98c1b99269628634de859bddf43cf016e0c298be673d6b8",
+        "tools/isaac_vr_injected_recording.py": "c6014506748d0d71635f2196648eecdd01be6fba8145bc901a121be0f3e4184e",
+        "tools/isaac_vr_recording.py": "2123bdb5036896e3b320796bdc3822714c358ecce80b8159b36b0eb40304b441",
+        "tools/isaac_vr_recording_smoke.py": "a0c8dde3ec894e5797c31a2e7340e1582e37b0baaa5afc4c4292b8339ac5b1f5",
+        "tools/launch_isaac_vr.py": "e8f599f015f395f21d3ab5c8f7d8df78f06912e96a0073f2b19beb7cd1479525",
+        "tools/run_isaac_s1.py": "dc63f04701b7a541f6a7cce8ffdc303dc3686ab1fe2f348894e85b635654f0f3"
+      },
+      "status": "VALID",
+      "technical_episodes": null,
+      "xr": "on_no_client",
+      "xr_receipt": "synthetic"
+    },
+    {
+      "cohort": "D",
+      "command": "./run-vr record --xr-smoke --no-client-audit --audit-gaps 6 --injected-actions --injected-count 1204 --max-control-steps 1210 --state-root /data/ebulochkin/p25/d/host --run-dir /data/ebulochkin/p25/d/run --recordings-root /data/ebulochkin/p25/d/recordings --performance-warmup-steps 100 --performance-window-steps 500",
+      "committed_frames": 1204,
+      "discarded_observations": 6,
+      "expected_gaps": 6,
+      "hdf_output_bytes": 59821552,
+      "hdf_readback": [
+        {
+          "artifact_state": "finalized",
+          "bytes": 8545936,
+          "committed_frames": 172,
+          "discarded_observations": 1,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/d/recordings/episode_000000/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "137999d8e15d9e82c78c79ea5f8507740aa22e27bd22b8549a48430b86f3aed6",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/d/recordings/episode_000000/session.hdf5",
+          "sha256": "0763e0c62e0718a6d3b1127b6a36275c0b27c15396660b4599fef7caf082b629",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "d3799bae650b02bbea7a1b77792b4e2d0215332591aa4392787185896409cf8d",
+          "transition_schema": "piper_x_committed_transition_v3"
+        },
+        {
+          "artifact_state": "finalized",
+          "bytes": 8545936,
+          "committed_frames": 172,
+          "discarded_observations": 1,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000001/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "a1e7d11c3b9fbee06f62dfc8c966536a3ab22df89e87bc79ce475ca12e3d44e6",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000001/session.hdf5",
+          "sha256": "4576f361c3ae4758eac3376eb0a5e6be9724fc83f5b5ce3611b0bc7ab3b6bb31",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "db949a7a41b9942694d844172586c81e3420c1f6b7a0c2937d64a0c243a7407e",
+          "transition_schema": "piper_x_committed_transition_v3"
+        },
+        {
+          "artifact_state": "finalized",
+          "bytes": 8545936,
+          "committed_frames": 172,
+          "discarded_observations": 1,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000002/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "8f647b8e7f11bd27f54a50e8853db8788f7c7d4b4ee7b07fa9476ac97aeaf79f",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000002/session.hdf5",
+          "sha256": "30758cc7d7371efcc21fce71a4f89ca3eb06c9d453a387d438efadf9ebc081cc",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "a796f7f7c674f438eaf3d1564309baa5280f2e419175ae7e2bb17a3d213bf9b1",
+          "transition_schema": "piper_x_committed_transition_v3"
+        },
+        {
+          "artifact_state": "finalized",
+          "bytes": 8545936,
+          "committed_frames": 172,
+          "discarded_observations": 1,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000003/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "8859f0004956f65c39ac853da495944af6b95c247931a6ec5a6d9260bc7f1ef8",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000003/session.hdf5",
+          "sha256": "ac96fa65cc0e5b1981a5adc159e874d61b83f0bb18b4d568827e1dd49e720d5f",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "b1d549521f59acbbcd06e86de3313db87e7cab481f1d9fdba301578e13b2d1cc",
+          "transition_schema": "piper_x_committed_transition_v3"
+        },
+        {
+          "artifact_state": "finalized",
+          "bytes": 8545936,
+          "committed_frames": 172,
+          "discarded_observations": 1,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000004/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "73fd53fd1d121a584741e7813e917b34a53bcb63404ae126feb3de041972fef8",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000004/session.hdf5",
+          "sha256": "0202f2d460805ecd6c2e84c31c7ed65962af70bee7c4fb67abc8ba9c8e93c647",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "6fb51bbafd70d455bd97dac1f3d97f855e2105076a3f14d8bbe8f852bb6545fe",
+          "transition_schema": "piper_x_committed_transition_v3"
+        },
+        {
+          "artifact_state": "finalized",
+          "bytes": 8545936,
+          "committed_frames": 172,
+          "discarded_observations": 1,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000005/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "c16120c4eaf2e1bdce415c491641b4b9022b9fb3e63b97fa7f5daecfa74076c9",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000005/session.hdf5",
+          "sha256": "0489c9c23ccdb15420844f0377049ed872484abf56e7ce7aba96dc7ee29ab192",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "4350758c532fe766cc165912d690ce987e47ab02d3044918e90644f6e71242c4",
+          "transition_schema": "piper_x_committed_transition_v3"
+        },
+        {
+          "artifact_state": "finalized",
+          "bytes": 8545936,
+          "committed_frames": 172,
+          "discarded_observations": 0,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000006/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "9f97bdf995740ddfc6ce84f4f0dff032db4840c3677229dd056eec047bb6777a",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000006/session.hdf5",
+          "sha256": "9666bbd443212518b73df46ad7d07b79741ea94c3cac4ebab0d08be1891e93e9",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "23d59506cbec338185424fb0828a687656fc85eb40916ad44b5eaba3c5780eca",
+          "transition_schema": "piper_x_committed_transition_v3"
+        }
+      ],
+      "host": {
+        "after": {
+          "cpu_frequency_mhz": {
+            "max": 5300.0,
+            "mean": 2688.7568749999996,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 52.0
+          },
+          "data_disk_free_bytes": 21342789632,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 53, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            2.14306640625,
+            4.53662109375,
+            4.783203125
+          ],
+          "wall_time_utc": "2026-09-25T00:48:03Z"
+        },
+        "before": {
+          "cpu_frequency_mhz": {
+            "max": 5300.0,
+            "mean": 1973.0001249999998,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 47.0
+          },
+          "data_disk_free_bytes": 22075621376,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 43, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            1.66259765625,
+            4.0908203125,
+            4.486328125
+          ],
+          "wall_time_utc": "2026-09-25T00:42:10Z"
+        },
+        "gpu_samples": {
+          "full_process_including_startup_shutdown": true,
+          "graphics_clock_mhz": {
+            "max": 2745.0,
+            "mean": 975.8571428571429
+          },
+          "sample_interval_s": 10,
+          "samples": 35,
+          "temperature_c": {
+            "max": 55.0,
+            "mean": 48.285714285714285
+          },
+          "utilization_percent": {
+            "max": 44.0,
+            "mean": 3.8285714285714287
+          },
+          "vram_mib": {
+            "max": 6426.0,
+            "mean": 3158.3142857142857
+          }
+        },
+        "peak_rss_kib": 16452476,
+        "whole_process_cpu_busy_fraction_all_cores": 0.23497877990373905
+      },
+      "ik": false,
+      "input_targets_sha256": null,
+      "launcher_command": [
+        "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/tools/run_isaac_s1.py",
+        "--config",
+        "/data/ebulochkin/p25/d/run/runtime.yaml",
+        "--s2-config",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/configs/isaac61_s2_runtime.yaml",
+        "--vr-runtime",
+        "--s2-mode",
+        "run",
+        "--demo-profile",
+        "dual_cube_to_matching_plates",
+        "--device",
+        "cuda:0",
+        "--kit_args",
+        "--portable-root /data/ebulochkin/p25/d/host/kit --enable isaacsim.replicator.episode_recorder --enable omni.kit.scene_view.xr --enable omni.kit.scene_view.xr_utils",
+        "--demo-preview-isolation",
+        "off",
+        "--report",
+        "/data/ebulochkin/p25/d/run/result.json",
+        "--s2-max-control-steps",
+        "1210",
+        "--s2-teleop",
+        "--s2-recordings-root",
+        "/data/ebulochkin/p25/d/recordings",
+        "--s2-record",
+        "--s2-recording-dir",
+        "/data/ebulochkin/p25/d/recordings/episode_000000",
+        "--s2-injected-recording-smoke",
+        "--s2-injected-count",
+        "1204",
+        "--s2-current-record-audit",
+        "gap",
+        "--s2-audit-gaps",
+        "6",
+        "--s2-performance-log",
+        "/data/ebulochkin/p25/d/run/performance.jsonl",
+        "--s2-performance-window-steps",
+        "500",
+        "--s2-performance-warmup-steps",
+        "100",
+        "--viz",
+        "kit",
+        "--experience",
+        "/data/vla-infrastructure/isaac61_production/IsaacLab/apps/isaaclab.python.xr.openxr.kit",
+        "--s2-cloudxr-profile",
+        "cloudxrjs",
+        "--no-s2-require-session",
+        "--s2-reset-step",
+        "30",
+        "--xr"
+      ],
+      "left_transition_counts": null,
+      "lifecycle_events": null,
+      "mode": "RECORD_GAPS",
+      "per_gap_boundary_ms": {
+        "1": {
+          "first_recovered_body_ms": 31.191501,
+          "first_recovered_tick": 174,
+          "first_recovered_wall_ms": 217.394971,
+          "last_committed_body_ms": 25.933604,
+          "last_committed_tick": 172,
+          "last_committed_wall_ms": 25.733961,
+          "technical_episode_end": 93.570272,
+          "technical_episode_open": 71.51264,
+          "technical_gap_to_first_commit": 222.423744
+        },
+        "2": {
+          "first_recovered_body_ms": 29.865436,
+          "first_recovered_tick": 347,
+          "first_recovered_wall_ms": 208.217525,
+          "last_committed_body_ms": 25.632799,
+          "last_committed_tick": 345,
+          "last_committed_wall_ms": 26.506507,
+          "technical_episode_end": 85.211056,
+          "technical_episode_open": 72.782609,
+          "technical_gap_to_first_commit": 212.255278
+        },
+        "3": {
+          "first_recovered_body_ms": 29.393504,
+          "first_recovered_tick": 520,
+          "first_recovered_wall_ms": 211.602925,
+          "last_committed_body_ms": 27.903193,
+          "last_committed_tick": 518,
+          "last_committed_wall_ms": 26.776827,
+          "technical_episode_end": 86.805245,
+          "technical_episode_open": 72.128838,
+          "technical_gap_to_first_commit": 212.710728
+        },
+        "4": {
+          "first_recovered_body_ms": 28.063048,
+          "first_recovered_tick": 693,
+          "first_recovered_wall_ms": 207.403876,
+          "last_committed_body_ms": 27.046792,
+          "last_committed_tick": 691,
+          "last_committed_wall_ms": 30.196099,
+          "technical_episode_end": 86.160261,
+          "technical_episode_open": 71.061331,
+          "technical_gap_to_first_commit": 208.202873
+        },
+        "5": {
+          "first_recovered_body_ms": 28.320932,
+          "first_recovered_tick": 866,
+          "first_recovered_wall_ms": 211.764132,
+          "last_committed_body_ms": 27.411887,
+          "last_committed_tick": 864,
+          "last_committed_wall_ms": 28.665691,
+          "technical_episode_end": 86.000497,
+          "technical_episode_open": 74.70471,
+          "technical_gap_to_first_commit": 212.454945
+        },
+        "6": {
+          "first_recovered_body_ms": 29.126711,
+          "first_recovered_tick": 1039,
+          "first_recovered_wall_ms": 211.545285,
+          "last_committed_body_ms": 28.417533,
+          "last_committed_tick": 1037,
+          "last_committed_wall_ms": 27.663878,
+          "technical_episode_end": 87.12688,
+          "technical_episode_open": 71.928746,
+          "technical_gap_to_first_commit": 212.054761
+        }
+      },
+      "performance": {
+        "boundaries": {
+          "hdf_close": {
+            "max_ms": 11.338096,
+            "mean_ms": 9.816885428571428,
+            "p95_ms": 10.8793384,
+            "samples": 7
+          },
+          "hdf_sha256": {
+            "max_ms": 4.806946,
+            "mean_ms": 4.275813714285714,
+            "p95_ms": 4.6858231,
+            "samples": 7
+          },
+          "manifest_publication": {
+            "max_ms": 59.025245,
+            "mean_ms": 53.95760857142857,
+            "p95_ms": 57.64481149999999,
+            "samples": 7
+          },
+          "recording_session_preparation": {
+            "max_ms": 439.766987,
+            "mean_ms": 439.766987,
+            "p95_ms": 439.766987,
+            "samples": 1
+          },
+          "result_publication": {
+            "max_ms": 5.43753,
+            "mean_ms": 5.261064857142857,
+            "p95_ms": 5.4257256,
+            "samples": 7
+          },
+          "technical_episode_end": {
+            "max_ms": 93.570272,
+            "mean_ms": 87.47903516666668,
+            "p95_ms": 91.95942400000001,
+            "samples": 6
+          },
+          "technical_episode_open": {
+            "max_ms": 74.70471,
+            "mean_ms": 72.35314566666666,
+            "p95_ms": 74.22418475,
+            "samples": 6
+          },
+          "technical_gap_to_first_commit": {
+            "max_ms": 222.423744,
+            "mean_ms": 213.35038816666668,
+            "p95_ms": 219.99549000000002,
+            "samples": 6
+          },
+          "terminal_successor_verify": {
+            "max_ms": 2.789576,
+            "mean_ms": 1.9645475714285714,
+            "p95_ms": 2.5346587999999994,
+            "samples": 7
+          },
+          "terminal_successor_write": {
+            "max_ms": 9.175006,
+            "mean_ms": 8.943017571428571,
+            "p95_ms": 9.1605757,
+            "samples": 7
+          }
+        },
+        "control": {
+          "max_ms": 42.754727,
+          "mean_ms": 26.563968224637684,
+          "p50_ms": 25.94816,
+          "p90_ms": 28.44973,
+          "p95_ms": 29.121289849999997,
+          "p99_9_ms": 39.37224477899989,
+          "p99_ms": 33.23952643000001,
+          "samples": 1104
+        },
+        "effective_wall_hz": 36.22523179300062,
+        "nested_stages_not_additive": {
+          "camera_update": {
+            "max_ms": 0.008116,
+            "mean_ms": 0.003674440217391304,
+            "p95_ms": 0.004427550000000001,
+            "samples": 1104
+          },
+          "experiment_update": {
+            "max_ms": 0.018584999999999997,
+            "mean_ms": 0.008737634057971014,
+            "p95_ms": 0.01072925,
+            "samples": 1104
+          },
+          "hdf_append_ms": {
+            "max_ms": 1.288247,
+            "mean_ms": 0.258384017210145,
+            "p95_ms": 0.5174050499999999,
+            "samples": 1104
+          },
+          "hdf_flush_ms": {
+            "max_ms": 15.748528,
+            "mean_ms": 0.11221527717391304,
+            "p95_ms": 0.0,
+            "samples": 1104
+          },
+          "physics_probe_update": {
+            "max_ms": 0.01336,
+            "mean_ms": 0.005052761775362319,
+            "p95_ms": 0.00635455,
+            "samples": 1104
+          },
+          "physics_target_write": {
+            "max_ms": 1.295665,
+            "mean_ms": 0.7018119664855073,
+            "p95_ms": 1.0418981499999975,
+            "samples": 1104
+          },
+          "robot_update": {
+            "max_ms": 2.775282,
+            "mean_ms": 0.6660642364130435,
+            "p95_ms": 0.8320548999999999,
+            "samples": 1104
+          },
+          "sim_step": {
+            "max_ms": 30.816096,
+            "mean_ms": 21.08754289311594,
+            "p95_ms": 22.2224403,
+            "samples": 1104
+          }
+        },
+        "stages": {
+          "causal_commit_and_record": {
+            "max_ms": 17.265671,
+            "mean_ms": 1.7374707509057972,
+            "p95_ms": 2.8117623999999997,
+            "samples": 1104
+          },
+          "injected_decision_apply": {
+            "max_ms": 1.839394,
+            "mean_ms": 0.8193334782608696,
+            "p95_ms": 1.22352925,
+            "samples": 1104
+          },
+          "observation_capture": {
+            "max_ms": 1.442643,
+            "mean_ms": 0.008677735507246378,
+            "p95_ms": 0.0017163999999999997,
+            "samples": 1104
+          },
+          "runtime_bookkeeping": {
+            "max_ms": 0.018988,
+            "mean_ms": 0.006557857789855072,
+            "p95_ms": 0.009962849999999999,
+            "samples": 1104
+          },
+          "simulation_advance": {
+            "max_ms": 34.10095,
+            "mean_ms": 22.4986763759058,
+            "p95_ms": 24.26748765,
+            "samples": 1104
+          },
+          "successor_capture": {
+            "max_ms": 2.86731,
+            "mean_ms": 1.448381740942029,
+            "p95_ms": 2.28388525,
+            "samples": 1104
+          },
+          "teleop_advance": {
+            "max_ms": 0.066136,
+            "mean_ms": 0.03585935960144927,
+            "p95_ms": 0.04651539999999999,
+            "samples": 1104
+          }
+        },
+        "total_logged_steps": 1104,
+        "wall_control": {
+          "max_ms": 217.394971,
+          "mean_ms": 27.605068359927472,
+          "p50_ms": 25.983209,
+          "p90_ms": 28.5279806,
+          "p95_ms": 29.38666869999999,
+          "p99_9_ms": 211.74768888599996,
+          "p99_ms": 37.28400164000001,
+          "samples": 1103
+        },
+        "wall_deadline_miss_fraction": 0.016319129646418858,
+        "wall_deadline_misses": 18,
+        "wall_rtf": 1.2075077264333538,
+        "warmup_steps_excluded": 100
+      },
+      "processor": false,
+      "quest_client": false,
+      "raw_files": [
+        {
+          "bytes": 935,
+          "path": "/data/ebulochkin/p25/d/host-before.json",
+          "sha256": "9f16240ee960852d3d451f708e0ea58af2ea4e6589174aef129003bc28361970"
+        },
+        {
+          "bytes": 936,
+          "path": "/data/ebulochkin/p25/d/host-after.json",
+          "sha256": "1b569f11fb6dce885b78e9ed799406361da713a41e69adf41f4e8f428bce4537"
+        },
+        {
+          "bytes": 1479,
+          "path": "/data/ebulochkin/p25/d/gpu-samples.csv",
+          "sha256": "5d4a070d46a1174b7f812311c783a07414139876e9c1bfd8e4092c308d85421c"
+        },
+        {
+          "bytes": 1069,
+          "path": "/data/ebulochkin/p25/d/time.txt",
+          "sha256": "d54d6615569fb128cef12fb3b10e2f9e1e931758d149d261ca5a84f791e5025c"
+        },
+        {
+          "bytes": 16170,
+          "path": "/data/ebulochkin/p25/d/run/run_manifest.json",
+          "sha256": "57028f04afda90724628512cdd6721418acd366ce702ac9177a914e86c70a0e1"
+        },
+        {
+          "bytes": 6752,
+          "path": "/data/ebulochkin/p25/d/run/runtime.yaml",
+          "sha256": "fee787263dacb0aaa71a02ca191c582eb9e3271b9f486fd23e4083d250039166"
+        },
+        {
+          "bytes": 164625,
+          "path": "/data/ebulochkin/p25/d/run/result.json",
+          "sha256": "7da8a3cccdef07ff4ca485acb81464233495e86f292c9fa04cf0c37b9b7ca051"
+        },
+        {
+          "bytes": 957373,
+          "path": "/data/ebulochkin/p25/d/run/performance.jsonl",
+          "sha256": "5c5fe397787b73ae4c4f4cc4b425840d1d8c694919d829b31dd711cd1b838ace"
+        },
+        {
+          "bytes": 180678,
+          "path": "/data/ebulochkin/p25/d/run/stdout.log",
+          "sha256": "ecfdddc6540f9a1b1b5910d4b844e3019db5d0e1b72b6ca4cad40d7fe898dc32"
+        }
+      ],
+      "record_writer": true,
+      "result_flags": {
+        "cloudxr_profile": "cloudxrjs",
+        "input_pump_calls": 1204,
+        "kit_xr_bridge": true,
+        "kit_xr_bridge_configured": null,
+        "session_running_at_end": false,
+        "xr_initialized": true,
+        "xr_input_available_at_end": false
+      },
+      "run_manifest_sha256": "57028f04afda90724628512cdd6721418acd366ce702ac9177a914e86c70a0e1",
+      "run_slug": "d",
+      "source_profile": "isaac_human_vr_offline_rgb_v2",
+      "source_sha256": {
+        "tools/isaac_s2_performance.py": "06ea8e0fee9cfbf1159bf2102fd9c0743014772ba97dd5e9566fb9693ae03c3b",
+        "tools/isaac_s2_runtime.py": "34bdac29a19197eee98c1b99269628634de859bddf43cf016e0c298be673d6b8",
+        "tools/isaac_vr_injected_recording.py": "c6014506748d0d71635f2196648eecdd01be6fba8145bc901a121be0f3e4184e",
+        "tools/isaac_vr_recording.py": "2123bdb5036896e3b320796bdc3822714c358ecce80b8159b36b0eb40304b441",
+        "tools/isaac_vr_recording_smoke.py": "a0c8dde3ec894e5797c31a2e7340e1582e37b0baaa5afc4c4292b8339ac5b1f5",
+        "tools/launch_isaac_vr.py": "e8f599f015f395f21d3ab5c8f7d8df78f06912e96a0073f2b19beb7cd1479525",
+        "tools/run_isaac_s1.py": "dc63f04701b7a541f6a7cce8ffdc303dc3686ab1fe2f348894e85b635654f0f3"
+      },
+      "status": "VALID",
+      "technical_episodes": [
+        {
+          "committed_frames": 172,
+          "discarded_observations": 1,
+          "episode_id": "episode_000000",
+          "first_committed_tick": 1,
+          "hdf5": "/data/ebulochkin/p25/d/recordings/episode_000000/session.hdf5",
+          "last_committed_tick": 172
+        },
+        {
+          "committed_frames": 172,
+          "discarded_observations": 1,
+          "episode_id": "episode_000001",
+          "first_committed_tick": 174,
+          "hdf5": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000001/session.hdf5",
+          "last_committed_tick": 345
+        },
+        {
+          "committed_frames": 172,
+          "discarded_observations": 1,
+          "episode_id": "episode_000002",
+          "first_committed_tick": 347,
+          "hdf5": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000002/session.hdf5",
+          "last_committed_tick": 518
+        },
+        {
+          "committed_frames": 172,
+          "discarded_observations": 1,
+          "episode_id": "episode_000003",
+          "first_committed_tick": 520,
+          "hdf5": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000003/session.hdf5",
+          "last_committed_tick": 691
+        },
+        {
+          "committed_frames": 172,
+          "discarded_observations": 1,
+          "episode_id": "episode_000004",
+          "first_committed_tick": 693,
+          "hdf5": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000004/session.hdf5",
+          "last_committed_tick": 864
+        },
+        {
+          "committed_frames": 172,
+          "discarded_observations": 1,
+          "episode_id": "episode_000005",
+          "first_committed_tick": 866,
+          "hdf5": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000005/session.hdf5",
+          "last_committed_tick": 1037
+        },
+        {
+          "committed_frames": 172,
+          "episode_id": "episode_000006",
+          "first_committed_tick": 1039,
+          "hdf5": "/data/ebulochkin/p25/d/recordings/370d74d4-74c1-4134-ab71-f32b5fb1fa54/episode_000006/session.hdf5",
+          "last_committed_tick": 1210
+        }
+      ],
+      "xr": "on_no_client",
+      "xr_receipt": "synthetic"
+    },
+    {
+      "cohort": "B0_repeat",
+      "command": "./run-vr record --smoke --no-client-audit --injected-actions --injected-count 3101 --max-control-steps 3101 --state-root /data/ebulochkin/p25/b0-03/host --run-dir /data/ebulochkin/p25/b0-03/run --recordings-root /data/ebulochkin/p25/b0-03/recordings --performance-warmup-steps 100 --performance-window-steps 500",
+      "committed_frames": 3101,
+      "discarded_observations": 0,
+      "expected_gaps": null,
+      "hdf_output_bytes": 33315472,
+      "hdf_readback": [
+        {
+          "artifact_state": "finalized",
+          "bytes": 33315472,
+          "committed_frames": 3101,
+          "discarded_observations": 0,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/b0-03/recordings/episode_000000/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "4f1ad640e405a869146dacc9f547f380fd90fe7aea566a6719bdeb4af976d257",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/b0-03/recordings/episode_000000/session.hdf5",
+          "sha256": "5c3fd8b479ee7111fbe483989abe0f7134375f3e57158e8984cff472767a0397",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "ff976cd22ec2522cb82c8a030cc74c437cee40019e1558e1f67f76d061ac21e5",
+          "transition_schema": "piper_x_committed_transition_v3"
+        }
+      ],
+      "host": {
+        "after": {
+          "cpu_frequency_mhz": {
+            "max": 5019.305,
+            "mean": 3329.270958333333,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 53.0
+          },
+          "data_disk_free_bytes": 20660756480,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 51, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            2.2080078125,
+            3.845703125,
+            4.55517578125
+          ],
+          "wall_time_utc": "2026-09-25T00:54:56Z"
+        },
+        "before": {
+          "cpu_frequency_mhz": {
+            "max": 5300.0,
+            "mean": 2149.4242083333334,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 40.0
+          },
+          "data_disk_free_bytes": 21342777344,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 53, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            1.29736328125,
+            4.1015625,
+            4.62939453125
+          ],
+          "wall_time_utc": "2026-09-25T00:48:32Z"
+        },
+        "gpu_samples": {
+          "full_process_including_startup_shutdown": true,
+          "graphics_clock_mhz": {
+            "max": 2730.0,
+            "mean": 983.6842105263158
+          },
+          "sample_interval_s": 10,
+          "samples": 38,
+          "temperature_c": {
+            "max": 62.0,
+            "mean": 55.21052631578947
+          },
+          "utilization_percent": {
+            "max": 51.0,
+            "mean": 12.263157894736842
+          },
+          "vram_mib": {
+            "max": 5192.0,
+            "mean": 1889.2894736842106
+          }
+        },
+        "peak_rss_kib": 15834096,
+        "whole_process_cpu_busy_fraction_all_cores": 0.1925102812640681
+      },
+      "ik": false,
+      "input_targets_sha256": "e84980063820927b1e02b510d1784085efc2e144231ce7655a3f1ae001659802",
+      "launcher_command": [
+        "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/tools/run_isaac_s1.py",
+        "--config",
+        "/data/ebulochkin/p25/b0-03/run/runtime.yaml",
+        "--s2-config",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/configs/isaac61_s2_runtime.yaml",
+        "--vr-runtime",
+        "--s2-mode",
+        "run",
+        "--demo-profile",
+        "dual_cube_to_matching_plates",
+        "--device",
+        "cuda:0",
+        "--kit_args",
+        "--portable-root /data/ebulochkin/p25/b0-03/host/kit --enable isaacsim.replicator.episode_recorder",
+        "--demo-preview-isolation",
+        "off",
+        "--report",
+        "/data/ebulochkin/p25/b0-03/run/result.json",
+        "--s2-max-control-steps",
+        "3101",
+        "--s2-recordings-root",
+        "/data/ebulochkin/p25/b0-03/recordings",
+        "--s2-record",
+        "--s2-recording-dir",
+        "/data/ebulochkin/p25/b0-03/recordings/episode_000000",
+        "--s2-injected-recording-smoke",
+        "--s2-injected-count",
+        "3101",
+        "--s2-current-record-audit",
+        "steady",
+        "--s2-performance-log",
+        "/data/ebulochkin/p25/b0-03/run/performance.jsonl",
+        "--s2-performance-window-steps",
+        "500",
+        "--s2-performance-warmup-steps",
+        "100",
+        "--viz",
+        "kit",
+        "--no-s2-require-session",
+        "--s2-reset-step",
+        "30"
+      ],
+      "left_transition_counts": {
+        "motion": 3101
+      },
+      "lifecycle_events": null,
+      "mode": "RECORD",
+      "performance": {
+        "boundaries": {
+          "hdf_close": {
+            "max_ms": 11.63861,
+            "mean_ms": 11.63861,
+            "p95_ms": 11.63861,
+            "samples": 1
+          },
+          "hdf_sha256": {
+            "max_ms": 17.029844,
+            "mean_ms": 17.029844,
+            "p95_ms": 17.029844,
+            "samples": 1
+          },
+          "manifest_publication": {
+            "max_ms": 52.231157,
+            "mean_ms": 52.231157,
+            "p95_ms": 52.231157,
+            "samples": 1
+          },
+          "recording_session_preparation": {
+            "max_ms": 412.271814,
+            "mean_ms": 412.271814,
+            "p95_ms": 412.271814,
+            "samples": 1
+          },
+          "result_publication": {
+            "max_ms": 5.493634,
+            "mean_ms": 5.493634,
+            "p95_ms": 5.493634,
+            "samples": 1
+          },
+          "terminal_successor_verify": {
+            "max_ms": 2.372534,
+            "mean_ms": 2.372534,
+            "p95_ms": 2.372534,
+            "samples": 1
+          },
+          "terminal_successor_write": {
+            "max_ms": 8.597629,
+            "mean_ms": 8.597629,
+            "p95_ms": 8.597629,
+            "samples": 1
+          }
+        },
+        "control": {
+          "max_ms": 37.831112,
+          "mean_ms": 23.774069561146288,
+          "p50_ms": 23.472613,
+          "p90_ms": 24.669619,
+          "p95_ms": 25.774444,
+          "p99_9_ms": 31.443909,
+          "p99_ms": 30.430448,
+          "samples": 3001
+        },
+        "effective_wall_hz": 41.9987357031554,
+        "nested_stages_not_additive": {
+          "camera_update": {
+            "max_ms": 0.036019999999999996,
+            "mean_ms": 0.0034321422859046984,
+            "p95_ms": 0.0039900000000000005,
+            "samples": 3001
+          },
+          "experiment_update": {
+            "max_ms": 0.015152,
+            "mean_ms": 0.008604971009663445,
+            "p95_ms": 0.010368,
+            "samples": 3001
+          },
+          "hdf_append_ms": {
+            "max_ms": 0.559223,
+            "mean_ms": 0.21989378440519827,
+            "p95_ms": 0.230658,
+            "samples": 3001
+          },
+          "hdf_flush_ms": {
+            "max_ms": 11.283732,
+            "mean_ms": 0.11471146417860713,
+            "p95_ms": 0.0,
+            "samples": 3001
+          },
+          "physics_probe_update": {
+            "max_ms": 0.015411000000000001,
+            "mean_ms": 0.005237975341552815,
+            "p95_ms": 0.00662,
+            "samples": 3001
+          },
+          "physics_target_write": {
+            "max_ms": 1.436503,
+            "mean_ms": 0.6706838913695434,
+            "p95_ms": 0.876903,
+            "samples": 3001
+          },
+          "robot_update": {
+            "max_ms": 1.080578,
+            "mean_ms": 0.618840305898034,
+            "p95_ms": 0.78709,
+            "samples": 3001
+          },
+          "sim_step": {
+            "max_ms": 22.774791999999998,
+            "mean_ms": 18.816363333888706,
+            "p95_ms": 19.825325,
+            "samples": 3001
+          }
+        },
+        "stages": {
+          "causal_commit_and_record": {
+            "max_ms": 13.998541,
+            "mean_ms": 1.5527486597800733,
+            "p95_ms": 1.582767,
+            "samples": 3001
+          },
+          "injected_decision_apply": {
+            "max_ms": 2.054958,
+            "mean_ms": 0.7952464138620459,
+            "p95_ms": 0.936101,
+            "samples": 3001
+          },
+          "observation_capture": {
+            "max_ms": 0.006185,
+            "mean_ms": 0.001232226591136288,
+            "p95_ms": 0.00149,
+            "samples": 3001
+          },
+          "runtime_bookkeeping": {
+            "max_ms": 0.027891,
+            "mean_ms": 0.006069429856714429,
+            "p95_ms": 0.007596,
+            "samples": 3001
+          },
+          "simulation_advance": {
+            "max_ms": 25.064921,
+            "mean_ms": 20.14671387904032,
+            "p95_ms": 21.199148,
+            "samples": 3001
+          },
+          "successor_capture": {
+            "max_ms": 2.518104,
+            "mean_ms": 1.2632506871042986,
+            "p95_ms": 1.429152,
+            "samples": 3001
+          },
+          "teleop_advance": {
+            "max_ms": 0.000589,
+            "mean_ms": 0.00016647484171942686,
+            "p95_ms": 0.000223,
+            "samples": 3001
+          }
+        },
+        "total_logged_steps": 3001,
+        "wall_control": {
+          "max_ms": 37.865206,
+          "mean_ms": 23.810240552666667,
+          "p50_ms": 23.4997865,
+          "p90_ms": 24.719124299999997,
+          "p95_ms": 25.882443349999992,
+          "p99_9_ms": 31.509032101000464,
+          "p99_ms": 30.522003459999997,
+          "samples": 3000
+        },
+        "wall_deadline_miss_fraction": 0.001,
+        "wall_deadline_misses": 3,
+        "wall_rtf": 1.3999578567718465,
+        "warmup_steps_excluded": 100
+      },
+      "processor": false,
+      "quest_client": false,
+      "raw_files": [
+        {
+          "bytes": 934,
+          "path": "/data/ebulochkin/p25/b0-03/host-before.json",
+          "sha256": "ae90d24999dc3ecc1297438ce50f0301214624ec4529e846061af8ede2473a77"
+        },
+        {
+          "bytes": 936,
+          "path": "/data/ebulochkin/p25/b0-03/host-after.json",
+          "sha256": "f7e7572e0742ad17af590b7c51a876daf0343e52f78c9c5f5e276d5f9f66690c"
+        },
+        {
+          "bytes": 1588,
+          "path": "/data/ebulochkin/p25/b0-03/gpu-samples.csv",
+          "sha256": "e28e0e4a7ce29e4e5f3837adaacbcaa440970dd2c394a5360244a73055b27fd6"
+        },
+        {
+          "bytes": 1063,
+          "path": "/data/ebulochkin/p25/b0-03/time.txt",
+          "sha256": "239099efc2dc01b486128ab052bcb89dfe5e81a2ed979dcb61a958b59b198f2b"
+        },
+        {
+          "bytes": 15875,
+          "path": "/data/ebulochkin/p25/b0-03/run/run_manifest.json",
+          "sha256": "cfbfb68ce45f807278feb22ec7016d437202faf7f03727d91119ac77ab8e061e"
+        },
+        {
+          "bytes": 6760,
+          "path": "/data/ebulochkin/p25/b0-03/run/runtime.yaml",
+          "sha256": "f45e3af232febda73b457347262b72c351015fb564fd07167fe704f87d626312"
+        },
+        {
+          "bytes": 1034018,
+          "path": "/data/ebulochkin/p25/b0-03/run/result.json",
+          "sha256": "bf50bfd99b2d08ce0dabe65dbe22d208a7974a9da7051ba7a01ff7d5316bd242"
+        },
+        {
+          "bytes": 2435059,
+          "path": "/data/ebulochkin/p25/b0-03/run/performance.jsonl",
+          "sha256": "d3a07fd1e5144ded35d945fce5c6b69ab9ed5a755f170f731a855af290dca7da"
+        },
+        {
+          "bytes": 742093,
+          "path": "/data/ebulochkin/p25/b0-03/run/stdout.log",
+          "sha256": "32bc5e295caf0cc96cb232b06abe2cdf93c33a3766a5c55661af7277d771944f"
+        }
+      ],
+      "record_writer": true,
+      "result_flags": {
+        "cloudxr_profile": "cloudxrjs",
+        "input_pump_calls": 0,
+        "kit_xr_bridge": false,
+        "kit_xr_bridge_configured": null,
+        "session_running_at_end": false,
+        "xr_initialized": false,
+        "xr_input_available_at_end": false
+      },
+      "run_manifest_sha256": "cfbfb68ce45f807278feb22ec7016d437202faf7f03727d91119ac77ab8e061e",
+      "run_slug": "b0-03",
+      "source_profile": "isaac_human_vr_offline_rgb_v2",
+      "source_sha256": {
+        "tools/isaac_s2_performance.py": "06ea8e0fee9cfbf1159bf2102fd9c0743014772ba97dd5e9566fb9693ae03c3b",
+        "tools/isaac_s2_runtime.py": "34bdac29a19197eee98c1b99269628634de859bddf43cf016e0c298be673d6b8",
+        "tools/isaac_vr_injected_recording.py": "c6014506748d0d71635f2196648eecdd01be6fba8145bc901a121be0f3e4184e",
+        "tools/isaac_vr_recording.py": "2123bdb5036896e3b320796bdc3822714c358ecce80b8159b36b0eb40304b441",
+        "tools/isaac_vr_recording_smoke.py": "a0c8dde3ec894e5797c31a2e7340e1582e37b0baaa5afc4c4292b8339ac5b1f5",
+        "tools/launch_isaac_vr.py": "e8f599f015f395f21d3ab5c8f7d8df78f06912e96a0073f2b19beb7cd1479525",
+        "tools/run_isaac_s1.py": "dc63f04701b7a541f6a7cce8ffdc303dc3686ab1fe2f348894e85b635654f0f3"
+      },
+      "status": "VALID",
+      "technical_episodes": null,
+      "xr": "off",
+      "xr_receipt": "synthetic"
+    },
+    {
+      "cohort": "B1_repeat",
+      "command": "./run-vr record --xr-smoke --no-client-audit --injected-actions --injected-count 3101 --max-control-steps 3101 --state-root /data/ebulochkin/p25/b1-02/host --run-dir /data/ebulochkin/p25/b1-02/run --recordings-root /data/ebulochkin/p25/b1-02/recordings --performance-warmup-steps 100 --performance-window-steps 500",
+      "committed_frames": 3101,
+      "discarded_observations": 0,
+      "expected_gaps": null,
+      "hdf_output_bytes": 33315472,
+      "hdf_readback": [
+        {
+          "artifact_state": "finalized",
+          "bytes": 33315472,
+          "committed_frames": 3101,
+          "discarded_observations": 0,
+          "episode": "episode_00000",
+          "manifest_path": "/data/ebulochkin/p25/b1-02/recordings/episode_000000/manifest.json",
+          "manifest_schema": "piper_x_isaac_vr_recording_manifest_v2",
+          "manifest_sha256": "c13e64ef6d68a7757025b878447d1ad85b1bd6cc8cea0c6d2326e6b1ab3875c0",
+          "outcome": "operator_stopped",
+          "path": "/data/ebulochkin/p25/b1-02/recordings/episode_000000/session.hdf5",
+          "sha256": "e309ac0875769fd6896999370d37f8a74f880f21dff7b82732bea8abe4dd198e",
+          "source_profile": "isaac_human_vr_offline_rgb_v2",
+          "terminal_successor_sha256": "3af7dd03e11d57ba7d66a0306fb3580664d423ecb5de4bbb6d1917c4074d9631",
+          "transition_schema": "piper_x_committed_transition_v3"
+        }
+      ],
+      "host": {
+        "after": {
+          "cpu_frequency_mhz": {
+            "max": 5156.658,
+            "mean": 2694.8699166666665,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 49.0
+          },
+          "data_disk_free_bytes": 19959746560,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 54, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            2.5087890625,
+            4.3505859375,
+            4.779296875
+          ],
+          "wall_time_utc": "2026-09-25T01:01:45Z"
+        },
+        "before": {
+          "cpu_frequency_mhz": {
+            "max": 5000.0,
+            "mean": 2212.969291666667,
+            "min": 800.0
+          },
+          "cpu_governors": [
+            "powersave"
+          ],
+          "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700K",
+          "cpu_temperatures_c": {
+            "acpitz": 27.8,
+            "x86_pkg_temp": 46.0
+          },
+          "data_disk_free_bytes": 20660748288,
+          "gpu_csv": "NVIDIA GeForce RTX 4090, 580.159.03, 118, 24564, 0, 48, 210, 405",
+          "host": "lab-desktop-1",
+          "kernel": "6.8.0-124-generic",
+          "load_average": [
+            1.580078125,
+            3.595703125,
+            4.45703125
+          ],
+          "wall_time_utc": "2026-09-25T00:55:18Z"
+        },
+        "gpu_samples": {
+          "full_process_including_startup_shutdown": true,
+          "graphics_clock_mhz": {
+            "max": 2745.0,
+            "mean": 1250.5263157894738
+          },
+          "sample_interval_s": 10,
+          "samples": 38,
+          "temperature_c": {
+            "max": 57.0,
+            "mean": 46.76315789473684
+          },
+          "utilization_percent": {
+            "max": 45.0,
+            "mean": 10.157894736842104
+          },
+          "vram_mib": {
+            "max": 6446.0,
+            "mean": 3614.657894736842
+          }
+        },
+        "peak_rss_kib": 16584368,
+        "whole_process_cpu_busy_fraction_all_cores": 0.2301909740192527
+      },
+      "ik": false,
+      "input_targets_sha256": "e84980063820927b1e02b510d1784085efc2e144231ce7655a3f1ae001659802",
+      "launcher_command": [
+        "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/tools/run_isaac_s1.py",
+        "--config",
+        "/data/ebulochkin/p25/b1-02/run/runtime.yaml",
+        "--s2-config",
+        "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance/configs/isaac61_s2_runtime.yaml",
+        "--vr-runtime",
+        "--s2-mode",
+        "run",
+        "--demo-profile",
+        "dual_cube_to_matching_plates",
+        "--device",
+        "cuda:0",
+        "--kit_args",
+        "--portable-root /data/ebulochkin/p25/b1-02/host/kit --enable isaacsim.replicator.episode_recorder --enable omni.kit.scene_view.xr --enable omni.kit.scene_view.xr_utils",
+        "--demo-preview-isolation",
+        "off",
+        "--report",
+        "/data/ebulochkin/p25/b1-02/run/result.json",
+        "--s2-max-control-steps",
+        "3101",
+        "--s2-teleop",
+        "--s2-recordings-root",
+        "/data/ebulochkin/p25/b1-02/recordings",
+        "--s2-record",
+        "--s2-recording-dir",
+        "/data/ebulochkin/p25/b1-02/recordings/episode_000000",
+        "--s2-injected-recording-smoke",
+        "--s2-injected-count",
+        "3101",
+        "--s2-current-record-audit",
+        "steady",
+        "--s2-performance-log",
+        "/data/ebulochkin/p25/b1-02/run/performance.jsonl",
+        "--s2-performance-window-steps",
+        "500",
+        "--s2-performance-warmup-steps",
+        "100",
+        "--viz",
+        "kit",
+        "--experience",
+        "/data/vla-infrastructure/isaac61_production/IsaacLab/apps/isaaclab.python.xr.openxr.kit",
+        "--s2-cloudxr-profile",
+        "cloudxrjs",
+        "--no-s2-require-session",
+        "--s2-reset-step",
+        "30",
+        "--xr"
+      ],
+      "left_transition_counts": {
+        "motion": 3101
+      },
+      "lifecycle_events": null,
+      "mode": "RECORD",
+      "performance": {
+        "boundaries": {
+          "hdf_close": {
+            "max_ms": 10.765116,
+            "mean_ms": 10.765116,
+            "p95_ms": 10.765116,
+            "samples": 1
+          },
+          "hdf_sha256": {
+            "max_ms": 16.319493,
+            "mean_ms": 16.319493,
+            "p95_ms": 16.319493,
+            "samples": 1
+          },
+          "manifest_publication": {
+            "max_ms": 56.460181,
+            "mean_ms": 56.460181,
+            "p95_ms": 56.460181,
+            "samples": 1
+          },
+          "recording_session_preparation": {
+            "max_ms": 410.462231,
+            "mean_ms": 410.462231,
+            "p95_ms": 410.462231,
+            "samples": 1
+          },
+          "result_publication": {
+            "max_ms": 5.786636,
+            "mean_ms": 5.786636,
+            "p95_ms": 5.786636,
+            "samples": 1
+          },
+          "terminal_successor_verify": {
+            "max_ms": 2.65373,
+            "mean_ms": 2.65373,
+            "p95_ms": 2.65373,
+            "samples": 1
+          },
+          "terminal_successor_write": {
+            "max_ms": 8.959121,
+            "mean_ms": 8.959121,
+            "p95_ms": 8.959121,
+            "samples": 1
+          }
+        },
+        "control": {
+          "max_ms": 43.91982,
+          "mean_ms": 26.537048757414198,
+          "p50_ms": 25.926808,
+          "p90_ms": 28.406234,
+          "p95_ms": 29.309037,
+          "p99_9_ms": 38.30844,
+          "p99_ms": 33.181504,
+          "samples": 3001
+        },
+        "effective_wall_hz": 37.62790970109819,
+        "nested_stages_not_additive": {
+          "camera_update": {
+            "max_ms": 0.027877000000000002,
+            "mean_ms": 0.00367542919026991,
+            "p95_ms": 0.004446,
+            "samples": 3001
+          },
+          "experiment_update": {
+            "max_ms": 0.906731,
+            "mean_ms": 0.008803452515828057,
+            "p95_ms": 0.010296,
+            "samples": 3001
+          },
+          "hdf_append_ms": {
+            "max_ms": 1.478524,
+            "mean_ms": 0.24983265544818392,
+            "p95_ms": 0.516764,
+            "samples": 3001
+          },
+          "hdf_flush_ms": {
+            "max_ms": 15.643382,
+            "mean_ms": 0.12586846617794067,
+            "p95_ms": 0.0,
+            "samples": 3001
+          },
+          "physics_probe_update": {
+            "max_ms": 0.015122,
+            "mean_ms": 0.005539224591802732,
+            "p95_ms": 0.007347,
+            "samples": 3001
+          },
+          "physics_target_write": {
+            "max_ms": 1.5829739999999999,
+            "mean_ms": 0.707710331556148,
+            "p95_ms": 1.000507,
+            "samples": 3001
+          },
+          "robot_update": {
+            "max_ms": 2.731898,
+            "mean_ms": 0.6739394015328224,
+            "p95_ms": 0.8440529999999999,
+            "samples": 3001
+          },
+          "sim_step": {
+            "max_ms": 27.789876,
+            "mean_ms": 21.05891126257914,
+            "p95_ms": 22.294491,
+            "samples": 3001
+          }
+        },
+        "stages": {
+          "causal_commit_and_record": {
+            "max_ms": 18.475497,
+            "mean_ms": 1.732995970343219,
+            "p95_ms": 2.823088,
+            "samples": 3001
+          },
+          "injected_decision_apply": {
+            "max_ms": 2.67689,
+            "mean_ms": 0.8262944305231589,
+            "p95_ms": 1.229025,
+            "samples": 3001
+          },
+          "observation_capture": {
+            "max_ms": 0.017956,
+            "mean_ms": 0.0012448497167610797,
+            "p95_ms": 0.001657,
+            "samples": 3001
+          },
+          "runtime_bookkeeping": {
+            "max_ms": 0.023726,
+            "mean_ms": 0.006369909030323226,
+            "p95_ms": 0.00967,
+            "samples": 3001
+          },
+          "simulation_advance": {
+            "max_ms": 31.120831,
+            "mean_ms": 22.484258063312225,
+            "p95_ms": 24.195561,
+            "samples": 3001
+          },
+          "successor_capture": {
+            "max_ms": 4.587207,
+            "mean_ms": 1.4422002092635786,
+            "p95_ms": 2.282699,
+            "samples": 3001
+          },
+          "teleop_advance": {
+            "max_ms": 0.111284,
+            "mean_ms": 0.034785714761746085,
+            "p95_ms": 0.045765,
+            "samples": 3001
+          }
+        },
+        "total_logged_steps": 3001,
+        "wall_control": {
+          "max_ms": 43.95123,
+          "mean_ms": 26.576017853333333,
+          "p50_ms": 25.9545755,
+          "p90_ms": 28.4712187,
+          "p95_ms": 29.3750538,
+          "p99_9_ms": 38.39419922500026,
+          "p99_ms": 33.291212099999996,
+          "samples": 3000
+        },
+        "wall_deadline_miss_fraction": 0.009333333333333334,
+        "wall_deadline_misses": 28,
+        "wall_rtf": 1.254263656703273,
+        "warmup_steps_excluded": 100
+      },
+      "processor": false,
+      "quest_client": false,
+      "raw_files": [
+        {
+          "bytes": 930,
+          "path": "/data/ebulochkin/p25/b1-02/host-before.json",
+          "sha256": "12448e5a71250624308eb32df42d6faadeddb760891a20a4e48240cdabc67f74"
+        },
+        {
+          "bytes": 936,
+          "path": "/data/ebulochkin/p25/b1-02/host-after.json",
+          "sha256": "4a13f2e54f5768f4d0530b653ebbdfbaa403b139682e4dc04d11e10a03b3de42"
+        },
+        {
+          "bytes": 1617,
+          "path": "/data/ebulochkin/p25/b1-02/gpu-samples.csv",
+          "sha256": "03269190f41bf42ed52fff4b51f89596dae728c88ae9afb1fb3570a7b1c4b442"
+        },
+        {
+          "bytes": 1066,
+          "path": "/data/ebulochkin/p25/b1-02/time.txt",
+          "sha256": "55ef2e823eaddc12238746533a67b33496aad7c5e5ada41d1242f89893be393d"
+        },
+        {
+          "bytes": 16153,
+          "path": "/data/ebulochkin/p25/b1-02/run/run_manifest.json",
+          "sha256": "93d5295f4ecef349e52e3579be6079815eb3e392f92a7c732742cd48ff765910"
+        },
+        {
+          "bytes": 6760,
+          "path": "/data/ebulochkin/p25/b1-02/run/runtime.yaml",
+          "sha256": "dd3ed260d7018d9904c2c02b7478a7b73d0d991f34f5aed2b5c49f81c1072aa5"
+        },
+        {
+          "bytes": 1034065,
+          "path": "/data/ebulochkin/p25/b1-02/run/result.json",
+          "sha256": "2d6eb871af6d889fab3b02dcd501dc4ac1d9da5ebdfced4560bd00a9243ecc4d"
+        },
+        {
+          "bytes": 2437892,
+          "path": "/data/ebulochkin/p25/b1-02/run/performance.jsonl",
+          "sha256": "d689d6cbac12b8ff6bd1f7e98908ec1de20d0df1b6b4545e8e0e3462b126b8a1"
+        },
+        {
+          "bytes": 756375,
+          "path": "/data/ebulochkin/p25/b1-02/run/stdout.log",
+          "sha256": "9642f7d4f4ab6f17ea82665ac18deff33e6a91ae0357f3b2468e9088d912f3b2"
+        }
+      ],
+      "record_writer": true,
+      "result_flags": {
+        "cloudxr_profile": "cloudxrjs",
+        "input_pump_calls": 3101,
+        "kit_xr_bridge": true,
+        "kit_xr_bridge_configured": null,
+        "session_running_at_end": false,
+        "xr_initialized": true,
+        "xr_input_available_at_end": false
+      },
+      "run_manifest_sha256": "93d5295f4ecef349e52e3579be6079815eb3e392f92a7c732742cd48ff765910",
+      "run_slug": "b1-02",
+      "source_profile": "isaac_human_vr_offline_rgb_v2",
+      "source_sha256": {
+        "tools/isaac_s2_performance.py": "06ea8e0fee9cfbf1159bf2102fd9c0743014772ba97dd5e9566fb9693ae03c3b",
+        "tools/isaac_s2_runtime.py": "34bdac29a19197eee98c1b99269628634de859bddf43cf016e0c298be673d6b8",
+        "tools/isaac_vr_injected_recording.py": "c6014506748d0d71635f2196648eecdd01be6fba8145bc901a121be0f3e4184e",
+        "tools/isaac_vr_recording.py": "2123bdb5036896e3b320796bdc3822714c358ecce80b8159b36b0eb40304b441",
+        "tools/isaac_vr_recording_smoke.py": "a0c8dde3ec894e5797c31a2e7340e1582e37b0baaa5afc4c4292b8339ac5b1f5",
+        "tools/launch_isaac_vr.py": "e8f599f015f395f21d3ab5c8f7d8df78f06912e96a0073f2b19beb7cd1479525",
+        "tools/run_isaac_s1.py": "dc63f04701b7a541f6a7cce8ffdc303dc3686ab1fe2f348894e85b635654f0f3"
+      },
+      "status": "VALID",
+      "technical_episodes": null,
+      "xr": "on_no_client",
+      "xr_receipt": "synthetic"
+    }
+  ],
+  "warmup_steps_steady": 100,
+  "worktree": "/home/ebulochkin/vla_infrastructure/.worktrees/vr-current-record-performance"
+}

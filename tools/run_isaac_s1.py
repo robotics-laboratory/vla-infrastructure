@@ -85,6 +85,13 @@ parser.add_argument(
 parser.add_argument("--s2-recording-dir", type=Path)
 parser.add_argument("--s2-recordings-root", type=Path)
 parser.add_argument("--s2-injected-recording-smoke", action="store_true", help=argparse.SUPPRESS)
+parser.add_argument("--s2-injected-count", type=int, default=3, help=argparse.SUPPRESS)
+parser.add_argument(
+    "--s2-current-record-audit", choices=("steady", "clutch", "gap", "lifecycle"),
+    help=argparse.SUPPRESS,
+)
+parser.add_argument("--s2-audit-gaps", type=int, default=0, help=argparse.SUPPRESS)
+parser.add_argument("--s2-audit-lifecycle-cycles", type=int, default=0, help=argparse.SUPPRESS)
 parser.add_argument("--s2-rgb-e2e-assay", action="store_true", help=argparse.SUPPRESS)
 parser.add_argument("--s2-recording-benchmark-log", type=Path, help=argparse.SUPPRESS)
 parser.add_argument("--s2-recording-benchmark-pair-id", help=argparse.SUPPRESS)
@@ -169,9 +176,19 @@ if args_cli.s2_replay_hdf5 is not None and (
 ):
     parser.error("state-only replay cannot share teleop, recording, or XR")
 if args_cli.s2_injected_recording_smoke and (
-    not args_cli.s2_record or args_cli.s2_teleop or args_cli.xr
+    not args_cli.s2_record
+    or (args_cli.s2_current_record_audit is None and (args_cli.s2_teleop or args_cli.xr))
 ):
     parser.error("injected recording smoke requires no-client --s2-record")
+if args_cli.s2_injected_count < 2 or (
+    args_cli.s2_injected_count != 3
+    and not (args_cli.s2_injected_recording_smoke or args_cli.s2_current_record_audit)
+):
+    parser.error("injected count requires no-client recording smoke")
+if (args_cli.s2_current_record_audit and not args_cli.s2_teleop
+        and not (args_cli.s2_record and args_cli.s2_injected_recording_smoke
+                 and not args_cli.xr)):
+    parser.error("XR-enabled current RECORD audit requires the S2 teleop device")
 if args_cli.s2_rgb_e2e_assay and not args_cli.s2_injected_recording_smoke:
     parser.error("RGB end-to-end assay requires injected recording smoke")
 benchmark_fields = (
