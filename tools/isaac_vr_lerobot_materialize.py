@@ -105,7 +105,7 @@ _SHA256 = re.compile(r"[0-9a-f]{64}\Z")
 
 
 class MaterializationError(RuntimeError):
-    """The source cannot be admitted to the canonical materialized dataset."""
+    """The source projection or LeRobot materialization is invalid."""
 
 
 def _canonical_json(value: object) -> bytes:
@@ -1045,12 +1045,6 @@ def materialize_projection(
             )
         report_sha256 = report.pop("_verified_file_sha256")
         identical_digest_roles = report.pop("_identical_rgb_digest_roles")
-        blocking_reasons = ["source_admission_requires_external_physical_vr_qualification"]
-        if bundle_manifest["source"].get("outcome") != "success":
-            blocking_reasons.append("source_outcome_is_not_success")
-        execution_profile = bundle_manifest["source"].get("execution_profile")
-        if not isinstance(execution_profile, str) or "smoke" in execution_profile:
-            blocking_reasons.append("source_execution_profile_is_not_physical_human_vr")
         manifest: dict[str, Any] = {
             "schema": MATERIALIZATION_SCHEMA,
             "conversion_revision": CONVERSION_REVISION,
@@ -1079,7 +1073,7 @@ def materialize_projection(
             },
             "admission": {
                 "dataset_admissible": False,
-                "blocking_reasons": blocking_reasons,
+                "blocking_reasons": ["requires_demo_admission_decision"],
             },
             "row_outcomes": [
                 {

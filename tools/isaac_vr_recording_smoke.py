@@ -106,9 +106,11 @@ def recording_session_metadata(
     episode_id: str,
     execution_profile: str,
     processor_revision: str,
+    demo_id: str | None = None,
     xr_render: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     return {
+        **({"demo_id": demo_id} if demo_id is not None else {}),
         **({"xr_render": xr_render} if xr_render else {}),
         "run_id": run_id,
         "session_id": session_id,

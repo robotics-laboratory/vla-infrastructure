@@ -295,11 +295,7 @@ def test_materializes_v3_videos_and_full_reads_every_stream(
     assert result["task_label_revision"] == materialize.TASK_LABEL_REVISION
     assert result["admission"] == {
         "dataset_admissible": False,
-        "blocking_reasons": [
-            "source_admission_requires_external_physical_vr_qualification",
-            "source_outcome_is_not_success",
-            "source_execution_profile_is_not_physical_human_vr",
-        ],
+        "blocking_reasons": ["requires_demo_admission_decision"],
     }
     assert result["image_join"] == {
         "key": ["obs_id", "scene_state_snapshot_sha256", "camera_role"],

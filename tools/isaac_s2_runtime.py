@@ -928,6 +928,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
                                     xr_render=getattr(args_cli, "xr_render_readback", None),
                                     config_path=config_path, environment_pins=actual_versions,
                                     run_id=run_id, session_id=session_id, episode_id=episode_id,
+                                    demo_id=lifecycle.demo_id,
                                     execution_profile="isaac_vr_record",
                                     processor_revision=PROCESSOR_REVISION,
                                 ), portable_roots=roots, **recording_options,

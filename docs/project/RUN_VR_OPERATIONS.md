@@ -233,6 +233,15 @@ Every episode retains the normal native `session.hdf5`, `manifest.json`,
 asset closure and visual provenance. Dry-run writes only config/provenance and
 private directories; it cannot produce episode, performance or result artifacts.
 
+During an actual human demo, explicitly Stop, Save and classify the human task
+outcome. The saved `saved_demos/<demo_id>.json` keeps the ordered technical
+episodes. Tracking gaps may split one successful human demo into multiple
+`operator_stopped` technical episodes; keep each segment separate. Follow the
+[materialization and admission workflow](../DATASET_MATERIALIZATION.md#human-demo-admission)
+for projection, strict replay/RGB, one LeRobot output per segment and a final
+demo-level decision. Save plus human task success does not admit training data:
+the current physical Quest qualification is still unresolved.
+
 ### Pinned upstream XR resolution audit
 
 The Isaac Sim 6.1 / Kit 110.3 installation's
