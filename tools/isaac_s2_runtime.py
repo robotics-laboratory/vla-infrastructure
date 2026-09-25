@@ -521,7 +521,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
         recording_episodes.append(summary)
         demo_episodes.append(summary)
         print(
-            json.dumps({"event": "recording_episode_finalized", **summary}, sort_keys=True),
+            json.dumps({"event": "recording_episode_sealed", **summary}, sort_keys=True),
             flush=True,
         )
 
@@ -584,6 +584,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
     def save_demo(demo_id: str, task_outcome: str) -> None:
         with (performance.boundary("demo_save_publication", task_outcome=task_outcome)
               if performance is not None else nullcontext()):
+            if recording_session is not None:
+                recording_session.check_finalization()
             publish_saved_demo(
                 demo_index_root() / "saved_demos",
                 demo_id=demo_id,
@@ -640,6 +642,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 if performance is not None:
                     performance.begin_step()
                     stage_started_ns = time.perf_counter_ns()
+                if recording_session is not None:
+                    recording_session.check_finalization()
                 before_pose = ik.tcp_poses_base() if diagnostic else ()
                 if performance is not None:
                     performance.add_stage(
@@ -928,7 +932,15 @@ def run_s2(env, args_cli, simulation_app) -> int:
                                     processor_revision=PROCESSOR_REVISION,
                                 ), portable_roots=roots, **recording_options,
                             )
-                        recording_session = RecordingSession(recording)
+                        recording_session = RecordingSession(
+                            recording,
+                            queue_observer=(
+                                lambda depth, size: performance.record_boundary(
+                                    "finalizer_queue", 0, depth=depth, bytes=size
+                                )
+                                if performance is not None else None
+                            ),
+                        )
                     else:
                         with (performance.boundary("technical_episode_open")
                               if performance is not None else nullcontext()):
@@ -940,7 +952,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         )
                         demo_start_requested_ns = None
                     recording_episode_index += 1
-                    recording_token = recording.capture_observation()
+                    with (performance.boundary("episode_first_observation_capture")
+                          if performance is not None else nullcontext()):
+                        recording_token = recording.capture_observation()
                     observation = recording_token.observation
                 if recording is not None and not eligible:
                     assert recording_token is not None
@@ -956,7 +970,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         rejection_reason = "tracking_invalid"
                     else:
                         rejection_reason = "operator_hold"
-                    recording.discard_observation(recording_token, reason=rejection_reason)
+                    with (performance.boundary("gap_discard")
+                          if performance is not None else nullcontext()):
+                        recording.discard_observation(recording_token, reason=rejection_reason)
                     recording_token = None
                     # Seal this causal segment before unrecorded physics. The
                     # static recording session and CloudXR remain open.

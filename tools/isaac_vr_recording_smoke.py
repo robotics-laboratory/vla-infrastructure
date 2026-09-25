@@ -146,6 +146,7 @@ def _run_gap_audit(
             require_distinct_actions=False, start_tick=tick,
             target_index_offset=committed_before,
             first_commit_callback=pending_first_commit,
+            pre_step_callback=session.check_finalization,
         )
         tick += size
         committed_before += size
@@ -162,7 +163,8 @@ def _run_gap_audit(
             break
         gap_started_ns = time.perf_counter_ns()
         token = recording.capture_observation()
-        recording.discard_observation(token, reason="tracking_invalid")
+        with performance.boundary("gap_discard", gap_index=index + 1):
+            recording.discard_observation(token, reason="tracking_invalid")
         with performance.boundary("technical_episode_end", gap_index=index + 1):
             session.end_episode(outcome="operator_stopped", reason="tracking_invalid")
         episodes[-1]["discarded_observations"] = recording.discarded_observations
@@ -305,7 +307,14 @@ def run_recording_lifecycle_smoke(
             if getattr(args_cli, "s2_injected_recording_smoke", False):
                 from isaac_vr_recording import RecordingSession
 
-                recording_session = RecordingSession(recording)
+                recording_session = RecordingSession(
+                    recording,
+                    queue_observer=(
+                        lambda depth, size: performance.record_boundary(
+                            "finalizer_queue", 0, depth=depth, bytes=size
+                        ) if performance is not None else None
+                    ),
+                )
         if getattr(args_cli, "s2_injected_recording_smoke", False):
             from isaac_vr_injected_recording import (
                 record_injected_transitions,

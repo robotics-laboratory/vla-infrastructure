@@ -157,14 +157,17 @@ def test_save_requires_explicit_task_outcome_and_keeps_source(tmp_path, button, 
         "dataset_admissible": False,
         "schema": "piper_x_isaac_vr_recording_manifest_v2",
         "transition_schema": "piper_x_committed_transition_v3",
+        "hdf5_sha256": "a" * 64,
     }
     manifest = episode / "manifest.json"
     manifest.write_text(json.dumps(canonical))
+    (episode / "recording_state.json").write_text(json.dumps({"artifact_state": "finalized", "hdf5_sha256": "a" * 64}))
     before = manifest.read_bytes()
     second = tmp_path / "episode_000001"
     second.mkdir()
     second_manifest = second / "manifest.json"
     second_manifest.write_text(json.dumps(canonical))
+    (second / "recording_state.json").write_text(json.dumps({"artifact_state": "finalized", "hdf5_sha256": "a" * 64}))
     second_before = second_manifest.read_bytes()
     recorder = Facade()
     saved = []
@@ -216,6 +219,28 @@ def test_save_requires_explicit_task_outcome_and_keeps_source(tmp_path, button, 
     assert lifecycle.state is RecordingState.WAITING and recorder.resets == 1
     press(lifecycle, "x")
     assert lifecycle.demo_id != document["demo_id"]
+
+
+def test_saved_demo_rejects_manifest_without_finalized_state_marker(tmp_path):
+    episode = tmp_path / "episode"
+    episode.mkdir()
+    (episode / "manifest.json").write_text(json.dumps({
+        "artifact_state": "finalized", "outcome": "operator_stopped",
+        "schema": "piper_x_isaac_vr_recording_manifest_v2",
+        "transition_schema": "piper_x_committed_transition_v3",
+        "hdf5_sha256": "a" * 64,
+    }))
+    (episode / "recording_state.json").write_text(json.dumps({
+        "artifact_state": "finalizing", "hdf5_sha256": "a" * 64,
+    }))
+    with pytest.raises(RuntimeError, match="matching finalized marker"):
+        publish_saved_demo(
+            tmp_path / "saved", demo_id="demo",
+            episodes=[{"episode_id": "episode", "output_dir": str(episode)}],
+            profile="isaac_human_vr_offline_rgb_v2", start_tick=1, stop_tick=2,
+            task_outcome="success",
+        )
+    assert not list((tmp_path / "saved").glob("*.json"))
 
 
 def test_discard_skips_classification(tmp_path):
@@ -352,7 +377,9 @@ def test_publication_failure_keeps_canonical_artifact_and_fails_lifecycle(tmp_pa
         "artifact_state": "finalized", "outcome": "operator_stopped",
         "schema": "piper_x_isaac_vr_recording_manifest_v2",
         "transition_schema": "piper_x_committed_transition_v3",
+        "hdf5_sha256": "a" * 64,
     }))
+    (episode / "recording_state.json").write_text(json.dumps({"artifact_state": "finalized", "hdf5_sha256": "a" * 64}))
     before = manifest.read_bytes()
     resets = []
     lifecycle = RecordingLifecycle(

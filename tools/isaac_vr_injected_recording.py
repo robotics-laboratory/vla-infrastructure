@@ -111,6 +111,7 @@ def record_injected_transitions(
     start_tick: int = 1,
     target_index_offset: int = 0,
     first_commit_callback: Callable[[], None] | None = None,
+    pre_step_callback: Callable[[], None] | None = None,
 ) -> dict[str, Any]:
     """Write distinct committed transitions through the production causal/writer APIs."""
     if count < 2:
@@ -125,6 +126,8 @@ def record_injected_transitions(
     input_digest = hashlib.sha256()
     transition_counts: dict[str, int] = {}
     for index in range(count):
+        if pre_step_callback is not None:
+            pre_step_callback()
         tick = start_tick + index
         benchmark_started_ns = time.perf_counter_ns()
         if performance_logger is not None:

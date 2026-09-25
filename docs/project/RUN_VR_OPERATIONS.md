@@ -38,9 +38,14 @@ different transitions in one row. The recorded action is the processed IK
 solution actually applied, with per-arm transition provenance. Tracking loss,
 tracking recovery rebase, sensitivity switches, session/reference changes and
 missing XR receipts remain gaps. After at least one committed transition, a gap
-finalizes the current episode before the next physics step; the CloudXR session
+causally seals the current episode before the next physics step; the CloudXR session
 stays open and the next control boundary starts a new, independently finalized
 artifact in a sibling directory suffixed `-<demo_id>-episode_000001`, etc.
+The closed HDF and terminal successor remain non-finalized until a single bounded
+filesystem worker verifies, hashes and publishes them after the next episode's
+first committed transition. Stop/shutdown waits for that work; a worker failure
+blocks further recording and saved-demo publication. An unfinished artifact keeps
+a non-finalized state marker.
 The first episode of the first demonstration remains at the requested output
 directory; later demonstrations use unique sibling directories. With
 `--recordings-root`, the first episode remains `<root>/episode_000000`; later

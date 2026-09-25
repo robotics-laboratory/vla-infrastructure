@@ -13,8 +13,11 @@ discards its buffered observation without ever becoming an HDF5 frame.
 from __future__ import annotations
 
 from collections import Counter
+from collections import deque
 from collections.abc import Callable, Iterable, Mapping, Sequence
+from concurrent.futures import Future, ThreadPoolExecutor
 from contextlib import contextmanager
+import copy
 from dataclasses import dataclass
 import hashlib
 import io
@@ -39,6 +42,7 @@ _ID_BYTES = 256
 _HASH_BYTES = 32
 TERMINAL_SUCCESSOR_SCHEMA = "piper_x_terminal_successor_v1"
 TERMINAL_SUCCESSOR_FILENAME = "terminal_successor.npz"
+RECORDING_BUFFER_FRAMES = 128
 
 
 @contextmanager
@@ -237,7 +241,10 @@ def open_explicit_session(
     from isaacsim.replicator.episode_recorder import SessionStorage, build_manifest
 
     _validate_session_metadata(session_metadata)
-    storage = SessionStorage(output_path)
+    # Upstream uses this value for both the in-memory buffer and HDF chunks.
+    # Keep the 64-row flush policy; 128-row chunks avoid the 1024-row
+    # allocation cost without moving the whole write into append_frame().
+    storage = SessionStorage(output_path, buffer_frames=RECORDING_BUFFER_FRAMES)
     storage.open()
     opened: list[Any] = []
     try:
@@ -297,11 +304,14 @@ def start_explicit_episode(
     sampler: ExplicitFrameSampler,
     recordables: Sequence[Any],
     metadata: Mapping[str, Any],
+    timing_observer: Callable[[str, int], None] | None = None,
 ) -> int:
     """Begin an episode and prepare public Recordables for caller-driven frames."""
-    episode = storage.begin_episode(sampler.schemas, metadata=metadata)
-    for recordable in recordables:
-        recordable.on_episode_start()
+    with _timed_boundary(timing_observer, "episode_hdf_begin"):
+        episode = storage.begin_episode(sampler.schemas, metadata=metadata)
+    with _timed_boundary(timing_observer, "episode_callbacks_start"):
+        for recordable in recordables:
+            recordable.on_episode_start()
     return episode
 
 
@@ -312,28 +322,32 @@ def close_explicit_session(
     success: bool | None,
     metadata: Mapping[str, Any],
     close_recordables: bool = True,
+    timing_observer: Callable[[str, int], None] | None = None,
 ) -> None:
     """End one episode and storage file; optionally release session-owned handles."""
     errors: list[Exception] = []
-    for recordable in recordables:
+    with _timed_boundary(timing_observer, "episode_callbacks_end"):
+        for recordable in recordables:
+            try:
+                recordable.on_episode_end()
+            except Exception as exc:
+                errors.append(exc)
+    with _timed_boundary(timing_observer, "episode_hdf_end"):
         try:
-            recordable.on_episode_end()
+            storage.end_episode(success=success, metadata=metadata)
         except Exception as exc:
             errors.append(exc)
-    try:
-        storage.end_episode(success=success, metadata=metadata)
-    except Exception as exc:
-        errors.append(exc)
     if close_recordables:
         for recordable in reversed(recordables):
             try:
                 recordable.on_session_close()
             except Exception as exc:
                 errors.append(exc)
-    try:
-        storage.close()
-    except Exception as exc:
-        errors.append(exc)
+    with _timed_boundary(timing_observer, "episode_hdf_close_file"):
+        try:
+            storage.close()
+        except Exception as exc:
+            errors.append(exc)
     if len(errors) == 1:
         raise errors[0]
     if errors:
@@ -538,16 +552,18 @@ class LiveRecording:
 
     def close(self, *, outcome: str, reason: str | None = None) -> None:
         """Close a standalone recording and its Recordable session handles."""
-        self._finish(outcome=outcome, reason=reason, close_recordables=True)
+        descriptor = self.seal(outcome=outcome, reason=reason, close_recordables=True)
+        finalize_sealed_episode(descriptor, self._timing_observer)
 
     def end(self, *, outcome: str, reason: str | None = None) -> None:
         """Seal one technical episode while retaining session-owned handles."""
-        self._finish(outcome=outcome, reason=reason, close_recordables=False)
+        descriptor = self.seal(outcome=outcome, reason=reason, close_recordables=False)
+        finalize_sealed_episode(descriptor, self._timing_observer)
 
-    def _finish(
+    def seal(
         self, *, outcome: str, reason: str | None, close_recordables: bool
-    ) -> None:
-        """Finalize metadata atomically; failures can never produce a finalized marker."""
+    ) -> "SealedEpisode":
+        """Close mutable native ownership on the simulation thread."""
         self._require_open()
         if outcome not in FINAL_OUTCOMES:
             raise ValueError(f"outcome must be one of {sorted(FINAL_OUTCOMES)}, got {outcome!r}")
@@ -570,6 +586,7 @@ class LiveRecording:
             effective_outcome = outcome
             effective_reason = reason
         success = True if effective_outcome == "success" else False
+        started_ns = time.perf_counter_ns()
         try:
             with _timed_boundary(self._timing_observer, "hdf_close"):
                 close_explicit_session(
@@ -584,6 +601,7 @@ class LiveRecording:
                         "rejections": dict(self.rejections),
                     },
                     close_recordables=close_recordables,
+                    timing_observer=self._timing_observer,
                 )
             terminal_successor: dict[str, Any] | None = None
             if self.committed_frames:
@@ -597,51 +615,14 @@ class LiveRecording:
                         successor_token,
                         successor_frames,
                     )
-                # Read the just-written artifact through the same strict path
-                # used by replay before advertising it in the final manifest.
-                with _timed_boundary(self._timing_observer, "terminal_successor_verify"):
-                    verify_terminal_successor_snapshot(
-                        terminal_path,
-                        expected_artifact_sha256=terminal_successor["sha256"],
-                        committed_transition=last_transition,
-                    )
-            with _timed_boundary(self._timing_observer, "hdf_sha256"):
-                hdf5_hash = sha256_file(self.hdf5_path)
-            manifest_path = self.output_dir / "manifest.json"
-            manifest = json.loads(manifest_path.read_text())
-            manifest.update(
-                {
-                    "artifact_state": (
-                        "finalized"
-                        if effective_outcome in {"success", "operator_stopped"}
-                        else "failed"
-                    ),
-                    "committed_frames": self.committed_frames,
-                    "discarded_observations": self.discarded_observations,
-                    "hdf5_sha256": hdf5_hash,
-                    "outcome": effective_outcome,
-                    "reason": effective_reason,
-                    "rejections": dict(sorted(self.rejections.items())),
-                    "terminal_successor": terminal_successor,
-                }
+            descriptor = SealedEpisode(
+                self.output_dir, self.hdf5_path, self.snapshot,
+                self.committed_frames, self.discarded_observations,
+                effective_outcome, effective_reason,
+                dict(sorted(self.rejections.items())), terminal_successor,
+                copy.deepcopy(last_transition) if self.committed_frames else None,
+                time.perf_counter_ns(),
             )
-            with _timed_boundary(self._timing_observer, "manifest_publication"):
-                _atomic_write_json(manifest_path, manifest)
-            state = {
-                "artifact_state": manifest["artifact_state"],
-                "committed_frames": self.committed_frames,
-                "discarded_observations": self.discarded_observations,
-                "hdf5": str(self.hdf5_path),
-                "hdf5_sha256": hdf5_hash,
-                "outcome": effective_outcome,
-                "reason": effective_reason,
-                "stage_snapshot": str(self.snapshot),
-                "terminal_successor": terminal_successor,
-            }
-            with _timed_boundary(self._timing_observer, "result_publication"):
-                _atomic_write_json(self.output_dir / "result.json", state)
-                # This marker is deliberately written last.
-                _atomic_write_json(self.output_dir / "recording_state.json", state)
         except Exception as exc:
             _atomic_write_json(
                 self.output_dir / "recording_state.json",
@@ -655,6 +636,9 @@ class LiveRecording:
             self._closed = True
             raise
         self._closed = True
+        if self._timing_observer is not None:
+            self._timing_observer("seal_ms", time.perf_counter_ns() - started_ns)
+        return descriptor
 
     def _take_pending(self, token: RecordedObservationToken) -> dict[str, dict[str, Any]]:
         if self._pending is None:
@@ -750,6 +734,152 @@ class LiveRecording:
             raise RuntimeError("recording is already closed")
 
 
+@dataclass(frozen=True)
+class SealedEpisode:
+    output_dir: Path
+    hdf5_path: Path
+    snapshot: Path
+    committed_frames: int
+    discarded_observations: int
+    outcome: str
+    reason: str | None
+    rejections: dict[str, int]
+    terminal_successor: dict[str, Any] | None
+    last_transition: dict[str, Any] | None
+    sealed_at_ns: int = 0
+
+
+def finalize_sealed_episode(
+    sealed: SealedEpisode,
+    observer: Callable[[str, int], None] | None = None,
+) -> None:
+    """Publish only closed files; the final state marker is written last."""
+    started_ns = time.perf_counter_ns()
+    try:
+        if sealed.output_dir.joinpath("recording_state.json").exists():
+            _atomic_write_json(sealed.output_dir / "recording_state.json", {
+                "artifact_state": "finalizing", "committed_frames": sealed.committed_frames,
+                "outcome": sealed.outcome,
+            })
+        if sealed.terminal_successor is not None:
+            with _timed_boundary(observer, "terminal_successor_verify"):
+                verify_terminal_successor_snapshot(
+                    sealed.output_dir / TERMINAL_SUCCESSOR_FILENAME,
+                    expected_artifact_sha256=sealed.terminal_successor["sha256"],
+                    committed_transition=sealed.last_transition,
+                )
+        with _timed_boundary(observer, "hdf_sha256"):
+            hdf5_hash = sha256_file(sealed.hdf5_path)
+        manifest_path = sealed.output_dir / "manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        manifest.update({
+            "artifact_state": (
+                "finalized" if sealed.outcome in {"success", "operator_stopped"} else "failed"
+            ),
+            "committed_frames": sealed.committed_frames,
+            "discarded_observations": sealed.discarded_observations,
+            "hdf5_sha256": hdf5_hash,
+            "outcome": sealed.outcome,
+            "reason": sealed.reason,
+            "rejections": sealed.rejections,
+            "terminal_successor": sealed.terminal_successor,
+        })
+        with _timed_boundary(observer, "manifest_publication"):
+            _atomic_write_json(manifest_path, manifest)
+        state = {
+            "artifact_state": manifest["artifact_state"],
+            "committed_frames": sealed.committed_frames,
+            "discarded_observations": sealed.discarded_observations,
+            "hdf5": str(sealed.hdf5_path),
+            "hdf5_sha256": hdf5_hash,
+            "outcome": sealed.outcome,
+            "reason": sealed.reason,
+            "stage_snapshot": str(sealed.snapshot),
+            "terminal_successor": sealed.terminal_successor,
+        }
+        with _timed_boundary(observer, "result_publication"):
+            _atomic_write_json(sealed.output_dir / "result.json", state)
+            _atomic_write_json(sealed.output_dir / "recording_state.json", state)
+    except Exception as exc:
+        _atomic_write_json(sealed.output_dir / "recording_state.json", {
+            "artifact_state": "failed", "committed_frames": sealed.committed_frames,
+            "outcome": "failure", "reason": f"finalization_failed:{type(exc).__name__}:{exc}",
+        })
+        raise
+    finally:
+        if observer is not None:
+            observer("finalize_work_ms", time.perf_counter_ns() - started_ns)
+
+
+class _FinalizationOwner:
+    """One filesystem worker and a bounded number of sealed artifacts."""
+
+    def __init__(
+        self, observer: Callable[[str, int], None] | None, max_pending: int = 2,
+        queue_observer: Callable[[int, int], None] | None = None,
+    ):
+        self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="vr-finalize")
+        self._pending: deque[tuple[Future[tuple[int, dict[str, int]]], int]] = deque()
+        self._observer = observer
+        self._queue_observer = queue_observer
+        self._pending_bytes = 0
+        self.max_pending = max_pending
+        self._failure: Exception | None = None
+
+    def _observe(self, name: str, elapsed_ns: int) -> None:
+        if self._observer is not None:
+            self._observer(name, elapsed_ns)
+
+    def _acknowledge(self, *, wait: bool, limit: int | None = None) -> None:
+        acknowledged = 0
+        while self._pending and (wait or self._pending[0][0].done()):
+            if limit is not None and acknowledged >= limit:
+                break
+            future, size = self._pending.popleft()
+            acknowledged += 1
+            self._pending_bytes -= size
+            try:
+                queued_ns, timings = future.result()
+                self._observe("finalize_queue_wait_ms", queued_ns)
+                for name, elapsed_ns in timings.items():
+                    self._observe(name, elapsed_ns)
+            except Exception as exc:
+                self._failure = exc
+            if self._queue_observer is not None:
+                self._queue_observer(len(self._pending), self._pending_bytes)
+        if self._failure is not None:
+            raise RuntimeError("recording artifact finalization failed") from self._failure
+
+    def check(self) -> None:
+        self._acknowledge(wait=False)
+
+    def submit(self, sealed: SealedEpisode) -> None:
+        self.check()
+        if len(self._pending) >= self.max_pending:
+            # Deterministic backpressure: wait for the oldest result before
+            # admitting another artifact. This bounds both count and file work.
+            self._acknowledge(wait=True, limit=1)
+        queued_at = sealed.sealed_at_ns or time.perf_counter_ns()
+
+        def work() -> tuple[int, dict[str, int]]:
+            queue_wait = time.perf_counter_ns() - queued_at
+            timings: dict[str, int] = {}
+            finalize_sealed_episode(sealed, lambda name, ns: timings.__setitem__(name, ns))
+            return queue_wait, timings
+
+        size = sealed.hdf5_path.stat().st_size
+        self._pending.append((self._executor.submit(work), size))
+        self._pending_bytes += size
+        if self._queue_observer is not None:
+            self._queue_observer(len(self._pending), self._pending_bytes)
+
+    def close(self) -> None:
+        try:
+            self._acknowledge(wait=True)
+        finally:
+            self._executor.shutdown(wait=True)
+
+
 class RecordingSession:
     """Keep immutable scene preparation and Recordable handles across segments.
 
@@ -761,6 +891,7 @@ class RecordingSession:
     def __init__(
         self, first_episode: LiveRecording, *,
         stage_getter: Callable[[], Any] | None = None,
+        queue_observer: Callable[[int, int], None] | None = None,
     ) -> None:
         if stage_getter is None:
             import omni.usd
@@ -781,42 +912,85 @@ class RecordingSession:
         self._flush_every_frames = first_episode.flush_every_frames
         self._timing_observer = first_episode._timing_observer
         self.active_episode: LiveRecording | None = first_episode
+        self._queue_observer = queue_observer
+        self._deferred_sealed: SealedEpisode | None = None
+        self._finalizer = _FinalizationOwner(
+            self._timing_observer, queue_observer=self._observe_queue
+        )
         self._closed = False
+
+    def _observe_queue(self, depth: int, size: int) -> None:
+        if self._queue_observer is not None:
+            staged = self._deferred_sealed
+            self._queue_observer(
+                depth + int(staged is not None),
+                size + (staged.hdf5_path.stat().st_size if staged is not None else 0),
+            )
+
+    def check_finalization(self) -> None:
+        self._finalizer.check()
+        # Give the next episode its first admitted transition before the
+        # filesystem worker competes with its HDF creation and first control.
+        if (
+            self._deferred_sealed is not None
+            and self.active_episode is not None
+            and self.active_episode.committed_frames > 0
+        ):
+            self._submit_deferred()
+
+    def _submit_deferred(self) -> None:
+        sealed = self._deferred_sealed
+        if sealed is None:
+            return
+        self._deferred_sealed = None
+        try:
+            self._finalizer.submit(sealed)
+        except Exception as exc:
+            _atomic_write_json(sealed.output_dir / "recording_state.json", {
+                "artifact_state": "failed", "committed_frames": sealed.committed_frames,
+                "outcome": "failure", "reason": f"finalization_queue_failed:{exc}",
+            })
+            raise
 
     def start_episode(self, output_dir: Path, episode_id: str) -> LiveRecording:
         """Start a new causal scope using the session's immutable artifact bundle."""
         if self._closed or self.active_episode is not None:
             raise RuntimeError("recording session must be open and between episodes")
+        self.check_finalization()
         if self._stage_getter() is not self._stage:
             raise RuntimeError("USD stage changed during recording session")
         output_dir = prepare_private_output_dir(
             output_dir, repository=Path(__file__).resolve().parents[1], min_free_bytes=1 << 30
         )
         try:
-            self._link_static_artifacts(output_dir)
+            with _timed_boundary(self._timing_observer, "episode_static_link"):
+                self._link_static_artifacts(output_dir)
             manifest = json.loads(json.dumps(self._static_manifest))
             metadata = manifest["session_metadata"]
             metadata["episode_id"] = episode_id
             manifest["artifact_state"] = "in_progress"
             manifest["committed_frames"] = 0
-            _atomic_write_json(output_dir / "recording_state.json", {
-                "artifact_state": "in_progress", "committed_frames": 0, "outcome": None,
-            })
-            path = output_dir / "session.hdf5"
-            storage, sampler = open_explicit_session(
-                str(path),
-                recordables=self._recordables,
-                stage=self._stage,
-                session_metadata=metadata,
-                stage_snapshot=manifest["stage_snapshot"],
-                deferred_groups=(self._d0.group,),
-                recordables_already_open=True,
-                sampler=self._sampler,
-            )
-            try:
-                start_explicit_episode(storage, sampler, self._recordables, {
-                    "artifact_state": "in_progress", "episode_id": episode_id, "outcome": None,
+            with _timed_boundary(self._timing_observer, "episode_state_open"):
+                _atomic_write_json(output_dir / "recording_state.json", {
+                    "artifact_state": "in_progress", "committed_frames": 0, "outcome": None,
                 })
+            path = output_dir / "session.hdf5"
+            with _timed_boundary(self._timing_observer, "episode_hdf_open"):
+                storage, sampler = open_explicit_session(
+                    str(path),
+                    recordables=self._recordables,
+                    stage=self._stage,
+                    session_metadata=metadata,
+                    stage_snapshot=manifest["stage_snapshot"],
+                    deferred_groups=(self._d0.group,),
+                    recordables_already_open=True,
+                    sampler=self._sampler,
+                )
+            try:
+                with _timed_boundary(self._timing_observer, "episode_recordable_start"):
+                    start_explicit_episode(storage, sampler, self._recordables, {
+                        "artifact_state": "in_progress", "episode_id": episode_id, "outcome": None,
+                    }, timing_observer=self._timing_observer)
             except Exception:
                 close_explicit_session(
                     storage, self._recordables, success=False,
@@ -824,7 +998,8 @@ class RecordingSession:
                     close_recordables=False,
                 )
                 raise
-            _atomic_write_json(output_dir / "manifest.json", manifest)
+            with _timed_boundary(self._timing_observer, "episode_manifest_open"):
+                _atomic_write_json(output_dir / "manifest.json", manifest)
             identity = {key: str(metadata[key]) for key in REQUIRED_SESSION_METADATA}
             episode = LiveRecording(
                 storage, sampler, self._recordables, self._d0,
@@ -878,7 +1053,22 @@ class RecordingSession:
             raise RuntimeError("recording session has no active episode")
         episode = self.active_episode
         try:
-            episode.end(outcome=outcome, reason=reason)
+            sealed = episode.seal(outcome=outcome, reason=reason, close_recordables=False)
+            _atomic_write_json(episode.output_dir / "recording_state.json", {
+                "artifact_state": "queued_for_finalization",
+                "committed_frames": sealed.committed_frames, "outcome": sealed.outcome,
+            })
+            if self._deferred_sealed is not None:
+                try:
+                    self._submit_deferred()
+                except Exception as exc:
+                    _atomic_write_json(episode.output_dir / "recording_state.json", {
+                        "artifact_state": "failed", "committed_frames": sealed.committed_frames,
+                        "outcome": "failure", "reason": f"prior_finalization_failed:{exc}",
+                    })
+                    raise
+            self._deferred_sealed = sealed
+            self._observe_queue(len(self._finalizer._pending), self._finalizer._pending_bytes)
         finally:
             self.active_episode = None
 
@@ -897,6 +1087,16 @@ class RecordingSession:
                 try:
                     recordable.on_session_close()
                 except Exception as exc:
+                    errors.append(exc)
+            try:
+                self._submit_deferred()
+            except Exception as exc:
+                errors.append(exc)
+            try:
+                self._finalizer.close()
+            except Exception as exc:
+                if not any(type(prior) is type(exc) and str(prior) == str(exc)
+                           for prior in errors):
                     errors.append(exc)
         finally:
             self._closed = True

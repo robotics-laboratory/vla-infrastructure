@@ -5,6 +5,8 @@ import copy
 import hashlib
 import json
 from pathlib import Path
+from threading import Event, Thread
+import time
 from types import SimpleNamespace
 
 import numpy as np
@@ -717,7 +719,7 @@ def _session_fixture(tmp_path, monkeypatch):
         sampler.storage = storage
         return storage, sampler
 
-    def start_segment(storage, sampler, recordables, metadata):
+    def start_segment(storage, sampler, recordables, metadata, **_):
         assert metadata["episode_id"] == "episode_000001"
         events.append("storage_episode_start")
         for recordable in recordables:
@@ -819,6 +821,181 @@ def test_technical_gap_reuses_static_bundle_and_seals_independent_episodes(tmp_p
             expected_stage_snapshot=artifact / "stage_snapshot.usd",
         )
         assert verified_closure["asset_closure_sha256"] == manifest["asset_closure_sha256"]
+
+
+def test_seal_allows_new_causal_episode_before_immutable_finalization(tmp_path, monkeypatch):
+    session, first_storage, _ = _session_fixture(tmp_path, monkeypatch)
+    first = session.active_episode
+    token = first.capture_observation()
+    successor = first.capture_successor(token)
+    first.commit_transition(token, successor, row_for_tokens(token, successor))
+    entered, release = Event(), Event()
+    original = recording_module.finalize_sealed_episode
+
+    def delayed(sealed, observer=None):
+        entered.set()
+        assert release.wait(5)
+        return original(sealed, observer)
+
+    monkeypatch.setattr(recording_module, "finalize_sealed_episode", delayed)
+    session.end_episode(outcome="operator_stopped", reason="tracking_invalid")
+    assert first_storage.closed and not entered.is_set()
+    assert json.loads((first.output_dir / "recording_state.json").read_text())["artifact_state"] == "queued_for_finalization"
+    try:
+        second = session.start_episode(tmp_path / "episode_000001", "episode_000001")
+        assert second.hdf5_path != first.hdf5_path
+        assert second.episode_id != first.episode_id
+        next_token = second.capture_observation()
+        assert next_token.capture_sequence == 0
+        assert next_token.scene_state_snapshot_id.startswith("run:episode_000001:")
+        assert first.committed_frames == 1 and second.committed_frames == 0
+        next_successor = second.capture_successor(next_token)
+        row = row_for_tokens(next_token, next_successor)
+        row["episode_id"] = second.episode_id
+        second.commit_transition(next_token, next_successor, seal_sample(row))
+        session.check_finalization()
+        assert entered.wait(5)
+    finally:
+        release.set()
+        session.close(outcome="aborted", reason="test_complete")
+    assert json.loads((first.output_dir / "recording_state.json").read_text())["artifact_state"] == "finalized"
+
+
+def test_async_finalizer_failure_is_observable_and_blocks_publication(tmp_path, monkeypatch):
+    from tools.isaac_vr_episode_lifecycle import publish_saved_demo
+
+    session, _, _ = _session_fixture(tmp_path, monkeypatch)
+    first = session.active_episode
+    token = first.capture_observation()
+    successor = first.capture_successor(token)
+    first.commit_transition(token, successor, row_for_tokens(token, successor))
+    original = recording_module.sha256_file
+
+    def fail_hdf(path, **kwargs):
+        if Path(path).suffix == ".hdf5":
+            raise OSError("injected hash failure")
+        return original(path, **kwargs)
+
+    monkeypatch.setattr(recording_module, "sha256_file", fail_hdf)
+    session.end_episode(outcome="operator_stopped", reason="tracking_invalid")
+    second = session.start_episode(tmp_path / "episode_000001", "episode_000001")
+    second_token = second.capture_observation()
+    second_successor = second.capture_successor(second_token)
+    second_row = row_for_tokens(second_token, second_successor)
+    second_row["episode_id"] = second.episode_id
+    second.commit_transition(second_token, second_successor, seal_sample(second_row))
+    session.check_finalization()
+    deadline = time.monotonic() + 5
+    while json.loads((first.output_dir / "recording_state.json").read_text())["artifact_state"] != "failed":
+        assert time.monotonic() < deadline
+        time.sleep(0.01)
+    with pytest.raises(RuntimeError, match="finalization failed"):
+        session.check_finalization()
+    with pytest.raises(RuntimeError, match="finalization failed"):
+        session.close()
+    marker = json.loads((first.output_dir / "recording_state.json").read_text())
+    assert marker["artifact_state"] == "failed"
+    assert "injected hash failure" in marker["reason"]
+    assert json.loads((first.output_dir / "manifest.json").read_text())["artifact_state"] != "finalized"
+    with pytest.raises(RuntimeError, match="not conservatively finalized"):
+        publish_saved_demo(
+            tmp_path / "saved", demo_id="demo",
+            episodes=[{"episode_id": first.episode_id, "output_dir": str(first.output_dir)}],
+            profile=first.source_profile, start_tick=1, stop_tick=2, task_outcome="success",
+        )
+
+
+def test_previous_finalizer_submission_failure_still_seals_current_hdf(tmp_path, monkeypatch):
+    session, _, _ = _session_fixture(tmp_path, monkeypatch)
+    first = session.active_episode
+    token = first.capture_observation()
+    successor = first.capture_successor(token)
+    first.commit_transition(token, successor, row_for_tokens(token, successor))
+    session.end_episode(outcome="operator_stopped", reason="tracking_invalid")
+    second = session.start_episode(tmp_path / "episode_000001", "episode_000001")
+    second_token = second.capture_observation()
+    second_successor = second.capture_successor(second_token)
+    row = row_for_tokens(second_token, second_successor)
+    row["episode_id"] = second.episode_id
+    second.commit_transition(second_token, second_successor, seal_sample(row))
+    monkeypatch.setattr(session._finalizer, "submit", lambda _: (_ for _ in ()).throw(
+        RuntimeError("queue unavailable")
+    ))
+    with pytest.raises(RuntimeError, match="queue unavailable"):
+        session.end_episode(outcome="operator_stopped", reason="tracking_invalid")
+    assert second.storage.closed and session.active_episode is None
+    assert json.loads((first.output_dir / "recording_state.json").read_text())["artifact_state"] == "failed"
+    assert json.loads((second.output_dir / "recording_state.json").read_text())["artifact_state"] == "failed"
+    session.close()
+
+
+def test_finalizer_queue_is_bounded_and_shutdown_drains(tmp_path, monkeypatch):
+    entered, release = Event(), Event()
+    completed = []
+
+    def slow(sealed, observer=None):
+        entered.set()
+        assert release.wait(5)
+        completed.append(sealed.output_dir.name)
+
+    monkeypatch.setattr(recording_module, "finalize_sealed_episode", slow)
+    owner = recording_module._FinalizationOwner(None, max_pending=2)
+    descriptors = []
+    for index in range(3):
+        directory = tmp_path / str(index)
+        directory.mkdir()
+        hdf = directory / "session.hdf5"
+        hdf.write_bytes(b"hdf")
+        descriptors.append(recording_module.SealedEpisode(
+            directory, hdf, directory / "snapshot.usd", 0, 0,
+            "aborted", "test", {}, None, None,
+        ))
+    owner.submit(descriptors[0])
+    assert entered.wait(5)
+    owner.submit(descriptors[1])
+    third_done = Event()
+    worker = Thread(target=lambda: (owner.submit(descriptors[2]), third_done.set()))
+    worker.start()
+    try:
+        time.sleep(0.03)
+        assert not third_done.is_set()
+        assert len(owner._pending) <= 2
+    finally:
+        release.set()
+        worker.join(timeout=5)
+        owner.close()
+    assert third_done.is_set()
+    assert completed == ["0", "1", "2"]
+    assert owner._pending_bytes == 0
+
+
+def test_finalizer_shutdown_waits_for_pending_work(tmp_path, monkeypatch):
+    entered, release, closed = Event(), Event(), Event()
+
+    def slow(sealed, observer=None):
+        entered.set()
+        assert release.wait(5)
+
+    monkeypatch.setattr(recording_module, "finalize_sealed_episode", slow)
+    directory = tmp_path / "episode"
+    directory.mkdir()
+    hdf = directory / "session.hdf5"
+    hdf.write_bytes(b"hdf")
+    owner = recording_module._FinalizationOwner(None)
+    owner.submit(recording_module.SealedEpisode(
+        directory, hdf, directory / "snapshot.usd", 0, 0,
+        "aborted", "test", {}, None, None,
+    ))
+    assert entered.wait(5)
+    shutdown = Thread(target=lambda: (owner.close(), closed.set()))
+    shutdown.start()
+    try:
+        time.sleep(0.03)
+        assert not closed.is_set()
+    finally:
+        release.set()
+        shutdown.join(timeout=5)
+    assert closed.is_set()
 
 
 def test_session_failure_does_not_publish_finalized_marker(tmp_path, monkeypatch):

@@ -153,6 +153,14 @@ def publish_saved_demo(
         value = json.loads(manifest.read_text(encoding="utf-8"))
         if value["artifact_state"] != "finalized" or value["outcome"] != "operator_stopped":
             raise RuntimeError(f"episode is not conservatively finalized: {manifest}")
+        marker = json.loads((manifest.parent / "recording_state.json").read_text(encoding="utf-8"))
+        if (
+            marker.get("artifact_state") != "finalized"
+            or not isinstance(value.get("hdf5_sha256"), str)
+            or len(value["hdf5_sha256"]) != 64
+            or marker.get("hdf5_sha256") != value.get("hdf5_sha256")
+        ):
+            raise RuntimeError(f"episode has no matching finalized marker: {manifest}")
         identity = (value["schema"], value["transition_schema"])
         if source_schema is not None and identity != (source_schema, row_schema):
             raise RuntimeError(f"technical episode schema differs: {manifest}")

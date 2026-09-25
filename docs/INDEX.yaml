@@ -3348,3 +3348,13 @@ documents:
   status: historical
   owner: vr.performance
   mutable: false
+- path: docs/experiments/20260925_record_boundary_tail_reduction/REPORT.md
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+- path: docs/experiments/20260925_record_boundary_tail_reduction/results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
