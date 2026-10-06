@@ -256,7 +256,11 @@ def test_presenter_retains_panels_and_excludes_them_before_render(monkeypatch):
     presenter = RecordingUi(config, isolation=isolation)
     assert len(containers) == 2 and len(isolation.panels) == 1
     assert containers[0].config["space_stack"] == ["/_xr/stage/xrCamera", (0, 23, -75), "look_at"]
-    assert containers[0].component.config["unit_to_pixel_scale"] == 0.01
+    component = containers[0].component.config
+    assert component["unit_to_pixel_scale"] == 12.0
+    assert component["resolution_scale"] == 1.0
+    # A 22px label must fit in the 72px status layout, not a 0.06px layout.
+    assert component["height"] * component["unit_to_pixel_scale"] == pytest.approx(72)
     assert containers[0].component.config["update_policy"] == "on_demand"
     events.clear()
     presenter.update(RecordingState.WAITING)

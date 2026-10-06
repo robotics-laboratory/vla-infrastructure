@@ -52,6 +52,15 @@ displaying accepted recording events and retaining visible feedback across the
 synchronous reset. [The display adapter](../../tools/isaac_vr_recording_ui.py)
 observes the existing lifecycle and single controller pipeline, reads no RGB,
 uses on-demand widget invalidation and retains containers with show/hide.
+For text, `unit_to_pixel_scale` converts stage units to the configured UI pixels
+per metre and `resolution_scale` stays at one. Copying the camera-image
+presenter's resolution scale alone made the layout smaller than one UI pixel
+and produced blank panels. Texture resolution alone does not establish a usable
+text layout. The head-locked anchor, metric distance and sensor isolation reuse
+the upstream placement unchanged; no desktop `DISPLAY` is required for this
+offscreen widget rendering. The [upstream sizing contract](https://docs.omniverse.nvidia.com/kit/docs/omni.kit.scene_view.xr_utils/1.0.2/WidgetComponent.html)
+distinguishes layout size from texture supersampling. Native Kit rendering with
+a synthetic camera checks drawing and state updates, not physical Quest visibility.
 It reuses the existing scene-partition exclusion for dataset sensors; the existing
 snapshot sanitizer removes the runtime `/_xr` and `/ui` graphs before offline replay.
 No dependency, environment, recorder, processor, protocol or gate-state change is
@@ -214,8 +223,14 @@ Every run retains:
 - `result.json`: runtime result and process/shutdown status, when the child reaches
   reporting. Early failures may leave only manifest/config; nonzero exit remains fatal.
 
-DIAG and explicitly profiled RECORD also retain `stdout.log` (combined stdout and
-stderr) and `performance.jsonl`. The launcher prints the run, recording, result
+Every live launch retains `stdout.log` (combined stdout and stderr). DIAG and
+explicitly profiled RECORD additionally retain `performance.jsonl`.
+Ctrl-C latches an S2 stop request; the Python control loop unwinds outside Kit's
+event dispatcher, finalizes pending recording work, writes its report and stops
+XR/owned CloudXR before Kit closes. A native callback can consume a raised
+`KeyboardInterrupt`, so stopping cannot depend on that exception escaping a
+callback. Repeated Ctrl-C does not interrupt finalization or teardown.
+The launcher prints the run, recording, result
 and performance paths on exit. Optional bounded camera
 captures live under `camera_feed_diagnostics/`; scene snapshots use the supplied
 path. RUN does not create the diagnostic bundle. Retain a completed physical

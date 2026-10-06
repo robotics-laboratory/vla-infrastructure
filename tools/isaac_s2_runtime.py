@@ -215,7 +215,7 @@ def _camera_sample(env, previous_indices: np.ndarray | None) -> dict[str, Any]:
     return result
 
 
-def run_s2(env, args_cli, simulation_app) -> int:
+def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
     """Run S2 using an already-created accepted S1 environment."""
 
     recording_requested = bool(getattr(args_cli, "s2_record", False))
@@ -642,6 +642,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     yaml.safe_load(args_cli.config.read_text()), carb.settings.get_settings()
                 )
             for step in range(1, args_cli.s2_max_control_steps + 1):
+                if stop_requested is not None and stop_requested():
+                    raise KeyboardInterrupt
                 if not simulation_app.is_running():
                     break
                 control_steps = step
@@ -682,6 +684,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     )
                     stage_started_ns = time.perf_counter_ns()
                 action = device.advance()
+                if stop_requested is not None and stop_requested():
+                    raise KeyboardInterrupt
                 if performance is not None:
                     performance.add_stage(
                         "teleop_advance", time.perf_counter_ns() - stage_started_ns

@@ -135,8 +135,11 @@ class RecordingUi:
                 PanelWidget,
                 width=float(layout["width_m"]) / meters_per_unit,
                 height=float(layout["height_m"]) / meters_per_unit,
-                resolution_scale=float(config["pixels_per_m"]),
-                unit_to_pixel_scale=meters_per_unit,
+                # Text needs pixel-sized layout coordinates, unlike an image
+                # provider that can fill a sub-pixel UI layout. Resolution scale
+                # supersamples that layout; it does not enlarge its usable area.
+                resolution_scale=1.0,
+                unit_to_pixel_scale=float(config["pixels_per_m"]) * meters_per_unit,
                 update_policy=UpdatePolicy.ON_DEMAND,
             )
             container = UiContainer(

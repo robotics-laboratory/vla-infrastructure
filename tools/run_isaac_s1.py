@@ -254,6 +254,19 @@ if (
 
 app_launcher = AppLauncher(args_cli)
 simulation_app = app_launcher.app
+# A KeyboardInterrupt raised inside a Kit event callback can be consumed by
+# its native dispatcher. Latch Ctrl-C instead, and unwind at the S2 loop's
+# Python boundary so recording finalization and XR teardown both run.
+vr_stop_requested = False
+
+
+def request_vr_stop(_signum, _frame) -> None:
+    global vr_stop_requested
+    vr_stop_requested = True
+
+
+if args_cli.s2_teleop:
+    signal.signal(signal.SIGINT, request_vr_stop)
 if args_cli.s2_record or args_cli.s2_replay_hdf5 is not None:
     from isaac_episode_recorder_preflight import preflight_episode_recorder
 
@@ -1112,6 +1125,7 @@ def main() -> int:
             robot_cfg_factory=_robot_cfg,
             wrist_path_resolver=_wrist_path,
             environment_type=BimanualPiperXIsaacEnvironment,
+            stop_requested=lambda: vr_stop_requested,
         )
 
     print("[S1] creating 120 Hz PhysX context", flush=True)
@@ -1269,7 +1283,9 @@ def main() -> int:
         from isaac_s2_runtime import run_s2
 
         try:
-            return run_s2(env, args_cli, simulation_app)
+            return run_s2(
+                env, args_cli, simulation_app, stop_requested=lambda: vr_stop_requested
+            )
         finally:
             if getattr(env, "preview", None) is not None:
                 env.preview.close()

@@ -1291,6 +1291,7 @@ def run_vr(
     robot_cfg_factory,
     wrist_path_resolver,
     environment_type,
+    stop_requested=None,
 ) -> int:
     """Build the selected VR scene, validate it, then enter the existing S2 loop."""
 
@@ -1435,4 +1436,4 @@ def run_vr(
         print(f"[DEMO] scene preview={args_cli.demo_scene_preview}", flush=True)
     from isaac_s2_runtime import run_s2
 
-    return run_s2(env, args_cli, simulation_app)
+    return run_s2(env, args_cli, simulation_app, stop_requested=stop_requested)

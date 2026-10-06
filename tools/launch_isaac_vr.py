@@ -13,7 +13,6 @@ import subprocess
 import shlex
 import signal
 import sys
-from contextlib import nullcontext
 
 from isaac_vr_config import CONFIG_PATH, ASSET_LAB_CONFIG, XR_RESOLUTION_SETTING, load_composition
 
@@ -686,12 +685,7 @@ def main(argv: list[str] | None = None) -> int:
 
     previous_sigint = signal.signal(signal.SIGINT, request_stop)
     try:
-        log_context = (
-            (output_dir / "stdout.log").open("w", encoding="utf-8")
-            if args.performance_enabled
-            else nullcontext(None)
-        )
-        with log_context as log:
+        with (output_dir / "stdout.log").open("w", encoding="utf-8") as log:
             with subprocess.Popen(
                 command,
                 cwd=ROOT,
@@ -703,9 +697,8 @@ def main(argv: list[str] | None = None) -> int:
             ) as process:
                 assert process.stdout is not None
                 for line in process.stdout:
-                    if log is not None:
-                        log.write(line)
-                        log.flush()
+                    log.write(line)
+                    log.flush()
                     print(line, end="", flush=True)
                 return_code = process.wait()
     finally:
@@ -724,7 +717,7 @@ def main(argv: list[str] | None = None) -> int:
         "exit_code": return_code,
         "clean_shutdown": return_code in (0, 130),
         "stop_requested": stop_requested,
-        "stdout_log": str(output_dir / "stdout.log") if args.performance_enabled else None,
+        "stdout_log": str(output_dir / "stdout.log"),
         "launcher": str(Path(__file__).resolve()),
     }
     report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")

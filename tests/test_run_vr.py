@@ -8,8 +8,10 @@ import hashlib
 import importlib
 import json
 import io
+import os
 from pathlib import Path
 import sys
+import signal
 from types import ModuleType, SimpleNamespace as NS
 
 import numpy as np
@@ -144,7 +146,8 @@ def test_manual_record_cli_constraints(launcher):
 
 
 @pytest.mark.parametrize("dry_run", [False, True])
-def test_self_contained_record_bundle(launcher, tmp_path, monkeypatch, dry_run):
+@pytest.mark.parametrize("performance_enabled", [False, True])
+def test_self_contained_record_bundle(launcher, tmp_path, monkeypatch, dry_run, performance_enabled):
     """Exercise launcher paths and log retention without starting Kit or Quest."""
     monkeypatch.setattr(launcher, "verify_stack", lambda _: launcher.STACKS["isaac61"])
     monkeypatch.setattr(launcher, "configure_cloudxr", lambda *a, **kw: None)
@@ -154,22 +157,24 @@ def test_self_contained_record_bundle(launcher, tmp_path, monkeypatch, dry_run):
         "record", "--state-root", str(run / "host"), "--run-dir", str(run),
         "--recordings-root", str(tmp_path / "recordings"),
         "--xr-resolution-scale", "0.4",
-        "--performance-warmup-steps", "60", "--performance-window-steps", "300",
     ]
+    if performance_enabled:
+        options += ["--performance-warmup-steps", "60", "--performance-window-steps", "300"]
 
     class Child:
         def __init__(self, command, **kwargs):
             assert not dry_run
             assert kwargs["env"]["XDG_CACHE_HOME"] == str(run / "host/cache")
-            assert command[command.index("--s2-performance-log") + 1] == str(run / "performance.jsonl")
+            assert ("--s2-performance-log" in command) == performance_enabled
             (run / "result.json").write_text('{}')
             from isaac_s2_performance import S2PerformanceLogger
-            log = S2PerformanceLogger(
-                run / "performance.jsonl", warmup_steps=0, window_steps=1, target_hz=30.0
-            )
-            log.begin_step()
-            log.end_step(1)
-            log.close()
+            if performance_enabled:
+                log = S2PerformanceLogger(
+                    run / "performance.jsonl", warmup_steps=0, window_steps=1, target_hz=30.0
+                )
+                log.begin_step()
+                log.end_step(1)
+                log.close()
             self.stdout = io.StringIO("record child output\n")
 
         def __enter__(self):
@@ -218,7 +223,7 @@ def test_self_contained_record_bundle(launcher, tmp_path, monkeypatch, dry_run):
     if not dry_run:
         assert (run / "stdout.log").read_text() == "record child output\n"
         assert json.loads((run / "result.json").read_text())["process"]["exit_code"] == 0
-        assert (run / "performance.jsonl").is_file()
+        assert (run / "performance.jsonl").is_file() == performance_enabled
     with pytest.raises(FileExistsError):
         launcher.main([*options, "--dry-run"])
 
@@ -818,6 +823,40 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
         assert result["human_recording"]["state"] == "waiting"
         assert ui_updates and all(state == "waiting" for state, _ in ui_updates)
         assert ui_closed == [True]
+        # A stop latched inside vendor advance must unwind on our Python
+        # boundary, before any control or physics step, and still write reports.
+        child_tree = ast.parse((ROOT / "tools/run_isaac_s1.py").read_text())
+        stop_handler = next(
+            node for node in child_tree.body
+            if isinstance(node, ast.FunctionDef) and node.name == "request_vr_stop"
+        )
+        stop_scope = {"vr_stop_requested": False}
+        exec(compile(ast.Module([stop_handler], []), "stop_handler", "exec"), stop_scope)
+
+        def advance_and_stop():
+            # Like a native dispatcher, this callback consumes exceptions.
+            try:
+                os.kill(os.getpid(), signal.SIGINT)
+            except BaseException:
+                pass
+            return torch.cat((original_advance(), torch.zeros(1)))
+
+        device.advance = advance_and_stop
+        targets.clear()
+        args.report = tmp_path / "interrupted-record-result.json"
+        args.s2_performance_log = tmp_path / "interrupted-performance.jsonl"
+        previous_sigint = signal.signal(signal.SIGINT, stop_scope["request_vr_stop"])
+        try:
+            assert runtime.run_s2(
+                env, args, NS(is_running=lambda: True),
+                stop_requested=lambda: stop_scope["vr_stop_requested"],
+            ) == 130
+        finally:
+            signal.signal(signal.SIGINT, previous_sigint)
+        assert not targets
+        result = json.loads(args.report.read_text())
+        assert result["execution"]["stopped_by_user"]
+        assert ui_closed == [True, True]
 
 
 def test_current_doc_sources_and_contract():
