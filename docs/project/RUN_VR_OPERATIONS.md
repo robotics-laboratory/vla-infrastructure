@@ -207,6 +207,24 @@ export ISAACLAB_CXR_ACCEPT_EULA=1
 Use the exact client URL and headset setup in the canonical config's
 `cloudxr_web_client`. The host prints these instructions; browser localStorage is
 owned by the headset. The physical launch requires tracking from both controllers.
+
+If the headset control panel shows buttons without Start / Reset / Disconnect
+text, first close the old client tab and open the configured URL in a new tab.
+NVIDIA moved the published client from the `IsaacTeleop` Pages path to
+`IsaacCapture`; the release series remains unchanged. Direct HTTP checks on
+2026-10-06 returned 404 for the old release page and its `bundle.emulator.js`,
+and 200 for the new page, `bundle.js` and `bundle.emulator.js`. Inspection of
+the published main bundle found that UIKit's Inter font loaders import the
+`emulator` chunk; that chunk contains the font data. A cached old main bundle
+can therefore keep drawing buttons while failing to load text. This is a
+client resource failure hypothesis for the operator's symptom, not a headset
+verification. The control panel is the client's
+[CloudXRUI](https://github.com/NVIDIA/IsaacCapture/blob/release/1.4.x/deps/cloudxr/webxr_client/src/CloudXRUI.tsx),
+separate from Isaac's SceneUI camera previews and recording panels. If text is
+still absent on the new URL, reload that page and check its browser console for
+chunk-loading/WebGL errors before changing host widget sizing. The launcher
+prints the URL but cannot reload or clear the headset browser's cache.
+
 Client start/stop controls teleoperation activity. Client reset resets the scene,
 processor and IK and requires fresh rebase. Disconnect holds targets; reconnect
 rebases. Host Ctrl-C preserves available reports and exits 130, never PASS.

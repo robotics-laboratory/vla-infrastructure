@@ -16,9 +16,9 @@ operator:
     legacy: {preview_isolation: "off", preview_cameras: 2}
 
 cloudxr_web_client:
-  url: https://nvidia.github.io/IsaacTeleop/client/release-1.4.x/
+  url: https://nvidia.github.io/IsaacCapture/client/release-1.4.x/
   release_series: 1.4.x
-  operator_setup: Open the exact URL in the headset, select Isaac Lab, press Reset to defaults, then select the Quest 3 device profile before connecting.
+  operator_setup: Close any old IsaacTeleop client tab and open the exact URL in the headset, select Isaac Lab, press Reset to defaults, then select the Quest 3 device profile before connecting.
   delivery: Operator-facing only; the browser client and its localStorage are not configured by the host launcher.
 
 demo_physics:

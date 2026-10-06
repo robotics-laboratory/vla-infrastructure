@@ -601,7 +601,7 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
             left[7] = float(self.index not in (8, 9))
             right[8] = float(self.index in (5, 6))
             left[10], right[10] = (-1 + self.index / 15), (1 - self.index / 15)
-            return torch.tensor([*left, *right, 0.0, 0.0, 0.0])
+            return torch.tensor([*left, *right, 0.0, 0.0, 0.0, 0.0])
 
     device = Device()
     module(
@@ -611,6 +611,7 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
         DEMO_DISPLAY_BUTTON_INDEX=22,
         DEMO_RECENTER_BUTTON_INDEX=24,
         RECORD_STOP_BUTTON_INDEX=25,
+        PREVIEW_LAYOUT_BUTTON_INDEX=25,
         PIPELINE_ACTION_DIM=22,
         build_piper_x_bimanual_pipeline=lambda **k: None,
         create_piper_x_teleop_device=lambda *a, **k: device,
@@ -713,7 +714,8 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
         display_control="left_primary_click",
         backdrop_control="right_secondary_click",
         recenter_control="right_thumbstick_click",
-        pipeline_action_dim=25,
+        layout_control="left_thumbstick_click",
+        pipeline_action_dim=26,
         display_visible=False,
         backdrop_visible=True,
         open=lambda e: None,
@@ -722,6 +724,7 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
         consume_display_button=lambda *a, **k: None,
         consume_backdrop_button=lambda *a, **k: None,
         consume_recenter_button=lambda *a, **k: False,
+        consume_layout_button=lambda *a, **k: False,
         performance_report=lambda *a: {},
     )
     admitted = []
@@ -794,8 +797,6 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
             pytest.fail("WAITING must not construct the recorder")
 
         monkeypatch.setattr(isaac_vr_recording, "start_live_recording", unexpected_record)
-        original_advance = device.advance
-        device.advance = lambda: torch.cat((original_advance(), torch.zeros(1)))
         ui_updates, ui_closed = [], []
 
         class UiSpy:
@@ -840,13 +841,15 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
         stop_scope = {"vr_stop_requested": False}
         exec(compile(ast.Module([stop_handler], []), "stop_handler", "exec"), stop_scope)
 
+        original_advance = device.advance
+
         def advance_and_stop():
             # Like a native dispatcher, this callback consumes exceptions.
             try:
                 os.kill(os.getpid(), signal.SIGINT)
             except BaseException:
                 pass
-            return torch.cat((original_advance(), torch.zeros(1)))
+            return original_advance()
 
         device.advance = advance_and_stop
         targets.clear()

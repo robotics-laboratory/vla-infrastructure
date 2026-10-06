@@ -134,7 +134,7 @@ def test_robosyn_demo_pins_matching_webxr_client_and_records_provenance() -> Non
         (ROOT / "configs/isaac61_vr_runtime.yaml").read_text(encoding="utf-8")
     )
     client_url = config["cloudxr_web_client"]["url"]
-    assert client_url == "https://nvidia.github.io/IsaacTeleop/client/release-1.4.x/"
+    assert client_url == "https://nvidia.github.io/IsaacCapture/client/release-1.4.x/"
 
     launcher = (ROOT / "tools/launch_isaac_vr.py").read_text(encoding="utf-8")
     assert '"schema": "piper_x_isaac_vr_run_manifest_v1"' in launcher
