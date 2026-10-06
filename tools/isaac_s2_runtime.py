@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from functools import partial
-from contextlib import nullcontext
+from contextlib import nullcontext, suppress
 import hashlib
 import importlib.metadata
 import json
@@ -56,6 +56,7 @@ from isaac_vr_episode_lifecycle import (
     RecordingLifecycle, RecordingState, publish_saved_demo, publish_unsaved_demo,
     technical_episode_output_dir,
 )
+from isaac_vr_recording_ui import RecordingUi
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -492,6 +493,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
     demo_start_tick = 0
     demo_stop_tick = 0
     lifecycle: RecordingLifecycle | None = None
+    recording_ui: RecordingUi | None = None
     demo_start_requested_ns: int | None = None
 
     def finalize_recording(outcome: str, reason: str) -> None:
@@ -619,6 +621,10 @@ def run_s2(env, args_cli, simulation_app) -> int:
                 discard=lambda demo_id: classify_unsaved(demo_id, "discarded"),
                 interrupted=lambda demo_id: classify_unsaved(demo_id, "interrupted"),
             )
+            if experiment is not None and args_cli.xr:
+                ui_config = experiment.config.get("recording_ui", {})
+                if ui_config.get("enabled", False):
+                    recording_ui = RecordingUi(ui_config, isolation=experiment.preview_isolation)
             print(json.dumps({"event": "human_recording_state", "state": "waiting", "buttons":
                 {"start": "X", "stop": "Y", "save": "X", "discard": "B",
                  "success": "X", "failure": "Y", "incomplete": "B"}}), flush=True)
@@ -691,6 +697,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         print(json.dumps({"event": "human_recording_state", "state": lifecycle.state.value,
                             "demo_id": lifecycle.demo_id}), flush=True)
                     if lifecycle.state is RecordingState.INTERRUPTED:
+                        if recording_ui is not None:
+                            recording_ui.update(lifecycle.state)
                         break
                     buttons = np.zeros(3, dtype=np.float32)
                     if action is not None:
@@ -715,6 +723,14 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     if event is not None or lifecycle.state != previous_state:
                         print(json.dumps({"event": "human_recording_state", "state": lifecycle.state.value,
                             "demo_id": lifecycle.demo_id, "input": event}), flush=True)
+                    if recording_ui is not None and (
+                        lifecycle.state is not RecordingState.RECORDING or event is not None
+                    ):
+                        recording_ui.update(
+                            lifecycle.state, event=event,
+                            pressed=tuple(name for name, value in zip(("X", "Y", "B"), buttons)
+                                          if value >= 0.5),
+                        )
                     if (
                         lifecycle.state in (
                             RecordingState.WAITING, RecordingState.REVIEW,
@@ -729,6 +745,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                             lifecycle.external_reset()
                         else:
                             reset_demo()
+                        if recording_ui is not None:
+                            recording_ui.update(lifecycle.state, event="reset")
                         continue
                     if lifecycle.state in (
                         RecordingState.REVIEW, RecordingState.CLASSIFY_OUTCOME
@@ -1059,6 +1077,8 @@ def run_s2(env, args_cli, simulation_app) -> int:
                     saturated_frames += int(ik.apply(solution))
                 if eligible:
                     env.last_control_decision = solution
+                if recording_ui is not None and lifecycle is not None:
+                    recording_ui.update(lifecycle.state, gap=not eligible)
                 if performance is not None:
                     performance.add_stage("ik_apply", time.perf_counter_ns() - stage_started_ns)
                     stage_started_ns = time.perf_counter_ns()
@@ -1233,6 +1253,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
         recording_failure_reason = f"{type(exc).__name__}: {exc}"
         if lifecycle is not None:
             lifecycle.fail(exc)
+            if recording_ui is not None:
+                with suppress(Exception):
+                    recording_ui.update(lifecycle.state, error=lifecycle.error)
             print(json.dumps({"event": "human_recording_state", "state": "failed",
                 "error": lifecycle.error, "demo_id": lifecycle.demo_id}), flush=True)
         raise
@@ -1271,8 +1294,12 @@ def run_s2(env, args_cli, simulation_app) -> int:
             if experiment is not None:
                 experiment.close()
         finally:
-            if performance is not None:
-                performance_summary = performance.close()
+            try:
+                if recording_ui is not None:
+                    recording_ui.close()
+            finally:
+                if performance is not None:
+                    performance_summary = performance.close()
 
     elapsed = time.perf_counter() - started
     gpu_end = _gpu_observation() if diagnostic else None

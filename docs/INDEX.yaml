@@ -3358,3 +3358,9 @@ documents:
   status: historical
   owner: vr.performance
   mutable: false
+- path: docs/evidence/S2/20261006_recording_ui_inputs/isaac61_vr_runtime_before_ui.yaml
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates: [S2]

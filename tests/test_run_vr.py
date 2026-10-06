@@ -598,6 +598,7 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
         DEMO_BACKDROP_BUTTON_INDEX=23,
         DEMO_DISPLAY_BUTTON_INDEX=22,
         DEMO_RECENTER_BUTTON_INDEX=24,
+        RECORD_STOP_BUTTON_INDEX=25,
         PIPELINE_ACTION_DIM=22,
         build_piper_x_bimanual_pipeline=lambda **k: None,
         create_piper_x_teleop_device=lambda *a, **k: device,
@@ -773,38 +774,32 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
         half = len(admitted) // 2
         assert admitted[:half] == admitted[half:] == list(range(1, half + 1))
     else:
-        # Execute normal RECORD's logger branch without diagnostic observers.
+        # Human RECORD waits for Start; its HUD/logger must not create an episode
+        # or run diagnostic RGB observers while the operator is still waiting.
         import isaac_vr_recording
 
-        closed = []
-        record = NS(
-            committed_frames=0,
-            discarded_observations=0,
-            rejections={},
-            run_id="run",
-            session_id="session",
-            episode_id="episode_000000",
-            output_dir=tmp_path / "recording",
-            source_profile="isaac_human_vr_offline_rgb_v2",
-            capture_observation=lambda: NS(observation=env.current_capture),
-            discard_observation=lambda *a, **kw: None,
-            close=lambda **kw: closed.append(kw),
-        )
-        monkeypatch.setattr(isaac_vr_recording, "start_live_recording", lambda *a, **kw: record)
-        class FakeRecordingSession:
-            def __init__(self, first):
-                self.active_episode = first
+        def unexpected_record(*args, **kwargs):
+            pytest.fail("WAITING must not construct the recorder")
 
-            def end_episode(self, *, outcome, reason):
-                self.active_episode.close(outcome=outcome, reason=reason)
-                self.active_episode = None
+        monkeypatch.setattr(isaac_vr_recording, "start_live_recording", unexpected_record)
+        original_advance = device.advance
+        device.advance = lambda: torch.cat((original_advance(), torch.zeros(1)))
+        ui_updates, ui_closed = [], []
 
-            def close(self, **_):
-                pass
+        class UiSpy:
+            def __init__(self, config, *, isolation):
+                assert config["enabled"] and isolation is composition.preview_isolation
 
-        monkeypatch.setattr(isaac_vr_recording, "RecordingSession", FakeRecordingSession)
-        monkeypatch.setattr(runtime, "recording_portable_roots", lambda _: {})
+            def update(self, state, **kwargs):
+                ui_updates.append((state.value, kwargs))
+
+            def close(self):
+                ui_closed.append(True)
+
+        monkeypatch.setattr(runtime, "RecordingUi", UiSpy)
+        composition.preview_isolation = object()
         composition.prepare_recording_view = lambda: None
+        args.xr = True
         args.s2_mode = "run"
         args.s2_record = args.s2_teleop = True
         args.s2_recording_dir = tmp_path / "recording"
@@ -819,7 +814,10 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
         assert env.performance_logger.path == args.s2_performance_log
         result = json.loads(args.report.read_text())
         assert result["execution"]["performance"]["control"]["samples"] == 4
-        assert closed and result["recording"]["committed_frames"] == 0
+        assert result.get("recording") is None
+        assert result["human_recording"]["state"] == "waiting"
+        assert ui_updates and all(state == "waiting" for state, _ in ui_updates)
+        assert ui_closed == [True]
 
 
 def test_current_doc_sources_and_contract():

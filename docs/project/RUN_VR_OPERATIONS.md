@@ -14,8 +14,19 @@ before using it in another state. In particular, holding X after Save cannot
 select success. Stop seals the
 source recording before review while XR input stays live. The state and button
 mapping are printed as `human_recording_state` events and the final state is
-included in the run report. Physical Quest visibility of these events or a
-headset menu has not been qualified. A saved demonstration gets a separate
+included in the run report. Human RECORD also displays a head-locked status strip
+and a Stop review window, selected by `recording_ui` in the
+[canonical VR config](../../configs/isaac61_vr_runtime.yaml). The strip shows
+`[ready]` with Start, `[recording]` with Stop, or `[stopped]` during review.
+An ineligible recording tick adds `Input gap: no sample`; it does not open review.
+The review window shows the current X/Y/B choices and held buttons with a release
+reminder. Save remains visible as the accepted choice on the outcome screen;
+completed outcome selection or Discard highlights the accepted item and retains
+its confirmation after the existing scene reset for the configured duration.
+Confirmation does not delay reset or prevent another Start. "Demonstration saved"
+appears only after successful saved-index publication and reset; it does not mean
+dataset admission. Physical Quest visibility/readability is still unqualified.
+A saved demonstration gets a separate
 `saved_demos/<demo_id>.json` index beside the recording directory only after
 task outcome selection. It records separate `save_classification: saved` and
 `task_outcome: success|failure|incomplete`, ordered technical episode directories,
@@ -31,6 +42,30 @@ classification is interrupted. Discard and completed classification run a state-
 scene/device/processor/IK reset
 and returns to `WAITING`; another Start creates a new causal scope. Disconnect
 seals an active episode conservatively and never saves the demonstration.
+
+The recording UI composes the installed Kit `XRSceneView` and `xr_utils`
+`UiContainer` / `WidgetComponent`, as already used by the upstream camera-feed
+presenter. The pinned candidates are `omni.kit.scene_view.xr` 1.0.4 and
+`omni.kit.scene_view.xr_utils` 1.0.2 in the declared Isaac environment; upstream
+owns scene placement, rendering and panel visibility. The remaining S2/D1 gap is
+displaying accepted recording events and retaining visible feedback across the
+synchronous reset. [The display adapter](../../tools/isaac_vr_recording_ui.py)
+observes the existing lifecycle and single controller pipeline, reads no RGB,
+uses on-demand widget invalidation and retains containers with show/hide.
+It reuses the existing scene-partition exclusion for dataset sensors; the existing
+snapshot sanitizer removes the runtime `/_xr` and `/ui` graphs before offline replay.
+No dependency, environment, recorder, processor, protocol or gate-state change is
+needed. Ordinary RUN/DIAG and recorder-only/injected smoke do not construct these
+panels. Automated model/presenter checks are regression checks, not registered
+physical acceptance evidence for [[gate:S2]] or dataset evidence for [[gate:D1]].
+
+When UI settings were added, the registered `vr_three_camera_boundary_config`
+input was relocated from `configs/isaac61_vr_runtime.yaml` to the
+[frozen pre-UI configuration](../evidence/S2/20261006_recording_ui_inputs/isaac61_vr_runtime_before_ui.yaml).
+Its bytes come from `63c6db11fb1d882e023bf12277d247b665ce8052` and retain the original
+registered SHA-256 `309697428a2281972ca9780f579cf43377fd247e2e3c73d9886441e8c5f65643`.
+Only the artifact locator/description changed; existing evidence bindings and tested
+scope remain unchanged. That source snapshot is not a UI qualification result.
 
 In RECORD, tracked intentional clutch engagement, hold and release rebase are
 causal action rows in the same technical episode as motion. Both arms may have

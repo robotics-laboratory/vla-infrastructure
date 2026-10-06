@@ -7,7 +7,8 @@ import json
 from pathlib import Path
 from threading import Event, Thread
 import time
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
+import sys
 
 import numpy as np
 import pytest
@@ -1256,6 +1257,29 @@ def test_recording_writes_atomic_portable_asset_closure_sidecar(tmp_path):
     assert json.loads(sidecar.read_text()) == closure
     assert closure["stage_snapshot_path"] == "recording/stage_snapshot.usd"
     assert len(closure["asset_closure_sha256"]) == 64
+
+
+def test_snapshot_sanitizer_removes_recording_ui_without_changing_live_stage(monkeypatch, tmp_path):
+    live_paths = {"/World", "/World/LeftPiper", "/World/demo_scene", "/ui", "/_xr", "/Render", "/Replicator"}
+    snapshot_paths = live_paths.copy()
+    snapshot = tmp_path / "stage_snapshot.usd"
+
+    def save():
+        snapshot.write_text("\n".join(sorted(snapshot_paths)))
+        return True
+
+    stage = SimpleNamespace(
+        GetPrimAtPath=lambda path: SimpleNamespace(IsValid=lambda: path in snapshot_paths),
+        RemovePrim=snapshot_paths.remove,
+        GetRootLayer=lambda: SimpleNamespace(Save=save),
+    )
+    pxr = ModuleType("pxr")
+    pxr.Usd = SimpleNamespace(Stage=SimpleNamespace(Open=lambda path: stage))
+    monkeypatch.setitem(sys.modules, "pxr", pxr)
+    assert recording_module._sanitize_exported_stage(snapshot) is stage
+    assert snapshot_paths == {"/World", "/World/LeftPiper", "/World/demo_scene"}
+    assert "/ui" in live_paths and "/_xr" in live_paths
+    assert "/ui" not in snapshot.read_text()
 
 
 def test_private_output_path_validation(tmp_path):

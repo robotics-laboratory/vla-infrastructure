@@ -162,18 +162,6 @@ vr_camera_feeds:
 diagnostics:
   camera_capture_limit_per_feed: 12
 
-recording_ui:
-  enabled: true
-  status: SELECTED_HUMAN_ACCEPTANCE_PENDING
-  implementation: Kit XRSceneView + UiContainer + WidgetComponent; existing X/Y/B lifecycle input
-  placement: head_locked
-  distance_m: 0.75
-  pixels_per_m: 1200.0
-  feedback_seconds: 1.2
-  layout:
-    status: {width_m: 0.64, height_m: 0.06, offset_y_m: 0.23}
-    review: {width_m: 0.60, height_m: 0.32, offset_y_m: -0.02}
-
 validation:
   camera_max_stale_control_steps: 2
   camera_progression: Source-owned Camera.frame must advance within the bounded control-step tolerance; resets start a new epoch. No image-content-change requirement for static scenes.

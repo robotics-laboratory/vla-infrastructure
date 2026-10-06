@@ -1278,7 +1278,9 @@ def _sanitize_exported_stage(snapshot: Path) -> Any:
     ``export_stage_snapshot`` may canonicalize authored asset paths.  Hashing the
     live stage would therefore describe a different composed input than replay
     later opens.  Render, Replicator, and XR graphs are runtime products and
-    collide with fresh offline render products when persisted.  A separate USD
+    collide with fresh offline render products when persisted. SceneUI's /ui
+    draw systems also contain transient textures, including the recording HUD.
+    A separate USD
     stage preserves the active simulation while binding provenance to the
     sanitized snapshot that replay actually opens.
     """
@@ -1287,7 +1289,7 @@ def _sanitize_exported_stage(snapshot: Path) -> Any:
     stage = Usd.Stage.Open(str(snapshot))
     if stage is None:
         raise RuntimeError(f"could not open exported recording snapshot: {snapshot}")
-    for path in ("/Render", "/Replicator", "/_xr"):
+    for path in ("/Render", "/Replicator", "/_xr", "/ui"):
         if stage.GetPrimAtPath(path).IsValid():
             stage.RemovePrim(path)
     if stage.GetRootLayer().Save() is False:

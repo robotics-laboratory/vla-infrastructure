@@ -2474,9 +2474,11 @@ artifacts:
   vr_three_camera_boundary_config:
     kind: processor_config
     sha256: 309697428a2281972ca9780f579cf43377fd247e2e3c73d9886441e8c5f65643
-    path: configs/isaac61_vr_runtime.yaml
+    path: docs/evidence/S2/20261006_recording_ui_inputs/isaac61_vr_runtime_before_ui.yaml
     uri: null
-    description: Current VR three-camera canonical role/boundary configuration; no recorder or physical acceptance.
+    description: Frozen VR three-camera configuration; bytes retained from 63c6db11fb1d882e023bf12277d247b665ce8052
+      when recording UI settings were added. Locator-only relocation preserves its original hash and tested scope;
+      no recorder or physical acceptance.
   gate_d0_v4_final_validation:
     kind: report
     sha256: b44d5c41bf8b358478540b665c5b96f2c10f1ed6f2cba2a88e03cc351fbc4c62
