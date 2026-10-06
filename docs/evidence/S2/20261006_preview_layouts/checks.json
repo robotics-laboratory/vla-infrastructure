@@ -1,0 +1,2298 @@
+{
+  "branch": "codex/vr-recording-ui",
+  "current_source_sha256": {
+    "configs/isaac61_vr_runtime.yaml": "a635a7f4ce7160bd4b2e59f40e1f4115b200b6e2f3e8b009279a5be6ac90bcec",
+    "tests/test_isaac_s2_upstream.py": "a3000e71f2e69b63ea37944954ccb14b6f57f0ed0c3aa0c5299845ece42978f5",
+    "tests/test_isaac_vr_config.py": "67c15dac56e8f062be9416fe7c9e7b9a6666a6f5bdf082cde6896ce3396e5e69",
+    "tests/test_isaac_vr_preview_layout.py": "dcd775a64eaea2fa65f814a64295a1fab685584f64cc332cd0a505777a9d15ba",
+    "tools/isaac_s2_runtime.py": "f3d1db401a713eeb2417effcfa36d59f84632d6e4c0529795b1954d0a8c36204",
+    "tools/isaac_s2_upstream.py": "d950ac2425c2350bec5c6039e491714576f219caffe3fcb863c2193014c89271",
+    "tools/isaac_vr_preview_layout.py": "08afa50b723c31fea5cd47114abaff6a7e7b1a6b73ea6b64d2586694403b1260",
+    "tools/isaac_vr_runtime.py": "c1b2a2d4a39cb60b0e936cc4227a067f8615819a8bca43e95769fa29d15ea56a",
+    "tools/launch_isaac_vr.py": "9e58b52aa5783221c92a12ea4535debec22e547e029a6d7c1ad50537e239d2d9"
+  },
+  "failed_attempts": {
+    "/tmp/vr-layout-head-wall-diag.log": {
+      "reason": "CloudXR port occupied by ongoing user RUN; no takeover.",
+      "selected_output": [
+        "Traceback (most recent call last):",
+        "OSError: [Errno 98] Address already in use",
+        "Traceback (most recent call last):",
+        "    raise RuntimeError('CloudXR port 48322 is occupied. Its owner must stop it, '",
+        "RuntimeError: CloudXR port 48322 is occupied. Its owner must stop it, or use --cloudxr-mode existing for YOUR own runtime."
+      ],
+      "sha256": "5ba5c6a1009c458ca79c5bf128e504d97f8c7980566c40610b04a835321c5bc7"
+    },
+    "/tmp/vr-layout-head-wall-offline.log": {
+      "reason": "HUD-on-start is rejected by the plain --smoke guard.",
+      "selected_output": [
+        "vr_layout_native_launcher.py: error: HUD measurement requires --xr-smoke or the default physical XR run"
+      ],
+      "sha256": "e869461aff917715ffd2b30671916526b66517c03f8dae5e403f936f760893db"
+    },
+    "/tmp/vr-layout-native-fixture-v2.log": {
+      "reason": "Offline app did not load xr_utils; feed presenter unavailable.",
+      "selected_output": [
+        "2026-10-06T18:29:49Z [5,211ms] [Warning] [isaaclab_teleop.camera_feed] XR camera PiP is unavailable because Kit SceneUI could not be loaded (ModuleNotFoundError: No module named 'omni.kit.scene_view.xr_utils'). Continuing without PiP.",
+        "Traceback (most recent call last):",
+        "AttributeError: 'NoneType' object has no attribute '_feeds'"
+      ],
+      "sha256": "70534d5f65080f7720b59a53d56c39ff4c85e910111fad28e4264f54830ffc3f"
+    },
+    "/tmp/vr-layout-native-fixture-v3.log": {
+      "reason": "Offline app did not load XRCore; feed presenter unavailable.",
+      "selected_output": [
+        "2026-10-06T18:31:31Z [5,302ms] [Warning] [isaaclab_teleop.camera_feed] XR camera PiP is unavailable because Kit SceneUI could not be loaded (ModuleNotFoundError: No module named 'omni.kit.xr'). Continuing without PiP.",
+        "Traceback (most recent call last):",
+        "AttributeError: 'NoneType' object has no attribute '_feeds'"
+      ],
+      "sha256": "98da7a5c2f9da3479ecc7e11e34263a7548037a880a75ee1028fbd77f4d0f96e"
+    },
+    "/tmp/vr-layout-native-fixture.log": {
+      "reason": "Test fixture omitted the production post-preflight reset; eligible-observation guard correctly rejected startup settling.",
+      "selected_output": [
+        "2026-10-06T18:28:33Z [5,883ms] [Warning] [isaaclab_teleop.camera_feed] XR camera PiP is unavailable because Kit SceneUI could not be loaded (ModuleNotFoundError: No module named 'omni.kit.scene_view.xr_utils'). Continuing without PiP.",
+        "Traceback (most recent call last):",
+        "    raise RuntimeError(\"Startup settling is not an eligible observation\")",
+        "RuntimeError: Startup settling is not an eligible observation"
+      ],
+      "sha256": "11ca17d47cb97e518ce96cabf09e08d3fe85692f453359a5402468116eacf5ba"
+    },
+    "/tmp/vr-layout-offline-hidden.log": {
+      "reason": "Production S2 session cannot enter without NV_CXR_RUNTIME_DIR; UI fixture subsequently avoids S2/OpenXR session entry.",
+      "selected_output": [
+        "2026-10-06T18:26:34Z [6,737ms] [Warning] [isaaclab_teleop.camera_feed] XR camera PiP is unavailable because Kit SceneUI could not be loaded (ModuleNotFoundError: No module named 'omni.kit.scene_view.xr_utils'). Continuing without PiP.",
+        "Traceback (most recent call last):",
+        "RuntimeError: Environment variable NV_CXR_RUNTIME_DIR is not set"
+      ],
+      "sha256": "b556b6d7faf3e190cf66dc70507f703be7bf494a588c02d69345501d10db3e01"
+    }
+  },
+  "native_ui": {
+    "ffft": [
+      {
+        "dataset_products": 3,
+        "kit_pumps": 7,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 23,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 92
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 7,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 7,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      }
+    ],
+    "output": {
+      "backdrop_compute_visibility": "inherited",
+      "backdrop_visibility": {
+        "control": "right_secondary_click",
+        "final": true,
+        "initial": true,
+        "quest_button": "B",
+        "toggle_count": 1,
+        "visual_only": true
+      },
+      "camera_capture_cycles_including_reset": 61,
+      "camera_configured_simulation_hz": {
+        "demo_scene": 30.0,
+        "left_wrist": 30.0,
+        "right_wrist": 30.0
+      },
+      "camera_effective_hz": {
+        "demo_scene": 60.0,
+        "left_wrist": 60.0,
+        "right_wrist": 60.0
+      },
+      "camera_feed_updates": {
+        "callbacks": 68,
+        "duplicate_frames": 0,
+        "hidden_callbacks": 28,
+        "published_frames": 120,
+        "throttled_frames": 0
+      },
+      "camera_frames_end": {
+        "demo_scene": 33,
+        "left_wrist": 33,
+        "right_wrist": 33
+      },
+      "camera_frames_start": {
+        "demo_scene": 1,
+        "left_wrist": 1,
+        "right_wrist": 1
+      },
+      "fixture": "native builder/capture/panels, no S2 decision loop or CloudXR",
+      "native_controller_tests": 3,
+      "observation_capture": {
+        "current": {
+          "cameras": [
+            {
+              "data_generation": 69,
+              "frame": 33,
+              "role": "left_wrist"
+            },
+            {
+              "data_generation": 69,
+              "frame": 33,
+              "role": "right_wrist"
+            },
+            {
+              "data_generation": 69,
+              "frame": 33,
+              "role": "scene"
+            }
+          ],
+          "capture_cycle": 64,
+          "eligible": true,
+          "producer": {
+            "physics_step": 416,
+            "render_generation": 104,
+            "reset_epoch": 3
+          },
+          "state": [
+            -20.0,
+            90.0,
+            -50.0,
+            1.9858179545195753e-09,
+            -7.071675689473977e-09,
+            5.756897181186105e-10,
+            50.0,
+            20.0,
+            90.0,
+            -50.0,
+            1.7112667949348292e-09,
+            -8.284287034143745e-09,
+            4.949948784194191e-10,
+            50.0
+          ]
+        },
+        "failed_attempts": 0,
+        "initial": {
+          "cameras": [
+            {
+              "data_generation": 5,
+              "frame": 1,
+              "role": "left_wrist"
+            },
+            {
+              "data_generation": 5,
+              "frame": 1,
+              "role": "right_wrist"
+            },
+            {
+              "data_generation": 5,
+              "frame": 1,
+              "role": "scene"
+            }
+          ],
+          "capture_cycle": 3,
+          "eligible": true,
+          "producer": {
+            "physics_step": 148,
+            "render_generation": 37,
+            "reset_epoch": 2
+          },
+          "state": [
+            -20.0,
+            90.0,
+            -50.0,
+            -1.335356358822537e-08,
+            1.0502805292134099e-09,
+            7.577454774754244e-10,
+            50.0,
+            20.0,
+            90.0,
+            -50.0,
+            -7.736591811635662e-09,
+            -2.538540933016975e-09,
+            5.223594334857751e-10,
+            50.0
+          ]
+        },
+        "last_error": null,
+        "rgb_cpu_copies_for_capture": 0,
+        "successful_capture_cycles": 64
+      },
+      "optional_demo_performance_mode": "preview_uploads_optimized_renderer_unchanged",
+      "passed": true,
+      "preview_feed_count": 3,
+      "preview_layout": {
+        "mode": "head_locked",
+        "order": [
+          "left_wrist",
+          "demo_scene",
+          "right_wrist"
+        ],
+        "persistent_panel_count": 6,
+        "toggle_count": 6
+      },
+      "preview_partition_topology": {
+        "active_panel_roots": [
+          "/ui/draw_system_0",
+          "/ui/draw_system_1",
+          "/ui/draw_system_2"
+        ],
+        "enabled": true,
+        "panel_roots": [
+          "/ui/draw_system_0",
+          "/ui/draw_system_1",
+          "/ui/draw_system_2",
+          "/ui/draw_system_3",
+          "/ui/draw_system_4",
+          "/ui/draw_system_5"
+        ],
+        "preview_token": "vla_xr_preview",
+        "sensor_paths": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+          "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+          "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera"
+        ],
+        "sensor_token": "vla_sensor_world",
+        "ui_base": "/ui",
+        "world": "unpartitioned/shared",
+        "xr": "unassigned spectator, showAllPartitionsByDefault=true"
+      },
+      "process": {
+        "clean_shutdown": true,
+        "exit_code": 0,
+        "launcher": "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording-ui/tools/launch_isaac_vr.py",
+        "stdout_log": "/tmp/vr-layout-native-fixture-v4/stdout.log",
+        "stop_requested": false
+      },
+      "profile": "dual_cube_to_matching_plates",
+      "validation": {
+        "camera_prim_valid": {
+          "left_wrist": true,
+          "right_wrist": true,
+          "scene": true
+        },
+        "camera_rendering": "live_rgb",
+        "candidate_home_used": true,
+        "collision_free_at_home": true,
+        "finite_state": true,
+        "home_tcp_separation_m": 0.3481847047805837,
+        "home_tcp_world_m": {
+          "left": [
+            0.5789287686347961,
+            0.1740923523902893,
+            1.0264804363250732
+          ],
+          "right": [
+            0.5789287090301514,
+            -0.1740923523902893,
+            1.0264804363250732
+          ]
+        },
+        "imported_prim_valid": {},
+        "maximum_arm_contact_force_n": {
+          "left": 0.0,
+          "right": 0.0
+        },
+        "maximum_home_error_deg_or_mm": 8.281654473307754e-09,
+        "maximum_profile_reset_position_error_m": 0.002000272274017334,
+        "observation_capture": {
+          "cameras": [
+            {
+              "data_generation": 3,
+              "frame": 2,
+              "role": "left_wrist"
+            },
+            {
+              "data_generation": 3,
+              "frame": 2,
+              "role": "right_wrist"
+            },
+            {
+              "data_generation": 3,
+              "frame": 2,
+              "role": "scene"
+            }
+          ],
+          "capture_cycle": 2,
+          "eligible": false,
+          "producer": {
+            "physics_step": 120,
+            "render_generation": 30,
+            "reset_epoch": 1
+          },
+          "state": [
+            -20.0,
+            90.0,
+            -50.0,
+            1.979228780868425e-09,
+            -7.067586071940468e-09,
+            5.756237708709477e-10,
+            50.0,
+            20.0,
+            90.0,
+            -50.0,
+            1.7074684999229817e-09,
+            -8.281654473307754e-09,
+            4.950707621631523e-10,
+            50.0
+          ]
+        },
+        "passed": true,
+        "required_prim_valid": {
+          "/World/LeftPiper": true,
+          "/World/RightPiper": true,
+          "/World/RobosynDemo/Backdrop": true,
+          "/World/RobosynDemo/LeftCube": true,
+          "/World/RobosynDemo/LeftPlate": true,
+          "/World/RobosynDemo/RightCube": true,
+          "/World/RobosynDemo/RightPlate": true,
+          "/World/RobosynDemo/SceneCamera": true,
+          "/World/RobosynDemo/Table": true
+        },
+        "scene_camera": {
+          "dtype": "uint8",
+          "frame": 2,
+          "rgb_stddev": 59.76628112792969,
+          "shape": [
+            600,
+            960,
+            3
+          ]
+        },
+        "table_collision_api": true,
+        "wrist_shapes": {
+          "left_wrist": [
+            600,
+            960,
+            3
+          ],
+          "right_wrist": [
+            600,
+            960,
+            3
+          ]
+        },
+        "zed_mounts": {
+          "left_wrist": {
+            "authored_optical_matrix": [
+              [
+                0.0,
+                -1.0000000000000004,
+                2.220446049250313e-16,
+                0.0
+              ],
+              [
+                -9.992007221626409e-16,
+                0.0,
+                1.0000000000000002,
+                0.0
+              ],
+              [
+                -1.0000000000000002,
+                -2.220446049250313e-16,
+                -1.3322676295501878e-15,
+                0.0
+              ],
+              [
+                0.028,
+                4.017068566816438e-32,
+                0.0155141094471127,
+                1.0
+              ]
+            ],
+            "desired_optical_matrix": [
+              [
+                -1.128272697492605e-08,
+                -1.0000000101104936,
+                -4.476568138400694e-08,
+                0.0
+              ],
+              [
+                -0.9986295407656665,
+                -1.128272697492605e-08,
+                0.05233603472888548,
+                0.0
+              ],
+              [
+                -0.05233603472888548,
+                4.476568138400694e-08,
+                -0.99862955087616,
+                0.0
+              ],
+              [
+                -0.06,
+                0.0,
+                0.01,
+                1.0
+              ]
+            ],
+            "model": "ZED_XONE_GS",
+            "mount_physics": "parented_massless_no_collision",
+            "native_resolution": [
+              960,
+              600
+            ],
+            "path": "isaac_lab_authored_usd_sdk_free",
+            "prim_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "resolution": "SVGA",
+            "revision": "0164268ca123fa4549fc9d2062c1fd55cf7996dc",
+            "root_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera",
+            "source_sha256": {
+              "exts/sl.sensor.camera/data/usd/ZED_XONE_GS.usdc": "c93196a2a23cef9f5422ea848309143f1b4a2b8ba04974e3ea3e88c52ced6eb7",
+              "exts/sl.sensor.camera/sl/sensor/camera/__init__.py": "17e0e3f6728d88c75ab3b403aff44ea431deab135a8d03b4c9d3c56eddc18c7a",
+              "exts/sl.sensor.camera/sl/sensor/camera/isaaclab_utils.py": "de40752a386b4c7b59be07fbf91d771223eabc11c6c32fecbd23ff5361b4b7c4",
+              "exts/sl.sensor.camera/sl/sensor/camera/utils.py": "aa76d1a22bbc97ab5874c3aca77afcddbffa11a9659127f54005f31bf65e5ea0"
+            },
+            "usd": "/data/vla-infrastructure/assets/zed-isaac-sim/exts/sl.sensor.camera/data/usd/ZED_XONE_GS.usdc"
+          },
+          "right_wrist": {
+            "authored_optical_matrix": [
+              [
+                0.0,
+                -1.0000000000000004,
+                2.220446049250313e-16,
+                0.0
+              ],
+              [
+                -9.992007221626409e-16,
+                0.0,
+                1.0000000000000002,
+                0.0
+              ],
+              [
+                -1.0000000000000002,
+                -2.220446049250313e-16,
+                -1.3322676295501878e-15,
+                0.0
+              ],
+              [
+                0.028,
+                4.017068566816438e-32,
+                0.0155141094471127,
+                1.0
+              ]
+            ],
+            "desired_optical_matrix": [
+              [
+                -1.128272697492605e-08,
+                -1.0000000101104936,
+                -4.476568138400694e-08,
+                0.0
+              ],
+              [
+                -0.9986295407656665,
+                -1.128272697492605e-08,
+                0.05233603472888548,
+                0.0
+              ],
+              [
+                -0.05233603472888548,
+                4.476568138400694e-08,
+                -0.99862955087616,
+                0.0
+              ],
+              [
+                -0.06,
+                0.0,
+                0.01,
+                1.0
+              ]
+            ],
+            "model": "ZED_XONE_GS",
+            "mount_physics": "parented_massless_no_collision",
+            "native_resolution": [
+              960,
+              600
+            ],
+            "path": "isaac_lab_authored_usd_sdk_free",
+            "prim_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "resolution": "SVGA",
+            "revision": "0164268ca123fa4549fc9d2062c1fd55cf7996dc",
+            "root_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera",
+            "source_sha256": {
+              "exts/sl.sensor.camera/data/usd/ZED_XONE_GS.usdc": "c93196a2a23cef9f5422ea848309143f1b4a2b8ba04974e3ea3e88c52ced6eb7",
+              "exts/sl.sensor.camera/sl/sensor/camera/__init__.py": "17e0e3f6728d88c75ab3b403aff44ea431deab135a8d03b4c9d3c56eddc18c7a",
+              "exts/sl.sensor.camera/sl/sensor/camera/isaaclab_utils.py": "de40752a386b4c7b59be07fbf91d771223eabc11c6c32fecbd23ff5361b4b7c4",
+              "exts/sl.sensor.camera/sl/sensor/camera/utils.py": "aa76d1a22bbc97ab5874c3aca77afcddbffa11a9659127f54005f31bf65e5ea0"
+            },
+            "usd": "/data/vla-infrastructure/assets/zed-isaac-sim/exts/sl.sensor.camera/data/usd/ZED_XONE_GS.usdc"
+          },
+          "scene": {
+            "authored_optical_matrix": [
+              [
+                0.0,
+                -1.0000000000000004,
+                2.220446049250313e-16,
+                0.0
+              ],
+              [
+                -9.992007221626409e-16,
+                0.0,
+                1.0000000000000002,
+                0.0
+              ],
+              [
+                -1.0000000000000002,
+                -2.220446049250313e-16,
+                -1.3322676295501878e-15,
+                0.0
+              ],
+              [
+                0.028,
+                4.017068566816438e-32,
+                0.0155141094471127,
+                1.0
+              ]
+            ],
+            "desired_optical_matrix": [
+              [
+                -0.09053571053065212,
+                -0.9958932721335501,
+                8.790356886834161e-08,
+                0.0
+              ],
+              [
+                0.7027523997508567,
+                -0.06388650676576368,
+                0.7085603010477186,
+                0.0
+              ],
+              [
+                -0.7056503908631306,
+                0.06415002802456371,
+                0.7056502911117644,
+                0.0
+              ],
+              [
+                0.1,
+                0.05,
+                1.43,
+                1.0
+              ]
+            ],
+            "model": "ZED_XONE_GS",
+            "mount_physics": "parented_massless_no_collision",
+            "native_resolution": [
+              960,
+              600
+            ],
+            "path": "isaac_lab_authored_usd_sdk_free",
+            "prim_path": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "resolution": "SVGA",
+            "revision": "0164268ca123fa4549fc9d2062c1fd55cf7996dc",
+            "root_path": "/World/RobosynDemo/SceneCamera",
+            "source_sha256": {
+              "exts/sl.sensor.camera/data/usd/ZED_XONE_GS.usdc": "c93196a2a23cef9f5422ea848309143f1b4a2b8ba04974e3ea3e88c52ced6eb7",
+              "exts/sl.sensor.camera/sl/sensor/camera/__init__.py": "17e0e3f6728d88c75ab3b403aff44ea431deab135a8d03b4c9d3c56eddc18c7a",
+              "exts/sl.sensor.camera/sl/sensor/camera/isaaclab_utils.py": "de40752a386b4c7b59be07fbf91d771223eabc11c6c32fecbd23ff5361b4b7c4",
+              "exts/sl.sensor.camera/sl/sensor/camera/utils.py": "aa76d1a22bbc97ab5874c3aca77afcddbffa11a9659127f54005f31bf65e5ea0"
+            },
+            "usd": "/data/vla-infrastructure/assets/zed-isaac-sim/exts/sl.sensor.camera/data/usd/ZED_XONE_GS.usdc"
+          }
+        },
+        "zed_pose_readback": {
+          "left_wrist": {
+            "actual_optical_matrix": [
+              [
+                2.361458687466831e-07,
+                -1.0000002564463082,
+                -3.160218516413931e-07,
+                0.0
+              ],
+              [
+                -0.9986295768885158,
+                -3.910466620446248e-07,
+                0.05233609971993042,
+                0.0
+              ],
+              [
+                -0.05233587779417037,
+                1.885184445505565e-07,
+                -0.9986294209635885,
+                0.0
+              ],
+              [
+                -0.060000017764177516,
+                -1.0988394472111196e-08,
+                0.009999956795864046,
+                1.0000000000000002
+              ]
+            ],
+            "max_matrix_error": 3.7976393506969873e-07,
+            "passed": true
+          },
+          "right_wrist": {
+            "actual_optical_matrix": [
+              [
+                -2.7862102726668944e-08,
+                -0.9999999836732162,
+                -9.416349839017056e-09,
+                0.0
+              ],
+              [
+                -0.9986294195375436,
+                6.77156252178651e-08,
+                0.0523360865688523,
+                0.0
+              ],
+              [
+                -0.05233609407410261,
+                9.893666983441954e-09,
+                -0.9986294245614404,
+                0.0
+              ],
+              [
+                -0.060000027073135564,
+                3.786516988846245e-09,
+                0.009999979567471673,
+                1.0000000000000002
+              ]
+            ],
+            "max_matrix_error": 1.263147195729175e-07,
+            "passed": true
+          },
+          "scene": {
+            "actual_optical_matrix": [
+              [
+                -0.09053554794769525,
+                -0.9958931166054938,
+                8.497281811514767e-08,
+                0.0
+              ],
+              [
+                0.7027522442228005,
+                -0.06388634418280681,
+                0.7085602364383412,
+                0.0
+              ],
+              [
+                -0.7056503262537532,
+                0.06415002509381296,
+                0.7056502911117644,
+                0.0
+              ],
+              [
+                0.10000000149011612,
+                0.05000000074505806,
+                1.4299999475479126,
+                1.0
+              ]
+            ],
+            "max_matrix_error": 1.625829568752124e-07,
+            "passed": true
+          }
+        }
+      },
+      "vr_feed_visibility": {
+        "capture_continues_when_hidden": true,
+        "control": "left_primary_click",
+        "feed_bound_ever": true,
+        "final": true,
+        "initial": false,
+        "preview_policy": "visible fresh camera frames; on-demand UI texture capture",
+        "provider_api": "ByteImageProvider.set_raw_bytes_data CPU RGBA8_UNORM",
+        "quest_button": "X",
+        "toggle_count": 3,
+        "upload_path": "cpu_staged",
+        "upstream_session_prepared_enabled": true
+      },
+      "xr_recenter": {
+        "authoritative_scene_geometry_changed": false,
+        "control": "right_thumbstick_click",
+        "controller_transform_source": "XRCore.get_physical_to_virtual_world_transform",
+        "quest_button": "R3",
+        "request_count": 0,
+        "scheduled_count": 0,
+        "upstream_mechanism": "XRCore.schedule_teleport_to_view",
+        "view_prim_path": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera"
+      }
+    },
+    "preview_uploads": [
+      {
+        "camera": "left_wrist",
+        "publication": 1,
+        "reason": "display-visible-1",
+        "shape": [
+          600,
+          960,
+          4
+        ],
+        "source": "0001-left_wrist-display-visible-1-source.ppm",
+        "source_rgba_sha256": "98e7de549fde0fc08edb89367eada1c3e8f427e884b472ae9ef9462ad12e01fa",
+        "source_upload_identical": true,
+        "upload": "0001-left_wrist-display-visible-1-upload.ppm",
+        "upload_rgba_sha256": "98e7de549fde0fc08edb89367eada1c3e8f427e884b472ae9ef9462ad12e01fa"
+      },
+      {
+        "camera": "demo_scene",
+        "publication": 1,
+        "reason": "display-visible-1",
+        "shape": [
+          600,
+          960,
+          4
+        ],
+        "source": "0001-demo_scene-display-visible-1-source.ppm",
+        "source_rgba_sha256": "39fde9f5fae16565270fbcef254b4b5fd45eb957631aaf0feced3963f9932c0d",
+        "source_upload_identical": true,
+        "upload": "0001-demo_scene-display-visible-1-upload.ppm",
+        "upload_rgba_sha256": "39fde9f5fae16565270fbcef254b4b5fd45eb957631aaf0feced3963f9932c0d"
+      },
+      {
+        "camera": "right_wrist",
+        "publication": 1,
+        "reason": "display-visible-1",
+        "shape": [
+          600,
+          960,
+          4
+        ],
+        "source": "0001-right_wrist-display-visible-1-source.ppm",
+        "source_rgba_sha256": "28892fe25da7c643c2020aad53cf421f1424349b1723a30ae558a2dabc50c192",
+        "source_upload_identical": true,
+        "upload": "0001-right_wrist-display-visible-1-upload.ppm",
+        "upload_rgba_sha256": "28892fe25da7c643c2020aad53cf421f1424349b1723a30ae558a2dabc50c192"
+      },
+      {
+        "camera": "left_wrist",
+        "publication": 20,
+        "reason": "display-visible-3",
+        "shape": [
+          600,
+          960,
+          4
+        ],
+        "source": "0020-left_wrist-display-visible-3-source.ppm",
+        "source_rgba_sha256": "b8fdbf13286274edade46dc77e7d1e0473830fcfe6ba70435bd9caf920168456",
+        "source_upload_identical": true,
+        "upload": "0020-left_wrist-display-visible-3-upload.ppm",
+        "upload_rgba_sha256": "b8fdbf13286274edade46dc77e7d1e0473830fcfe6ba70435bd9caf920168456"
+      },
+      {
+        "camera": "demo_scene",
+        "publication": 20,
+        "reason": "display-visible-3",
+        "shape": [
+          600,
+          960,
+          4
+        ],
+        "source": "0020-demo_scene-display-visible-3-source.ppm",
+        "source_rgba_sha256": "7c2a7729099c892e228e9e2717a193bd3e23d6bd7ad9126bc2848274e6bac88c",
+        "source_upload_identical": true,
+        "upload": "0020-demo_scene-display-visible-3-upload.ppm",
+        "upload_rgba_sha256": "7c2a7729099c892e228e9e2717a193bd3e23d6bd7ad9126bc2848274e6bac88c"
+      },
+      {
+        "camera": "right_wrist",
+        "publication": 20,
+        "reason": "display-visible-3",
+        "shape": [
+          600,
+          960,
+          4
+        ],
+        "source": "0020-right_wrist-display-visible-3-source.ppm",
+        "source_rgba_sha256": "dc873deda23965f2c3a26d09df3b53b7a255734706f7514a47a84b46e0cd7dd8",
+        "source_upload_identical": true,
+        "upload": "0020-right_wrist-display-visible-3-upload.ppm",
+        "upload_rgba_sha256": "dc873deda23965f2c3a26d09df3b53b7a255734706f7514a47a84b46e0cd7dd8"
+      },
+      {
+        "camera": "left_wrist",
+        "publication": 30,
+        "reason": "scheduled",
+        "shape": [
+          600,
+          960,
+          4
+        ],
+        "source": "0030-left_wrist-scheduled-source.ppm",
+        "source_rgba_sha256": "080818ef2d93b4e58b3450096787492b8db1d8e4eb0b6fd22abac82b6edb7d34",
+        "source_upload_identical": true,
+        "upload": "0030-left_wrist-scheduled-upload.ppm",
+        "upload_rgba_sha256": "080818ef2d93b4e58b3450096787492b8db1d8e4eb0b6fd22abac82b6edb7d34"
+      },
+      {
+        "camera": "demo_scene",
+        "publication": 30,
+        "reason": "scheduled",
+        "shape": [
+          600,
+          960,
+          4
+        ],
+        "source": "0030-demo_scene-scheduled-source.ppm",
+        "source_rgba_sha256": "796f0c421ee99a92522efecbebc6b064cc9240147b1d61c9086e8085f925ff99",
+        "source_upload_identical": true,
+        "upload": "0030-demo_scene-scheduled-upload.ppm",
+        "upload_rgba_sha256": "796f0c421ee99a92522efecbebc6b064cc9240147b1d61c9086e8085f925ff99"
+      },
+      {
+        "camera": "right_wrist",
+        "publication": 30,
+        "reason": "scheduled",
+        "shape": [
+          600,
+          960,
+          4
+        ],
+        "source": "0030-right_wrist-scheduled-source.ppm",
+        "source_rgba_sha256": "780cc549d5c649d68f437f209797dc60ab7cb903df577987d8b207f60d74e1b1",
+        "source_upload_identical": true,
+        "upload": "0030-right_wrist-scheduled-upload.ppm",
+        "upload_rgba_sha256": "780cc549d5c649d68f437f209797dc60ab7cb903df577987d8b207f60d74e1b1"
+      }
+    ],
+    "run_manifest": {
+      "cloudxr_web_client": {
+        "delivery": "Operator-facing only; the browser client and its localStorage are not configured by the host launcher.",
+        "operator_setup": "Open the exact URL in the headset, select Isaac Lab, press Reset to defaults, then select the Quest 3 device profile before connecting.",
+        "passed_to_host_process": false,
+        "release_series": "1.4.x",
+        "state_location": "headset browser cache/localStorage",
+        "url": "https://nvidia.github.io/IsaacTeleop/client/release-1.4.x/"
+      },
+      "effective_control_config": {
+        "backdrop": {
+          "center_m": [
+            1.55,
+            0.0,
+            1.15
+          ],
+          "color_rgb": [
+            0.18,
+            0.21,
+            0.25
+          ],
+          "initial_visibility": true,
+          "quest_button": "B",
+          "size_m": [
+            0.06,
+            3.0,
+            2.3
+          ],
+          "toggle_control": "right_secondary_click"
+        },
+        "preview": {
+          "image_source": "Isaac Lab Camera RGBA buffer reused for presentation; sensor exclusion is owned by the optional RTX Scene Partition integration, not buffer selection.",
+          "implementation": "upstream isaaclab_teleop XrCameraFeedSession and Kit SceneUI presenter",
+          "include_scene_camera": true,
+          "initial_visibility": false,
+          "layout": {
+            "center_offset_m": [
+              0.0,
+              0.1
+            ],
+            "distance_m": 0.65,
+            "max_update_hz": 30.0,
+            "mode": "horizontal",
+            "panel_gap_m": 0.035,
+            "panel_width_m": 0.36,
+            "placement": "head_locked"
+          },
+          "layout_quest_button": "L3",
+          "layout_toggle_control": "left_thumbstick_click",
+          "order": [
+            "left_wrist",
+            "demo_scene",
+            "right_wrist"
+          ],
+          "panel_layout": "Camera-resolution pixel layout; persistent head-locked and wall panels share camera buffers. Texture supersampling is 1.0.",
+          "performance_mode": "preview_uploads_optimized_ffft_renderer",
+          "preview_isolation": "scene-partitions",
+          "quest_button": "X",
+          "semantics": "RUN and DIAG start with previews visible; X changes upstream UiContainer visibility after one binding. Camera capture occurs after each FFFT group at simulation 30 Hz. Hidden preview callbacks skip acquisition, staging and upload. Visible panels publish fresh camera frames at most 30 Hz through ByteImageProvider.set_raw_bytes_data with retained CPU uint8 RGBA buffers and on-demand SceneUI capture. RECORD constructs only USD camera prims for offline RGB and never binds previews or creates dataset render products. Physical Quest verification remains pending.",
+          "toggle_control": "left_primary_click",
+          "upload_path": "cpu_staged",
+          "wall_layout": {
+            "center_offset_m": [
+              0.0,
+              0.0
+            ],
+            "mode": "horizontal",
+            "panel_gap_m": 0.05,
+            "panel_width_m": 0.6,
+            "placement": "world",
+            "world_orientation_xyzw": [
+              0.5,
+              -0.5,
+              -0.5,
+              0.5
+            ],
+            "world_position_m": [
+              1.5,
+              0.0,
+              1.72
+            ]
+          }
+        },
+        "processor": {
+          "clutch": {
+            "active_behavior": "zero Cartesian delta while upstream continues updating its relative reference",
+            "control": "squeeze_value greater than 0.5",
+            "release_behavior": "discard the first released delta and rebase; no target jump",
+            "scope": "independent per arm",
+            "threshold": 0.5
+          },
+          "controller_pose": "grip_pose",
+          "disconnect": "hold simulated targets, mark both streams inactive, and require per-arm rebase on reconnect; never replay stale intent",
+          "frames": {
+            "arm_target": "each Gate C base_link; both S1 base rotations are identity, so world spatial deltas have the same axes in each base",
+            "openxr": "Y-up; +X right, +Y up, +Z back",
+            "output": "Isaac world, Z-up, +X forward, +Y left",
+            "tcp": "Gate C gripper_base",
+            "upstream_transform": "world_T_anchor uses [x, y, z]_isaac = [x, -z, y]_openxr before the configured anchor pose"
+          },
+          "gripper": {
+            "closed_aperture_m": 0.0,
+            "control": "trigger_value",
+            "mapping": "aperture = open + normalized_trigger * (closed - open); trigger 0 is fully open and trigger 1 is fully closed; independent per arm",
+            "mode": "analog_linear",
+            "open_aperture_m": 0.1,
+            "reset_aperture_m": 0.05,
+            "trigger_input_range": [
+              0.0,
+              1.0
+            ]
+          },
+          "input_per_arm": {
+            "pose_delta": [
+              "dx",
+              "dy",
+              "dz",
+              "rotation_vector_x",
+              "rotation_vector_y",
+              "rotation_vector_z"
+            ],
+            "state": [
+              "controller_available",
+              "effective_grip_pose_valid",
+              "squeeze_value",
+              "trigger_value",
+              "sensitivity_button_value"
+            ]
+          },
+          "provenance_revision": "piper_x_s2_generation_v1",
+          "reset": "reset S1 environment and upstream execution state, then require one newly valid rebase frame per arm",
+          "revision": "piper_x_isaac_s2_bimanual_relative_v3",
+          "rotation": {
+            "handedness": "right-handed",
+            "quaternion_order": "xyzw",
+            "relative_delta": "R_current * inverse(R_previous)",
+            "target_composition": "left-multiply spatial delta onto the current TCP orientation"
+          },
+          "sensitivity": {
+            "control_mode": "slider",
+            "input_control": "thumbstick_x",
+            "input_range": [
+              -1.0,
+              1.0
+            ],
+            "mapping": "Piecewise linear and clamped; left is slower, center keeps the previous normal speed, right is faster.",
+            "quest_control": "each controller's own horizontal thumbstick axis",
+            "scope": "independent per arm",
+            "slider": {
+              "center": {
+                "rotation_scale": 4.0,
+                "translation_scale": 4.0
+              },
+              "maximum": {
+                "rotation_scale": 6.0,
+                "translation_scale": 6.0
+              },
+              "minimum": {
+                "rotation_scale": 2.0,
+                "translation_scale": 2.0
+              }
+            },
+            "status": "SELECTED_HUMAN_ACCEPTANCE_PENDING"
+          },
+          "tracking": {
+            "invalid": "emit zero delta, hold simulated target, reject invalid/default or non-finite poses, invalidate that arm's relative reference and smoothing state, and leave the opposite valid arm usable",
+            "recovery": "first newly valid pose becomes the new per-arm baseline and emits zero delta; subsequent samples resume without manual clutch",
+            "root_cause_remediation": "TrackingSafeSe3RelRetargeter closes the pinned upstream Se3RelRetargeter is_none branch gap, which emitted zero but retained the stale previous wrist pose and smoothing accumulator",
+            "source_timestamp_threshold": null,
+            "valid": "controller present and grip_pose_valid with finite values"
+          },
+          "upstream_deadband": {
+            "position_m_before_scale": 0.001,
+            "rotation_rad_before_scale": 0.01
+          },
+          "upstream_smoothing": {
+            "alpha_position": 0.5,
+            "alpha_rotation": 0.5
+          }
+        },
+        "rendering": {
+          "pattern": "FFFT",
+          "physics_substeps_per_render": 4,
+          "record_cameras": "usd_prims_only_no_render_products",
+          "status": "SELECTED_HUMAN_ACCEPTANCE_PENDING"
+        },
+        "xr_presentation": {
+          "anchor_pos_m": [
+            -0.05,
+            0.0,
+            -0.1
+          ],
+          "anchor_rot_xyzw": [
+            0.0,
+            0.0,
+            -0.7071067811865475,
+            0.7071067811865476
+          ],
+          "near_plane_m": 0.1,
+          "rationale": "Physical Quest evidence showed +1.20 m was far too low and -0.25 m was slightly too high. The selected VR anchor Z is now -0.10 m, lowering the unchanged table/robots by 0.15 m relative to the previous run; -90 degree world yaw still maps OpenXR forward to scene +X.",
+          "recenter": {
+            "behavior": "One rising edge uses XRCore.schedule_teleport_to_view so the current physical HMD pose matches the validated demo scene-camera pose; controller poses use XRCore's full physical-to-virtual transform including the resulting space origin, while robot/table USD geometry and 1:1 scale remain unchanged.",
+            "execution_mode": "sync",
+            "motion_barrier": "Hold the request frame; on the next control frame accept XRCore's current physical-to-world transform as the new reference and emit a zero-motion rebase. Any later transform change rebases again. Missing active XR transforms still hold motion.",
+            "quest_button": "R3",
+            "toggle_control": "right_thumbstick_click",
+            "view_prim_path": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera"
+          },
+          "scale": 1.0
+        },
+        "xr_render": null
+      },
+      "generated_runtime_config_sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "host_paths": {
+        "cloudxr_install_root": "/data/ebulochkin/vla-runtime/isaac-isaac61/cloudxr",
+        "home": "/home/ebulochkin",
+        "kit_portable_root": "/data/ebulochkin/vla-runtime/isaac-isaac61/kit",
+        "python_environment": "/data/vla-infrastructure/isaac61_production/env",
+        "uid": 1006,
+        "xdg_cache_home": "/data/ebulochkin/vla-runtime/isaac-isaac61/cache"
+      },
+      "launch": {
+        "cloudxr_initialized": false,
+        "cloudxr_mode": "auto",
+        "command": [
+          "/data/vla-infrastructure/isaac61_production/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording-ui/tools/run_isaac_s1.py",
+          "--config",
+          "/tmp/vr-layout-native-fixture-v4/runtime.yaml",
+          "--s2-config",
+          "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording-ui/configs/isaac61_s2_runtime.yaml",
+          "--vr-runtime",
+          "--s2-mode",
+          "diagnostic",
+          "--demo-profile",
+          "dual_cube_to_matching_plates",
+          "--device",
+          "cuda:0",
+          "--kit_args",
+          "--portable-root /data/ebulochkin/vla-runtime/isaac-isaac61/kit --/renderer/scenePartitioning/enabled=true --/rtx/scenePartitioning/showAllPartitionsByDefault=true --enable omni.kit.scene_view.xr",
+          "--demo-preview-isolation",
+          "scene-partitions",
+          "--report",
+          "/tmp/vr-layout-native-fixture-v4/result.json",
+          "--s2-max-control-steps",
+          "60",
+          "--s2-teleop",
+          "--s2-performance-log",
+          "/tmp/vr-layout-native-fixture-v4/performance.jsonl",
+          "--s2-performance-window-steps",
+          "30",
+          "--s2-performance-warmup-steps",
+          "30",
+          "--viz",
+          "kit",
+          "--demo-preview-scene",
+          "--s2-cloudxr-profile",
+          "standalone",
+          "--no-s2-require-session",
+          "--s2-reset-step",
+          "30"
+        ],
+        "dry_run": false,
+        "environment_pins": {
+          "cloudxr_runtime_version": "6.2.1",
+          "dependency_source": "v3.0.0-EA frozen uv.lock teleop extra",
+          "isaac_lab_commit": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d",
+          "isaac_lab_package_version": "17.0.2",
+          "isaac_lab_release": "release/3.0.0",
+          "isaac_sim_version": "6.1.0.0",
+          "isaaclab_teleop_version": "0.9.0",
+          "isaacteleop_version": "1.4.98rc1"
+        },
+        "frozen_workspace_sha256": {
+          "lock": "f633120f145944672d9ba3d6a7bda9a145a01b6295e9fc08f0997e60dc6a40e7",
+          "pyproject": "2780d507882950e64ca8f972fcad4c19e74b9681af1d830e0b34fa09e79e116b"
+        },
+        "hud_on_start": false,
+        "lab_commit": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d",
+        "max_control_steps": 60,
+        "no_client_audit": false,
+        "pinned_packages": {
+          "isaaclab": "17.0.2",
+          "isaaclab-rl": "0.16.3",
+          "isaaclab-teleop": "0.9.0",
+          "isaacsim": "6.1.0.0",
+          "isaacteleop": "1.4.98rc1"
+        },
+        "preview_cameras": 3,
+        "preview_isolation": "scene-partitions",
+        "profile": "dual_cube_to_matching_plates",
+        "smoke": true,
+        "stack": "isaac61",
+        "xr_smoke": false
+      },
+      "mode": "diagnostic",
+      "processor_revision": "piper_x_isaac_s2_bimanual_relative_v3",
+      "repository": {
+        "branch": "codex/vr-recording-ui",
+        "commit": "39774707a2b5cd3b333473dfc7d7b9ad7d94142c",
+        "full_status": " M configs/isaac61_vr_runtime.yaml\n M docs/project/RUN_VR_OPERATIONS.md\n M tests/test_isaac_s2_upstream.py\n M tests/test_isaac_vr_config.py\n M tools/isaac_s2_runtime.py\n M tools/isaac_s2_upstream.py\n M tools/isaac_vr_runtime.py\n M tools/launch_isaac_vr.py\n?? tests/test_isaac_vr_preview_layout.py\n?? tools/isaac_vr_preview_layout.py",
+        "root": "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording-ui",
+        "source_sha256": {
+          "configs/environments/isaac1103/ENVIRONMENT.yaml": "fe997db42e9d91e64c4820b5f073cd3ff69625a89ef299cb7db28b58d82ac0c6",
+          "configs/isaac61_s1_runtime.yaml": "5da72ca0cfba86241d8f834eb8ee9369c002236dba699f0f3a36b35fc8c0e171",
+          "configs/isaac61_s2_runtime.yaml": "8bf47ae99191b9f63317e5f5ff5aa557f533b6a1890df14d8c45e60b15a02977",
+          "configs/isaac61_vr_runtime.yaml": "a635a7f4ce7160bd4b2e59f40e1f4115b200b6e2f3e8b009279a5be6ac90bcec",
+          "run-vr": "84cf0afada6d7d52dd3b9ded70c67add6f576bec2462e6545285421b897f1256",
+          "tools/isaac_demo_launch.py": "f1b2a8dde4fe639e63cc5c2c02b59b992391bae25aab0aa71284aed3a1ab5ca6",
+          "tools/isaac_preview_partitions.py": "5b846dfaed43044d5838474e396732e2a22a1fa069c4bfded4b909109fb27dc2",
+          "tools/isaac_s1_runtime.py": "8dde4e0eae2bb27cc061329e83dd8602cb83c889e43e561359c19c8070864eaf",
+          "tools/isaac_s2_performance.py": "06ea8e0fee9cfbf1159bf2102fd9c0743014772ba97dd5e9566fb9693ae03c3b",
+          "tools/isaac_s2_processor.py": "9e0b388717ed632d110c06e7be7ac6773936ed28c17d18a6a8d13194960e4054",
+          "tools/isaac_s2_runtime.py": "02fc92de7ce0658cc8e84a74bd00e9029817e51f074a48f7e0e7c19d72953c9c",
+          "tools/isaac_s2_upstream.py": "d950ac2425c2350bec5c6039e491714576f219caffe3fcb863c2193014c89271",
+          "tools/isaac_vr_camera_guard.py": "38d191c5d2c6700ac53aa30462106839c44b5cef44e4ffc46d165b76a9ea9f31",
+          "tools/isaac_vr_camera_rendering.py": "0667e12673d755f7c97847ddacb3f384ceaf9969b1529be2a3d9efff5651f29a",
+          "tools/isaac_vr_capture.py": "a45fea9cd2521ecd4a83d8b6128e9bc63f51beb26fd676fad2c71cf5a593ee50",
+          "tools/isaac_vr_config.py": "3555357e70e0db20a2410bb3e27aaffaa65da160d3c2e07ad63e62b1a1cc1f52",
+          "tools/isaac_vr_decision.py": "0a9188211bfaadd9d5974788cc125d0eca04c77b9b358f4c42e680774141f025",
+          "tools/isaac_vr_injected_recording.py": "e9bd6c89f429c0edad510e577266ed551a6366a336b98d781eb0965107e6a1a0",
+          "tools/isaac_vr_preview_layout.py": "08afa50b723c31fea5cd47114abaff6a7e7b1a6b73ea6b64d2586694403b1260",
+          "tools/isaac_vr_recording.py": "94b5d25903615cb7133fbf9503d7bd24e5e1221e576ba71a26e00c0ce286072c",
+          "tools/isaac_vr_recording_benchmark.py": "b7f34cf3efa781dd60d091b55bada846865426acf05930c14acb1e7271838292",
+          "tools/isaac_vr_recording_smoke.py": "60eac8473947e3ac51ec604f4ce789446dd4bde18f5bf187d5b7fea7944ddc7b",
+          "tools/isaac_vr_replay.py": "20939c24b42744b701ca1e951d889ddf55f15dacd2550cf9fa8d87203d2efb70",
+          "tools/isaac_vr_runtime.py": "c1b2a2d4a39cb60b0e936cc4227a067f8615819a8bca43e95769fa29d15ea56a",
+          "tools/isaac_vr_zed.py": "fe6684ec78966c536bf8195ac0b1c0749ce4b400956935dbd94fa793f5aa4283",
+          "tools/launch_isaac_vr.py": "9e58b52aa5783221c92a12ea4535debec22e547e029a6d7c1ad50537e239d2d9",
+          "tools/run_isaac_s1.py": "c2b8dbe2d05c32c4f5cfec4269ad37d58673c0a5d79603c5057f907e7c4201e2"
+        },
+        "tracked_status": " M configs/isaac61_vr_runtime.yaml\n M docs/project/RUN_VR_OPERATIONS.md\n M tests/test_isaac_s2_upstream.py\n M tests/test_isaac_vr_config.py\n M tools/isaac_s2_runtime.py\n M tools/isaac_s2_upstream.py\n M tools/isaac_vr_runtime.py\n M tools/launch_isaac_vr.py",
+        "untracked_files": [
+          "tests/test_isaac_vr_preview_layout.py",
+          "tools/isaac_vr_preview_layout.py"
+        ]
+      },
+      "run_id": "vr-layout-native-fixture-v4",
+      "schema": "piper_x_isaac_vr_run_manifest_v1",
+      "top_level_command": "./run-vr diag --smoke --no-hud-on-start --capture-preview-evidence --max-control-steps 60 --run-dir /tmp/vr-layout-native-fixture-v4",
+      "top_level_invocation": [
+        "./run-vr",
+        "diag",
+        "--smoke",
+        "--no-hud-on-start",
+        "--capture-preview-evidence",
+        "--max-control-steps",
+        "60",
+        "--run-dir",
+        "/tmp/vr-layout-native-fixture-v4"
+      ]
+    },
+    "stdout_sha256": "12107848daee2e0f8b17f8939106e0d58ba4a0d259d8e8911e3bc7a6e3e42438"
+  },
+  "observers": {
+    "/tmp/vr_layout_offline_fixture.py": {
+      "sha256": "325c88ceff7898f0815f96158c74c8ba50d4e2c47fd2d236f01ab67c9c61384d",
+      "source": "import builtins, json, runpy, sys\nscript = sys.argv.pop(1)\nsys.argv[0] = script\nsys.path.insert(0, str(__import__('pathlib').Path(script).parent))\ndef offline_fixture(env, args, app, **kwargs):\n    from pathlib import Path\n    import importlib.util, unittest\n    from pxr import UsdGeom\n    runtime = env.vr_runtime\n    testspec=importlib.util.spec_from_file_location('native_s2_tests', Path(script).parents[1]/'tests/test_isaac_s2_upstream.py')\n    testmodule=importlib.util.module_from_spec(testspec)\n    testspec.loader.exec_module(testmodule)\n    names=['test_preview_layout_l3_keeps_motion_shape_and_record_stop_isolation','test_recording_view_keeps_backdrop_without_enabling_rgb','test_demo_controls_append_three_values_without_changing_production_shape']\n    suite=unittest.TestSuite(testmodule.IsaacS2UpstreamTests(name) for name in names)\n    result=unittest.TextTestRunner(verbosity=2).run(suite)\n    assert result.wasSuccessful() and result.testsRun == 3 and not result.skipped\n    env.reset(0)  # Same qualified post-preflight reset as run_s2.\n    runtime.open(env)\n    try:\n        assert len(runtime._feed_session._manager._feeds)==3\n        cameras=[id(f.camera) for f in runtime._feed_session._manager._feeds]\n        runtime.consume_display_button(1)\n        runtime.consume_display_button(0)\n        for tick in range(1,61):\n            runtime.consume_layout_button(0)\n            if tick in (20,40):\n                runtime.consume_display_button(1)\n                runtime.consume_display_button(0)\n            if tick == 15:\n                runtime.consume_backdrop_button(1)\n                runtime.consume_backdrop_button(0)\n            if tick == 30:\n                env.reset(0)\n                runtime.after_reset()\n            env._advance(4)\n            assert cameras==[id(f.camera) for f in runtime._feed_session._manager._feeds]\n        report=runtime.performance_report(elapsed=1, camera_observation_frames=60)\n        wall=env.sim.stage.GetPrimAtPath('/World/RobosynDemo/Backdrop')\n        report.update({'passed':True,'fixture':'native builder/capture/panels, no S2 decision loop or CloudXR', 'native_controller_tests':3,\n                      'backdrop_compute_visibility':UsdGeom.Imageable(wall).ComputeVisibility()})\n        assert report['preview_layout']['toggle_count']==6\n        Path(args.report).write_text(json.dumps(report,indent=2,sort_keys=True)+'\\n')\n        return 0\n    finally:\n        runtime.close()\n\noriginal_import = builtins.__import__\npatched = False\n\ndef importing(name, globals=None, locals=None, fromlist=(), level=0):\n    global patched\n    module = original_import(name, globals, locals, fromlist, level)\n    if name == 'isaac_vr_runtime' and not patched and hasattr(module, 'run_vr'):\n        patched = True\n        original_layout = module.VRRuntime.consume_layout_button\n        layout_tick = [0]\n        def layout_smoke(runtime, value, **kwargs):\n            layout_tick[0] += 1\n            pulse = layout_tick[0] in (5, 6, 12, 13, 22, 23, 35, 36, 42, 43, 52, 53)\n            before = runtime._preview_layouts.toggle_count\n            original_layout(runtime, float(pulse), event_origin='bounded_layout_smoke_after_mapping')\n            panels = runtime._preview_layouts\n            assert panels.report()['persistent_panel_count'] == 6\n            assert panels.report()['order'] == ['left_wrist', 'demo_scene', 'right_wrist']\n            if layout_tick[0] in (6, 13, 23, 36, 43, 53):\n                assert panels.toggle_count == before, 'Held L3 toggled twice'\n            if panels.toggle_count != before:\n                from pxr import UsdGeom\n                wall = runtime._env.sim.stage.GetPrimAtPath('/World/RobosynDemo/Backdrop')\n                assert UsdGeom.Imageable(wall).ComputeVisibility() == 'inherited'\n                print('LAYOUT_CHECK ' + json.dumps(panels.report()), flush=True)\n        module.VRRuntime.consume_layout_button = layout_smoke\n        original_run = module.run_vr\n        def audited_run(*args, **kwargs):\n            cls = kwargs['environment_type']\n            advance = cls._advance\n            def audited_advance(env, repeat):\n                phase = env._render_substep\n                before = env.sim.get_physics_step_count()\n                rendered_before = env.sim.render_generation\n                original_step = env.sim.step\n                flags = []\n                def step(*args, **kwargs):\n                    flags.append(kwargs['render'])\n                    return original_step(*args, **kwargs)\n                env.sim.step = step\n                try:\n                    result = advance(env, repeat)\n                finally:\n                    env.sim.step = original_step\n                assert env.sim.get_physics_step_count() - before == repeat\n                assert flags == [(phase + i + 1) % 4 == 0 for i in range(repeat)]\n                delta = env.sim.render_generation - rendered_before\n                assert delta == sum(flags), (repeat, delta, flags)\n                from pxr import UsdRender\n                camera_paths = set(env.camera.camera_prim_paths.values())\n                products = [str(p.GetPath()) for p in env.sim.stage.Traverse()\n                            if p.IsA(UsdRender.Product) and camera_paths.intersection(\n                                str(x) for x in UsdRender.Product(p).GetCameraRel().GetTargets())]\n                if not env.camera.live_rgb_enabled:\n                    assert not products, products\n                print('FFFT_CHECK ' + json.dumps({'physics_steps': repeat,\n                    'kit_pumps': delta, 'live_rgb': env.camera.live_rgb_enabled,\n                    'dataset_products': len(products), 'phase': env._render_substep}), flush=True)\n                return result\n            cls._advance = audited_advance\n            return original_run(*args, **kwargs)\n        module.run_vr = audited_run\n    if name == 'isaac_s2_runtime' and hasattr(module, 'run_s2'):\n        module.run_s2 = offline_fixture\n    return module\nbuiltins.__import__ = importing\nrunpy.run_path(script, run_name='__main__')\n"
+    },
+    "/tmp/vr_layout_offline_launcher.py": {
+      "sha256": "556435c5e1d50c9fee23ddb91b4d9a20c6216d90c23588f9f7a50818472df4ef",
+      "source": "import sys\nfrom pathlib import Path\nsys.path.insert(0, '/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording-ui/tools')\nimport launch_isaac_vr as launcher\noriginal = launcher.subprocess.Popen\ndef popen(command, *args, **kwargs):\n    if isinstance(command, list) and len(command) > 1 and command[1].endswith('run_isaac_s1.py'):\n        kit_index = command.index('--kit_args')\n        command[kit_index+1] += ' --enable omni.kit.xr.core --enable omni.kit.scene_view.xr_utils'\n        command = [command[0], '/tmp/vr_layout_offline_fixture.py', *command[1:]]\n    return original(command, *args, **kwargs)\nlauncher.subprocess.Popen = popen\nraise SystemExit(launcher.main(sys.argv[1:]))\n"
+    },
+    "/tmp/vr_layout_record_launcher.py": {
+      "sha256": "384a21b48bd7d1defa18f114826a26ae87115587f77446b7d0c0de298b4d3140",
+      "source": "import sys\nfrom pathlib import Path\nsys.path.insert(0, '/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording-ui/tools')\nimport launch_isaac_vr as launcher\noriginal = launcher.subprocess.Popen\ndef popen(command, *args, **kwargs):\n    if isinstance(command, list) and len(command) > 1 and command[1].endswith('run_isaac_s1.py'):\n        command = [command[0], '/tmp/vr_layout_record_wrapper.py', *command[1:]]\n    return original(command, *args, **kwargs)\nlauncher.subprocess.Popen = popen\nraise SystemExit(launcher.main(sys.argv[1:]))\n"
+    },
+    "/tmp/vr_layout_record_wrapper.py": {
+      "sha256": "d24e3dfab68034c2cfb417ea89c337e40464ea82d5a3ae2232b0950648764986",
+      "source": "import builtins, json, runpy, sys\nscript = sys.argv.pop(1)\nsys.argv[0] = script\nsys.path.insert(0, str(__import__('pathlib').Path(script).parent))\noriginal_import = builtins.__import__\npatched = False\n\ndef importing(name, globals=None, locals=None, fromlist=(), level=0):\n    global patched\n    module = original_import(name, globals, locals, fromlist, level)\n    if name == 'isaac_vr_runtime' and not patched and hasattr(module, 'run_vr'):\n        patched = True\n        original_run = module.run_vr\n        def audited_run(*args, **kwargs):\n            cls = kwargs['environment_type']\n            advance = cls._advance\n            def audited_advance(env, repeat):\n                phase = env._render_substep\n                before = env.sim.get_physics_step_count()\n                rendered_before = env.sim.render_generation\n                original_step = env.sim.step\n                flags = []\n                def step(*args, **kwargs):\n                    flags.append(kwargs['render'])\n                    return original_step(*args, **kwargs)\n                env.sim.step = step\n                try:\n                    result = advance(env, repeat)\n                finally:\n                    env.sim.step = original_step\n                assert env.sim.get_physics_step_count() - before == repeat\n                assert flags == [(phase + i + 1) % 4 == 0 for i in range(repeat)]\n                delta = env.sim.render_generation - rendered_before\n                assert delta == sum(flags), (repeat, delta, flags)\n                from pxr import UsdRender, UsdGeom\n                backdrop = env.sim.stage.GetPrimAtPath('/World/RobosynDemo/Backdrop')\n                assert UsdGeom.Imageable(backdrop).ComputeVisibility() == 'inherited'\n                camera_paths = set(env.camera.camera_prim_paths.values())\n                products = [str(p.GetPath()) for p in env.sim.stage.Traverse()\n                            if p.IsA(UsdRender.Product) and camera_paths.intersection(\n                                str(x) for x in UsdRender.Product(p).GetCameraRel().GetTargets())]\n                if not env.camera.live_rgb_enabled:\n                    assert not products, products\n                print('FFFT_CHECK ' + json.dumps({'physics_steps': repeat,\n                    'kit_pumps': delta, 'live_rgb': env.camera.live_rgb_enabled,\n                    'dataset_products': len(products), 'phase': env._render_substep}), flush=True)\n                return result\n            cls._advance = audited_advance\n            return original_run(*args, **kwargs)\n        module.run_vr = audited_run\n    return module\nbuiltins.__import__ = importing\nrunpy.run_path(script, run_name='__main__')\n"
+    }
+  },
+  "record": {
+    "ffft": [
+      {
+        "dataset_products": 0,
+        "kit_pumps": 7,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 23,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 92
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      }
+    ],
+    "output": {
+      "accepted_transactions": 3,
+      "actions": [
+        [
+          -19.75,
+          90.0,
+          -50.0,
+          1.979228780868425e-09,
+          -7.067586071940468e-09,
+          5.756237708709477e-10,
+          52.25,
+          19.75,
+          90.0,
+          -50.0,
+          1.7074684999229817e-09,
+          -8.281654473307754e-09,
+          4.950707621631523e-10,
+          47.75
+        ],
+        [
+          -19.7497501373291,
+          90.0,
+          -50.0,
+          1.979228780868425e-09,
+          -7.067586071940468e-09,
+          5.756237708709477e-10,
+          52.25025177001953,
+          19.7497501373291,
+          90.0,
+          -50.0,
+          1.7074684999229817e-09,
+          -8.281654473307754e-09,
+          4.950707621631523e-10,
+          47.74974822998047
+        ],
+        [
+          -19.749500274658203,
+          90.0,
+          -50.0,
+          1.979228780868425e-09,
+          -7.067586071940468e-09,
+          5.756237708709477e-10,
+          52.2504997253418,
+          19.749500274658203,
+          90.0,
+          -50.0,
+          1.7074684999229817e-09,
+          -8.281654473307754e-09,
+          4.950707621631523e-10,
+          47.7495002746582
+        ]
+      ],
+      "artifact_state": "finalized",
+      "cloudxr_profile": "cloudxrjs",
+      "committed_frames": 3,
+      "discarded_observations": 0,
+      "episode_id": "episode_000000",
+      "ik_executed": false,
+      "input_pump_calls": 0,
+      "input_targets_sha256": "ebff65096e2251bdbe193e043b8358e9c022de473cb6b656c00f425d0c00bce9",
+      "kit_xr_bridge": false,
+      "left_transition_counts": {
+        "motion": 3
+      },
+      "mode": "injected_recording_integration_smoke",
+      "outcome": "operator_stopped",
+      "passed": true,
+      "process": {
+        "clean_shutdown": true,
+        "exit_code": 0,
+        "launcher": "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording-ui/tools/launch_isaac_vr.py",
+        "stdout_log": "/tmp/vr-layout-record/run/stdout.log",
+        "stop_requested": false
+      },
+      "processor_executed": false,
+      "processor_revision": "piper_x_isaac_s2_bimanual_relative_v3",
+      "reader_validation": {
+        "artifact": "/tmp/vr-layout-record/episode/session.hdf5",
+        "artifact_sha256": "677f6063c4e521222fdcb9d665a16c47ea73cd7307f8aa33a7ba26b2ab243dba",
+        "committed_frames": 3,
+        "episode": "episode_00000",
+        "observation_ids": [
+          "2b3d54f2-aebf-4afd-aacb-0a8a8fafc706:episode_000000:isaac_human_vr:1:1:1:observation:1",
+          "2b3d54f2-aebf-4afd-aacb-0a8a8fafc706:episode_000000:isaac_human_vr:1:1:1:observation:2",
+          "2b3d54f2-aebf-4afd-aacb-0a8a8fafc706:episode_000000:isaac_human_vr:1:1:1:observation:3"
+        ],
+        "tracks": [
+          {
+            "group": "meta/time",
+            "type": "sim_time"
+          },
+          {
+            "group": "state/left_robot",
+            "include_root": true,
+            "link_paths": [
+              "/World/LeftPiper",
+              "/World/LeftPiper/Geometry/world/base_link",
+              "/World/LeftPiper/Geometry/world/base_link/link1",
+              "/World/LeftPiper/Geometry/world/base_link/link1/link2",
+              "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3",
+              "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4",
+              "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5",
+              "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6",
+              "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link",
+              "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base",
+              "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link",
+              "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+              "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2"
+            ],
+            "prim_path": "/World/LeftPiper",
+            "type": "articulation"
+          },
+          {
+            "group": "state/right_robot",
+            "include_root": true,
+            "link_paths": [
+              "/World/RightPiper",
+              "/World/RightPiper/Geometry/world/base_link",
+              "/World/RightPiper/Geometry/world/base_link/link1",
+              "/World/RightPiper/Geometry/world/base_link/link1/link2",
+              "/World/RightPiper/Geometry/world/base_link/link1/link2/link3",
+              "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4",
+              "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5",
+              "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6",
+              "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link",
+              "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base",
+              "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link",
+              "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+              "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2"
+            ],
+            "prim_path": "/World/RightPiper",
+            "type": "articulation"
+          },
+          {
+            "group": "state/object_0",
+            "prim_path": "/World/RobosynDemo/LeftCube",
+            "type": "rigid_body"
+          },
+          {
+            "group": "state/object_1",
+            "prim_path": "/World/RobosynDemo/RightCube",
+            "type": "rigid_body"
+          },
+          {
+            "group": "state/camera/left_wrist",
+            "prim_path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "resolution": [
+              960,
+              600
+            ],
+            "type": "camera"
+          },
+          {
+            "group": "state/camera/right_wrist",
+            "prim_path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "resolution": [
+              960,
+              600
+            ],
+            "type": "camera"
+          },
+          {
+            "group": "state/camera/scene",
+            "prim_path": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "resolution": [
+              960,
+              600
+            ],
+            "type": "camera"
+          },
+          {
+            "group": "d0/committed_transition",
+            "schema": "piper_x_committed_transition_v3",
+            "type": "piper_x_committed_transition_v3"
+          }
+        ]
+      },
+      "reason": "deterministic_injected_xr_completed",
+      "rgb_e2e_assay": false,
+      "run_id": "2b3d54f2-aebf-4afd-aacb-0a8a8fafc706",
+      "session_id": "7ed85e44-ab41-4373-b077-0b6b8dad168b",
+      "session_running_at_end": false,
+      "source": "deterministic_injected_xr_v1",
+      "teleop_initialized": false,
+      "xr_initialized": false,
+      "xr_input_available_at_end": false,
+      "xr_receipt": "synthetic"
+    },
+    "run_manifest": {
+      "cloudxr_web_client": {
+        "delivery": "Operator-facing only; the browser client and its localStorage are not configured by the host launcher.",
+        "operator_setup": "Open the exact URL in the headset, select Isaac Lab, press Reset to defaults, then select the Quest 3 device profile before connecting.",
+        "passed_to_host_process": false,
+        "release_series": "1.4.x",
+        "state_location": "headset browser cache/localStorage",
+        "url": "https://nvidia.github.io/IsaacTeleop/client/release-1.4.x/"
+      },
+      "effective_control_config": {
+        "backdrop": {
+          "center_m": [
+            1.55,
+            0.0,
+            1.15
+          ],
+          "color_rgb": [
+            0.18,
+            0.21,
+            0.25
+          ],
+          "initial_visibility": true,
+          "quest_button": "B",
+          "size_m": [
+            0.06,
+            3.0,
+            2.3
+          ],
+          "toggle_control": "right_secondary_click"
+        },
+        "preview": {
+          "image_source": "Isaac Lab Camera RGBA buffer reused for presentation; sensor exclusion is owned by the optional RTX Scene Partition integration, not buffer selection.",
+          "implementation": "upstream isaaclab_teleop XrCameraFeedSession and Kit SceneUI presenter",
+          "include_scene_camera": true,
+          "initial_visibility": false,
+          "layout": {
+            "center_offset_m": [
+              0.0,
+              0.1
+            ],
+            "distance_m": 0.65,
+            "max_update_hz": 30.0,
+            "mode": "horizontal",
+            "panel_gap_m": 0.035,
+            "panel_width_m": 0.36,
+            "placement": "head_locked"
+          },
+          "layout_quest_button": "L3",
+          "layout_toggle_control": "left_thumbstick_click",
+          "order": [
+            "left_wrist",
+            "demo_scene",
+            "right_wrist"
+          ],
+          "panel_layout": "Camera-resolution pixel layout; persistent head-locked and wall panels share camera buffers. Texture supersampling is 1.0.",
+          "performance_mode": "preview_uploads_optimized_ffft_renderer",
+          "preview_isolation": "off",
+          "quest_button": "X",
+          "semantics": "RUN and DIAG start with previews visible; X changes upstream UiContainer visibility after one binding. Camera capture occurs after each FFFT group at simulation 30 Hz. Hidden preview callbacks skip acquisition, staging and upload. Visible panels publish fresh camera frames at most 30 Hz through ByteImageProvider.set_raw_bytes_data with retained CPU uint8 RGBA buffers and on-demand SceneUI capture. RECORD constructs only USD camera prims for offline RGB and never binds previews or creates dataset render products. Physical Quest verification remains pending.",
+          "toggle_control": "left_primary_click",
+          "upload_path": "cpu_staged",
+          "wall_layout": {
+            "center_offset_m": [
+              0.0,
+              0.0
+            ],
+            "mode": "horizontal",
+            "panel_gap_m": 0.05,
+            "panel_width_m": 0.6,
+            "placement": "world",
+            "world_orientation_xyzw": [
+              0.5,
+              -0.5,
+              -0.5,
+              0.5
+            ],
+            "world_position_m": [
+              1.5,
+              0.0,
+              1.72
+            ]
+          }
+        },
+        "processor": {
+          "clutch": {
+            "active_behavior": "zero Cartesian delta while upstream continues updating its relative reference",
+            "control": "squeeze_value greater than 0.5",
+            "release_behavior": "discard the first released delta and rebase; no target jump",
+            "scope": "independent per arm",
+            "threshold": 0.5
+          },
+          "controller_pose": "grip_pose",
+          "disconnect": "hold simulated targets, mark both streams inactive, and require per-arm rebase on reconnect; never replay stale intent",
+          "frames": {
+            "arm_target": "each Gate C base_link; both S1 base rotations are identity, so world spatial deltas have the same axes in each base",
+            "openxr": "Y-up; +X right, +Y up, +Z back",
+            "output": "Isaac world, Z-up, +X forward, +Y left",
+            "tcp": "Gate C gripper_base",
+            "upstream_transform": "world_T_anchor uses [x, y, z]_isaac = [x, -z, y]_openxr before the configured anchor pose"
+          },
+          "gripper": {
+            "closed_aperture_m": 0.0,
+            "control": "trigger_value",
+            "mapping": "aperture = open + normalized_trigger * (closed - open); trigger 0 is fully open and trigger 1 is fully closed; independent per arm",
+            "mode": "analog_linear",
+            "open_aperture_m": 0.1,
+            "reset_aperture_m": 0.05,
+            "trigger_input_range": [
+              0.0,
+              1.0
+            ]
+          },
+          "input_per_arm": {
+            "pose_delta": [
+              "dx",
+              "dy",
+              "dz",
+              "rotation_vector_x",
+              "rotation_vector_y",
+              "rotation_vector_z"
+            ],
+            "state": [
+              "controller_available",
+              "effective_grip_pose_valid",
+              "squeeze_value",
+              "trigger_value",
+              "sensitivity_button_value"
+            ]
+          },
+          "provenance_revision": "piper_x_s2_generation_v1",
+          "reset": "reset S1 environment and upstream execution state, then require one newly valid rebase frame per arm",
+          "revision": "piper_x_isaac_s2_bimanual_relative_v3",
+          "rotation": {
+            "handedness": "right-handed",
+            "quaternion_order": "xyzw",
+            "relative_delta": "R_current * inverse(R_previous)",
+            "target_composition": "left-multiply spatial delta onto the current TCP orientation"
+          },
+          "sensitivity": {
+            "control_mode": "slider",
+            "input_control": "thumbstick_x",
+            "input_range": [
+              -1.0,
+              1.0
+            ],
+            "mapping": "Piecewise linear and clamped; left is slower, center keeps the previous normal speed, right is faster.",
+            "quest_control": "each controller's own horizontal thumbstick axis",
+            "scope": "independent per arm",
+            "slider": {
+              "center": {
+                "rotation_scale": 4.0,
+                "translation_scale": 4.0
+              },
+              "maximum": {
+                "rotation_scale": 6.0,
+                "translation_scale": 6.0
+              },
+              "minimum": {
+                "rotation_scale": 2.0,
+                "translation_scale": 2.0
+              }
+            },
+            "status": "SELECTED_HUMAN_ACCEPTANCE_PENDING"
+          },
+          "tracking": {
+            "invalid": "emit zero delta, hold simulated target, reject invalid/default or non-finite poses, invalidate that arm's relative reference and smoothing state, and leave the opposite valid arm usable",
+            "recovery": "first newly valid pose becomes the new per-arm baseline and emits zero delta; subsequent samples resume without manual clutch",
+            "root_cause_remediation": "TrackingSafeSe3RelRetargeter closes the pinned upstream Se3RelRetargeter is_none branch gap, which emitted zero but retained the stale previous wrist pose and smoothing accumulator",
+            "source_timestamp_threshold": null,
+            "valid": "controller present and grip_pose_valid with finite values"
+          },
+          "upstream_deadband": {
+            "position_m_before_scale": 0.001,
+            "rotation_rad_before_scale": 0.01
+          },
+          "upstream_smoothing": {
+            "alpha_position": 0.5,
+            "alpha_rotation": 0.5
+          }
+        },
+        "rendering": {
+          "pattern": "FFFT",
+          "physics_substeps_per_render": 4,
+          "record_cameras": "usd_prims_only_no_render_products",
+          "status": "SELECTED_HUMAN_ACCEPTANCE_PENDING"
+        },
+        "xr_presentation": {
+          "anchor_pos_m": [
+            -0.05,
+            0.0,
+            -0.1
+          ],
+          "anchor_rot_xyzw": [
+            0.0,
+            0.0,
+            -0.7071067811865475,
+            0.7071067811865476
+          ],
+          "near_plane_m": 0.1,
+          "rationale": "Physical Quest evidence showed +1.20 m was far too low and -0.25 m was slightly too high. The selected VR anchor Z is now -0.10 m, lowering the unchanged table/robots by 0.15 m relative to the previous run; -90 degree world yaw still maps OpenXR forward to scene +X.",
+          "recenter": {
+            "behavior": "One rising edge uses XRCore.schedule_teleport_to_view so the current physical HMD pose matches the validated demo scene-camera pose; controller poses use XRCore's full physical-to-virtual transform including the resulting space origin, while robot/table USD geometry and 1:1 scale remain unchanged.",
+            "execution_mode": "sync",
+            "motion_barrier": "Hold the request frame; on the next control frame accept XRCore's current physical-to-world transform as the new reference and emit a zero-motion rebase. Any later transform change rebases again. Missing active XR transforms still hold motion.",
+            "quest_button": "R3",
+            "toggle_control": "right_thumbstick_click",
+            "view_prim_path": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera"
+          },
+          "scale": 1.0
+        },
+        "xr_render": null
+      },
+      "generated_runtime_config_sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "host_paths": {
+        "cloudxr_install_root": "/data/ebulochkin/vla-runtime/isaac-isaac61/cloudxr",
+        "home": "/home/ebulochkin",
+        "kit_portable_root": "/data/ebulochkin/vla-runtime/isaac-isaac61/kit",
+        "python_environment": "/data/vla-infrastructure/isaac61_production/env",
+        "uid": 1006,
+        "xdg_cache_home": "/data/ebulochkin/vla-runtime/isaac-isaac61/cache"
+      },
+      "launch": {
+        "cloudxr_initialized": false,
+        "cloudxr_mode": "auto",
+        "command": [
+          "/data/vla-infrastructure/isaac61_production/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording-ui/tools/run_isaac_s1.py",
+          "--config",
+          "/tmp/vr-layout-record/run/runtime.yaml",
+          "--s2-config",
+          "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording-ui/configs/isaac61_s2_runtime.yaml",
+          "--vr-runtime",
+          "--s2-mode",
+          "run",
+          "--demo-profile",
+          "dual_cube_to_matching_plates",
+          "--device",
+          "cuda:0",
+          "--kit_args",
+          "--portable-root /data/ebulochkin/vla-runtime/isaac-isaac61/kit --enable isaacsim.replicator.episode_recorder",
+          "--demo-preview-isolation",
+          "off",
+          "--report",
+          "/tmp/vr-layout-record/run/result.json",
+          "--s2-max-control-steps",
+          "6",
+          "--s2-record",
+          "--s2-recording-dir",
+          "/tmp/vr-layout-record/episode",
+          "--s2-injected-recording-smoke",
+          "--s2-injected-count",
+          "3",
+          "--viz",
+          "kit",
+          "--no-s2-require-session",
+          "--s2-reset-step",
+          "30"
+        ],
+        "dry_run": false,
+        "environment_pins": {
+          "cloudxr_runtime_version": "6.2.1",
+          "dependency_source": "v3.0.0-EA frozen uv.lock teleop extra",
+          "isaac_lab_commit": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d",
+          "isaac_lab_package_version": "17.0.2",
+          "isaac_lab_release": "release/3.0.0",
+          "isaac_sim_version": "6.1.0.0",
+          "isaaclab_teleop_version": "0.9.0",
+          "isaacteleop_version": "1.4.98rc1"
+        },
+        "frozen_workspace_sha256": {
+          "lock": "f633120f145944672d9ba3d6a7bda9a145a01b6295e9fc08f0997e60dc6a40e7",
+          "pyproject": "2780d507882950e64ca8f972fcad4c19e74b9681af1d830e0b34fa09e79e116b"
+        },
+        "hud_on_start": false,
+        "lab_commit": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d",
+        "max_control_steps": 6,
+        "no_client_audit": false,
+        "pinned_packages": {
+          "isaaclab": "17.0.2",
+          "isaaclab-rl": "0.16.3",
+          "isaaclab-teleop": "0.9.0",
+          "isaacsim": "6.1.0.0",
+          "isaacteleop": "1.4.98rc1"
+        },
+        "preview_cameras": 3,
+        "preview_isolation": "off",
+        "profile": "dual_cube_to_matching_plates",
+        "smoke": true,
+        "stack": "isaac61",
+        "xr_smoke": false
+      },
+      "mode": "record",
+      "processor_revision": "piper_x_isaac_s2_bimanual_relative_v3",
+      "repository": {
+        "branch": "codex/vr-recording-ui",
+        "commit": "39774707a2b5cd3b333473dfc7d7b9ad7d94142c",
+        "full_status": " M configs/isaac61_vr_runtime.yaml\n M docs/project/RUN_VR_OPERATIONS.md\n M tests/test_isaac_s2_upstream.py\n M tests/test_isaac_vr_config.py\n M tools/isaac_s2_runtime.py\n M tools/isaac_s2_upstream.py\n M tools/isaac_vr_runtime.py\n M tools/launch_isaac_vr.py\n?? tests/test_isaac_vr_preview_layout.py\n?? tools/isaac_vr_preview_layout.py",
+        "root": "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording-ui",
+        "source_sha256": {
+          "configs/environments/isaac1103/ENVIRONMENT.yaml": "fe997db42e9d91e64c4820b5f073cd3ff69625a89ef299cb7db28b58d82ac0c6",
+          "configs/isaac61_s1_runtime.yaml": "5da72ca0cfba86241d8f834eb8ee9369c002236dba699f0f3a36b35fc8c0e171",
+          "configs/isaac61_s2_runtime.yaml": "8bf47ae99191b9f63317e5f5ff5aa557f533b6a1890df14d8c45e60b15a02977",
+          "configs/isaac61_vr_runtime.yaml": "a635a7f4ce7160bd4b2e59f40e1f4115b200b6e2f3e8b009279a5be6ac90bcec",
+          "run-vr": "84cf0afada6d7d52dd3b9ded70c67add6f576bec2462e6545285421b897f1256",
+          "tools/isaac_demo_launch.py": "f1b2a8dde4fe639e63cc5c2c02b59b992391bae25aab0aa71284aed3a1ab5ca6",
+          "tools/isaac_preview_partitions.py": "5b846dfaed43044d5838474e396732e2a22a1fa069c4bfded4b909109fb27dc2",
+          "tools/isaac_s1_runtime.py": "8dde4e0eae2bb27cc061329e83dd8602cb83c889e43e561359c19c8070864eaf",
+          "tools/isaac_s2_performance.py": "06ea8e0fee9cfbf1159bf2102fd9c0743014772ba97dd5e9566fb9693ae03c3b",
+          "tools/isaac_s2_processor.py": "9e0b388717ed632d110c06e7be7ac6773936ed28c17d18a6a8d13194960e4054",
+          "tools/isaac_s2_runtime.py": "02fc92de7ce0658cc8e84a74bd00e9029817e51f074a48f7e0e7c19d72953c9c",
+          "tools/isaac_s2_upstream.py": "d950ac2425c2350bec5c6039e491714576f219caffe3fcb863c2193014c89271",
+          "tools/isaac_vr_camera_guard.py": "38d191c5d2c6700ac53aa30462106839c44b5cef44e4ffc46d165b76a9ea9f31",
+          "tools/isaac_vr_camera_rendering.py": "0667e12673d755f7c97847ddacb3f384ceaf9969b1529be2a3d9efff5651f29a",
+          "tools/isaac_vr_capture.py": "a45fea9cd2521ecd4a83d8b6128e9bc63f51beb26fd676fad2c71cf5a593ee50",
+          "tools/isaac_vr_config.py": "3555357e70e0db20a2410bb3e27aaffaa65da160d3c2e07ad63e62b1a1cc1f52",
+          "tools/isaac_vr_decision.py": "0a9188211bfaadd9d5974788cc125d0eca04c77b9b358f4c42e680774141f025",
+          "tools/isaac_vr_injected_recording.py": "e9bd6c89f429c0edad510e577266ed551a6366a336b98d781eb0965107e6a1a0",
+          "tools/isaac_vr_preview_layout.py": "08afa50b723c31fea5cd47114abaff6a7e7b1a6b73ea6b64d2586694403b1260",
+          "tools/isaac_vr_recording.py": "94b5d25903615cb7133fbf9503d7bd24e5e1221e576ba71a26e00c0ce286072c",
+          "tools/isaac_vr_recording_benchmark.py": "b7f34cf3efa781dd60d091b55bada846865426acf05930c14acb1e7271838292",
+          "tools/isaac_vr_recording_smoke.py": "60eac8473947e3ac51ec604f4ce789446dd4bde18f5bf187d5b7fea7944ddc7b",
+          "tools/isaac_vr_replay.py": "20939c24b42744b701ca1e951d889ddf55f15dacd2550cf9fa8d87203d2efb70",
+          "tools/isaac_vr_runtime.py": "c1b2a2d4a39cb60b0e936cc4227a067f8615819a8bca43e95769fa29d15ea56a",
+          "tools/isaac_vr_zed.py": "fe6684ec78966c536bf8195ac0b1c0749ce4b400956935dbd94fa793f5aa4283",
+          "tools/launch_isaac_vr.py": "9e58b52aa5783221c92a12ea4535debec22e547e029a6d7c1ad50537e239d2d9",
+          "tools/run_isaac_s1.py": "c2b8dbe2d05c32c4f5cfec4269ad37d58673c0a5d79603c5057f907e7c4201e2"
+        },
+        "tracked_status": " M configs/isaac61_vr_runtime.yaml\n M docs/project/RUN_VR_OPERATIONS.md\n M tests/test_isaac_s2_upstream.py\n M tests/test_isaac_vr_config.py\n M tools/isaac_s2_runtime.py\n M tools/isaac_s2_upstream.py\n M tools/isaac_vr_runtime.py\n M tools/launch_isaac_vr.py",
+        "untracked_files": [
+          "tests/test_isaac_vr_preview_layout.py",
+          "tools/isaac_vr_preview_layout.py"
+        ]
+      },
+      "run_id": "run",
+      "schema": "piper_x_isaac_vr_run_manifest_v1",
+      "top_level_command": "./run-vr record --smoke --injected-actions --injected-count 3 --max-control-steps 6 --run-dir /tmp/vr-layout-record/run --recording-dir /tmp/vr-layout-record/episode",
+      "top_level_invocation": [
+        "./run-vr",
+        "record",
+        "--smoke",
+        "--injected-actions",
+        "--injected-count",
+        "3",
+        "--max-control-steps",
+        "6",
+        "--run-dir",
+        "/tmp/vr-layout-record/run",
+        "--recording-dir",
+        "/tmp/vr-layout-record/episode"
+      ]
+    },
+    "stdout_sha256": "d75b7e7b46e01f0889985a0ffb02ae51065afc6d90e1da3b33b0181502b99d8f"
+  },
+  "schema": "vr_preview_layout_qualification_v1",
+  "scope": [
+    "Native UI fixture uses production run_vr scene/Camera builder, native FFFT advance/capture and real upstream SceneUI; it replaces only S2 decision/session entry. No CloudXR or headset is connected.",
+    "Native fixture and recorder source manifests retain their exact tested hashes. After those runs, a two-line RUN caller guard was added to ignore layout-button release on missing controller samples; the final scoped core suite checks final source. The fixture does not execute that S2 controller loop.",
+    "Wall source normal/up/left-scene-right positions checked using the pinned upstream _world_panel_matrix function with native Gf; transforms match selected wall plane.",
+    "RECORD dispatcher smoke committed three injected rows, kept backdrop visible on all five measured FFFT advance boundaries, and created zero canonical camera products. No RGB was acquired.",
+    "Initial pytest command included a nonexistent test filename; corrected to the seven existing files recorded in README.",
+    "Existing user RUN (PID 2043743 at observation) was not stopped or mutated. Its log had no B-hide event; old physical RUN wall disappearance was not independently reproduced. Removing RECORD hide is a definite fix; new candidate fixture verifies effective USD visibility.",
+    "Physical headset visibility/readability/comfort and full CloudXR RUN trial remain pending. Gate states remain unchanged.",
+    "Raw runtime/preview captures remain external in /tmp; selected results/source manifests and original-output hashes are retained here."
+  ],
+  "timestamp": "2026-10-06T18:37:46+00:00",
+  "trusted_base": "39774707a2b5cd3b333473dfc7d7b9ad7d94142c",
+  "wall_geometry": [
+    {
+      "normal": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "position": [
+        1.5,
+        0.65,
+        1.72
+      ],
+      "role": "left_wrist",
+      "up": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "normal": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "position": [
+        1.5,
+        0.0,
+        1.72
+      ],
+      "role": "demo_scene",
+      "up": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "normal": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "position": [
+        1.5,
+        -0.65,
+        1.72
+      ],
+      "role": "right_wrist",
+      "up": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  ]
+}

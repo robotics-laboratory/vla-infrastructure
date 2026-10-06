@@ -92,6 +92,7 @@ DEMO_DISPLAY_BUTTON_INDEX = 22
 DEMO_BACKDROP_BUTTON_INDEX = 23
 DEMO_RECENTER_BUTTON_INDEX = 24
 RECORD_STOP_BUTTON_INDEX = 25
+PREVIEW_LAYOUT_BUTTON_INDEX = 25  # RUN layout and RECORD Stop are disjoint profiles.
 
 
 def _gf_row_matrix_to_numpy_transform(matrix: Any) -> np.ndarray:
@@ -283,6 +284,7 @@ def build_piper_x_bimanual_pipeline(
     recenter_control: str | None = None,
     record_stop_control: str | None = None,
     receipt: XrInputReceipt | None = None,
+    preview_layout_control: str | None = None,
 ) -> OutputCombiner:
     """Build the one-source bimanual controller pipeline used by S2.
 
@@ -290,6 +292,11 @@ def build_piper_x_bimanual_pipeline(
     action. Production S2 callers leave all of them unset.
     """
 
+    if preview_layout_control is not None:
+        if preview_layout_control != "left_thumbstick_click" or sensitivity_control == "thumbstick_click":
+            raise ValueError("Preview layout requires free L3 with slider sensitivity")
+        if record_stop_control is not None:
+            raise ValueError("RECORD forbids camera preview layout controls")
     controllers = (ControllersSource(name="piper_x_s2_controllers") if receipt is None
                    else _OwnedControllersSource("piper_x_s2_controllers", receipt))
     world_transform = ValueInput("world_T_anchor", TransformMatrix())
@@ -381,6 +388,13 @@ def build_piper_x_bimanual_pipeline(
         connected["record_stop"] = stop.connect(
             {ControllersSource.LEFT: transformed.output(ControllersSource.LEFT)}
         )
+    if preview_layout_control is not None:
+        layout = ControllerButtonRetargeter(
+            ControllersSource.LEFT, "thumbstick_click", "piper_x_preview_layout_button"
+        )
+        connected["preview_layout"] = layout.connect(
+            {ControllersSource.LEFT: transformed.output(ControllersSource.LEFT)}
+        )
     left_delta_names = [f"left_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]
     right_delta_names = [f"right_d{axis}" for axis in ("x", "y", "z", "rx", "ry", "rz")]
     left_state_names = [
@@ -416,6 +430,9 @@ def build_piper_x_bimanual_pipeline(
     if record_stop_control is not None:
         input_config["record_stop"] = ["record_stop_button"]
         output_order += ["record_stop_button"]
+    if preview_layout_control is not None:
+        input_config["preview_layout"] = ["preview_layout_button"]
+        output_order += ["preview_layout_button"]
     reorderer = TensorReorderer(
         input_config=input_config,
         output_order=output_order,
@@ -436,6 +453,8 @@ def build_piper_x_bimanual_pipeline(
         reorder_inputs["demo_recenter"] = connected["demo_recenter"].output("button")
     if record_stop_control is not None:
         reorder_inputs["record_stop"] = connected["record_stop"].output("button")
+    if preview_layout_control is not None:
+        reorder_inputs["preview_layout"] = connected["preview_layout"].output("button")
     packed = reorderer.connect(reorder_inputs)
     return OutputCombiner({"action": packed.output("output")})
 

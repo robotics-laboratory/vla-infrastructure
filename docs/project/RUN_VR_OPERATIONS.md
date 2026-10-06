@@ -10,6 +10,38 @@ X toggles preview visibility in these modes. Use `./run-vr --no-hud-on-start`
 to start with hidden previews. RECORD displays the recording status/review UI;
 `record --hud-on-start` is rejected because camera rendering is forbidden.
 
+**L3 (left thumbstick click)** switches preview placement in RUN/DIAG: the initial
+head-locked row is 8 cm below its previous position; the second placement is fixed
+to the background wall above the task. Both rows read **LEFT WRIST → SCENE → RIGHT
+WRIST**. Wall panels face the operator, sit just in front of the wall and are wider
+for viewing at a distance. Their selected dimensions/poses live in `vr_camera_feeds`
+in the [VR configuration](../../configs/isaac61_vr_runtime.yaml). This changes panel
+placement only; the ZED optical cameras, capture boundary and replay geometry stay
+the same. A two-camera preview omits SCENE and preserves left/right order.
+
+L3 is free in this VR composition because sensitivity uses `thumbstick_x`, while
+X toggles preview visibility, B toggles the wall and R3 recenters. RECORD retains
+X/Y/B recording controls and no preview-layout input or camera rendering. The wall
+starts visible in RECORD too; the earlier unconditional recording-view hide is
+removed. Entering the wall layout restores its visibility if B had hidden it.
+
+Upstream audit for placement: pinned Isaac Lab `camera_feed` already calculates
+head-locked/world layouts and `KitSceneUiCameraFeedPanel` constructs both kinds.
+Kit `xr_utils` 1.0.2 recommends retaining containers and changing visibility
+([UiContainer lifecycle](https://docs.omniverse.nvidia.com/kit/docs/omni.kit.scene_view.xr_utils/1.0.2/omni.kit.scene_view.xr_utils/omni.kit.scene_view.xr_utils.UiContainer.html)).
+The remaining gap is switching placement without recreating views. A narrow
+adapter prepares two persistent panel sets once, then selects one per RGB feed.
+Only the active set receives uploads; there are still three Camera sensors/render
+products, and the existing Scene Partitions exclude both panel sets from RGB.
+Reset/reconnect retain layout and held-button state. No new dependency, renderer,
+processor semantics or dataset schema is introduced; physical layout acceptance
+remains pending.
+
+[Bounded placement checks](../evidence/S2/20261006_preview_layouts/README.md) cover
+real SceneUI/Camera composition in an isolated offline fixture and state-only
+RECORD. The fixture excludes full S2/CloudXR session entry; it is not headset
+visibility or physical acceptance evidence.
+
 The 2026-10-06 operator selection replaces the VR render cadence with FFFT.
 The [earlier rejected substep experiment](../evidence/S2/20260921_vr_render_substeps/README.md)
 retains its original rejection and exact tested source. This selection does not

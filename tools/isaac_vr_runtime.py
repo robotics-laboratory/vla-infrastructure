@@ -438,7 +438,10 @@ class VRRuntime:
         self.backdrop_control = str(config["scene"]["backdrop"]["toggle_control"])
         self.recenter_control = str(config["xr_presentation"]["recenter"]["toggle_control"])
         self.recenter_view_prim_path = str(config["xr_presentation"]["recenter"]["view_prim_path"])
-        self.pipeline_action_dim = 25
+        self.layout_control = str(config["vr_camera_feeds"]["layout_toggle_control"])
+        self.pipeline_action_dim = 26 if camera_rig.live_rgb_enabled else 25
+        self._preview_layouts = None
+        self._preview_layout_report = {}
         self.validation: dict[str, Any] = {}
         self._env = None
         self._display_visible = False
@@ -475,8 +478,10 @@ class VRRuntime:
                 label=label,
             )
             for name, label in (
-                [("left_wrist", "LEFT WRIST"), ("right_wrist", "RIGHT WRIST")]
-                + ([("demo_scene", "SCENE")] if self.preview_scene else [])
+                (name, {"left_wrist": "LEFT WRIST", "demo_scene": "SCENE",
+                        "right_wrist": "RIGHT WRIST"}[name])
+                for name in config["vr_camera_feeds"]["order"]
+                if name != "demo_scene" or self.preview_scene
             )
         ]
         layout_cfg = XrCameraFeedLayoutCfg(
@@ -584,9 +589,9 @@ class VRRuntime:
             self.camera_rig.capture.invalidate()
 
     def prepare_recording_view(self) -> None:
-        """Keep headset connection controls visible while dataset RGB is suspended."""
+        """Keep the selected background without enabling any camera RGB."""
         self.disable_live_rgb()
-        self._set_backdrop_visibility(False)
+        self._set_backdrop_visibility(bool(self.config["scene"]["backdrop"]["initial_visibility"]))
 
     def open(self, env) -> None:
         self._env = env
@@ -620,6 +625,12 @@ class VRRuntime:
             # One initial publication validates the compatibility buffer.
             # Subsequent hidden callbacks return before any feed acquisition.
             self._feed_session.refresh()
+            from tools.isaac_vr_preview_layout import PreviewLayoutPanels
+
+            self._preview_layouts = PreviewLayoutPanels(
+                manager, self._feed_session._presenter,
+                self.config["vr_camera_feeds"]["wall_layout"], self.preview_isolation,
+            )
             self._set_upstream_panel_visibility(False)
             manager = self._feed_session._manager
             feeds = tuple(manager._feeds) if manager is not None else ()
@@ -672,6 +683,10 @@ class VRRuntime:
 
     def close(self) -> None:
         if self._feed_bound:
+            if getattr(self, "_preview_layouts", None) is not None:
+                self._preview_layout_report = self._preview_layouts.report()
+                self._preview_layouts.close_inactive()
+                self._preview_layouts = None
             if self._feed_updates is not None:
                 self._feed_update_report = dict(self._feed_updates.counters)
             self._feed_session.close()
@@ -737,6 +752,18 @@ class VRRuntime:
                 flush=True,
             )
         self._backdrop_button_pressed = pressed
+
+    def consume_layout_button(self, value: float, *, event_origin: str = "controller_pipeline") -> None:
+        if self._preview_layouts is None or not self._preview_layouts.consume_button(value):
+            return
+        self._feed_updates.invalidate()
+        if self._preview_layouts.mode == "wall":
+            self._set_backdrop_visibility(True)
+        self._set_upstream_panel_visibility(self._display_visible)
+        print(json.dumps({"event": "demo_preview_layout_changed",
+                          "event_origin": event_origin, "control": self.layout_control,
+                          "quest_button": self.config["vr_camera_feeds"]["layout_quest_button"],
+                          **self._preview_layouts.report()}, sort_keys=True), flush=True)
 
     def consume_recenter_button(
         self,
@@ -871,6 +898,8 @@ class VRRuntime:
             if self.preview_isolation
             else {"enabled": False},
             "preview_feed_count": 3 if self.preview_scene else 2,
+            "preview_layout": (self._preview_layouts.report() if self._preview_layouts
+                               else self._preview_layout_report),
             "camera_frames_start": self._runtime_frames,
             "camera_frames_end": final,
             "camera_capture_cycles_including_reset": cycles,

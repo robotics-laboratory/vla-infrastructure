@@ -42,6 +42,7 @@ from isaac_s2_upstream import (
     DEMO_DISPLAY_BUTTON_INDEX,
     DEMO_RECENTER_BUTTON_INDEX,
     RECORD_STOP_BUTTON_INDEX,
+    PREVIEW_LAYOUT_BUTTON_INDEX,
     PIPELINE_ACTION_DIM,
     build_piper_x_bimanual_pipeline,
     create_piper_x_teleop_device,
@@ -356,6 +357,8 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
         pipeline_kwargs["display_control"] = experiment.display_control
         pipeline_kwargs["backdrop_control"] = experiment.backdrop_control
         pipeline_kwargs["recenter_control"] = experiment.recenter_control
+        if not recording_requested:
+            pipeline_kwargs["preview_layout_control"] = experiment.layout_control
         pipeline_action_dim = experiment.pipeline_action_dim
     if recording_requested:
         # X, Y and B travel through the existing single ControllersSource.
@@ -818,6 +821,7 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                 display_button_value = 0.0
                 backdrop_button_value = 0.0
                 recenter_button_value = 0.0
+                layout_button_value = 0.0
                 if action is None:
                     command = processor.session_inactive()
                 else:
@@ -833,6 +837,8 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                         display_button_value = float(action_numpy[DEMO_DISPLAY_BUTTON_INDEX])
                         backdrop_button_value = float(action_numpy[DEMO_BACKDROP_BUTTON_INDEX])
                         recenter_button_value = float(action_numpy[DEMO_RECENTER_BUTTON_INDEX])
+                        if not recording_requested:
+                            layout_button_value = float(action_numpy[PREVIEW_LAYOUT_BUTTON_INDEX])
                     left, right = unpack_pipeline_action(action_numpy[:PIPELINE_ACTION_DIM])
                     command = processor.advance(
                         left,
@@ -840,6 +846,9 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                         session_active=events.is_active is not False,
                     )
                 if experiment is not None and not recording_requested:
+                    # A missing controller frame is not a physical L3 release.
+                    if action is not None and left.available:
+                        experiment.consume_layout_button(layout_button_value)
                     smoke_display_edge = bool(
                         args_cli.demo_display_toggle_smoke and control_steps in (10, 20, 40, 50)
                     )

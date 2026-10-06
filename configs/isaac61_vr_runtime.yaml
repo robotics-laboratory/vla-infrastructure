@@ -147,7 +147,10 @@ vr_camera_feeds:
   implementation: upstream isaaclab_teleop XrCameraFeedSession and Kit SceneUI presenter
   image_source: Isaac Lab Camera RGBA buffer reused for presentation; sensor exclusion is owned by the optional RTX Scene Partition integration, not buffer selection.
   upload_path: cpu_staged
-  panel_layout: Camera-resolution pixel layout; preserve upstream physical dimensions, labels and placement. Texture supersampling is 1.0.
+  panel_layout: Camera-resolution pixel layout; persistent head-locked and wall panels share camera buffers. Texture supersampling is 1.0.
+  order: [left_wrist, demo_scene, right_wrist]
+  layout_toggle_control: left_thumbstick_click
+  layout_quest_button: L3
   initial_visibility: true
   toggle_control: left_primary_click
   quest_button: X
@@ -157,12 +160,22 @@ vr_camera_feeds:
     mode: horizontal
     placement: head_locked
     # Upstream layout coordinates are horizontal/image-right and vertical/image-up.
-    # With a ~0.31 m panel height, +0.18 m keeps the lower edge above eye center.
-    center_offset_m: [0.0, 0.18]
+    # Lower the previous head-locked row by 8 cm.
+    center_offset_m: [0.0, 0.10]
     distance_m: 0.65
     panel_width_m: 0.36
     panel_gap_m: 0.035
     max_update_hz: 30.0
+  wall_layout:
+    mode: horizontal
+    placement: world
+    center_offset_m: [0.0, 0.0]
+    # Wall front X=1.52; panels sit 2 cm in front, above the task.
+    world_position_m: [1.50, 0.0, 1.72]
+    # Image right=-Y, up=+Z, readable normal=-X toward the operator.
+    world_orientation_xyzw: [0.5, -0.5, -0.5, 0.5]
+    panel_width_m: 0.60
+    panel_gap_m: 0.05
 
 diagnostics:
   camera_capture_limit_per_feed: 12

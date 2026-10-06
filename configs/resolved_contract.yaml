@@ -2063,6 +2063,20 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  vr_preview_layout_checks:
+    kind: report
+    sha256: b829a8a5bfc9d7cb6a7199cc35f6e1c0ccb020e0cc0051a4c5039afa95d1a53a
+    path: docs/evidence/S2/20261006_preview_layouts/checks.json
+    uri: null
+    description: Bounded native preview-placement/state-only backdrop checks; exact
+      source, failed setup attempts and physical limitations in the registered bundle.
+  vr_preview_layout_core_tests:
+    kind: test_output
+    sha256: 87dd91b3c352ed3bb73f010e78f75ddd84ea1f8be49d334f8c572021daeb6af0
+    path: docs/evidence/S2/20261006_preview_layouts/core_tests.txt
+    uri: null
+    description: Bounded native preview-placement/state-only backdrop checks; exact
+      source, failed setup attempts and physical limitations in the registered bundle.
   vr_zed_ffft_source_inputs:
     kind: run_manifest
     sha256: 54b957a4493f700ed598e713b9500e1951fd2e1a4c2ad932f0b4e2725d583a21
@@ -3290,6 +3304,27 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  vr_preview_layout_native:
+    kind: command_test
+    status: pass
+    timestamp: '2026-10-06T18:37:46+00:00'
+    command: Declared core scoped pytest; isolated native UI fixture, three native unittest
+      cases and production state-only record smoke; exact commands and observer sources
+      retained in bundle.
+    summary: 110 scoped core tests pass; six native UI mode changes preserve three Camera
+      products/FFFT and left-scene-right order; nine preview uploads match; state-only
+      RECORD has zero camera products and visible backdrop.
+    artifact_ids:
+    - vr_preview_layout_checks
+    - vr_preview_layout_core_tests
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/evidence/S2/20261006_preview_layouts
+    symbol: null
+    notes: Native fixtures are hash-scoped and exclude full S2/CloudXR session entry.
+      No physical headset, wall-visibility or comfort acceptance; existing user RUN
+      untouched. S2/D1 unresolved.
   vr_zed_ffft_camera_qualification:
     kind: command_test
     status: pass
@@ -5068,6 +5103,7 @@ gates:
   S2:
     state: unresolved
     evidence_ids:
+    - vr_preview_layout_native
     - vr_zed_ffft_camera_qualification
     - vr_architecture_audit
     - vr_architecture_phase
@@ -5089,6 +5125,8 @@ gates:
     - gate_s2_physical_run1_failed
     - isaac1103_s2_automated
     artifact_ids:
+    - vr_preview_layout_checks
+    - vr_preview_layout_core_tests
     - vr_zed_ffft_source_inputs
     - vr_zed_ffft_native_results
     - vr_zed_ffft_scheduling

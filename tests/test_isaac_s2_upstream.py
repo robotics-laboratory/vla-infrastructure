@@ -274,6 +274,33 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         self.assertEqual(production.output_types()["action"].types[0].shape, (22,))
         self.assertEqual(demo.output_types()["action"].types[0].shape, (25,))
 
+    def test_preview_layout_l3_keeps_motion_shape_and_record_stop_isolation(self) -> None:
+        kwargs = dict(sensitivity_control="thumbstick_x", display_control="left_primary_click",
+                      backdrop_control="right_secondary_click", recenter_control="right_thumbstick_click")
+        preview = self.build_piper_x_bimanual_pipeline(
+            **kwargs, preview_layout_control="left_thumbstick_click"
+        )
+        record = self.build_piper_x_bimanual_pipeline(**kwargs, record_stop_control="left_secondary_click")
+        self.assertEqual(preview.output_types()["action"].types[0].shape, (26,))
+        self.assertEqual(record.output_types()["action"].types[0].shape, (26,))
+        with self.assertRaisesRegex(ValueError, "RECORD forbids"):
+            self.build_piper_x_bimanual_pipeline(
+                **kwargs, preview_layout_control="left_thumbstick_click", record_stop_control="left_secondary_click"
+            )
+        with self.assertRaisesRegex(ValueError, "free L3"):
+            self.build_piper_x_bimanual_pipeline(preview_layout_control="left_thumbstick_click")
+
+    def test_recording_view_keeps_backdrop_without_enabling_rgb(self) -> None:
+        runtime = self.VRRuntime.__new__(self.VRRuntime)
+        runtime.config = {"scene": {"backdrop": {"initial_visibility": True}}}
+        runtime._feed_bound = runtime._display_visible = False
+        runtime.camera_rig = SimpleNamespace(live_rgb_enabled=False, capture=None)
+        visible = []
+        runtime._set_backdrop_visibility = visible.append
+        runtime.prepare_recording_view()
+        self.assertEqual(visible, [True])
+        self.assertFalse(runtime.camera_rig.live_rgb_enabled)
+
     def test_demo_display_edges_hide_panels_without_closing_rgb_source(self) -> None:
         import torch
 

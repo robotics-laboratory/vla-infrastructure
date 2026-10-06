@@ -88,7 +88,7 @@ def test_selected_vr_tuning_requires_human_acceptance_and_preserves_geometry() -
     assert config["vr_camera_feeds"]["quest_button"] == "X"
     assert config["vr_camera_feeds"]["upload_path"] == "cpu_staged"
     assert config["vr_camera_feeds"]["layout"]["placement"] == "head_locked"
-    assert config["vr_camera_feeds"]["layout"]["center_offset_m"] == [0.0, 0.18]
+    assert config["vr_camera_feeds"]["layout"]["center_offset_m"] == [0.0, 0.10]
     assert config["vr_camera_feeds"]["layout"]["distance_m"] == 0.65
     assert config["vr_camera_feeds"]["layout"]["panel_width_m"] == 0.36
 
