@@ -1,171 +1,165 @@
-> Current Quest -> Isaac VR: [operator guide](docs/project/RUN_VR_OPERATIONS.md).
-> Project commands run from your own `~/vla_infrastructure`; SDKs and large runtime data live in `/data`.
-> Physical Quest S2 acceptance remains pending.
+# PIPER-X VR Teleoperation & Dataset Collection
 
-# PIPER-X + Quest 3 Codex Instruction Pack — v5.2 Hardened
+Collect bimanual robot demonstrations in NVIDIA Isaac Sim using a Meta Quest 3,
+then turn them into LeRobot datasets for training vision-language-action models.
 
-## Current VR operator entrypoint
+The project connects two AgileX PIPER-X arms, VR controllers, simulation and
+dataset tooling. Its current workflow is **Quest → Isaac teleoperation → recorded
+state and actions → offline RGB → LeRobotDataset v3**. The repository also contains
+a LeRobot plugin for physical PIPER-X arms and the shared robot/data definitions
+needed to carry demonstrations between simulation and hardware.
 
-`./run-vr` selects the canonical VR composition; `./run-vr diag` adds diagnostic
-observers to the same runtime. Start with [RUN_VR_OPERATIONS.md](docs/project/RUN_VR_OPERATIONS.md)
-for prerequisites, controls/config ownership and troubleshooting.
+## What you can do today
 
-Selected facts live in `configs/resolved_contract.yaml`; shared processor semantics
-in `configs/isaac61_s2_runtime.yaml`; operator composition in
-`configs/isaac61_vr_runtime.yaml`. Physical S2 acceptance remains pending.
-Dataset recording is not implemented; D1 remains unresolved.
+- **Teleoperate two simulated PIPER-X arms.** Quest controllers drive the arms
+  through relative pose commands and Isaac Lab inverse kinematics, with gripper,
+  clutch, recenter and reset controls.
+- **Collect demonstrations.** Start and stop recording from the controllers,
+  save or discard a demonstration, and classify it as success, failure or
+  incomplete. Tracking interruptions produce separate technical segments within
+  the same demonstration.
+- **Replay recorded states and render camera images offline.** Each recorded
+  transition retains its observation, action and successor identities. Replay
+  restores the recorded scene state without advancing physics.
+- **Build and inspect LeRobotDataset v3 outputs.** Conversion joins RGB to the
+  recorded observations and checks every dataset row and video stream.
+- **Diagnose performance and data integrity.** The runtime provides control
+  timing, recording diagnostics, source manifests and strict artifact checks.
 
-## Instruction pack
+The default task is `dual_cube_to_matching_plates`: move two colored cubes onto
+their matching plates. Observations use two wrist cameras and one scene camera,
+each at 640×480. Simulation runs at 120 Hz physics with 30 Hz logical control;
+these settings do not guarantee 30 Hz in wall time.
 
-v5.2 is a consolidation/hardening release.
+## How recording works
 
-It keeps the v5.1 architecture:
+During recording, the system captures native/Fabric scene state and processed
+actions through NVIDIA Episode Recorder. Dataset camera rendering and live RGB
+reads are suspended. Four physics steps use **F,F,F,T** rendering: one final
+render/Kit pump per control transition, retaining the XR presentation path.
 
-```text
-native upstream runtimes
-+ LeRobot/Gym/EnvHub/native benchmark seams
-+ thin processors/adapters
-+ one explicit PIPER-X policy/data contract
-- project-owned universal simulator backend
-```
-
-but replaces the weak `DECIDE/PIN + *_complete: true` completion model with a machine-enforced contract.
-
-## Mandatory project capabilities
-
-```text
-REAL PIPER-X
-- Quest/VR teleoperation
-- LeRobotDataset v3 recording
-- real policy rollout
-- hardware safety / HIL acceptance
-
-ISAAC
-- Quest/VR teleoperation
-- dataset recording
-- automated episode generation
-- policy evaluation
-
-MUJOCO
-- policy evaluation
-```
-
-Benchmark-native evaluation remains a first-class supported mode. A specific benchmark is mandatory only when `requirements.capabilities.selected_benchmark` is true.
-
-## Three distinct execution modes
+After recording, the saved states are replayed to render the three camera views.
+Images are matched to immutable observation identities before conversion to
+LeRobot format. This keeps dataset image rendering out of the teleoperation loop
+and preserves the pairing between what the policy observes and its action.
 
 ```text
-REAL ROLLOUT
-policy -> LeRobot Robot -> physical PIPER-X
-
-SIM EVAL
-policy -> LeRobot processors -> Gym/EnvHub/native sim env -> metrics
-
-BENCHMARK-NATIVE EVAL
-policy -> minimum edge processors -> official benchmark protocol -> comparable result
+Quest controllers → relative pose processing → IK → simulated PIPER-X
+                                                    │
+                                           state/action recording
+                                                    │
+                                   strict replay → three-view RGB
+                                                    │
+                                            LeRobotDataset v3
 ```
 
-Do not collapse them into one project-owned `rollout()` abstraction.
+A saved demonstration is not automatically admitted for training. Source
+verification, conversion checks and physical qualification are separate steps.
 
-## What is new in v5.2
+## Getting started
 
-- standalone gate definitions;
-- one explicit normative/conflict model;
-- strict full JSON Schema with closed objects;
-- no magic `DECIDE/PIN` placeholders: unresolved values are `null`;
-- gate state machine instead of free-floating `*_complete` booleans;
-- machine-readable gate dependency DAG;
-- first-class evidence and artifact registries;
-- local artifact existence/SHA-256 verification;
-- fail-closed JSON Schema dependency;
-- structured execution profiles;
-- machine-readable timing/safety/hardware/calibration/HIL contracts;
-- explicit `obs_t <-> action_t` temporal semantics;
-- native-recorder conversion causality test;
-- D2a -> R2 -> D2b dataset parity ordering;
-- executable mixed-source dataset materialization contract;
-- full-read/video/DataLoader dataset QA gate;
-- PIPER-X sign/home/limits/FK/TCP/gripper cross-runtime parity;
-- reproducible Isaac/MuJoCo evaluation run manifests;
-- same-checkpoint cross-sim validation;
-- real-rollout acceptance manifest;
-- machine-derived Final RC readiness;
-- negative tests covering known v5.1 false-green classes;
-- stale reference/spec linter.
+### Requirements
 
-## Canonical files
+The Isaac runtime targets Ubuntu 22.04/24.04 on an RTX workstation. The pinned
+environment specifies at least 16 GB VRAM and 32 GB RAM; testing has used an
+RTX 4090. Physical VR operation requires a Quest 3, the CloudXR client and
+accepted NVIDIA Isaac Sim/CloudXR EULAs.
 
-Use the [documentation reading map](docs/README.md) to select current owners.
-Before documentation/evidence work, follow [documentation governance](docs/DOCUMENTATION_POLICY.md).
+Core tooling uses Python 3.12.13, `uv` and LeRobot 0.6.1. Isaac runs in a separate
+pinned environment with Isaac Sim 6.1, Kit 110.3 and Isaac Lab. SDKs, assets,
+recordings and generated datasets live outside the checkout under `/data`.
 
-Read `docs/NORMATIVE_MODEL.md` first.
-
-Live repository operating commands preserved from the pre-v5.2 project are in
-`docs/project/CORE_ENVIRONMENT_OPERATIONS.md`; that note is operational, not a
-second resolved contract.
-
-- `AGENTS.md`
-- `docs/NORMATIVE_MODEL.md`
-- `docs/CAPABILITY_MATRIX.md`
-- `docs/GATE_SPEC.md`
-- `docs/DATA_COLLECTION_POLICY.md`
-- `docs/DATASET_MATERIALIZATION.md`
-- `docs/SIMULATION_POLICY.md`
-- `docs/EVALUATION_POLICY.md`
-- `docs/BENCHMARK_POLICY.md`
-- `docs/ENVIRONMENT_POLICY.md`
-- `docs/PIPER_X_VERIFICATION.md`
-- `docs/SAFETY_TIMING.md`
-- `docs/HIL_EXTENSION.md`
-- `docs/IMPLEMENTATION_PLAN.md`
-- `docs/ACCEPTANCE_CHECKLIST.md`
-- `docs/MIGRATION_V4_3_V5_1_TO_V5_2.md`
-- `docs/DESIGN_BASIS.md`
-- `docs/SOURCE_REFERENCES.md`
-- `configs/resolved_contract.yaml`
-- `configs/resolved_contract.schema.json`
-- `configs/gate_rules.yaml`
-- `tools/validate_resolved_contract.py`
-- `tools/lint_spec_references.py`
-- `tests/test_validator_negative.py`
-
-## Validator semantics
-
-Normal validation:
+Install the core environment:
 
 ```bash
-python tools/validate_resolved_contract.py configs/resolved_contract.yaml
+uv sync --frozen
 ```
 
-A valid but unfinished project prints:
+This installs dataset and development tooling. Set up the Isaac environment
+using the [Isaac installation guide](docs/project/migrations/20260918_isaac1103/OPERATIONS.md)
+and [pinned environment specification](configs/environments/isaac1103/ENVIRONMENT.yaml)
+before launching VR.
 
-```text
-CONTRACT STRUCTURALLY VALID
-CONTRACT SEMANTICALLY VALID
-FINAL RC NOT READY
-```
+### Launch the scene
 
-To require release readiness:
+Run from the repository root. After accepting the NVIDIA EULAs:
 
 ```bash
-python tools/validate_resolved_contract.py configs/resolved_contract.yaml --require-final-rc
+export OMNI_KIT_ACCEPT_EULA=Y
+export ISAACLAB_CXR_ACCEPT_EULA=1
+
+./run-vr --dry-run   # Check the installed environment and selected assets
+./run-vr            # Start Quest teleoperation
+./run-vr diag       # Start the same runtime with diagnostic observers
 ```
 
-To require one gate:
+The host prints the headset client URL and connection instructions. See the
+[VR operator guide](docs/project/RUN_VR_OPERATIONS.md) for headset setup,
+controller mappings and runtime options.
+
+### Record a demonstration
 
 ```bash
-python tools/validate_resolved_contract.py configs/resolved_contract.yaml --require-gate S1
+./run-vr record
 ```
 
-## Reuse rule
+Recording starts in `WAITING`:
 
-```text
-REUSE
-> CONFIGURE
-> COMPOSE
-> PROCESSOR / RENAME MAP
-> THIN ADAPTER
-> NEW IMPLEMENTATION
+1. Press **X** to start.
+2. Press **Y** to stop.
+3. Press **X** to save or **B** to discard.
+4. After saving, press **X** for success, **Y** for failure or **B** for incomplete.
+
+Release each button before the next press. The host reports lifecycle changes
+and output paths. Saved-demo metadata groups the technical recording segments.
+
+Follow [dataset materialization](docs/DATASET_MATERIALIZATION.md) to extract the
+recording, render offline RGB, create LeRobot outputs and evaluate admission.
+
+## Components
+
+| Component | Responsibility |
+|---|---|
+| `run-vr` | Entry point for run, diagnostic, recording and replay modes |
+| `tools/isaac_vr_*` | VR scene, cameras, recording, replay and dataset conversion |
+| `tools/isaac_s2_*` | Shared teleoperation loop, input processing and timing |
+| `packages/lerobot_robot_piperx` | LeRobot integration for single and bimanual physical PIPER-X arms |
+| `configs/` | Runtime settings, dependency specifications and robot/data contracts |
+| `tests/` | Offline regression and integration checks |
+| `docs/` | Setup, operations, dataset workflow and retained experiment results |
+
+Isaac Lab, Isaac Teleop/CloudXR, NVIDIA Episode Recorder and LeRobot own their
+respective runtime and storage functions. Project code composes them and maps
+their inputs and outputs to explicit PIPER-X semantics.
+
+## Current status
+
+Isaac VR teleoperation, native state/action recording, offline RGB and LeRobot
+conversion are implemented. Formal physical acceptance and human-VR dataset
+admission remain open; this is a development system, not a qualified release.
+
+Automated demonstration generation, complete Isaac/MuJoCo policy evaluation and
+physical policy rollout are further project milestones. Their requirements and
+acceptance criteria are tracked separately from the working collection path.
+The ZED/live-RGB camera experiments are maintained in an experimental branch;
+they are not the default recorder.
+
+## Development and documentation
+
+Core development commands:
+
+```bash
+uv run pytest
+uv run python tools/validate_resolved_contract.py configs/resolved_contract.yaml
 ```
 
-The stricter v5.2 machine layer is not permission to build more robotics infrastructure.
+The contract validator distinguishes a valid configuration from a finished
+release. `FINAL RC NOT READY` means required qualification milestones remain open.
+
+- [VR operations](docs/project/RUN_VR_OPERATIONS.md): launch, controls and recording.
+- [Dataset materialization](docs/DATASET_MATERIALIZATION.md): offline RGB, conversion and admission.
+- [Core environment](docs/project/CORE_ENVIRONMENT_OPERATIONS.md): dependency setup and host tooling.
+- [Documentation map](docs/README.md): further design, hardware and verification references.
+
+For contributions, read [AGENTS.md](AGENTS.md) and the relevant component's
+documentation before changing runtime or data semantics.
