@@ -171,7 +171,7 @@ vr_camera_feeds:
     placement: world
     center_offset_m: [0.0, 0.0]
     # Wall front X=1.52; panels sit 2 cm in front, above the task.
-    world_position_m: [1.50, 0.0, 1.72]
+    world_position_m: [1.50, 0.0, 1.57]
     # Image right=-Y, up=+Z, readable normal=-X toward the operator.
     world_orientation_xyzw: [0.5, -0.5, -0.5, 0.5]
     panel_width_m: 0.60
