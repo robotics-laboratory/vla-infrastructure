@@ -22,6 +22,14 @@ Retain the run directory printed by the launcher. Its expanded command includes
 valid tracked frames from both physical controllers; that check does not replace
 the observations below. Use the exact client URL and setup in the canonical VR config.
 
+Choose a sufficient `--max-control-steps` budget before starting, retain that exact
+command, and let RUN complete its budget after the observations. The runtime PASS
+predicate requires all requested control steps. Ctrl-C can produce a clean process
+shutdown and preserve recordings while intentionally leaving `passed: false`;
+do not rewrite that report as PASS. A RECORD session supplements lifecycle and
+artifact checks but does not exercise RUN's live RGB previews or replace the RUN
+acceptance target.
+
 ## Session metadata
 
 - Observer:
@@ -132,12 +140,17 @@ Use endpoints, center and interpolation defined in canonical `teleop_tuning.sens
 - Table/robot placement and scale match the canonical config:
 - R3 recenters once per press; no scene reset, target jump or session restart:
 - Recheck both hands' forward/right/up and rotation axes after repeated R3:
-- X shows/hides three distinct live feeds: left wrist, right wrist, scene preview:
-- The third feed remains preview-only; no third canonical D0 camera is claimed:
+- X shows/hides three distinct live ZED feeds in left wrist / scene / right wrist order:
+- All three feeds correspond to the current canonical camera roles; RECORD stores
+  their state without camera rendering, and offline REPLAY supplies RGB:
+- L3 switches head-locked / wall placement once per press; both retain the same
+  order and readable images, with no motion or sensitivity change:
 - Aim sensor cameras toward visible preview panels; no panel/recursive image
   appears in sensor feeds, with Scene Partitions active:
 - B toggles only backdrop visibility; repeat X/B, hold buttons, and reset while
   connected to check debounce and retained presentation state:
+- Frame rate, latency and motion remain comfortable in both preview layouts;
+  note observed stream FPS separately from host control Hz and simulation cadence:
 
 ## Acceptance rule
 

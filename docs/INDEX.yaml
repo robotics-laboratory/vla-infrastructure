@@ -3424,3 +3424,33 @@ documents:
   owner: vr.presentation.qualification
   mutable: false
   gates: [S2]
+- path: docs/evidence/S2/20261006_operator_recording_audit/README.md
+  kind: evidence
+  status: historical
+  owner: vr.acceptance
+  mutable: false
+  gates: [S2]
+- path: docs/evidence/S2/20261006_operator_recording_audit/checks.json
+  kind: evidence
+  status: historical
+  owner: vr.acceptance
+  mutable: false
+  gates: [S2]
+- path: docs/evidence/S2/20261006_operator_recording_audit/record_stdout.log
+  kind: evidence
+  status: historical
+  owner: vr.acceptance
+  mutable: false
+  gates: [S2]
+- path: docs/evidence/S2/20261006_operator_recording_audit/human_observations.json
+  kind: evidence
+  status: historical
+  owner: vr.acceptance
+  mutable: false
+  gates: [S2]
+- path: docs/evidence/S2/20261006_operator_recording_audit/layout_observation.json
+  kind: evidence
+  status: historical
+  owner: vr.acceptance
+  mutable: false
+  gates: [S2]

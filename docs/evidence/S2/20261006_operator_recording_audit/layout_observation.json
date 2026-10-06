@@ -1,0 +1,12 @@
+{
+  "device": "Meta Quest 3",
+  "method": "Explicit operator attestation, supplementary to human_observations.json; machine runtime reports unchanged.",
+  "observer": "ebulochkin",
+  "operator": "ebulochkin",
+  "operator_report": "Да, этот пункт тоже PASS",
+  "question": "L3 switches head-locked/wall placement once per press; left/scene/right order preserved; arm motion and sensitivity unchanged. Also checked and PASS?",
+  "reported_at": "2026-10-06T19:12:41.377854+00:00",
+  "result": "pass",
+  "schema": "piper_x_s2_operator_layout_observation_v1",
+  "tested_commit": "f2ac4eae6a063984d0377d4bb1ae07623d7d96b8"
+}
