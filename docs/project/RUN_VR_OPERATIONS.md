@@ -5,7 +5,7 @@ with diagnostics. `./run-vr record` writes a native NVIDIA Episode Recorder HDF5
 state/action/provenance artifact. It does not create a D1 dataset; S2 physical
 acceptance and D1 remain unresolved.
 
-RUN and DIAG start with the existing three head-locked camera previews visible.
+RUN and DIAG start with three head-locked ZED camera previews visible.
 X toggles preview visibility in these modes. Use `./run-vr --no-hud-on-start`
 to start with hidden previews. RECORD displays the recording status/review UI;
 `record --hud-on-start` is rejected because camera rendering is forbidden.
@@ -17,15 +17,49 @@ establish Quest comfort, wall FPS or physical acceptance of the new source.
 
 Upstream audit: pinned Isaac Lab 17.0.2 (materialization `0c2e2c64`), Isaac Sim
 6.1 / Kit 110.3 own `SimulationContext.step(render=False/True)`, render interval,
-USD pinhole-camera spawning, orientation/look-at math and `CameraRecordable`.
+orientation/look-at math, native Camera sensors and `CameraRecordable`.
 The [upstream simulation context reference](https://isaac-sim.github.io/IsaacLab/develop/_modules/isaaclab/sim/simulation_context.html)
 describes the render flag and Kit app pump; the installed pinned source was
 checked before using these APIs.
 The existing upstream `XrCameraFeedSession` owns RUN panel binding/lifetime.
 The remaining composition gap is choosing the cadence before the first control
-and spawning only camera prims in RECORD. The local code holds one render phase,
-rounds settling to a completed group and reuses the existing camera configuration.
+and authoring only camera prims in RECORD. The local code holds one render phase,
+rounds settling to a completed group and reuses the same camera builder.
 No dependency, environment, control processor or recorder format changes.
+
+### Selected ZED cameras
+
+All three roles use monocular **ZED X One GS**, native **960×600 SVGA**. They use
+the authored optical prims and intrinsics from Stereolabs `zed-isaac-sim`, pinned
+to `0164268ca123fa4549fc9d2062c1fd55cf7996dc`. The
+[vendor Isaac Lab integration](https://docs.stereolabs.com/docs/integrations/isaac-sim/using-the-zed-in-isaac-lab)
+provides the SDK-free `make_camera_cfg(..., spawn_pinhole=False)` path. RUN adds
+ordinary Isaac Lab Camera sensors to those prims; RECORD uses the same USD builder
+and CameraCfg without constructing sensors. No ZED SDK, Sim2Real or streaming
+graph is enabled. The selected checkout and asset/helper identities are checked
+before startup.
+
+The existing ZED composition from `358e7f341f2545726773377ab4010a330fbae19e` is
+reused in [isaac_vr_zed.py](../../tools/isaac_vr_zed.py), with the state-only RECORD
+branch added to that builder. The rig root compensates the vendor optical-frame
+offset to preserve the selected wrist optical poses and scene look-at. Camera
+housing rigid-body, mass and collision APIs are removed; camera meshes add no
+robot bodies or contacts. Recenter targets the vendor optical Camera prim.
+
+Preview uploads the native Camera RGBA buffer. RECORD stores the same authored
+optics, optical poses and resolution through CameraRecordable and visual
+provenance; REPLAY renders the recorded camera prims at those recorded dimensions.
+Thus teleop preview and offline rendering share camera geometry. Bit-identical
+pixels across independent RTX renders are not promised. LeRobot materialization
+preserves native dimensions, with current schema fingerprint
+`1a8c638cb8f544de6994c53e8d0311f4d316c7867e97f3d326a45dde10411cb3`.
+Existing 640×480 recordings retain their source geometry and legacy fingerprint;
+they are not silently resized or merged into the new schema.
+
+[Bounded qualification](../evidence/S1/20261006_zed_ffft_cameras/README.md) covers
+native preview uploads, FFFT, zero RECORD camera products, offline RGB geometry,
+LeRobot decoding, lifecycle and Ctrl-C. It does not establish Quest visibility,
+comfort, performance, physical S2 acceptance or D1 dataset admission.
 
 RECORD starts in `WAITING` with no demonstration or episode. On the existing
 single controller pipeline, press **X** (left primary) to Start, **Y** (left
@@ -367,8 +401,8 @@ There is no cadence switch on the first X or when a recording stops. Reset uses
 Startup preflight still totals 120 integrations. Plain S1 retains its 25-step
 reset and per-step rendering. Simulation rates do not guarantee wall-clock FPS.
 
-RECORD authors only the canonical USD camera prims, preserving mount poses,
-intrinsics and scene look-at. It never constructs dataset Camera sensors,
+RECORD authors the selected ZED USD rigs and optical camera prims, preserving
+mount poses and scene look-at while using vendor intrinsics. It never constructs dataset Camera sensors,
 annotators or RenderProducts, including preflight, WAITING, RECORDING, review
 and subsequent resets. The headset scene and recording UI still render. Its
 preflight checks state, contacts and camera prims without claiming RGB validity.
@@ -403,7 +437,8 @@ RGB and preview panels are off in RECORD; no RGB is read, retained or uploaded.
 `./run-vr replay --recording <session.hdf5> --episode 0` uses the unmodified NVIDIA
 `SessionReader` and `EpisodeReplayer` with the USD pose backend. It disables the S2
 decision loop, controller actuation and physics stepping. Add
-`--render-cameras <output-dir>` to write first/middle/last 640x480 RGB images for
+`--render-cameras <output-dir>` to write RGB images at the recorded camera dimensions
+(960×600 for the selected ZED source, 640×480 for historical sources) for
 `left_wrist`, `right_wrist` and `scene` from synchronously rendered replay state.
 The native record artifact is not yet a final D0 observation dataset; canonical
 three-camera images are produced at replay/materialization. Runtime round-trip

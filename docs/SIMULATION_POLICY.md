@@ -152,8 +152,12 @@ renderer support needs a separately qualified upstream configuration/fix.
 
 The offline-RGB recording profile is distinct from the live three-camera boundary
 above. RECORD must never render dataset cameras, including startup, waiting,
-reset and review. It authors the three USD camera prims through the upstream
-spawner without constructing Camera sensors, annotators or dataset RenderProducts.
+reset and review. The selected ZED profile references vendor-authored USD cameras
+through the same builder used by RUN, without constructing Camera sensors,
+annotators or dataset RenderProducts. Vendor optics and the selected optical poses
+are preserved in the native snapshot. Preview and replay use the same optical
+prims and native 960×600 resolution; historical recordings retain their recorded
+geometry. Camera housings add no rigid bodies, mass or collisions.
 CameraRecordable records their state for offline rendering; headset scene/UI
 rendering continues at the same F,F,F,T cadence. Before native actuation it
 freezes a content-addressed scene-state snapshot

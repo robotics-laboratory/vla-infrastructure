@@ -885,9 +885,15 @@ def test_async_finalizer_failure_is_observable_and_blocks_publication(tmp_path, 
     second_row = row_for_tokens(second_token, second_successor)
     second_row["episode_id"] = second.episode_id
     second.commit_transition(second_token, second_successor, seal_sample(second_row))
-    session.check_finalization()
     deadline = time.monotonic() + 5
-    while json.loads((first.output_dir / "recording_state.json").read_text())["artifact_state"] != "failed":
+    # The worker writes its marker before its Future becomes done. Observe the
+    # public polling boundary, not the marker as a thread-completion signal.
+    while True:
+        try:
+            session.check_finalization()
+        except RuntimeError as exc:
+            assert "finalization failed" in str(exc)
+            break
         assert time.monotonic() < deadline
         time.sleep(0.01)
     with pytest.raises(RuntimeError, match="finalization failed"):

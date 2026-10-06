@@ -65,7 +65,7 @@ def test_selected_vr_tuning_requires_human_acceptance_and_preserves_geometry() -
         ),
         "toggle_control": "right_thumbstick_click",
         "quest_button": "R3",
-        "view_prim_path": "/World/RobosynDemo/SceneCamera",
+        "view_prim_path": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
         "behavior": (
             "One rising edge uses XRCore.schedule_teleport_to_view so the current physical "
             "HMD pose matches the validated demo scene-camera pose; controller poses use "

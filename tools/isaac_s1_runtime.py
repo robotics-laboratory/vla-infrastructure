@@ -173,8 +173,8 @@ def native_observation_to_d0(
 
     def rgb(value: np.ndarray, role: str) -> np.ndarray:
         array = np.asarray(value)
-        if array.shape not in {(480, 640, 3), (480, 640, 4)}:
-            raise ValueError(f"{role} image must be 480x640 RGB/RGBA HWC, got {array.shape}")
+        if array.shape not in {(480, 640, 3), (480, 640, 4), (600, 960, 3), (600, 960, 4)}:
+            raise ValueError(f"{role} image must be legacy 480x640 or native ZED 600x960 RGB/RGBA HWC, got {array.shape}")
         if array.dtype != np.uint8:
             raise ValueError(f"{role} image must be uint8, got {array.dtype}")
         return np.ascontiguousarray(array[..., :3])

@@ -391,7 +391,8 @@ def test_render_identity_binds_exact_d0_camera_renderer_and_stage(tmp_path):
         2,
     )
     rendered = [
-        {"frame": 1, "role": role, "sha256": str(index) * 64}
+        {"frame": 1, "role": role, "sha256": str(index) * 64,
+         "shape": [480, 640, 3], "dtype": "uint8"}
         for index, role in enumerate(replay.CANONICAL_CAMERA_ROLES, start=3)
     ]
 

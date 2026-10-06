@@ -646,7 +646,7 @@ class BimanualPiperXIsaacEnvironment:
         for robot, ids in zip(self.robots, self.joint_ids, strict=True):
             measured.append(_cpu(robot.data.joint_pos)[0, ids])
         images = _cpu(self.camera.data.output["rgb"])
-        if images.shape != (2, 480, 640, 3):
+        if images.shape not in ((2, 480, 640, 3), (2, 600, 960, 3)):
             raise RuntimeError(f"batched camera output shape mismatch: {images.shape}")
         return native_observation_to_d0(measured[0], measured[1], images[0], images[1])
 

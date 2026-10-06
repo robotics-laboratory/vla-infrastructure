@@ -3364,3 +3364,45 @@ documents:
   owner: simulation.capture.qualification
   mutable: false
   gates: [S2]
+- path: docs/evidence/S1/20261006_zed_ffft_cameras/README.md
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/evidence/S1/20261006_zed_ffft_cameras/core_tests.txt
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/evidence/S1/20261006_zed_ffft_cameras/native_results.json
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/evidence/S1/20261006_zed_ffft_cameras/rpc_tests.txt
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/evidence/S1/20261006_zed_ffft_cameras/scheduling.json
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/evidence/S1/20261006_zed_ffft_cameras/source_inputs.json
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates: [D0, S1, S2, D1]
+- path: docs/evidence/S1/20261006_zed_ffft_cameras/validation.json
+  kind: evidence
+  status: historical
+  owner: simulation.capture.qualification
+  mutable: false
+  gates: [D0, S1, S2, D1]

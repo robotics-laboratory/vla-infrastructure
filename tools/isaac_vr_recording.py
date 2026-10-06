@@ -1170,10 +1170,11 @@ def start_live_recording(
         from isaac_vr_visual_provenance import build_visual_provenance
 
     camera_roles = env.camera.camera_prim_paths
+    camera_configs = {role: getattr(camera, "cfg", camera) for role, camera in cameras.items()}
     visual_provenance = build_visual_provenance(
         snapshot_stage,
         {
-            role: {"data_type": "rgb", "prim_path": path, "resolution": (640, 480)}
+            role: {"data_type": "rgb", "prim_path": path, "resolution": (camera_configs[role].width, camera_configs[role].height)}
             for role, path in camera_roles.items()
         },
     )
@@ -1189,7 +1190,7 @@ def start_live_recording(
             CameraRecordable(
                 group=f"state/camera/{role}",
                 prim_path=camera_roles[role],
-                resolution=(640, 480),
+                resolution=(camera_configs[role].width, camera_configs[role].height),
             )
             for role in cameras
         ),

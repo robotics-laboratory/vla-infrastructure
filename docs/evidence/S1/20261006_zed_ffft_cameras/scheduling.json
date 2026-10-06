@@ -1,0 +1,1097 @@
+{
+  "interrupt": {
+    "boundaries": [
+      {
+        "dataset_products": 0,
+        "kit_pumps": 7,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 23,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 92
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 7,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      }
+    ],
+    "stdout_path": "/tmp/vr-stop-native-1791309204561763547/run/stdout.log",
+    "stdout_sha256": "a46b2751d6292918d009c9817a58133af6c4339ed0ed51b2213da2cfa83e86c2"
+  },
+  "lifecycle": {
+    "boundaries": [
+      {
+        "dataset_products": 0,
+        "kit_pumps": 7,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 23,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 92
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 7,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 7,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 7,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 7,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 7,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 28
+      }
+    ],
+    "stdout_path": "/tmp/vr-zed-ffft-lifecycle/run/stdout.log",
+    "stdout_sha256": "910cfced14bd39cd7a2401fd3214fc04c1fdb7a574f13c019c9652ea0bafd862"
+  },
+  "preview": {
+    "boundaries": [
+      {
+        "dataset_products": 3,
+        "kit_pumps": 7,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 23,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 92
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 7,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 7,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 7,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 3,
+        "kit_pumps": 1,
+        "live_rgb": true,
+        "phase": 0,
+        "physics_steps": 4
+      }
+    ],
+    "stdout_path": "/tmp/vr-zed-ffft-preview-60/stdout.log",
+    "stdout_sha256": "6d6e05db3feda6541269a28238ed971a5f7aa3816f9f6bbc406cc72a10e881e5"
+  },
+  "record": {
+    "boundaries": [
+      {
+        "dataset_products": 0,
+        "kit_pumps": 7,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 28
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 23,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 92
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      },
+      {
+        "dataset_products": 0,
+        "kit_pumps": 1,
+        "live_rgb": false,
+        "phase": 0,
+        "physics_steps": 4
+      }
+    ],
+    "stdout_path": "/tmp/vr-zed-ffft-record/run/stdout.log",
+    "stdout_sha256": "941f212fbe3225fcda6429b5f469b9246f0728672c660285b74ac4a0bb72dd27"
+  }
+}

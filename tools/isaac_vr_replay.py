@@ -12,7 +12,7 @@ from dataclasses import dataclass
 import hashlib
 import json
 from pathlib import Path
-from typing import Any, Callable, Mapping
+from typing import Any, Callable, Mapping, Sequence
 
 import numpy as np
 
@@ -551,6 +551,9 @@ def _bind_render_identity(
         if not isinstance(rgb_sha256, str) or len(rgb_sha256) != 64:
             raise RuntimeError("render output has no RGB SHA-256")
         camera = cameras[role]
+        width, height = camera["resolution"]
+        if item.get("shape") != [height, width, 3] or item.get("dtype") != "uint8":
+            raise RuntimeError("render geometry differs from recorded camera provenance")
         item.update(
             {
                 "asset_closure_sha256": artifact.asset_closure_sha256,
@@ -614,8 +617,14 @@ class ReplayRuntimeGuard:
 class ReplayCameraMaterializer:
     """Own one persistent render product/annotator per recorded camera role."""
 
-    def __init__(self, camera_paths: Mapping[str, str], output_dir: Path) -> None:
+    def __init__(self, camera_paths: Mapping[str, str], output_dir: Path, *,
+                 resolutions: Mapping[str, Sequence[int]] | None = None) -> None:
         self.camera_paths = dict(camera_paths)
+        self.resolutions = dict(resolutions or {role: (640, 480) for role in CANONICAL_CAMERA_ROLES})
+        if set(self.resolutions) != set(CANONICAL_CAMERA_ROLES) or any(
+            tuple(size) not in ((640, 480), (960, 600)) for size in self.resolutions.values()
+        ):
+            raise ValueError("Replay camera resolutions must match a supported recorded schema")
         self.output_dir = output_dir
         self.products: dict[str, Any] = {}
         self.annotators: dict[str, Any] = {}
@@ -641,7 +650,7 @@ class ReplayCameraMaterializer:
         self._settings.set("/exts/omni.replicator.core/Orchestrator/enabled", False)
         for role in CANONICAL_CAMERA_ROLES:
             self.products[role] = rep.create.render_product(
-                self.camera_paths[role], (640, 480), force_new=True
+                self.camera_paths[role], tuple(self.resolutions[role]), force_new=True
             )
             annotator = rep.AnnotatorRegistry.get_annotator("rgb")
             self.annotators[role] = annotator
@@ -667,7 +676,8 @@ class ReplayCameraMaterializer:
         rendered: list[dict[str, Any]] = []
         for role in CANONICAL_CAMERA_ROLES:
             image = np.asarray(self.annotators[role].get_data())
-            if image.shape not in ((480, 640, 4), (480, 640, 3)) or image.dtype != np.uint8:
+            width, height = self.resolutions[role]
+            if image.shape not in ((height, width, 4), (height, width, 3)) or image.dtype != np.uint8:
                 raise RuntimeError(f"{role}: unexpected RGB buffer {image.shape} {image.dtype}")
             path = self.output_dir / f"frame_{frame:06d}_{role}.png"
             Image.fromarray(image[..., :3]).save(path)
@@ -679,7 +689,7 @@ class ReplayCameraMaterializer:
                     "path": str(path),
                     "role": role,
                     "sha256": _sha256(path),
-                    "shape": [480, 640, 3],
+                    "shape": [height, width, 3],
                 }
             )
         return rendered
@@ -792,7 +802,12 @@ def replay_from_snapshot(
                 f"prepared={sorted(prepared_groups)}, recorded={sorted(recorded_groups)}"
             )
         if render_cameras is not None:
-            materializer = ReplayCameraMaterializer(artifact.camera_paths, render_cameras)
+            materializer = ReplayCameraMaterializer(
+                artifact.camera_paths, render_cameras, resolutions={
+                    entry["role"]: entry["resolution"]
+                    for entry in artifact.visual_provenance["camera_roles"]
+                },
+            )
             materializer.open()
 
         def materialize(frame: int) -> None:

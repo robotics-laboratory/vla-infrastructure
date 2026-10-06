@@ -921,6 +921,9 @@ class VRRuntime:
         }
 
     def validate(self, env) -> dict[str, Any]:
+        from tools.isaac_vr_zed import verify_mounts
+
+        mount_readback = verify_mounts(env)
         live_rgb = self.camera_rig.live_rgb_enabled
         preflight_capture = (
             self.camera_rig.capture.latest(require_eligible=False) if live_rgb else None
@@ -994,6 +997,8 @@ class VRRuntime:
             "observation_capture": asdict(preflight_capture) if live_rgb else None,
             "camera_rendering": "live_rgb" if live_rgb else "usd_prims_only",
             "camera_prim_valid": camera_prims,
+            "zed_mounts": self.camera_rig.zed_mounts,
+            "zed_pose_readback": mount_readback,
             "candidate_home_used": True,
             "maximum_home_error_deg_or_mm": float(home_error.max()),
             "finite_state": bool(np.isfinite(state).all()),
@@ -1023,8 +1028,11 @@ class VRRuntime:
             and report["maximum_profile_reset_position_error_m"]
             <= float(self.config["validation"]["profile_reset_position_tolerance_m"])
             and (not live_rgb or (
-                wrist_shapes == {"left_wrist": [480, 640, 3], "right_wrist": [480, 640, 3]}
-                and report["scene_camera"]["shape"] == [480, 640, 3]
+                wrist_shapes == {role: [self.config["cameras"]["wrist"]["height"],
+                                      self.config["cameras"]["wrist"]["width"], 3]
+                                 for role in ("left_wrist", "right_wrist")}
+                and report["scene_camera"]["shape"] == [self.config["cameras"]["scene"]["height"],
+                                                    self.config["cameras"]["scene"]["width"], 3]
                 and report["scene_camera"]["dtype"] == "uint8"
                 and report["scene_camera"]["rgb_stddev"]
                 >= float(self.config["validation"]["minimum_scene_rgb_stddev"])
@@ -1039,51 +1047,6 @@ class VRRuntime:
         # intact, but stop forcing tensor reads on every physical teleop frame.
         self._validation_complete = True
         return report
-
-
-def _camera_cfg(prim_path: str, camera: dict[str, Any], *, rgba: bool) -> CameraCfg:
-    return CameraCfg(
-        prim_path=prim_path,
-        update_period=0.0,
-        height=int(camera["height"]),
-        width=int(camera["width"]),
-        # The XR presenter consumes RGBA.  The unchanged D0 facade above exposes
-        # its first three channels as RGB, avoiding a duplicate wrist annotator.
-        data_types=["rgba"] if rgba else ["rgb"],
-        update_latest_camera_pose=True,
-        spawn=sim_utils.PinholeCameraCfg(
-            focal_length=float(camera["focal_length_mm"]),
-            focus_distance=1.0,
-            horizontal_aperture=float(camera["horizontal_aperture_mm"]),
-            clipping_range=tuple(camera["clipping_range_m"]),
-        ),
-        offset=CameraCfg.OffsetCfg(
-            pos=tuple(camera.get("offset_xyz_m", (0.0, 0.0, 0.0))),
-            rot=tuple(camera.get("offset_quat_xyzw", (0.0, 0.0, 0.0, 1.0))),
-            convention="world",
-        ),
-    )
-
-
-def _spawn_recording_camera(cfg: CameraCfg, *, view: dict | None = None) -> CameraCfg:
-    """Author the same replay camera without constructing a sensor/RTX product."""
-    from isaaclab.utils.math import (
-        convert_camera_frame_orientation_convention, create_rotation_matrix_from_view,
-        quat_from_matrix,
-    )
-
-    position = cfg.offset.pos
-    rotation = convert_camera_frame_orientation_convention(
-        torch.tensor([cfg.offset.rot]), origin=cfg.offset.convention, target="opengl"
-    )[0].tolist()
-    if view is not None:
-        position = tuple(view["eye_m"])
-        rotation = quat_from_matrix(create_rotation_matrix_from_view(
-            torch.tensor([position]), torch.tensor([view["target_m"]]), "Z"
-        ))[0].tolist()
-    cfg.spawn.vertical_aperture = cfg.spawn.horizontal_aperture * cfg.height / cfg.width
-    cfg.spawn.func(cfg.prim_path, cfg.spawn, translation=position, orientation=rotation)
-    return cfg
 
 
 def _spawn_static_scene(config: dict[str, Any]) -> None:
@@ -1421,28 +1384,29 @@ def run_vr(
     wrist_paths = tuple(
         wrist_path_resolver(sim, arm) for arm in ("/World/LeftPiper", "/World/RightPiper")
     )
-    wrist_cfg = config["cameras"]["wrist"]
-    wrist_camera_cfgs = tuple(
-        _camera_cfg(f"{path}/S1WristCamera", wrist_cfg, rgba=True) for path in wrist_paths
+    from tools.isaac_vr_zed import create_camera, upstream_identity
+
+    zed_selection = config["cameras"]["zed"]
+    zed_identity = upstream_identity(zed_selection)
+    wrist_results = tuple(
+        create_camera(
+            sim.stage, f"{path}/ZEDCamera", config["cameras"]["wrist"],
+            zed_selection, zed_identity, rgba=True, wrist=True,
+            live_rgb_enabled=not recording,
+        ) for path in wrist_paths
     )
-    if isolation:
-        for cfg in wrist_camera_cfgs:
-            cfg.renderer_cfg.enable_scene_partitioning = False
-    wrist_cameras = tuple(
-        _spawn_recording_camera(cfg) if recording else Camera(cfg) for cfg in wrist_camera_cfgs
-    )
-    scene_cfg = _camera_cfg(
-        "/World/RobosynDemo/SceneCamera",
-        config["cameras"]["scene"],
-        rgba=bool(args_cli.demo_preview_scene),
-    )
-    if isolation:
-        scene_cfg.renderer_cfg.enable_scene_partitioning = False
-    scene_camera = (
-        _spawn_recording_camera(scene_cfg, view=config["cameras"]["scene"])
-        if recording else Camera(scene_cfg)
+    wrist_cameras = tuple(result[0] for result in wrist_results)
+    wrist_camera_cfgs = tuple(getattr(camera, "cfg", camera) for camera in wrist_cameras)
+    scene_camera, scene_mount = create_camera(
+        sim.stage, "/World/RobosynDemo/SceneCamera", config["cameras"]["scene"],
+        zed_selection, zed_identity, rgba=bool(args_cli.demo_preview_scene), wrist=False,
+        live_rgb_enabled=not recording,
     )
     camera_rig = VRCameraRig(wrist_cameras, scene_camera, live_rgb_enabled=not recording)
+    camera_rig.zed_mounts = {
+        "left_wrist": wrist_results[0][1], "right_wrist": wrist_results[1][1],
+        "scene": scene_mount,
+    }
     camera_rig.preview_isolation = isolation
     if isolation:
         isolation.bind_sensors(
@@ -1465,11 +1429,6 @@ def run_vr(
         diagnostic=args_cli.s2_mode == "diagnostic",
     )
     sim.reset()
-    if not recording:
-        scene_camera.set_world_poses_from_view(
-            torch.tensor([config["cameras"]["scene"]["eye_m"]], device=sim.device),
-            torch.tensor([config["cameras"]["scene"]["target_m"]], device=sim.device),
-        )
     env = environment_type(
         sim,
         left,

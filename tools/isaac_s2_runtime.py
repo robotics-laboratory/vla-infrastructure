@@ -200,7 +200,7 @@ def _camera_sample(env, previous_indices: np.ndarray | None) -> dict[str, Any]:
     for index, role in enumerate(("left_wrist", "right_wrist")):
         image = images[f"observation.images.{role}"]
         valid = bool(
-            image.shape == (480, 640, 3) and image.dtype == np.uint8 and np.isfinite(image).all()
+            image.shape in ((480, 640, 3), (600, 960, 3)) and image.dtype == np.uint8 and np.isfinite(image).all()
         )
         advanced = previous_indices is None or bool(frame_indices[index] > previous_indices[index])
         result["roles"][role] = {
@@ -1446,8 +1446,12 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
             **({"performance": performance_summary} if performance_summary is not None else {}),
         },
         "cameras": {
-            "left_wrist": "640x480 uint8 RGB HWC",
-            "right_wrist": "640x480 uint8 RGB HWC",
+            **{
+                role: (f"{experiment.config['cameras']['wrist']['width']}x"
+                       f"{experiment.config['cameras']['wrist']['height']} uint8 RGB HWC"
+                       if experiment is not None else "640x480 uint8 RGB HWC")
+                for role in ("left_wrist", "right_wrist")
+            },
             "valid_bimanual_frames": camera_valid_frames,
             "strictly_advanced_bimanual_frames": camera_advanced_frames,
         },

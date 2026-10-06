@@ -1,0 +1,1032 @@
+{
+  "branch": "codex/vr-recording-ui",
+  "contract_scope": "Hashes describe tested WIP before evidence registration. Later contract edits add registries/gate bindings only; dataset semantic input below remains unchanged.",
+  "core": {
+    "environment": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env",
+    "huggingface_cache": "/tmp/vr-zed-ffft-hf",
+    "python": "3.12.13",
+    "pythonpath": "/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording-ui/packages/lerobot_robot_piperx/src",
+    "uv_cache": "/tmp/vla-vr-ui-uv-cache"
+  },
+  "environment_changes": false,
+  "isaac": {
+    "isaaclab": "17.0.2",
+    "kit": "110.3",
+    "materialization": "0c2e2c64",
+    "python": "/data/vla-infrastructure/isaac61_production/env/bin/python",
+    "sim": "6.1"
+  },
+  "observers": {
+    "/tmp/vr_ffft_native_launcher.py": {
+      "sha256": "1f8b9e00477b934751e03f136be9de3cb865122ba60537087c9656f279afc9bd",
+      "source": "import sys\nfrom pathlib import Path\nsys.path.insert(0, '/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording-ui/tools')\nimport launch_isaac_vr as launcher\noriginal = launcher.subprocess.Popen\ndef popen(command, *args, **kwargs):\n    if isinstance(command, list) and len(command) > 1 and command[1].endswith('run_isaac_s1.py'):\n        command = [command[0], '/tmp/vr_ffft_native_wrapper.py', *command[1:]]\n    return original(command, *args, **kwargs)\nlauncher.subprocess.Popen = popen\nraise SystemExit(launcher.main(sys.argv[1:]))\n"
+    },
+    "/tmp/vr_ffft_native_wrapper.py": {
+      "sha256": "4db08bc5592e4521c13787aca943330bee1e51b2d0ea8fa36aa068205571aa73",
+      "source": "import builtins, json, runpy, sys\nscript = sys.argv.pop(1)\nsys.argv[0] = script\nsys.path.insert(0, str(__import__('pathlib').Path(script).parent))\noriginal_import = builtins.__import__\npatched = False\n\ndef importing(name, globals=None, locals=None, fromlist=(), level=0):\n    global patched\n    module = original_import(name, globals, locals, fromlist, level)\n    if name == 'isaac_vr_runtime' and not patched and hasattr(module, 'run_vr'):\n        patched = True\n        original_run = module.run_vr\n        def audited_run(*args, **kwargs):\n            cls = kwargs['environment_type']\n            advance = cls._advance\n            def audited_advance(env, repeat):\n                phase = env._render_substep\n                before = env.sim.get_physics_step_count()\n                rendered_before = env.sim.render_generation\n                original_step = env.sim.step\n                flags = []\n                def step(*args, **kwargs):\n                    flags.append(kwargs['render'])\n                    return original_step(*args, **kwargs)\n                env.sim.step = step\n                try:\n                    result = advance(env, repeat)\n                finally:\n                    env.sim.step = original_step\n                assert env.sim.get_physics_step_count() - before == repeat\n                assert flags == [(phase + i + 1) % 4 == 0 for i in range(repeat)]\n                delta = env.sim.render_generation - rendered_before\n                assert delta == sum(flags), (repeat, delta, flags)\n                from pxr import UsdRender\n                camera_paths = set(env.camera.camera_prim_paths.values())\n                products = [str(p.GetPath()) for p in env.sim.stage.Traverse()\n                            if p.IsA(UsdRender.Product) and camera_paths.intersection(\n                                str(x) for x in UsdRender.Product(p).GetCameraRel().GetTargets())]\n                if not env.camera.live_rgb_enabled:\n                    assert not products, products\n                print('FFFT_CHECK ' + json.dumps({'physics_steps': repeat,\n                    'kit_pumps': delta, 'live_rgb': env.camera.live_rgb_enabled,\n                    'dataset_products': len(products), 'phase': env._render_substep}), flush=True)\n                return result\n            cls._advance = audited_advance\n            return original_run(*args, **kwargs)\n        module.run_vr = audited_run\n    return module\nbuiltins.__import__ = importing\nrunpy.run_path(script, run_name='__main__')\n"
+    },
+    "/tmp/vr_stop_ffft_native_check.py": {
+      "sha256": "8eb91047fa55d480e636e83046916d3a6c1ac455ccbbb80d89a53fcc1f5c022e",
+      "source": "import subprocess, time, os, signal, json\nfrom pathlib import Path\nroot=Path('/tmp/vr-stop-native-'+str(time.time_ns()))\nroot.mkdir()\nenv=os.environ.copy()\nenv['OMNI_KIT_ACCEPT_EULA']='Y'\nenv['ISAACLAB_CXR_ACCEPT_EULA']='1'\nenv['PYTHONFAULTHANDLER']='1'\ncommand=['/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python','/tmp/vr_ffft_native_launcher.py','record','--run-dir',str(root/'run'),'--recordings-root',str(root/'recordings'),'--max-control-steps','3000']\nwith (root/'driver.log').open('w') as log:\n    process=subprocess.Popen(command,cwd='/home/ebulochkin/vla_infrastructure/.worktrees/vr-recording-ui',env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)\n    print('CHECK',root,'launcher',process.pid,flush=True)\n    deadline=time.monotonic()+75\n    requested=False\n    while process.poll() is None and time.monotonic()<deadline:\n        text=(root/'driver.log').read_text(errors='replace')\n        if not requested and '\"event\": \"human_recording_state\", \"state\": \"waiting\"' in text:\n            time.sleep(2)\n            os.kill(process.pid,signal.SIGINT)\n            requested=True\n            deadline=time.monotonic()+20\n            print('CHECK SIGINT once',flush=True)\n        time.sleep(.25)\n    print('CHECK exit',process.poll(),'requested',requested,flush=True)\n    if process.poll() is not None and (root/'run/result.json').exists():\n        report=json.loads((root/'run/result.json').read_text())\n        print('CHECK result',report['process'],report.get('human_recording'),flush=True)\n    else:\n        print('CHECK still running or startup failed; inspect driver.log',flush=True)\n"
+    }
+  },
+  "physical_motion": false,
+  "schema": "zed_ffft_tested_inputs_v1",
+  "source_sha256": {
+    "configs/isaac61_vr_runtime.yaml": "52f55f8ba470cd0b2d645c582bf4469254cfb510a4e7df0bac2dd249961c3354",
+    "configs/resolved_contract.schema.json": "631bde040abf95cc3a1cb5d8a0d5dc147b145692c3e9b43636bdedb0338bad6a",
+    "configs/resolved_contract.yaml": "604f9e4c690c96bc21edff29e6074c974b91ea9d6ae49881937c987c61c0c9fc",
+    "tests/test_d0_causal.py": "06ef5210103601b93d3a7855ca6d312d44623e4acdc1fd0b57fd7df78a59f80e",
+    "tests/test_isaac_vr_capture.py": "f36a6e3e518137de8cbfd9436b51107620245b8ee2e1fb37a6aa9588e68de321",
+    "tests/test_isaac_vr_config.py": "6c562a6e061254bcc5a932a9c95c42226413718a3800f75928f48150c0e6e127",
+    "tests/test_isaac_vr_lerobot_materialize.py": "fbfc1265f76358c7016e6c824b9206d31498686de0584bd3019cd13dcc2ec005",
+    "tests/test_isaac_vr_recording.py": "87c820e1b05753e5e8d187ecbda37563e76b9741bb36244cdbe482e4bb874bd7",
+    "tests/test_isaac_vr_replay.py": "4526cc1763d0fb5f788a8876649d1f06226d017a67cbe69966e289717d0dea4c",
+    "tools/isaac_s1_runtime.py": "8dde4e0eae2bb27cc061329e83dd8602cb83c889e43e561359c19c8070864eaf",
+    "tools/isaac_s2_runtime.py": "8d47c49de79f5e22387ae68c3ad131d11ccb58b05fd808aa2956b5990893c9a5",
+    "tools/isaac_vr_admission.py": "c15b97ffdc5e2b46b243de2385a468873ee4f1e756c1032a7e7c8eee83fb3e0a",
+    "tools/isaac_vr_camera_guard.py": "38d191c5d2c6700ac53aa30462106839c44b5cef44e4ffc46d165b76a9ea9f31",
+    "tools/isaac_vr_capture.py": "a45fea9cd2521ecd4a83d8b6128e9bc63f51beb26fd676fad2c71cf5a593ee50",
+    "tools/isaac_vr_lerobot_materialize.py": "cd120c3c6b7abb902cd6f3b97bc25394bac9c56ee756abf914e92087b4f27bbf",
+    "tools/isaac_vr_recording.py": "94b5d25903615cb7133fbf9503d7bd24e5e1221e576ba71a26e00c0ce286072c",
+    "tools/isaac_vr_replay.py": "20939c24b42744b701ca1e951d889ddf55f15dacd2550cf9fa8d87203d2efb70",
+    "tools/isaac_vr_rgb_alignment.py": "ed6cc215bbfd0758cc5a810c9340009405ef2c047b6edaa3e1d73d67457858dc",
+    "tools/isaac_vr_rgb_alignment_assay.py": "7d2a785da839718027bfd8a56d9046fd1b6ee975d3c937be9ba5ad9584ea0e98",
+    "tools/isaac_vr_runtime.py": "48250cc3dc7e39cb9f123bb5add2aad5c595f5ba91612940ae49194a7ef6765f",
+    "tools/isaac_vr_zed.py": "fe6684ec78966c536bf8195ac0b1c0749ce4b400956935dbd94fa793f5aa4283",
+    "tools/launch_isaac_vr.py": "ffb0c555b3b06dcaf0575b0395c94abda6c9999f7e49b32ee54221c53a36d3fc",
+    "tools/run_isaac_s1.py": "c2b8dbe2d05c32c4f5cfec4269ad37d58673c0a5d79603c5057f907e7c4201e2"
+  },
+  "tested_dataset": {
+    "action_label_pipeline": {
+      "dataset_action": {
+        "derived": false,
+        "dtype": "float32",
+        "feature_key": "action",
+        "names": [
+          "left_joint_1.pos",
+          "left_joint_2.pos",
+          "left_joint_3.pos",
+          "left_joint_4.pos",
+          "left_joint_5.pos",
+          "left_joint_6.pos",
+          "left_gripper.pos",
+          "right_joint_1.pos",
+          "right_joint_2.pos",
+          "right_joint_3.pos",
+          "right_joint_4.pos",
+          "right_joint_5.pos",
+          "right_joint_6.pos",
+          "right_gripper.pos"
+        ],
+        "policy_role": "training_target",
+        "processor_chain": [
+          "lerobot.teleop_action_processor.IdentityProcessorStep",
+          "lerobot.aggregate_pipeline_dataset_features",
+          "lerobot.build_dataset_frame_float32"
+        ],
+        "semantics": [
+          "absolute_joint_position_command",
+          "absolute_joint_position_command",
+          "absolute_joint_position_command",
+          "absolute_joint_position_command",
+          "absolute_joint_position_command",
+          "absolute_joint_position_command",
+          "signed_gripper_travel_command",
+          "absolute_joint_position_command",
+          "absolute_joint_position_command",
+          "absolute_joint_position_command",
+          "absolute_joint_position_command",
+          "absolute_joint_position_command",
+          "absolute_joint_position_command",
+          "signed_gripper_travel_command"
+        ],
+        "shape": [
+          14
+        ],
+        "source_owner": "Source-owned deterministic label output packed in canonical order; real uses LeRobot build_dataset_frame, Isaac converter binding remains pending.",
+        "units": [
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "millimeter",
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "millimeter"
+        ]
+      },
+      "device_accepted_command": {
+        "definitionally_equal_to_dataset_action": false,
+        "evidence_owner": "R1 hardware evidence or the later simulator-native step result where observable.",
+        "observable_at_d0": false,
+        "observation_source": null
+      },
+      "label_processor": {
+        "deterministic": true,
+        "owner": "Source-owned deterministic label processor; real uses LeRobot teleop_action_processor; Isaac mapping is pending source qualification.",
+        "pipeline": "lerobot.processor.RobotProcessorPipeline",
+        "reset_boundary": "Stateless; pipeline.reset is still called at every episode boundary by any source path that supplies additional stateful steps.",
+        "serialization_artifact_id": "gate_d0_processor_snapshot",
+        "stateful": false,
+        "steps": [
+          "lerobot.processor.pipeline.IdentityProcessorStep"
+        ]
+      },
+      "runtime_mapping": {
+        "owner": "Runtime-owned mapping after the canonical dataset_action; real uses LeRobot robot_action_processor/Robot.send_action; Isaac native mapping is source-gate-owned.",
+        "pipeline": "lerobot.processor.RobotProcessorPipeline_then_Robot.send_action",
+        "send_action_return_semantics": "LeRobot returns the action actually sent to motors, potentially clipped or modified; the PIPER-X plugin first rejects partial/invalid arm actions and any command before motion_ready, validates and converts both bimanual sides before either SDK call, then returns the SDK command after integer milli-unit round-trip, not hardware acceptance feedback. record_loop does not store this return as dataset.action.",
+        "steps": [
+          "lerobot.processor.pipeline.IdentityProcessorStep",
+          "lerobot_robot_piperx.BiPiperXFollower.send_action_for_real_runtime",
+          "source_runtime_native_mapping_for_simulators_selected_later"
+        ],
+        "stored_label_mutation_allowed": false
+      },
+      "source_action": {
+        "feature_names": [
+          "left_joint_1.pos",
+          "left_joint_2.pos",
+          "left_joint_3.pos",
+          "left_joint_4.pos",
+          "left_joint_5.pos",
+          "left_joint_6.pos",
+          "left_gripper.pos",
+          "right_joint_1.pos",
+          "right_joint_2.pos",
+          "right_joint_3.pos",
+          "right_joint_4.pos",
+          "right_joint_5.pos",
+          "right_joint_6.pos",
+          "right_gripper.pos"
+        ],
+        "owner": "Source/runtime controller after its owned control solution for obs_t; source profile defines the pre-native boundary.",
+        "representation": "Flat ordered RobotAction mapping in the accepted PIPER-X boundary units; no policy normalization.",
+        "units": [
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "millimeter",
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "millimeter"
+        ]
+      }
+    },
+    "cameras": {
+      "left_wrist": {
+        "acquisition_owner": "Source/runtime camera provider; physical_source_name maps to canonical_feature_key in source camera_bindings. No device is selected by D0.",
+        "canonical_transforms": {
+          "crop": false,
+          "flip": false,
+          "resize": false
+        },
+        "color_space": "RGB",
+        "crop_resize_revision": null,
+        "dtype": "uint8",
+        "extrinsics_artifact_id": null,
+        "feature_key": "observation.images.left_wrist",
+        "freshness_source": "Source-profile-owned validation: physical acquisition age/skew or Isaac aligned simulation/capture identity; logical timestamp is never freshness evidence.",
+        "intrinsics_artifact_id": null,
+        "missing_frame_behavior": "Reject the tick when no admissible sample exists; repeated or non-monotonic source sequences are inadmissible.",
+        "nominal_fps": 30,
+        "policy_observation_status": "training_input",
+        "policy_tensor_dtype": "float32",
+        "policy_tensor_range": [
+          0.0,
+          1.0
+        ],
+        "policy_tensor_shape": [
+          3,
+          600,
+          960
+        ],
+        "processor_mapping": "uint8 RGB HWC -> float32 RGB CHW divided by 255; no canonical crop, resize, or flip.",
+        "resolution": [
+          960,
+          600
+        ],
+        "runtime_binding": null,
+        "runtime_binding_owner": "Per-runtime source configuration; no device index/path belongs to D0.",
+        "shape": [
+          600,
+          960,
+          3
+        ],
+        "timestamp_source": "Physical profile: temporal.observation.images.left_wrist.source_timestamp; Isaac: simulation/capture identity, not physical acquisition time."
+      },
+      "right_wrist": {
+        "acquisition_owner": "Source/runtime camera provider; physical_source_name maps to canonical_feature_key in source camera_bindings. No device is selected by D0.",
+        "canonical_transforms": {
+          "crop": false,
+          "flip": false,
+          "resize": false
+        },
+        "color_space": "RGB",
+        "crop_resize_revision": null,
+        "dtype": "uint8",
+        "extrinsics_artifact_id": null,
+        "feature_key": "observation.images.right_wrist",
+        "freshness_source": "Source-profile-owned validation: physical acquisition age/skew or Isaac aligned simulation/capture identity; logical timestamp is never freshness evidence.",
+        "intrinsics_artifact_id": null,
+        "missing_frame_behavior": "Reject the tick when no admissible sample exists; repeated or non-monotonic source sequences are inadmissible.",
+        "nominal_fps": 30,
+        "policy_observation_status": "training_input",
+        "policy_tensor_dtype": "float32",
+        "policy_tensor_range": [
+          0.0,
+          1.0
+        ],
+        "policy_tensor_shape": [
+          3,
+          600,
+          960
+        ],
+        "processor_mapping": "uint8 RGB HWC -> float32 RGB CHW divided by 255; no canonical crop, resize, or flip.",
+        "resolution": [
+          960,
+          600
+        ],
+        "runtime_binding": null,
+        "runtime_binding_owner": "Per-runtime source configuration; no device index/path belongs to D0.",
+        "shape": [
+          600,
+          960,
+          3
+        ],
+        "timestamp_source": "Physical profile: temporal.observation.images.right_wrist.source_timestamp; Isaac: simulation/capture identity, not physical acquisition time."
+      },
+      "scene": {
+        "acquisition_owner": "Source/runtime camera provider; physical_source_name maps to canonical_feature_key in source camera_bindings. No device is selected by D0.",
+        "canonical_transforms": {
+          "crop": false,
+          "flip": false,
+          "resize": false
+        },
+        "color_space": "RGB",
+        "crop_resize_revision": null,
+        "dtype": "uint8",
+        "extrinsics_artifact_id": null,
+        "feature_key": "observation.images.scene",
+        "freshness_source": "Source-profile-owned validation: physical acquisition age/skew or Isaac aligned simulation/capture identity; logical timestamp is never freshness evidence.",
+        "intrinsics_artifact_id": null,
+        "missing_frame_behavior": "Reject the tick when no admissible sample exists; repeated or non-monotonic source sequences are inadmissible.",
+        "nominal_fps": 30,
+        "policy_observation_status": "training_input",
+        "policy_tensor_dtype": "float32",
+        "policy_tensor_range": [
+          0.0,
+          1.0
+        ],
+        "policy_tensor_shape": [
+          3,
+          600,
+          960
+        ],
+        "processor_mapping": "uint8 RGB HWC -> float32 RGB CHW divided by 255; no canonical crop, resize, or flip.",
+        "resolution": [
+          960,
+          600
+        ],
+        "runtime_binding": null,
+        "runtime_binding_owner": "Per-runtime source configuration; no device index/path belongs to D0.",
+        "shape": [
+          600,
+          960,
+          3
+        ],
+        "timestamp_source": "Physical profile: temporal.observation.images.scene.source_timestamp; Isaac: simulation/capture identity, not physical acquisition time."
+      }
+    },
+    "common_training_view": {
+      "input_features": [
+        "observation.state",
+        "observation.images.left_wrist",
+        "observation.images.right_wrist",
+        "observation.images.scene",
+        "task"
+      ],
+      "schema_fingerprint_algorithm": "sha256_canonical_json_ordered_feature_spec_v1",
+      "schema_fingerprint_sha256": "1a8c638cb8f544de6994c53e8d0311f4d316c7867e97f3d326a45dde10411cb3",
+      "target_features": [
+        "action"
+      ],
+      "task_feature": "task",
+      "task_semantics": "Natural-language instruction string recovered by LeRobotDataset from task_index and the dataset task table; identical task_id/revision semantics are required across sources."
+    },
+    "feature_classification": {
+      "evaluation_only": [
+        "timestamp",
+        "frame_index",
+        "episode_index",
+        "index",
+        "task_index"
+      ],
+      "privileged_debug": [],
+      "provenance_only": [
+        "provenance.runtime",
+        "provenance.source_class",
+        "provenance.task_id",
+        "provenance.task_revision",
+        "provenance.embodiment_revision",
+        "provenance.processor_contract_revision",
+        "provenance.dataset_revision",
+        "provenance.conversion_revision",
+        "provenance.generator_revision",
+        "provenance.source_demonstration_lineage",
+        "provenance.randomization_seed",
+        "provenance.policy_checkpoint",
+        "temporal.observation.state.sequence",
+        "temporal.observation.state.source_timestamp",
+        "temporal.observation.state.clock_domain",
+        "temporal.observation.state.age_ms",
+        "temporal.observation.images.left_wrist.sequence",
+        "temporal.observation.images.left_wrist.source_timestamp",
+        "temporal.observation.images.left_wrist.clock_domain",
+        "temporal.observation.images.left_wrist.age_ms",
+        "temporal.observation.images.right_wrist.sequence",
+        "temporal.observation.images.right_wrist.source_timestamp",
+        "temporal.observation.images.right_wrist.clock_domain",
+        "temporal.observation.images.right_wrist.age_ms",
+        "temporal.xr.left_pose.sequence",
+        "temporal.xr.left_pose.source_timestamp",
+        "temporal.xr.left_pose.clock_domain",
+        "temporal.xr.left_pose.age_ms",
+        "temporal.xr.right_pose.sequence",
+        "temporal.xr.right_pose.source_timestamp",
+        "temporal.xr.right_pose.clock_domain",
+        "temporal.xr.right_pose.age_ms",
+        "temporal.source_action.sequence",
+        "temporal.source_action.source_timestamp",
+        "temporal.source_action.clock_domain",
+        "temporal.source_action.age_ms",
+        "temporal.cross_modal_skew_ms",
+        "temporal.observation.images.scene.sequence",
+        "temporal.observation.images.scene.source_timestamp",
+        "temporal.observation.images.scene.clock_domain",
+        "temporal.observation.images.scene.age_ms"
+      ],
+      "training_input": [
+        "observation.state",
+        "observation.images.left_wrist",
+        "observation.images.right_wrist",
+        "observation.images.scene",
+        "task"
+      ],
+      "training_target": [
+        "action"
+      ]
+    },
+    "format": "LeRobotDataset_v3",
+    "materialization": {
+      "execution_profile": "dataset_materialize",
+      "final_dataset": {
+        "identity_type": null,
+        "manifest_artifact_id": null,
+        "repo_id": null,
+        "revision": null,
+        "schema_fingerprint_sha256": null
+      },
+      "projected_schema_fingerprints": {},
+      "projection_artifact_id": null,
+      "selected_source_ids": [],
+      "strategy": "deterministic_projection_then_merge"
+    },
+    "observation_contract": {
+      "policy_whitelist": [
+        "observation.state",
+        "observation.images.left_wrist",
+        "observation.images.right_wrist",
+        "observation.images.scene",
+        "task"
+      ],
+      "raw_vs_derived_rule": "Only the 14 measured Gate A scalars are canonical state; FK/IK pose, velocity, force, torque, and normalized gripper values are absent unless a later owned processor declares them as derived outside this revision.",
+      "state": {
+        "derived": false,
+        "dtype": "float32",
+        "feature_key": "observation.state",
+        "names": [
+          "left_joint_1.pos",
+          "left_joint_2.pos",
+          "left_joint_3.pos",
+          "left_joint_4.pos",
+          "left_joint_5.pos",
+          "left_joint_6.pos",
+          "left_gripper.pos",
+          "right_joint_1.pos",
+          "right_joint_2.pos",
+          "right_joint_3.pos",
+          "right_joint_4.pos",
+          "right_joint_5.pos",
+          "right_joint_6.pos",
+          "right_gripper.pos"
+        ],
+        "policy_role": "training_input",
+        "processor_chain": [
+          "lerobot.robot_observation_processor.IdentityProcessorStep",
+          "lerobot.aggregate_pipeline_dataset_features",
+          "lerobot.build_dataset_frame_float32"
+        ],
+        "semantics": [
+          "measured_joint_position",
+          "measured_joint_position",
+          "measured_joint_position",
+          "measured_joint_position",
+          "measured_joint_position",
+          "measured_joint_position",
+          "absolute_measured_gripper_travel",
+          "measured_joint_position",
+          "measured_joint_position",
+          "measured_joint_position",
+          "measured_joint_position",
+          "measured_joint_position",
+          "measured_joint_position",
+          "absolute_measured_gripper_travel"
+        ],
+        "shape": [
+          14
+        ],
+        "source_owner": "Runtime observation provider; real path is BiPiperXFollower.get_observation composed from both PiperXFollower instances and rejects the sample unless each joint/gripper SDK envelope has positive finite time_stamp and Hz and every required payload field is present.",
+        "units": [
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "millimeter",
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "degree",
+          "millimeter"
+        ]
+      }
+    },
+    "policy_data_contract_revision": "piper_x_d0_policy_data_v4",
+    "processor_ownership": {
+      "label_processors": "Source-owned deterministic transforms to canonical float32[14] deg/mm before native clipping; real reuses LeRobot IdentityProcessorStep. Isaac runtime binding remains pending.",
+      "policy_processors": "LeRobot policy pre/postprocessor pipelines own model normalization, batching, device transfer, and any policy-specific rename; no policy or normalization is selected by D0.",
+      "runtime_device_mapping": "robot_action_processor plus Robot.send_action/env.step owns runtime units, native ordering, safety residuals, clipping, and device rounding after dataset_action.",
+      "stateful_processors": [],
+      "transform_classification": {
+        "camera_preprocessing": "Runtime providers supply canonical uint8 RGB HWC frames; LeRobot video decoding deterministically exposes float32 RGB CHW in [0,1], with no D0 crop or resize.",
+        "clipping": "None in label semantics; runtime safety or device clipping is residual behavior and must not replace dataset.action.",
+        "feature_rename_reorder": "LeRobot feature aggregation/build_dataset_frame packs the explicit left-then-right name order into observation.state and action.",
+        "frame_mapping": "None in canonical data semantics; source/runtime-specific controller or simulator mapping owns any frame transform.",
+        "gripper_conversion": "No label conversion; signed millimeter command and absolute millimeter observation are preserved, with SDK integer conversion only at send_action.",
+        "left_right_composition": "BiPiperXFollower owns deterministic left_ then right_ flat composition; LeRobot packs that declared order.",
+        "normalization": "None in canonical data semantics; only an explicit serialized LeRobot policy processor may normalize later.",
+        "rounding": "PIPER-X unit_to_milli integer rounding is runtime/device mapping; send_action return evidence is separate from the label.",
+        "units_conversion": "Real label seam already uses deg/mm; Isaac source label mapping must convert post-IK desired targets to canonical deg/mm before native clipping; binding pending D1."
+      }
+    },
+    "provenance_schema": {
+      "fields": {
+        "conversion_revision": {
+          "key": "conversion_revision",
+          "required": true,
+          "scope": "dataset",
+          "type": "string"
+        },
+        "dataset_revision": {
+          "key": "dataset_revision",
+          "required": true,
+          "scope": "dataset",
+          "type": "string"
+        },
+        "embodiment_revision": {
+          "key": "embodiment_revision",
+          "required": true,
+          "scope": "dataset",
+          "type": "string"
+        },
+        "generator_revision": {
+          "key": "generator_revision",
+          "required": false,
+          "scope": "dataset",
+          "type": "string"
+        },
+        "policy_checkpoint": {
+          "key": "policy_checkpoint",
+          "required": false,
+          "scope": "dataset",
+          "type": "string"
+        },
+        "processor_contract_revision": {
+          "key": "processor_contract_revision",
+          "required": true,
+          "scope": "dataset",
+          "type": "string"
+        },
+        "randomization_seed": {
+          "key": "randomization_seed",
+          "required": false,
+          "scope": "episode",
+          "type": "int"
+        },
+        "runtime": {
+          "key": "runtime",
+          "required": true,
+          "scope": "dataset",
+          "type": "string"
+        },
+        "source_class": {
+          "key": "source_class",
+          "required": true,
+          "scope": "dataset",
+          "type": "string"
+        },
+        "source_demonstration_lineage": {
+          "key": "source_demonstration_lineage",
+          "required": false,
+          "scope": "sidecar",
+          "type": "object"
+        },
+        "task_id": {
+          "key": "task_id",
+          "required": true,
+          "scope": "dataset",
+          "type": "string"
+        },
+        "task_revision": {
+          "key": "task_revision",
+          "required": true,
+          "scope": "dataset",
+          "type": "string"
+        }
+      },
+      "sidecar_artifact_id": null,
+      "storage": "hybrid"
+    },
+    "qa": {
+      "all_video_streams_required": true,
+      "dataloader_smoke_required": true,
+      "execution_profile": "dataset_qa",
+      "full_frame_iteration_required": true,
+      "report_artifact_id": null,
+      "semantic_replay_required_where_applicable": true
+    },
+    "resampling": {
+      "canonical_fps": 30,
+      "causality_rule": "No future sample may contribute to tick t; obs_t and dataset_action_t must retain the same source tick identity.",
+      "drop_policy": "Count rejection and abort pending transaction; do not persist inadmissible data. Physical pre-actuation failures still abort the upstream loop before send_action.",
+      "duplicate_policy": "Reject repeated/regressing source identities and ticks; physical profiles also enforce source acquisition sequence/time monotonicity.",
+      "exact_rate_behavior": "One causally aligned three-camera obs_t/dataset_action_t transaction per accepted logical tick, validated by its declared source profile.",
+      "faster_source_behavior": "Select unique causal source identities; physical profiles additionally require acquisition no later than selection. Drop unselected intermediate samples.",
+      "grid": "episode_relative_frame_index_div_fps",
+      "interpolation_policy": {
+        "camera": "none",
+        "command": "lerobot_action_interpolator_when_configured",
+        "dataset_action": "none",
+        "joint_state": "source_path_declared_causal",
+        "xr_pose": "source_path_declared_causal"
+      },
+      "recording_command_relationship": "Pinned record_loop makes one send_action attempt per accepted dataset tick. Policy rollout command cadence is independent of dataset FPS and, when interpolation is configured, equals policy_fps multiplied by interpolation_multiplier.",
+      "slower_source_behavior": "No silent source reuse. Physical LeRobot compatibility requires each camera rate >= dataset_fps. Isaac capture barriers must supply each camera for the selected state generation."
+    },
+    "sources": {},
+    "temporal_semantics": {
+      "action_phase": "decision_t",
+      "causal_transaction": {
+        "completion": "successful_transition_and_successor_observation_before_causal_commit",
+        "duplicate_rule": "reject_reused_tick_source_identity_or_transition_within_run",
+        "epoch_rule": "invalidate_pending_on_reset_reference_or_session_source_epoch_change_no_reentry",
+        "identity_fields": [
+          "run_id",
+          "episode_id",
+          "source_id",
+          "reset_epoch",
+          "control_reference_epoch",
+          "source_epoch",
+          "control_tick_id",
+          "obs_id",
+          "dataset_action_id",
+          "native_command_id",
+          "transition_id",
+          "next_obs_id"
+        ],
+        "label_native_separation": true,
+        "payload_binding": "sha256_of_edge_owned_canonical_bytes_or_immutable_content_addressed_references",
+        "physical_validator": "tools.d0_temporal.PhysicalTimingValidator",
+        "real_persistence_qualification": "LeRobot add_frame remains after send_action; persistence alone does not attest physical transition or successor. Full source admission requires separately paired successor evidence.",
+        "validator": "tools.d0_causal.CausalTransactionValidator"
+      },
+      "causality_test_evidence_id": "gate_d0_v4_causality",
+      "converters": {
+        "isaac_automated": {
+          "action_t_field": null,
+          "causal_transaction_evidence_id": null,
+          "demonstration_quality_envelope_artifact_id": null,
+          "generator_identity_evidence_id": null,
+          "native_recorder_mapping_evidence_id": null,
+          "obs_t_field": null,
+          "outcome_field": null,
+          "termination_field": null,
+          "three_camera_barrier_evidence_id": null
+        },
+        "isaac_human": {
+          "action_t_field": null,
+          "causal_transaction_evidence_id": null,
+          "demonstration_quality_envelope_artifact_id": null,
+          "native_recorder_mapping_evidence_id": null,
+          "obs_t_field": null,
+          "outcome_field": null,
+          "preclip_action_seam_evidence_id": null,
+          "resolved_xr_identity_evidence_id": null,
+          "termination_field": null,
+          "three_camera_barrier_evidence_id": null
+        },
+        "real_human": {
+          "action_t_field": null,
+          "causal_transaction_evidence_id": null,
+          "demonstration_quality_envelope_artifact_id": null,
+          "native_recorder_mapping_evidence_id": null,
+          "obs_t_field": null,
+          "outcome_field": null,
+          "termination_field": null,
+          "three_camera_barrier_evidence_id": null
+        }
+      },
+      "dataset_action_phase": "deterministic_label_output_t",
+      "dataset_timestamp": {
+        "clock_domain": "episode_relative_fixed_grid",
+        "computation": "frame_index_div_dataset_fps",
+        "feature_key": "timestamp",
+        "freshness_eligible": false,
+        "semantics": "Logical LeRobot sample-grid time used for indexing and video lookup; it is not an acquisition or freshness timestamp."
+      },
+      "device_accepted_command_phase": "runtime_or_device_residual_after_runtime_command_t",
+      "freshness": {
+        "age_reference": "recording_selection_time_minus_source_timestamp_in_a_common_monotonic_domain",
+        "cross_modal_skew_reference": "max_minus_min_source_timestamp_for_all_source_inputs_contributing_to_obs_t_and_source_action_t",
+        "enforcement_phase": "after_exact_source_selection_before_robot_send_action_and_lerobot_dataset_add_frame",
+        "invalid_tick_behavior": "reject_tick_record_reason_and_abort_current_record_loop_before_actuation_caller_must_clear_or_discard_episode",
+        "scope": "physical_profiles_only"
+      },
+      "label_fixed_before_runtime_mapping": true,
+      "native_actuation_phase": "after_dataset_action_t",
+      "native_recording_row": {
+        "admission": "only_after_successful_transition_successor_observation_and_causal_commit",
+        "applies_to_profile": "isaac_human_vr_offline_rgb_v2",
+        "cardinality": "one_hdf_row_per_committed_causal_transaction",
+        "control_tick_policy": "may_have_gaps_and_must_never_be_inferred_from_hdf_row_index",
+        "episode_with_zero_commits": "lifecycle_artifact_only_dataset_admissible_false",
+        "fields": {
+          "dataset_action_t": {
+            "identity_field": "dataset_action_id",
+            "payload": "canonical_float32_action_14",
+            "per_arm_transition_provenance": "left_transition_and_right_transition_bound_into_action_payload_sha256",
+            "phase": "deterministic_label_output_t_before_native_mapping_or_clipping",
+            "units": "ordered_joint_degrees_and_gripper_millimetres_from_action_contract"
+          },
+          "native_command_t": {
+            "identity_field": "native_command_id",
+            "payload": "exact_native_preclip_clipped_residual_and_saturation_float32_14_fields",
+            "phase": "after_dataset_action_t_before_transition_t",
+            "units": "ordered_joint_radians_and_gripper_metres"
+          },
+          "next_observation_t_plus_1": {
+            "identity_field": "next_obs_id",
+            "payload": "canonical_float32_state_14_and_successor_identity",
+            "phase": "post_transition_t",
+            "units": "ordered_joint_degrees_and_gripper_millimetres_from_observation_contract"
+          },
+          "observation_t": {
+            "identity_field": "obs_id",
+            "payload": "canonical_float32_state_14_and_immutable_scene_state_snapshot_reference",
+            "phase": "pre_decision_t",
+            "units": "ordered_joint_degrees_and_gripper_millimetres_from_observation_contract"
+          },
+          "transition_t": {
+            "identity_field": "transition_id",
+            "payload": "outcome_termination_success_and_failure_classification",
+            "phase": "successful_environment_transition_caused_by_native_command_t"
+          }
+        },
+        "hdf_row_index": "dense_zero_based_committed_order_independent_of_control_tick_id",
+        "invalid_tick_policy": "do_not_append_hdf_row_and_record_reason_in_episode_qa",
+        "missing_successor_policy": "abort_pending_transaction_and_do_not_append",
+        "revision": "isaac_vr_committed_transition_row_v2",
+        "terminal_state_policy": "final_action_requires_a_successor_observation_and_terminal_outcome_in_the_same_row_no_actionless_terminal_row",
+        "zero_action_policy": "a_zero_vector_is_admitted_only_as_a_committed_source_action_never_as_invalid_tick_fill"
+      },
+      "next_observation_phase": "post_transition_t",
+      "observation_phase": "pre_decision_t",
+      "outcome_definition": "Runtime transition, success, termination, failure, or device response caused by runtime_command_t; it is not part of obs_t.",
+      "outcome_phase": "transition_t",
+      "pairing": "obs_t_action_t",
+      "persistence_call_phase": "source_profile_owned",
+      "profile_selector": "tools.d0_causal.select_temporal_profile(runtime, source_class)",
+      "runtime_command_phase": "after_dataset_action_t_before_transition_t",
+      "source_action_phase": "controller_output_for_obs_t",
+      "source_profiles": {
+        "isaac_automated_v4": {
+          "generator_provenance": [
+            "revision",
+            "state",
+            "seed_when_applicable"
+          ],
+          "persistence_call_phase": "after_successful_transition_and_successor_observation",
+          "physical_timing_required": false,
+          "required_source_identities": [
+            "simulation.state_generation",
+            "camera.left_wrist",
+            "camera.right_wrist",
+            "camera.scene",
+            "generator.decision"
+          ],
+          "runtime": "isaac",
+          "runtime_binding_status": "pending_G1",
+          "source_action": "generator decision mapped deterministically to canonical deg/mm before native clipping",
+          "source_classes": [
+            "scripted_expert",
+            "planner",
+            "datagen",
+            "policy_generated"
+          ],
+          "source_epoch_semantics": "generator lifecycle epoch",
+          "tracking_valid_required": false
+        },
+        "isaac_human_vr_offline_rgb_v1": {
+          "dataset_admissible_before_materialization_and_D1_evidence": false,
+          "host_timestamps": "optional_QA_provenance_not_XR_physical_acquisition_time",
+          "materialized_camera_identity_fields": [
+            "obs_id",
+            "scene_state_snapshot_id",
+            "scene_state_snapshot_sha256",
+            "camera_role",
+            "camera_prim_path",
+            "camera_configuration_sha256",
+            "renderer_configuration_sha256",
+            "stage_snapshot_sha256",
+            "asset_closure_sha256",
+            "materialization_revision",
+            "rgb_sha256"
+          ],
+          "materialized_camera_join": "exact_obs_id_and_scene_state_snapshot_sha256_positional_join_forbidden",
+          "materialized_required_source_identities": [
+            "offline_rgb.left_wrist",
+            "offline_rgb.right_wrist",
+            "offline_rgb.scene"
+          ],
+          "native_row_semantics_revision": "isaac_vr_committed_transition_row_v1",
+          "observation_mode": "immutable_pre_action_scene_state_snapshot_with_offline_rgb_materialization",
+          "openxr_query_time": "optional_when_explicitly_exposed_by_source",
+          "persistence_call_phase": "after_successful_transition_successor_observation_and_causal_commit",
+          "physical_timing_required": false,
+          "required_source_identities": [
+            "simulation.scene_state_snapshot",
+            "xr.device_io_update",
+            "xr.submitted_frame",
+            "xr.returned_frame",
+            "xr.resolved_input"
+          ],
+          "runtime": "isaac",
+          "runtime_binding_status": "pending_D1_implementation_and_evidence",
+          "scene_state_snapshot_identity_fields": [
+            "run_id",
+            "episode_id",
+            "source_id",
+            "reset_epoch",
+            "control_reference_epoch",
+            "source_epoch",
+            "control_tick_id",
+            "obs_id",
+            "scene_state_snapshot_id",
+            "scene_state_snapshot_sha256",
+            "simulation_state_generation",
+            "physics_step"
+          ],
+          "source_action": "post-DifferentialIK desired joint target BEFORE native clipping, converted to canonical deg/mm",
+          "source_classes": [
+            "human_vr"
+          ],
+          "source_epoch_semantics": "XR session epoch",
+          "tracking_valid_required": true
+        },
+        "isaac_human_vr_offline_rgb_v2": {
+          "dataset_admissible_before_materialization_and_D1_evidence": false,
+          "host_timestamps": "optional_QA_provenance_not_XR_physical_acquisition_time",
+          "materialized_camera_identity_fields": [
+            "obs_id",
+            "scene_state_snapshot_id",
+            "scene_state_snapshot_sha256",
+            "camera_role",
+            "camera_prim_path",
+            "camera_configuration_sha256",
+            "renderer_configuration_sha256",
+            "stage_snapshot_sha256",
+            "asset_closure_sha256",
+            "materialization_revision",
+            "rgb_sha256"
+          ],
+          "materialized_camera_join": "exact_obs_id_and_scene_state_snapshot_sha256_positional_join_forbidden",
+          "materialized_required_source_identities": [
+            "offline_rgb.left_wrist",
+            "offline_rgb.right_wrist",
+            "offline_rgb.scene"
+          ],
+          "native_row_semantics_revision": "isaac_vr_committed_transition_row_v2",
+          "observation_mode": "immutable_pre_action_scene_state_snapshot_with_offline_rgb_materialization",
+          "openxr_query_time": "optional_when_explicitly_exposed_by_source",
+          "persistence_call_phase": "after_successful_transition_successor_observation_and_causal_commit",
+          "physical_timing_required": false,
+          "recording_arm_transitions": [
+            "motion",
+            "clutch_engaged",
+            "clutch_held",
+            "clutch_release_rebased"
+          ],
+          "recording_gap_transitions": [
+            "tracking_lost",
+            "tracking_invalid",
+            "tracking_rebased",
+            "sensitivity_switched_normal",
+            "sensitivity_switched_precise",
+            "session_inactive"
+          ],
+          "required_source_identities": [
+            "simulation.scene_state_snapshot",
+            "xr.device_io_update",
+            "xr.submitted_frame",
+            "xr.returned_frame",
+            "xr.resolved_input"
+          ],
+          "runtime": "isaac",
+          "runtime_binding_status": "pending_D1_implementation_and_evidence",
+          "scene_state_snapshot_identity_fields": [
+            "run_id",
+            "episode_id",
+            "source_id",
+            "reset_epoch",
+            "control_reference_epoch",
+            "source_epoch",
+            "control_tick_id",
+            "obs_id",
+            "scene_state_snapshot_id",
+            "scene_state_snapshot_sha256",
+            "simulation_state_generation",
+            "physics_step"
+          ],
+          "source_action": "post-DifferentialIK desired joint target BEFORE native clipping, converted to canonical deg/mm",
+          "source_classes": [
+            "human_vr"
+          ],
+          "source_epoch_semantics": "XR session epoch",
+          "tracking_valid_required": true
+        },
+        "isaac_human_vr_v4": {
+          "host_timestamps": "optional_QA_provenance_not_XR_physical_acquisition_time",
+          "openxr_query_time": "optional_when_explicitly_exposed_by_source",
+          "persistence_call_phase": "after_successful_transition_and_successor_observation",
+          "physical_timing_required": false,
+          "required_source_identities": [
+            "simulation.state_generation",
+            "camera.left_wrist",
+            "camera.right_wrist",
+            "camera.scene",
+            "xr.device_io_update",
+            "xr.submitted_frame",
+            "xr.returned_frame",
+            "xr.resolved_input"
+          ],
+          "runtime": "isaac",
+          "runtime_binding_status": "pending_D1",
+          "source_action": "post-DifferentialIK desired joint target BEFORE native clipping, converted to canonical deg/mm",
+          "source_classes": [
+            "human_vr"
+          ],
+          "source_epoch_semantics": "XR session epoch",
+          "tracking_valid_required": true
+        },
+        "real_human_vr_physical_v4": {
+          "persistence_call_phase": "after_send_action_before_next_tick",
+          "physical_timing_required": true,
+          "required_source_identities": [
+            "observation.state",
+            "observation.images.left_wrist",
+            "observation.images.right_wrist",
+            "observation.images.scene",
+            "xr.left_pose",
+            "xr.right_pose",
+            "source_action"
+          ],
+          "runtime": "real",
+          "runtime_binding_status": "physical_LeRobot_seam_preserved_full_source_admission_pending_R2",
+          "source_action": "physical timestamped controller output in canonical deg/mm before native mapping",
+          "source_classes": [
+            "human_vr"
+          ],
+          "source_epoch_semantics": "physical XR session and source lifecycle epoch",
+          "tracking_valid_required": true
+        }
+      },
+      "source_timing": {
+        "cross_modal_skew_feature_key": "temporal.cross_modal_skew_ms",
+        "feature_sets": {
+          "observation.images.left_wrist": {
+            "age_ms": "temporal.observation.images.left_wrist.age_ms",
+            "clock_domain": "temporal.observation.images.left_wrist.clock_domain",
+            "sequence": "temporal.observation.images.left_wrist.sequence",
+            "source_timestamp": "temporal.observation.images.left_wrist.source_timestamp"
+          },
+          "observation.images.right_wrist": {
+            "age_ms": "temporal.observation.images.right_wrist.age_ms",
+            "clock_domain": "temporal.observation.images.right_wrist.clock_domain",
+            "sequence": "temporal.observation.images.right_wrist.sequence",
+            "source_timestamp": "temporal.observation.images.right_wrist.source_timestamp"
+          },
+          "observation.images.scene": {
+            "age_ms": "temporal.observation.images.scene.age_ms",
+            "clock_domain": "temporal.observation.images.scene.clock_domain",
+            "sequence": "temporal.observation.images.scene.sequence",
+            "source_timestamp": "temporal.observation.images.scene.source_timestamp"
+          },
+          "observation.state": {
+            "age_ms": "temporal.observation.state.age_ms",
+            "clock_domain": "temporal.observation.state.clock_domain",
+            "sequence": "temporal.observation.state.sequence",
+            "source_timestamp": "temporal.observation.state.source_timestamp"
+          },
+          "source_action": {
+            "age_ms": "temporal.source_action.age_ms",
+            "clock_domain": "temporal.source_action.clock_domain",
+            "sequence": "temporal.source_action.sequence",
+            "source_timestamp": "temporal.source_action.source_timestamp"
+          },
+          "xr.left_pose": {
+            "age_ms": "temporal.xr.left_pose.age_ms",
+            "clock_domain": "temporal.xr.left_pose.clock_domain",
+            "sequence": "temporal.xr.left_pose.sequence",
+            "source_timestamp": "temporal.xr.left_pose.source_timestamp"
+          },
+          "xr.right_pose": {
+            "age_ms": "temporal.xr.right_pose.age_ms",
+            "clock_domain": "temporal.xr.right_pose.clock_domain",
+            "sequence": "temporal.xr.right_pose.sequence",
+            "source_timestamp": "temporal.xr.right_pose.source_timestamp"
+          }
+        },
+        "feature_spec_factory": "tools.d0_temporal.temporal_feature_specs",
+        "field_types": {
+          "age_ms": "float64",
+          "clock_domain": "string",
+          "cross_modal_skew_ms": "float64",
+          "sequence": "int64",
+          "source_timestamp": "float64"
+        },
+        "production_dataset_adapter": "tools.temporal_recording.TemporalLeRobotDatasetAdapter",
+        "qa_summary_method": "tools.d0_temporal.TemporalFrameRecorder.qa_summary",
+        "record_loop_factory": "tools.temporal_recording.wrap_lerobot_dataset_for_temporal_recording",
+        "recorder_adapter": "tools.d0_temporal.TemporalFrameRecorder",
+        "required_feature_sets_by_source_class": {
+          "automated": [
+            "observation.state",
+            "observation.images.left_wrist",
+            "observation.images.right_wrist",
+            "observation.images.scene",
+            "source_action"
+          ],
+          "human_vr": [
+            "observation.state",
+            "observation.images.left_wrist",
+            "observation.images.right_wrist",
+            "observation.images.scene",
+            "xr.left_pose",
+            "xr.right_pose",
+            "source_action"
+          ]
+        },
+        "required_fields": [
+          "sequence",
+          "source_timestamp",
+          "clock_domain",
+          "age_ms"
+        ],
+        "scope": "physical_profiles_only",
+        "storage": "lerobot_additional_frame_features",
+        "timestamp_requirement": "Source-owned acquisition identity in host monotonic time or an explicitly synchronized domain with a recorded conversion. Cameras must report capture time atomically with the selected frame; host read/decode/postprocess time is forbidden. PIPER-X, whose CAN payload has no device timestamp, uses the kernel SocketCAN receive timestamp of every required component as an explicitly declared lower-bound acquisition proxy and selects the oldest component time for the assembled state."
+      }
+    }
+  },
+  "timestamp": "2026-10-06T17:58:09+00:00",
+  "trusted_base": "86bcd6f0b13425a5beacfed2f009723db0ac0b83",
+  "vendor_revision": "0164268ca123fa4549fc9d2062c1fd55cf7996dc"
+}

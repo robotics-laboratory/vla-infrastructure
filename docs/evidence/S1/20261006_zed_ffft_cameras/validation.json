@@ -1,0 +1,184 @@
+{
+  "alignment": {
+    "checks": 24,
+    "max_center_error_px": 8.065,
+    "min_iou": 0.5658,
+    "physics_callbacks": 0,
+    "visible_witness_checks_by_role": {
+      "left_wrist": 8,
+      "right_wrist": 8,
+      "scene": 8
+    },
+    "wrong_row_rejections": 58
+  },
+  "core": {
+    "full_suite_failed": 3,
+    "full_suite_passed": 701,
+    "rpc_retry_failed": 0,
+    "rpc_retry_passed": 27,
+    "scoped_runtime_tests_passed": 199,
+    "skipped": 26,
+    "subtests_passed": 4,
+    "unique_tests_passed": 704
+  },
+  "gate_states": {
+    "D0": "accepted_offline_schema_with_new_proof",
+    "D1": "unresolved",
+    "S1": "accepted_historical_plus_bounded_VR_supplement",
+    "S2": "unresolved"
+  },
+  "interrupt": {
+    "clean_shutdown": true,
+    "exit_code": 130,
+    "single_sigint": true,
+    "state": "waiting"
+  },
+  "limits": [
+    "No physical headset/client trial, wall-FPS comparison, comfort or S2 acceptance.",
+    "No admitted D1 source: injected source is an automated assay.",
+    "Bulk HDF5/USD/frames/videos remain at temporary external paths; selected JSON outputs and test logs are retained here, not the bulk artifacts.",
+    "Preview source/upload buffers match byte-for-byte; cross-run preview/replay pixels are not asserted identical.",
+    "Native diagnostic legacy canonical_d0_changed=false is not schema evidence: the native ZED image dimensions and D0 fingerprint change explicitly in the contract and tests.",
+    "Existing vendor make_camera_cfg AST is pinned, while an unrelated vendor fixed-joint patch/ABI accommodation remains outside the selected path; effective source hashes retained."
+  ],
+  "materialization": {
+    "frames": 6,
+    "qa": {
+      "all_frames_read": 6,
+      "all_video_frames_decoded": 18,
+      "dataloader_batches": 3,
+      "dataloader_frames": 6,
+      "identical_rgb_digest_roles": []
+    },
+    "schema_fingerprint_sha256": "1a8c638cb8f544de6994c53e8d0311f4d316c7867e97f3d326a45dde10411cb3"
+  },
+  "preserved_failures": [
+    "36-control preview diagnostic did not complete toggle/reset/recenter smoke; validation/pixel/mount checks passed. The complete 60-control run passed.",
+    "Full core suite had three sandbox Unix-socket failures. All 27 RPC tests passed with sandbox escalation.",
+    "Initial test collection lacked the editable PIPER-X extension; declared source PYTHONPATH resolved it. Earlier scoped materialization failures used a read-only default HF cache; explicit disposable cache resolved them."
+  ],
+  "preview": {
+    "fresh_frames": 60,
+    "pose_readback": {
+      "left_wrist": {
+        "actual_optical_matrix": [
+          [
+            2.361458687466831e-07,
+            -1.0000002564463082,
+            -3.160218516413931e-07,
+            0.0
+          ],
+          [
+            -0.9986295768885158,
+            -3.910466620446248e-07,
+            0.05233609971993042,
+            0.0
+          ],
+          [
+            -0.05233587779417037,
+            1.885184445505565e-07,
+            -0.9986294209635885,
+            0.0
+          ],
+          [
+            -0.060000017764177516,
+            -1.0988394472111196e-08,
+            0.009999956795864046,
+            1.0000000000000002
+          ]
+        ],
+        "max_matrix_error": 3.7976393506969873e-07,
+        "passed": true
+      },
+      "right_wrist": {
+        "actual_optical_matrix": [
+          [
+            -2.7862102726668944e-08,
+            -0.9999999836732162,
+            -9.416349839017056e-09,
+            0.0
+          ],
+          [
+            -0.9986294195375436,
+            6.77156252178651e-08,
+            0.0523360865688523,
+            0.0
+          ],
+          [
+            -0.05233609407410261,
+            9.893666983441954e-09,
+            -0.9986294245614404,
+            0.0
+          ],
+          [
+            -0.060000027073135564,
+            3.786516988846245e-09,
+            0.009999979567471673,
+            1.0000000000000002
+          ]
+        ],
+        "max_matrix_error": 1.263147195729175e-07,
+        "passed": true
+      },
+      "scene": {
+        "actual_optical_matrix": [
+          [
+            -0.09053554794769525,
+            -0.9958931166054938,
+            8.497281811514767e-08,
+            0.0
+          ],
+          [
+            0.7027522442228005,
+            -0.06388634418280681,
+            0.7085602364383412,
+            0.0
+          ],
+          [
+            -0.7056503262537532,
+            0.06415002509381296,
+            0.7056502911117644,
+            0.0
+          ],
+          [
+            0.10000000149011612,
+            0.05000000074505806,
+            1.4299999475479126,
+            1.0
+          ]
+        ],
+        "max_matrix_error": 1.625829568752124e-07,
+        "passed": true
+      }
+    },
+    "shape": [
+      600,
+      960,
+      4
+    ],
+    "source_upload_identical_samples": 12,
+    "valid_frames": 60
+  },
+  "record": {
+    "camera_render_products": 0,
+    "committed_rows": 6,
+    "lifecycle_outcomes": [
+      "success",
+      "failure",
+      "incomplete",
+      "discard"
+    ]
+  },
+  "replay": {
+    "physics_callbacks": 0,
+    "rgb_images": 18,
+    "rgb_shape": [
+      600,
+      960,
+      3
+    ]
+  },
+  "schema": "zed_ffft_bounded_qualification_v1",
+  "status": "pass_with_scoped_limits",
+  "timestamp": "2026-10-06T17:58:09+00:00"
+}

@@ -57,6 +57,7 @@ def project_cube(
     vertical_aperture_mm: float,
     *,
     edge_m: float = CUBE_EDGE_M,
+    width: int = IMAGE_WIDTH, height: int = IMAGE_HEIGHT,
 ) -> Projection:
     """Project eight native cube corners through a recorded USD camera pose.
 
@@ -74,26 +75,26 @@ def project_cube(
     depth = -local[:, 2]
     if np.any(depth <= 0.02):
         return Projection(None, None, "near_plane_or_behind")
-    u = IMAGE_WIDTH / 2 + IMAGE_WIDTH * focal_length_mm / horizontal_aperture_mm * local[:, 0] / depth
-    v = IMAGE_HEIGHT / 2 - IMAGE_HEIGHT * focal_length_mm / vertical_aperture_mm * local[:, 1] / depth
+    u = width / 2 + width * focal_length_mm / horizontal_aperture_mm * local[:, 0] / depth
+    v = height / 2 - height * focal_length_mm / vertical_aperture_mm * local[:, 1] / depth
     raw = (float(u.min()), float(v.min()), float(u.max()), float(v.max()))
-    if raw[2] <= 0 or raw[0] >= IMAGE_WIDTH or raw[3] <= 0 or raw[1] >= IMAGE_HEIGHT:
+    if raw[2] <= 0 or raw[0] >= width or raw[3] <= 0 or raw[1] >= height:
         return Projection(None, None, "out_of_frame")
     # A diagnostic mask is clipped to the render product; compare like bounds.
     bounds = (
         max(0.0, raw[0]), max(0.0, raw[1]),
-        min(float(IMAGE_WIDTH), raw[2]), min(float(IMAGE_HEIGHT), raw[3]),
+        min(float(width), raw[2]), min(float(height), raw[3]),
     )
     center = ((bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2)
     raw_center = ((raw[0] + raw[2]) / 2, (raw[1] + raw[3]) / 2)
-    partial = not (0 <= raw_center[0] < IMAGE_WIDTH and 0 <= raw_center[1] < IMAGE_HEIGHT)
+    partial = not (0 <= raw_center[0] < width and 0 <= raw_center[1] < height)
     return Projection(bounds, center, "partial_out_of_frame" if partial else "in_frame")
 
 
 def mask_bounds(mask: np.ndarray) -> tuple[float, float, float, float] | None:
     pixels = np.asarray(mask, dtype=bool)
-    if pixels.shape != (IMAGE_HEIGHT, IMAGE_WIDTH):
-        raise ValueError("diagnostic mask must be 480x640")
+    if pixels.shape not in ((480, 640), (600, 960)):
+        raise ValueError("diagnostic mask must match legacy or native ZED resolution")
     yy, xx = np.nonzero(pixels)
     if len(xx) < MIN_MASK_PIXELS:
         return None

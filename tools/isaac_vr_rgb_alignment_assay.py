@@ -136,12 +136,10 @@ def _mask_for_path(data: dict[str, Any], path: str) -> np.ndarray:
     if not isinstance(labels, dict):
         raise RuntimeError("instance_id_segmentation lacks public idToLabels mapping")
     ids = [int(key) for key, label in labels.items() if path in str(label)]
-    if not ids:
-        return np.zeros((480, 640), dtype=bool)
     values = np.asarray(data["data"])
-    if values.shape == (480, 640, 1):
+    if values.ndim == 3 and values.shape[-1] == 1:
         values = values[..., 0]
-    if values.shape != (480, 640):
+    if values.shape not in ((480, 640), (600, 960)):
         raise RuntimeError(f"instance_id_segmentation shape {values.shape} is unsupported")
     return np.isin(values, ids)
 
@@ -179,6 +177,7 @@ def _evaluate_frame(
                 np.asarray(camera["position"]), np.asarray(camera["orientation"]),
                 float(camera["focal_length"]), float(camera["horizontal_aperture"]),
                 float(camera["vertical_aperture"]),
+                width=render["shape"][1], height=render["shape"][0],
             )
             mask = _mask_for_path(data, obj["path"])
             observed = mask_bounds(mask)
@@ -255,7 +254,7 @@ def run_native(args: argparse.Namespace, app: Any) -> dict[str, Any]:
     print("ASSAY_STAGE=stage_open", flush=True)
     guard.start_monitoring()
     ensure_d0_recordable()
-    materializer = ReplayCameraMaterializer(artifact.camera_paths, args.output / ("restart_rgb" if args.restart else "rgb"))
+    materializer = ReplayCameraMaterializer(artifact.camera_paths, args.output / ("restart_rgb" if args.restart else "rgb"), resolutions={entry["role"]: entry["resolution"] for entry in artifact.visual_provenance["camera_roles"]})
     replayer = None
     annotators = {}
     rows: list[dict[str, Any]] = []
@@ -318,6 +317,8 @@ def run_native(args: argparse.Namespace, app: Any) -> dict[str, Any]:
                         np.asarray(camera["position"]), np.asarray(camera["orientation"]),
                         float(camera["focal_length"]), float(camera["horizontal_aperture"]),
                         float(camera["vertical_aperture"]),
+                        width=materializer.resolutions["scene"][0],
+                        height=materializer.resolutions["scene"][1],
                     )
                     observed = evidence["scene"][obj["path"]]["observed"]
                     controls["wrong_transform"] = bool(observed is not None and not compare_geometry(shifted, observed)["pass"])
@@ -431,7 +432,12 @@ def run_current(args: argparse.Namespace, app: Any) -> dict[str, Any]:
     _open_verified_snapshot(artifact, app)
     guard.start_monitoring()
     ensure_d0_recordable()
-    materializer = ReplayCameraMaterializer(artifact.camera_paths, args.output / "current_rgb")
+    materializer = ReplayCameraMaterializer(
+        artifact.camera_paths, args.output / "current_rgb", resolutions={
+            entry["role"]: entry["resolution"]
+            for entry in artifact.visual_provenance["camera_roles"]
+        },
+    )
     replayer = None
     annotators = {}
     checked = []
@@ -508,6 +514,8 @@ def run_current(args: argparse.Namespace, app: Any) -> dict[str, Any]:
                 expected_plate = project_cube(
                     plate_world, np.array([1, 0, 0, 0]),
                     *kwargs, edge_m=0.008,
+                    width=materializer.resolutions["scene"][0],
+                    height=materializer.resolutions["scene"][1],
                 )
                 observed_plate = mask_bounds(_mask_for_path(
                     annotators["scene"].get_data(), "/World/RobosynDemo/LeftPlate"
@@ -530,6 +538,8 @@ def run_current(args: argparse.Namespace, app: Any) -> dict[str, Any]:
                             np.asarray(camera["position"]), np.asarray(camera["orientation"]),
                             float(camera["focal_length"]), float(camera["horizontal_aperture"]),
                             float(camera["vertical_aperture"]),
+                            width=materializer.resolutions[role][0],
+                            height=materializer.resolutions[role][1],
                         )
                         observed = evidence[role][obj["path"]]["observed"]
                         if expected.visibility == "in_frame" and observed is not None:

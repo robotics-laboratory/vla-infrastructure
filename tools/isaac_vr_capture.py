@@ -79,7 +79,11 @@ class ThreeCameraCapture:
             raise RuntimeError("Camera output has no completed producer generation")
         output = camera.data.output
         value = output.get("rgba", output.get("rgb"))
-        if value is None or tuple(value.shape) not in ((1, 480, 640, 3), (1, 480, 640, 4)):
+        cfg = getattr(camera, "cfg", None)
+        height, width = (cfg.height, cfg.width) if cfg else (480, 640)
+        if (height, width) not in ((480, 640), (600, 960)):
+            raise RuntimeError("Unsupported source camera resolution")
+        if value is None or tuple(value.shape) not in ((1, height, width, 3), (1, height, width, 4)):
             raise RuntimeError("Camera output missing or wrong shape")
         if str(tensor(value).dtype).split(".")[-1] != "uint8":
             raise RuntimeError("Camera output must be uint8")

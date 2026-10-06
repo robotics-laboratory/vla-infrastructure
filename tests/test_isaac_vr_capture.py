@@ -72,6 +72,22 @@ def test_alignment_identical_pixels_and_owned_freeze_without_acquisition():
         assert source.render == step
 
 
+def test_native_zed_bundle_preserves_pixels_and_rejects_resolution_substitution():
+    _, cameras, capture = bundle()
+    for index, camera in enumerate(cameras.values()):
+        camera.cfg = NS(height=600, width=960)
+        camera.data.output["rgba"] = np.full((1, 600, 960, 4), index + 17, dtype=np.uint8)
+    assert capture.capture(1 / 30)
+    frozen = capture.freeze()
+    for index, role in enumerate(ROLES):
+        image = frozen[f"observation.images.{role}"]
+        assert image.shape == (600, 960, 3)
+        assert np.all(image == index + 17)
+    cameras["right_wrist"].data.output["rgba"] = np.zeros((1, 480, 640, 4), dtype=np.uint8)
+    assert capture.capture(1 / 30) is None
+    assert capture.last_error == "Camera output missing or wrong shape"
+
+
 @pytest.mark.parametrize("role", ROLES)
 @pytest.mark.parametrize("fault", ["raise", "frozen", "old_receipt", "empty", "dtype"])
 def test_no_partial_publication(role, fault):

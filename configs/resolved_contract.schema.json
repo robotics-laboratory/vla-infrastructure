@@ -536,8 +536,8 @@
         },
         "shape": {
           "const": [
-            480,
-            640,
+            600,
+            960,
             3
           ]
         },
@@ -549,8 +549,8 @@
         },
         "resolution": {
           "const": [
-            640,
-            480
+            960,
+            600
           ]
         },
         "nominal_fps": {
@@ -611,8 +611,8 @@
         "policy_tensor_shape": {
           "const": [
             3,
-            480,
-            640
+            600,
+            960
           ]
         },
         "policy_tensor_dtype": {

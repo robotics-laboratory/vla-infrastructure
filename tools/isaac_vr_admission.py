@@ -251,11 +251,14 @@ def evaluate_demo_admission(
             "projection source identity/digest mismatch",
         )
         visual = artifact.visual_provenance
+        projected_cameras = projected["visual_identity"]["camera_roles"]
         expected_visual = {
             "camera_roles": {
                 item["role"]: {
                     "prim_path": item["prim_path"],
                     "camera_configuration_sha256": item["camera_configuration_sha256"],
+                    **({"resolution": item["resolution"]}
+                       if "resolution" in projected_cameras[item["role"]] else {}),
                 }
                 for item in visual["camera_roles"]
             },

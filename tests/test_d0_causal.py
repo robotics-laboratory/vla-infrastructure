@@ -413,12 +413,12 @@ def test_three_camera_schema_fingerprint_order_and_preserved_gates():
         == d["common_training_view"]["schema_fingerprint_sha256"]
     )
     for cam in d["cameras"].values():
-        assert (cam["dtype"], cam["shape"], cam["color_space"]) == ("uint8", [480, 640, 3], "RGB")
+        assert (cam["dtype"], cam["shape"], cam["color_space"]) == ("uint8", [600, 960, 3], "RGB")
         assert (
             cam["policy_tensor_dtype"],
             cam["policy_tensor_shape"],
             cam["policy_tensor_range"],
-        ) == ("float32", [3, 480, 640], [0, 1])
+        ) == ("float32", [3, 600, 960], [0, 1])
         assert cam["canonical_transforms"] == dict(crop=False, resize=False, flip=False)
     assert d["sources"] == {}
     assert [c["gates"][g]["state"] for g in ("D0", "S0", "S1", "S2", "D1")] == [

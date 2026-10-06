@@ -42,9 +42,13 @@ class CameraGuard:
                 pixels = pixels.torch
             channels = 4 if "rgba" in output else 3
             batch = 2 if role == "wrists" else 1
+            cfg = getattr(camera, "cfg", None)
+            height, width = (cfg.height, cfg.width) if cfg else (480, 640)
+            if (height, width) not in ((480, 640), (600, 960)):
+                raise RuntimeError("Unsupported source camera resolution")
             if (
                 pixels is None
-                or tuple(pixels.shape) != (batch, 480, 640, channels)
+                or tuple(pixels.shape) != (batch, height, width, channels)
                 or str(pixels.dtype) not in ("torch.uint8", "uint8")
             ):
                 raise RuntimeError(f"Broken required camera buffer: {role}")

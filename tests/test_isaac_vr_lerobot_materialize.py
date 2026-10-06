@@ -53,6 +53,7 @@ def _source() -> dict[str, object]:
             "camera_roles": {
                 role: {
                     "prim_path": f"/World/{role}",
+                    "resolution": [materialize.IMAGE_SHAPE[1], materialize.IMAGE_SHAPE[0]],
                     "camera_configuration_sha256": ("8", "9", "a")[index] * 64,
                 }
                 for index, role in enumerate(materialize.CAMERA_ROLES)
@@ -61,6 +62,41 @@ def _source() -> dict[str, object]:
             "materialization_revision": "piper_x_offline_rgb_materializer_v1",
         },
     }
+
+
+def test_source_geometry_selects_native_or_historical_fingerprint():
+    source = _source()
+    assert materialize._source_image_shape(source) == (600, 960, 3)
+    assert materialize._source_schema_fingerprint(source) == materialize.SCHEMA_FINGERPRINT
+    for camera in source["visual_identity"]["camera_roles"].values():
+        del camera["resolution"]
+    assert materialize._source_image_shape(source) == (480, 640, 3)
+    assert materialize._source_schema_fingerprint(source) == materialize.LEGACY_SCHEMA_FINGERPRINT
+    source["visual_identity"]["camera_roles"]["scene"]["resolution"] = [960, 600]
+    with pytest.raises(materialize.MaterializationError, match="one supported image schema"):
+        materialize._source_image_shape(source)
+
+
+def test_native_image_schema_matches_resolved_contract():
+    import yaml
+    from tools.validate_resolved_contract import canonical_training_schema_fingerprint
+
+    root = Path(__file__).resolve().parents[1]
+    contract = yaml.safe_load((root / "configs/resolved_contract.yaml").read_text())
+    assert canonical_training_schema_fingerprint(contract) == materialize.SCHEMA_FINGERPRINT
+    for role in materialize.CAMERA_ROLES:
+        assert contract["dataset"]["cameras"][role]["shape"] == list(materialize.IMAGE_SHAPE)
+
+
+def test_legacy_projection_bundle_remains_readable(tmp_path):
+    source = _source()
+    for camera in source["visual_identity"]["camera_roles"].values():
+        del camera["resolution"]
+    bundle = tmp_path / "legacy"
+    materialize._write_projection_bundle(bundle, _arrays(), source)
+    manifest, arrays = materialize.verify_projection_bundle(bundle)
+    assert manifest["schema_fingerprint_sha256"] == materialize.LEGACY_SCHEMA_FINGERPRINT
+    assert len(arrays["obs_id"]) == 2
 
 
 def _arrays(frames: int = 2) -> dict[str, np.ndarray]:
@@ -376,8 +412,8 @@ def test_frame_decode_is_on_demand_and_materializer_releases_previous_rgb(
     decoded: list[weakref.ReferenceType[np.ndarray]] = []
     calls: list[str] = []
 
-    def observed_load(path: Path, digest: str) -> np.ndarray:
-        image = original(path, digest)
+    def observed_load(path: Path, digest: str, image_shape=materialize.IMAGE_SHAPE) -> np.ndarray:
+        image = original(path, digest, image_shape)
         decoded.append(weakref.ref(image))
         calls.append(path.name)
         return image
@@ -452,10 +488,10 @@ def test_late_frame_failure_does_not_publish_dataset(
     if failure == "missing_image":
         original_load = materialize._load_rgb
 
-        def remove_later_image(path: Path, digest: str) -> np.ndarray:
+        def remove_later_image(path: Path, digest: str, image_shape=materialize.IMAGE_SHAPE) -> np.ndarray:
             if path.name == "1-scene.png":
                 path.unlink()
-            return original_load(path, digest)
+            return original_load(path, digest, image_shape)
 
         monkeypatch.setattr(materialize, "_load_rgb", remove_later_image)
         expected = "file is missing"
@@ -493,9 +529,9 @@ def test_replay_report_mutation_during_materialization_is_rejected(
     original = materialize._load_rgb
     calls = 0
 
-    def mutating_load(path: Path, digest: str) -> np.ndarray:
+    def mutating_load(path: Path, digest: str, image_shape=materialize.IMAGE_SHAPE) -> np.ndarray:
         nonlocal calls
-        result = original(path, digest)
+        result = original(path, digest, image_shape)
         calls += 1
         if calls == 1:
             report.write_text(report.read_text(encoding="utf-8") + "\n", encoding="utf-8")

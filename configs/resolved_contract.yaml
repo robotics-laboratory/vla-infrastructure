@@ -343,7 +343,7 @@ process_architecture:
   shared_semantic_boundary:
     gate: D0
     contract_revision: piper_x_d0_policy_data_v4
-    schema_fingerprint_sha256: 5926a9271f997202970f757738327593d22ed2ad2696c478cb69a75d35dd1ee1
+    schema_fingerprint_sha256: 1a8c638cb8f544de6994c53e8d0311f4d316c7867e97f3d326a45dde10411cb3
   processes:
     core_lerobot:
       environment: core
@@ -1662,7 +1662,7 @@ dataset:
     task_semantics: Natural-language instruction string recovered by LeRobotDataset from task_index and the dataset task table;
       identical task_id/revision semantics are required across sources.
     schema_fingerprint_algorithm: sha256_canonical_json_ordered_feature_spec_v1
-    schema_fingerprint_sha256: 5926a9271f997202970f757738327593d22ed2ad2696c478cb69a75d35dd1ee1
+    schema_fingerprint_sha256: 1a8c638cb8f544de6994c53e8d0311f4d316c7867e97f3d326a45dde10411cb3
   feature_classification:
     training_input:
     - observation.state
@@ -1789,14 +1789,14 @@ dataset:
     left_wrist:
       feature_key: observation.images.left_wrist
       shape:
-      - 480
-      - 640
+      - 600
+      - 960
       - 3
       dtype: uint8
       color_space: RGB
       resolution:
-      - 640
-      - 480
+      - 960
+      - 600
       nominal_fps: 30
       timestamp_source: 'Physical profile: temporal.observation.images.left_wrist.source_timestamp; Isaac: simulation/capture
         identity, not physical acquisition time.'
@@ -1815,8 +1815,8 @@ dataset:
       runtime_binding_owner: Per-runtime source configuration; no device index/path belongs to D0.
       policy_tensor_shape:
       - 3
-      - 480
-      - 640
+      - 600
+      - 960
       policy_tensor_dtype: float32
       policy_tensor_range:
       - 0.0
@@ -1828,14 +1828,14 @@ dataset:
     right_wrist:
       feature_key: observation.images.right_wrist
       shape:
-      - 480
-      - 640
+      - 600
+      - 960
       - 3
       dtype: uint8
       color_space: RGB
       resolution:
-      - 640
-      - 480
+      - 960
+      - 600
       nominal_fps: 30
       timestamp_source: 'Physical profile: temporal.observation.images.right_wrist.source_timestamp; Isaac: simulation/capture
         identity, not physical acquisition time.'
@@ -1854,8 +1854,8 @@ dataset:
       runtime_binding_owner: Per-runtime source configuration; no device index/path belongs to D0.
       policy_tensor_shape:
       - 3
-      - 480
-      - 640
+      - 600
+      - 960
       policy_tensor_dtype: float32
       policy_tensor_range:
       - 0.0
@@ -1867,14 +1867,14 @@ dataset:
     scene:
       feature_key: observation.images.scene
       shape:
-      - 480
-      - 640
+      - 600
+      - 960
       - 3
       dtype: uint8
       color_space: RGB
       resolution:
-      - 640
-      - 480
+      - 960
+      - 600
       nominal_fps: 30
       timestamp_source: 'Physical profile: temporal.observation.images.scene.source_timestamp; Isaac: simulation/capture identity,
         not physical acquisition time.'
@@ -1893,8 +1893,8 @@ dataset:
       runtime_binding_owner: Per-runtime source configuration; no device index/path belongs to D0.
       policy_tensor_shape:
       - 3
-      - 480
-      - 640
+      - 600
+      - 960
       policy_tensor_dtype: float32
       policy_tensor_range:
       - 0.0
@@ -2063,6 +2063,48 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  vr_zed_ffft_source_inputs:
+    kind: run_manifest
+    sha256: 54b957a4493f700ed598e713b9500e1951fd2e1a4c2ad932f0b4e2725d583a21
+    path: docs/evidence/S1/20261006_zed_ffft_cameras/source_inputs.json
+    uri: null
+    description: Bounded native ZED/FFFT qualification; exact tested source, failures
+      and limits in the registered README.
+  vr_zed_ffft_native_results:
+    kind: test_output
+    sha256: d0eb5004099d8ebe4e641e348871377f3d4115eb9cc23dea502dab4a16952adc
+    path: docs/evidence/S1/20261006_zed_ffft_cameras/native_results.json
+    uri: null
+    description: Bounded native ZED/FFFT qualification; exact tested source, failures
+      and limits in the registered README.
+  vr_zed_ffft_scheduling:
+    kind: test_output
+    sha256: 01868675127c10bb007b8c06f70819910e1a37672cd06ac6e2bf60b09ee757db
+    path: docs/evidence/S1/20261006_zed_ffft_cameras/scheduling.json
+    uri: null
+    description: Bounded native ZED/FFFT qualification; exact tested source, failures
+      and limits in the registered README.
+  vr_zed_ffft_validation:
+    kind: report
+    sha256: df8af3de655b7812958e4e0dd52ddc8c17d5c60344069070789b8263d2566984
+    path: docs/evidence/S1/20261006_zed_ffft_cameras/validation.json
+    uri: null
+    description: Bounded native ZED/FFFT qualification; exact tested source, failures
+      and limits in the registered README.
+  vr_zed_ffft_core_tests:
+    kind: test_output
+    sha256: 07e23871d3aee422d6dd856986cfbd491592b76cb8e7492ebaadb269bd82d538
+    path: docs/evidence/S1/20261006_zed_ffft_cameras/core_tests.txt
+    uri: null
+    description: Bounded native ZED/FFFT qualification; exact tested source, failures
+      and limits in the registered README.
+  vr_zed_ffft_rpc_tests:
+    kind: test_output
+    sha256: a7753bbc4db37b99d711004bc34fd1b181bc8d67503c5b9f5e94f9483487e336
+    path: docs/evidence/S1/20261006_zed_ffft_cameras/rpc_tests.txt
+    uri: null
+    description: Bounded native ZED/FFFT qualification; exact tested source, failures
+      and limits in the registered README.
   vr_record_runtime_optimization_report:
     kind: report
     sha256: 4e62bfbec0f6e430789d362b5822883007c40fba7e394f4fe14d6257d8d26345
@@ -3248,6 +3290,32 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  vr_zed_ffft_camera_qualification:
+    kind: command_test
+    status: pass
+    timestamp: '2026-10-06T17:58:09+00:00'
+    summary: Native 960x600 ZED preview/FFFT, zero RECORD camera products, six-row replay
+      and 24 geometry checks, LeRobot decode, lifecycle and Ctrl-C; 704 distinct offline
+      tests pass across suite and socket-permitted retry.
+    command: Declared core pytest -q plus RPC retry; native observer diag/record, production
+      replay/extract/materialize and RGB alignment. Exact argv and retained observer
+      scripts in bundle README/source_inputs.
+    artifact_ids:
+    - vr_zed_ffft_source_inputs
+    - vr_zed_ffft_native_results
+    - vr_zed_ffft_scheduling
+    - vr_zed_ffft_validation
+    - vr_zed_ffft_core_tests
+    - vr_zed_ffft_rpc_tests
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/evidence/S1/20261006_zed_ffft_cameras
+    symbol: null
+    notes: Tested WIP over 86bcd6f at retained source hashes. Current native image schema
+      proof supplements frozen legacy geometry. No physical Quest, FPS/comfort claim,
+      source admission or S2/D1 acceptance; bulk temporary artifacts are not durably
+      retained.
   vr_offline_rgb_state_alignment_assay:
     kind: command_test
     status: pass
@@ -4905,12 +4973,19 @@ gates:
   D0:
     state: accepted
     evidence_ids:
+    - vr_zed_ffft_camera_qualification
     - gate_d0_pinned_lerobot_audit__other_0a0ed027
     - gate_d0_causality_regression__other_0a0ed027
     - gate_d0_v4_causality
     - gate_d0_v4_review
     - gate_d0_v4_dependency_validation
     artifact_ids:
+    - vr_zed_ffft_source_inputs
+    - vr_zed_ffft_native_results
+    - vr_zed_ffft_scheduling
+    - vr_zed_ffft_validation
+    - vr_zed_ffft_core_tests
+    - vr_zed_ffft_rpc_tests
     - gate_d0_upstream_audit__other_0a0ed027
     - gate_d0_processor_snapshot
     - gate_d0_causality_test_output__other_0a0ed027
@@ -4921,7 +4996,7 @@ gates:
     - gate_d0_v4_final_validation
     - gate_d0_v4_full_suite
     - gate_d0_v4_first_full_attempt
-    notes: D0 v4 accepts offline canonical state/action and three-camera schema, common immutable causal transactions, explicit
+    notes: Native ZED 600x960 image shapes/fingerprint have new offline schema and bounded runtime proof; legacy image evidence retains its frozen scope. D0 v4 accepts offline canonical state/action and three-camera schema, common immutable causal transactions, explicit
       Isaac human/automated identity and strict real physical profiles. New v4 proof supplements frozen history. S0/S1 facts
       are unchanged; camera and XR/preclip seams have bounded machine qualification. Full recording and source admission
       remain pending. The additive isaac_human_vr_offline_rgb_v1 declaration is pending D1 implementation and evidence and
@@ -4959,6 +5034,7 @@ gates:
   S1:
     state: accepted
     evidence_ids:
+    - vr_zed_ffft_camera_qualification
     - vr_xr_decision_qualification
     - vr_three_camera_boundary_s1_regression
     - vr_three_camera_boundary_offline
@@ -4966,6 +5042,12 @@ gates:
     - isaac1103_s1_artifact
     - isaac1103_combined_preview
     artifact_ids:
+    - vr_zed_ffft_source_inputs
+    - vr_zed_ffft_native_results
+    - vr_zed_ffft_scheduling
+    - vr_zed_ffft_validation
+    - vr_zed_ffft_core_tests
+    - vr_zed_ffft_rpc_tests
     - vr_three_camera_boundary_s1_result
     - vr_three_camera_boundary_provenance
     - vr_three_camera_boundary_report
@@ -4982,10 +5064,11 @@ gates:
     - isaac1103_combined_stdout
     - isaac1103_combined_runtime
     - isaac1103_combined_frames
-    notes: New complete S1 evidence on exact final frozen SDK. Same model/task/D0/physics/processor/camera semantics; old acceptance remains historical. Combined production SceneUI isolation has zero captured leakage; retained UI lifecycle follows NVIDIA guidance. Physical S2 not inferred. Historical acceptance is scoped to the registered exact source/SDK. The three-camera-boundary change passed a new canonical non-headless S1 regression at the registered source hashes. Plain S1 remains the state/two-wrist subset; complete source capture belongs to the VR/recording profiles. Headless Kit is not qualified; S2/D1 acceptance is not inferred.
+    notes: Native ZED/FFFT bounded VR supplement is source-hash scoped; plain S1 and historical acceptance remain scoped to their registered sources. New complete S1 evidence on exact final frozen SDK. Same model/task/D0/physics/processor/camera semantics; old acceptance remains historical. Combined production SceneUI isolation has zero captured leakage; retained UI lifecycle follows NVIDIA guidance. Physical S2 not inferred. Historical acceptance is scoped to the registered exact source/SDK. The three-camera-boundary change passed a new canonical non-headless S1 regression at the registered source hashes. Plain S1 remains the state/two-wrist subset; complete source capture belongs to the VR/recording profiles. Headless Kit is not qualified; S2/D1 acceptance is not inferred.
   S2:
     state: unresolved
     evidence_ids:
+    - vr_zed_ffft_camera_qualification
     - vr_architecture_audit
     - vr_architecture_phase
     - vr_architecture_replay
@@ -5006,6 +5089,12 @@ gates:
     - gate_s2_physical_run1_failed
     - isaac1103_s2_automated
     artifact_ids:
+    - vr_zed_ffft_source_inputs
+    - vr_zed_ffft_native_results
+    - vr_zed_ffft_scheduling
+    - vr_zed_ffft_validation
+    - vr_zed_ffft_core_tests
+    - vr_zed_ffft_rpc_tests
     - vr_architecture_report
     - vr_architecture_long
     - vr_architecture_short
@@ -5060,10 +5149,16 @@ gates:
   D1:
     state: unresolved
     evidence_ids:
+    - vr_zed_ffft_camera_qualification
     - vr_xr_decision_qualification
-    artifact_ids: []
-    notes: The selected snapshot-backed/offline-RGB profile and committed-transition native row semantics are contract-only;
-      no admitted recording, materialized three-camera dataset, or Isaac human-VR dataset evidence exists.
+    artifact_ids:
+    - vr_zed_ffft_source_inputs
+    - vr_zed_ffft_native_results
+    - vr_zed_ffft_scheduling
+    - vr_zed_ffft_validation
+    - vr_zed_ffft_core_tests
+    - vr_zed_ffft_rpc_tests
+    notes: Injected six-row ZED/FFFT recording, replay, geometry and LeRobot checks provide bounded converter evidence only. No admitted Isaac human-VR demonstration or physical S2 acceptance; D1 remains unresolved.
   G1:
     state: unresolved
     evidence_ids: []

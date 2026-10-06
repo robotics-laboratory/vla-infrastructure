@@ -78,14 +78,18 @@ profiles:
     right_plate: {position_m: [0.72, -0.17, 0.831], diameter_m: 0.14, thickness_m: 0.008, color_rgb: [0.96, 0.36, 0.10]}
 
 cameras:
+  zed:
+    checkout: /data/vla-infrastructure/assets/zed-isaac-sim
+    revision: 0164268ca123fa4549fc9d2062c1fd55cf7996dc
+    model: ZED_XONE_GS
+    resolution: SVGA
+    consumer: isaac_lab_authored_usd_sdk_free
+    mount_physics: parented_massless_no_collision
   wrist:
     roles: [left_wrist, right_wrist]
-    width: 640
-    height: 480
+    width: 960
+    height: 600
     target_fps: 30.0
-    focal_length_mm: 18.0
-    horizontal_aperture_mm: 20.955
-    clipping_range_m: [0.02, 10.0]
     # Isaac Lab's `world` camera convention uses local +X as forward and +Z as up.
     # Start from the PIPER gripper's +Z approach axis, roll the image 180 degrees,
     # then pitch the optical axis 3 degrees toward parent +X.
@@ -98,19 +102,15 @@ cameras:
     up_axis_parent: -X
     output_roll_deg: 180.0
     pitch_toward_gripper_deg: 3.0
-    d0_contract_change: none
+    d0_contract_change: native_zed_svga_600x960
   scene:
     role: demo_scene
     eye_m: [0.10, 0.05, 1.43]
     target_m: [0.65, 0.0, 0.88]
     up: [0.0, 0.0, 1.0]
-    width: 640
-    height: 480
+    width: 960
+    height: 600
     target_fps: 30.0
-    horizontal_fov_deg: 60.0
-    horizontal_aperture_mm: 20.955
-    focal_length_mm: 18.147558
-    clipping_range_m: [0.02, 10.0]
     canonical_d0_input: true
     d0_key: observation.images.scene
     capture_boundary_revision: piper_x_three_camera_boundary_v1
@@ -126,7 +126,7 @@ xr_presentation:
     motion_barrier: Hold the request frame; on the next control frame accept XRCore's current physical-to-world transform as the new reference and emit a zero-motion rebase. Any later transform change rebases again. Missing active XR transforms still hold motion.
     toggle_control: right_thumbstick_click
     quest_button: R3
-    view_prim_path: /World/RobosynDemo/SceneCamera
+    view_prim_path: /World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera
     behavior: One rising edge uses XRCore.schedule_teleport_to_view so the current physical HMD pose matches the validated demo scene-camera pose; controller poses use XRCore's full physical-to-virtual transform including the resulting space origin, while robot/table USD geometry and 1:1 scale remain unchanged.
 
 teleop_tuning:

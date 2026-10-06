@@ -37,6 +37,7 @@ PROVENANCE_INPUTS = (
     ROOT / "tools/isaac_vr_config.py",
     ROOT / "tools/isaac_vr_camera_guard.py",
     ROOT / "tools/isaac_vr_camera_rendering.py",
+    ROOT / "tools/isaac_vr_zed.py",
     ROOT / "tools/isaac_vr_capture.py",
     ROOT / "tools/isaac_vr_decision.py",
     ROOT / "tools/isaac_s2_performance.py",

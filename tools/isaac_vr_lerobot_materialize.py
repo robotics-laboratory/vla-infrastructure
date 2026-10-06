@@ -45,7 +45,8 @@ if __package__ in {None, ""}:
 BUNDLE_SCHEMA = "piper_x_isaac_vr_projection_bundle_v1"
 MATERIALIZATION_SCHEMA = "piper_x_isaac_vr_lerobot_materialization_v1"
 REPLAY_SCHEMA = "piper_x_isaac_vr_replay_report_v3"
-SCHEMA_FINGERPRINT = "5926a9271f997202970f757738327593d22ed2ad2696c478cb69a75d35dd1ee1"
+LEGACY_SCHEMA_FINGERPRINT = "5926a9271f997202970f757738327593d22ed2ad2696c478cb69a75d35dd1ee1"
+SCHEMA_FINGERPRINT = "1a8c638cb8f544de6994c53e8d0311f4d316c7867e97f3d326a45dde10411cb3"
 CONVERSION_REVISION = "piper_x_isaac_vr_lerobot_materializer_v1"
 TASK_LABEL_REVISION = "piper_x_task_labels_v1"
 TASK_LABELS = {
@@ -56,7 +57,8 @@ BUNDLE_MANIFEST = "manifest.json"
 MATERIALIZATION_MANIFEST = "isaac_vr_materialization_manifest.json"
 FPS = 30
 CAMERA_ROLES = ("left_wrist", "right_wrist", "scene")
-IMAGE_SHAPE = (480, 640, 3)
+IMAGE_SHAPE = (600, 960, 3)
+LEGACY_IMAGE_SHAPE = (480, 640, 3)
 VECTOR_SHAPE = (14,)
 JOINT_NAMES = (
     "left_joint_1.pos",
@@ -346,6 +348,28 @@ def _publish_directory(temporary: Path, target: Path) -> None:
     os.replace(temporary, target)
 
 
+def _source_image_shape(source: Mapping[str, Any]) -> tuple[int, int, int]:
+    """Use the immutable source geometry; old projections imply legacy 640x480."""
+    cameras = source.get("visual_identity", {}).get("camera_roles", {})
+    if set(cameras) != set(CAMERA_ROLES):
+        raise MaterializationError("projection source camera identities are incomplete")
+    shapes = set()
+    for camera in cameras.values():
+        resolution = camera.get("resolution", [640, 480])
+        if (not isinstance(resolution, (list, tuple)) or len(resolution) != 2
+                or any(type(value) is not int for value in resolution)):
+            raise MaterializationError("projection source camera resolution is invalid")
+        shapes.add((resolution[1], resolution[0], 3))
+    if len(shapes) != 1 or not shapes <= {IMAGE_SHAPE, LEGACY_IMAGE_SHAPE}:
+        raise MaterializationError("projection cameras require one supported image schema")
+    return next(iter(shapes))
+
+
+def _source_schema_fingerprint(source: Mapping[str, Any]) -> str:
+    return (SCHEMA_FINGERPRINT if _source_image_shape(source) == IMAGE_SHAPE
+            else LEGACY_SCHEMA_FINGERPRINT)
+
+
 def _write_projection_bundle(
     output: Path,
     arrays: Mapping[str, np.ndarray],
@@ -361,7 +385,7 @@ def _write_projection_bundle(
         manifest: dict[str, Any] = {
             "schema": BUNDLE_SCHEMA,
             "conversion_revision": CONVERSION_REVISION,
-            "schema_fingerprint_sha256": SCHEMA_FINGERPRINT,
+            "schema_fingerprint_sha256": _source_schema_fingerprint(source),
             "frames": frames,
             "projection": {
                 "path": PROJECTION_FILE,
@@ -388,7 +412,7 @@ def verify_projection_bundle(bundle: Path) -> tuple[dict[str, Any], dict[str, np
         raise MaterializationError("unsupported projection bundle schema")
     if manifest.get("conversion_revision") != CONVERSION_REVISION:
         raise MaterializationError("unsupported projection conversion revision")
-    if manifest.get("schema_fingerprint_sha256") != SCHEMA_FINGERPRINT:
+    if manifest.get("schema_fingerprint_sha256") != _source_schema_fingerprint(manifest.get("source", {})):
         raise MaterializationError("projection schema fingerprint mismatch")
     declared_self = _require_sha256(
         manifest.get("manifest_sha256"), field="projection manifest_sha256"
@@ -436,10 +460,10 @@ def verify_projection_bundle(bundle: Path) -> tuple[dict[str, Any], dict[str, np
     if not isinstance(cameras, dict) or set(cameras) != set(CAMERA_ROLES):
         raise MaterializationError("projection source camera identities are incomplete")
     for role, camera in cameras.items():
-        if not isinstance(camera, dict) or set(camera) != {
-            "camera_configuration_sha256",
-            "prim_path",
-        }:
+        if not isinstance(camera, dict) or set(camera) not in (
+            {"camera_configuration_sha256", "prim_path"},
+            {"camera_configuration_sha256", "prim_path", "resolution"},
+        ):
             raise MaterializationError(f"projection source camera identity is invalid for {role}")
         _require_sha256(
             camera["camera_configuration_sha256"],
@@ -575,6 +599,7 @@ def extract_projection(
                 str(camera["role"]): {
                     "prim_path": camera["prim_path"],
                     "camera_configuration_sha256": camera["camera_configuration_sha256"],
+                    "resolution": camera["resolution"],
                 }
                 for camera in artifact.visual_provenance["camera_roles"]
             },
@@ -589,7 +614,8 @@ def extract_projection(
     return _write_projection_bundle(output, arrays, source)
 
 
-def _load_rgb(path: Path, declared_sha256: str) -> np.ndarray:
+def _load_rgb(path: Path, declared_sha256: str,
+              image_shape: tuple[int, int, int] = IMAGE_SHAPE) -> np.ndarray:
     if not path.is_file():
         raise MaterializationError(f"materialized RGB file is missing: {path}")
     actual_sha256 = _sha256_stable(path)
@@ -605,9 +631,9 @@ def _load_rgb(path: Path, declared_sha256: str) -> np.ndarray:
             array = np.asarray(image)
     except (OSError, ValueError) as exc:
         raise MaterializationError(f"materialized RGB is unreadable: {path}") from exc
-    if array.dtype != np.uint8 or array.shape != IMAGE_SHAPE:
+    if array.dtype != np.uint8 or array.shape != image_shape:
         raise MaterializationError(
-            f"materialized RGB must be uint8{IMAGE_SHAPE}, got {array.dtype}{array.shape}"
+            f"materialized RGB must be uint8{image_shape}, got {array.dtype}{array.shape}"
         )
     if _sha256_stable(path) != declared_sha256:
         raise MaterializationError(f"materialized RGB changed while it was decoded: {path}")
@@ -631,6 +657,7 @@ def _validated_image_join(
         raise MaterializationError("replay report did not use strict state-only replay")
     frames = _validate_projection_arrays(arrays)
     source = bundle_manifest["source"]
+    image_shape = _source_image_shape(source)
     expected_top = {
         "recording_sha256": source["recording_sha256"],
         "stage_snapshot_sha256": source["stage_snapshot_sha256"],
@@ -707,7 +734,7 @@ def _validated_image_join(
             raise MaterializationError(
                 f"replay render {index} has the wrong materialization revision"
             )
-        if raw.get("dtype") != "uint8" or raw.get("shape") != list(IMAGE_SHAPE):
+        if raw.get("dtype") != "uint8" or raw.get("shape") != list(image_shape):
             raise MaterializationError(f"replay render {index} has the wrong RGB type or shape")
         if (
             not isinstance(raw["scene_state_snapshot_id"], str)
@@ -808,7 +835,7 @@ def _add_projection_frame(
     for role in CAMERA_ROLES:
         entry = images[(obs_id, snapshot_sha256, role)]
         sample[f"observation.images.{role}"] = _load_rgb(
-            Path(entry["path"]), entry["rgb_sha256"]
+            Path(entry["path"]), entry["rgb_sha256"], tuple(entry["shape"])
         )
     dataset.add_frame(sample)
     # With the pinned synchronous LeRobot writer, add_frame has persisted each
@@ -816,7 +843,9 @@ def _add_projection_frame(
     del sample
 
 
-def canonical_lerobot_features() -> dict[str, dict[str, Any]]:
+def canonical_lerobot_features(
+    image_shape: tuple[int, int, int] = IMAGE_SHAPE,
+) -> dict[str, dict[str, Any]]:
     features: dict[str, dict[str, Any]] = {
         "observation.state": {
             "dtype": "float32",
@@ -827,7 +856,7 @@ def canonical_lerobot_features() -> dict[str, dict[str, Any]]:
     for role in CAMERA_ROLES:
         features[f"observation.images.{role}"] = {
             "dtype": "video",
-            "shape": IMAGE_SHAPE,
+            "shape": image_shape,
             "names": ["height", "width", "channel"],
         }
     features["action"] = {
@@ -844,6 +873,7 @@ def _qa_lerobot_dataset(
     repo_id: str,
     arrays: Mapping[str, np.ndarray],
     task: str,
+    image_shape: tuple[int, int, int] = IMAGE_SHAPE,
 ) -> dict[str, Any]:
     import torch
     from torch.utils.data import DataLoader
@@ -891,7 +921,7 @@ def _qa_lerobot_dataset(
             raise MaterializationError(f"LeRobot frame {index} has a wrong logical timestamp")
         for role in CAMERA_ROLES:
             image = frame[f"observation.images.{role}"]
-            if image.dtype != torch.float32 or tuple(image.shape) != (3, 480, 640):
+            if image.dtype != torch.float32 or tuple(image.shape) != (3, image_shape[0], image_shape[1]):
                 raise MaterializationError(f"LeRobot frame {index} {role} decode shape mismatch")
             if not torch.isfinite(image).all() or image.min().item() < 0 or image.max().item() > 1:
                 raise MaterializationError(f"LeRobot frame {index} {role} decode range mismatch")
@@ -908,7 +938,7 @@ def _qa_lerobot_dataset(
             raise MaterializationError("DataLoader action batch shape mismatch")
         for role in CAMERA_ROLES:
             image = batch[f"observation.images.{role}"]
-            if tuple(image.shape[1:]) != (3, 480, 640) or image.dtype != torch.float32:
+            if tuple(image.shape[1:]) != (3, image_shape[0], image_shape[1]) or image.dtype != torch.float32:
                 raise MaterializationError(f"DataLoader {role} batch shape mismatch")
         if list(batch["task"]) != [task] * batch_size:
             raise MaterializationError("DataLoader task batch mismatch")
@@ -976,6 +1006,7 @@ def materialize_projection(
     bundle_path = bundle.expanduser().resolve()
     report_path = replay_report.expanduser().resolve()
     bundle_manifest, arrays = verify_projection_bundle(bundle_path)
+    image_shape = _source_image_shape(bundle_manifest["source"])
     source_task_id = bundle_manifest["source"].get("task")
     if task_id != source_task_id:
         raise MaterializationError(
@@ -998,7 +1029,7 @@ def materialize_projection(
         dataset = LeRobotDataset.create(
             repo_id=repo_id,
             fps=FPS,
-            features=canonical_lerobot_features(),
+            features=canonical_lerobot_features(image_shape),
             root=temporary,
             use_videos=True,
             video_backend="pyav",
@@ -1013,6 +1044,7 @@ def materialize_projection(
             repo_id=repo_id,
             arrays=arrays,
             task=task,
+            image_shape=image_shape,
         )
         join_ledger = []
         for frame in range(frames):
@@ -1048,7 +1080,7 @@ def materialize_projection(
         manifest: dict[str, Any] = {
             "schema": MATERIALIZATION_SCHEMA,
             "conversion_revision": CONVERSION_REVISION,
-            "schema_fingerprint_sha256": SCHEMA_FINGERPRINT,
+            "schema_fingerprint_sha256": bundle_manifest["schema_fingerprint_sha256"],
             "repo_id": repo_id,
             "fps": FPS,
             "frames": frames,
