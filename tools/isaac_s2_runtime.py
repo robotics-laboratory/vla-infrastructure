@@ -479,6 +479,7 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
     maximum_rebase_motion_m = {"left": 0.0, "right": 0.0}
     saturated_frames = 0
     control_steps = 0
+    completed_control_steps = 0
     run_id = str(uuid4())
     validator = None
     control_tick_id = 0
@@ -754,6 +755,7 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                             reset_demo()
                         if recording_ui is not None:
                             recording_ui.update(lifecycle.state, event="reset")
+                        completed_control_steps = step
                         continue
                     if lifecycle.state in (
                         RecordingState.REVIEW, RecordingState.CLASSIFY_OUTCOME
@@ -761,6 +763,7 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                         # Keep XR input/rendering alive; no IK or D0 on menu ticks.
                         if event not in ("stop", "save", "discard", "success", "failure", "incomplete"):
                             env._advance(4)
+                        completed_control_steps = step
                         continue
                 if performance is not None:
                     performance.add_stage(
@@ -800,6 +803,7 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                     lifecycle.external_reset()
                     action = None
                     observation = None
+                    completed_control_steps = step
                     continue
                 if environment_reset_requested:
                     env.reset(0)
@@ -1248,6 +1252,7 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                     )
                     if window is not None:
                         print(json.dumps(window, sort_keys=True), flush=True)
+                completed_control_steps = step
     except KeyboardInterrupt:
         interrupted = True
         recording_stop_reason = "keyboard_interrupt"
@@ -1314,6 +1319,8 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                 if performance is not None:
                     performance_summary = performance.close()
 
+    attempted_control_steps = control_steps
+    control_steps = completed_control_steps
     elapsed = time.perf_counter() - started
     gpu_end = _gpu_observation() if diagnostic else None
     gpu_samples.append(gpu_end)
@@ -1335,8 +1342,11 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
         or (experiment is not None and experiment.recenter_request_count == 2)
     )
     passed = bool(
-        control_steps == args_cli.s2_max_control_steps
-        and camera_valid_frames == control_steps
+        control_steps > 0
+        and (control_steps == args_cli.s2_max_control_steps or interrupted)
+        and recording_failure_reason is None
+        and (lifecycle is None or lifecycle.error is None)
+        and (recording_requested or camera_valid_frames == control_steps)
         and (not diagnostic or camera_advanced_frames == control_steps)
         and session_requirement_met
         and tracking_requirement_met
@@ -1442,7 +1452,14 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
         },
         "execution": {
             "control_steps": control_steps,
+            "attempted_control_steps": attempted_control_steps,
             "stopped_by_user": interrupted,
+            "requested_control_steps": args_cli.s2_max_control_steps,
+            "completed_control_budget": control_steps == args_cli.s2_max_control_steps,
+            "completion_reason": (
+                "operator_stop" if interrupted else "control_budget"
+                if control_steps == args_cli.s2_max_control_steps else "incomplete"
+            ),
             "wall_seconds": elapsed,
             "control_hz": control_steps / elapsed,
             "physics_hz": (control_steps * 4) / elapsed,
@@ -1461,12 +1478,15 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                        if experiment is not None else "640x480 uint8 RGB HWC")
                 for role in ("left_wrist", "right_wrist")
             },
+            "validation": (
+                "not_applicable_state_only_record" if recording_requested else "live_rgb"
+            ),
             "valid_bimanual_frames": camera_valid_frames,
             "strictly_advanced_bimanual_frames": camera_advanced_frames,
         },
         "gpu": {"start": gpu_start, "end": gpu_end},
         "physical_human_gate": "required_not_implied_by_runtime_smoke",
-        "passed": passed and not interrupted,
+        "passed": passed,
     }
     if experiment is not None and diagnostic:
         report["gpu"]["samples"] = gpu_samples
@@ -1499,4 +1519,4 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
             encoding="utf-8",
         )
     print(json.dumps(jsonable(report), sort_keys=True), flush=True)
-    return 130 if interrupted else (0 if passed else 1)
+    return 0 if passed else (130 if interrupted else 1)

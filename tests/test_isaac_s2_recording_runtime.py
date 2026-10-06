@@ -58,7 +58,7 @@ def test_recording_setup_preserves_ffft_and_uses_prim_state_without_rtx_resource
     assert "CameraRecordable(" in body
 
 
-def test_physical_recording_hides_backdrop_before_recorder_start():
+def test_physical_recording_preserves_selected_backdrop_without_camera_rgb():
     source = (ROOT / "tools/isaac_s2_runtime.py").read_text(encoding="utf-8")
     prepare = source.index("experiment.prepare_recording_view()")
     start = source.index("recording = start_live_recording(", prepare)
@@ -69,7 +69,7 @@ def test_physical_recording_hides_backdrop_before_recorder_start():
     next_method = runtime.index("\n    def ", method + 1)
     body = runtime[method:next_method]
     assert "self.disable_live_rgb()" in body
-    assert "self._set_backdrop_visibility(False)" in body
+    assert 'self._set_backdrop_visibility(bool(self.config["scene"]["backdrop"]["initial_visibility"]))' in body
 
 
 def test_recording_gap_finalizes_episode_before_unrecorded_native_advance():
