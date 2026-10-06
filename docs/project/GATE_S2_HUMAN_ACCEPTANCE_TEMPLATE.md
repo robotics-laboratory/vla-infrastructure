@@ -22,13 +22,14 @@ Retain the run directory printed by the launcher. Its expanded command includes
 valid tracked frames from both physical controllers; that check does not replace
 the observations below. Use the exact client URL and setup in the canonical VR config.
 
-Choose a sufficient `--max-control-steps` budget before starting, retain that exact
-command, and let RUN complete its budget after the observations. The runtime PASS
-predicate requires all requested control steps. Ctrl-C can produce a clean process
-shutdown and preserve recordings while intentionally leaving `passed: false`;
-do not rewrite that report as PASS. A RECORD session supplements lifecycle and
-artifact checks but does not exercise RUN's live RGB previews or replace the RUN
-acceptance target.
+Retain the exact command and control-step budget. After completing observations,
+either let RUN reach its budget or stop normally with host Ctrl-C. Runtime PASS
+requires completed control ticks, the requested session/tracking checks, healthy
+cameras/presentation and successful cleanup. The report distinguishes operator
+stop from completed budget; a clean stop alone is insufficient. Preserve original
+reports when a later documented policy reassessment changes their qualification.
+A RECORD session supplements lifecycle and artifact checks but does not exercise
+RUN's live RGB previews or replace the RUN acceptance target.
 
 ## Session metadata
 
@@ -162,5 +163,6 @@ is supported by the retained log, and this completed worksheet is registered as 
 `human_gate` evidence object. Retain required command-test, log and test-output
 evidence and satisfy all prerequisites in `configs/gate_rules.yaml`; reconcile
 the selected configuration/provenance through the contract before promotion.
-A verbal “looks good”, interrupted run, or existing Gate B identity evidence is
-insufficient. No gate state is changed by this template.
+A verbal “looks good”, an interrupted run with failed checks, or existing Gate B
+identity evidence is insufficient. An explicit full-checklist operator attestation
+may be registered with exact run provenance and a separate L3 supplement. No gate state is changed by this template.

@@ -60,7 +60,7 @@ def test_offline_rgb_profile_is_additive_selected_and_not_accepted_evidence() ->
     assert profile["runtime_binding_status"] == "pending_D1_implementation_and_evidence"
     assert profile["dataset_admissible_before_materialization_and_D1_evidence"] is False
     assert data["gates"]["D0"]["state"] == "accepted"
-    assert data["gates"]["S2"]["state"] == "unresolved"
+    assert data["gates"]["S2"]["state"] == "accepted"
     assert data["gates"]["D1"]["state"] == "unresolved"
     assert data["dataset"]["sources"] == {}
 

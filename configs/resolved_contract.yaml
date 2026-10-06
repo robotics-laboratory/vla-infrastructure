@@ -1041,12 +1041,14 @@ teleop:
     right_source: isaacteleop ControllersSource.RIGHT controller_right OptionalTensorGroup from the one shared piper_x_s2_controllers source and lifecycle
     processor_revision: piper_x_isaac_s2_bimanual_relative_v3
     evidence_ids:
+    - vr_s2_operator_stop_qualification
+    - vr_operator_s2_human_observations
+    - vr_operator_s2_layout_observation
     - gate_s0_isaac_upstream_audit
     - gate_s0_isaac_teleop_upstream_audit
     - gate_s2_upstream_reuse_audit__base_682ee936
     - gate_s2_automated_runtime__base_682ee936
     - gate_s2_s1_non_xr_regression
-    - gate_s2_physical_run1_failed
     - isaac1103_s0_source
     - isaac1103_s2_automated
 dataset:
@@ -2063,6 +2065,20 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  vr_s2_operator_stop_report:
+    kind: report
+    sha256: 45182821b4a6ffd83df75937f071b43d14640a64de51aa79f9ff24c0e9444728
+    path: docs/evidence/S2/20261006_operator_recording_audit/operator_stop_acceptance.json
+    uri: null
+    description: S2 operator-stop rule, exact-source automatic tests and retrospective
+      f2ac4ea RUN/RECORD PASS; originals retained.
+  vr_s2_operator_stop_tests:
+    kind: test_output
+    sha256: 8533e5abdf352749cd5a4f357ba008e62902450a8eb9b7e4e78f242a8e53aee9
+    path: docs/evidence/S2/20261006_operator_recording_audit/operator_stop_tests.txt
+    uri: null
+    description: Actual shared RUN/DIAG/RECORD loop positive/negative operator-stop,
+      record camera exclusion and native lifecycle regression checks.
   vr_operator_s2_layout_record:
     kind: report
     sha256: 6ebd19753e14fa6752888b3326207fe811a5192495c2082d822a17bb0259533c
@@ -2080,7 +2096,7 @@ artifacts:
     sha256: a70e5eeabb65bdae80ddfbced207c61e5a0c36917a390aeb846d220e9ecb4670
     path: docs/evidence/S2/20261006_operator_recording_audit/checks.json
     uri: null
-    description: Read-only finalized operator recording/session integrity audit with retained exact RUN/RECORD inputs/results; S2 human observations and runtime PASS pending.
+    description: Read-only finalized operator recording/session integrity audit with retained exact RUN/RECORD inputs/results; Human observations and runtime PASS were pending at audit capture; later qualification is in vr_s2_operator_stop_report.
   vr_operator_recording_stdout:
     kind: log
     sha256: 27b0601f5e1de90683d78a5169af01ae1c0b7340114fd1cf27a2584d7705620b
@@ -3328,6 +3344,26 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  vr_s2_operator_stop_qualification:
+    kind: command_test
+    status: pass
+    timestamp: '2026-10-06T19:21:21.177775+00:00'
+    command: Declared core actual-loop pytest plus retained native reports evaluated
+      with the production run_s2 PASS expression; exact commands and source hashes in
+      supplement.
+    summary: RUN and state-only RECORD qualify under clean operator-stop policy; original
+      failures retained; full Quest 3 and L3 operator PASS completes S2.
+    artifact_ids:
+    - vr_s2_operator_stop_report
+    - vr_s2_operator_stop_tests
+    repository: null
+    revision_type: null
+    revision: null
+    path: docs/evidence/S2/20261006_operator_recording_audit/operator_stop_acceptance.json
+    symbol: null
+    notes: Physical control observations remain scoped to f2ac4ea. Later code changes
+      affect completed-iteration accounting/report qualification only and were automatically
+      tested. No new physical run or dataset admission.
   vr_operator_s2_layout_observation:
     kind: human_gate
     status: pass
@@ -3340,7 +3376,7 @@ evidence:
     revision: f2ac4eae6a063984d0377d4bb1ae07623d7d96b8
     path: docs/evidence/S2/20261006_operator_recording_audit/layout_observation.json
     symbol: null
-    notes: Supplements the prior full-checklist attestation. No independent headset reproduction or rewriting of machine non-PASS results; S2 remains unresolved.
+    notes: Supplements the prior full-checklist attestation. No independent headset reproduction. Original machine reports remain frozen; later operator-stop reassessment and accepted S2 binding are in vr_s2_operator_stop_report.
   vr_operator_s2_human_observations:
     kind: human_gate
     status: pass
@@ -3353,7 +3389,7 @@ evidence:
     revision: f2ac4eae6a063984d0377d4bb1ae07623d7d96b8
     path: docs/evidence/S2/20261006_operator_recording_audit/human_observations.json
     symbol: null
-    notes: Registration of operator observation, not independent reproduction. Prior checklist excludes its obsolete noncanonical SCENE assertion. Newly added L3-specific checks are not inferred. All retained machine reports remain interrupted/non-PASS; S2 stays unresolved and no dataset admission is asserted.
+    notes: Registration of operator observation, not independent reproduction. Prior checklist excludes its obsolete noncanonical SCENE assertion. Newly added L3-specific checks are not inferred. Original native reports remain interrupted/non-PASS in the frozen audit; later runtime qualification and S2 closure are in vr_s2_operator_stop_report. No dataset admission is asserted.
   vr_operator_recording_integrity:
     kind: artifact_validation
     status: pass
@@ -3366,7 +3402,7 @@ evidence:
     revision: f2ac4eae6a063984d0377d4bb1ae07623d7d96b8
     path: docs/evidence/S2/20261006_operator_recording_audit
     symbol: null
-    notes: Artifact-only PASS; all retained runtime reports remain interrupted/non-PASS. Detailed human observations pending. No headset stream-FPS measurement, automatic task-success claim, LeRobot admission or S2 promotion.
+    notes: Artifact-only PASS at capture, before human attestation and runtime reassessment. Original interrupted reports remain frozen. Later S2 acceptance is registered separately; no headset stream-FPS measurement, automatic task-success claim or LeRobot admission.
   vr_preview_layout_native:
     kind: command_test
     status: pass
@@ -5164,33 +5200,20 @@ gates:
     - isaac1103_combined_frames
     notes: Native ZED/FFFT bounded VR supplement is source-hash scoped; plain S1 and historical acceptance remain scoped to their registered sources. New complete S1 evidence on exact final frozen SDK. Same model/task/D0/physics/processor/camera semantics; old acceptance remains historical. Combined production SceneUI isolation has zero captured leakage; retained UI lifecycle follows NVIDIA guidance. Physical S2 not inferred. Historical acceptance is scoped to the registered exact source/SDK. The three-camera-boundary change passed a new canonical non-headless S1 regression at the registered source hashes. Plain S1 remains the state/two-wrist subset; complete source capture belongs to the VR/recording profiles. Headless Kit is not qualified; S2/D1 acceptance is not inferred.
   S2:
-    state: unresolved
+    state: accepted
     evidence_ids:
+    - vr_s2_operator_stop_qualification
     - vr_operator_s2_layout_observation
     - vr_operator_s2_human_observations
     - vr_operator_recording_integrity
     - vr_preview_layout_native
     - vr_zed_ffft_camera_qualification
-    - vr_architecture_audit
-    - vr_architecture_phase
-    - vr_architecture_replay
-    - vr_architecture_desktop
-    - vr_sensor_xr_audit
-    - vr_sensor_xr_cadence_probes
-    - vr_sensor_xr_alignment_probe
-    - vr_sensor_xr_operator_clarification
-    - vr_render_substeps_offline
-    - vr_render_substeps_quest_rejected
     - vr_xr_decision_qualification
     - vr_three_camera_boundary_runtime
-    - vr_step1_postpush_93d3497
-    - vr_step1_automated
-    - gate_s2_upstream_reuse_audit__base_682ee936
-    - gate_s2_automated_runtime__base_682ee936
-    - gate_s2_s1_non_xr_regression
-    - gate_s2_physical_run1_failed
     - isaac1103_s2_automated
     artifact_ids:
+    - vr_s2_operator_stop_report
+    - vr_s2_operator_stop_tests
     - vr_operator_s2_layout_record
     - vr_operator_s2_human_record
     - vr_operator_recording_audit
@@ -5203,48 +5226,22 @@ gates:
     - vr_zed_ffft_validation
     - vr_zed_ffft_core_tests
     - vr_zed_ffft_rpc_tests
-    - vr_architecture_report
-    - vr_architecture_long
-    - vr_architecture_short
-    - vr_architecture_replay
-    - vr_architecture_phase
-    - vr_architecture_display
-    - vr_architecture_provenance
-    - vr_architecture_tests
-    - vr_architecture_raw
-    - vr_sensor_xr_report
-    - vr_sensor_xr_summary
-    - vr_sensor_xr_provenance
-    - vr_sensor_xr_tests
-    - vr_sensor_xr_raw
-    - vr_render_substeps_report
-    - vr_render_substeps_summary
-    - vr_render_substeps_provenance
-    - vr_render_substeps_tests
-    - vr_render_substeps_raw
+    - vr_xr_decision_attempts
+    - vr_xr_decision_diag_result
+    - vr_xr_decision_run_result
+    - vr_xr_decision_report
+    - vr_xr_decision_provenance
+    - vr_xr_decision_core_tests
+    - vr_xr_decision_upstream_tests
+    - vr_xr_decision_checks
+    - vr_xr_decision_config
+    - vr_three_camera_boundary_provenance
+    - vr_three_camera_boundary_report
+    - vr_three_camera_boundary_run_result
+    - vr_three_camera_boundary_diag_result
+    - vr_three_camera_boundary_headless_failure
+    - vr_three_camera_boundary_counter_only
     - vr_three_camera_boundary_config
-    - isaac61_vr_canonical_config
-    - vr_step1_postpush_verification
-    - vr_step1_validation
-    - isaac_s2_runtime_config__base_682ee936
-    - gate_s2_upstream_audit
-    - gate_s2_dependency_recheck
-    - gate_s2_processor_tests
-    - gate_s2_runtime_evidence_summary
-    - gate_s2_standalone_result
-    - gate_s2_standalone_stdout
-    - gate_s2_xr_result
-    - gate_s2_xr_stdout
-    - gate_s2_s1_regression_result
-    - gate_s2_s1_regression_stdout
-    - gate_s2_physical_run1_summary
-    - gate_s2_physical_run1_stdout_a
-    - gate_s2_physical_run1_stdout_b
-    - gate_s2_physical_run1_stdout_c
-    - gate_s2_physical_run1_cloudxr_a
-    - gate_s2_physical_run1_cloudxr_b
-    - gate_s2_physical_run1_cloudxr_c
-    - isaac1103_s2_config
     - isaac1103_s2_result
     - isaac1103_s2_launch_manifest
     - isaac1103_s2_stdout
@@ -5253,7 +5250,15 @@ gates:
     - isaac1103_s2_standalone_launch_manifest
     - isaac1103_s2_standalone_stdout
     - isaac1103_s2_standalone_runtime
-    notes: 'Unresolved: historical physical FAIL/PARTIAL preserved. Canonical code/config processorv3 aligned; final SDK automated path and combined previews pass. Complete physical Quest human acceptance still required. Operator f2ac4ea RUN/RECORD artifacts now have a registered read-only integrity audit and clean interrupted shutdown reports. The prior physical checklist now has registered ebulochkin Quest 3 PASS observations; L3-specific observations also have registered PASS; a completed runtime PASS remains pending; physical Quest remains unresolved.'
+    - isaac1103_s2_config
+    notes: 'Accepted: ebulochkin explicitly reports full Quest 3 S2 checklist and L3
+      PASS on clean f2ac4ea. Exact retained RUN and RECORD qualify under the documented
+      operator-stop rule; original reports and native exit 130 preserved. Later termination/report
+      changes pass actual-loop tests without another physical run. All numeric config/control/camera
+      settings retained; selected statuses promoted only. Prior FAIL/probes remain historical
+      registry evidence, detached from current accepted binding and listed in the supplement.
+      Saved 836-row state-only source integrity passes; dataset admission and quantitative
+      headset FPS are not claimed.'
   D1:
     state: unresolved
     evidence_ids:

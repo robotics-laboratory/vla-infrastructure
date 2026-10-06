@@ -32,7 +32,7 @@ def test_selected_vr_tuning_requires_human_acceptance_and_preserves_geometry() -
     config = yaml.safe_load(
         (ROOT / "configs/isaac61_vr_runtime.yaml").read_text(encoding="utf-8")
     )
-    assert config["status"] == "SELECTED_HUMAN_ACCEPTANCE_PENDING"
+    assert config["status"] == "HUMAN_ACCEPTED_S2_20261006"
     gripper = config["demo_physics"]["gripper_contact"]
     assert gripper["canonical_geometry_change"] == "none"
     assert gripper["leader_joint"] == "gripper"

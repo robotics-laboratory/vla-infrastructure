@@ -3454,3 +3454,15 @@ documents:
   owner: vr.acceptance
   mutable: false
   gates: [S2]
+- path: docs/evidence/S2/20261006_operator_recording_audit/operator_stop_acceptance.json
+  kind: evidence
+  status: historical
+  owner: vr.acceptance
+  mutable: false
+  gates: [S2]
+- path: docs/evidence/S2/20261006_operator_recording_audit/operator_stop_tests.txt
+  kind: evidence
+  status: historical
+  owner: vr.acceptance
+  mutable: false
+  gates: [S2]

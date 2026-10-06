@@ -1,10 +1,10 @@
 revision: piper_x_isaac_vr_runtime_v1
-status: SELECTED_HUMAN_ACCEPTANCE_PENDING
+status: HUMAN_ACCEPTED_S2_20261006
 extends_runtime: configs/isaac61_s2_runtime.yaml
 rendering:
   physics_substeps_per_render: 4
   pattern: FFFT
-  status: SELECTED_HUMAN_ACCEPTANCE_PENDING
+  status: HUMAN_ACCEPTED_S2_20261006
   record_cameras: usd_prims_only_no_render_products
 operator:
   stack: isaac61
@@ -23,7 +23,7 @@ cloudxr_web_client:
 
 demo_physics:
   gripper_contact:
-    status: SELECTED_HUMAN_ACCEPTANCE_PENDING
+    status: HUMAN_ACCEPTED_S2_20261006
     canonical_geometry_change: none
     leader_joint: gripper
     leader_drive:
@@ -141,7 +141,7 @@ teleop_tuning:
       center: {translation_scale: 4.0, rotation_scale: 4.0}
       maximum: {translation_scale: 6.0, rotation_scale: 6.0}
     mapping: Piecewise linear and clamped; left is slower, center keeps the previous normal speed, right is faster.
-    status: SELECTED_HUMAN_ACCEPTANCE_PENDING
+    status: HUMAN_ACCEPTED_S2_20261006
 
 vr_camera_feeds:
   implementation: upstream isaaclab_teleop XrCameraFeedSession and Kit SceneUI presenter
@@ -182,7 +182,7 @@ diagnostics:
 
 recording_ui:
   enabled: true
-  status: SELECTED_HUMAN_ACCEPTANCE_PENDING
+  status: HUMAN_ACCEPTED_S2_20261006
   implementation: Kit XRSceneView + UiContainer + WidgetComponent; existing X/Y/B lifecycle input
   placement: head_locked
   distance_m: 0.75

@@ -153,7 +153,7 @@ def test_selected_layout_matches_installed_head_locked_panel_contract():
     root = Path(__file__).resolve().parents[1]
     config = yaml.safe_load((root / "configs/isaac61_vr_runtime.yaml").read_text())["recording_ui"]
     assert config["enabled"] and config["placement"] == "head_locked"
-    assert config["status"] == "SELECTED_HUMAN_ACCEPTANCE_PENDING"
+    assert config["status"] == "HUMAN_ACCEPTED_S2_20261006"
     assert config["distance_m"] > 0.1
     for role in ("status", "review"):
         layout = config["layout"][role]

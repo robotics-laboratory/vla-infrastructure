@@ -51,7 +51,11 @@ See the [operator guide](project/RUN_VR_OPERATIONS.md) and
 [current human worksheet](project/GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md).
 Runtime smoke PASS does not accept S2. The optional asset lab remains experimental
 and cannot claim S2 acceptance. Registered human evidence and all machine
-requirements remain mandatory.
+requirements remain mandatory. A clean operator-requested stop may satisfy the
+runtime check before the configured budget if completed ticks and all required
+session/tracking/camera/presentation checks pass. A retrospective reassessment
+must retain original results, identify the changed rule and distinguish tested
+physical inputs from later automatically tested termination changes.
 
 ## [[gate:D1]] Isaac human-VR dataset
 

@@ -285,7 +285,7 @@ class ResolvedContractTests(unittest.TestCase):
             (REPOSITORY_ROOT / "configs" / "gate_rules.yaml").read_text(encoding="utf-8")
         )
 
-        self.assertEqual(data["gates"]["S2"]["state"], "unresolved")
+        self.assertEqual(data["gates"]["S2"]["state"], "accepted")
         self.assertEqual(
             data["execution_profiles"]["isaac_vr"]["command"],
             ["./run-vr"],
@@ -295,7 +295,10 @@ class ResolvedContractTests(unittest.TestCase):
             "piper_x_isaac_s2_bimanual_relative_v3",
         )
         probe = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
-        probe["gates"]["S2"]["state"] = "accepted"
+        probe["gates"]["S2"]["evidence_ids"] = [
+            key for key in probe["gates"]["S2"]["evidence_ids"]
+            if probe["evidence"][key]["kind"] != "human_gate"
+        ]
         errors = validate_gates(probe, rules)
         self.assertIn("gate S2: missing PASS evidence kind human_gate", errors)
         self.assertIn("gate S2: human evidence required", errors)

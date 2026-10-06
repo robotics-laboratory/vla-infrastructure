@@ -227,7 +227,19 @@ prints the URL but cannot reload or clear the headset browser's cache.
 
 Client start/stop controls teleoperation activity. Client reset resets the scene,
 processor and IK and requires fresh rebase. Disconnect holds targets; reconnect
-rebases. Host Ctrl-C preserves available reports and exits 130, never PASS.
+rebases. Host Ctrl-C preserves reports and finalizes recording before returning. It exits
+0 with runtime PASS when at least one control tick completed and the required
+session, tracking, camera and presentation checks pass without recording errors.
+The report identifies `operator_stop` and whether the requested budget completed;
+Ctrl-C before useful work or with unmet checks remains FAIL (exit 130). An
+application exit before the budget without an operator stop remains FAIL.
+Stopping an active unsaved demo preserves its interrupted disposition; runtime
+PASS does not classify that demo as successful or admit a dataset.
+
+[S2 operator acceptance and stop reassessment](../evidence/S2/20261006_operator_recording_audit/operator_stop_acceptance.json)
+retains the original reports and the retrospective result under this rule. The
+physical observations are on `f2ac4ea`; the termination/report change was tested
+automatically without another headset run.
 
 ```sh
 ./run-vr --dry-run

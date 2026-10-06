@@ -785,9 +785,39 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
     for run, diag in zip(outputs[0][1], outputs[1][1], strict=True):
         assert torch.equal(run, diag)
     assert any(torch.count_nonzero(c) for c in outputs[0][1])
+    parity_admitted = admitted.copy()
+    # Exercise operator stops through the real loop, with successful and missing
+    # tracking cases. A vendor/application exit without a stop remains incomplete.
+    original_advance_for_stop = device.advance
+    for mode in ("run", "diagnostic"):
+        for tracked in (True, False):
+            def advance_until_stop():
+                if device.index == 5:
+                    raise KeyboardInterrupt
+                action = original_advance_for_stop()
+                if not tracked and action is not None:
+                    action[7] = action[18] = 0.0
+                return action
+
+            device.advance = advance_until_stop
+            args.s2_mode = mode
+            args.s2_require_session = True
+            args.report = tmp_path / f"operator-stop-{mode}-{tracked}.json"
+            assert runtime.run_s2(env, args, NS(is_running=lambda: True)) == (0 if tracked else 130)
+            result = json.loads(args.report.read_text())
+            assert result["passed"] is tracked
+            assert result["execution"]["control_steps"] == 5
+            assert result["execution"]["stopped_by_user"]
+            assert not result["execution"]["completed_control_budget"]
+            assert result["execution"]["completion_reason"] == "operator_stop"
+    device.advance = original_advance_for_stop
+    args.s2_mode = "run"
+    assert runtime.run_s2(env, args, NS(is_running=lambda: device.index < 5)) == 1
+    result = json.loads(args.report.read_text())
+    assert not result["passed"] and result["execution"]["completion_reason"] == "incomplete"
     if decision_receipts:
-        half = len(admitted) // 2
-        assert admitted[:half] == admitted[half:] == list(range(1, half + 1))
+        half = len(parity_admitted) // 2
+        assert parity_admitted[:half] == parity_admitted[half:] == list(range(1, half + 1))
     else:
         # Human RECORD waits for Start; its HUD/logger must not create an episode
         # or run diagnostic RGB observers while the operator is still waiting.
@@ -866,7 +896,48 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
         assert not targets
         result = json.loads(args.report.read_text())
         assert result["execution"]["stopped_by_user"]
+        assert not result["passed"] and result["execution"]["control_steps"] == 0
         assert ui_closed == [True, True]
+        stop_scope["vr_stop_requested"] = False
+
+        def advance_then_latch_stop():
+            if device.index == 3:
+                stop_scope["request_vr_stop"](signal.SIGINT, None)
+            return original_advance()
+
+        device.advance = advance_then_latch_stop
+        gpu_calls.clear()
+        hash_calls.clear()
+        assert runtime.run_s2(
+            env, args, NS(is_running=lambda: True),
+            stop_requested=lambda: stop_scope["vr_stop_requested"],
+        ) == 0
+        result = json.loads(args.report.read_text())
+        assert result["passed"] and result["execution"]["control_steps"] == 3
+        assert result["human_recording"]["state"] == "waiting"
+        assert not gpu_calls and not hash_calls
+        assert ui_closed == [True, True, True]
+        # A RECORD reset/menu iteration intentionally skips the RGB/progress
+        # observer. Its count must not be treated as missing live camera frames.
+        stop_scope["vr_stop_requested"] = False
+        args.s2_max_control_steps = 30
+
+        def advance_record_reset_then_stop():
+            if device.index == 25:
+                stop_scope["request_vr_stop"](signal.SIGINT, None)
+            return original_advance()
+
+        device.advance = advance_record_reset_then_stop
+        assert runtime.run_s2(
+            env, args, NS(is_running=lambda: True),
+            stop_requested=lambda: stop_scope["vr_stop_requested"],
+        ) == 0
+        result = json.loads(args.report.read_text())
+        assert result["passed"] and result["execution"]["control_steps"] == 25
+        assert result["cameras"]["validation"] == "not_applicable_state_only_record"
+        assert result["cameras"]["valid_bimanual_frames"] == 24
+        assert not gpu_calls and not hash_calls
+        assert ui_closed == [True, True, True, True]
 
 
 def test_current_doc_sources_and_contract():
@@ -889,7 +960,8 @@ def test_current_doc_sources_and_contract():
     assert c["execution_profiles"]["isaac_vr"]["command"] == ["./run-vr"]
     assert c["teleop"]["isaac"]["execution_profile"] == "isaac_vr"
     assert "execution_profiles.isaac_vr.command" in rules["S2"]["required_paths"]
-    assert c["gates"]["S2"]["state"] == c["gates"]["D1"]["state"] == "unresolved"
+    assert c["gates"]["S2"]["state"] == "accepted"
+    assert c["gates"]["D1"]["state"] == "unresolved"
     assert c["simulation"]["isaac"]["recorder"]["execution_profile"] == "isaac_vr_record"
     from tools.validate_resolved_contract import validate_profiles
 
