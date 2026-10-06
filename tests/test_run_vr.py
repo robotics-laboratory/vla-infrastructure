@@ -38,6 +38,8 @@ def test_cli_modes_and_explicit_rollback(launcher):
     assert run.profile == "dual_cube_to_matching_plates"
     assert run.preview_isolation == "scene-partitions" and run.preview_cameras == 3
     assert launcher.parse_args(["--stack", "legacy"]).preview_isolation == "off"
+    assert run.hud_on_start and diag.hud_on_start
+    assert not launcher.parse_args(["--no-hud-on-start"]).hud_on_start
     assert launcher.parse_args(["--hud-on-start"]).mode == "run"
     assert launcher.parse_args(["--smoke"]).mode == "run"
     assert launcher.parse_args([
@@ -66,6 +68,9 @@ def test_cli_modes_and_explicit_rollback(launcher):
         assert launcher.parse_args(["diag", *flag]).performance_enabled
     record = launcher.parse_args(["record"])
     assert record.mode == "record"
+    assert not record.hud_on_start
+    with pytest.raises(SystemExit):
+        launcher.parse_args(["record", "--hud-on-start"])
     assert not record.performance_enabled
     for flag in (["--performance-window-steps=300"], ["--performance-warmup-steps", "60"]):
         assert launcher.parse_args(["record", *flag]).performance_enabled
@@ -191,6 +196,8 @@ def test_self_contained_record_bundle(launcher, tmp_path, monkeypatch, dry_run, 
     assert launcher.main([*options, *(["--dry-run"] if dry_run else [])]) == 0
     manifest = json.loads((run / "run_manifest.json").read_text())
     runtime = yaml.safe_load((run / "runtime.yaml").read_text())
+    assert manifest["effective_control_config"]["rendering"]["physics_substeps_per_render"] == 4
+    assert not manifest["effective_control_config"]["preview"]["initial_visibility"]
     assert runtime["xr_render"]["resolution_scale"] == 0.4
     assert runtime["xr_render"] == manifest["effective_control_config"]["xr_render"]
     assert manifest["effective_control_config"]["xr_presentation"]["scale"] == 1.0

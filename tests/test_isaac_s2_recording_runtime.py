@@ -46,20 +46,16 @@ def test_recording_runtime_declares_offline_profile_and_real_episode_identity():
     assert 'outcome="unclassified"' not in source
 
 
-def test_dataset_suspension_follows_snapshot_provenance_and_recordable_setup():
+def test_recording_setup_preserves_ffft_and_uses_prim_state_without_rtx_resources():
     source = (ROOT / "tools/isaac_vr_recording.py").read_text(encoding="utf-8")
     setup = source.index("def start_live_recording(")
-    snapshot = source.index("snapshot = Path(export_stage_snapshot(", setup)
-    provenance = source.index("visual_provenance = build_visual_provenance(", snapshot)
-    cameras = source.index("CameraRecordable(", provenance)
-    opened = source.index("storage, sampler = open_explicit_session(", cameras)
-    episode = source.index("start_explicit_episode(", opened)
-    suspension = source.index(
-        "suspend_dataset_camera_rendering(cameras, stage, camera_roles)", episode
-    )
-    cadence = source.index("env.render_only_final_substep = True", suspension)
-    ready = source.index("return recording", cadence)
-    assert snapshot < provenance < cameras < opened < episode < suspension < cadence < ready
+    body = source[setup:source.index("def _sanitize_exported_stage(", setup)]
+    assert "env.camera.camera_prim_paths" in body
+    assert 'getattr(camera, "_render_data", None)' in body
+    assert "suspend_dataset_camera_rendering" not in body
+    assert "render_only_final_substep" not in body
+    assert "render_substeps =" not in body
+    assert "CameraRecordable(" in body
 
 
 def test_physical_recording_hides_backdrop_before_recorder_start():
@@ -410,7 +406,7 @@ def test_no_client_lifecycle_smoke_captures_and_finalizes_without_teleop(tmp_pat
 
 def test_runtime_closes_static_session_once_after_episode_finalization():
     source = (ROOT / "tools/isaac_s2_runtime.py").read_text()
-    assert source.count("recording_session = RecordingSession(recording)") == 1
+    assert source.count("recording_session = RecordingSession(") == 1
     assert source.count("recording_session.close(") == 1
     assert source.index("finalize_recording(recording_outcome, close_reason)") < source.index(
         "recording_session.close("

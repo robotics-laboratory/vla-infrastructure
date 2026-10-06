@@ -160,6 +160,7 @@ def environment(monkeypatch, baseline=False):
     monkeypatch.syspath_prepend(str(ROOT / "tools"))
     namespace = {
         "Camera": Camera,
+        "CameraCfg": NS,
         "Any": object,
         "torch": torch,
         "_tensor": lambda x: x,
@@ -185,7 +186,12 @@ def environment(monkeypatch, baseline=False):
         "tools/run_isaac_s1.py", "BimanualPiperXIsaacEnvironment", env_namespace, baseline
     )
     env = object.__new__(Env)
-    env.render_only_final_substep = False
+    if baseline:
+        env.render_only_final_substep = False
+    else:
+        env.render_substeps = 4
+        env._render_substep = 0
+        env.reset_settle_physics_steps = 28
     env.sim = NS(
         step_count=0,
         render_generation=0,
@@ -242,24 +248,24 @@ def environment(monkeypatch, baseline=False):
 def test_actual_environment_advance_reset_and_startup_sequence(monkeypatch):
     env, cameras = environment(monkeypatch)
     env.reset(0)
-    assert env.sim.step_count == 25
+    assert env.sim.step_count == 28
     first = env.camera.capture.latest(require_eligible=False)
-    assert first.producer.physics_step == 25 and first.state[6] == 25
+    assert first.producer.physics_step == 28 and first.state[6] == 28
     with pytest.raises(RuntimeError, match="Startup"):
         env.latest_observation_capture()
-    env._advance(95)  # canonical run_vr preflight to 120
+    env._advance(92)  # canonical run_vr preflight to 120
     assert env.camera.capture.latest(require_eligible=False).producer.physics_step == 120
     env.vr_runtime._validation_complete = True
     env.reset(0)  # run_s2 really performs another reset before the first decision
-    assert env.latest_observation_capture().producer.physics_step == 145
-    for target in (149, 153):
+    assert env.latest_observation_capture().producer.physics_step == 148
+    for target in (152, 156):
         env._advance(4)
         snapshot = env.latest_observation_capture()
         assert snapshot.producer.physics_step == target
         assert snapshot.state[6] == pytest.approx(target)
-        assert env.sim.render_generation == target
+        assert env.sim.render_generation == target // 4
     assert {camera.updates for camera in cameras} == {5}
-    assert all(env.sim.render_flags)  # Shared RUN/DIAG default remains unchanged.
+    assert env.sim.render_flags == [False, False, False, True] * 39
 
 
 def test_record_advance_preserves_four_state_updates_with_one_final_render(monkeypatch):
@@ -267,7 +273,6 @@ def test_record_advance_preserves_four_state_updates_with_one_final_render(monke
     env.vr_runtime._validation_complete = True
     env.reset(0)
     env.camera.live_rgb_enabled = False
-    env.render_only_final_substep = True
     env.sim.render_flags.clear()
     before = env.sim.step_count
     updates = [camera.updates for camera in cameras]
@@ -291,19 +296,19 @@ def test_record_advance_preserves_four_state_updates_with_one_final_render(monke
     epoch = env.camera.reset_epoch
     env.sim.render_flags.clear()
     observation = env.reset(0)
-    assert env.sim.step_count == before + 8 + 25
-    assert env.sim.render_flags == [False] * 24 + [True]
+    assert env.sim.step_count == before + 8 + 28
+    assert env.sim.render_flags == [False, False, False, True] * 7
     assert env.camera.reset_epoch == epoch + 1
     assert set(observation) == {"observation.state"}
     assert observation["observation.state"].dtype == np.float32
     from tools.isaac_vr_decision import capture_state_snapshot
 
     boundary = capture_state_snapshot(env)
-    assert boundary.physics_step == before + 8 + 25
+    assert boundary.physics_step == before + 8 + 28
     np.testing.assert_array_equal(observation["observation.state"], boundary.state)
     assert env.camera.capture._latest is None  # No fabricated camera boundary.
     assert not env.camera.live_rgb_enabled
-    assert env.render_only_final_substep
+    assert env.render_substeps == 4
     env.sim.render_flags.clear()
     env._advance(4)
     assert env.sim.render_flags == [False, False, False, True]
@@ -325,7 +330,7 @@ def test_baseline_phase_reproduction_and_bounded_synthetic_cost(monkeypatch):
         for _ in range(2):
             env._advance(4)
             alignment.append((env.sim.step_count, cameras[0].producer_step))
-        expected = [(25, 24), (29, 28), (33, 32)] if baseline else [(25, 25), (29, 29), (33, 33)]
+        expected = [(25, 24), (29, 28), (33, 32)] if baseline else [(28, 28), (32, 32), (36, 36)]
         assert alignment == expected
         before_renders = env.sim.render_generation
         before_updates = sum(c.updates for c in cameras)
@@ -333,12 +338,13 @@ def test_baseline_phase_reproduction_and_bounded_synthetic_cost(monkeypatch):
         for _ in range(300):
             env._advance(4)
         elapsed = time.perf_counter_ns() - started
-        assert env.sim.render_generation - before_renders == 1200
+        assert env.sim.render_generation - before_renders == (1200 if baseline else 300)
         assert sum(c.updates for c in cameras) - before_updates == 900
         results["before" if baseline else "after"] = {
             "alignment": alignment,
             "synthetic_control_mean_us": elapsed / 300 / 1000,
-            "physics_and_render_steps": 1200,
+            "physics_steps": 1200,
+            "render_steps": 1200 if baseline else 300,
             "camera_updates": 900,
             "mandatory_rgb_cpu_copies": 0,
         }
@@ -361,6 +367,8 @@ def test_scene_first_success_then_wrist_failure_still_all_or_none():
 def test_plain_s1_scheduler_retains_per_substep_camera_updates(monkeypatch):
     env, _ = environment(monkeypatch)
     env.vr_runtime = None
+    env.render_substeps = 1
+    env.reset_settle_physics_steps = 25
     env.camera = Camera()
     env.reset(0)
     assert env.sim.step_count == env.camera.updates == 25
@@ -390,3 +398,36 @@ def test_headless_kit_claim_without_real_pump_rejected(monkeypatch):
         env.reset(0)
     assert env.camera.capture_cycles_total == 0
     assert not any(camera.updates for camera in cameras)
+
+
+def test_ffft_phase_survives_split_advances(monkeypatch):
+    env, cameras = environment(monkeypatch)
+    env.vr_runtime._validation_complete = True
+    env.reset(0)
+    env.sim.render_flags.clear()
+    before = [camera.updates for camera in cameras]
+    env._advance(2)
+    assert env.sim.render_flags == [False, False]
+    assert [camera.updates for camera in cameras] == before
+    with pytest.raises(RuntimeError):
+        env.latest_observation_capture()
+    env._advance(2)
+    assert env.sim.render_flags == [False, False, False, True]
+    assert env.latest_observation_capture().producer.physics_step == 32
+    assert [camera.updates for camera in cameras] == [n + 1 for n in before]
+
+
+def test_recording_rig_never_reads_camera_pixels_even_at_startup(monkeypatch):
+    env, _ = environment(monkeypatch)
+    # The canonical RECORD scene contains camera configs/prim identities only.
+    configs = [NS(prim_path=f"/World/{role}") for role in ROLES]
+    env.camera.wrists = tuple(configs[:2])
+    env.camera.scene_camera = configs[2]
+    env.camera.live_rgb_enabled = False
+    observation = env.reset(0)
+    assert set(observation) == {"observation.state"}
+    assert env.camera.capture is None
+    assert env.camera.camera_prim_paths == dict(zip(ROLES, (c.prim_path for c in configs)))
+    env._advance(4)
+    assert env.camera.capture is None
+    assert env.sim.render_flags == [False, False, False, True] * 8

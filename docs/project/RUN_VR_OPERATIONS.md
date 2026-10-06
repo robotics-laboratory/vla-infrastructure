@@ -5,6 +5,28 @@ with diagnostics. `./run-vr record` writes a native NVIDIA Episode Recorder HDF5
 state/action/provenance artifact. It does not create a D1 dataset; S2 physical
 acceptance and D1 remain unresolved.
 
+RUN and DIAG start with the existing three head-locked camera previews visible.
+X toggles preview visibility in these modes. Use `./run-vr --no-hud-on-start`
+to start with hidden previews. RECORD displays the recording status/review UI;
+`record --hud-on-start` is rejected because camera rendering is forbidden.
+
+The 2026-10-06 operator selection replaces the VR render cadence with FFFT.
+The [earlier rejected substep experiment](../evidence/S2/20260921_vr_render_substeps/README.md)
+retains its original rejection and exact tested source. This selection does not
+establish Quest comfort, wall FPS or physical acceptance of the new source.
+
+Upstream audit: pinned Isaac Lab 17.0.2 (materialization `0c2e2c64`), Isaac Sim
+6.1 / Kit 110.3 own `SimulationContext.step(render=False/True)`, render interval,
+USD pinhole-camera spawning, orientation/look-at math and `CameraRecordable`.
+The [upstream simulation context reference](https://isaac-sim.github.io/IsaacLab/develop/_modules/isaaclab/sim/simulation_context.html)
+describes the render flag and Kit app pump; the installed pinned source was
+checked before using these APIs.
+The existing upstream `XrCameraFeedSession` owns RUN panel binding/lifetime.
+The remaining composition gap is choosing the cadence before the first control
+and spawning only camera prims in RECORD. The local code holds one render phase,
+rounds settling to a completed group and reuses the existing camera configuration.
+No dependency, environment, control processor or recorder format changes.
+
 RECORD starts in `WAITING` with no demonstration or episode. On the existing
 single controller pipeline, press **X** (left primary) to Start, **Y** (left
 secondary) to Stop, then **X** to Save or **B** (right secondary) to Discard.
@@ -338,17 +360,22 @@ instrumentation-write statistic excludes summary/flush and timer overhead.
 Blackfire's separate paired recorder benchmark remains the resource and recorder
 overhead evidence owner. Unmeasured metrics must not be inferred as zero.
 
-RECORD's environment reset shares native seed/object/robot/home reset, camera
-bookkeeping and 25 physics settling integrations with RUN/DIAG. Once live RGB is
-disabled for RECORD, it returns only the measured state boundary: the recorder
-then captures immutable O_t through its existing Fabric/native path. It neither
-requires a live camera capture nor reads RGB. After RECORD setup, settling uses
-24 non-rendered steps and one final render/pump; this is not 25 control
-transitions. The three dataset RenderProducts remain suspended. Ordinary RECORD
-controls retain four integrations with F,F,F,T. Startup preflight before RECORD
-setup and RUN/DIAG retain their existing per-step rendering and RGB observations.
-No reset performance claim is made. A physical reset request still ends the
-current recording episode; it does not bridge a committed transaction across reset.
+VR RUN/DIAG/RECORD share F,F,F,T rendering from startup onward: four physics
+integrations at 120 Hz and one Kit pump on the fourth step (simulation 30 Hz).
+There is no cadence switch on the first X or when a recording stops. Reset uses
+28 settling integrations, seven complete groups, with no dataset transitions.
+Startup preflight still totals 120 integrations. Plain S1 retains its 25-step
+reset and per-step rendering. Simulation rates do not guarantee wall-clock FPS.
+
+RECORD authors only the canonical USD camera prims, preserving mount poses,
+intrinsics and scene look-at. It never constructs dataset Camera sensors,
+annotators or RenderProducts, including preflight, WAITING, RECORDING, review
+and subsequent resets. The headset scene and recording UI still render. Its
+preflight checks state, contacts and camera prims without claiming RGB validity.
+Reset returns only the measured state boundary, then the recorder captures
+immutable O_t through Fabric/CameraRecordable for offline RGB in REPLAY. A
+physical reset request ends the technical episode and cannot bridge a committed
+transaction across reset.
 
 Plain `record --smoke` checks only capture/discard/finalization and commits no
 rows. Use the existing `--smoke --injected-actions --recording-benchmark` path for
@@ -409,8 +436,9 @@ the machine sources and launch path above.
 
 ## Observation capture availability
 
-All three cameras publish one boundary after reset completion or four control
-substeps. Scene capture remains active while previews are hidden. RUN keeps only
+In RUN/DIAG all three cameras publish one boundary after reset completion or
+four control substeps. Scene capture remains active while previews are hidden.
+RECORD uses the separate snapshot-backed state boundary and renders no camera RGB. RUN keeps only
 the current GPU-backed images and immutable identity/state; it does not record
 actions or episodes. Consumers must use a successful current capture before the
 next transition.

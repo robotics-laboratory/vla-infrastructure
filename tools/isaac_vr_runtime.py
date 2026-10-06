@@ -326,7 +326,10 @@ def _scene_rgb(camera):
 class VRCameraRig:
     """Three canonical cameras with an explicit control-boundary capture owner."""
 
-    def __init__(self, wrists: tuple[Camera, Camera], scene: Camera) -> None:
+    def __init__(
+        self, wrists: tuple[Camera, Camera] | tuple[CameraCfg, CameraCfg],
+        scene: Camera | CameraCfg, *, live_rgb_enabled: bool = True,
+    ) -> None:
         self.wrists = wrists
         self.scene_camera = scene
         self.preview_isolation: Any = None
@@ -335,7 +338,17 @@ class VRCameraRig:
         self._elapsed = 0.0
         self.reset_epoch = 0
         self.capture: ThreeCameraCapture | None = None
-        self.live_rgb_enabled = True
+        self.live_rgb_enabled = live_rgb_enabled
+
+    @property
+    def camera_prim_paths(self) -> dict[str, str]:
+        return {
+            role: getattr(camera, "cfg", camera).prim_path
+            for role, camera in zip(
+                ("left_wrist", "right_wrist", "scene"),
+                (*self.wrists, self.scene_camera), strict=True,
+            )
+        }
 
     @property
     def capture_cycles_total(self) -> int:
@@ -349,8 +362,9 @@ class VRCameraRig:
         self.reset_epoch += 1
         if self.capture:
             self.capture.invalidate()
-        for camera in (*self.wrists, self.scene_camera):
-            camera.reset()
+        if self.live_rgb_enabled:
+            for camera in (*self.wrists, self.scene_camera):
+                camera.reset()
         self._elapsed = 0.0
 
     def update(self, dt: float, *, force_recompute: bool = False) -> None:
@@ -476,7 +490,7 @@ class VRRuntime:
             num_envs=1,
             left_wrist=camera_cfgs[0],
             right_wrist=camera_cfgs[1],
-            demo_scene=camera_rig.scene_camera.cfg,
+            demo_scene=getattr(camera_rig.scene_camera, "cfg", camera_rig.scene_camera),
         )
         env_cfg = SimpleNamespace(
             scene=scene_cfg,
@@ -486,7 +500,8 @@ class VRRuntime:
             ),
         )
         self._feed_session = XrCameraFeedSession.prepare(
-            env_cfg, enabled=True, camera_rendering_enabled=True
+            env_cfg, enabled=camera_rig.live_rgb_enabled,
+            camera_rendering_enabled=camera_rig.live_rgb_enabled,
         )
         self.feed_session_prepared_enabled = bool(self._feed_session.enabled)
         self.feed_upload_path = str(config["vr_camera_feeds"]["upload_path"])
@@ -906,10 +921,15 @@ class VRRuntime:
         }
 
     def validate(self, env) -> dict[str, Any]:
-        assert self.camera_rig.capture is not None
-        preflight_capture = self.camera_rig.capture.latest(require_eligible=False)
-        observation = env.observation()
-        state = observation["observation.state"]
+        live_rgb = self.camera_rig.live_rgb_enabled
+        preflight_capture = (
+            self.camera_rig.capture.latest(require_eligible=False) if live_rgb else None
+        )
+        observation = env.observation() if live_rgb else {}
+        state = (
+            observation["observation.state"] if live_rgb
+            else np.asarray(env.capture_measured_state()[1], dtype=np.float32)
+        )
         home_error = np.abs(state - env.home_d0)
         forces = {}
         for side, sensors in self.contact_sensors.items():
@@ -918,11 +938,11 @@ class VRRuntime:
                 for sensor in sensors
             ]
             forces[side] = max(magnitudes, default=0.0)
-        scene_image = _scene_rgb(self.camera_rig.scene_camera)
+        scene_image = _scene_rgb(self.camera_rig.scene_camera) if live_rgb else None
         wrist_shapes = {
             role: list(observation[f"observation.images.{role}"].shape)
             for role in ("left_wrist", "right_wrist")
-        }
+        } if live_rgb else {}
         import omni.usd  # type: ignore[import-not-found]
         from pxr import UsdPhysics  # type: ignore[import-not-found]
 
@@ -950,6 +970,11 @@ class VRRuntime:
         required_prims = {
             path: bool(stage.GetPrimAtPath(path).IsValid()) for path in required_paths
         }
+        camera_prims = {
+            role: bool(stage.GetPrimAtPath(path).IsValid()
+                       and stage.GetPrimAtPath(path).GetTypeName() == "Camera")
+            for role, path in self.camera_rig.camera_prim_paths.items()
+        }
         table_collision = any(
             prim.HasAPI(UsdPhysics.CollisionAPI)
             for prim in stage.Traverse()
@@ -966,7 +991,9 @@ class VRRuntime:
         ]
         contact_free = all(value <= 1.0e-3 for value in forces.values())
         report: dict[str, Any] = {
-            "observation_capture": asdict(preflight_capture),
+            "observation_capture": asdict(preflight_capture) if live_rgb else None,
+            "camera_rendering": "live_rgb" if live_rgb else "usd_prims_only",
+            "camera_prim_valid": camera_prims,
             "candidate_home_used": True,
             "maximum_home_error_deg_or_mm": float(home_error.max()),
             "finite_state": bool(np.isfinite(state).all()),
@@ -983,7 +1010,7 @@ class VRRuntime:
                 "dtype": str(scene_image.dtype),
                 "rgb_stddev": float(scene_image.astype(np.float32).std()),
                 "frame": int(_cpu(self.camera_rig.scene_camera.frame)[0]),
-            },
+            } if live_rgb else {"rendered": False},
             "imported_prim_valid": imports,
             "required_prim_valid": required_prims,
             "table_collision_api": bool(table_collision),
@@ -995,13 +1022,16 @@ class VRRuntime:
             and report["collision_free_at_home"]
             and report["maximum_profile_reset_position_error_m"]
             <= float(self.config["validation"]["profile_reset_position_tolerance_m"])
-            and wrist_shapes == {"left_wrist": [480, 640, 3], "right_wrist": [480, 640, 3]}
-            and report["scene_camera"]["shape"] == [480, 640, 3]
-            and report["scene_camera"]["dtype"] == "uint8"
-            and report["scene_camera"]["rgb_stddev"]
-            >= float(self.config["validation"]["minimum_scene_rgb_stddev"])
+            and (not live_rgb or (
+                wrist_shapes == {"left_wrist": [480, 640, 3], "right_wrist": [480, 640, 3]}
+                and report["scene_camera"]["shape"] == [480, 640, 3]
+                and report["scene_camera"]["dtype"] == "uint8"
+                and report["scene_camera"]["rgb_stddev"]
+                >= float(self.config["validation"]["minimum_scene_rgb_stddev"])
+            ))
             and all(imports.values())
             and all(required_prims.values())
+            and all(camera_prims.values())
             and report["table_collision_api"]
         )
         self.validation = report
@@ -1033,6 +1063,27 @@ def _camera_cfg(prim_path: str, camera: dict[str, Any], *, rgba: bool) -> Camera
             convention="world",
         ),
     )
+
+
+def _spawn_recording_camera(cfg: CameraCfg, *, view: dict | None = None) -> CameraCfg:
+    """Author the same replay camera without constructing a sensor/RTX product."""
+    from isaaclab.utils.math import (
+        convert_camera_frame_orientation_convention, create_rotation_matrix_from_view,
+        quat_from_matrix,
+    )
+
+    position = cfg.offset.pos
+    rotation = convert_camera_frame_orientation_convention(
+        torch.tensor([cfg.offset.rot]), origin=cfg.offset.convention, target="opengl"
+    )[0].tolist()
+    if view is not None:
+        position = tuple(view["eye_m"])
+        rotation = quat_from_matrix(create_rotation_matrix_from_view(
+            torch.tensor([position]), torch.tensor([view["target_m"]]), "Z"
+        ))[0].tolist()
+    cfg.spawn.vertical_aperture = cfg.spawn.horizontal_aperture * cfg.height / cfg.width
+    cfg.spawn.func(cfg.prim_path, cfg.spawn, translation=position, orientation=rotation)
+    return cfg
 
 
 def _spawn_static_scene(config: dict[str, Any]) -> None:
@@ -1296,10 +1347,17 @@ def run_vr(
     """Build the selected VR scene, validate it, then enter the existing S2 loop."""
 
     config = load_composition(args_cli.demo_profile)
+    render_substeps = int(config["rendering"]["physics_substeps_per_render"])
+    if render_substeps != 4:
+        raise ValueError("The selected VR composition requires FFFT rendering")
+    recording = bool(args_cli.s2_record)
+    if recording and args_cli.demo_hud_on_start:
+        raise ValueError("RECORD forbids live camera previews")
     print(f"[VR] profile={args_cli.demo_profile} physical_human_gate=required")
     sim = sim_utils.SimulationContext(
         sim_utils.SimulationCfg(
-            dt=PHYSICS_DT, render_interval=1, device=args_cli.device, use_fabric=True
+            dt=PHYSICS_DT, render_interval=render_substeps,
+            device=args_cli.device, use_fabric=True
         )
     )
     isolation = None
@@ -1370,7 +1428,9 @@ def run_vr(
     if isolation:
         for cfg in wrist_camera_cfgs:
             cfg.renderer_cfg.enable_scene_partitioning = False
-    wrist_cameras = tuple(Camera(cfg) for cfg in wrist_camera_cfgs)
+    wrist_cameras = tuple(
+        _spawn_recording_camera(cfg) if recording else Camera(cfg) for cfg in wrist_camera_cfgs
+    )
     scene_cfg = _camera_cfg(
         "/World/RobosynDemo/SceneCamera",
         config["cameras"]["scene"],
@@ -1378,11 +1438,17 @@ def run_vr(
     )
     if isolation:
         scene_cfg.renderer_cfg.enable_scene_partitioning = False
-    scene_camera = Camera(scene_cfg)
-    camera_rig = VRCameraRig(wrist_cameras, scene_camera)
+    scene_camera = (
+        _spawn_recording_camera(scene_cfg, view=config["cameras"]["scene"])
+        if recording else Camera(scene_cfg)
+    )
+    camera_rig = VRCameraRig(wrist_cameras, scene_camera, live_rgb_enabled=not recording)
     camera_rig.preview_isolation = isolation
     if isolation:
-        isolation.bind_sensors((*wrist_cameras, scene_camera))
+        isolation.bind_sensors(
+            (*wrist_cameras, scene_camera),
+            concrete_paths=list(camera_rig.camera_prim_paths.values()),
+        )
     contacts = {
         side.lower(): _arm_contact_sensors(sim, f"/World/{side.title()}Piper")
         for side in ("left", "right")
@@ -1399,10 +1465,11 @@ def run_vr(
         diagnostic=args_cli.s2_mode == "diagnostic",
     )
     sim.reset()
-    scene_camera.set_world_poses_from_view(
-        torch.tensor([config["cameras"]["scene"]["eye_m"]], device=sim.device),
-        torch.tensor([config["cameras"]["scene"]["target_m"]], device=sim.device),
-    )
+    if not recording:
+        scene_camera.set_world_poses_from_view(
+            torch.tensor([config["cameras"]["scene"]["eye_m"]], device=sim.device),
+            torch.tensor([config["cameras"]["scene"]["target_m"]], device=sim.device),
+        )
     env = environment_type(
         sim,
         left,
@@ -1422,7 +1489,7 @@ def run_vr(
         }
     )
     env.reset(0)
-    env._advance(int(config["validation"]["settle_physics_steps"]) - 25)
+    env._advance(int(config["validation"]["settle_physics_steps"]) - env.reset_settle_physics_steps)
     validation = runtime.validate(env)
     print(f"[DEMO] validation={validation}", flush=True)
     if not validation["passed"]:

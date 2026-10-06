@@ -458,8 +458,12 @@ class BimanualPiperXIsaacEnvironment:
         if self.home_d0.shape != (14,):
             raise ValueError(f"home_d0 must have shape (14,), got {self.home_d0.shape}")
         self.vr_runtime = vr_runtime
-        # RECORD opts in only after its state-recording resources are ready.
-        self.render_only_final_substep = False
+        self.render_substeps = (
+            int(vr_runtime.config["rendering"]["physics_substeps_per_render"])
+            if vr_runtime is not None else 1
+        )
+        self._render_substep = 0
+        self.reset_settle_physics_steps = 25 + (-25 % self.render_substeps)
         self.preview: Any = None
         self.joint_ids: list[list[int]] = []
         self.actuated_joint_ids: list[list[int]] = []
@@ -530,7 +534,7 @@ class BimanualPiperXIsaacEnvironment:
 
     def _advance(self, repeat: int) -> None:
         performance = getattr(self, "performance_logger", None)
-        for substep in range(repeat):
+        for _ in range(repeat):
             started_ns = time.perf_counter_ns() if performance is not None else 0
             for robot in self.robots:
                 robot.write_data_to_sim()
@@ -541,7 +545,8 @@ class BimanualPiperXIsaacEnvironment:
                 self.vr_runtime.before_render()
             if getattr(self, "preview", None) is not None:
                 self.preview.assert_valid()
-            self.sim.step(render=not self.render_only_final_substep or substep == repeat - 1)
+            self._render_substep = (self._render_substep + 1) % self.render_substeps
+            self.sim.step(render=self._render_substep == 0)
             if performance is not None:
                 performance.add_nested("sim_step", time.perf_counter_ns() - started_ns)
                 started_ns = time.perf_counter_ns()
@@ -567,7 +572,7 @@ class BimanualPiperXIsaacEnvironment:
                 if performance is not None:
                     performance.add_nested("experiment_update", time.perf_counter_ns() - started_ns)
 
-        if self.vr_runtime is not None:
+        if self.vr_runtime is not None and self._render_substep == 0:
             started_ns = time.perf_counter_ns() if performance is not None else 0
             self.camera.capture_boundary(self)
             if performance is not None:
@@ -611,10 +616,10 @@ class BimanualPiperXIsaacEnvironment:
             robot.reset()
         self.camera.reset()
         self.step_count = 0
-        # These are 25 settling integrations, not control/dataset transitions.
-        # RUN/DIAG retain a pump per tick. RECORD retains its final-only policy
-        # (24 non-rendered ticks, then one pump), with dataset products suspended.
-        self._advance(25)
+        # Settling integrations are not control/dataset transitions. Complete
+        # the final render group before reading state/cameras (28 VR, 25 S1).
+        self._render_substep = 0
+        self._advance(self.reset_settle_physics_steps)
 
     def reset_recording_state(self, seed: int = 0) -> dict[str, np.ndarray]:
         """Leave a settled state boundary for the recorder's next Fabric capture."""

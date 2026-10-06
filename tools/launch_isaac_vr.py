@@ -99,6 +99,7 @@ def _write_launch_manifest(
         ).hexdigest(),
         "processor_revision": s2["processor"]["revision"],
         "effective_control_config": {
+            "rendering": config["rendering"],
             "xr_render": yaml.safe_load((output_dir / "runtime.yaml").read_text()).get("xr_render"),
             "processor": {**s2["processor"], "sensitivity": config["teleop_tuning"]["sensitivity"]},
             "xr_presentation": config["xr_presentation"],
@@ -223,8 +224,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument(
         "--hud-on-start",
-        action="store_true",
-        help="Start the upstream left/right wrist PiP visible for measurement.",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Show camera previews on start (default in RUN/DIAG; forbidden in RECORD).",
     )
     parser.add_argument("--scene-preview", type=Path, help="Optional scene-camera PNG output.")
     parser.add_argument(
@@ -369,6 +371,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
             "--smoke",
             "--xr-smoke",
             "--hud-on-start",
+            "--no-hud-on-start",
             "--cloudxr-mode",
         }
         used_replay_incompatible = sorted(
@@ -385,6 +388,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
             )
     if args.hud_on_start and args.smoke:
         parser.error("HUD measurement requires --xr-smoke or the default physical XR run")
+    if args.hud_on_start and args.mode == "record":
+        parser.error("RECORD forbids camera rendering and previews; use RUN/DIAG")
     if args.recording_dir is not None and args.mode != "record":
         parser.error("--recording-dir requires ./run-vr record")
     if args.recordings_root is not None:
@@ -428,6 +433,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         args.max_control_steps
         or defaults["smoke_control_steps" if args.smoke or args.xr_smoke else "max_control_steps"]
     )
+    if args.hud_on_start is None:
+        args.hud_on_start = bool(
+            config["vr_camera_feeds"]["initial_visibility"]
+            and args.mode in {"run", "diagnostic"}
+            and not args.smoke and not args.no_client_audit
+        )
     return args
 
 

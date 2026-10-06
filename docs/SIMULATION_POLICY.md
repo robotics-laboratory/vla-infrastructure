@@ -114,8 +114,10 @@ persistence and completed episode admission remain pending. The selected VR runt
 exposes an in-memory resolved-XR/post-IK preclip decision seam; its bounded
 qualification does not accept a dataset or physical human operation.
 
-VR advances the requested physics steps before one all-or-none capture. Reset
-retains 24 settling steps plus the completion step. Preflight reaches its configured
+VR advances physics in F,F,F,T groups: four 120 Hz integrations followed by
+one Kit/RTX pump on the fourth integration. RUN/DIAG capture all three cameras
+after the completed group. VR reset uses 28 settling integrations (seven groups).
+Preflight reaches its configured
 settling boundary; the existing control-loop reset then establishes the first
 eligible observation. Intermediate startup captures are explicitly non-evidence.
 Steady state is observation at P, native target, four 120 Hz physics steps, then
@@ -132,10 +134,12 @@ Identical pixel content is valid; producer association establishes freshness.
 
 Startup/reset requires a valid bundle. During ordinary RUN a rejected bundle is
 unavailable to capture consumers while existing camera health guards retain their
-bounded-staleness policy. Diagnostic guards remain stricter. Future RECORD will
-define admission/abort behavior separately. The shared RTX pump and 120 Hz render
-cadence are unchanged; capture extraction occurs once per control boundary, even
-when previews are hidden. No per-tick three-camera CPU snapshot is required.
+bounded-staleness policy. Diagnostic guards remain stricter. The selected VR
+render cadence is simulation
+30 Hz from startup through reset, waiting, recording and review; capture extraction
+occurs once per control boundary in RUN/DIAG, even when previews are hidden.
+Plain S1 retains its existing 25-step reset and per-physics-step rendering.
+No per-tick three-camera CPU snapshot is required.
 
 The pinned Kit visualizer's `HEADLESS=1` path can skip its app pump while claiming
 to own it. A Camera counter alone therefore cannot prove current RTX pixels. The
@@ -147,7 +151,12 @@ renderer support needs a separately qualified upstream configuration/fix.
 ## Snapshot-backed recording boundary
 
 The offline-RGB recording profile is distinct from the live three-camera boundary
-above. Before native actuation it freezes a content-addressed scene-state snapshot
+above. RECORD must never render dataset cameras, including startup, waiting,
+reset and review. It authors the three USD camera prims through the upstream
+spawner without constructing Camera sensors, annotators or dataset RenderProducts.
+CameraRecordable records their state for offline rendering; headset scene/UI
+rendering continues at the same F,F,F,T cadence. Before native actuation it
+freezes a content-addressed scene-state snapshot
 for `O_t`, including the canonical measured state and every world/camera state
 needed for later rendering. It must not reuse a later post-transition state or
 claim live camera identities. After `A_t` is applied and the successor `O_(t+1)`

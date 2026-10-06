@@ -1,6 +1,11 @@
 revision: piper_x_isaac_vr_runtime_v1
 status: SELECTED_HUMAN_ACCEPTANCE_PENDING
 extends_runtime: configs/isaac61_s2_runtime.yaml
+rendering:
+  physics_substeps_per_render: 4
+  pattern: FFFT
+  status: SELECTED_HUMAN_ACCEPTANCE_PENDING
+  record_cameras: usd_prims_only_no_render_products
 operator:
   stack: isaac61
   mode: run
@@ -143,11 +148,11 @@ vr_camera_feeds:
   image_source: Isaac Lab Camera RGBA buffer reused for presentation; sensor exclusion is owned by the optional RTX Scene Partition integration, not buffer selection.
   upload_path: cpu_staged
   panel_layout: Camera-resolution pixel layout; preserve upstream physical dimensions, labels and placement. Texture supersampling is 1.0.
-  initial_visibility: false
+  initial_visibility: true
   toggle_control: left_primary_click
   quest_button: X
-  semantics: X changes upstream UiContainer visibility after one binding. Camera capture continues at configured simulation 30 Hz; hidden preview callbacks skip acquisition, staging and upload. Visible panels publish fresh camera frames at most 30 Hz through ByteImageProvider.set_raw_bytes_data with retained CPU uint8 RGBA buffers and on-demand SceneUI capture. Physics and renderer cadence are unchanged; panel visibility still requires physical Quest verification.
-  performance_mode: preview_uploads_optimized_renderer_unchanged
+  semantics: RUN and DIAG start with previews visible; X changes upstream UiContainer visibility after one binding. Camera capture occurs after each FFFT group at simulation 30 Hz. Hidden preview callbacks skip acquisition, staging and upload. Visible panels publish fresh camera frames at most 30 Hz through ByteImageProvider.set_raw_bytes_data with retained CPU uint8 RGBA buffers and on-demand SceneUI capture. RECORD constructs only USD camera prims for offline RGB and never binds previews or creates dataset render products. Physical Quest verification remains pending.
+  performance_mode: preview_uploads_optimized_ffft_renderer
   layout:
     mode: horizontal
     placement: head_locked

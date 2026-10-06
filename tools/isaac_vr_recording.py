@@ -1126,7 +1126,6 @@ def start_live_recording(
     )
     import omni.usd
     from tools.isaac_vr_decision import capture_state_snapshot
-    from tools.isaac_vr_camera_rendering import suspend_dataset_camera_rendering
 
     if env.camera.live_rgb_enabled:
         raise RuntimeError("State-only RECORD requires live RGB to be disabled before setup")
@@ -1163,12 +1162,14 @@ def start_live_recording(
         "right_wrist": env.camera.wrists[1],
         "scene": env.camera.scene_camera,
     }
+    if any(getattr(camera, "_render_data", None) is not None for camera in cameras.values()):
+        raise RuntimeError("RECORD forbids dataset camera render products, including at startup")
     try:
         from tools.isaac_vr_visual_provenance import build_visual_provenance
     except ImportError:  # Runtime can import tools directly from its source directory.
         from isaac_vr_visual_provenance import build_visual_provenance
 
-    camera_roles = {role: camera._view.prim_paths[0] for role, camera in cameras.items()}
+    camera_roles = env.camera.camera_prim_paths
     visual_provenance = build_visual_provenance(
         snapshot_stage,
         {
@@ -1187,10 +1188,10 @@ def start_live_recording(
         *(
             CameraRecordable(
                 group=f"state/camera/{role}",
-                prim_path=camera._view.prim_paths[0],
+                prim_path=camera_roles[role],
                 resolution=(640, 480),
             )
-            for role, camera in cameras.items()
+            for role in cameras
         ),
     ]
     d0 = D0()
@@ -1261,14 +1262,6 @@ def start_live_recording(
         flush_every_frames=flush_every_frames,
         timing_observer=timing_observer,
     )
-    try:
-        # Snapshot, visual provenance and all Recordables have been initialized.
-        # Retain Camera/prim identity for Fabric sampling and offline replay RGB.
-        suspend_dataset_camera_rendering(cameras, stage, camera_roles)
-        env.render_only_final_substep = True
-    except Exception:
-        recording.close(outcome="failure", reason="dataset_camera_suspension_failed")
-        raise
     return recording
 
 
