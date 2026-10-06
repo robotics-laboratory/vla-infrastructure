@@ -38,15 +38,22 @@ export ISAACLAB_CXR_ACCEPT_EULA=1
 ```
 
 This selects the canonical VR composition in `configs/isaac61_vr_runtime.yaml`
-on the final Isaac61 stack, with status `SELECTED_HUMAN_ACCEPTANCE_PENDING`.
-`./run-vr diag` uses the same runtime with diagnostic observers. Physical Quest S2
-acceptance remains unresolved; use the
-[current worksheet](../../GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md).
+on the final Isaac61 stack, with status `HUMAN_ACCEPTED_S2_20261006`.
+`./run-vr diag` uses the same runtime with diagnostic observers. Physical Quest 3
+S2 acceptance covers the retained RUN and RECORD sessions on clean `f2ac4ea`
+and the operator's checklist observations. The later operator-stop reporting
+changes passed automated checks without another headset run; see the
+[acceptance supplement](../../../evidence/S2/20261006_operator_recording_audit/operator_stop_acceptance.json).
+Use the [current worksheet](../../GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md) for
+subsequent physical qualification. The older pending-verification prose retained
+in the tested config does not describe the current registered S2 gate state.
 Only the explicitly selected `robosyn_asset_lab` profile remains experimental.
 VR smoke checks do not replace separate S1 validation or admit a D1 dataset.
 `./run-vr record` and `./run-vr replay` implement native recording and offline RGB
 materialization; follow the operator guide for their lifecycle and validation.
-Physical recording qualification and D1 source admission remain pending.
+Acceptance of those retained sessions and the saved source's integrity does not
+admit a dataset: D1 source qualification, materialization and admission evidence
+remain pending.
 
 ## Canonical VR automated checks and S1 maintenance
 
@@ -75,9 +82,10 @@ uses hardware PIPER commands. Close test sessions before normal teleop.
 
 Use the supported canonical Kit rendering path without `HEADLESS=1`. Current S1
 acceptance does not qualify headless camera rendering or a complete three-camera
-training source; those scopes require their own evidence. RECORD suspends live
-dataset camera rendering and captures native/Fabric state for later replay,
-as described in the operator guide.
+training source; those scopes require their own evidence. RECORD creates only
+USD camera prims for offline RGB, without live Camera sensors or dataset
+RenderProducts, and captures native/Fabric state for later replay, as described
+in the operator guide.
 
 ## Frozen materialization
 

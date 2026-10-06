@@ -1,16 +1,20 @@
 from __future__ import annotations
 
+import sys
 import numpy as np
 import pytest
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
 
 from tools.isaac_vr_pose_parity_assay import (
     PoseIdentity,
     PoseParityError,
     PoseThresholds,
+    _apply_motion,
     _capture_native,
+    _MountedCameraSource,
     _native_articulation,
     _project_fabric_frame,
+    _recordables_and_sources,
     compare_pose_frame,
     qualify_pose_sequence,
     quaternion_error_rad,
@@ -162,3 +166,127 @@ def test_camera_native_source_uses_opengl_tensor_matching_usd_camera_axes():
     )
     _, frame = _capture_native((recordable,), {"camera": ("camera", source)})
     np.testing.assert_array_equal(frame["camera"]["orientation"], [0, 1, 0, 0])
+
+
+def test_prim_only_zed_recordables_use_configs_and_independent_native_mounts(monkeypatch):
+    class Recordable:
+        def __init__(self, **kwargs):
+            self.__dict__.update(kwargs)
+
+        def on_session_open(self, stage):
+            assert stage == "stage"
+
+    recorder = ModuleType("isaacsim.replicator.episode_recorder")
+    for name in ("ArticulationRecordable", "RigidBodyRecordable", "CameraRecordable"):
+        setattr(recorder, name, Recordable)
+    monkeypatch.setitem(sys.modules, recorder.__name__, recorder)
+    roles = ("left_wrist", "right_wrist", "scene")
+    configs = [
+        SimpleNamespace(prim_path=f"/World/{role}/ZED/Camera", width=960, height=600)
+        for role in roles
+    ]
+    # A 90-degree parent Z rotation plus a 90-degree local X rotation. Expected
+    # pose is independent of the recorded Fabric frame and uses xyzw tensors.
+    half = np.sqrt(0.5)
+    parent_poses = np.array([[[10, 20, 30, 0, 0, half, half]]])
+    robots = [
+        SimpleNamespace(data=SimpleNamespace(body_link_pose_w=parent_poses.copy())),
+        SimpleNamespace(data=SimpleNamespace(body_link_pose_w=np.array([[[0, 0, 0, 0, 0, 0, 1]]]))),
+    ]
+    left_mount = [[1, 0, 0, 0], [0, 0, 1, 0], [0, -1, 0, 0], [1, 2, 3, 1]]
+    scene_mount = np.eye(4)
+    scene_mount[3, :3] = [4, 5, 6]
+    mounts = (left_mount, np.eye(4), scene_mount)
+    receipts = {
+        role: {"prim_path": cfg.prim_path, "desired_optical_matrix": mount}
+        for role, cfg, mount in zip(roles, configs, mounts, strict=True)
+    }
+    env = SimpleNamespace(
+        camera=SimpleNamespace(
+            wrists=configs[:2], scene_camera=configs[2], live_rgb_enabled=False,
+            zed_mounts=receipts,
+        ),
+        robots=robots, wrist_ids=(0, 0),
+        vr_runtime=SimpleNamespace(dynamic_assets=[]), sim=SimpleNamespace(stage="stage"),
+    )
+    recordables, sources = _recordables_and_sources(env)
+    cameras = [item for item in recordables if item.group.startswith("state/camera/")]
+    assert [item.prim_path for item in cameras] == [cfg.prim_path for cfg in configs]
+    assert all(item.resolution == (960, 600) for item in cameras)
+    identities, native = _capture_native(cameras, sources)
+    left = native["state/camera/left_wrist"]
+    np.testing.assert_allclose(left["position"], [8, 21, 33])
+    np.testing.assert_allclose(left["orientation"], [0.5, 0.5, 0.5, 0.5])
+    np.testing.assert_array_equal(native["state/camera/scene"]["position"], [4, 5, 6])
+    fabric = {group: {key: value.copy() for key, value in frame.items()}
+              for group, frame in native.items()}
+    assert compare_pose_frame(fabric, native, identities)["passed"]
+    # A shifted actual attachment/Fabric pose must fail; it cannot become the
+    # oracle just because it was what the recorder observed.
+    fabric["state/camera/left_wrist"]["position"][0] += 0.002
+    assert not compare_pose_frame(fabric, native, identities)["passed"]
+    robots[0].data.body_link_pose_w[0, 0, 0] += 0.1
+    _, refreshed = _capture_native(cameras, sources)
+    np.testing.assert_allclose(refreshed["state/camera/left_wrist"]["position"], [8.1, 21, 33])
+    # Source matrices were copied, so accidental receipt mutation cannot rewrite
+    # the expected optical attachment after the assay started.
+    receipts["left_wrist"]["desired_optical_matrix"][3][0] += 1
+    _, after_receipt_change = _capture_native(cameras, sources)
+    np.testing.assert_array_equal(
+        after_receipt_change["state/camera/left_wrist"]["position"],
+        refreshed["state/camera/left_wrist"]["position"],
+    )
+
+
+@pytest.mark.parametrize("bad_mount", (np.zeros((4, 4)), np.eye(3), np.full((4, 4), np.nan)))
+def test_prim_only_camera_oracle_rejects_nonrigid_mount_commands(bad_mount):
+    with pytest.raises(PoseParityError, match="rigid"):
+        _MountedCameraSource(bad_mount)
+
+
+def test_prim_only_scene_motion_writes_command_without_sensor_or_pose_readback(monkeypatch):
+    # Fake only the USD write seam; SciPy/native oracle remains the real code.
+    class Matrix:
+        def __init__(self, value):
+            self.value = np.asarray(value)
+
+        def GetInverse(self):
+            return Matrix(np.linalg.inv(self.value))
+
+        def __mul__(self, other):
+            return Matrix(self.value @ other.value)
+
+    writes = []
+    attribute = SimpleNamespace(IsValid=lambda: True, Set=lambda value: writes.append(value) or True)
+    prim = SimpleNamespace(GetAttribute=lambda name: attribute if name == "xformOp:transform" else None)
+    stage = SimpleNamespace(GetPrimAtPath=lambda path: prim if path == "/World/SceneRig" else None)
+    pxr = ModuleType("pxr")
+    pxr.Gf = SimpleNamespace(Matrix4d=Matrix)
+    monkeypatch.setitem(sys.modules, "pxr", pxr)
+    mapper = ModuleType("isaac_s1_runtime")
+    mapper.d0_action_to_native = lambda target: target
+    monkeypatch.setitem(sys.modules, mapper.__name__, mapper)
+    commands, advances = [], []
+    env = SimpleNamespace(
+        home_d0=np.zeros(14), _apply=commands.append, _advance=advances.append,
+        vr_runtime=SimpleNamespace(dynamic_assets=[]),
+        sim=SimpleNamespace(device="cpu", stage=stage),
+        camera=SimpleNamespace(
+            scene_camera=SimpleNamespace(prim_path="/World/SceneRig/Camera"),
+            zed_mounts={"scene": {"root_path": "/World/SceneRig",
+                                  "authored_optical_matrix": np.eye(4).tolist()}},
+        ),
+    )
+    mount = np.eye(4)
+    mount[3, :3] = [4, 5, 6]
+    source = _MountedCameraSource(mount)
+    origin = source.pose_xyzw()
+    _apply_motion(env, 1, [], origin, scene_source=source)
+    assert advances == [4] and len(commands) == 1
+    assert writes[0].value[3, 2] == pytest.approx(6.002)
+    np.testing.assert_allclose(source.pose_xyzw()[:3], [4, 5, 6.002])
+    # A writer/attachment defect returning the old recorded position is detected.
+    recordable = SimpleNamespace(group="camera", prim_path="/World/SceneRig/Camera")
+    identities, native = _capture_native((recordable,), {"camera": ("mounted_camera", source)})
+    fabric = {"camera": {"position": origin[:3], "orientation": [1, 0, 0, 0]}}
+    assert not compare_pose_frame(fabric, native, identities)["passed"]

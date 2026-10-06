@@ -8,6 +8,7 @@ from types import ModuleType, SimpleNamespace as NS
 
 import yaml
 import numpy as np
+import pytest
 
 from tools.isaac_s2_processor import BimanualS2TeleopProcessor, ControllerDeltaSample
 from tools.isaac_vr_decision import recordable_teleop_command
@@ -411,3 +412,253 @@ def test_runtime_closes_static_session_once_after_episode_finalization():
     assert source.index("finalize_recording(recording_outcome, close_reason)") < source.index(
         "recording_session.close("
     )
+
+
+@pytest.mark.parametrize("committed", [0, 1])
+def test_interrupted_injected_audit_finalizes_without_claiming_pass(tmp_path, monkeypatch, committed):
+    config = tmp_path / "config.yaml"
+    config.write_text(yaml.safe_dump({
+        "processor": {"revision": PROCESSOR_REVISION},
+        "environment": {"isaac_lab_release": "pin", "cloudxr_runtime_version": "pin",
+                        "materialized_path": "/data/runtime/env"},
+        "asset": {"source_checkout": "/data/assets/source"},
+    }))
+    monkeypatch.setattr(isaac_vr_recording_smoke.importlib.metadata, "version", lambda name: "pin")
+    monkeypatch.setitem(sys.modules, "isaacteleop.cloudxr.runtime", NS(runtime_version=lambda: "pin"))
+    closes = []
+    recording = NS(committed_frames=committed, discarded_observations=0,
+                   episode_id="episode_000000", run_id="run", session_id="session",
+                   output_dir=tmp_path, hdf5_path=tmp_path / "session.hdf5")
+
+    class Session:
+        def __init__(self, active, **kwargs):
+            assert active is recording
+
+        def close(self, *, outcome, reason):
+            closes.append((outcome, reason))
+
+    stopped = False
+
+    def inject(active, env, *, stop_requested, input_pump, **kwargs):
+        nonlocal stopped
+        assert active is recording
+        input_pump()
+        stopped = True
+        assert stop_requested()
+        return {"committed_frames": committed, "accepted_transactions": committed,
+                "stopped_by_user": True, "requested_control_steps": 3,
+                "completed_control_budget": False, "input_pump_calls": 1}
+
+    def validate(*args, **kwargs):
+        raise AssertionError("An interrupted audit must not claim full reader qualification")
+
+    monkeypatch.setitem(sys.modules, "isaac_vr_recording", NS(
+        start_live_recording=lambda *args, **kwargs: recording, RecordingSession=Session))
+    monkeypatch.setitem(sys.modules, "isaac_vr_injected_recording", NS(
+        record_injected_transitions=inject, validate_injected_recording=validate))
+    env = NS(vr_runtime=None)
+    args = NS(config=config, s2_config=config, s2_record=True, s2_recording_dir=tmp_path,
+              s2_teleop=True, xr=True, s2_injected_recording_smoke=True,
+              s2_injected_count=3, s2_current_record_audit="steady", report=tmp_path / "result.json")
+    device = NS(advance=lambda: None, session_running=False)
+    code = isaac_vr_recording_smoke.run_recording_lifecycle_smoke(
+        env, args, default_config_path=config, processor_revision=PROCESSOR_REVISION,
+        audit_device=device, stop_requested=lambda: stopped,
+    )
+    result = json.loads(args.report.read_text())
+    assert code == 130 and not result["passed"] and result["stopped_by_user"]
+    assert result["committed_frames"] == committed and result["input_pump_calls"] == 1
+    assert result["reason"] == "keyboard_interrupt"
+    assert result["reader_validation"] == []
+    assert closes == [("operator_stopped" if committed else "aborted", "keyboard_interrupt")]
+
+
+@pytest.mark.parametrize("stop_at", ["gap_transition", "second_episode_input"])
+def test_gap_audit_stop_keeps_completed_episode_and_actual_counts(tmp_path, monkeypatch, stop_at):
+    from test_isaac_vr_injected_recording import FakeEnvironment, FakeRecording
+    from isaac_s2_performance import S2PerformanceLogger
+    import isaac_vr_episode_lifecycle as lifecycle
+
+    env = FakeEnvironment()
+    records, sealed = [], []
+    stopped = False
+    pumps = 0
+
+    def new_recording(path, episode):
+        recording = FakeRecording(env)
+        recording.output_dir, recording.hdf5_path = path, path / "session.hdf5"
+        recording.episode_id = episode
+        recording.discarded_observations = 0
+        recording.discard_observation = lambda *args, **kwargs: None
+        records.append(recording)
+        return recording
+
+    original_advance = env._advance
+
+    def advance(repeat):
+        nonlocal stopped
+        if env.pending is None:
+            env.physics_step += repeat
+            stopped = stop_at == "gap_transition"
+        else:
+            original_advance(repeat)
+
+    def pump():
+        nonlocal stopped, pumps
+        pumps += 1
+        if pumps == 4:
+            stopped = True
+
+    env._advance = advance
+    session = NS(check_finalization=lambda: None,
+                 end_episode=lambda **kwargs: sealed.append((records[-1], kwargs)),
+                 start_episode=new_recording)
+    monkeypatch.setattr(lifecycle, "technical_episode_output_dir", lambda **kwargs: tmp_path / "second")
+    first = new_recording(tmp_path / "first", "episode_000000")
+    args = NS(s2_audit_gaps=1, s2_recordings_root=tmp_path)
+    logger = S2PerformanceLogger(tmp_path / "performance.jsonl", window_steps=2,
+                                 warmup_steps=0, target_hz=30)
+    try:
+        last, result, paths = isaac_vr_recording_smoke._run_gap_audit(
+            first, session, env, args, logger, NS(advance=pump), count=6,
+            stop_requested=lambda: stopped,
+        )
+    finally:
+        logger.close()
+    expected_episodes = 1 if stop_at == "gap_transition" else 2
+    assert result["stopped_by_user"] and not result["completed_control_budget"]
+    assert result["accepted_transactions"] == result["committed_frames"] == 3
+    assert result["input_pump_calls"] == pumps == (3 if expected_episodes == 1 else 4)
+    assert len(result["technical_episodes"]) == len(paths) == expected_episodes
+    assert sealed == [(first, {"outcome": "operator_stopped", "reason": "tracking_invalid"})]
+    assert last is records[-1] and last.committed_frames == (3 if expected_episodes == 1 else 0)
+
+
+@pytest.mark.parametrize("stop_at", ["input_pump", "transition"])
+def test_lifecycle_audit_stop_seals_partial_demo_as_interrupted(tmp_path, monkeypatch, stop_at):
+    from test_isaac_vr_injected_recording import FakeEnvironment, FakeRecording
+
+    config = tmp_path / "config.yaml"
+    config.write_text(yaml.safe_dump({
+        "processor": {"revision": PROCESSOR_REVISION},
+        "environment": {"isaac_lab_release": "pin", "materialized_path": "/data/runtime/env"},
+        "asset": {"source_checkout": "/data/assets/source"},
+    }))
+    monkeypatch.setattr(isaac_vr_recording_smoke.importlib.metadata, "version", lambda name: "pin")
+    monkeypatch.setitem(sys.modules, "isaacteleop.cloudxr.runtime", NS(runtime_version=lambda: "pin"))
+    env = FakeEnvironment()
+    env.vr_runtime.disable_live_rgb = lambda: None
+    env.vr_runtime.close = lambda: None
+    active = FakeRecording(env)
+    active.output_dir, active.hdf5_path = tmp_path, tmp_path / "session.hdf5"
+    closes = []
+
+    class Session:
+        def __init__(self, recording):
+            assert recording is active
+
+        def close(self, **kwargs):
+            closes.append(kwargs)
+
+    monkeypatch.setitem(sys.modules, "isaac_vr_recording", NS(
+        start_live_recording=lambda *args, **kwargs: active, RecordingSession=Session,
+        # The real injected function still builds and verifies causal rows.
+        build_committed_transition_sample=__import__("tools.isaac_vr_recording", fromlist=[
+            "build_committed_transition_sample"]).build_committed_transition_sample))
+    stopped = False
+    original_advance = env._advance
+
+    def advance(repeat):
+        nonlocal stopped
+        original_advance(repeat)
+        stopped = True
+
+    def pump():
+        nonlocal stopped
+        if stop_at == "input_pump":
+            stopped = True
+
+    if stop_at == "transition":
+        env._advance = advance
+    args = NS(config=config, s2_config=config, s2_recordings_root=tmp_path,
+              s2_recording_dir=tmp_path, s2_injected_count=3, s2_audit_lifecycle_cycles=2,
+              s2_performance_log=tmp_path / "performance.jsonl", s2_performance_window_steps=2,
+              s2_performance_warmup_steps=0, xr=True, s2_cloudxr_profile="cloudxrjs",
+              report=tmp_path / "report.json")
+    device = NS(advance=pump, session_running=False, reset=lambda **kwargs: None)
+    code = isaac_vr_recording_smoke.run_injected_lifecycle_audit(
+        env, args, default_config_path=config, processor_revision=PROCESSOR_REVISION,
+        audit_device=device, stop_requested=lambda: stopped,
+    )
+    result = json.loads(args.report.read_text())
+    committed = int(stop_at == "transition")
+    assert code == 130 and not result["passed"] and result["stopped_by_user"]
+    assert result["cycles"] == 0 and result["requested_cycles"] == 2
+    assert result["control_steps"] == committed and result["input_pump_calls"] == 1
+    assert result["requested_control_steps"] == 6 and not result["completed_control_budget"]
+    assert result["events"] == result["reader_validation"] == []
+    assert result["technical_episodes"][0]["committed_frames"] == committed
+    assert closes == [{"outcome": "operator_stopped" if committed else "aborted",
+                       "reason": "keyboard_interrupt"}]
+    indexes = list((tmp_path / "interrupted_demos").glob("*.json"))
+    assert len(indexes) == 1 and json.loads(indexes[0].read_text())["classification"] == "interrupted"
+    assert not (tmp_path / "saved_demos").exists()
+
+
+@pytest.mark.parametrize("stop_at", ["input_pump", "transition"])
+def test_no_client_run_route_returns_interrupted_report(tmp_path, monkeypatch, stop_at):
+    from test_isaac_vr_injected_recording import FakeEnvironment
+    from isaac_s2_performance import S2PerformanceLogger
+    import isaac_vr_injected_recording as injected
+
+    # Execute the runtime's actual early audit branch; vendor construction and
+    # version preflight happen before this branch and are outside this stop seam.
+    source = (ROOT / "tools/isaac_s2_runtime.py").read_text()
+    run = next(node for node in ast.parse(source).body
+               if isinstance(node, ast.FunctionDef) and node.name == "run_s2")
+    audit = next(node for node in run.body if isinstance(node, ast.If)
+                 and "s2_current_record_audit" in ast.unparse(node.test))
+    wrapper = ast.parse("def route(env, args_cli, device, stop_requested): pass").body[0]
+    wrapper.body = [audit]
+    namespace = {"experiment": None, "recording_requested": False,
+                 "S2PerformanceLogger": S2PerformanceLogger, "Path": Path, "json": json}
+    exec(compile(ast.fix_missing_locations(ast.Module([wrapper], [])), "audit_route", "exec"),
+         namespace)
+    env = FakeEnvironment()
+    monkeypatch.setattr(injected, "capture_state_snapshot", lambda env: None)
+    stopped = False
+    original_advance = env._advance
+    device_closed = []
+
+    def advance(repeat):
+        nonlocal stopped
+        original_advance(repeat)
+        stopped = True
+
+    class Device:
+        session_running = False
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            device_closed.append(True)
+
+        def advance(self):
+            nonlocal stopped
+            if stop_at == "input_pump":
+                stopped = True
+
+    if stop_at == "transition":
+        env._advance = advance
+    args = NS(s2_current_record_audit="steady", s2_injected_count=3,
+              s2_performance_log=tmp_path / "performance.jsonl", s2_performance_window_steps=2,
+              s2_performance_warmup_steps=0, xr=True, s2_cloudxr_profile="cloudxrjs",
+              report=tmp_path / "report.json")
+    assert namespace["route"](env, args, Device(), lambda: stopped) == 130
+    assert device_closed == [True]
+    result = json.loads(args.report.read_text())
+    assert not result["passed"] and result["stopped_by_user"]
+    assert result["control_steps"] == int(stop_at == "transition")
+    assert result["requested_control_steps"] == 3 and not result["completed_control_budget"]
+    assert result["input_pump_calls"] == 1

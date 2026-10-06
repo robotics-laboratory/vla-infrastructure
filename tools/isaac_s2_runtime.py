@@ -406,10 +406,12 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                     return run_injected_lifecycle_audit(
                         env, args_cli, default_config_path=CONFIG_PATH,
                         processor_revision=PROCESSOR_REVISION, audit_device=device,
+                        stop_requested=stop_requested,
                     )
                 return run_recording_lifecycle_smoke(
                     env, args_cli, default_config_path=CONFIG_PATH,
                     processor_revision=PROCESSOR_REVISION, audit_device=device,
+                    stop_requested=stop_requested,
                 )
             from isaac_vr_injected_recording import run_injected_controls
 
@@ -426,6 +428,7 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                     env, count=args_cli.s2_injected_count,
                     performance_logger=audit_performance,
                     input_pump=device.advance,
+                    stop_requested=stop_requested,
                 )
             finally:
                 audit_summary = audit_performance.close()
@@ -434,13 +437,12 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
             audit_result["performance"] = audit_summary
             audit_result.update({
                 "mode": "matched_injected_run_no_client",
-                "passed": True,
+                "passed": not audit_result["stopped_by_user"],
                 "teleop_initialized": True,
                 "kit_xr_bridge_configured": bool(args_cli.xr),
                 "cloudxr_profile": args_cli.s2_cloudxr_profile,
                 "session_running_at_end": bool(device.session_running),
                 "xr_input_available_at_end": getattr(device, "xr_input", None) is not None,
-                "input_pump_calls": args_cli.s2_injected_count,
                 "processor_executed": False,
                 "ik_executed": False,
                 "xr_receipt": "none",
@@ -450,7 +452,7 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                     json.dumps(audit_result, indent=2) + "\n", encoding="utf-8"
                 )
             print(json.dumps(audit_result, sort_keys=True), flush=True)
-            return 0
+            return 130 if audit_result["stopped_by_user"] else 0
     started = time.perf_counter()
     gpu_start = _gpu_observation() if diagnostic else None
     gpu_samples = [gpu_start]

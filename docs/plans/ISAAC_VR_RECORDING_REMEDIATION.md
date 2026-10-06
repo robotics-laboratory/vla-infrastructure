@@ -339,6 +339,31 @@ cleanup. Required live camera guards remain active in RUN/DIAG. Real-loop regres
 checks and explicit retrospective RUN/RECORD results are registered in the S2 bundle;
 original failures and native exit codes remain retained.
 
+### Current audit compatibility repairs
+
+No-client RUN/RECORD audits consume the existing host stop predicate before a
+new injected native command. A transition already applied completes its exact
+successor and causal commit; partial audits retain actual completed counts,
+close recording ownership and return exit 130 without claiming full-budget PASS.
+The human operator-stop acceptance rule remains a separate qualification scope.
+
+The moving pose-parity helper supports prim-only RECORD without creating live
+Camera sensors or RenderProducts. It compares Fabric camera poses against the
+commanded optical mount composed with refreshed native wrist-link tensors;
+the scene camera uses its independent commanded world pose. CameraRecordables
+use the selected camera configuration's dimensions. It does not use Fabric or
+USD world-pose readback as its own reference.
+
+Reuse and size re-audit: pinned Isaac Lab owns native body-link tensors, NVIDIA
+Episode Recorder owns Recordables/Fabric sampling and storage finalization, and
+the existing runtime owns the stop latch. Existing SciPy rigid rotations compose
+the mount with those native tensors. The remaining project seams are stop
+delivery and a camera reference for the existing assay; no FK solver, recorder,
+renderer, environment or dependency is added. CPU regression checks cover these
+seams. A new real Kit moving-parity run remains required to qualify the updated
+assay; the historical checkpoint below and registered physical S2 evidence keep
+their original source scope. No D1 admission is established by this repair.
+
 ### Open implementation defects
 
 These are repair work, not accepted behavior or reasons to relax qualification:

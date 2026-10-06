@@ -245,6 +245,13 @@ application exit before the budget without an operator stop remains FAIL.
 Stopping an active unsaved demo preserves its interrupted disposition; runtime
 PASS does not classify that demo as successful or admit a dataset.
 
+No-client injected audits require their full requested budget. Ctrl-C stops
+before the next native command; an already applied transition finishes its
+successor/causal commit before shutdown. The audit retains actual completed
+counts, finalizes available source artifacts and reports `stopped_by_user: true`,
+`passed: false`, exit 130. This partial audit does not inherit the human
+operator-stop PASS rule.
+
 [S2 operator acceptance and stop reassessment](../evidence/S2/20261006_operator_recording_audit/operator_stop_acceptance.json)
 retains the original reports and the retrospective result under this rule. The
 physical observations are on `f2ac4ea`; the termination/report change was tested

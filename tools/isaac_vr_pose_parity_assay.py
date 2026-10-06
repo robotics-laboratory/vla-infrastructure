@@ -344,6 +344,46 @@ def _native_single(
     )
 
 
+@dataclass
+class _MountedCameraSource:
+    """Commanded optical mount composed with a native wrist pose, never USD readback."""
+
+    optical_matrix: np.ndarray
+    robot: Any = None
+    body_index: int = 0
+
+    def __post_init__(self) -> None:
+        self.optical_matrix = np.asarray(self.optical_matrix, dtype=np.float64).copy()
+        matrix = self.optical_matrix
+        if (
+            matrix.shape != (4, 4)
+            or not np.isfinite(matrix).all()
+            or not np.allclose(matrix[:, 3], [0, 0, 0, 1], atol=1e-6)
+            or not np.allclose(matrix[:3, :3] @ matrix[:3, :3].T, np.eye(3), atol=1e-6)
+            or not np.isclose(np.linalg.det(matrix[:3, :3]), 1.0, atol=1e-6)
+        ):
+            raise PoseParityError("camera mount must be a finite rigid USD row-vector matrix")
+
+    def pose_xyzw(self) -> np.ndarray:
+        from scipy.spatial.transform import Rotation
+
+        # USD matrices use row vectors; SciPy uses column vectors.
+        rotation = Rotation.from_matrix(self.optical_matrix[:3, :3].T)
+        position = self.optical_matrix[3, :3].copy()
+        if self.robot is not None:
+            poses = _numpy(self.robot.data.body_link_pose_w)
+            if (
+                poses.ndim != 3 or poses.shape[0] != 1 or poses.shape[2] != 7
+                or not 0 <= self.body_index < poses.shape[1] or not np.isfinite(poses).all()
+            ):
+                raise PoseParityError("camera parent requires a finite native body_link_pose_w")
+            parent = poses[0, self.body_index]
+            parent_rotation = Rotation.from_quat(parent[3:])
+            position = parent[:3] + parent_rotation.apply(position)
+            rotation = parent_rotation * rotation
+        return np.concatenate((position, rotation.as_quat()))
+
+
 def _recordables_and_sources(env: Any) -> tuple[list[Any], dict[str, tuple[str, Any]]]:
     from isaacsim.replicator.episode_recorder import (
         ArticulationRecordable,
@@ -368,12 +408,28 @@ def _recordables_and_sources(env: Any) -> tuple[list[Any], dict[str, tuple[str, 
         recordable = RigidBodyRecordable(group=group, prim_path=asset.cfg.prim_path)
         recordables.append(recordable)
         sources[group] = ("rigid_body", asset)
-    for role, camera in cameras.items():
+    for index, (role, camera) in enumerate(cameras.items()):
         group = f"state/camera/{role}"
-        path = camera._view.prim_paths[0]
-        recordable = CameraRecordable(group=group, prim_path=path, resolution=(640, 480))
+        cfg = getattr(camera, "cfg", camera)
+        path = cfg.prim_path
+        recordable = CameraRecordable(
+            group=group, prim_path=path, resolution=(cfg.width, cfg.height)
+        )
         recordables.append(recordable)
-        sources[group] = ("camera", camera)
+        if env.camera.live_rgb_enabled:
+            sources[group] = ("camera", camera)
+        else:
+            receipt = env.camera.zed_mounts[role]
+            if receipt["prim_path"] != path:
+                raise PoseParityError(f"{group}: optical mount identity differs from camera config")
+            sources[group] = (
+                "mounted_camera",
+                _MountedCameraSource(
+                    receipt["desired_optical_matrix"],
+                    env.robots[index] if role != "scene" else None,
+                    int(env.wrist_ids[index]) if role != "scene" else 0,
+                ),
+            )
     for recordable in recordables:
         recordable.on_session_open(env.sim.stage)
     return recordables, sources
@@ -393,6 +449,10 @@ def _capture_native(
             if pose.shape != (1, 7):
                 raise PoseParityError(f"{recordable.group}: native rigid pose shape {pose.shape}")
             identity, sample = _native_single(recordable.group, recordable.prim_path, pose[0], kind)
+        elif kind == "mounted_camera":
+            identity, sample = _native_single(
+                recordable.group, recordable.prim_path, source.pose_xyzw(), "camera"
+            )
         elif kind == "camera":
             position = _numpy(source.data.pos_w)
             # UsdGeom.Camera uses OpenGL camera axes.  This remains the native
@@ -416,7 +476,8 @@ def _capture_native(
 
 
 def _apply_motion(
-    env: Any, index: int, object_origins: Sequence[np.ndarray], scene_origin: np.ndarray
+    env: Any, index: int, object_origins: Sequence[np.ndarray], scene_origin: np.ndarray,
+    *, scene_source: _MountedCameraSource | None = None,
 ) -> None:
     import torch
     from isaac_s1_runtime import d0_action_to_native
@@ -439,15 +500,30 @@ def _apply_motion(
         asset.write_root_velocity_to_sim_index(
             root_velocity=torch.zeros((1, 6), device=env.sim.device)
         )
-    scene = env.camera.scene_camera
-    position = torch.as_tensor(
-        scene_origin[:3], dtype=torch.float32, device=env.sim.device
-    ).reshape(1, 3)
-    position[0, 2] += 0.001 * phase
-    orientation = torch.as_tensor(
-        scene_origin[3:], dtype=torch.float32, device=env.sim.device
-    ).reshape(1, 4)
-    scene.set_world_poses(positions=position, orientations=orientation, convention="world")
+    if scene_source is not None:
+        from pxr import Gf
+
+        # Set the existing massless camera root from the independent command.
+        # Do not create a Camera sensor or query the recorded Fabric/USD pose.
+        scene_source.optical_matrix[3, 2] = scene_origin[2] + 0.001 * phase
+        receipt = env.camera.zed_mounts["scene"]
+        authored = Gf.Matrix4d(receipt["authored_optical_matrix"])
+        desired = Gf.Matrix4d(scene_source.optical_matrix.tolist())
+        attribute = env.sim.stage.GetPrimAtPath(receipt["root_path"]).GetAttribute(
+            "xformOp:transform"
+        )
+        if not attribute.IsValid() or not attribute.Set(authored.GetInverse() * desired):
+            raise PoseParityError("could not apply commanded scene camera root transform")
+    else:
+        scene = env.camera.scene_camera
+        position = torch.as_tensor(
+            scene_origin[:3], dtype=torch.float32, device=env.sim.device
+        ).reshape(1, 3)
+        position[0, 2] += 0.001 * phase
+        orientation = torch.as_tensor(
+            scene_origin[3:], dtype=torch.float32, device=env.sim.device
+        ).reshape(1, 4)
+        scene.set_world_poses(positions=position, orientations=orientation, convention="world")
     env._advance(4)
 
 
@@ -472,20 +548,27 @@ def run_live_pose_parity_assay(env: Any, report_path: Path, *, samples: int = 5)
     try:
         recordables, sources = _recordables_and_sources(env)
         sampler = ExplicitFrameSampler(object(), recordables)
-        object_origins = [
+        object_origins: list[np.ndarray] = [
             _numpy(asset.data.root_pose_w)[0].astype(np.float64).copy()
             for asset in env.vr_runtime.dynamic_assets
         ]
-        scene = env.camera.scene_camera
-        scene_origin = np.concatenate(
-            (_numpy(scene.data.pos_w)[0], _numpy(scene.data.quat_w_world)[0])
-        ).astype(np.float64)
+        scene_kind, scene_source = sources["state/camera/scene"]
+        if scene_kind == "mounted_camera":
+            scene_origin = scene_source.pose_xyzw()
+        else:
+            scene = env.camera.scene_camera
+            scene_origin = np.concatenate(
+                (_numpy(scene.data.pos_w)[0], _numpy(scene.data.quat_w_world)[0])
+            ).astype(np.float64)
         fabric_frames: list[dict[str, dict[str, Any]]] = []
         native_frames: list[dict[str, dict[str, np.ndarray]]] = []
         identities: list[PoseIdentity] | None = None
         for index in range(samples):
             if index:
-                _apply_motion(env, index - 1, object_origins, scene_origin)
+                _apply_motion(
+                    env, index - 1, object_origins, scene_origin,
+                    scene_source=scene_source if scene_kind == "mounted_camera" else None,
+                )
             raw_fabric = sampler.capture_frame()
             current_identities, native = _capture_native(recordables, sources)
             if identities is None:
@@ -504,7 +587,12 @@ def run_live_pose_parity_assay(env: Any, report_path: Path, *, samples: int = 5)
                 "native_sources": {
                     "articulation": "Isaac Lab body_link_pose_w/root_pose_w tensors (xyzw)",
                     "rigid_body": "Isaac Lab root_pose_w tensor (xyzw)",
-                    "camera": "Isaac Lab Camera pos_w/quat_w_opengl tensors (xyzw)",
+                    "camera": (
+                        "native body_link_pose_w + commanded ZED optical mount; "
+                        "scene commanded world pose (xyzw)"
+                        if scene_kind == "mounted_camera"
+                        else "Isaac Lab Camera pos_w/quat_w_opengl tensors (xyzw)"
+                    ),
                 },
             }
         )

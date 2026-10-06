@@ -425,7 +425,7 @@ def test_three_camera_schema_fingerprint_order_and_preserved_gates():
         "accepted",
         "accepted",
         "accepted",
-        "unresolved",
+        "accepted",
         "unresolved",
     ]
     rules = yaml.safe_load((ROOT / "configs/gate_rules.yaml").read_text())

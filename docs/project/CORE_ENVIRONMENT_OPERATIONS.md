@@ -34,7 +34,12 @@ This command does not establish physical Quest acceptance by itself. The v5.2 Ga
 For the current **Quest -> Isaac** operator workflow use `./run-vr` and
 [RUN_VR_OPERATIONS.md](RUN_VR_OPERATIONS.md). It selects the final Isaac61
 environment and canonical VR composition. `./run-vr diag` adds observers to the
-same runtime; final physical S2 acceptance remains pending. This core host
-diagnostic is a separate real-XR profile.
+same runtime. Registered physical Quest 3 S2 acceptance covers the retained RUN
+and RECORD sessions on clean `f2ac4ea` and the operator's checklist observations.
+Later operator-stop reporting changes passed automated checks without another
+headset run; see the
+[acceptance supplement](../evidence/S2/20261006_operator_recording_audit/operator_stop_acceptance.json).
+D1 dataset source admission remains unresolved. This core host diagnostic is a
+separate real-XR profile.
 
 Canonical offline checks are defined by the `offline_tests` execution profile in the live contract. No hardware-motion command belongs in this document.

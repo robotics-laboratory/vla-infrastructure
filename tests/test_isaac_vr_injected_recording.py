@@ -65,6 +65,7 @@ class FakeRecording:
         self.rows = []
         self.rejections = {}
         self.timing_observer = timing_observer
+        self.discarded = []
 
     def _token(self):
         digest = f"{self.sequence + 1:064x}"
@@ -103,6 +104,9 @@ class FakeRecording:
         assert token.physics_step + 4 == self.env.physics_step
         return self._token()
 
+    def discard_observation(self, token, *, reason):
+        self.discarded.append((token, reason))
+
     def commit_transition(self, token, successor, row):
         canonical = canonical_committed_transition(row)
         verify_committed_transition_sample(canonical)
@@ -113,6 +117,72 @@ class FakeRecording:
             self.timing_observer("hdf_flush_ms", 20)
         self.committed_frames += 1
         self.promoted = successor
+
+
+@pytest.mark.parametrize("record", [False, True])
+@pytest.mark.parametrize("stop_at", ["before", "input_pump", "capture", "transition"])
+def test_injected_stop_preserves_only_completed_transitions(tmp_path, monkeypatch, record, stop_at):
+    import isaac_vr_injected_recording as injected
+    from tools.isaac_s2_performance import S2PerformanceLogger
+
+    env = FakeEnvironment()
+    recording = FakeRecording(env)
+    logger = S2PerformanceLogger(tmp_path / "performance.jsonl", warmup_steps=0,
+                                 window_steps=2, target_hz=30)
+    stopped = stop_at == "before"
+    pumps = 0
+    applied = []
+    original_apply, original_advance = env._apply, env._advance
+    original_capture = recording.capture_observation
+
+    def pump():
+        nonlocal stopped, pumps
+        pumps += 1
+        if stop_at == "input_pump":
+            stopped = True
+
+    def apply(target):
+        applied.append(target)
+        original_apply(target)
+
+    def advance(repeat):
+        nonlocal stopped
+        original_advance(repeat)
+        if stop_at == "transition":
+            stopped = True
+
+    def capture(env=None):
+        nonlocal stopped
+        token = original_capture() if record else None
+        if stop_at == "capture":
+            stopped = True
+        return token
+
+    env._apply, env._advance = apply, advance
+    recording.capture_observation = capture
+    monkeypatch.setattr(injected, "capture_state_snapshot", capture)
+    kwargs = dict(count=3, performance_logger=logger, input_pump=pump,
+                  stop_requested=lambda: stopped)
+    try:
+        result = (injected.record_injected_transitions(recording, env, **kwargs) if record
+                  else injected.run_injected_controls(env, **kwargs))
+    finally:
+        performance = logger.close()
+    completed = int(stop_at == "transition")
+    assert result["stopped_by_user"] and not result["completed_control_budget"]
+    assert result["requested_control_steps"] == 3
+    assert result["input_pump_calls"] == pumps == int(stop_at != "before")
+    assert len(applied) == completed
+    assert env.physics_step == 20 + 4 * completed
+    assert performance["control"]["samples"] == completed
+    if record:
+        assert result["accepted_transactions"] == result["committed_frames"] == completed
+        assert len(recording.rows) == completed
+        assert len(recording.discarded) == int(stop_at == "capture")
+        if completed:
+            assert recording.rows[0]["successor_physics_step"] == env.physics_step
+    else:
+        assert result["control_steps"] == completed
 
 
 @pytest.mark.parametrize("count", [3, 330])

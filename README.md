@@ -38,9 +38,10 @@ these settings do not guarantee 30 Hz in wall time.
 During recording, the system captures native/Fabric scene state and post-IK,
 preclip training actions through NVIDIA Episode Recorder. Training labels use
 degrees/millimetres; the applied clipped native command in radians/metres and
-its residual/saturation are stored separately. Dataset camera rendering and live
-RGB reads are suspended. Four physics steps use **F,F,F,T** rendering: one final
-render/Kit pump per control transition, retaining the XR presentation path.
+its residual/saturation are stored separately. RECORD creates only USD camera
+prims for offline RGB; it does not create live Camera sensors or dataset
+RenderProducts, or read live RGB. Four physics steps use **F,F,F,T** rendering:
+one final render/Kit pump per control transition, retaining the XR presentation path.
 
 After recording, the saved states are replayed to render the three camera views.
 Images are matched to immutable observation identities before conversion to
@@ -59,6 +60,12 @@ Quest controllers → relative pose processing → IK → simulated PIPER-X
 
 A saved demonstration is not automatically admitted for training. Source
 verification, conversion checks and physical qualification are separate steps.
+
+Physical Quest 3 S2 acceptance is scoped to the retained RUN and RECORD sessions
+on clean `f2ac4ea` and the operator's checklist observations. Later operator-stop
+reporting changes passed automated checks without another headset run; see the
+[acceptance supplement](docs/evidence/S2/20261006_operator_recording_audit/operator_stop_acceptance.json).
+D1 dataset source admission remains unresolved.
 
 ## Getting started
 

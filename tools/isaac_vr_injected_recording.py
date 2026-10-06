@@ -112,6 +112,7 @@ def record_injected_transitions(
     target_index_offset: int = 0,
     first_commit_callback: Callable[[], None] | None = None,
     pre_step_callback: Callable[[], None] | None = None,
+    stop_requested: Callable[[], bool] | None = None,
 ) -> dict[str, Any]:
     """Write distinct committed transitions through the production causal/writer APIs."""
     if count < 2:
@@ -125,7 +126,10 @@ def record_injected_transitions(
     actions: list[list[float]] = []
     input_digest = hashlib.sha256()
     transition_counts: dict[str, int] = {}
+    input_pump_calls = 0
     for index in range(count):
+        if stop_requested is not None and stop_requested():
+            break
         if pre_step_callback is not None:
             pre_step_callback()
         tick = start_tick + index
@@ -135,6 +139,9 @@ def record_injected_transitions(
             stage_started_ns = time.perf_counter_ns()
         if input_pump is not None:
             input_pump()
+            input_pump_calls += 1
+        if stop_requested is not None and stop_requested():
+            break
         if performance_logger is not None:
             performance_logger.add_stage(
                 "teleop_advance", time.perf_counter_ns() - stage_started_ns
@@ -183,14 +190,10 @@ def record_injected_transitions(
                 action[:7] = np.asarray(token.state[:7], dtype=np.float64)
             target = d0_action_to_native(action)
         native = np.concatenate((target.left_rad_m, target.right_rad_m))
-        input_digest.update(np.asarray(native, dtype="<f8").tobytes())
         command = _command(
             (float(target.left_rad_m[6]), float(target.right_rad_m[6])),
             left_clutch=rgb_e2e_assay and index == 2,
             left_transition=left_transition if clutch_pattern else None,
-        )
-        transition_counts[command.left.transition] = (
-            transition_counts.get(command.left.transition, 0) + 1
         )
         decision = SolvedControlDecision.from_native(
             tick,
@@ -201,6 +204,16 @@ def record_injected_transitions(
             native.copy(),
         )
         prepared = decision.prepare(validator)
+        if stop_requested is not None and stop_requested():
+            validator.abort()
+            recording.discard_observation(token, reason="keyboard_interrupt")
+            break
+        # Once native actuation starts, finish its successor and causal commit
+        # before observing a stop again at the next tick boundary.
+        input_digest.update(np.asarray(native, dtype="<f8").tobytes())
+        transition_counts[command.left.transition] = (
+            transition_counts.get(command.left.transition, 0) + 1
+        )
         env._apply(
             NativeBimanualTargets(
                 target.left_rad_m.copy(),
@@ -270,17 +283,22 @@ def record_injected_transitions(
             )
         if performance_logger is not None:
             performance_logger.end_step(tick, source="deterministic_injected_xr_v1")
-    assert validator is not None
-    if validator.accepted_transactions != count or recording.committed_frames != count:
+    completed = len(actions)
+    accepted = validator.accepted_transactions if validator is not None else 0
+    if accepted != completed or recording.committed_frames != completed:
         raise RuntimeError("injected causal commits and HDF frames diverged")
     # Long experiments may retain the original bounded sweep beyond its
     # 1000-control period; repeated actions still require distinct causal rows.
-    if require_distinct_actions and len({tuple(action) for action in actions}) != count:
+    if require_distinct_actions and len({tuple(action) for action in actions}) != completed:
         raise RuntimeError("injected integration actions are not distinct")
     return {
         "actions": actions,
-        "accepted_transactions": validator.accepted_transactions,
+        "accepted_transactions": accepted,
         "committed_frames": recording.committed_frames,
+        "requested_control_steps": count,
+        "completed_control_budget": completed == count,
+        "stopped_by_user": bool(stop_requested is not None and stop_requested()),
+        "input_pump_calls": input_pump_calls,
         "processor_revision": PROCESSOR_REVISION,
         "source": "deterministic_injected_xr_v1",
         "rgb_e2e_assay": rgb_e2e_assay,
@@ -292,16 +310,23 @@ def record_injected_transitions(
 def run_injected_controls(
     env: Any, *, count: int, performance_logger: Any,
     input_pump: Callable[[], Any] | None = None, start_tick: int = 1,
+    stop_requested: Callable[[], bool] | None = None,
 ) -> dict[str, Any]:
     """Matched native-target RUN control loop without recorder side effects."""
     reference = _audit_reference_state(env)
     digest = hashlib.sha256()
+    completed = input_pump_calls = 0
     for index in range(count):
+        if stop_requested is not None and stop_requested():
+            break
         tick = start_tick + index
         performance_logger.begin_step()
         started_ns = time.perf_counter_ns()
         if input_pump is not None:
             input_pump()
+            input_pump_calls += 1
+        if stop_requested is not None and stop_requested():
+            break
         performance_logger.add_stage("teleop_advance", time.perf_counter_ns() - started_ns)
         started_ns = time.perf_counter_ns()
         capture_state_snapshot(env)
@@ -309,6 +334,8 @@ def run_injected_controls(
         started_ns = time.perf_counter_ns()
         target = d0_action_to_native(_target(reference, index))
         native = np.concatenate((target.left_rad_m, target.right_rad_m))
+        if stop_requested is not None and stop_requested():
+            break
         digest.update(np.asarray(native, dtype="<f8").tobytes())
         env._apply(NativeBimanualTargets(
             target.left_rad_m.copy(), target.right_rad_m.copy(), target.saturated
@@ -319,7 +346,11 @@ def run_injected_controls(
         performance_logger.add_stage("simulation_advance", time.perf_counter_ns() - started_ns)
         performance_logger.add_stage("runtime_bookkeeping", 0)
         performance_logger.end_step(tick, source="deterministic_injected_native_v1")
-    return {"control_steps": count, "input_targets_sha256": digest.hexdigest()}
+        completed += 1
+    return {"control_steps": completed, "input_targets_sha256": digest.hexdigest(),
+            "requested_control_steps": count, "completed_control_budget": completed == count,
+            "stopped_by_user": bool(stop_requested is not None and stop_requested()),
+            "input_pump_calls": input_pump_calls}
 
 
 def validate_injected_recording(
