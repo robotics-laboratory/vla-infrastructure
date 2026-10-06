@@ -81,9 +81,10 @@ and video lookup. It never proves physical acquisition or simulation capture.
   role and prim path, camera and renderer configuration digests, stage-snapshot
   and asset-closure digests, materialization revision and RGB digest. The join is
   exact on `obs_id` and scene-state-snapshot digest; positional joins are
-  forbidden. This declaration is pending implementation and D1 evidence, and a
-  native state recording remains `dataset_admissible=false` until the three
-  camera roles are materialized and the D1 requirements pass.
+  forbidden. V1 artifacts remain readable by the implemented projection,
+  replay and LeRobot materialization tools. This implementation does not supply
+  physical source qualification or D1 acceptance; a native state recording is
+  not an admissible training dataset.
 - `isaac_human_vr_offline_rgb_v2`: the selected recording revision retains
   the V1 snapshot, XR, action-label and offline RGB identities. Admission adds
   tracked per-arm `motion`, `clutch_engaged`, `clutch_held` and
@@ -92,7 +93,10 @@ and video lookup. It never proves physical acquisition or simulation capture.
   and remains a gap. Each committed row records both arm transitions bound to
   its action digest. Tracking loss/invalidity, XR receipt or identity loss,
   session/reference epoch changes, reset and sensitivity switches remain gaps.
-  D1 and physical acceptance remain pending for this revision.
+  The runtime, committed-row verifier, converter and demo admission evaluator
+  implement this revision. Their existence does not qualify a physical source:
+  D1 source qualification remains pending; accepted S2 controls/presentation
+  observations do not establish dataset admission.
 - `isaac_automated_v4`: the same simulation/camera/transition identities, with
   generator decision/revision/state and seed when applicable. No XR is synthesized.
 - `real_human_vr_physical_v4`: causal identity plus strict physical timing for state,
@@ -166,11 +170,26 @@ successful native transition, successor observation, causal completion and commi
 The HDF row index is a dense zero-based commit order, not a control-tick identity;
 control ticks may have gaps. An invalid, untrusted, tracking-invalid, reset-crossing or
 failed tick appends no row and only increments reasoned episode QA. A genuine
-committed zero action remains valid and is never inferred from value alone. The
-last admitted action still requires a successor observation and terminal outcome
-in the same row; there is no actionless terminal row. A missing successor aborts
-the pending transaction, and an episode with zero commits is lifecycle-only and
-not dataset-admissible.
+committed zero action remains valid and is never inferred from value alone.
+Tracked intentional clutch engagement, hold and release rebase are valid V2
+rows; an invalid tick is never replaced by a zero-action placeholder.
+
+Every action, including the last, requires its transition classification and
+exact successor in the same row. The last committed transition may remain
+`continued`, with `terminated=false` and `success=false`, when an operator Stop
+or a causal gap later closes the technical episode. Closure does not rewrite
+that action's outcome or append an actionless terminal row. The separately
+hashed `terminal_successor.npz` preserves the full successor of the last
+committed row; the HDF episode metadata and finalized manifest retain the
+technical closure outcome and reason. A missing successor aborts the pending
+transaction, and an episode with zero commits is lifecycle-only and not
+dataset-admissible.
+
+The operator retains a demonstration with explicit Save and then classifies its
+human task outcome as `success`, `failure` or `incomplete`. The saved-demo index
+keeps that classification separate from the ordered technical episodes and
+their `operator_stopped` outcomes. Save and task success alone do not admit
+training data; follow the [materialization and admission policy](DATASET_MATERIALIZATION.md#human-demo-admission).
 
 ## Causality regression test
 
@@ -214,9 +233,15 @@ action
 ```
 
 The first five features are the policy-input whitelist; `action` is the target.
-All three cameras capture uint8 RGB `[480,640,3]` and expose float32 RGB
-`[3,480,640]` in `[0,1]`. There is no canonical crop, resize or flip. Native
-camera/device names belong in source bindings, never canonical role names.
+The baseline and historical 640×480 camera schema captures uint8 RGB
+`[480,640,3]` and exposes float32 RGB `[3,480,640]` in `[0,1]`. The selected
+native ZED Isaac source captures `[600,960,3]` and exposes `[3,600,960]` with
+its own schema fingerprint, as specified in
+[materialization](DATASET_MATERIALIZATION.md#schema-fingerprint). Keep each
+source's declared dimensions; do not resize historical recordings or mix these
+fingerprints implicitly. There is no canonical crop, resize or flip. Cross-source
+parity requires matching declared schemas. Native camera/device names belong in
+source bindings, never canonical role names.
 State and action remain float32[14], left six joints in degrees and gripper in
 millimetres, then the same right-arm order. Native clipping never replaces labels.
 

@@ -3344,7 +3344,7 @@
                 "invalid_tick_policy": "do_not_append_hdf_row_and_record_reason_in_episode_qa",
                 "control_tick_policy": "may_have_gaps_and_must_never_be_inferred_from_hdf_row_index",
                 "zero_action_policy": "a_zero_vector_is_admitted_only_as_a_committed_source_action_never_as_invalid_tick_fill",
-                "terminal_state_policy": "final_action_requires_a_successor_observation_and_terminal_outcome_in_the_same_row_no_actionless_terminal_row",
+                "terminal_state_policy": "final_action_requires_bound_successor_row_outcome_may_remain_continued_episode_outcome_in_metadata_no_actionless_terminal_row",
                 "missing_successor_policy": "abort_pending_transaction_and_do_not_append",
                 "episode_with_zero_commits": "lifecycle_artifact_only_dataset_admissible_false"
               }
@@ -3427,7 +3427,7 @@
                   "persistence_call_phase": "after_successful_transition_successor_observation_and_causal_commit",
                   "source_action": "post-DifferentialIK desired joint target BEFORE native clipping, converted to canonical deg/mm",
                   "native_row_semantics_revision": "isaac_vr_committed_transition_row_v1",
-                  "runtime_binding_status": "pending_D1_implementation_and_evidence",
+                  "runtime_binding_status": "implemented_pending_D1_physical_qualification_and_evidence",
                   "dataset_admissible_before_materialization_and_D1_evidence": false,
                   "host_timestamps": "optional_QA_provenance_not_XR_physical_acquisition_time",
                   "openxr_query_time": "optional_when_explicitly_exposed_by_source"
@@ -3486,7 +3486,7 @@
                   "persistence_call_phase": "after_successful_transition_successor_observation_and_causal_commit",
                   "source_action": "post-DifferentialIK desired joint target BEFORE native clipping, converted to canonical deg/mm",
                   "native_row_semantics_revision": "isaac_vr_committed_transition_row_v2",
-                  "runtime_binding_status": "pending_D1_implementation_and_evidence",
+                  "runtime_binding_status": "implemented_pending_D1_physical_qualification_and_evidence",
                   "dataset_admissible_before_materialization_and_D1_evidence": false,
                   "host_timestamps": "optional_QA_provenance_not_XR_physical_acquisition_time",
                   "openxr_query_time": "optional_when_explicitly_exposed_by_source"

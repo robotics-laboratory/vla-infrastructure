@@ -38,7 +38,13 @@ Pin minimum current Isaac Lab/XR/Recorder path, automated generation path, LeRob
 
 ## [[gate:S1]] Isaac PIPER-X environment
 
-Headless reset/step, asset, cameras, control semantics, processors, task success/termination and executable embodiment parity.
+Reset/step, asset, control semantics, processors, task success/termination and
+executable embodiment parity, with the native state/two-wrist-camera observation
+subset. The current supported rendering scope is canonical non-headless Kit;
+registered historical evidence retains its exact source/environment scope. S1
+does not qualify a complete three-camera training source. Headless rendering
+requires a separately qualified upstream configuration/fix and new evidence
+before use; it is not established by the current S1 acceptance.
 
 ## [[gate:S2]] Quest -> Isaac
 
@@ -60,11 +66,20 @@ physical inputs from later automatically tested termination changes.
 ## [[gate:D1]] Isaac human-VR dataset
 
 Record successful Isaac human-VR episodes using the Isaac human causal profile.
-Require registered proof for the three-camera capture barrier, resolved XR identity,
-post-DifferentialIK preclip action seam, native recorder mapping, converter,
+Require registered proof for the profile-specific three-camera observation
+boundary, resolved XR identity, post-DifferentialIK preclip action seam,
+native recorder mapping, converter,
 causal transition/successor, dataset manifest and demonstration-quality envelope.
 Commit after successful transition plus successor observation. Physical XR/camera
 acquisition-age paths are not D1 prerequisites. Finalize a LeRobotDataset v3 source.
+
+The selected snapshot/offline-RGB profile captures immutable pre-action native
+state online, commits after the completed transition and successor, and joins
+all three offline camera roles to that exact observation/snapshot identity.
+Its three-camera proof is materialization proof, not a claim of live camera
+acquisition during RECORD. The native recorder, strict replay and converter are
+implemented; successful physical recording, source admission and the required
+gate artifacts/evidence still determine D1 acceptance.
 
 ## [[gate:G1]] Isaac automated dataset
 

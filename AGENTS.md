@@ -8,6 +8,12 @@ Do not build a robotics framework.
 - Check the assigned checkout/worktree, branch, HEAD, base and WIP. Use the
   assigned worktree; do not create another for every task. Report unexpected
   state without reset/stash/clean. Keep implementation worktrees in `.worktrees/`.
+- If `.codegraph/` exists, use `codegraph explore` before text searches or file
+  reads to understand or locate code. [codegraph.json](codegraph.json) scopes the
+  index to the assigned checkout and excludes `.worktrees/`. After checking
+  checkout state, refresh that checkout's index when its branch/source changed;
+  never aggregate code from other branches' worktrees. If `.codegraph/` is absent,
+  skip CodeGraph; do not install or create an index implicitly.
 - Read [NORMATIVE_MODEL](docs/NORMATIVE_MODEL.md) and the short
   [reading map](docs/README.md). Select relevant current owners from
   [INDEX](docs/INDEX.yaml) by owner/topic; do not read the whole index or history.
@@ -40,8 +46,11 @@ For VR read [current operations](docs/project/RUN_VR_OPERATIONS.md),
 `./run-vr` and `./run-vr diag` share scene, control, processors, cameras/XR and
 lifecycle. Diagnostic observers must not mutate actions or control state.
 Experimental implementation -> diagnostic mode -> automated and physical
-qualification -> promote selection -> run and future recording inherit the
-same base. Never copy implementations between modes.
+qualification -> promote selection -> run and record inherit the selected
+shared base. Never copy implementations between modes. RECORD already writes
+snapshot-backed state/action artifacts; offline RGB materialization is implemented
+as a later stage. Its observation/rendering path differs from RUN/DIAG.
+Recording does not establish physical S2 qualification or D1 dataset admission.
 
 ## Before creating documents or artifacts
 

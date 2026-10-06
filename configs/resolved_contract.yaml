@@ -1249,7 +1249,7 @@ dataset:
       invalid_tick_policy: do_not_append_hdf_row_and_record_reason_in_episode_qa
       control_tick_policy: may_have_gaps_and_must_never_be_inferred_from_hdf_row_index
       zero_action_policy: a_zero_vector_is_admitted_only_as_a_committed_source_action_never_as_invalid_tick_fill
-      terminal_state_policy: final_action_requires_a_successor_observation_and_terminal_outcome_in_the_same_row_no_actionless_terminal_row
+      terminal_state_policy: final_action_requires_bound_successor_row_outcome_may_remain_continued_episode_outcome_in_metadata_no_actionless_terminal_row
       missing_successor_policy: abort_pending_transaction_and_do_not_append
       episode_with_zero_commits: lifecycle_artifact_only_dataset_admissible_false
     source_profiles:
@@ -1321,7 +1321,7 @@ dataset:
         persistence_call_phase: after_successful_transition_successor_observation_and_causal_commit
         source_action: post-DifferentialIK desired joint target BEFORE native clipping, converted to canonical deg/mm
         native_row_semantics_revision: isaac_vr_committed_transition_row_v1
-        runtime_binding_status: pending_D1_implementation_and_evidence
+        runtime_binding_status: implemented_pending_D1_physical_qualification_and_evidence
         dataset_admissible_before_materialization_and_D1_evidence: false
         host_timestamps: optional_QA_provenance_not_XR_physical_acquisition_time
         openxr_query_time: optional_when_explicitly_exposed_by_source
@@ -1374,7 +1374,7 @@ dataset:
         persistence_call_phase: after_successful_transition_successor_observation_and_causal_commit
         source_action: post-DifferentialIK desired joint target BEFORE native clipping, converted to canonical deg/mm
         native_row_semantics_revision: isaac_vr_committed_transition_row_v2
-        runtime_binding_status: pending_D1_implementation_and_evidence
+        runtime_binding_status: implemented_pending_D1_physical_qualification_and_evidence
         dataset_admissible_before_materialization_and_D1_evidence: false
         host_timestamps: optional_QA_provenance_not_XR_physical_acquisition_time
         openxr_query_time: optional_when_explicitly_exposed_by_source
@@ -1576,8 +1576,9 @@ dataset:
       - absolute_joint_position_command
       - signed_gripper_travel_command
       policy_role: training_target
-      source_owner: Source-owned deterministic label output packed in canonical order; real uses LeRobot build_dataset_frame,
-        Isaac converter binding remains pending.
+      source_owner: Source-owned deterministic label output packed in canonical order; real uses LeRobot build_dataset_frame;
+        Isaac snapshot recording stores the post-IK preclip degree/mm label and tools.isaac_vr_lerobot_materialize
+        preserves that label in LeRobot action. Physical source qualification and D1 acceptance remain pending.
       processor_chain:
       - lerobot.teleop_action_processor.IdentityProcessorStep
       - lerobot.aggregate_pipeline_dataset_features
@@ -1941,7 +1942,7 @@ simulation:
       reset_distribution_revision: deterministic_bimanual_home_seeded_v1
       workspace_frame: each arm-local base_link
     processors:
-      observation_to_policy: tools.isaac_s1_runtime.native_observation_to_d0 maps the plain S1 state/two-wrist subset to D0 units and RGB; S1 qualifies native embodiment/control/reset and wrist mapping, not a complete D0 v4 training source. The VR source owns the complete three-camera boundary via tools.isaac_vr_capture; profile recording admission remains pending
+      observation_to_policy: tools.isaac_s1_runtime.native_observation_to_d0 maps the plain S1 state/two-wrist subset to D0 units and RGB; S1 qualifies native embodiment/control/reset and wrist mapping, not a complete D0 v4 training source. RUN/DIAG expose the live three-camera boundary via tools.isaac_vr_capture; RECORD persists snapshot-backed transitions and tools.isaac_vr_lerobot_materialize joins three-role offline RGB. Demo admission is implemented; physical source qualification remains pending.
       policy_action_to_native: tools.isaac_s1_runtime.d0_action_to_native preserves the accepted D0 label, then maps named degrees and signed-mm to separate clipped Isaac joint-radian/model-aperture targets
       config_artifact_ids:
       - isaac1103_s1_config
@@ -1960,7 +1961,7 @@ simulation:
     recorder:
       backend: NVIDIA isaacsim.replicator.episode_recorder SessionStorage with public Recordable tracks and explicit control-boundary sampling
       native_format: Episode Recorder HDF5 V2; not a final D0 observation dataset
-      conversion_revision: null
+      conversion_revision: piper_x_isaac_vr_lerobot_materializer_v1
       execution_profile: isaac_vr_record
       source_profile: isaac_human_vr_offline_rgb_v2
     generator:
@@ -5271,7 +5272,7 @@ gates:
     - vr_zed_ffft_validation
     - vr_zed_ffft_core_tests
     - vr_zed_ffft_rpc_tests
-    notes: Injected six-row ZED/FFFT recording, replay, geometry and LeRobot checks provide bounded converter evidence only. No admitted Isaac human-VR demonstration or physical S2 acceptance; D1 remains unresolved.
+    notes: Snapshot-backed V2 recording, committed-transition HDF rows, strict replay, three-role offline RGB, LeRobot v3 conversion/full-read QA and demo-level admission are implemented. Injected six-row ZED/FFFT checks remain bounded converter evidence. S2 is accepted separately with registered Quest 3 operator evidence; source/demo-quality qualification and an admitted Isaac human-VR dataset remain required before D1 acceptance.
   G1:
     state: unresolved
     evidence_ids: []

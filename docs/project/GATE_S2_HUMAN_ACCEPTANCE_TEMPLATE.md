@@ -143,7 +143,8 @@ Use endpoints, center and interpolation defined in canonical `teleop_tuning.sens
 - Recheck both hands' forward/right/up and rotation axes after repeated R3:
 - X shows/hides three distinct live ZED feeds in left wrist / scene / right wrist order:
 - All three feeds correspond to the current canonical camera roles; RECORD stores
-  their state without camera rendering, and offline REPLAY supplies RGB:
+  their state without camera rendering, and offline REPLAY supplies RGB. Hiding
+  RUN previews does not stop canonical observation production:
 - L3 switches head-locked / wall placement once per press; both retain the same
   order and readable images, with no motion or sensitivity change:
 - Aim sensor cameras toward visible preview panels; no panel/recursive image
@@ -158,7 +159,7 @@ Use endpoints, center and interpolation defined in canonical `teleop_tuning.sens
 PRIMARY OPERATOR PATH is distinct from ALREADY ACCEPTED GATE CONFIG. Gate S2 may
 be changed from `unresolved` to `accepted` only when every current observation
 above is PASS, the exact composition's runtime report passes with physical tracking
-for both sides, both accepted wrist cameras remain valid, clean disconnect/shutdown
+for both sides, all three canonical cameras remain valid, clean disconnect/shutdown
 is supported by the retained log, and this completed worksheet is registered as a
 `human_gate` evidence object. Retain required command-test, log and test-output
 evidence and satisfy all prerequisites in `configs/gate_rules.yaml`; reconcile

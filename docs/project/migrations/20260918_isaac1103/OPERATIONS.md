@@ -43,7 +43,10 @@ on the final Isaac61 stack, with status `SELECTED_HUMAN_ACCEPTANCE_PENDING`.
 acceptance remains unresolved; use the
 [current worksheet](../../GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md).
 Only the explicitly selected `robosyn_asset_lab` profile remains experimental.
-VR checks do not qualify the complete S1 contract or record a D1 dataset.
+VR smoke checks do not replace separate S1 validation or admit a D1 dataset.
+`./run-vr record` and `./run-vr replay` implement native recording and offline RGB
+materialization; follow the operator guide for their lifecycle and validation.
+Physical recording qualification and D1 source admission remain pending.
 
 ## Canonical VR automated checks and S1 maintenance
 
@@ -54,8 +57,8 @@ VR checks do not qualify the complete S1 contract or record a D1 dataset.
 ./run-vr diag --xr-smoke
 ```
 
-Separate S1 maintenance uses the bounded complete contract validation and its
-combined preview diagnostics:
+Separate S1 maintenance validates native embodiment, control/reset, task behavior
+and the state/two-wrist-camera subset, with optional combined preview diagnostics:
 
 ```sh
 python3 tools/launch_isaac_s1.py
@@ -69,6 +72,12 @@ and witness cameras are test-only. `--preview-control` intentionally disables
 isolation and must never be used as a normal teleop launch. Both raw and Camera
 buffers are inspected on every captured tick, including reset settling. No test
 uses hardware PIPER commands. Close test sessions before normal teleop.
+
+Use the supported canonical Kit rendering path without `HEADLESS=1`. Current S1
+acceptance does not qualify headless camera rendering or a complete three-camera
+training source; those scopes require their own evidence. RECORD suspends live
+dataset camera rendering and captures native/Fabric state for later replay,
+as described in the operator guide.
 
 ## Frozen materialization
 

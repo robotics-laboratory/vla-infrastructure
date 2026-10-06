@@ -16,4 +16,17 @@ v5.2 hardening is based on verified current behavior:
 
 These facts justify stricter contracts and tests, not new runtime frameworks.
 
+The selected human-VR RECORD path uses Isaac Sim's
+`isaacsim.replicator.episode_recorder` extension directly: upstream
+`SessionStorage` owns HDF5 persistence and buffering, and public `Recordable`
+implementations own native tracks. The project samples immutable pre-action and
+successor state, binds the causal transaction and appends only committed rows
+through its `ExplicitFrameSampler`. Replay uses upstream `SessionReader` and
+`EpisodeReplayer`; the project verifies snapshot/asset/visual identities and
+materializes the three canonical camera roles without physics advancement.
+Isaac Lab `RecorderManager` and Mimic/SkillGen remain upstream workflow candidates
+for generation; they do not own the selected human recorder. The backend and
+source-profile selection live in the resolved contract. Physical qualification
+and D1 admission require their registered evidence.
+
 See `SOURCE_REFERENCES.md` for the first-party references used during this hardening pass.
