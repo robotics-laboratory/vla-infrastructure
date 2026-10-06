@@ -61,6 +61,17 @@ ordered source segments and their separate LeRobot episodes; a true causal gap
 is never filled into a dense trajectory. `operator_stopped` is an honest
 technical recorder outcome and does not determine human task success.
 
+Keep three outcome scopes distinct: the immutable row's causal transition,
+the technical episode's closure metadata, and the saved demo's human task
+classification. Stop or a gap may close an episode whose last row is
+`continued` with `terminated=false` and `success=false`. Its exact successor
+is retained in the row and the hashed `terminal_successor.npz`; closure does
+not relabel the row as task success or add an actionless terminal sample.
+Tracked V2 clutch engagement, hold and release rebase are valid committed rows;
+unknown tracking/reference intervals remain separate technical episodes.
+The materialization manifest retains row outcomes as provenance, while
+`observation.state` and `action` preserve the original `(O_t, A_t)` BC pair.
+
 The `orchestrate` shortcut uses a temporary projection. For admission, use its
 `extract` and `materialize` subcommands separately so every verified projection
 bundle remains available. Repeat these commands for each ordered technical
@@ -98,7 +109,7 @@ dataset admission.
 
 Reuse audit: the NVIDIA recorder owns source artifacts, the existing projection
 and LeRobot tool owns strict conversion/QA, and the resolved contract owns S2
-human evidence. The remaining gap is the small demo-level verifier linking
+human evidence. The implemented demo-level verifier links
 those identities. It runs in the declared core profile; no recorder, LeRobot
 dataset format, evidence registry or runtime framework is replaced.
 At the integration-module size re-audit, the code remains one source/output
@@ -187,8 +198,10 @@ the snapshot, stage, asset-closure, camera-configuration, renderer-configuration
 materialization-revision and output-RGB digests. It joins images to state/action by
 `obs_id` and scene-state-snapshot digest; row/list position is not a join key.
 
-The native HDF is not a D1 dataset by itself. Projection may admit a row only when
-all three materialized camera identities exist and verify against the same `O_t`.
+The native HDF is not a D1 dataset by itself. Extraction first emits a verified
+projection bundle of native state/action/successor rows, before the RGB join.
+LeRobot materialization may include a row only when all three materialized
+camera identities exist and verify against the same `O_t`.
 Missing, duplicate, mismatched or extra-role images fail closed. The projected BC
 sample is `(O_t, A_t)`; `O_(t+1)` and transition/outcome remain provenance and QA
 for causal verification rather than silently shifting the learning pair.

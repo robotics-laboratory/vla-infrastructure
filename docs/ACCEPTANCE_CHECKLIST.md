@@ -8,6 +8,8 @@ This checklist is explanatory. Machine acceptance is `../configs/gate_rules.yaml
 - [ ] no legacy magic placeholders;
 - [ ] no unknown profile/environment/evidence/artifact references;
 - [ ] local artifact hashes verify;
+- [ ] evidence applicability matches the claimed profile, source/config identities
+  and tested scope; a PASS from another gate/runtime is not transferred;
 - [ ] Markdown machine references lint;
 - [ ] migration aliases gone after migration completion.
 
@@ -45,6 +47,8 @@ This checklist is explanatory. Machine acceptance is `../configs/gate_rules.yaml
 - [ ] firmware/profile/API pinned per arm;
 - [ ] home/limits/sign tests pass;
 - [ ] Isaac FK/TCP parity accepted;
+- [ ] S1 native state/two-wrist scope and supported rendering configuration recorded;
+  headless rendering is used only after separate qualification;
 - [ ] MuJoCo FK/TCP parity accepted;
 - [ ] gripper endpoints verified.
 
@@ -62,6 +66,18 @@ This checklist is explanatory. Machine acceptance is `../configs/gate_rules.yaml
 - [ ] diagnostics qualify the same control semantics without a second runtime;
 - [ ] human evidence registered under `configs/gate_rules.yaml`; smoke PASS and
   experimental asset-lab runs are not accepted physical S2 evidence.
+
+## Isaac recording and materialization
+
+- [ ] RECORD uses the shared scene/control path and immutable pre-action
+  snapshot/native state, with no live canonical RGB claim;
+- [ ] only completed causal transactions with a verified successor append native rows;
+- [ ] strict replay opens the retained snapshot, verifies its dependencies and
+  visual provenance, and reports zero physics callbacks;
+- [ ] every admitted observation has all three offline RGB roles joined by exact
+  observation/snapshot identities;
+- [ ] full-read converter/QA and physical recording evidence support source admission;
+  command availability and injected smoke do not accept D1.
 
 ## Evaluation
 

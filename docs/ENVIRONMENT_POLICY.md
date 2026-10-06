@@ -53,8 +53,11 @@ environment with diagnostic observers. Modes do not create environment identitie
 Pins remain in the selected environment and shared S2 config; the canonical VR
 composition carries operator semantics only. See
 [operator operations](project/RUN_VR_OPERATIONS.md) for ownership and rollback.
-Physical S2 acceptance is required. The unresolved D1 recorder has no execution
-profile or working record command.
+Physical S2 acceptance remains required. [[profile:isaac_vr_record]] launches
+`./run-vr record` in the same Isaac environment and records native
+state/action/provenance. [[profile:isaac_vr_replay]] launches `./run-vr replay`
+to verify the retained snapshot and materialize canonical RGB offline. These
+implemented commands do not establish D1 dataset admission or physical acceptance.
 
 ## No hidden mutation
 
@@ -90,6 +93,8 @@ do not invent RPC automatically
 [[profile:piper_motion]]
 [[profile:isaac_env]]
 [[profile:isaac_vr]]
+[[profile:isaac_vr_record]]
+[[profile:isaac_vr_replay]]
 [[profile:isaac_generate]]
 [[profile:isaac_dataset_convert]]
 [[profile:isaac_eval]]

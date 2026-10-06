@@ -50,12 +50,21 @@ Prefer native upstream components:
 ```text
 Isaac Lab
 Isaac Teleop
-RecorderManager
+Isaac Sim Episode Recorder SessionStorage / Recordables / EpisodeReplayer
+Isaac Lab RecorderManager
 Mimic / SkillGen / native datagen
 LeRobot Env/EnvHub evaluation seams
 ```
 
 Use generic Piper/DoublePiper assets only as references unless exact PIPER-X equivalence is proven.
+
+The selected human recorder uses upstream Episode Recorder `SessionStorage` for
+native HDF5 persistence/buffering and public `Recordable` tracks for state.
+The project `ExplicitFrameSampler` owns sampling at the causal control boundary
+and appends committed rows; it does not instantiate an `EpisodeRecorder` scheduler
+or route this path through Isaac Lab `RecorderManager`. Replay uses upstream
+`SessionReader` and `EpisodeReplayer` after project integrity checks. Native
+generation workflows remain candidates for the separate automated source.
 
 ## MuJoCo
 
@@ -99,9 +108,11 @@ when selected. A composition object does not imply experimental gate scope.
 Recording consumes the same base runtime and preserves D0 temporal and action-label
 boundaries. The selected `isaac_vr_record` execution profile writes a native
 snapshot/state/action/provenance artifact under the additive
-`isaac_human_vr_offline_rgb_v2` source profile. This contract selection neither
-admits the current implementation nor resolves D1; canonical RGB and final
-LeRobotDataset v3 samples require verified offline materialization.
+`isaac_human_vr_offline_rgb_v2` source profile. Native recording, strict replay and
+LeRobotDataset v3 conversion are implemented. Implementation and contract
+selection do not establish source admission or resolve D1; canonical RGB requires
+verified offline materialization, and gate acceptance requires the registered
+physical/source and dataset evidence.
 
 ## Three-camera observation boundary
 
@@ -109,13 +120,14 @@ Plain [[gate:S1]] qualifies native embodiment, control/reset behavior and the
 state/two-wrist mapping. Its `observation()` compatibility API is a subset, not a
 complete D0 v4 training source. Historical evidence retains its exact tested scope.
 The human/automated Isaac source profiles own the complete training view; the VR
-composition implements its three-camera production boundary. Recording admission,
-persistence and completed episode admission remain pending. The selected VR runtime
-exposes an in-memory resolved-XR/post-IK preclip decision seam; its bounded
-qualification does not accept a dataset or physical human operation.
+composition implements its live three-camera production boundary. RUN/DIAG expose
+the resolved-XR/post-IK preclip decision seam; RECORD consumes the shared control
+solution with its snapshot-backed observation and completed causal persistence.
+Their bounded implementation checks do not accept a dataset or physical human
+operation. Source and completed-demo admission remain subject to D1 evidence.
 
-VR advances the requested physics steps before one all-or-none capture. Reset
-retains 24 settling steps plus the completion step. Preflight reaches its configured
+RUN/DIAG advance the requested physics steps before one all-or-none live capture.
+Reset retains 24 settling steps plus the completion step. Preflight reaches its configured
 settling boundary; the existing control-loop reset then establishes the first
 eligible observation. Intermediate startup captures are explicitly non-evidence.
 Steady state is observation at P, native target, four 120 Hz physics steps, then
@@ -130,12 +142,13 @@ arrays at the unchanged boundary without acquisition, rendering or physics.
 Consumers run on the simulation thread and must freeze before its next advance.
 Identical pixel content is valid; producer association establishes freshness.
 
-Startup/reset requires a valid bundle. During ordinary RUN a rejected bundle is
-unavailable to capture consumers while existing camera health guards retain their
-bounded-staleness policy. Diagnostic guards remain stricter. Future RECORD will
-define admission/abort behavior separately. The shared RTX pump and 120 Hz render
-cadence are unchanged; capture extraction occurs once per control boundary, even
-when previews are hidden. No per-tick three-camera CPU snapshot is required.
+RUN/DIAG startup/reset requires a valid live bundle. During ordinary RUN a rejected
+bundle is unavailable to capture consumers while existing camera health guards retain their
+bounded-staleness policy. Diagnostic guards remain stricter. RUN/DIAG retain the
+RTX pump per physics integration; capture extraction occurs once per control
+boundary, even when previews are hidden. Physics/control/capture rates describe
+simulation time, not achieved wall-clock throughput. Preview publication has its
+own host-time limit. No per-tick three-camera CPU snapshot is required.
 
 The pinned Kit visualizer's `HEADLESS=1` path can skip its app pump while claiming
 to own it. A Camera counter alone therefore cannot prove current RTX pixels. The
@@ -154,8 +167,19 @@ claim live camera identities. After `A_t` is applied and the successor `O_(t+1)`
 is captured, the runtime completes and commits the causal transaction before one
 native row can be appended. Invalid loops append no data row.
 
+RECORD preserves canonical Camera prims and Recordables but suspends their live
+dataset RenderProducts/annotators. It reads no live canonical RGB. The shared
+native transition still has four physics integrations; rendering/app pumping is
+selected only for the final integration (`F,F,F,T`). RECORD reset performs the
+shared 25 settling integrations with only the final render/pump, then returns
+measured state for the recorder's immutable capture. Startup preflight before
+recording setup and RUN/DIAG retain their live rendering path. These implemented
+schedules do not establish physical performance or recording qualification.
+
 Replay opens the recorded stage and applies the immutable `O_t` snapshot without
-advancing physics, then materializes left-wrist, right-wrist and scene RGB. The
-rendered identities bind the snapshot and the full stage/asset/camera/renderer
+advancing physics, then materializes left-wrist, right-wrist and scene RGB for
+every admitted observation. Replay verifies complete track binding and zero
+physics callbacks; it does not construct the current task scene or rerun actions.
+The rendered identities bind the snapshot and the full stage/asset/camera/renderer
 inputs. Until those three outputs exist and D1 evidence passes, the native artifact
 is explicitly not a canonical dataset.

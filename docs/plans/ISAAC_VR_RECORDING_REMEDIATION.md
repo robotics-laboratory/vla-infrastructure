@@ -257,7 +257,7 @@ Status vocabulary:
 | VRR-012 | Validate private recording/output paths and disk budget | none | `done` (`tests/test_isaac_vr_recording.py`) | Non-absolute, repository-owned, wrong-UID, permissive, existing, and insufficient-space targets fail closed |
 | VRR-020 | Implement immutable pre-action native/Fabric `O_t` capture and one-frame buffer | VRR-001, VRR-002 | `done` (real injected run `20260922T233936232911Z`; buffer invariants) | Captured source identity and state remain unchanged through decision and native application |
 | VRR-021 | Complete and commit the production causal transaction after native transition | VRR-020 | `done` (real injected run `20260922T233936232911Z`; failure/epoch tests) | Production invokes prepare, complete, and commit; every failure/epoch change aborts without persistence |
-| VRR-022 | Append only committed transitions and move rejection data to QA counters | VRR-021 | `done` (3 validator accepts = 3 HDF frames; zero discards in `20260922T233936232911Z`) | `N` validator commits equal `N` HDF frames; no invalid/held zero-action rows are admitted |
+| VRR-022 | Append only committed transitions and move rejection data to QA counters | VRR-021 | `done` (3 validator accepts = 3 HDF frames; zero discards in `20260922T233936232911Z`) | `N` validator commits equal `N` HDF frames; invalid zero-action placeholders are rejected; V2 admits tracked intentional clutch/hold rows |
 | VRR-023 | Propagate run/session/episode/observation/action/native/transition/successor identities | VRR-002 | `done` (strict reader validation and hashed `terminal_successor.npz` in `20260922T233936232911Z`) | A reader can verify every row without process-local state or positional inference |
 | VRR-030 | Select Fabric explicitly for record-side pose sampling and forbid silent demotion | VRR-010 | `done` (shared-pose tests; real Fabric lifecycle smoke `20260922T225844486820Z`) | Manifest records requested/effective backend and a missing FSD path fails before episode start |
 | VRR-031 | Qualify moving robot/object/camera pose parity against Isaac Lab native tensors | VRR-030 | `done` (5-boundary real Kit assay `20260922T235305834853Z`; 13 pure tests) | Retained moving assay passes fixed position/orientation thresholds for every required prim |
@@ -274,7 +274,7 @@ Status vocabulary:
 | VRR-070 | Benchmark production HDF recording against paired no-recording baseline | VRR-031, VRR-042, VRR-062 | `in_progress` (paired harness plus real state/HDF/resource hooks; supported render/XR telemetry and physical pairs pending) | Retained p50/p95/p99, drop/rejection, CPU/GPU/memory/disk metrics meet agreed budget |
 | VRR-080 | Execute physical Quest recording acceptance | VRR-062, VRR-070, S2 physical prerequisite | `blocked` | Human run records useful distinct actions without causal loss and retains required evidence |
 | VRR-090 | Implement LeRobot v3 materializer and full-read dataset QA | VRR-053, VRR-080 | `in_progress` (converter and full-read QA pass on the headless injected artifact; physical admissible source pending VRR-080) | All rows and video streams load, align, and pass schema/task/action/unit/outcome checks |
-| VRR-100 | Add multi-episode operator lifecycle and UX | VRR-090 | `in_progress` (automatic gap segmentation implemented; physical validation and explicit start/stop/reset UX pending) | Repeated start/stop/reset creates independently finalized qualified episodes without restart |
+| VRR-100 | Add multi-episode operator lifecycle and UX | VRR-090 | `in_progress` (gap segmentation, explicit Start/Stop/Save/Discard, separate task classification and reset implemented; physical Quest UX validation pending) | Repeated start/stop/reset creates independently finalized qualified episodes without restart |
 | VRR-101 | Record intentional clutch transitions and keep CloudXR alive across genuine recording gaps | VRR-022, VRR-100 | `in_progress` (CPU clutch continuity regression passes; physical Quest re-test pending) | Tracked grip engage/hold/release are committed causal rows in one episode; tracking and reference gaps still finalize the prior episode before unrecorded physics; the next episode resumes without XR reconnect |
 
 Execution order for the first repair milestone is:
@@ -285,6 +285,66 @@ VRR-030/031 -> VRR-040/041/042 -> VRR-050/051/052 -> VRR-060/061/062`.
 VRR-070 and later tasks must not be used to compensate for a failed correctness
 task. Performance tuning begins only after the recorded transaction and strict
 replay are correct.
+
+### Maintained implementation and qualification scope
+
+The dated branch reviews and checkpoints below retain their original source
+revisions and tested scope. Their V1 selection, rejected clutch holds and
+pending operator UX describe those revisions, not the current selection.
+The current runtime selects snapshot/offline-RGB V2 and records tracked
+`motion`, `clutch_engaged`, `clutch_held` and `clutch_release_rebased` rows.
+Tracking loss/recovery, sensitivity and reference/session changes remain gaps.
+`recordable_teleop_command` in
+[the decision boundary](../../tools/isaac_vr_decision.py) owns this distinction;
+invalid ticks never become zero-action placeholders.
+
+[The operator lifecycle](../../tools/isaac_vr_episode_lifecycle.py) and its
+[runtime composition](../../tools/isaac_s2_runtime.py) implement explicit
+Start/Stop/Save/Discard, separate success/failure/incomplete classification,
+state-only reset and repeated demonstrations. Stop seals the technical source
+before review. A bounded filesystem worker verifies/hashes closed artifacts;
+only matching finalized markers permit saved-demo publication. The current
+[operator guide](../project/RUN_VR_OPERATIONS.md) describes this workflow.
+Physical Quest visibility and repeated-session acceptance still need evidence;
+VRR-100/101 remain `in_progress` and VRR-080 remains `blocked`.
+
+The converter and full-read/DataLoader QA are implemented in
+[the LeRobot materializer](../../tools/isaac_vr_lerobot_materialize.py); the
+[demo admission evaluator](../../tools/isaac_vr_admission.py) links the retained
+segments and outputs to registered physical qualification. Follow the
+[current materialization policy](../DATASET_MATERIALIZATION.md), including a
+retained projection and separate LeRobot episode for every causal segment.
+Technical closure outcome, causal row outcome and human task classification
+are separate. The last committed row may be `continued`; its full exact
+successor is retained independently in `terminal_successor.npz`. Stop does not
+rewrite that row as a successful task terminal.
+
+Headless/injected round trips, CPU regressions and measurements prove only
+their retained scope. Historical PASS outputs do not qualify the current
+checkout, physical Quest behavior or D1 admission. Current implementation is
+not contract-only, but no admitted physical human-VR dataset is established;
+VRR-090 and D1 acceptance remain pending the physical source requirements.
+
+### Open implementation defects
+
+These are repair work, not accepted behavior or reasons to relax qualification:
+
+- RECORD review/classification/reset paths in
+  [the shared S2 loop](../../tools/isaac_s2_runtime.py) can leave before camera
+  accounting while incrementing control steps. The final equality of
+  `camera_valid_frames` and `control_steps` can therefore mark a valid operator
+  lifecycle FAIL. Reconcile the accounting and cover repeated menu/reset paths.
+- First and subsequent episode startup in
+  [the native recorder](../../tools/isaac_vr_recording.py) lack complete rollback
+  when startup callbacks or manifest publication fail after opening HDF storage.
+  Close newly acquired native/storage ownership on every startup failure and
+  retain a non-finalized artifact; test both first and sibling episode startup.
+- `test_async_finalizer_failure_is_observable_and_blocks_publication` in
+  [the recorder tests](../../tests/test_isaac_vr_recording.py) waits for the
+  worker's failed file marker, then assumes its Future is already complete.
+  `_FinalizationOwner.check` observes completed Futures, so this synchronization
+  can race. Repair the test's completion wait while preserving the requirement
+  that finalization failure blocks further recording and saved publication.
 
 ### Implementation checkpoint: 2026-09-23
 

@@ -29,7 +29,10 @@ guide `docs/project/RUN_VR_OPERATIONS.md` was explicitly added at the user's
 request, bringing the set to 91 paths. Step 1 replaces the removed generic S2 launcher entry with the canonical VR
 launcher and explicitly adds the entrypoint, canonical/experimental composition
 configs, composition/guard sources, their regression tests and physical worksheet:
-plus the original registered environment snapshot: 101 selected paths. No other tracked file is implicitly included.
+plus the original registered environment snapshot: 101 selected paths. Documentation
+governance explicitly added six paths, and recording explicitly added its source,
+replay source and regression test, bringing the reviewed set to 110 paths. The
+ordered list remains the membership owner; no other tracked file is implicitly included.
 Add/remove individual paths in this list through review; never derive membership
 from globs or `git ls-files`. Comments start with `#`.
 

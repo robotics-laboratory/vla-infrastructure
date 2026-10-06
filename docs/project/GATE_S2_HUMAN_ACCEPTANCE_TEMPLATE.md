@@ -133,7 +133,8 @@ Use endpoints, center and interpolation defined in canonical `teleop_tuning.sens
 - R3 recenters once per press; no scene reset, target jump or session restart:
 - Recheck both hands' forward/right/up and rotation axes after repeated R3:
 - X shows/hides three distinct live feeds: left wrist, right wrist, scene preview:
-- The third feed remains preview-only; no third canonical D0 camera is claimed:
+- The third feed shows the canonical scene camera (`observation.images.scene`);
+  hiding its preview does not stop observation production:
 - Aim sensor cameras toward visible preview panels; no panel/recursive image
   appears in sensor feeds, with Scene Partitions active:
 - B toggles only backdrop visibility; repeat X/B, hold buttons, and reset while
@@ -144,7 +145,7 @@ Use endpoints, center and interpolation defined in canonical `teleop_tuning.sens
 PRIMARY OPERATOR PATH is distinct from ALREADY ACCEPTED GATE CONFIG. Gate S2 may
 be changed from `unresolved` to `accepted` only when every current observation
 above is PASS, the exact composition's runtime report passes with physical tracking
-for both sides, both accepted wrist cameras remain valid, clean disconnect/shutdown
+for both sides, all three canonical cameras remain valid, clean disconnect/shutdown
 is supported by the retained log, and this completed worksheet is registered as a
 `human_gate` evidence object. Retain required command-test, log and test-output
 evidence and satisfy all prerequisites in `configs/gate_rules.yaml`; reconcile

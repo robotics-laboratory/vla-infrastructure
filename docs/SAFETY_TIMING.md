@@ -60,13 +60,22 @@ joint/action in the selected physical profile. CAN component receive timing,
 oldest-component assembly and wall-to-monotonic calibration remain unchanged;
 a wall-clock drift beyond the existing budget fails closed.
 
-Isaac human recording [[gate:D1]] requires simulation generation, three-camera
-capture barrier, XR session/DeviceIO/submitted/returned/resolved-input identities,
-tracking validity, preclip action binding and completed transition/successor
-proof. Host timestamps are QA/provenance, never physical XR acquisition time.
+Isaac human recording [[gate:D1]] requires simulation generation,
+XR session/DeviceIO/submitted/returned/resolved-input identities, tracking
+validity, preclip action binding and completed transition/successor proof.
+The live-camera profile additionally requires the three-camera capture barrier.
+The selected snapshot/offline-RGB V2 profile instead binds an immutable
+pre-action scene-state snapshot online and requires all three materialized
+camera identities to join exactly to its `obs_id` and snapshot digest offline.
+Readable V1 artifacts use the same snapshot/RGB proof with motion-only admission.
+Neither offline profile claims that live canonical pixels existed during
+teleoperation. Host timestamps are QA/provenance, never physical XR acquisition time.
 Automated Isaac generation [[gate:G1]] uses generator decision/revision/state/seed
 identity and no XR stream. Neither Isaac profile inherits physical age paths.
-These semantic declarations do not qualify the pending runtime bindings.
+The implemented Isaac human recording and materialization boundaries still
+require physical qualification and registered D1 source evidence. Automated
+source binding remains pending G1; implementation or profile selection alone
+does not establish gate acceptance.
 
 Physical XR identity/session acceptance alone does not select or prove a numeric
 source-pose age threshold. The earliest data/control gate owns the measured value and its

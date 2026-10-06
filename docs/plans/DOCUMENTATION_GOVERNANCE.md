@@ -38,8 +38,9 @@ is created by recording these audit findings.
 ## Applicability reviews
 
 - [Old scene specification](../project/PIPER_X_ISAAC_DEMO_SCENE_SPEC.md): review
-  unimplemented proposals, especially the proposed third policy camera, against
-  the selected two-wrist-camera contract and preview-only scene feed. It is not
+  unimplemented proposals against the selected three-camera contract. The scene
+  camera is now a canonical training input as well as an optional preview; this
+  does not adopt the historical proposal's other settings or acceptance claims. It is not
   an approved current implementation plan.
 - [Old XR backlog](../project/ISAAC_XR_BACKLOG_20260915.md): reconcile remaining
   work with later fixes, migration and canonical configuration before selecting
@@ -48,6 +49,34 @@ is created by recording these audit findings.
 Mixed reports have separate maintained owners: current VR operation belongs to
 [RUN_VR_OPERATIONS](../project/RUN_VR_OPERATIONS.md), not the historical RoboSyn
 report or pre-canonical documentation audit.
+
+## Current implementation reconciliation
+
+Current instructions describe the existing live RUN/DIAG, snapshot-backed RECORD,
+strict all-frame replay, LeRobot materialization and demo admission. Implemented
+features and physical qualification are separate facts. The recording plan retains
+its original reviewed revision and dated checkpoints; its maintained task register
+and current-scope section route subsequent work. No historical result is promoted
+to acceptance of changed source bytes by updating this documentation.
+
+Remaining work has separate owners:
+
+- RECORD lifecycle reporting, startup resource rollback and finalizer test
+  synchronization: [recording remediation](ISAAC_VR_RECORDING_REMEDIATION.md).
+- Request retry, malformed/error response handling, complete policy input and
+  RGB retention: [evaluation policy](../EVALUATION_POLICY.md).
+- Physical S2 and D1 source admission: [operator guide](../project/RUN_VR_OPERATIONS.md)
+  and [materialization/admission policy](../DATASET_MATERIALIZATION.md).
+- Headless rendering: [simulation policy](../SIMULATION_POLICY.md); current
+  non-headless qualification does not cover that path.
+
+The [contract validator](../../tools/validate_resolved_contract.py) still needs
+stronger proof checks. Gate validation checks PASS evidence kinds without enforcing
+gate/profile/source/config applicability; local artifact validation skips content
+hashing for existing directories. Require matching registered proof scope and a
+defined directory integrity protocol. The acceptance checklist describes these
+requirements; their documentation is not a claim that the validator already
+enforces them. Historical integrity and external retention debt above remain open.
 
 ## Optional next changes
 

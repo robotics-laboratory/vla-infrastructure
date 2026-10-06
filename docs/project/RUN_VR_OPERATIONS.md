@@ -7,8 +7,8 @@ acceptance and D1 remain unresolved.
 
 RECORD starts in `WAITING` with no demonstration or episode. On the existing
 single controller pipeline, press **X** (left primary) to Start, **Y** (left
-secondary) to Stop, then **X** to Save or **B** (right secondary) to Discard.
-After Save, explicitly classify the saved task with **X** for success, **Y** for
+secondary) to Stop, then **X** to select Save or **B** (right secondary) to Discard.
+After selecting Save, explicitly classify the task with **X** for success, **Y** for
 failure, or **B** for incomplete. Each press is a rising edge; release a button
 before using it in another state. In particular, holding X after Save cannot
 select success. Stop seals the
@@ -31,16 +31,22 @@ classification is interrupted. Discard and completed classification run a state-
 scene/device/processor/IK reset
 and returns to `WAITING`; another Start creates a new causal scope. Disconnect
 seals an active episode conservatively and never saves the demonstration.
+These buttons replace RUN/DIAG's presentation controls. RECORD keeps previews
+off and does not currently consume the R3 recenter button; RUN/DIAG retain the
+configured preview, backdrop and recenter controls.
 
 In RECORD, tracked intentional clutch engagement, hold and release rebase are
 causal action rows in the same technical episode as motion. Both arms may have
-different transitions in one row. The recorded action is the processed IK
-solution actually applied, with per-arm transition provenance. Tracking loss,
+different transitions in one row. The recorded training action is the post-IK,
+preclip float32[14] label in degrees/millimetres, with per-arm transition
+provenance. The original native preclip and applied clipped command in
+radians/metres, residual and saturation are stored separately. Tracking loss,
 tracking recovery rebase, sensitivity switches, session/reference changes and
 missing XR receipts remain gaps. After at least one committed transition, a gap
 causally seals the current episode before the next physics step; the CloudXR session
 stays open and the next control boundary starts a new, independently finalized
-artifact in a sibling directory suffixed `-<demo_id>-episode_000001`, etc.
+artifact. Without `--recordings-root`, its sibling directory is suffixed
+`-<demo_id>-episode_000001`, etc.; with that option, it is placed under the demo ID.
 The closed HDF and terminal successor remain non-finalized until a single bounded
 filesystem worker verifies, hashes and publishes them after the next episode's
 first committed transition. Stop/shutdown waits for that work; a worker failure
@@ -76,8 +82,10 @@ Use the exact client URL and headset setup in the canonical config's
 `cloudxr_web_client`. The host prints these instructions; browser localStorage is
 owned by the headset. The physical launch requires tracking from both controllers.
 Client start/stop controls teleoperation activity. Client reset resets the scene,
-processor and IK and requires fresh rebase. Disconnect holds targets; reconnect
-rebases. Host Ctrl-C preserves available reports and exits 130, never PASS.
+processor and IK and requires fresh rebase. RUN/DIAG disconnect holds targets;
+reconnect rebases. A RECORD disconnect interrupts the active demonstration and
+ends the loop rather than resuming it. Host Ctrl-C preserves available reports
+and exits 130, never PASS.
 
 ```sh
 ./run-vr --dry-run
@@ -92,8 +100,10 @@ rebases. Host Ctrl-C preserves available reports and exits 130, never PASS.
 ```
 
 Dry-run verifies installed pins and selected assets and writes provenance/config,
-without starting simulation. Smoke is a bounded no-client run with an injected
-reset. XR smoke additionally exercises Kit XR; diagnostic XR smoke enables
+without starting simulation. RUN/DIAG smoke is a bounded no-client run with an
+injected reset. Plain RECORD smoke checks only recorder capture/discard/close
+and commits no rows; use injected actions for committed-transition QA.
+XR smoke additionally exercises Kit XR; diagnostic XR smoke enables
 synthetic presentation-button checks. Neither implies physical Quest acceptance.
 Use [the physical worksheet](GATE_S2_HUMAN_ACCEPTANCE_TEMPLATE.md) for acceptance
 of the canonical run mode. Diagnostic qualification uses the same execution profile.
@@ -109,23 +119,35 @@ of the canonical run mode. Diagnostic qualification uses the same execution prof
 | [Environment specification](../../configs/environments/isaac1103/ENVIRONMENT.yaml) | Reproducible SDK/environment installation |
 | [Experimental asset lab](../../configs/experiments/robosyn_asset_lab.yaml) | Explicit optional external asset manifest and experimental classification |
 
-Read current numeric values and button mappings from these configs. This guide
+Read selected numeric values and RUN/DIAG presentation mappings from these configs.
+RECORD's X/Y/B lifecycle mapping is described above and implemented in the shared
+S2 loop and `RecordingLifecycle`. This guide
 intentionally does not maintain another table of settings. The scene sensor `demo_scene` maps explicitly to canonical
 `observation.images.scene`, alongside `left_wrist` and `right_wrist`. Its production
 does not depend on preview visibility.
 
 ```text
-./run-vr [diag|record|replay]
+./run-vr [diag|record]
   -> tools/launch_isaac_vr.py
   -> tools/run_isaac_s1.py --vr-runtime --s2-mode run|diagnostic
   -> tools/isaac_vr_runtime.py::run_vr / VRRuntime
   -> tools/isaac_s2_runtime.py::run_s2
+     -> RUN/DIAG/human RECORD: shared teleoperation loop
+     -> RECORD smoke: recorder lifecycle or injected-transition QA
+
+./run-vr replay
+  -> tools/launch_isaac_vr.py
+  -> tools/run_isaac_s1.py::main (early replay branch)
+  -> tools/isaac_vr_replay.py::replay_from_snapshot
 ```
 
 The launcher generates the lower-level S1 `runtime.yaml` with private asset paths.
 The VR builder reads the canonical composition, and the single S2 loop applies its
 selected controls over the shared S2 semantics. There is no recursive YAML merge.
-Both modes share scene/controllers/processor/IK/cameras/XR and reset/reconnect/shutdown.
+RUN/DIAG share scene/controllers/processor/IK/cameras/XR and reset/reconnect/shutdown.
+Human RECORD reuses control and native actuation while using snapshot observations
+and state-only recording. REPLAY opens the recorded snapshot before current scene
+construction and runs without the S2 device/control loop.
 The default profile has no RoboSyn checkout or asset-manifest dependency.
 
 ## Modes and flags
@@ -144,7 +166,7 @@ statistics and presentation counters. Bounded preview PPM capture is opt-in.
 
 RUN, DIAG and RECORD support `--stack`, `--profile`, `--cloudxr-mode`, `--state-root`,
 `--hud-on-start`, `--max-control-steps`, `--dry-run`, `--smoke` and `--xr-smoke`.
-RECORD also accepts `--performance-window-steps` and
+RUN and RECORD also accept `--performance-window-steps` and
 `--performance-warmup-steps`; supplying either enables the existing S2 timing
 logger without diagnostic camera observers or GPU subprocess sampling.
 `--recordings-root` selects the parent of numbered episodes and excludes
@@ -179,12 +201,22 @@ Every run retains:
 - `result.json`: runtime result and process/shutdown status, when the child reaches
   reporting. Early failures may leave only manifest/config; nonzero exit remains fatal.
 
-DIAG and explicitly profiled RECORD also retain `stdout.log` (combined stdout and
-stderr) and `performance.jsonl`. The launcher prints the run, recording, result
+The human RECORD report has an open bookkeeping defect: review, outcome-selection
+and reset branches can skip camera counters while the final PASS check counts
+every loop iteration. A normal Stop/Save/classify workflow can therefore yield
+`failed` and exit 1 even when episode artifacts were published. This needs a code
+fix; a saved artifact does not turn a failed report into qualification evidence.
+Episode startup also has incomplete rollback after HDF acquisition if later
+manifest publication fails. Both defects remain implementation work under the
+[recording remediation plan](../plans/ISAAC_VR_RECORDING_REMEDIATION.md).
+
+DIAG and explicitly profiled RUN/RECORD also retain `stdout.log` (combined stdout
+and stderr) and `performance.jsonl`. The launcher prints the run, recording, result
 and performance paths on exit. Optional bounded camera
 captures live under `camera_feed_diagnostics/`; scene snapshots use the supplied
-path. RUN does not create the diagnostic bundle. Retain a completed physical
-worksheet and observed shutdown facts alongside the manifest for human evidence.
+path. Unprofiled RUN does not retain the stdout/performance logs. Retain a
+completed physical worksheet and observed shutdown facts alongside the manifest
+for human evidence.
 
 If a pin check fails, restore the declared clean SDK/model installation rather than
 patching packages. A missing RoboSyn checkout affects only the asset-lab profile.
@@ -200,7 +232,7 @@ For a later physical Quest recording, connect the headset normally and stop with
 Ctrl-C. This command does not establish physical acceptance by itself:
 
 ```sh
-ROOT="/data/ebulochkin/vla-runtime/manual-record-04/$(date +%Y%m%dT%H%M%S)"
+ROOT="/data/$(id -un)/vla-runtime/manual-record/$(date +%Y%m%dT%H%M%S)"
 ./run-vr record \
   --state-root "$ROOT/run/host" \
   --run-dir "$ROOT/run" \
@@ -222,10 +254,15 @@ launch, including dry-run: existing run bundles are never overwritten. The layou
     runtime.yaml
     host/                 # existing Kit/CloudXR, cache, asset and temporary state
   recordings/
-    episode_000000/
-    episode_000001/
-    episode_000002/
-    ...
+    episode_000000/        # first segment of the first demonstration
+    <first-demo-id>/
+      episode_000001/
+      episode_000002/
+    <next-demo-id>/
+      episode_000000/
+    saved_demos/<demo_id>.json
+    discarded_demos/<demo_id>.json
+    interrupted_demos/<demo_id>.json
 ```
 
 Every episode retains the normal native `session.hdf5`, `manifest.json`,
@@ -283,8 +320,11 @@ python tools/summarize_vr_performance.py "$(printf '%s\n' /data/$(id -un)/vla-ru
 The dependency-free readout rejects malformed, incomplete or unmeasured logs.
 It prints warmup-excluded control statistics, stage mean/p95, and separately
 labelled non-additive nested stages. These are host timings without added CUDA
-synchronization. Effective Hz excludes logging and inter-control work; the
-instrumentation-write statistic excludes summary/flush and timer overhead.
+synchronization. `effective_hz` describes the control body and excludes logging
+and inter-control work. `wall_effective_hz`, wall RTF and wall deadline statistics
+use start-to-start intervals, including inter-control work and excluding the
+interval crossing warmup. The instrumentation-write statistic excludes
+summary/flush and timer overhead.
 Blackfire's separate paired recorder benchmark remains the resource and recorder
 overhead evidence owner. Unmeasured metrics must not be inferred as zero.
 
@@ -309,12 +349,12 @@ around the initial state so long benchmarks do not accumulate into joint limits.
 
 ## Feature development
 
-Keep long-lived implementation worktrees under `.worktrees/`; this branch uses
-`.worktrees/run-vr-primary`. Keep runtime state outside the checkout.
+Use the assigned checkout/worktree at its intended commit. Keep long-lived
+implementation worktrees under `.worktrees/` and runtime state outside the checkout.
 
 Experimental shared implementation → `./run-vr diag` → automated + physical
-qualification → promote canonical config/status → `./run-vr` inherits it → future
-record consumer inherits the same base semantics. Promotion changes selection,
+qualification → promote canonical config/status → RUN and RECORD inherit the
+selected shared control semantics. Promotion changes selection,
 not Python ownership. Never copy control loops or builders across modes.
 RECORD reuses that shared scene, XR, controller, processor, IK and native actuation
 path. It exports one `stage_snapshot.usd`, records static scene from that snapshot,
@@ -326,29 +366,35 @@ RGB and preview panels are off in RECORD; no RGB is read, retained or uploaded.
 `./run-vr replay --recording <session.hdf5> --episode 0` uses the unmodified NVIDIA
 `SessionReader` and `EpisodeReplayer` with the USD pose backend. It disables the S2
 decision loop, controller actuation and physics stepping. Add
-`--render-cameras <output-dir>` to write first/middle/last 640x480 RGB images for
-`left_wrist`, `right_wrist` and `scene` from synchronously rendered replay state.
+`--render-cameras <output-dir>` to write 640x480 RGB images for every committed
+observation and each of `left_wrist`, `right_wrist` and `scene` from synchronously
+rendered replay state, with their materialization identities.
 The native record artifact is not yet a final D0 observation dataset; canonical
 three-camera images are produced at replay/materialization. Runtime round-trip
 qualification remains pending manual validation outside the agent execution host.
 
-For the bounded manual round-trip, choose a new private directory and run this
-exact command from the branch checkout (the second command writes the only
-machine-readable validation report):
+For bounded automated injected-transition round-trip QA, choose a new private
+directory and run these commands from the intended checkout. The second command
+writes the strict replay report; this is not physical Quest or human-VR admission:
 
 ```sh
 set -e
 export OMNI_KIT_ACCEPT_EULA=Y ISAACLAB_CXR_ACCEPT_EULA=1
-recording="$HOME/.local/state/piper-x/recordings/manual-$(date +%Y%m%dT%H%M%S)"
-./run-vr record --smoke --max-control-steps 30 --recording-dir "$recording"
-./run-vr replay --smoke --recording "$recording/session.hdf5" --episode 0 \
+recording="$HOME/.local/state/piper-x/recordings/injected-$(date +%Y%m%dT%H%M%S)"
+./run-vr record --smoke --injected-actions --injected-count 30 --recording-dir "$recording"
+./run-vr replay --recording "$recording/session.hdf5" --episode 0 \
   --render-cameras "$recording/replay-renders" --replay-report "$recording/validation_report.json"
 ```
 
 Pass only when `session.hdf5`, `stage_snapshot.usd`, and
-`validation_report.json` exist; the report must show at least 30 applied frames,
-unchanged `physics_steps_before/after`, `native_action_replay: false`, valid D0
-observation/action indexing, and nine first/middle/last role images.
+`validation_report.json` exist. For this injected count, the replay report must
+show `frames_applied: 30`, `physics_callbacks: 0`, `native_action_replay: false`,
+`strict_policy: true`, every required group in `prepared_groups` and 30 applied
+frames per group in `applied_group_frames`. It must retain 30 D0 observation IDs
+and `d0.committed_count: 30`, plus 90 render entries covering every observation
+and all three roles. The output count is three images per committed row; there
+is no first/middle/last-only mode. Plain `record --smoke` produces no replayable
+committed episode, and REPLAY rejects `--smoke` and XR/CloudXR options.
 
 ## Historical references
 
@@ -359,11 +405,14 @@ the machine sources and launch path above.
 
 ## Observation capture availability
 
-All three cameras publish one boundary after reset completion or four control
-substeps. Scene capture remains active while previews are hidden. RUN keeps only
-the current GPU-backed images and immutable identity/state; it does not record
+RUN/DIAG attempt one all-or-none three-camera capture after reset completion or
+four control substeps. Scene capture remains active while previews are hidden.
+Rejected bundles publish no observation identity; ordinary RUN retains its
+configured camera-health/staleness policy. RUN keeps only the current GPU-backed
+images and immutable identity/state; it does not record
 actions or episodes. Consumers must use a successful current capture before the
-next transition.
+next transition. RECORD instead captures native/Fabric state snapshots and
+materializes the three camera roles offline; it does not publish live RGB captures.
 
 Use canonical Kit rendering without `HEADLESS=1`. The pinned headless Kit path
 can advance camera counters without pumping fresh pixels; the capture barrier
@@ -373,9 +422,11 @@ For capture validity and S1 scope, see the
 
 ## In-memory decision boundary
 
-The shared loop latches the qualified three-camera observation before one synchronous
-XR update. Its owned input receipt records both resolved controller tensor groups,
-the exact world transform, session/reference/update epochs and matching upstream
+For eligible RUN/DIAG decisions, the shared loop latches the qualified live
+three-camera observation before one synchronous XR update. Human RECORD uses the
+immutable scene-state snapshot at the same pre-action boundary. The owned input
+receipt records both resolved controller tensor groups, the exact world transform,
+session/reference/update epochs and matching upstream
 request/result IDs. These are application provenance, not physical acquisition time.
 The post-IK solution exposes immutable float32[14] preclip degree/mm labels and
 separate original native radians/metres, clipped targets, residuals and saturation.
@@ -384,14 +435,18 @@ Native actuation never converts the float32 label back to radians.
 `env.last_control_decision` and `env.prepared_control_transaction` expose the latest
 eligible applied decision and validator preparation. They are cleared on each loop;
 RUN aborts pending validator work on the next loop and never claims a committed
-transition. A future recording consumer must freeze camera pixels at the existing
-observation boundary, bind the native write and successful successor, then commit.
-No episode buffer or recording storage is installed.
+transition. RECORD buffers the pre-action snapshot, binds native actuation and
+the successful successor, then persists only a completed causal commit through
+the existing native recorder. The exact successor can become the next row's
+pre-action observation without resampling. Its stored snapshot identities are
+joined to offline RGB during materialization.
 
 Control tick IDs count eligible attempts and never restart on reset/recenter.
-Inactive sessions, invalid tracking, initial recovery and release/rebase frames
-retain existing RUN holds but are ineligible. Reset discards the already-polled
-action; the next loop acquires fresh input after the reset boundary. Recenter
+Inactive sessions, invalid tracking and tracking/session/reference recovery
+rebases retain existing RUN holds but are ineligible. Tracked intentional clutch
+engagement, hold and release rebase are eligible transitions; release rebase
+emits zero Cartesian delta. Reset discards the already-polled action; the next
+loop acquires fresh input after the reset boundary. Recenter
 invalidates the reference immediately and uses the existing hold/rebase path.
 State, reference, session, update reuse or processor-generation mismatch rejects
 application of a pending eligible solution.

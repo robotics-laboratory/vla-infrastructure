@@ -33,9 +33,11 @@ these settings do not guarantee 30 Hz in wall time.
 
 ## How recording works
 
-During recording, the system captures native/Fabric scene state and processed
-actions through NVIDIA Episode Recorder. Dataset camera rendering and live RGB
-reads are suspended. Four physics steps use **F,F,F,T** rendering: one final
+During recording, the system captures native/Fabric scene state and post-IK,
+preclip training actions through NVIDIA Episode Recorder. Training labels use
+degrees/millimetres; the applied clipped native command in radians/metres and
+its residual/saturation are stored separately. Dataset camera rendering and live
+RGB reads are suspended. Four physics steps use **F,F,F,T** rendering: one final
 render/Kit pump per control transition, retaining the XR presentation path.
 
 After recording, the saved states are replayed to render the three camera views.
@@ -66,8 +68,10 @@ RTX 4090. Physical VR operation requires a Quest 3, the CloudXR client and
 accepted NVIDIA Isaac Sim/CloudXR EULAs.
 
 Core tooling uses Python 3.12.13, `uv` and LeRobot 0.6.1. Isaac runs in a separate
-pinned environment with Isaac Sim 6.1, Kit 110.3 and Isaac Lab. SDKs, assets,
-recordings and generated datasets live outside the checkout under `/data`.
+pinned environment with Isaac Sim 6.1, Kit 110.3 and Isaac Lab. Shared SDKs and
+assets live under `/data`; runtime state and recordings default to a private
+directory under `/data` for each account. Explicit private output paths outside
+the checkout are also supported. Keep generated datasets outside the checkout.
 
 Install the core environment:
 
@@ -108,10 +112,12 @@ Recording starts in `WAITING`:
 1. Press **X** to start.
 2. Press **Y** to stop.
 3. Press **X** to save or **B** to discard.
-4. After saving, press **X** for success, **Y** for failure or **B** for incomplete.
+4. After selecting Save, press **X** for success, **Y** for failure or **B** for incomplete.
 
-Release each button before the next press. The host reports lifecycle changes
-and output paths. Saved-demo metadata groups the technical recording segments.
+Release each button before the next press. The saved-demo index is published
+only after task outcome selection; saved failure and incomplete demos remain
+operator-retained. The host reports lifecycle changes and output paths.
+Saved-demo metadata groups the technical recording segments.
 
 Follow [dataset materialization](docs/DATASET_MATERIALIZATION.md) to extract the
 recording, render offline RGB, create LeRobot outputs and evaluate admission.

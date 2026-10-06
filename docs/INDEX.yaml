@@ -473,7 +473,9 @@ documents:
   owner: vr.operations
   mutable: true
   gates:
+  - D0
   - S2
+  - D1
 - path: docs/project/integrations/20260918_kit1103_preview/README.md
   kind: experiment
   status: historical

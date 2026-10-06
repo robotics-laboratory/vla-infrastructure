@@ -85,10 +85,16 @@ Retain `run_manifest.json`, generated config and exact source/config hashes.
 
 Experimental implementation -> `./run-vr diag` -> automated and physical
 qualification -> promote selected config/status -> `./run-vr` inherits the feature
--> future record consumer inherits the same base semantics.
+-> RECORD consumes the same base semantics.
 Promotion changes config/status, never copies Python implementation. There is one
 scene builder and control loop with mode-specific observers/side effects.
-Recording remains a later D1 task; no record command or dataset is created here.
+`./run-vr record` implements native snapshot/state/action recording and causal
+commit; `./run-vr replay` verifies that artifact and materializes RGB offline.
+Physical S2 acceptance, recording qualification and D1 dataset admission remain
+separate work. Follow the maintained
+[recording remediation plan](plans/ISAAC_VR_RECORDING_REMEDIATION.md) for their
+completion checks. Implemented commands and offline round-trips do not accept
+those gates.
 
 ## Mandatory implementation discipline
 
