@@ -1,4 +1,4 @@
-"""Pinned Candidate B tests for the narrow S2 relative-reference adapter."""
+"""Native unit tests against the pinned Isaac 6.1 teleop stack; no Kit/XR."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
             version = importlib.metadata.version("isaacteleop")
             if version != "1.4.98rc1":
                 raise unittest.SkipTest(
-                    f"requires Candidate B isaacteleop 1.4.98rc1, found {version}"
+                    f"requires pinned isaacteleop 1.4.98rc1, found {version}"
                 )
             from isaacteleop.retargeters import Se3RetargeterConfig
             from isaacteleop.retargeting_engine.deviceio_source_nodes import (
@@ -49,7 +49,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
                 _FreshVisibleFeedUpdates,
             )
         except ModuleNotFoundError as exc:
-            raise unittest.SkipTest(f"Candidate B teleop stack unavailable: {exc}") from exc
+            raise unittest.SkipTest(f"Pinned Isaac teleop stack unavailable: {exc}") from exc
 
         cls.Se3RetargeterConfig = Se3RetargeterConfig
         cls.ControllersSource = ControllersSource
@@ -303,6 +303,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
 
     def test_demo_display_edges_hide_panels_without_closing_rgb_source(self) -> None:
         import torch
+        from isaaclab_teleop.isaac_teleop_cfg import XrCameraFeedCfg
 
         class Container:
             def __init__(self):
@@ -315,18 +316,24 @@ class IsaacS2UpstreamTests(unittest.TestCase):
             def hide(self):
                 self.hide_count += 1
 
+        class Panel:
+            def __init__(self):
+                self._container = Container()
+                self._component = SimpleNamespace(
+                    width=0.36,
+                    height=0.31,
+                    unit_to_pixel_scale=640 / 0.36,
+                    resolution_scale=1.0,
+                )
+                self.close_count = 0
+
+            def close(self):
+                self.close_count += 1
+
         class Feed:
             def __init__(self):
-                self.panel = SimpleNamespace(
-                    _container=Container(),
-                    _component=SimpleNamespace(
-                        width=0.36,
-                        height=0.31,
-                        unit_to_pixel_scale=640 / 0.36,
-                        resolution_scale=1.0,
-                    ),
-                )
-                self.cfg = type("Cfg", (), {"camera_name": "wrist"})()
+                self.panel = Panel()
+                self.cfg = XrCameraFeedCfg(camera_name="wrist")
                 self.image_source = None
                 self.image = torch.full((2, 2, 4), 255, dtype=torch.uint8)
                 self.upload_image = self.image.clone()
@@ -334,9 +341,16 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         class Session:
             def __init__(self):
                 self._manager = None
+                self.wall_panels = []
+                self._presenter = SimpleNamespace(create_panel=self.create_panel)
                 self.bind_count = 0
                 self.refresh_count = 0
                 self.close_count = 0
+
+            def create_panel(self, descriptor, width, height):
+                panel = Panel()
+                self.wall_panels.append(panel)
+                return panel
 
             def bind(self, _env):
                 self.bind_count += 1
@@ -355,6 +369,10 @@ class IsaacS2UpstreamTests(unittest.TestCase):
             "vr_camera_feeds": {
                 "quest_button": "X",
                 "layout": {"placement": "head_locked"},
+                "wall_layout": {
+                    "placement": "world", "panel_width_m": 0.36,
+                    "world_position_m": [0.0, 0.0, 1.5],
+                },
             },
         }
         runtime.display_control = "left_primary_click"
@@ -373,6 +391,9 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         self.assertEqual(runtime._feed_session.bind_count, 1)
         self.assertEqual(runtime._feed_session.refresh_count, 1)
         self.assertTrue(all(feed.panel._container.hide_count == 1 for feed in feeds))
+        self.assertEqual(len(runtime._feed_session.wall_panels), len(feeds))
+        self.assertTrue(all(panel._container.hide_count == 1
+                            for panel in runtime._feed_session.wall_panels))
 
         runtime.consume_display_button(1.0)
         self.assertTrue(runtime._display_visible)
@@ -396,6 +417,8 @@ class IsaacS2UpstreamTests(unittest.TestCase):
 
         runtime.close()
         self.assertEqual(runtime._feed_session.close_count, 1)
+        self.assertTrue(all(panel.close_count == 1
+                            for panel in runtime._feed_session.wall_panels))
 
     def test_demo_recenter_is_edge_triggered_and_uses_upstream_xr_teleport(self) -> None:
         runtime = self.VRRuntime.__new__(self.VRRuntime)
@@ -865,10 +888,6 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         self.assertEqual(runtime._backdrop_toggle_count, 2)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class XrDecisionSourceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -1018,3 +1037,7 @@ class XrDecisionSourceTests(unittest.TestCase):
             for side in ('left_rad_m', 'right_rad_m'):
                 self.assertEqual(getattr(old_applied[-1], side).tobytes(),
                                  getattr(new_applied[-1], side).tobytes())
+
+
+if __name__ == "__main__":
+    unittest.main()

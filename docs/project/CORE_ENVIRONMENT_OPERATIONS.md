@@ -42,4 +42,26 @@ headset run; see the
 D1 dataset source admission remains unresolved. This core host diagnostic is a
 separate real-XR profile.
 
-Canonical offline checks are defined by the `offline_tests` execution profile in the live contract. No hardware-motion command belongs in this document.
+## Required project checks
+
+[[profile:offline_tests]] checks core code and deliberately deselects the
+`isaac_upstream` tests. [[profile:isaac_upstream_tests]] runs those tests with
+standard-library `unittest` in the exact pinned Isaac environment. The runner
+verifies the SDK checkout, spec hashes and installed pins; missing imports,
+skips, an empty suite and failures are errors. It does not start Kit or XR.
+The SDK does not need pytest or LeRobot installed.
+
+Use [[profile:project_validation]] to require both results from the core
+environment in one command:
+
+```bash
+uv run --frozen --no-sync python tools/check_isaac_upstream.py --all
+```
+
+A core-only PASS does not establish upstream coverage. A workstation without
+the pinned SDK can run core checks, but cannot complete project validation.
+Physical Quest acceptance and dataset source admission remain separate.
+
+Canonical commands and environment ownership are defined by the execution
+profiles in the live contract. No hardware-motion command belongs in this
+document.

@@ -128,11 +128,14 @@ def _bundle(
     tmp_path: Path,
     frames: int = 2,
     source_profile: str = "isaac_human_vr_offline_rgb_v1",
+    image_shape: tuple[int, int, int] = materialize.IMAGE_SHAPE,
 ) -> tuple[Path, dict[str, np.ndarray]]:
     arrays = _arrays(frames)
     path = tmp_path / "bundle"
     source = _source()
     source["source_profile"] = source_profile
+    for camera in source["visual_identity"]["camera_roles"].values():
+        camera["resolution"] = [image_shape[1], image_shape[0]]
     materialize._write_projection_bundle(path, arrays, source)
     return path, arrays
 
@@ -150,7 +153,10 @@ def test_clutch_profile_projection_preserves_exact_row_count_and_order(tmp_path:
     np.testing.assert_array_equal(loaded["action"], arrays["action"])
 
 
-def _report(tmp_path: Path, arrays: dict[str, np.ndarray]) -> Path:
+def _report(
+    tmp_path: Path, arrays: dict[str, np.ndarray],
+    image_shape: tuple[int, int, int] = materialize.IMAGE_SHAPE,
+) -> Path:
     images = tmp_path / "rgb"
     images.mkdir()
     renders: list[dict[str, object]] = []
@@ -158,7 +164,7 @@ def _report(tmp_path: Path, arrays: dict[str, np.ndarray]) -> Path:
         for role_index, role in enumerate(materialize.CAMERA_ROLES):
             # Every stream and every frame has a distinguishable RGB digest.
             value = (20 + role_index * 70 + frame * 15) % 256
-            pixels = np.full(materialize.IMAGE_SHAPE, value, dtype=np.uint8)
+            pixels = np.full(image_shape, value, dtype=np.uint8)
             path = images / f"{frame}-{role}.png"
             Image.fromarray(pixels).save(path)
             digest = _sha256(path)
@@ -169,7 +175,7 @@ def _report(tmp_path: Path, arrays: dict[str, np.ndarray]) -> Path:
                     "camera_role": role,
                     "path": str(path),
                     "dtype": "uint8",
-                    "shape": list(materialize.IMAGE_SHAPE),
+                    "shape": list(image_shape),
                     "sha256": digest,
                     "rgb_sha256": digest,
                     "obs_id": str(arrays["obs_id"][frame]),
@@ -292,8 +298,9 @@ def test_image_join_fails_closed_without_publishing_output(
 @pytest.mark.parametrize(
     "source_profile", ["isaac_human_vr_offline_rgb_v1", "isaac_human_vr_offline_rgb_v2"]
 )
+@pytest.mark.parametrize("image_shape", [materialize.IMAGE_SHAPE, materialize.LEGACY_IMAGE_SHAPE])
 def test_materializes_v3_videos_and_full_reads_every_stream(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, source_profile: str
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, source_profile: str, image_shape
 ) -> None:
     from lerobot.datasets.lerobot_dataset import LeRobotDataset
 
@@ -310,8 +317,8 @@ def test_materializes_v3_videos_and_full_reads_every_stream(
             assert Path(staged).is_file()
 
     monkeypatch.setattr(LeRobotDataset, "add_frame", assert_synchronous_staging)
-    bundle, arrays = _bundle(tmp_path, source_profile=source_profile)
-    report = _report(tmp_path, arrays)
+    bundle, arrays = _bundle(tmp_path, source_profile=source_profile, image_shape=image_shape)
+    report = _report(tmp_path, arrays, image_shape)
     output = tmp_path / "dataset"
     task = "Move both cubes to their matching plates."
 
@@ -325,7 +332,10 @@ def test_materializes_v3_videos_and_full_reads_every_stream(
 
     assert result["frames"] == 2
     assert staged_frames == 2
-    assert result["schema_fingerprint_sha256"] == materialize.SCHEMA_FINGERPRINT
+    assert result["schema_fingerprint_sha256"] == (
+        materialize.SCHEMA_FINGERPRINT if image_shape == materialize.IMAGE_SHAPE
+        else materialize.LEGACY_SCHEMA_FINGERPRINT
+    )
     assert result["task_id"] == "dual_cube_to_matching_plates"
     assert result["task_label"] == task
     assert result["task_label_revision"] == materialize.TASK_LABEL_REVISION
@@ -360,6 +370,10 @@ def test_materializes_v3_videos_and_full_reads_every_stream(
     )
     np.testing.assert_array_equal(loaded[1]["action"].numpy(), arrays["action"][1])
     assert loaded[0]["task"] == task
+    for role in materialize.CAMERA_ROLES:
+        assert tuple(loaded[0][f"observation.images.{role}"].shape) == (
+            3, image_shape[0], image_shape[1]
+        )
     # The reverse-ordered report still joined frame 0 to its darker identity.
     assert (
         loaded[0]["observation.images.scene"].mean().item()

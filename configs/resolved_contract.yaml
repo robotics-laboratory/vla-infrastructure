@@ -172,7 +172,7 @@ environments:
     - Ubuntu22.04/24.04 x86_64; RTX4080+16GB VRAM;32GB RAM; SSD
     - Tested RTX4090 / driver580.159.03 / CUDA12.8
     - Each Linux account requires readable shared SDK/assets and private writable /data/<username>; port48322 exclusive
-    - Six inherited upstream metadata overrides remain documented; required final S1/S2 machine paths pass; physical Quest S2 unresolved
+    - Six inherited upstream metadata overrides remain documented; physical S2 acceptance covers the retained f2ac4ea RUN/RECORD sessions and operator checklist, with later stop reporting checked automatically only
     canonical_launch_prefix: UV_PROJECT_ENVIRONMENT=/data/vla-infrastructure/isaac61_production/env uv run --project /data/vla-infrastructure/isaac61_production/IsaacLab --frozen --no-sync --no-managed-python
   mujoco:
     id: mujoco
@@ -212,7 +212,28 @@ execution_profiles:
     - run
     - pytest
     - -q
+    - -m
+    - not isaac_upstream
     prerequisites: []
+  isaac_upstream_tests:
+    environment: isaac
+    working_directory: .
+    command:
+    - python
+    - tools/check_isaac_upstream.py
+    prerequisites:
+    - Exact clean Isaac SDK and frozen production environment are readable
+    - CPU upstream unit tests only; no Kit, XR session or physical action
+  project_validation:
+    environment: core
+    working_directory: .
+    command:
+    - python
+    - tools/check_isaac_upstream.py
+    - --all
+    prerequisites:
+    - Core dependencies and development group are materialized from the frozen project lock
+    - Exact clean Isaac SDK and frozen production environment are readable
   quest_xr_real:
     environment: core
     working_directory: .

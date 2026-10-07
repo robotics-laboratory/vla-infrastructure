@@ -341,6 +341,18 @@ original failures and native exit codes remain retained.
 
 ### Current audit compatibility repairs
 
+The upstream unit suite runs separately in the pinned Isaac environment via
+`tools/check_isaac_upstream.py`; the combined required check is
+[[profile:project_validation]]. Core deselection is explicit and the native
+runner rejects missing dependencies, skipped tests and an empty discovery.
+The camera display fixture follows the current presenter/layout lifecycle,
+and direct unittest discovery includes the XR decision-source cases.
+
+Historical 640x480 materialization retains its selected image geometry in
+both LeRobot feature creation and full-read QA. It remains a separate schema
+fingerprint, without resize or native SVGA admission. The converter's QA uses
+the existing canonical feature factory and upstream dataset reader.
+
 No-client RUN/RECORD audits consume the existing host stop predicate before a
 new injected native command. A transition already applied completes its exact
 successor and causal commit; partial audits retain actual completed counts,

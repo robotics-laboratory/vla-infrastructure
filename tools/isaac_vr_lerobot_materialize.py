@@ -886,7 +886,7 @@ def _qa_lerobot_dataset(
         raise MaterializationError(
             f"LeRobot full-read frame count mismatch: expected {frames}, got {len(dataset)}"
         )
-    expected_features = canonical_lerobot_features()
+    expected_features = canonical_lerobot_features(image_shape)
     for key, expected in expected_features.items():
         actual = dataset.features.get(key)
         if not isinstance(actual, dict):
