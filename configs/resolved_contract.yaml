@@ -95,6 +95,11 @@ migration:
     evidence_ids:
     - gate_a_piperx_adapter_hardening_review
     - gate_a_piperx_adapter_hardening_tests
+  - gate: E0
+    reason: unsupported_dependency
+    summary: NARROW CORE CODEC ABI AMENDMENT — TorchCodec 0.11.1 could not load against retained Torch 2.7.1; Linux x86_64 now selects compatible 0.5.0, with frozen candidate closure, real decoder reads and complete core plus native Isaac unit checks. Historical baseline bytes and physical proof scopes are preserved.
+    evidence_ids:
+    - core_upstream_dependency_refresh
 taxonomy:
   runtime_names:
   - real
@@ -2087,6 +2092,36 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  core_codec_candidate_av1_decode:
+    kind: test_output
+    sha256: 7b4c99e92fdefd913452cee4689e681eb1ed95c229c33a8ce7591c7fd373c064
+    path: docs/evidence/E0/20261007_upstream_dependency_refresh/codec_av1_decode.json
+    uri: null
+    description: Full sixty-row three-camera native-SVGA AV1 read compared against PyAV
+  core_codec_candidate_decode:
+    kind: test_output
+    sha256: faeef74090f0619ead25a53f7f76d2f6a2247b55eeb7c11c481729ae384e2d60
+    path: docs/evidence/E0/20261007_upstream_dependency_refresh/codec_decode.json
+    uri: null
+    description: Native CPU TorchCodec and explicit LeRobotDataset three-row round-trip
+  core_codec_candidate_dependencies:
+    kind: test_output
+    sha256: 3269ab5abd2233dbc96fe7d3c9962b38d11513b66787b3492a55b898205303aa
+    path: docs/evidence/E0/20261007_upstream_dependency_refresh/core_dependencies.json
+    uri: null
+    description: Read-only candidate core lock, closure, editable origin, metadata and decoder-import checks
+  upstream_dependency_refresh_tests:
+    kind: test_output
+    sha256: 3c6b0d06613f45b30870707d4d05a11166b63543b5086e41c976d27ea6cfaec1
+    path: docs/evidence/E0/20261007_upstream_dependency_refresh/project_validation.log
+    uri: null
+    description: Raw core 777 PASS and native Isaac 28 PASS without skipped tests
+  upstream_dependency_refresh_checks:
+    kind: test_output
+    sha256: 0669da808e6fc80def77be6c055fe795db4a5187b4b1e2163c06d3a2f2ef3519
+    path: docs/evidence/E0/20261007_upstream_dependency_refresh/checks.json
+    uri: null
+    description: Exact clean-source combined project validation, fingerprints, retained outputs and scoped limitations
   core_project_spec_20261007_baseline:
     kind: environment_spec
     sha256: 5c16074e19e3a10e775189ec8bc336a4558e9e9610ca24de93ffbac492c997b7
@@ -3384,6 +3419,26 @@ artifacts:
     uri: null
     description: Concrete S2 frames, axes, XYZW rotation, gains, clutch/rebase, gripper, tracking, reset, upstream retargeting/IK, and unchanged camera configuration
 evidence:
+  core_upstream_dependency_refresh:
+    kind: command_test
+    status: pass
+    summary: Compatible core decoder and required core plus pinned Isaac unit tests pass on the exact retained source; historical physical evidence retains its original scope.
+    timestamp: '2026-10-07T00:23:09.611107+00:00'
+    command: "UV_PROJECT_ENVIRONMENT=/data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env UV_CACHE_DIR=/tmp/vla-audit-uv-cache HF_HOME=/tmp/vla-final-hf HF_DATASETS_CACHE=/tmp/vla-final-hf/datasets XDG_CACHE_HOME=/tmp/vla-final-xdg PYTHONDONTWRITEBYTECODE=1 uv run --frozen --no-sync python tools/check_isaac_upstream.py --all"
+    artifact_ids:
+    - core_uv_lock_20261007_codec_compatibility
+    - core_project_spec_20261007_codec_compatibility
+    - upstream_dependency_refresh_checks
+    - upstream_dependency_refresh_tests
+    - core_codec_candidate_dependencies
+    - core_codec_candidate_decode
+    - core_codec_candidate_av1_decode
+    repository: null
+    revision_type: commit
+    revision: f764cd8e0ae7b20731d7063f53cfd58576bf3905
+    path: docs/evidence/E0/20261007_upstream_dependency_refresh/checks.json
+    symbol: null
+    notes: Exact clean tested commit and input hashes are retained; subsequent evidence registration is validated separately. CPU and synthetic data only; no new vendor ABI, Kit, Quest or D1 qualification. Unchanged Gate B Teleop dependency pins now reference the selected lock while historical physical proof keeps its original inputs.
   vr_s2_operator_stop_qualification:
     kind: command_test
     status: pass
@@ -5100,11 +5155,19 @@ gates:
     state: accepted
     evidence_ids:
     - v43_e0_offline_tests
+    - core_upstream_dependency_refresh
     artifact_ids:
     - core_uv_lock__other_0a0ed027
+    - core_project_spec_20261007_baseline
     - core_uv_lock_20261007_codec_compatibility
+    - core_project_spec_20261007_codec_compatibility
     - pre_contract_offline_runtime_tests
-    notes: Historical core proof remains scoped to the preserved baseline lock; compatible codec candidate checks supplement that scope without physical or dataset admission claims.
+    - upstream_dependency_refresh_checks
+    - upstream_dependency_refresh_tests
+    - core_codec_candidate_dependencies
+    - core_codec_candidate_decode
+    - core_codec_candidate_av1_decode
+    notes: Narrow codec ABI amendment validated in a separate frozen core candidate with complete required test execution. Historical proof retains its unchanged baseline lock and paired spec; no physical or dataset admission claim transfers to this commit.
   A:
     state: accepted
     evidence_ids:

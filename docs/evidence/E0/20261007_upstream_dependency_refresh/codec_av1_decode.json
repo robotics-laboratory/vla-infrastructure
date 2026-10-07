@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "completed_at": "2026-10-07T00:24:28.935272+00:00",
+  "scope": "Full 60-row synthetic native-SVGA AV1 dataset read with explicit TorchCodec; no physical admission",
+  "command": "HF_HOME=/tmp/vla-final-hf HF_DATASETS_CACHE=/tmp/vla-final-hf/datasets PYTHONDONTWRITEBYTECODE=1 /data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env/bin/python /tmp/vla-codec-av1-probe.py",
+  "source_commit": "f764cd8e0ae7b20731d7063f53cfd58576bf3905",
+  "probe_sha256": "116c88046251bacb12d4c5065a5b71d0e5a9e96d1d7c81f9153d351ef5497286",
+  "input_manifest_sha256": "f47de4f0e60d9e25e0ad2de47a08b1dfed2c7d32fad469a314edcd67cd2bdc98",
+  "input_root": "/tmp/vla-materializer-benchmark-20261007/staged_guard_clean",
+  "interpreter": "/data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env/bin/python",
+  "packages": {
+    "torch": "2.7.1",
+    "torchcodec": "0.5",
+    "lerobot": "0.6.1",
+    "av": "15.1.0"
+  },
+  "rows_read": 60,
+  "camera_frames_read": 180,
+  "decoded_shape_chw": [
+    3,
+    600,
+    960
+  ],
+  "max_abs_rgb_difference_vs_pyav": 0.0,
+  "state_action_timestamps_equal": true
+}

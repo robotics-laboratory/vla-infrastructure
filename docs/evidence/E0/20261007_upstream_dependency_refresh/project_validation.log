@@ -1,0 +1,95 @@
+........................................................................ [  9%]
+........................................................................ [ 18%]
+........................................................................ [ 27%]
+........................................................................ [ 37%]
+........................................................................ [ 46%]
+........................................................................ [ 55%]
+........................................................................ [ 64%]
+........................................................................ [ 74%]
+.................................................................... [ 82%]
+........................................................................ [ 92%]
+.............................................................            [100%]
+=============================== warnings summary ===============================
+../../../data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env/lib/python3.12/site-packages/cmeel.prefix/lib/python3.12/site-packages/hppfcl/__init__.py:3
+  /data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env/lib/python3.12/site-packages/cmeel.prefix/lib/python3.12/site-packages/hppfcl/__init__.py:3: DeprecationWarning: Please update your 'hppfcl' imports to 'coal'
+    warnings.warn(
+
+tests/test_isaac_vr_decision.py::test_original_native_parity_and_preclip_precision[0.0--1.0]
+  actual_ik_wrapper:123: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+
+tests/test_lerobot_robot_piperx.py::PiperXPluginTests::test_bimanual_connect_rolls_back_left_when_right_connect_fails
+  /data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env/lib/python3.12/site-packages/piper_sdk/piper_msgs/msg_v2/transmit/arm_joint_config.py:19: SyntaxWarning: invalid escape sequence '\['
+    max_joint_acc: 最大关节加速度,单位0.01rad/s^2(0x7FFF为设定无效数值),输入范围\[0, 500\]-->[0 rad/s^2, 5.0 rad/s^2]
+
+tests/test_lerobot_robot_piperx.py::PiperXPluginTests::test_bimanual_connect_rolls_back_left_when_right_connect_fails
+  /data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env/lib/python3.12/site-packages/piper_sdk/piper_msgs/msg_v2/transmit/arm_joint_config.py:49: SyntaxWarning: invalid escape sequence '\['
+    max_joint_acc: Maximum joint acceleration, unit: 0.01rad/s^2, 0x7FFF is defined as the invalid value.Range is \[0, 500\]-->[0 rad/s^2, 5.0 rad/s^2]
+
+tests/test_lerobot_robot_piperx.py::PiperXPluginTests::test_bimanual_connect_rolls_back_left_when_right_connect_fails
+  /data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env/lib/python3.12/site-packages/piper_sdk/interface/piper_interface.py:3268: SyntaxWarning: invalid escape sequence '\['
+    输入范围\[0, 500\]-->[0 rad/s^2, 5.0 rad/s^2]
+
+tests/test_lerobot_robot_piperx.py::PiperXPluginTests::test_bimanual_connect_rolls_back_left_when_right_connect_fails
+  /data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env/lib/python3.12/site-packages/piper_sdk/interface/piper_interface.py:3284: SyntaxWarning: invalid escape sequence '\['
+    Range is \[0, 500\]-->[0 rad/s^2, 5.0 rad/s^2]
+
+tests/test_lerobot_robot_piperx.py::PiperXPluginTests::test_bimanual_connect_rolls_back_left_when_right_connect_fails
+  /data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env/lib/python3.12/site-packages/piper_sdk/interface/piper_interface_v2.py:3268: SyntaxWarning: invalid escape sequence '\['
+    输入范围\[0, 500\]-->[0 rad/s^2, 5.0 rad/s^2]
+
+tests/test_lerobot_robot_piperx.py::PiperXPluginTests::test_bimanual_connect_rolls_back_left_when_right_connect_fails
+  /data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env/lib/python3.12/site-packages/piper_sdk/interface/piper_interface_v2.py:3284: SyntaxWarning: invalid escape sequence '\['
+    Range is \[0, 500\]-->[0 rad/s^2, 5.0 rad/s^2]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+777 passed, 28 deselected, 8 warnings, 4 subtests passed in 41.42s
+test_absence_clears_pose_baseline_and_smoothing_before_far_recovery (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_absence_clears_pose_baseline_and_smoothing_before_far_recovery) ... ok
+test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_active_xr_missing_or_invalid_transform_holds_and_rebases_on_recovery) ... {"epoch": 1, "event": "demo_xr_navigation_frame_applied", "monotonic_ns": 3558953636108750, "recenter": false, "recenter_ack": null, "world_T_physical": [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]}
+ok
+test_camera_feed_diagnostics_preserve_source_and_upload_boundary (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_camera_feed_diagnostics_preserve_source_and_upload_boundary) ... ok
+test_demo_backdrop_output_uses_free_right_secondary_b_button (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_backdrop_output_uses_free_right_secondary_b_button) ... ok
+test_demo_backdrop_toggle_is_rising_edge_only (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_backdrop_toggle_is_rising_edge_only) ... {"backdrop_visible": false, "control": "right_secondary_click", "event": "demo_backdrop_visibility_changed", "event_origin": "controller_pipeline", "quest_button": "B", "visual_only": true}
+{"backdrop_visible": true, "control": "right_secondary_click", "event": "demo_backdrop_visibility_changed", "event_origin": "controller_pipeline", "quest_button": "B", "visual_only": true}
+ok
+test_demo_camera_feed_cpu_staging_preserves_rgba_and_reuses_buffer (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_camera_feed_cpu_staging_preserves_rgba_and_reuses_buffer) ... ok
+test_demo_camera_feed_uses_camera_buffer_without_feedback_annotator (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_camera_feed_uses_camera_buffer_without_feedback_annotator) ... ok
+test_demo_controls_append_three_values_without_changing_production_shape (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_controls_append_three_values_without_changing_production_shape) ... ok
+test_demo_display_edges_hide_panels_without_closing_rgb_source (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_display_edges_hide_panels_without_closing_rgb_source) ... [DEMO] wrist camera panels prebound hidden before XR session
+[DEMO] wrist camera display ON
+{"capture_continues": true, "control": "left_primary_click", "display_visible": true, "event": "demo_vr_camera_feed_visibility_changed", "event_origin": "controller_pipeline", "feed_bound": true, "quest_button": "X"}
+[DEMO] wrist camera display OFF
+{"capture_continues": true, "control": "left_primary_click", "display_visible": false, "event": "demo_vr_camera_feed_visibility_changed", "event_origin": "controller_pipeline", "feed_bound": true, "quest_button": "X"}
+[DEMO] wrist camera display ON
+{"capture_continues": true, "control": "left_primary_click", "display_visible": true, "event": "demo_vr_camera_feed_visibility_changed", "event_origin": "controller_pipeline", "feed_bound": true, "quest_button": "X"}
+ok
+test_demo_display_output_uses_free_left_primary_x_button (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_display_output_uses_free_left_primary_x_button) ... ok
+test_demo_panel_uses_pixels_for_layout_without_changing_physical_size (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_panel_uses_pixels_for_layout_without_changing_physical_size) ... ok
+test_demo_recenter_controller_transform_tracks_xr_space_origin (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_recenter_controller_transform_tracks_xr_space_origin) ... ok
+test_demo_recenter_is_edge_triggered_and_uses_upstream_xr_teleport (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_recenter_is_edge_triggered_and_uses_upstream_xr_teleport) ... {"authoritative_scene_geometry_changed": false, "control": "right_thumbstick_click", "event": "demo_xr_recenter_requested", "event_origin": "controller_pipeline", "quest_button": "R3", "scheduled": true, "session_restart": false, "view_prim_path": "/World/RobosynDemo/SceneCamera"}
+{"authoritative_scene_geometry_changed": false, "control": "right_thumbstick_click", "event": "demo_xr_recenter_requested", "event_origin": "controller_pipeline", "quest_button": "R3", "scheduled": true, "session_restart": false, "view_prim_path": "/World/RobosynDemo/SceneCamera"}
+ok
+test_demo_recenter_output_uses_free_right_thumbstick_click (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_recenter_output_uses_free_right_thumbstick_click) ... ok
+test_demo_sensitivity_uses_left_y_for_both_arm_state_outputs (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_sensitivity_uses_left_y_for_both_arm_state_outputs) ... ok
+test_demo_slider_uses_each_controllers_own_thumbstick_x (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_demo_slider_uses_each_controllers_own_thumbstick_x) ... ok
+test_invalid_and_default_pose_are_ignored_and_recovery_is_zero (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_invalid_and_default_pose_are_ignored_and_recovery_is_zero) ... ok
+test_preview_layout_l3_keeps_motion_shape_and_record_stop_isolation (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_preview_layout_l3_keeps_motion_shape_and_record_stop_isolation) ... ok
+test_preview_skips_hidden_and_duplicate_frames_before_acquisition (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_preview_skips_hidden_and_duplicate_frames_before_acquisition) ... ok
+test_preview_throttle_keeps_latest_frame_and_reset_invalidates_identity (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_preview_throttle_keeps_latest_frame_and_reset_invalidates_identity) ... ok
+test_raw_cpu_upload_preserves_bytes_and_retains_buffer_until_close (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_raw_cpu_upload_preserves_bytes_and_retains_buffer_until_close) ... ok
+test_recenter_accepts_next_xr_frame_and_rebases_later_transform_change (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_recenter_accepts_next_xr_frame_and_rebases_later_transform_change) ... {"epoch": 1, "event": "demo_xr_navigation_frame_applied", "monotonic_ns": 3558953642157719, "recenter": true, "recenter_ack": "first_control_frame_after_scheduled_app_updates", "world_T_physical": [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]}
+{"epoch": 2, "event": "demo_xr_navigation_frame_applied", "monotonic_ns": 3558953642265364, "recenter": false, "recenter_ack": null, "world_T_physical": [[1.0, 0.0, 0.0, 0.6000000238418579], [0.0, 1.0, 0.0, 0.10000000149011612], [0.0, 0.0, 1.0, 1.399999976158142], [0.0, 0.0, 0.0, 1.0]]}
+{"epoch": 3, "event": "demo_xr_navigation_frame_applied", "monotonic_ns": 3558953642301774, "recenter": true, "recenter_ack": "first_control_frame_after_scheduled_app_updates", "world_T_physical": [[1.0, 0.0, 0.0, 0.6000000238418579], [0.0, 1.0, 0.0, 0.10000000149011612], [0.0, 0.0, 1.0, 1.399999976158142], [0.0, 0.0, 0.0, 1.0]]}
+ok
+test_recording_view_keeps_backdrop_without_enabling_rgb (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_recording_view_keeps_backdrop_without_enabling_rgb) ... ok
+test_rightward_relative_motion_preserves_direction_after_navigation_yaw (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_rightward_relative_motion_preserves_direction_after_navigation_yaw) ... ok
+test_state_uses_thumbstick_click_and_effective_pose_validity (test_isaac_s2_upstream.IsaacS2UpstreamTests.test_state_uses_thumbstick_click_and_effective_pose_validity) ... ok
+test_actual_differential_ik_preclip_native_parity (test_isaac_s2_upstream.XrDecisionSourceTests.test_actual_differential_ik_preclip_native_parity) ... pinned_ik_parity:123: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+ok
+test_actual_upstream_sync_update_source_conversion_owned_inputs (test_isaac_s2_upstream.XrDecisionSourceTests.test_actual_upstream_sync_update_source_conversion_owned_inputs) ... ok
+test_missing_invalid_hand_and_reference_change (test_isaac_s2_upstream.XrDecisionSourceTests.test_missing_invalid_hand_and_reference_change) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 1.169s
+
+OK
+ISAAC UPSTREAM: PASS (28 run, 0 skipped)

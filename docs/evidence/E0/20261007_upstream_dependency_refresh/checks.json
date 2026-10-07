@@ -1,0 +1,87 @@
+{
+  "command": "UV_PROJECT_ENVIRONMENT=/data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env UV_CACHE_DIR=/tmp/vla-audit-uv-cache HF_HOME=/tmp/vla-final-hf HF_DATASETS_CACHE=/tmp/vla-final-hf/datasets XDG_CACHE_HOME=/tmp/vla-final-xdg PYTHONDONTWRITEBYTECODE=1 uv run --frozen --no-sync python tools/check_isaac_upstream.py --all",
+  "completed_at": "2026-10-07T00:23:09.611107+00:00",
+  "completion_timestamp_source": "Retained raw log mtime; start timestamp was not independently retained",
+  "earlier_attempts": [
+    "Focused materializer run used a read-only default HF cache: 7 failed, 153 passed; retry with writable task cache: 160 passed; the failure counts were observed in tool output, not retained as a complete raw log",
+    "uv no-sync command with shared cache inside sandbox could not create cache locks; task-local cache used for validation",
+    "Additional resolution/probe attempts are retained in codec_provenance.json and previous_codec_failure.json"
+  ],
+  "environment": "/data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env",
+  "frozen_outputs_sha256": {
+    "baseline_pyproject.toml": "5c16074e19e3a10e775189ec8bc336a4558e9e9610ca24de93ffbac492c997b7",
+    "baseline_uv.lock": "4e3c9fce53777794b6815eb509b10799da889c986e42e01147f134dd21bc9fb6",
+    "codec_av1_decode.json": "7b4c99e92fdefd913452cee4689e681eb1ed95c229c33a8ce7591c7fd373c064",
+    "codec_av1_probe.py": "116c88046251bacb12d4c5065a5b71d0e5a9e96d1d7c81f9153d351ef5497286",
+    "codec_decode.json": "faeef74090f0619ead25a53f7f76d2f6a2247b55eeb7c11c481729ae384e2d60",
+    "codec_probe.py": "b7f18d7cef02d80faae8981cacd736dc618b1e83076090e1c24fcdeb10de596f",
+    "codec_provenance.json": "82f1d55892a5a0a2896306ed223609634b3403fde55ca5cd7a0fc63de4df93d3",
+    "core_dependencies.json": "3269ab5abd2233dbc96fe7d3c9962b38d11513b66787b3492a55b898205303aa",
+    "dependency_tests.txt": "21afa5189c26b2809bede74816574874d76a564e78ca3c7eb82efedde3d812c0",
+    "isaac61_dependencies.json": "d01ccd9fbd03ff115092b64101af7078955ae7b9b98227d91876c08703b171f8",
+    "legacy_dependencies.json": "b7aee028ccf337688c5b5817659aa6a23b8d0236f73d016826f9847b8ca826b1",
+    "previous_codec_failure.json": "67e2074b81ca301dd588e4e44d1e2b602e9f10cfebd34eff3594d4877b75a53a",
+    "previous_codec_probe.py": "51333cb4fd21d05b6e23c88148734c270229c16c6c0918ccf626d8eec6f57f5c",
+    "project_validation.log": "3c6b0d06613f45b30870707d4d05a11166b63543b5086e41c976d27ea6cfaec1",
+    "recording_start_checks.json": "fa805eead1e743e183b273b730fd90a75546aa81ff5ca5d7c1325c609d6fcd2a",
+    "recording_start_tests.txt": "461970eb1bbc7a17f5ad3f278e9627e0369d23a3eac0c001aa9dcb41c388779c",
+    "staged_encoding.json": "f966a7ba4ed3a792a887e7d82b38a0cdf17aff061139acbd16c4279f8228e52b",
+    "staged_encoding.log": "b67a52638e8a063b404106058eeac56b136e3dbd0eb611b69709deeb74fa7880",
+    "streaming_benchmark.json": "bfcec0d2a09e7ec42dc60f33d74b0ebe2707cd176b8e33f8e1f1eeb4c4e6e963",
+    "streaming_benchmark.py": "09ad845a8f77d72699c6b9bc245e73647f8b5b50c92ba5da47a84126c5bfeab9",
+    "streaming_encoding.json": "f6af4281e85866fa16c4f87ce672b6ee575dd46f1f57f74262f8ddeb941d9f6a",
+    "streaming_encoding.log": "64685e339838f05921395e10f353632c10a83b5e01a46b1beb3e2178b7705b53"
+  },
+  "limitations": [
+    "CPU tests and synthetic data only; no Kit, physical motion, headset or D1 dataset admission",
+    "SDK metadata exceptions are exact drift baselines, not ABI qualification",
+    "Decoder qualification is Linux x86_64 CPU only; universal lock also changes macOS arm64 codec selection, untested",
+    "Streaming stays opt-in; benchmark is sixty synthetic frames with sampled disk lower bounds, increased RSS and no long-episode claim",
+    "Scoped MyPy retains four pre-existing launcher and five pre-existing materializer errors; no claim of a clean repository-wide type check",
+    "Historical authenticity/debt and remote artifact URIs were not independently resolved"
+  ],
+  "passed": true,
+  "results": {
+    "core_dependencies": "PASS; no conflicts",
+    "core_pytest": {
+      "deselected_isaac": 28,
+      "passed": 777,
+      "skipped": 0,
+      "subtests_passed": 4,
+      "warnings": 8
+    },
+    "docs_trusted_base": "PASS; all 481 trusted historical files preserved",
+    "isaac61_dependencies": "PASS; exact retained six conflicts",
+    "isaac_unittest": {
+      "passed": true,
+      "run": 28,
+      "skipped": 0
+    },
+    "legacy_dependencies": "PASS; exact retained eleven conflicts",
+    "manifest": "PASS; unchanged reviewed 110-path membership",
+    "ruff_changed_python": "PASS",
+    "spec_references": "PASS",
+    "torchcodec": "PASS; import, three-row synthetic dataset and full 60-row three-camera SVGA AV1 read"
+  },
+  "schema": "piper_x_upstream_dependency_refresh_checks_v1",
+  "source_commit": "f764cd8e0ae7b20731d7063f53cfd58576bf3905",
+  "source_sha256": {
+    "MANIFEST.sha256": "cc837f11f95467be32f0815c747f9814e5d4f6282d155b29d64af34ff6f98723",
+    "configs/resolved_contract.yaml": "b723fa6b243fc0db9341439439fc724a6280d30d33834f1c416e1e0d96b0a3a1",
+    "docs/INDEX.yaml": "a6057a8d4443b0c52b322ef270028303bd336d6c2a9b05e7ae6c0f6b69f03b96",
+    "pyproject.toml": "34d517291513a9af720074046efe6f9c3dd928025ad2f86f04290e61de8ce0de",
+    "tests/conftest.py": "4b6cd18396aae89960890bfb88b38a5513899a8a8fd3b37eb5afd9a63443c67a",
+    "tests/test_environment_dependencies.py": "505e56daac5c9f180405f35fe8e085607e396c9654f8c1275c3a207580fbde06",
+    "tests/test_isaac_s2_upstream.py": "a2bcad511c0ff64b43bf6616c579383a7b9d30f204613abc0730bfbe16dedea7",
+    "tests/test_isaac_upstream_checks.py": "cb68c1fcf1daa25080c12aca772a5df040b29f3f139385704807c1f7bc0ac4ce",
+    "tests/test_isaac_vr_lerobot_materialize.py": "c24c15f61e5c8b33621466c8452a9c827520cdf2872e6640ebdca1208ba12a45",
+    "tests/test_isaac_vr_recording.py": "f36cbb1a59352699974e03f74c68e44e7272cf4dade57081284be9d6020dc110",
+    "tools/check_environment_dependencies.py": "42e2e7a5446e9a84388f14101d4d55b5ce4064ca459a3a69558a02c304dd7d4d",
+    "tools/check_isaac_upstream.py": "619ee436e28fd4a10cda6d2a722f4417212664a6a77e39f800c4a5ed81735124",
+    "tools/isaac_vr_lerobot_materialize.py": "4ad7ca92ed5b47d2afde960fb718cf984c3b153364b0f314086fd4736149b79d",
+    "tools/isaac_vr_recording.py": "d7ae93a06fe3a7b01634d891faa76a49674cf5913d2ed8415506e7cdf6e71d79",
+    "uv.lock": "191e1357aac9a6ec51df7b46fd6dc1d94ce5d0eab136830257f3bf7eea9f3bca"
+  },
+  "source_was_clean": true,
+  "trusted_base": "beaedfd1116577fd4d8026232cfb96cba0b030fa"
+}

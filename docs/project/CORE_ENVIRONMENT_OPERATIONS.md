@@ -94,6 +94,11 @@ six retained current conflicts, eleven legacy conflicts. A changed conflict fail
 even when the count stays the same. These exceptions do not prove vendor ABI
 compatibility and do not authorize changing the frozen SDK in place.
 
+The retained [compatibility and validation record](../evidence/E0/20261007_upstream_dependency_refresh/README.md)
+identifies the tested source, candidate, unchanged historical spec and remaining
+qualification scope. Ordinary existing environments need a frozen sync to adopt
+the changed lock; creating the candidate did not mutate them.
+
 Canonical commands and environment ownership are defined by the execution
 profiles in the live contract. No hardware-motion command belongs in this
 document.

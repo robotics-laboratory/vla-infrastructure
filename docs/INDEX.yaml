@@ -3582,3 +3582,33 @@ documents:
   owner: environment.compatibility
   mutable: false
   gates: [E0, D0, S2]
+- path: docs/evidence/E0/20261007_upstream_dependency_refresh/codec_av1_decode.json
+  kind: evidence
+  status: historical
+  owner: environment.compatibility
+  mutable: false
+  gates: [E0, D0, S2]
+- path: docs/evidence/E0/20261007_upstream_dependency_refresh/codec_av1_probe.py
+  kind: evidence
+  status: historical
+  owner: environment.compatibility
+  mutable: false
+  gates: [E0, D0, S2]
+- path: docs/evidence/E0/20261007_upstream_dependency_refresh/project_validation.log
+  kind: evidence
+  status: historical
+  owner: environment.compatibility
+  mutable: false
+  gates: [E0, D0, S2]
+- path: docs/evidence/E0/20261007_upstream_dependency_refresh/checks.json
+  kind: evidence
+  status: historical
+  owner: environment.compatibility
+  mutable: false
+  gates: [E0, D0, S2]
+- path: docs/evidence/E0/20261007_upstream_dependency_refresh/README.md
+  kind: evidence
+  status: historical
+  owner: environment.compatibility
+  mutable: false
+  gates: [E0, D0, S2]

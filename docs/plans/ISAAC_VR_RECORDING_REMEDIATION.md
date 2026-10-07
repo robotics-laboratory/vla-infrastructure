@@ -341,6 +341,10 @@ original failures and native exit codes remain retained.
 
 ### Current audit compatibility repairs
 
+The [retained refresh record](../evidence/E0/20261007_upstream_dependency_refresh/README.md)
+binds the exact tested source, candidate dependencies, complete unit checks,
+streaming comparison and qualification limits.
+
 The upstream unit suite runs separately in the pinned Isaac environment via
 `tools/check_isaac_upstream.py`; the combined required check is
 [[profile:project_validation]]. Core deselection is explicit and the native
