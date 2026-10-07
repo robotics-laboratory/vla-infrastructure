@@ -1,3 +1,7 @@
 # Preserve pytest's raw diagnostic whitespace in this frozen evidence log.
 docs/evidence/D0/20260921_causal_three_camera/first_full_attempt.txt whitespace=-blank-at-eol
 docs/evidence/S1/20260921_three_camera_boundary/first_offline_attempt.txt whitespace=-blank-at-eol
+
+# Preserve verbatim upstream codec logs, including their trailing spaces.
+docs/evidence/E0/20261007_upstream_dependency_refresh/staged_encoding.log whitespace=-blank-at-eol
+docs/evidence/E0/20261007_upstream_dependency_refresh/streaming_encoding.log whitespace=-blank-at-eol
