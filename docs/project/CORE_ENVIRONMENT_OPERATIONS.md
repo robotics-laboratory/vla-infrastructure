@@ -62,6 +62,38 @@ A core-only PASS does not establish upstream coverage. A workstation without
 the pinned SDK can run core checks, but cannot complete project validation.
 Physical Quest acceptance and dataset source admission remain separate.
 
+## Dependency compatibility checks
+
+The Linux x86_64 core specification pairs TorchCodec 0.5.0 with the retained
+PyTorch 2.7.1. The previous TorchCodec 0.11.1 could not load its decoder with
+that PyTorch ABI. LeRobot's PyAV fallback concealed the failure in ordinary
+dataset reads. Other core pins and the isolated Isaac SDK selections remain
+owned by their reproducible specifications.
+
+Check the installed core against the current lock, editable checkout origins,
+the complete frozen dependency closure, metadata and an actual decoder import:
+
+```bash
+uv run --frozen --no-sync python tools/check_environment_dependencies.py --environment core
+```
+
+Add `--with-teleop` when checking an environment materialized with the optional
+`isaac-teleop` group; `--python /path/to/env/bin/python` selects a candidate core
+interpreter. The checker is read-only and delegates lock/closure checks to `uv`.
+It requires Linux x86_64 and the declared Python version.
+
+From core, check the exact current or retained legacy Isaac installation:
+
+```bash
+uv run --frozen --no-sync python tools/check_environment_dependencies.py --environment isaac61
+uv run --frozen --no-sync python tools/check_environment_dependencies.py --environment legacy
+```
+
+The checker verifies the selected SDK and compares complete metadata diagnostics:
+six retained current conflicts, eleven legacy conflicts. A changed conflict fails
+even when the count stays the same. These exceptions do not prove vendor ABI
+compatibility and do not authorize changing the frozen SDK in place.
+
 Canonical commands and environment ownership are defined by the execution
 profiles in the live contract. No hardware-motion command belongs in this
 document.

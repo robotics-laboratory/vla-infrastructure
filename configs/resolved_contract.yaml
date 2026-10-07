@@ -151,7 +151,7 @@ environments:
     purpose: LeRobot, real PIPER-X, MuJoCo, host Quest diagnostics, and offline tooling
     manager: uv
     python_version: CPython 3.12.13
-    spec_artifact_id: core_uv_lock__other_0a0ed027
+    spec_artifact_id: core_uv_lock_20261007_codec_compatibility
     torch_version: 2.7.1+cu126
     cuda_runtime: PyTorch bundled CUDA 12.6
     vendor_runtime: NVIDIA CloudXR 6.2.0 with auto-webrtc device profile for physical Quest work
@@ -179,7 +179,7 @@ environments:
     purpose: Conceptual MuJoCo record mapped to the exact core environment; not a separate installation
     manager: uv
     python_version: CPython 3.12.13
-    spec_artifact_id: core_uv_lock__other_0a0ed027
+    spec_artifact_id: core_uv_lock_20261007_codec_compatibility
     torch_version: 2.7.1+cu126
     cuda_runtime: PyTorch bundled CUDA 12.6; MuJoCo itself does not require CUDA
     vendor_runtime: MuJoCo 3.9.0 canonical PyPI wheel with bundled MuJoCo library
@@ -1022,7 +1022,7 @@ teleop:
         version: 1.3.131
         revision_type: commit
         revision: 7002ed63d69454ae4f15c0ee19f803fd2846592b
-        source_artifact_id: core_uv_lock__other_0a0ed027
+        source_artifact_id: core_uv_lock_20261007_codec_compatibility
         source_detail: Exact core uv.lock isaac-teleop dependency group used by the accepted Gate B physical Quest runtime.
         evidence_ids:
         - v43_quest_host_implementation
@@ -2087,6 +2087,24 @@ real_rollout:
   accepted_command_log_artifact_id: null
   result_artifact_id: null
 artifacts:
+  core_project_spec_20261007_baseline:
+    kind: environment_spec
+    sha256: 5c16074e19e3a10e775189ec8bc336a4558e9e9610ca24de93ffbac492c997b7
+    path: docs/evidence/E0/20261007_upstream_dependency_refresh/baseline_pyproject.toml
+    uri: null
+    description: Exact paired baseline core project specification preserved from trusted beaedfd before the codec compatibility amendment
+  core_project_spec_20261007_codec_compatibility:
+    kind: environment_spec
+    sha256: 34d517291513a9af720074046efe6f9c3dd928025ad2f86f04290e61de8ce0de
+    path: pyproject.toml
+    uri: null
+    description: Paired current core project specification with the Linux x86_64 TorchCodec ABI constraint and unchanged optional Gate B dependency pins
+  core_uv_lock_20261007_codec_compatibility:
+    kind: environment_spec
+    sha256: 191e1357aac9a6ec51df7b46fd6dc1d94ce5d0eab136830257f3bf7eea9f3bca
+    path: uv.lock
+    uri: null
+    description: Core lock with Linux x86_64 TorchCodec 0.5 compatible with retained Torch 2.7.1; other selected package versions are retained
   vr_s2_operator_stop_report:
     kind: report
     sha256: 45182821b4a6ffd83df75937f071b43d14640a64de51aa79f9ff24c0e9444728
@@ -2692,7 +2710,7 @@ artifacts:
     sha256: ef20dd821a6b64299f3e2ed75a320edad29d0584cd60ed9693d05ed614c36a4b
     path: docs/project/reconciliation/20260919_contracts_kit1103/history/682ee936/uv.lock
     uri: null
-    description: Core uv lock including LeRobot 0.6.1 kinematics plus the Gate S0 MuJoCo 3.9.0 and Gymnasium 1.3.0 pins; pyproject.toml is the paired project specification
+    description: Historical core lock including LeRobot 0.6.1 kinematics, MuJoCo 3.9.0 and Gymnasium 1.3.0; unchanged bytes retained with baseline_pyproject.toml in the 20261007 upstream dependency refresh bundle
   piper_x_authoritative_xacro:
     kind: model_asset
     sha256: 0ee3f52f9acf3060a7f3e439c6e5e46b6a53d4fa509dd495045548be6b7f90cd
@@ -3308,9 +3326,9 @@ artifacts:
   core_uv_lock__other_0a0ed027:
     kind: environment_spec
     sha256: 4e3c9fce53777794b6815eb509b10799da889c986e42e01147f134dd21bc9fb6
-    path: uv.lock
+    path: docs/evidence/E0/20261007_upstream_dependency_refresh/baseline_uv.lock
     uri: null
-    description: Core uv lock including LeRobot 0.6.1 kinematics plus the Gate S0 MuJoCo 3.9.0 and Gymnasium 1.3.0 pins; pyproject.toml is the paired project specification
+    description: Historical core lock including LeRobot 0.6.1 kinematics, MuJoCo 3.9.0 and Gymnasium 1.3.0; unchanged bytes retained with baseline_pyproject.toml in the 20261007 upstream dependency refresh bundle
   final_m0_checks__other_0a0ed027:
     kind: test_output
     sha256: 27bcb5e1e852b9a552d9bbd9bfa5d649c1ab9fd3a644ec83243ab8a0cb1bc6b2
@@ -5084,8 +5102,9 @@ gates:
     - v43_e0_offline_tests
     artifact_ids:
     - core_uv_lock__other_0a0ed027
+    - core_uv_lock_20261007_codec_compatibility
     - pre_contract_offline_runtime_tests
-    notes: Existing single core uv environment preserved and revalidated.
+    notes: Historical core proof remains scoped to the preserved baseline lock; compatible codec candidate checks supplement that scope without physical or dataset admission claims.
   A:
     state: accepted
     evidence_ids:

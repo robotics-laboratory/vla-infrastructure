@@ -1,0 +1,25 @@
+{
+  "candidate_environment": "/data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env",
+  "lock_resolution_command": "UV_CACHE_DIR=/data/vla-infrastructure/cache/uv uv lock --python /data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12 --no-managed-python",
+  "checker_command": "UV_CACHE_DIR=/data/vla-infrastructure/cache/uv PYTHONDONTWRITEBYTECODE=1 /data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env/bin/python tools/check_environment_dependencies.py --environment core --with-teleop",
+  "test_command": "PYTHONDONTWRITEBYTECODE=1 /data/ebulochkin/vla-runtime/core-codec-candidate-20261007/env/bin/python -m pytest tests/test_environment_dependencies.py -q",
+  "lock_version_drift": {
+    "torchcodec": {
+      "before": [
+        "0.11.1"
+      ],
+      "after": [
+        "0.11.1",
+        "0.5"
+      ]
+    }
+  },
+  "cross_platform_scope": "Universal lock also selects TorchCodec0.5 on macOS arm64 inherited fork; accepted by coordinator as visible/unvalidated. Windows/LinuxARM also unvalidated. Qualification Linuxx86_64CPU only.",
+  "failures": [
+    "Initial offline /tmp cache resolution lacked LeRobot metadata; authorized shared-cache network resolution succeeded.",
+    "Synthetic LeRobotDataset default HF cache was read-only; redirecting cache under /tmp succeeded.",
+    "Original core TorchCodec0.11.1 native import failure remains in vla-codec-previous-core-failure.json."
+  ],
+  "final_pyproject_sha256": "34d517291513a9af720074046efe6f9c3dd928025ad2f86f04290e61de8ce0de",
+  "final_lock_sha256": "191e1357aac9a6ec51df7b46fd6dc1d94ce5d0eab136830257f3bf7eea9f3bca"
+}
