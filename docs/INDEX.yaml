@@ -3534,3 +3534,51 @@ documents:
   owner: environment.compatibility
   mutable: false
   gates: [E0]
+- path: docs/evidence/E0/20261007_upstream_dependency_refresh/streaming_benchmark.json
+  kind: evidence
+  status: historical
+  owner: environment.compatibility
+  mutable: false
+  gates: [E0, D0, S2]
+- path: docs/evidence/E0/20261007_upstream_dependency_refresh/streaming_benchmark.py
+  kind: evidence
+  status: historical
+  owner: environment.compatibility
+  mutable: false
+  gates: [E0, D0, S2]
+- path: docs/evidence/E0/20261007_upstream_dependency_refresh/staged_encoding.json
+  kind: evidence
+  status: historical
+  owner: environment.compatibility
+  mutable: false
+  gates: [E0, D0, S2]
+- path: docs/evidence/E0/20261007_upstream_dependency_refresh/streaming_encoding.json
+  kind: evidence
+  status: historical
+  owner: environment.compatibility
+  mutable: false
+  gates: [E0, D0, S2]
+- path: docs/evidence/E0/20261007_upstream_dependency_refresh/staged_encoding.log
+  kind: evidence
+  status: historical
+  owner: environment.compatibility
+  mutable: false
+  gates: [E0, D0, S2]
+- path: docs/evidence/E0/20261007_upstream_dependency_refresh/streaming_encoding.log
+  kind: evidence
+  status: historical
+  owner: environment.compatibility
+  mutable: false
+  gates: [E0, D0, S2]
+- path: docs/evidence/E0/20261007_upstream_dependency_refresh/recording_start_checks.json
+  kind: evidence
+  status: historical
+  owner: environment.compatibility
+  mutable: false
+  gates: [E0, D0, S2]
+- path: docs/evidence/E0/20261007_upstream_dependency_refresh/recording_start_tests.txt
+  kind: evidence
+  status: historical
+  owner: environment.compatibility
+  mutable: false
+  gates: [E0, D0, S2]

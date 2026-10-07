@@ -52,6 +52,25 @@ video-decode, or DataLoader mismatch. It never promotes the result to an
 admissible dataset: its standalone `dataset_admissible` field remains false and
 requires a separate demo admission decision.
 
+### Optional streaming video encoding
+
+Both `materialize` and `orchestrate` accept `--streaming-encoding` and
+`--encoder-queue-maxsize N` (positive integer, default 2 frames per camera).
+The default continues to stage temporary PNGs. Streaming uses LeRobot 0.6.1's
+public writer and `VideoEncodingManager`; it avoids the PNG round-trip and
+finalizes or cancels encoder ownership before temporary output cleanup.
+
+The manifest records the chosen encoding mode and queue bound. Every encoded
+camera stream must contain the full logical frame count and frame-time grid
+before publication, followed by the existing dataset and DataLoader full-read
+QA. Upstream queue overflow can drop frames; such an output must fail validation
+and remain unpublished. Encoding changes neither source labels, causal join,
+image geometry, schema fingerprint nor admission requirements.
+
+The option trades encoding latency and temporary disk work for concurrent encoder
+memory. Select it for the available machine and workload; a short synthetic
+benchmark does not establish performance for long episodes or physical recording.
+
 ## Human demo admission
 
 Record → explicit Save → classify the human task outcome (`success`, `failure`,

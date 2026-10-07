@@ -56,6 +56,7 @@ PROJECTION_FILE = "projection.npz"
 BUNDLE_MANIFEST = "manifest.json"
 MATERIALIZATION_MANIFEST = "isaac_vr_materialization_manifest.json"
 FPS = 30
+DEFAULT_ENCODER_QUEUE_MAXSIZE = 2
 CAMERA_ROLES = ("left_wrist", "right_wrist", "scene")
 IMAGE_SHAPE = (600, 960, 3)
 LEGACY_IMAGE_SHAPE = (480, 640, 3)
@@ -838,8 +839,8 @@ def _add_projection_frame(
             Path(entry["path"]), entry["rgb_sha256"], tuple(entry["shape"])
         )
     dataset.add_frame(sample)
-    # With the pinned synchronous LeRobot writer, add_frame has persisted each
-    # image to a temporary PNG and retains only its path in episode_buffer.
+    # Upstream either persists a temporary PNG or accepts the image into its
+    # bounded streaming queue. The caller retains no decoded episode cache.
     del sample
 
 
@@ -875,6 +876,7 @@ def _qa_lerobot_dataset(
     task: str,
     image_shape: tuple[int, int, int] = IMAGE_SHAPE,
 ) -> dict[str, Any]:
+    import av
     import torch
     from torch.utils.data import DataLoader
 
@@ -896,6 +898,25 @@ def _qa_lerobot_dataset(
             expected_value = tuple(expected[field]) if field == "shape" else expected[field]
             if actual_value != expected_value:
                 raise MaterializationError(f"LeRobot feature {key}.{field} differs from schema")
+
+    # Row metadata and nearest-timestamp reads cannot detect every missing video
+    # frame. Streaming may silently drop a queued frame upstream. This writer
+    # creates exactly one episode per dataset, so each public video locator
+    # covers precisely the projection's complete stream.
+    for role in CAMERA_ROLES:
+        video_path = root / dataset.meta.get_video_file_path(0, f"observation.images.{role}")
+        encoded_frames = 0
+        with av.open(str(video_path)) as container:
+            for encoded_frame in container.decode(video=0):
+                if encoded_frame.time is None or abs(encoded_frame.time - encoded_frames / FPS) > 1e-4:
+                    raise MaterializationError(
+                        f"LeRobot {role} encoded frame {encoded_frames} has a wrong video timestamp"
+                    )
+                encoded_frames += 1
+        if encoded_frames != frames:
+            raise MaterializationError(
+                f"LeRobot {role} encoded frame count mismatch: expected {frames}, got {encoded_frames}"
+            )
 
     decoded = 0
     for index in range(frames):
@@ -1000,7 +1021,15 @@ def materialize_projection(
     output: Path,
     repo_id: str,
     task_id: str,
+    streaming_encoding: bool = False,
+    encoder_queue_maxsize: int = DEFAULT_ENCODER_QUEUE_MAXSIZE,
 ) -> dict[str, Any]:
+    if (
+        isinstance(encoder_queue_maxsize, bool)
+        or not isinstance(encoder_queue_maxsize, int)
+        or encoder_queue_maxsize < 1
+    ):
+        raise MaterializationError("encoder_queue_maxsize must be a positive integer")
     if not repo_id or "/" not in repo_id:
         raise MaterializationError("repo_id must be a non-empty namespace/name")
     bundle_path = bundle.expanduser().resolve()
@@ -1025,6 +1054,7 @@ def materialize_projection(
     temporary.rmdir()
     try:
         from lerobot.datasets.lerobot_dataset import LeRobotDataset
+        from lerobot.datasets.video_utils import VideoEncodingManager
 
         dataset = LeRobotDataset.create(
             repo_id=repo_id,
@@ -1033,12 +1063,16 @@ def materialize_projection(
             root=temporary,
             use_videos=True,
             video_backend="pyav",
+            streaming_encoding=streaming_encoding,
+            encoder_queue_maxsize=encoder_queue_maxsize,
         )
         temporary.chmod(0o700)
-        for frame in range(frames):
-            _add_projection_frame(dataset, frame, arrays, images, task)
-        dataset.save_episode(parallel_encoding=False)
-        dataset.finalize()
+        # Upstream cancels streaming work on an exception and closes its video,
+        # parquet and metadata writers before the outer rollback removes files.
+        with VideoEncodingManager(dataset):
+            for frame in range(frames):
+                _add_projection_frame(dataset, frame, arrays, images, task)
+            dataset.save_episode(parallel_encoding=False)
         qa = _qa_lerobot_dataset(
             temporary,
             repo_id=repo_id,
@@ -1085,6 +1119,11 @@ def materialize_projection(
             "fps": FPS,
             "frames": frames,
             "episodes": 1,
+            "encoding": {
+                "streaming_encoding": streaming_encoding,
+                "encoder_queue_maxsize": encoder_queue_maxsize if streaming_encoding else None,
+                "video_backend": "pyav",
+            },
             "task_id": task_id,
             "task_label": task,
             "task_label_revision": TASK_LABEL_REVISION,
@@ -1181,6 +1220,18 @@ def _add_materialize_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--repo-id", required=True)
     parser.add_argument("--task-id", required=True)
+    _add_encoding_arguments(parser)
+
+
+def _add_encoding_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--streaming-encoding", action="store_true",
+        help="Use LeRobot's bounded streaming video encoder instead of temporary PNG staging.",
+    )
+    parser.add_argument(
+        "--encoder-queue-maxsize", type=int, default=DEFAULT_ENCODER_QUEUE_MAXSIZE,
+        help="Maximum frames queued per camera with --streaming-encoding (default: 2).",
+    )
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -1201,6 +1252,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     orchestrate.add_argument("--output", type=Path, required=True)
     orchestrate.add_argument("--repo-id", required=True)
     orchestrate.add_argument("--task-id", required=True)
+    _add_encoding_arguments(orchestrate)
     orchestrate.add_argument("--episode")
     orchestrate.add_argument(
         "--portable-root",
@@ -1228,6 +1280,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             output=args.output,
             repo_id=args.repo_id,
             task_id=args.task_id,
+            streaming_encoding=args.streaming_encoding,
+            encoder_queue_maxsize=args.encoder_queue_maxsize,
         )
     else:
         roots = _portable_root_map(args.portable_root)
@@ -1260,6 +1314,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 output=args.output,
                 repo_id=args.repo_id,
                 task_id=args.task_id,
+                streaming_encoding=args.streaming_encoding,
+                encoder_queue_maxsize=args.encoder_queue_maxsize,
             )
     print("ISAAC_VR_LEROBOT_RESULT=" + json.dumps(result, sort_keys=True), flush=True)
     return 0

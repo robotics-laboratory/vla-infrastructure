@@ -395,6 +395,93 @@ def test_task_id_cannot_relabel_recorded_episode(tmp_path: Path) -> None:
         )
 
 
+@pytest.mark.parametrize("image_shape", [materialize.IMAGE_SHAPE, materialize.LEGACY_IMAGE_SHAPE])
+def test_streaming_matches_staged_pixels_labels_and_provenance(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, image_shape
+) -> None:
+    import torch
+    from lerobot.datasets.lerobot_dataset import LeRobotDataset
+
+    bundle, arrays = _bundle(tmp_path, frames=3, image_shape=image_shape)
+    report = _report(tmp_path, arrays, image_shape)
+    original_create = LeRobotDataset.create
+    creation_options = []
+
+    def observed_create(cls, **kwargs):
+        creation_options.append(kwargs)
+        return original_create(**kwargs)
+
+    monkeypatch.setattr(LeRobotDataset, "create", classmethod(observed_create))
+    results, datasets = [], []
+    for streaming in (False, True):
+        output = tmp_path / ("streaming" if streaming else "staged")
+        results.append(materialize.materialize_projection(
+            bundle=bundle, replay_report=report, output=output,
+            repo_id="tests/encoding-comparison", task_id="dual_cube_to_matching_plates",
+            streaming_encoding=streaming, encoder_queue_maxsize=1,
+        ))
+        datasets.append(LeRobotDataset("tests/encoding-comparison", root=output, video_backend="pyav"))
+        assert not (output / "images").exists()
+    assert [options["streaming_encoding"] for options in creation_options] == [False, True]
+    assert all(options["encoder_queue_maxsize"] == 1 for options in creation_options)
+    assert results[0]["encoding"] == {
+        "streaming_encoding": False, "encoder_queue_maxsize": None, "video_backend": "pyav",
+    }
+    assert results[1]["encoding"] == {
+        "streaming_encoding": True, "encoder_queue_maxsize": 1, "video_backend": "pyav",
+    }
+    for field in (
+        "schema_fingerprint_sha256", "source", "row_outcomes", "image_join",
+        "projection_image_join_ledger", "qa", "admission", "task_label", "canonical_feature_order",
+    ):
+        assert results[0][field] == results[1][field]
+    assert datasets[0].features == datasets[1].features
+    for index in range(len(arrays["frame_index"])):
+        staged, streaming = (dataset[index] for dataset in datasets)
+        for key in ("observation.state", "action", "timestamp", "frame_index", "task_index"):
+            torch.testing.assert_close(staged[key], streaming[key], rtol=0, atol=0)
+        assert staged["task"] == streaming["task"]
+        for role in materialize.CAMERA_ROLES:
+            key = f"observation.images.{role}"
+            assert tuple(streaming[key].shape) == (3, image_shape[0], image_shape[1])
+            # Both modes use the same lossy codec. Compare decoded pixels with
+            # a two-code-value allowance, rather than requiring MP4 byte identity.
+            torch.testing.assert_close(staged[key], streaming[key], rtol=0, atol=2 / 255)
+
+
+@pytest.mark.parametrize("queue_size", [0, -1, None, True])
+def test_encoder_queue_must_be_positive_before_touching_inputs(tmp_path, queue_size):
+    with pytest.raises(materialize.MaterializationError, match="positive integer"):
+        materialize.materialize_projection(
+            bundle=tmp_path / "missing", replay_report=tmp_path / "missing.json",
+            output=tmp_path / "dataset", repo_id="tests/invalid-queue",
+            task_id="dual_cube_to_matching_plates", streaming_encoding=True,
+            encoder_queue_maxsize=queue_size,
+        )
+    assert not list(tmp_path.iterdir())
+
+
+@pytest.mark.parametrize("command", ["materialize", "orchestrate"])
+def test_encoding_cli_passes_public_options(command, tmp_path, monkeypatch):
+    calls = []
+    monkeypatch.setattr(materialize, "materialize_projection", lambda **kwargs: calls.append(kwargs) or {})
+    monkeypatch.setattr(materialize.subprocess, "run", lambda *args, **kwargs: None)
+    arguments = [
+        command, "--replay-report", str(tmp_path / "replay.json"),
+        "--output", str(tmp_path / "dataset"), "--repo-id", "tests/cli",
+        "--task-id", "dual_cube_to_matching_plates", "--streaming-encoding",
+        "--encoder-queue-maxsize", "3",
+    ]
+    if command == "materialize":
+        arguments.extend(("--bundle", str(tmp_path / "bundle")))
+    else:
+        arguments.extend(("--recording", str(tmp_path / "source.hdf5"), "--extract-python", sys.executable))
+        arguments.extend(("--portable-root", f"recording={tmp_path}"))
+    assert materialize.main(arguments) == 0
+    assert calls[0]["streaming_encoding"] is True
+    assert calls[0]["encoder_queue_maxsize"] == 3
+
+
 def test_metadata_join_validates_all_images_without_decode(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -491,14 +578,23 @@ def test_image_mutation_during_decode_fails(
 
 
 @pytest.mark.parametrize("failure", ["missing_image", "add_frame"])
+@pytest.mark.parametrize("streaming_encoding", [False, True])
 def test_late_frame_failure_does_not_publish_dataset(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, failure: str
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, failure: str, streaming_encoding: bool
 ) -> None:
     from lerobot.datasets.lerobot_dataset import LeRobotDataset
 
     bundle, arrays = _bundle(tmp_path, frames=3)
     report = _report(tmp_path, arrays)
     output = tmp_path / "dataset"
+    original_finalize = LeRobotDataset.finalize
+    finalized = []
+
+    def observed_finalize(self):
+        original_finalize(self)
+        finalized.append(self)
+
+    monkeypatch.setattr(LeRobotDataset, "finalize", observed_finalize)
     if failure == "missing_image":
         original_load = materialize._load_rgb
 
@@ -530,7 +626,47 @@ def test_late_frame_failure_does_not_publish_dataset(
             output=output,
             repo_id="tests/late-frame-failure",
             task_id="dual_cube_to_matching_plates",
+            streaming_encoding=streaming_encoding,
+            encoder_queue_maxsize=1,
         )
+    assert not output.exists()
+    assert not list(tmp_path.glob(".dataset.tmp-*"))
+    # Cancellation/finalization must happen while the private temp tree exists;
+    # dropping Python references after deleting it is insufficient for workers.
+    assert len(finalized) == 1
+
+
+def test_streaming_dropped_middle_frame_rejects_publication(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from lerobot.datasets.video_utils import StreamingVideoEncoder
+
+    bundle, arrays = _bundle(tmp_path, frames=4)
+    report = _report(tmp_path, arrays)
+    output = tmp_path / "dataset"
+    original_feed = StreamingVideoEncoder.feed_frame
+    calls = 0
+
+    def drop_middle_frame(encoder, video_key: str, image: np.ndarray) -> None:
+        nonlocal calls
+        if video_key == "observation.images.scene":
+            calls += 1
+            if calls == 2:
+                return  # Reproduce upstream's silent queue.Full drop, without private state.
+        original_feed(encoder, video_key, image)
+
+    monkeypatch.setattr(StreamingVideoEncoder, "feed_frame", drop_middle_frame)
+    with pytest.raises(materialize.MaterializationError, match="scene encoded frame count mismatch"):
+        materialize.materialize_projection(
+            bundle=bundle,
+            replay_report=report,
+            output=output,
+            repo_id="tests/streaming-dropped-frame",
+            task_id="dual_cube_to_matching_plates",
+            streaming_encoding=True,
+            encoder_queue_maxsize=2,
+        )
+    assert calls == 4
     assert not output.exists()
     assert not list(tmp_path.glob(".dataset.tmp-*"))
 

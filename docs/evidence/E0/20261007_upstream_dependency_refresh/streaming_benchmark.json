@@ -1,0 +1,542 @@
+{
+  "after_guard_ab": {
+    "rss_increase_percent": 31.463451770209062,
+    "staged": {
+      "admission": {
+        "blocking_reasons": [
+          "requires_demo_admission_decision"
+        ],
+        "dataset_admissible": false
+      },
+      "benchmark_script_sha256": "09ad845a8f77d72699c6b9bc245e73647f8b5b50c92ba5da47a84126c5bfeab9",
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "elapsed_seconds_full_pipeline_including_qa": 6.953317256178707,
+      "encoder_queue_maxsize": 2,
+      "final_output_bytes": 1042242,
+      "fingerprint": "1a8c638cb8f544de6994c53e8d0311f4d316c7867e97f3d326a45dde10411cb3",
+      "frames": 60,
+      "max_rss_mib": 1847.1953125,
+      "mode": "staged_guard_clean",
+      "packages": {
+        "av": "15.1.0",
+        "datasets": "4.8.5",
+        "lerobot": "0.6.1",
+        "numpy": "2.2.6",
+        "pyarrow": "25.0.1",
+        "torch": "2.7.1",
+        "torchcodec": "0.11.1"
+      },
+      "peak_output_tree_bytes_sampled_25ms": 2161322,
+      "peak_png_count_sampled_25ms": 180,
+      "python": "3.12.13 (main, Jun 23 2026, 15:18:55) [Clang 22.1.3 ]",
+      "qa": {
+        "all_frames_read": 60,
+        "all_video_frames_decoded": 180,
+        "dataloader_batches": 30,
+        "dataloader_frames": 60,
+        "identical_rgb_digest_roles": []
+      },
+      "rgb_encoder": "RGBEncoderConfig(vcodec='libsvtav1', pix_fmt='yuv420p', g=2, crf=30, preset=12, fast_decode=0, video_backend='pyav', extra_options={})",
+      "shape": [
+        600,
+        960,
+        3
+      ],
+      "source_sha256": "4ad7ca92ed5b47d2afde960fb718cf984c3b153364b0f314086fd4736149b79d",
+      "streaming_encoding": false,
+      "streams": 3
+    },
+    "storage_observed_lower_bound_bytes": {
+      "staged": 2161322,
+      "streaming": 1042245
+    },
+    "streaming": {
+      "admission": {
+        "blocking_reasons": [
+          "requires_demo_admission_decision"
+        ],
+        "dataset_admissible": false
+      },
+      "benchmark_script_sha256": "09ad845a8f77d72699c6b9bc245e73647f8b5b50c92ba5da47a84126c5bfeab9",
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "elapsed_seconds_full_pipeline_including_qa": 5.289521765429527,
+      "encoder_queue_maxsize": 2,
+      "final_output_bytes": 1042245,
+      "fingerprint": "1a8c638cb8f544de6994c53e8d0311f4d316c7867e97f3d326a45dde10411cb3",
+      "frames": 60,
+      "max_rss_mib": 2428.38671875,
+      "mode": "stream_guard_clean",
+      "packages": {
+        "av": "15.1.0",
+        "datasets": "4.8.5",
+        "lerobot": "0.6.1",
+        "numpy": "2.2.6",
+        "pyarrow": "25.0.1",
+        "torch": "2.7.1",
+        "torchcodec": "0.11.1"
+      },
+      "peak_output_tree_bytes_sampled_25ms": 1042245,
+      "peak_png_count_sampled_25ms": 0,
+      "python": "3.12.13 (main, Jun 23 2026, 15:18:55) [Clang 22.1.3 ]",
+      "qa": {
+        "all_frames_read": 60,
+        "all_video_frames_decoded": 180,
+        "dataloader_batches": 30,
+        "dataloader_frames": 60,
+        "identical_rgb_digest_roles": []
+      },
+      "rgb_encoder": "RGBEncoderConfig(vcodec='libsvtav1', pix_fmt='yuv420p', g=2, crf=30, preset=12, fast_decode=0, video_backend='pyav', extra_options={})",
+      "shape": [
+        600,
+        960,
+        3
+      ],
+      "source_sha256": "4ad7ca92ed5b47d2afde960fb718cf984c3b153364b0f314086fd4736149b79d",
+      "streaming_encoding": true,
+      "streams": 3
+    },
+    "time_reduction_percent": 23.92808251731552
+  },
+  "artifacts": [
+    {
+      "bytes": 4697,
+      "path": "benchmark.py",
+      "sha256": "09ad845a8f77d72699c6b9bc245e73647f8b5b50c92ba5da47a84126c5bfeab9"
+    },
+    {
+      "bytes": 4323,
+      "path": "benchmark-pre-guard.py",
+      "sha256": "a448d06b37d40aa6b60e5b2f74e485f4207ac4b87519d345ca1c6b6d8b27964c"
+    },
+    {
+      "bytes": 974,
+      "path": "staged1-report.json",
+      "sha256": "c271374fd1c2fb61656780cd63c186dbffd87f04aae49609e3d72cb034a43de3"
+    },
+    {
+      "bytes": 4609,
+      "path": "staged1.log",
+      "sha256": "3725db74b4b8c048eff3d2b5f95d5779eb3ddcf4eeb5924ab8ce0bd45feeb5ac"
+    },
+    {
+      "bytes": 968,
+      "path": "stream1-report.json",
+      "sha256": "765ed514491834d4c029b346db47ed81c3e2e6b66ce741d35738cc69c05db002"
+    },
+    {
+      "bytes": 4603,
+      "path": "stream1.log",
+      "sha256": "b65f1421ab1c0e31d27f08cc156f67553731ed58d95f9cecb7e34aa141047b8c"
+    },
+    {
+      "bytes": 963,
+      "path": "stream2-report.json",
+      "sha256": "b3d534c701f9371260a55aea0d60efe038cc27d87a247cdf80d519577fbb5f57"
+    },
+    {
+      "bytes": 4598,
+      "path": "stream2.log",
+      "sha256": "084c9036b033b3cb73e50b4410a59e3276cf2fad51d5aea5069c4d16232fa457"
+    },
+    {
+      "bytes": 972,
+      "path": "staged2-report.json",
+      "sha256": "97e90cf71abfd8189091204d0167fac3823834ffa3bd9e069d0226bb249eaf09"
+    },
+    {
+      "bytes": 4607,
+      "path": "staged2.log",
+      "sha256": "eabe307f1d9c4f87eea8d99fed08afc9b5e829ab3a719b5ced4ae06d2bb098b2"
+    },
+    {
+      "bytes": 1422,
+      "path": "staged_guard_clean-report.json",
+      "sha256": "f966a7ba4ed3a792a887e7d82b38a0cdf17aff061139acbd16c4279f8228e52b"
+    },
+    {
+      "bytes": 5017,
+      "path": "staged_guard_clean.log",
+      "sha256": "b67a52638e8a063b404106058eeac56b136e3dbd0eb611b69709deeb74fa7880"
+    },
+    {
+      "bytes": 1420,
+      "path": "stream_guard_clean-report.json",
+      "sha256": "f6af4281e85866fa16c4f87ce672b6ee575dd46f1f57f74262f8ddeb941d9f6a"
+    },
+    {
+      "bytes": 5015,
+      "path": "stream_guard_clean.log",
+      "sha256": "64685e339838f05921395e10f353632c10a83b5e01a46b1beb3e2178b7705b53"
+    }
+  ],
+  "before_guard_abba": {
+    "staged1": {
+      "admission": {
+        "blocking_reasons": [
+          "requires_demo_admission_decision"
+        ],
+        "dataset_admissible": false
+      },
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "elapsed_seconds_full_pipeline_including_qa": 6.7434525759890676,
+      "encoder_queue_maxsize": 2,
+      "final_output_bytes": 1042242,
+      "fingerprint": "1a8c638cb8f544de6994c53e8d0311f4d316c7867e97f3d326a45dde10411cb3",
+      "frames": 60,
+      "max_rss_mib": 1846.95703125,
+      "mode": "staged1",
+      "peak_output_tree_bytes_sampled_25ms": 2117725,
+      "peak_png_count_sampled_25ms": 180,
+      "qa": {
+        "all_frames_read": 60,
+        "all_video_frames_decoded": 180,
+        "dataloader_batches": 30,
+        "dataloader_frames": 60,
+        "identical_rgb_digest_roles": []
+      },
+      "rgb_encoder": "RGBEncoderConfig(vcodec='libsvtav1', pix_fmt='yuv420p', g=2, crf=30, preset=12, fast_decode=0, video_backend='pyav', extra_options={})",
+      "shape": [
+        600,
+        960,
+        3
+      ],
+      "streaming_encoding": false,
+      "streams": 3
+    },
+    "staged2": {
+      "admission": {
+        "blocking_reasons": [
+          "requires_demo_admission_decision"
+        ],
+        "dataset_admissible": false
+      },
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "elapsed_seconds_full_pipeline_including_qa": 7.0559949753805995,
+      "encoder_queue_maxsize": 2,
+      "final_output_bytes": 1042242,
+      "fingerprint": "1a8c638cb8f544de6994c53e8d0311f4d316c7867e97f3d326a45dde10411cb3",
+      "frames": 60,
+      "max_rss_mib": 1865.921875,
+      "mode": "staged2",
+      "peak_output_tree_bytes_sampled_25ms": 1975186,
+      "peak_png_count_sampled_25ms": 180,
+      "qa": {
+        "all_frames_read": 60,
+        "all_video_frames_decoded": 180,
+        "dataloader_batches": 30,
+        "dataloader_frames": 60,
+        "identical_rgb_digest_roles": []
+      },
+      "rgb_encoder": "RGBEncoderConfig(vcodec='libsvtav1', pix_fmt='yuv420p', g=2, crf=30, preset=12, fast_decode=0, video_backend='pyav', extra_options={})",
+      "shape": [
+        600,
+        960,
+        3
+      ],
+      "streaming_encoding": false,
+      "streams": 3
+    },
+    "stream1": {
+      "admission": {
+        "blocking_reasons": [
+          "requires_demo_admission_decision"
+        ],
+        "dataset_admissible": false
+      },
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "elapsed_seconds_full_pipeline_including_qa": 4.895756317302585,
+      "encoder_queue_maxsize": 2,
+      "final_output_bytes": 1042245,
+      "fingerprint": "1a8c638cb8f544de6994c53e8d0311f4d316c7867e97f3d326a45dde10411cb3",
+      "frames": 60,
+      "max_rss_mib": 2434.5390625,
+      "mode": "stream1",
+      "peak_output_tree_bytes_sampled_25ms": 819150,
+      "peak_png_count_sampled_25ms": 0,
+      "qa": {
+        "all_frames_read": 60,
+        "all_video_frames_decoded": 180,
+        "dataloader_batches": 30,
+        "dataloader_frames": 60,
+        "identical_rgb_digest_roles": []
+      },
+      "rgb_encoder": "RGBEncoderConfig(vcodec='libsvtav1', pix_fmt='yuv420p', g=2, crf=30, preset=12, fast_decode=0, video_backend='pyav', extra_options={})",
+      "shape": [
+        600,
+        960,
+        3
+      ],
+      "streaming_encoding": true,
+      "streams": 3
+    },
+    "stream2": {
+      "admission": {
+        "blocking_reasons": [
+          "requires_demo_admission_decision"
+        ],
+        "dataset_admissible": false
+      },
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "elapsed_seconds_full_pipeline_including_qa": 4.942195049021393,
+      "encoder_queue_maxsize": 2,
+      "final_output_bytes": 1042245,
+      "fingerprint": "1a8c638cb8f544de6994c53e8d0311f4d316c7867e97f3d326a45dde10411cb3",
+      "frames": 60,
+      "max_rss_mib": 2478.25,
+      "mode": "stream2",
+      "peak_output_tree_bytes_sampled_25ms": 819150,
+      "peak_png_count_sampled_25ms": 0,
+      "qa": {
+        "all_frames_read": 60,
+        "all_video_frames_decoded": 180,
+        "dataloader_batches": 30,
+        "dataloader_frames": 60,
+        "identical_rgb_digest_roles": []
+      },
+      "rgb_encoder": "RGBEncoderConfig(vcodec='libsvtav1', pix_fmt='yuv420p', g=2, crf=30, preset=12, fast_decode=0, video_backend='pyav', extra_options={})",
+      "shape": [
+        600,
+        960,
+        3
+      ],
+      "streaming_encoding": true,
+      "streams": 3
+    }
+  },
+  "checkout": {
+    "head_at_freeze": "18899c258dbab6f4a580d182ebc942a265727dde",
+    "pre_guard_hash_scope": "Observed after earlier four processes finished, before guard edit; earlier reports did not independently capture their execution hash.",
+    "pre_guard_source_sha256_observed_before_guard_edit": "4117b0bae304cd699484d8ff447c005b281ed0be12fd343c1769442f4a873783",
+    "root": "/home/ebulochkin/vla_infrastructure",
+    "source_execution_sha256": "4ad7ca92ed5b47d2afde960fb718cf984c3b153364b0f314086fd4736149b79d",
+    "tests_at_freeze_sha256": "c24c15f61e5c8b33621466c8452a9c827520cdf2872e6640ebdca1208ba12a45"
+  },
+  "checks": {
+    "diff_check": "PASS",
+    "result": "56 passed",
+    "ruff": "PASS",
+    "scope": "Real LeRobot native and legacy geometry, staged/stream decoded pixels and labels/metadata/provenance, bounded-queue passthrough, late-frame rollback, simulated silently dropped middle frame rejected before publication.",
+    "scoped_mypy": "5 existing baseline errors unchanged; no errors in new code",
+    "targeted_command": "UV_PROJECT_ENVIRONMENT=/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env UV_CACHE_DIR=/tmp/vla-dependency-audit HF_HOME=/tmp/vla-dependency-audit-hf uv run --frozen --no-sync pytest -q tests/test_isaac_vr_lerobot_materialize.py tests/test_isaac_vr_admission.py"
+  },
+  "commands": {
+    "cwd": "/home/ebulochkin/vla_infrastructure",
+    "prepare": "UV_PROJECT_ENVIRONMENT=/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env UV_CACHE_DIR=/tmp/vla-dependency-audit HF_HOME=/tmp/vla-dependency-audit-hf uv run --frozen --no-sync python /tmp/vla-materializer-benchmark-20261007.py prepare",
+    "runs": [
+      "UV_PROJECT_ENVIRONMENT=/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env UV_CACHE_DIR=/tmp/vla-dependency-audit HF_HOME=/tmp/vla-dependency-audit-hf uv run --frozen --no-sync python /tmp/vla-materializer-benchmark-20261007.py staged1 > /tmp/vla-materializer-benchmark-20261007/staged1.log 2>&1",
+      "UV_PROJECT_ENVIRONMENT=/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env UV_CACHE_DIR=/tmp/vla-dependency-audit HF_HOME=/tmp/vla-dependency-audit-hf uv run --frozen --no-sync python /tmp/vla-materializer-benchmark-20261007.py stream1 > /tmp/vla-materializer-benchmark-20261007/stream1.log 2>&1",
+      "UV_PROJECT_ENVIRONMENT=/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env UV_CACHE_DIR=/tmp/vla-dependency-audit HF_HOME=/tmp/vla-dependency-audit-hf uv run --frozen --no-sync python /tmp/vla-materializer-benchmark-20261007.py stream2 > /tmp/vla-materializer-benchmark-20261007/stream2.log 2>&1",
+      "UV_PROJECT_ENVIRONMENT=/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env UV_CACHE_DIR=/tmp/vla-dependency-audit HF_HOME=/tmp/vla-dependency-audit-hf uv run --frozen --no-sync python /tmp/vla-materializer-benchmark-20261007.py staged2 > /tmp/vla-materializer-benchmark-20261007/staged2.log 2>&1",
+      "UV_PROJECT_ENVIRONMENT=/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env UV_CACHE_DIR=/tmp/vla-dependency-audit HF_HOME=/tmp/vla-dependency-audit-hf uv run --frozen --no-sync python /tmp/vla-materializer-benchmark-20261007.py staged_guard_clean > /tmp/vla-materializer-benchmark-20261007/staged_guard_clean.log 2>&1",
+      "UV_PROJECT_ENVIRONMENT=/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env UV_CACHE_DIR=/tmp/vla-dependency-audit HF_HOME=/tmp/vla-dependency-audit-hf uv run --frozen --no-sync python /tmp/vla-materializer-benchmark-20261007.py stream_guard_clean > /tmp/vla-materializer-benchmark-20261007/stream_guard_clean.log 2>&1"
+    ]
+  },
+  "decision": {
+    "reason": "Short synthetic data showed lower time and PNG staging but higher process peak RSS; retain opt-in pending representative long-episode qualification.",
+    "streaming_default": false
+  },
+  "environment": {
+    "av_library_versions": {
+      "libavcodec": [
+        61,
+        19,
+        101
+      ],
+      "libavdevice": [
+        61,
+        3,
+        100
+      ],
+      "libavfilter": [
+        10,
+        4,
+        100
+      ],
+      "libavformat": [
+        61,
+        7,
+        100
+      ],
+      "libavutil": [
+        59,
+        39,
+        100
+      ],
+      "libswresample": [
+        5,
+        3,
+        100
+      ],
+      "libswscale": [
+        8,
+        3,
+        100
+      ]
+    },
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "encoder": "RGBEncoderConfig(vcodec='libsvtav1', pix_fmt='yuv420p', g=2, crf=30, preset=12, fast_decode=0, video_backend='pyav', extra_options={})",
+    "packages": {
+      "av": "15.1.0",
+      "datasets": "4.8.5",
+      "lerobot": "0.6.1",
+      "numpy": "2.2.6",
+      "pyarrow": "25.0.1",
+      "torch": "2.7.1",
+      "torchcodec": "0.11.1"
+    },
+    "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.35",
+    "project_environment": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env",
+    "python": "3.12.13 (main, Jun 23 2026, 15:18:55) [Clang 22.1.3 ]",
+    "torchcodec_scope": "Installed 0.11.1 is incompatible with this torch2.7.1 environment; explicit PyAV used throughout; candidate upgraded environment not measured.",
+    "uv_flags": [
+      "--frozen",
+      "--no-sync"
+    ],
+    "video_backend": "pyav"
+  },
+  "frozen_at_utc": "2026-10-07T00:16:11.309014+00:00",
+  "input": {
+    "content": "Deterministic RGB gradients, checker pattern and moving rectangles; same immutable input files for every process.",
+    "duration_seconds": 2,
+    "files": [
+      {
+        "bytes": 2663,
+        "path": "bundle/manifest.json",
+        "sha256": "5f4a18d205ad56bf9439926d27ec073e2d7960479816dc47ca8dcec0161c78b0"
+      },
+      {
+        "bytes": 9796,
+        "path": "bundle/projection.npz",
+        "sha256": "9206cc9168de6078036aa93254ddeeacb251483e572a5d6298b98d140e8fbdba"
+      },
+      {
+        "bytes": 179588,
+        "path": "replay.json",
+        "sha256": "bef3ba2af60db8436b1309f4616c58fd82a1d07988ba7412c22b0bbad3c7bfa0"
+      }
+    ],
+    "fps": 30,
+    "frames": 60,
+    "rgb_png_count": 180,
+    "rgb_png_inventory_sha256": "293fed06f56b2b5e6a7a514d0b03264d2265dbaa28e74a22756d22203f39ecfd",
+    "shape": [
+      600,
+      960,
+      3
+    ],
+    "streams": 3
+  },
+  "large_artifacts_not_for_evidence_bundle": [
+    {
+      "bytes": 4460554,
+      "path": "staged1-pixels.npz",
+      "sha256": "485b93ca0a0192fc28957727d99fd2e20c5c0766eb3e1a8c47dc640a42f0286b"
+    },
+    {
+      "bytes": 4460554,
+      "path": "stream1-pixels.npz",
+      "sha256": "485b93ca0a0192fc28957727d99fd2e20c5c0766eb3e1a8c47dc640a42f0286b"
+    },
+    {
+      "bytes": 4460554,
+      "path": "stream2-pixels.npz",
+      "sha256": "485b93ca0a0192fc28957727d99fd2e20c5c0766eb3e1a8c47dc640a42f0286b"
+    },
+    {
+      "bytes": 4460554,
+      "path": "staged2-pixels.npz",
+      "sha256": "485b93ca0a0192fc28957727d99fd2e20c5c0766eb3e1a8c47dc640a42f0286b"
+    },
+    {
+      "bytes": 4460554,
+      "path": "staged_guard_clean-pixels.npz",
+      "sha256": "485b93ca0a0192fc28957727d99fd2e20c5c0766eb3e1a8c47dc640a42f0286b"
+    },
+    {
+      "bytes": 4460554,
+      "path": "stream_guard_clean-pixels.npz",
+      "sha256": "485b93ca0a0192fc28957727d99fd2e20c5c0766eb3e1a8c47dc640a42f0286b"
+    }
+  ],
+  "limitations": [
+    "Synthetic two-second CPU-only input; no Isaac/Kit, physical qualification or admission.",
+    "One post-guard AB pair; four earlier ABBA runs lacked encoded-count guard and are reported separately.",
+    "Disk sampled every25ms: reported peak is an observed lower bound, may miss transient files or publication; final output bytes included in conservative lower bound.",
+    "RSS is whole-process ru_maxrss after materialization, including imports and codec buffers; queue bound is not a total memory bound.",
+    "Pixel comparisons cover first/middle/last frames of each camera, not source-to-codec losslessness; full QA reads every logical row and checks every encoded frame count and PTS post-guard.",
+    "An initial post-guard staged run overlapped targeted tests and is excluded from comparison and artifact set.",
+    "Measurements are qualitative on shared host with four-CPU affinity, not a controlled throughput benchmark.",
+    "Dataset admission remains false and geometry fingerprints remain separate; no resizing."
+  ],
+  "pixel_comparison_max_abs_difference": {
+    "staged1:stream1": {
+      "0_left_wrist": 0.0,
+      "0_right_wrist": 0.0,
+      "0_scene": 0.0,
+      "29_left_wrist": 0.0,
+      "29_right_wrist": 0.0,
+      "29_scene": 0.0,
+      "59_left_wrist": 0.0,
+      "59_right_wrist": 0.0,
+      "59_scene": 0.0
+    },
+    "staged2:stream2": {
+      "0_left_wrist": 0.0,
+      "0_right_wrist": 0.0,
+      "0_scene": 0.0,
+      "29_left_wrist": 0.0,
+      "29_right_wrist": 0.0,
+      "29_scene": 0.0,
+      "59_left_wrist": 0.0,
+      "59_right_wrist": 0.0,
+      "59_scene": 0.0
+    },
+    "staged_guard_clean:stream_guard_clean": {
+      "0_left_wrist": 0.0,
+      "0_right_wrist": 0.0,
+      "0_scene": 0.0,
+      "29_left_wrist": 0.0,
+      "29_right_wrist": 0.0,
+      "29_scene": 0.0,
+      "59_left_wrist": 0.0,
+      "59_right_wrist": 0.0,
+      "59_scene": 0.0
+    }
+  },
+  "schema": "piper_x_materializer_streaming_benchmark_v1"
+}

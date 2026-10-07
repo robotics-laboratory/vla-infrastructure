@@ -1,0 +1,23 @@
+{
+  "checkout": "/home/ebulochkin/vla_infrastructure",
+  "head": "18899c258dbab6f4a580d182ebc942a265727dde",
+  "profile": "offline_tests",
+  "environment": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env",
+  "source_sha256": {
+    "tools/isaac_vr_recording.py": "d7ae93a06fe3a7b01634d891faa76a49674cf5913d2ed8415506e7cdf6e71d79",
+    "tests/test_isaac_vr_recording.py": "f36cbb1a59352699974e03f74c68e44e7272cf4dade57081284be9d6020dc110"
+  },
+  "checks": {
+    "pytest": "63 passed; tests/test_isaac_vr_recording.py",
+    "ruff": "PASS; both assigned files",
+    "mypy": "PASS before and after; follow-imports=skip, ignore-missing-imports",
+    "diff_check": "PASS"
+  },
+  "logs": {
+    "vla-record-start-pytest.log": "/tmp/vla-record-start-pytest.log",
+    "vla-record-start-ruff.log": "/tmp/vla-record-start-ruff.log",
+    "vla-record-start-mypy-before.log": "/tmp/vla-record-start-mypy-before.log",
+    "vla-record-start-mypy-after.log": "/tmp/vla-record-start-mypy-after.log"
+  },
+  "scope": "CPU public-SDK fakes only; no Kit, physical motion, gate admission or SDK mutation"
+}

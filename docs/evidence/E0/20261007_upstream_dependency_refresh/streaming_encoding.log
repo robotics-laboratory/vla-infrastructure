@@ -1,0 +1,62 @@
+Svt[info]: -------------------------------------------
+Svt[info]: SVT [version]:	SVT-AV1 Encoder Lib v3.0.0
+Svt[info]: SVT [build]  :	GCC 14.2.1 20250110 (Red Hat 14.2.1-7)	 64 bit
+Svt[info]: LIB Build date: Jul  3 2025 03:14:07
+Svt[info]: -------------------------------------------
+Svt[warn]: Preset M12 is mapped to M10.
+Svt[info]: Level of Parallelism: 6
+Svt[info]: Number of PPCS 161
+Svt[info]: [asm level on system : up to avx2]
+Svt[info]: [asm level selected : up to avx2]
+Svt[info]: -------------------------------------------
+Svt[info]: SVT [config]: main profile	tier (auto)	level (auto)
+Svt[info]: SVT [config]: width / height / fps numerator / fps denominator 		: 960 / 600 / 30 / 1
+Svt[info]: SVT [config]: bit-depth / color format 					: 8 / YUV420
+Svt[info]: SVT [config]: preset / tune / pred struct 					: 10 / PSNR / random access
+Svt[info]: SVT [config]: gop size / mini-gop size / key-frame type 			: 2 / 16 / key frame
+Svt[info]: SVT [config]: BRC mode / rate factor 					: CRF / 30 
+Svt[info]: SVT [config]: AQ mode / variance boost 					: 2 / 0
+Svt[info]: SVT [config]: sharpness / luminance-based QP bias 			: 0 / 0
+Svt[info]: Svt[info]: -------------------------------------------
+Svt[info]: -------------------------------------------
+Svt[info]: SVT [version]:	SVT-AV1 Encoder Lib v3.0.0
+Svt[info]: SVT [build]  :	GCC 14.2.1 20250110 (Red Hat 14.2.1-7)	 64 bit
+Svt[info]: LIB Build date: Jul  3 2025 03:14:07
+Svt[info]: -------------------------------------------
+Svt[warn]: Preset M12 is mapped to M10.
+Svt[info]: Level of Parallelism: 6
+Svt[info]: Number of PPCS 161
+Svt[info]: [asm level on system : up to avx2]
+Svt[info]: [asm level selected : up to avx2]
+Svt[info]: -------------------------------------------
+Svt[info]: SVT [config]: main profile	tier (auto)	level (auto)
+Svt[info]: SVT [config]: width / height / fps numerator / fps denominator 		: 960 / 600 / 30 / 1
+Svt[info]: SVT [config]: bit-depth / color format 					: 8 / YUV420
+Svt[info]: SVT [config]: preset / tune / pred struct 					: 10 / PSNR / random access
+Svt[info]: SVT [config]: gop size / mini-gop size / key-frame type 			: 2 / 16 / key frame
+Svt[info]: SVT [config]: BRC mode / rate factor 					: CRF / 30 
+Svt[info]: SVT [config]: AQ mode / variance boost 					: 2 / 0
+Svt[info]: SVT [config]: sharpness / luminance-based QP bias 			: 0 / 0
+Svt[info]: Svt[info]: -------------------------------------------
+Svt[info]: -------------------------------------------
+Svt[info]: SVT [version]:	SVT-AV1 Encoder Lib v3.0.0
+Svt[info]: SVT [build]  :	GCC 14.2.1 20250110 (Red Hat 14.2.1-7)	 64 bit
+Svt[info]: LIB Build date: Jul  3 2025 03:14:07
+Svt[info]: -------------------------------------------
+Svt[warn]: Preset M12 is mapped to M10.
+Svt[info]: Level of Parallelism: 6
+Svt[info]: Number of PPCS 161
+Svt[info]: [asm level on system : up to avx2]
+Svt[info]: [asm level selected : up to avx2]
+Svt[info]: -------------------------------------------
+Svt[info]: SVT [config]: main profile	tier (auto)	level (auto)
+Svt[info]: SVT [config]: width / height / fps numerator / fps denominator 		: 960 / 600 / 30 / 1
+Svt[info]: SVT [config]: bit-depth / color format 					: 8 / YUV420
+Svt[info]: SVT [config]: preset / tune / pred struct 					: 10 / PSNR / random access
+Svt[info]: SVT [config]: gop size / mini-gop size / key-frame type 			: 2 / 16 / key frame
+Svt[info]: SVT [config]: BRC mode / rate factor 					: CRF / 30 
+Svt[info]: SVT [config]: AQ mode / variance boost 					: 2 / 0
+Svt[info]: SVT [config]: sharpness / luminance-based QP bias 			: 0 / 0
+Svt[info]: Svt[info]: -------------------------------------------
+Map:   0%|          | 0/60 [00:00<?, ? examples/s]Map: 100%|██████████| 60/60 [00:00<00:00, 3594.91 examples/s]
+{"source_sha256": "4ad7ca92ed5b47d2afde960fb718cf984c3b153364b0f314086fd4736149b79d", "benchmark_script_sha256": "09ad845a8f77d72699c6b9bc245e73647f8b5b50c92ba5da47a84126c5bfeab9", "python": "3.12.13 (main, Jun 23 2026, 15:18:55) [Clang 22.1.3 ]", "packages": {"lerobot": "0.6.1", "torch": "2.7.1", "torchcodec": "0.11.1", "datasets": "4.8.5", "av": "15.1.0", "numpy": "2.2.6", "pyarrow": "25.0.1"}, "mode": "stream_guard_clean", "streaming_encoding": true, "encoder_queue_maxsize": 2, "frames": 60, "streams": 3, "shape": [600, 960, 3], "elapsed_seconds_full_pipeline_including_qa": 5.289521765429527, "max_rss_mib": 2428.38671875, "peak_output_tree_bytes_sampled_25ms": 1042245, "peak_png_count_sampled_25ms": 0, "final_output_bytes": 1042245, "cpu_affinity": [0, 1, 2, 3], "rgb_encoder": "RGBEncoderConfig(vcodec='libsvtav1', pix_fmt='yuv420p', g=2, crf=30, preset=12, fast_decode=0, video_backend='pyav', extra_options={})", "qa": {"all_frames_read": 60, "all_video_frames_decoded": 180, "dataloader_batches": 30, "dataloader_frames": 60, "identical_rgb_digest_roles": []}, "admission": {"blocking_reasons": ["requires_demo_admission_decision"], "dataset_admissible": false}, "fingerprint": "1a8c638cb8f544de6994c53e8d0311f4d316c7867e97f3d326a45dde10411cb3"}

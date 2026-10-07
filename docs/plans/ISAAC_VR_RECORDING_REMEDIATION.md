@@ -353,6 +353,26 @@ both LeRobot feature creation and full-read QA. It remains a separate schema
 fingerprint, without resize or native SVGA admission. The converter's QA uses
 the existing canonical feature factory and upstream dataset reader.
 
+Core Linux x86_64 now constrains TorchCodec to the release compatible with its
+retained Torch 2.7.1. The read-only dependency checker reuses upstream `uv`
+for frozen closure and the existing `verify_stack` for SDK identity; it also
+loads the decoder and compares exact current/legacy metadata-conflict sets.
+Environment spec identity and historical gate proof remain separate from a
+new candidate's scoped checks; existing environments are not repaired in place.
+
+Optional materializer streaming delegates encoding, bounded queues and writer
+cleanup to LeRobot. Public PyAV decoding verifies complete encoded frame counts
+and time grids before publication, including queue-drop failures. The default
+remains PNG staging because the measured latency improvement has a memory cost.
+No source label, replay schema or D1 admission rule changes.
+
+Reuse and size re-audit: the small native test runner composes stdlib `unittest`
+with the existing SDK verifier. The dependency checker probes package metadata,
+editable origins and decoder import and delegates dependency resolution to `uv`.
+The materializer only configures the existing LeRobot writer and adds a strict
+encoded-stream check. None introduces a resolver, recorder, dataset backend or
+runtime framework.
+
 No-client RUN/RECORD audits consume the existing host stop predicate before a
 new injected native command. A transition already applied completes its exact
 successor and causal commit; partial audits retain actual completed counts,
@@ -376,21 +396,53 @@ seams. A new real Kit moving-parity run remains required to qualify the updated
 assay; the historical checkpoint below and registered physical S2 evidence keep
 their original source scope. No D1 admission is established by this repair.
 
-### Open implementation defects
+### Episode startup rollback repairs
 
-These are repair work, not accepted behavior or reasons to relax qualification:
+The [native recorder](../../tools/isaac_vr_recording.py) releases first-episode
+storage and acquired Recordables when opening, callbacks or manifest publication
+fail. A failed sibling episode closes its own storage, restores the sampler's
+previous storage and retains session-owned Recordables. Successful cleanup permits
+a retry; failed cleanup blocks reuse. The primary error survives cleanup and
+failure-marker errors, and the artifact remains non-finalized.
 
-- First and subsequent episode startup in
-  [the native recorder](../../tools/isaac_vr_recording.py) lack complete rollback
-  when startup callbacks or manifest publication fail after opening HDF storage.
-  Close newly acquired native/storage ownership on every startup failure and
-  retain a non-finalized artifact; test both first and sibling episode startup.
-- `test_async_finalizer_failure_is_observable_and_blocks_publication` in
-  [the recorder tests](../../tests/test_isaac_vr_recording.py) waits for the
-  worker's failed file marker, then assumes its Future is already complete.
-  `_FinalizationOwner.check` observes completed Futures, so this synchronization
-  can race. Repair the test's completion wait while preserving the requirement
-  that finalization failure blocks further recording and saved publication.
+Failure injection covers first and sibling startup, partial callbacks, manifest
+publication, cleanup and marker failures. The asynchronous finalizer regression
+waits for the worker's actual Future completion before asserting the existing
+public failure boundary. The production finalizer behavior is unchanged.
+
+Reuse and size re-audit: rollback composes public upstream lifecycle callbacks
+with the existing `close_explicit_session`; a small helper retains failure state
+and cleanup notes. These CPU regressions do not establish a new Kit or headset
+qualification. Existing physical acceptance keeps its original tested revision.
+
+### Remaining upstream adaptation and qualification
+
+The current Isaac61 migration already changes the vendor runtime, Isaac Lab
+and `isaaclab_teleop` from the legacy selection; it does not justify a second
+unqualified upgrade. The audited SE(3) retargeter, camera-feed implementation and
+IsaacTeleopDevice remain byte-identical between the retained SDK selections.
+The following seams still need their project adapters:
+
+- Invalid tracking must clear relative history and smoothing; removing the
+  wrapper requires a public upstream reset hook with equivalent behavior.
+- Selecting a single controller decision source and managing preview visibility,
+  CPU staging and wall layout still use private lifecycle/presenter hooks.
+  Replace them when upstream exposes equivalent injection/publication hooks,
+  with lifecycle and tracking regressions retained.
+- Capture must prove completion through a generation-bound receipt. A renderer
+  capability flag is insufficient. Batched rendering still needs a new per-view
+  content assay: the prior experiment retained cross-view stale-frame failures.
+- ExplicitFrameSampler separates observation capture from causal commit and
+  fails closed on unavailable poses. The native immediate-append scheduler and
+  zero fallback do not preserve that boundary. Keep the thin sampler until the
+  native recorder offers equivalent semantics.
+
+Native SDK rotations remain XYZW; the recorder's WXYZ edge conversion remains
+explicit. Do not apply a blanket quaternion migration. Future SDK/CloudXR
+changes, batch selection, long-episode encoding performance, real Kit lifecycle
+and the updated moving-parity assay need their own scoped qualification.
+Physical recording-source qualification and D1 admission remain open despite
+the retained S2 operator acceptance.
 
 ### Implementation checkpoint: 2026-09-23
 
