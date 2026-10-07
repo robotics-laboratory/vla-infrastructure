@@ -885,17 +885,11 @@ def test_async_finalizer_failure_is_observable_and_blocks_publication(tmp_path, 
     second_row = row_for_tokens(second_token, second_successor)
     second_row["episode_id"] = second.episode_id
     second.commit_transition(second_token, second_successor, seal_sample(second_row))
-    deadline = time.monotonic() + 5
-    # The worker writes its marker before its Future becomes done. Observe the
-    # public polling boundary, not the marker as a thread-completion signal.
-    while True:
-        try:
-            session.check_finalization()
-        except RuntimeError as exc:
-            assert "finalization failed" in str(exc)
-            break
-        assert time.monotonic() < deadline
-        time.sleep(0.01)
+    session._submit_deferred()
+    # A file marker precedes Future completion; wait for the actual worker.
+    future = session._finalizer._pending[0][0]
+    with pytest.raises(OSError, match="injected hash failure"):
+        future.result(timeout=5)
     with pytest.raises(RuntimeError, match="finalization failed"):
         session.check_finalization()
     with pytest.raises(RuntimeError, match="finalization failed"):
@@ -1348,3 +1342,277 @@ def test_replay_guard_applies_order_without_physics_or_native_actions():
     with pytest.raises(RuntimeError, match="advanced physics"):
         calls = iter((42, 43))
         apply_replay_frames(Replayer(), 1, pump=lambda: None, physics_steps=lambda: next(calls))
+
+
+def _native_start_fixture(tmp_path, monkeypatch, *, failure, cleanup_failure=False):
+    """Exercise first startup through the coordinator, with public SDK fakes."""
+    import tools.isaac_vr_visual_provenance as visual
+
+    primary = RuntimeError(f"startup:{failure}")
+    handles, storages = [], []
+
+    class Recordable(FakeLifecycleRecordable):
+        def __init__(self, *, group="state/time", **kwargs):
+            super().__init__(group, 7)
+            self.opens = self.starts = self.ends = self.closes = 0
+            handles.append(self)
+
+        def on_session_open(self, stage):
+            self.opens += 1
+            if failure == "session_callback" and self.group == "state/left_robot":
+                raise primary
+
+        def on_episode_start(self):
+            self.starts += 1
+            if failure == "episode_callback" and self.group == "state/left_robot":
+                raise primary
+
+        def on_episode_end(self):
+            self.ends += 1
+
+        def on_session_close(self):
+            self.closes += 1
+            if cleanup_failure and self.group == "state/left_robot":
+                raise OSError("recordable cleanup failed")
+
+        def to_manifest(self):
+            return {"group": self.group}
+
+    class D0(Recordable):
+        def __init__(self):
+            super().__init__(group="d0/committed_transition")
+
+        describe_channels = FakeD0Recordable.describe_channels
+
+    class Storage(FakeLifecycleStorage):
+        def __init__(self, path, **kwargs):
+            super().__init__()
+            self.path = Path(path)
+            self.close_count = 0
+            storages.append(self)
+
+        def open(self):
+            self.path.write_bytes(b"hdf")
+            if failure == "hdf_open":
+                raise primary
+
+        def set_root_attr(self, key, value):
+            pass
+
+        def write_manifest(self, manifest):
+            if failure == "native_manifest":
+                raise primary
+
+        def begin_episode(self, schemas, *, metadata):
+            if failure == "hdf_begin":
+                raise primary
+            return 0
+
+        def close(self):
+            self.close_count += 1
+            super().close()
+            if cleanup_failure:
+                raise OSError("storage cleanup failed")
+
+    sdk = ModuleType("isaacsim.replicator.episode_recorder")
+    for name in ("SimTimeRecordable", "ArticulationRecordable", "RigidBodyRecordable",
+                 "CameraRecordable"):
+        setattr(sdk, name, Recordable)
+    sdk.SessionStorage = Storage
+    sdk.build_manifest = lambda *args, **kwargs: {}
+
+    def export(path):
+        snapshot = Path(path) / "stage_snapshot.usd"
+        snapshot.write_bytes(b"usd")
+        return str(snapshot)
+
+    sdk.export_stage_snapshot = export
+    usd = ModuleType("omni.usd")
+    usd.get_context = lambda: SimpleNamespace(get_stage=lambda: object())
+    omni = ModuleType("omni")
+    omni.usd = usd
+    for name, module in (("isaacsim.replicator.episode_recorder", sdk), ("omni", omni),
+                         ("omni.usd", usd)):
+        monkeypatch.setitem(sys.modules, name, module)
+    monkeypatch.setattr(recording_module, "ensure_d0_recordable", lambda: D0)
+    monkeypatch.setattr(recording_module, "_sanitize_exported_stage", lambda _: object())
+    digest = hashlib.sha256(b"usd").hexdigest()
+    monkeypatch.setattr(recording_module, "write_asset_closure_sidecar", lambda *a, **kw: {
+        "asset_closure_sha256": digest,
+    })
+    monkeypatch.setattr(visual, "build_visual_provenance", lambda *a, **kw: {
+        "visual_provenance_sha256": digest,
+    })
+
+    def prepare(path, **kwargs):
+        path.mkdir()
+        return path
+
+    monkeypatch.setattr(recording_module, "prepare_private_output_dir", prepare)
+    write_json = recording_module._atomic_write_json
+
+    def write(path, payload):
+        if failure == "manifest" and path.name == "manifest.json":
+            raise primary
+        return write_json(path, payload)
+
+    monkeypatch.setattr(recording_module, "_atomic_write_json", write)
+    cameras = [SimpleNamespace(cfg=SimpleNamespace(width=2, height=2)) for _ in range(3)]
+    env = SimpleNamespace(
+        camera=SimpleNamespace(live_rgb_enabled=False, wrists=cameras[:2],
+                               scene_camera=cameras[2], camera_prim_paths={
+                                   "left_wrist": "/Left", "right_wrist": "/Right",
+                                   "scene": "/Scene",
+                               }),
+        vr_runtime=SimpleNamespace(dynamic_assets=[]),
+    )
+
+    def start():
+        return recording_module.start_live_recording(
+            tmp_path / "first", env, session_metadata={
+                "run_id": "run", "session_id": "session", "episode_id": "first",
+                "source_profile": "isaac_human_vr_offline_rgb_v2",
+            }, portable_roots={},
+        )
+
+    return start, primary, handles, storages
+
+
+@pytest.mark.parametrize("failure", [
+    "hdf_open", "session_callback", "native_manifest", "hdf_begin", "episode_callback", "manifest",
+])
+def test_first_episode_start_failure_closes_acquired_ownership_once(
+    tmp_path, monkeypatch, failure,
+):
+    start, primary, handles, storages = _native_start_fixture(
+        tmp_path, monkeypatch, failure=failure,
+    )
+    with pytest.raises(RuntimeError) as raised:
+        start()
+    assert raised.value is primary
+    assert len(storages) == 1 and storages[0].closed and storages[0].close_count == 1
+    assert all(handle.closes == int(handle.opens > 0) for handle in handles)
+    if failure in {"hdf_begin", "episode_callback", "manifest"}:
+        assert all(handle.ends == 1 for handle in handles)
+        assert len(storages[0].ended) == 1 and storages[0].ended[0][0] is False
+    marker = json.loads((tmp_path / "first/recording_state.json").read_text())
+    assert marker["artifact_state"] == "failed" and marker["committed_frames"] == 0
+    assert not (tmp_path / "first/manifest.json").exists()
+
+
+def test_first_start_preserves_primary_error_and_reports_all_cleanup_failures(tmp_path, monkeypatch):
+    start, primary, handles, storages = _native_start_fixture(
+        tmp_path, monkeypatch, failure="episode_callback", cleanup_failure=True,
+    )
+    with pytest.raises(RuntimeError) as raised:
+        start()
+    assert raised.value is primary
+    assert all(handle.closes == 1 for handle in handles)
+    assert storages[0].close_count == 1
+    notes = " ".join(primary.__notes__)
+    assert "recordable cleanup failed" in notes and "storage cleanup failed" in notes
+
+
+@pytest.mark.parametrize("failure", ["episode_callback", "manifest"])
+def test_sibling_start_failure_preserves_shared_handles_and_can_retry(tmp_path, monkeypatch, failure):
+    session, _, events = _session_fixture(tmp_path, monkeypatch)
+    session.end_episode(outcome="aborted", reason="test")
+    prior_storage = session._sampler.storage
+    opened = []
+    original_open = recording_module.open_explicit_session
+    original_start = recording_module.start_explicit_episode
+    original_write = recording_module._atomic_write_json
+    original_callback = session._recordables[1].on_episode_start
+    primary = RuntimeError(f"sibling:{failure}")
+
+    def open_segment(*args, **kwargs):
+        storage, sampler = original_open(*args, **kwargs)
+        storage.close_count = 0
+
+        def close():
+            storage.close_count += 1
+            storage.closed = True
+
+        storage.close = close
+        opened.append(storage)
+        return storage, sampler
+
+    def fail_callback():
+        raise primary
+
+    def write(path, payload):
+        if path.parent.name == "failed" and path.name == "manifest.json":
+            raise primary
+        return original_write(path, payload)
+
+    monkeypatch.setattr(recording_module, "open_explicit_session", open_segment)
+    if failure == "episode_callback":
+        monkeypatch.setattr(session._recordables[1], "on_episode_start", fail_callback)
+    if failure == "manifest":
+        monkeypatch.setattr(recording_module, "_atomic_write_json", write)
+    with pytest.raises(RuntimeError) as raised:
+        session.start_episode(tmp_path / "failed", "episode_000001")
+    assert raised.value is primary
+    assert opened[0].closed and opened[0].close_count == 1
+    assert session.active_episode is None and not session._closed
+    assert session._sampler.storage is prior_storage and not session._sampler.failed
+    assert events.count("session_close") == 0
+    assert events.count("episode_end") == 4
+    marker = json.loads((tmp_path / "failed/recording_state.json").read_text())
+    assert marker["artifact_state"] == "failed" and marker["committed_frames"] == 0
+    monkeypatch.setattr(recording_module, "start_explicit_episode", original_start)
+    monkeypatch.setattr(session._recordables[1], "on_episode_start", original_callback)
+    retry = session.start_episode(tmp_path / "retry", "episode_000001")
+    assert retry.recordables == session._recordables
+    session.close(outcome="aborted", reason="test")
+    assert all(storage.close_count == 1 for storage in opened)
+    assert events.count("session_close") == len(session._recordables)
+
+
+def test_sibling_cleanup_failure_preserves_error_and_blocks_unsafe_reuse(tmp_path, monkeypatch):
+    session, _, events = _session_fixture(tmp_path, monkeypatch)
+    session.end_episode(outcome="aborted", reason="test")
+    primary = RuntimeError("sibling callback failed")
+    prior_storage = session._sampler.storage
+
+    def fail_start(*args, **kwargs):
+        raise primary
+
+    def fail_end():
+        raise OSError("episode cleanup failed")
+
+    monkeypatch.setattr(recording_module, "start_explicit_episode", fail_start)
+    monkeypatch.setattr(session._recordables[0], "on_episode_end", fail_end)
+    with pytest.raises(RuntimeError) as raised:
+        session.start_episode(tmp_path / "failed", "episode_000001")
+    assert raised.value is primary
+    assert "episode cleanup failed" in " ".join(primary.__notes__)
+    assert session.active_episode is None and session._sampler.storage is prior_storage
+    assert session._sampler.failed and events.count("session_close") == 0
+    with pytest.raises(RuntimeError, match="sampler failed"):
+        session.start_episode(tmp_path / "retry", "episode_000001")
+    assert not (tmp_path / "retry").exists()
+    session.close()
+    session.close()
+    assert events.count("session_close") == len(session._recordables)
+
+
+def test_first_start_failure_marker_error_does_not_mask_primary(tmp_path, monkeypatch):
+    start, primary, _, storages = _native_start_fixture(
+        tmp_path, monkeypatch, failure="episode_callback",
+    )
+    original_write = recording_module._atomic_write_json
+
+    def write(path, payload):
+        if path.name == "recording_state.json" and payload["artifact_state"] == "failed":
+            raise OSError("failure marker publication failed")
+        return original_write(path, payload)
+
+    monkeypatch.setattr(recording_module, "_atomic_write_json", write)
+    with pytest.raises(RuntimeError) as raised:
+        start()
+    assert raised.value is primary
+    assert "failure marker publication failed" in " ".join(primary.__notes__)
+    assert storages[0].closed and storages[0].close_count == 1
+    marker = json.loads((tmp_path / "first/recording_state.json").read_text())
+    assert marker["artifact_state"] != "finalized"

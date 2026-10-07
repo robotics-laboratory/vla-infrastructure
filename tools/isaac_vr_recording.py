@@ -245,13 +245,13 @@ def open_explicit_session(
     # Keep the 64-row flush policy; 128-row chunks avoid the 1024-row
     # allocation cost without moving the whole write into append_frame().
     storage = SessionStorage(output_path, buffer_frames=RECORDING_BUFFER_FRAMES)
-    storage.open()
     opened: list[Any] = []
     try:
+        storage.open()
         if not recordables_already_open:
             for recordable in recordables:
-                recordable.on_session_open(stage)
                 opened.append(recordable)
+                recordable.on_session_open(stage)
         for key, value in session_metadata.items():
             storage.set_root_attr(key, value)
         storage.set_root_attr("transition_schema", TRANSITION_SCHEMA)
@@ -352,6 +352,33 @@ def close_explicit_session(
         raise errors[0]
     if errors:
         raise ExceptionGroup("recording lifecycle finalization failed", errors)
+
+
+def _rollback_episode_start(
+    error: Exception, output_dir: Path, storage: Any,
+    recordables: Sequence[Any], *, close_recordables: bool,
+) -> bool:
+    """Release startup ownership without replacing its primary failure."""
+    cleaned = True
+    if storage is not None:
+        try:
+            close_explicit_session(
+                storage, recordables, success=False,
+                metadata={"artifact_state": "failed", "outcome": "failure",
+                          "reason": "episode_start_failed"},
+                close_recordables=close_recordables,
+            )
+        except Exception as cleanup_error:
+            cleaned = False
+            error.add_note(f"episode-start rollback also failed: {cleanup_error!r}")
+    try:
+        _atomic_write_json(output_dir / "recording_state.json", {
+            "artifact_state": "failed", "committed_frames": 0, "outcome": "failure",
+            "reason": f"episode_start_failed:{type(error).__name__}:{error}",
+        })
+    except Exception as marker_error:
+        error.add_note(f"episode-start failure marker also failed: {marker_error!r}")
+    return cleaned
 
 
 @dataclass(frozen=True)
@@ -956,12 +983,16 @@ class RecordingSession:
         """Start a new causal scope using the session's immutable artifact bundle."""
         if self._closed or self.active_episode is not None:
             raise RuntimeError("recording session must be open and between episodes")
+        if self._sampler.failed:
+            raise RuntimeError("recording session sampler failed; cannot start another episode")
         self.check_finalization()
         if self._stage_getter() is not self._stage:
             raise RuntimeError("USD stage changed during recording session")
         output_dir = prepare_private_output_dir(
             output_dir, repository=Path(__file__).resolve().parents[1], min_free_bytes=1 << 30
         )
+        storage = None
+        prior_storage = self._sampler.storage
         try:
             with _timed_boundary(self._timing_observer, "episode_static_link"):
                 self._link_static_artifacts(output_dir)
@@ -986,18 +1017,10 @@ class RecordingSession:
                     recordables_already_open=True,
                     sampler=self._sampler,
                 )
-            try:
-                with _timed_boundary(self._timing_observer, "episode_recordable_start"):
-                    start_explicit_episode(storage, sampler, self._recordables, {
-                        "artifact_state": "in_progress", "episode_id": episode_id, "outcome": None,
-                    }, timing_observer=self._timing_observer)
-            except Exception:
-                close_explicit_session(
-                    storage, self._recordables, success=False,
-                    metadata={"outcome": "failure", "reason": "episode_start_failed"},
-                    close_recordables=False,
-                )
-                raise
+            with _timed_boundary(self._timing_observer, "episode_recordable_start"):
+                start_explicit_episode(storage, sampler, self._recordables, {
+                    "artifact_state": "in_progress", "episode_id": episode_id, "outcome": None,
+                }, timing_observer=self._timing_observer)
             with _timed_boundary(self._timing_observer, "episode_manifest_open"):
                 _atomic_write_json(output_dir / "manifest.json", manifest)
             identity = {key: str(metadata[key]) for key in REQUIRED_SESSION_METADATA}
@@ -1012,10 +1035,11 @@ class RecordingSession:
             self.active_episode = episode
             return episode
         except Exception as exc:
-            _atomic_write_json(output_dir / "recording_state.json", {
-                "artifact_state": "failed", "committed_frames": 0,
-                "outcome": "failure", "reason": f"episode_start_failed:{type(exc).__name__}:{exc}",
-            })
+            if not _rollback_episode_start(
+                exc, output_dir, storage, self._recordables, close_recordables=False,
+            ):
+                self._sampler.failed = True
+            self._sampler.storage = prior_storage
             raise
 
     def _link_static_artifacts(self, output_dir: Path) -> None:
@@ -1205,65 +1229,72 @@ def start_live_recording(
         asset_closure_sha256=str(asset_closure["asset_closure_sha256"]),
         visual_provenance_sha256=str(visual_provenance["visual_provenance_sha256"]),
     )
-    storage, sampler = open_explicit_session(
-        str(path),
-        recordables=recordables,
-        stage=stage,
-        session_metadata=storage_session_metadata,
-        stage_snapshot=snapshot.name,
-        deferred_groups=(d0.group,),
-    )
-    start_explicit_episode(
-        storage,
-        sampler,
-        recordables,
-        {
+    storage = None
+    try:
+        storage, sampler = open_explicit_session(
+            str(path),
+            recordables=recordables,
+            stage=stage,
+            session_metadata=storage_session_metadata,
+            stage_snapshot=snapshot.name,
+            deferred_groups=(d0.group,),
+        )
+        start_explicit_episode(
+            storage,
+            sampler,
+            recordables,
+            {
+                "artifact_state": "in_progress",
+                "episode_id": session_metadata["episode_id"],
+                "outcome": None,
+            },
+        )
+        identity = {key: str(session_metadata[key]) for key in REQUIRED_SESSION_METADATA}
+        manifest = {
+            "schema": "piper_x_isaac_vr_recording_manifest_v2",
             "artifact_state": "in_progress",
-            "episode_id": session_metadata["episode_id"],
-            "outcome": None,
-        },
-    )
-    identity = {key: str(session_metadata[key]) for key in REQUIRED_SESSION_METADATA}
-    manifest = {
-        "schema": "piper_x_isaac_vr_recording_manifest_v2",
-        "artifact_state": "in_progress",
-        "asset_closure": asset_closure_path.name,
-        "asset_closure_sha256": asset_closure["asset_closure_sha256"],
-        "camera_roles": camera_roles,
-        "committed_frames": 0,
-        "dataset_admissible": False,
-        "dirty_status": subprocess.check_output(
-            ["git", "-C", str(repository), "status", "--porcelain=v1"], text=True
-        ),
-        "git_commit": subprocess.check_output(
-            ["git", "-C", str(repository), "rev-parse", "HEAD"], text=True
-        ).strip(),
-        "hdf5": path.name,
-        "pose_backend_effective": POSE_BACKEND,
-        "pose_backend_requested": POSE_BACKEND,
-        "recordables": [recordable.to_manifest() for recordable in recordables],
-        "session_metadata": storage_session_metadata,
-        "stage_snapshot": snapshot.name,
-        "stage_snapshot_sha256": snapshot_hash,
-        "transition_schema": TRANSITION_SCHEMA,
-        "visual_provenance": visual_provenance,
-        "visual_provenance_sha256": visual_provenance["visual_provenance_sha256"],
-    }
-    _atomic_write_json(output_dir / "manifest.json", manifest)
-    recording = LiveRecording(
-        storage,
-        sampler,
-        recordables,
-        d0,
-        output_dir=output_dir,
-        hdf5_path=path,
-        snapshot=snapshot,
-        identity=identity,
-        observation_factory=lambda: capture_state_snapshot(env),
-        flush_every_frames=flush_every_frames,
-        timing_observer=timing_observer,
-    )
-    return recording
+            "asset_closure": asset_closure_path.name,
+            "asset_closure_sha256": asset_closure["asset_closure_sha256"],
+            "camera_roles": camera_roles,
+            "committed_frames": 0,
+            "dataset_admissible": False,
+            "dirty_status": subprocess.check_output(
+                ["git", "-C", str(repository), "status", "--porcelain=v1"], text=True
+            ),
+            "git_commit": subprocess.check_output(
+                ["git", "-C", str(repository), "rev-parse", "HEAD"], text=True
+            ).strip(),
+            "hdf5": path.name,
+            "pose_backend_effective": POSE_BACKEND,
+            "pose_backend_requested": POSE_BACKEND,
+            "recordables": [recordable.to_manifest() for recordable in recordables],
+            "session_metadata": storage_session_metadata,
+            "stage_snapshot": snapshot.name,
+            "stage_snapshot_sha256": snapshot_hash,
+            "transition_schema": TRANSITION_SCHEMA,
+            "visual_provenance": visual_provenance,
+            "visual_provenance_sha256": visual_provenance["visual_provenance_sha256"],
+        }
+        _atomic_write_json(output_dir / "manifest.json", manifest)
+        recording = LiveRecording(
+            storage,
+            sampler,
+            recordables,
+            d0,
+            output_dir=output_dir,
+            hdf5_path=path,
+            snapshot=snapshot,
+            identity=identity,
+            observation_factory=lambda: capture_state_snapshot(env),
+            flush_every_frames=flush_every_frames,
+            timing_observer=timing_observer,
+        )
+        return recording
+    except Exception as exc:
+        _rollback_episode_start(
+            exc, output_dir, storage, recordables, close_recordables=True,
+        )
+        raise
 
 
 def _sanitize_exported_stage(snapshot: Path) -> Any:
