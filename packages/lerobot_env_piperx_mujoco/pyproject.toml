@@ -1,0 +1,18 @@
+[project]
+name = "lerobot-env-piperx-mujoco"
+version = "0.1.0"
+description = "Concrete MuJoCo environment and LeRobot edge processors for bimanual PIPER-X."
+requires-python = "==3.12.13"
+dependencies = [
+    "gymnasium==1.3.0",
+    "lerobot==0.6.1",
+    "mujoco==3.9.0",
+    "numpy>=2.0",
+]
+
+[build-system]
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lerobot_env_piperx_mujoco"]

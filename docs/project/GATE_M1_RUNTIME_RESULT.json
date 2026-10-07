@@ -1,0 +1,162 @@
+{
+  "camera_contract": {
+    "dtype": "uint8",
+    "gripper_approach_axis_alignment": {
+      "left_wrist": 1.0000000000000013,
+      "right_wrist": 1.0000000000000009
+    },
+    "left_joint_probe_camera_translation_m": {
+      "left_wrist": 0.09181375486452054,
+      "right_wrist": 0.0
+    },
+    "optical_axis_image_tolerance_px": 8.0,
+    "optical_axis_marker_center_offset_px": {
+      "left_wrist": 0.07950394337464413,
+      "right_wrist": 0.07950394337464413
+    },
+    "optical_axis_marker_lateral_error_m": {
+      "left_wrist": 2.1895618164419092e-17,
+      "right_wrist": 3.173150347630143e-17
+    },
+    "passed": true,
+    "right_joint_probe_camera_translation_m": {
+      "left_wrist": 0.0,
+      "right_wrist": 0.09181375482025596
+    },
+    "role_image_sha256": {
+      "left_wrist": "fe5f495f04a6cc806e016e7b67f4ab260880e78fea30ef75f4d4c134a49d4400",
+      "right_wrist": "2a9b7e49bc11d0bbd8d8fbfa8c385462afc1616bdd0335c289124710b544368f"
+    },
+    "shape_hwc": [
+      480,
+      640,
+      3
+    ]
+  },
+  "checks": {
+    "camera_contract": true,
+    "contact_smoke": true,
+    "embodiment_parity": true,
+    "grasp_retention": true,
+    "gymnasium_checker": true,
+    "nvidia_egl": true,
+    "open_aperture_retention": true,
+    "performance": true,
+    "reset_stress": true,
+    "task_lifecycle": true
+  },
+  "contact_smoke": {
+    "finite_state": true,
+    "maximum_robot_cube_contact_penetration_m": 0.004352954530945315,
+    "passed": true,
+    "probe_semantics": "Settle at home, place the cube between the fingers, command close for a bounded contact impulse, then release to the canonical table pose and require finite settling without sustained oscillation.",
+    "released_and_settled_final_linear_speed_m_s": 5.720215392210826e-15,
+    "robot_cube_contact_ticks": 10
+  },
+  "environment_id": "PiperX-DualCubeToMatchingPlate-Mujoco-v0",
+  "gate": "M1",
+  "grasp_retention": {
+    "control_ticks": 300,
+    "cube_contact_ticks": {
+      "left": 300,
+      "right": 300
+    },
+    "maximum_allowed_finger_symmetry_error_m": 0.01,
+    "maximum_allowed_relative_shift_m": 0.02,
+    "maximum_cube_relative_shift_m": {
+      "left": 0.01778884499924331,
+      "right": 0.017788844851418698
+    },
+    "maximum_finger_symmetry_error_m": {
+      "left": 1.960811146858518e-06,
+      "right": 1.9608111122039473e-06
+    },
+    "passed": true,
+    "relative_shift_frame": "moving_gripper",
+    "wrist_roll_amplitude_deg": 5.0
+  },
+  "open_aperture_retention": {
+    "control_ticks": 300,
+    "joint_motion_amplitude_deg": [
+      10.0,
+      10.0,
+      10.0,
+      8.0,
+      8.0,
+      15.0
+    ],
+    "maximum_allowed_finger_symmetry_error_m": 0.003,
+    "maximum_finger_symmetry_error_m": {
+      "left": 0.00047563838451280746,
+      "right": 0.00047563838451271725
+    },
+    "minimum_allowed_aperture_m": 0.095,
+    "minimum_follower_aperture_m": {
+      "left": 0.09681589206862579,
+      "right": 0.09691894764843187
+    },
+    "passed": true
+  },
+  "passed": true,
+  "performance": {
+    "capture_indices_contiguous": true,
+    "control_render_ticks": 180,
+    "control_render_ticks_per_s": 781.0903349985055,
+    "elapsed_s": 0.2304470967501402,
+    "minimum_required_ticks_per_s": 30.0,
+    "passed": true,
+    "physics_steps_per_control_tick": 4,
+    "simulation_time_max_error_s": 8.79296635503124e-14
+  },
+  "processor_revision": "piper_x_d0_mujoco_edge_v1",
+  "provenance_sha256": {
+    "assets/mujoco/piper_x/f6642ce0d7872c686f29c99e9e10cd23d1d49313/manifest.json": "fb7effb8c38654a94d3b4f5586b7835c1c027444b8ed4165bfc9593c599835a4",
+    "assets/mujoco/scenes/dual_cube_to_matching_plates_v1.xml": "2da4e859d37d85c4822349f6970b7204e5c34b628bbb97b57fbfc485201be128",
+    "configs/mujoco_m1_runtime.yaml": "8de17e837e8a59bfff3498255d17798c490127380bf113372c15016eaab913e9",
+    "packages/lerobot_env_piperx_mujoco/src/lerobot_env_piperx_mujoco/env.py": "fd53053425883e67f0a7f22b90b80aa31934175f906fe793b3f88751d62e0cf3",
+    "packages/lerobot_env_piperx_mujoco/src/lerobot_env_piperx_mujoco/processors.py": "171d75f21b8f3d0c2846c809cd06d0000d5b29ddb2f82cd85587313060c2767c",
+    "tools/verify_mujoco_m1.py": "4bdd9f22006180e70c112d448f7f54c3f9e1ed6e1929ac569b4623d8c1c127b2",
+    "uv.lock": "3f081536391d76f4ab35c61431cc10653cd92e61a460dcbb05b0daf1e69f6462"
+  },
+  "reset_stress": {
+    "capture_serial_first": 1,
+    "capture_serial_last": 1002,
+    "initial_image_sha256": {
+      "left_wrist": "fe5f495f04a6cc806e016e7b67f4ab260880e78fea30ef75f4d4c134a49d4400",
+      "right_wrist": "2a9b7e49bc11d0bbd8d8fbfa8c385462afc1616bdd0335c289124710b544368f"
+    },
+    "maximum_cube_xy_error_m": 7.506467669671224e-12,
+    "maximum_home_state_error_d0": 3.180470743213724e-17,
+    "maximum_initial_penetration_m": 5.7133403791927856e-05,
+    "maximum_rss_after_warmup_bytes": 1575329792,
+    "maximum_rss_growth_after_warmup_bytes": 4096,
+    "passed": true,
+    "resets": 1000,
+    "rss_after_warmup_bytes": 1575325696,
+    "same_seed_capture_serial_delta": 1,
+    "same_seed_post_settle_exact": true
+  },
+  "runtime": {
+    "gymnasium_version": "1.3.0",
+    "mujoco_version": "3.9.0",
+    "python_gl": {
+      "renderer": "NVIDIA GeForce RTX 4090/PCIe/SSE2",
+      "vendor": "NVIDIA Corporation",
+      "version": "4.6.0 NVIDIA 580.159.03"
+    }
+  },
+  "schema_version": 1,
+  "task_lifecycle": {
+    "native_saturation_reported": true,
+    "passed": true,
+    "success_stable_ticks": {
+      "left": 5,
+      "right": 5
+    },
+    "success_terminated_control_tick": 5,
+    "timeout_control_tick": 300,
+    "timeout_terminated": false,
+    "timeout_truncated": true
+  },
+  "timestamp_utc": "2026-09-29T13:19:23.490327+00:00"
+}

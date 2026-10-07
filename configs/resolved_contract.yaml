@@ -83,6 +83,10 @@ migration:
     evidence_ids:
     - gate_s0_candidate_b_teleop_dependency_audit
     - gate_s0_teleop_dependency_scope_review
+  - gate: M1
+    reason: contradiction
+    summary: 'OPEN RECONCILIATION — M1 v22 retains 8 N, friction 1.5, condim=6, measured-width planar pads, and deterministic camera rendering. Its actuated q1-q2 aperture tendon and soft constraint on the passive q1+q2 centre tendon separate grasp width from finger common mode. The active contact solver uses upstream-recommended elliptic cones with impratio 10 and damped default contact compliance; the destabilizing NoSlip and near-rigid contact experiments are reverted. Full NVIDIA EGL and physical Quest evidence are pending.'
+    evidence_ids: []
 taxonomy:
   runtime_names:
   - real
@@ -264,7 +268,15 @@ execution_profiles:
   mujoco_env:
     environment: core
     working_directory: .
-    command: null
+    command:
+    - uv
+    - run
+    - --frozen
+    - --no-sync
+    - python
+    - tools/run_mujoco_m1.py
+    - --steps
+    - '8'
     prerequisites: []
   mujoco_eval:
     environment: core
@@ -1145,34 +1157,36 @@ simulation:
     model_asset:
       source: Deterministic MuJoCo public-parser MJCF derivation from the accepted Gate C PIPER-X URDF/Xacro; generic AgileX Piper MJCF rejected
       revision: f6642ce0d7872c686f29c99e9e10cd23d1d49313
-      artifact_id: null
-      sha256: null
+      artifact_id: mujoco_piperx_canonical_mjcf
+      sha256: a827a592b6b2cad2e530c7871fbdeafb441d6414b6be4d73a5791703b738bea7
     task:
-      task_id: null
-      revision: null
-      instruction: null
-      success_semantics_revision: null
-      reset_distribution_revision: null
-      workspace_frame: null
+      task_id: PiperX-DualCubeToMatchingPlate-v1
+      revision: dual_cube_plate_success_v1
+      instruction: Place each colored cube on the matching plate using both arms.
+      success_semantics_revision: dual_cube_plate_success_v1
+      reset_distribution_revision: dual_cube_level0_fixed_seeded_v1
+      workspace_frame: S with x forward from operator, y operator-left, z up
     processors:
-      observation_to_policy: LeRobot PolicyProcessorPipeline step for named MuJoCo qpos/model aperture/Renderer RGB to accepted D0 degrees/signed-mm/two-camera view
-      policy_action_to_native: LeRobot PolicyProcessorPipeline step for accepted D0 degrees/signed-mm to named MuJoCo joint-radian/model-aperture actuators
-      config_artifact_ids: []
+      observation_to_policy: PiperXMujocoObservationProcessor maps named MuJoCo arm qpos/physical-finger aperture and left/right wrist Renderer RGB to accepted D0 degrees/absolute-mm/two-camera view
+      policy_action_to_native: PiperXMujocoActionProcessor preserves dataset_action_t in accepted D0 degrees/signed-mm, then clips and maps to left/right MuJoCo joint-radian targets and direct +0.5/-0.5 physical-finger targets
+      config_artifact_ids:
+      - mujoco_m1_runtime_config
       state_artifact_ids: []
-      reset_semantics: null
+      reset_semantics: Write fixed Level-0 home and cube poses, zero velocities and applied forces, hold home controls for 240 non-policy settling physics ticks, reset control time/counters, and acquire fresh wrist RGB
     execution:
-      physics_dt_s: null
-      control_dt_s: null
-      action_repeat: null
-      control_mode: null
-      actuator_type: null
-      actuator_config_artifact_id: null
-      saturation_semantics: null
-      action_hold_or_interpolation: null
-      reset_seed_protocol: null
+      physics_dt_s: 0.004166666666666667
+      control_dt_s: 0.03333333333333333
+      action_repeat: 8
+      control_mode: absolute joint position
+      actuator_type: MuJoCo position actuators with one external aperture mapped to one q1-q2 tendon, a soft equality constraining the passive q1+q2 centre tendon, two force-limited physical fingers, and flat fingertip contact pads; no second finger actuator and no compatibility-joint actuator
+      actuator_config_artifact_id: mujoco_m1_runtime_config
+      saturation_semantics: Preserve dataset_action_t exactly; only the native radians/metres target is clipped, with saturation and the per-dimension mask reported separately
+      action_hold_or_interpolation: Zero-order hold of one native target for eight 240 Hz physics steps; no interpolation
+      reset_seed_protocol: Accept and report the Gymnasium seed; Level-0 intentionally uses identical fixed initial conditions for every seed
     parity:
-      report_artifact_id: null
-      evidence_ids: []
+      report_artifact_id: gate_m1_parity_report
+      evidence_ids:
+      - gate_m1_embodiment_parity
 evaluation:
   shared_policy_contract_revision: null
   isaac_run: null
@@ -1257,10 +1271,58 @@ artifacts:
     description: Existing PIPER-X and host-XR offline test output plus uv lock check
   core_uv_lock:
     kind: environment_spec
-    sha256: ef20dd821a6b64299f3e2ed75a320edad29d0584cd60ed9693d05ed614c36a4b
+    sha256: 3f081536391d76f4ab35c61431cc10653cd92e61a460dcbb05b0daf1e69f6462
     path: uv.lock
     uri: null
-    description: Core uv lock including LeRobot 0.6.1 kinematics plus the Gate S0 MuJoCo 3.9.0 and Gymnasium 1.3.0 pins; pyproject.toml is the paired project specification
+    description: Core uv lock including LeRobot 0.6.1, MuJoCo 3.9.0, Gymnasium 1.3.0, and the local concrete PIPER-X MuJoCo environment package; pyproject.toml is the paired project specification
+  mujoco_piperx_canonical_mjcf:
+    kind: model_asset
+    sha256: c7c4a8b638d8314058a52ac643f7335bf30e9818622f883642b1869c8cf8145a
+    path: assets/mujoco/piper_x/f6642ce0d7872c686f29c99e9e10cd23d1d49313/piper_x.xml
+    uri: null
+    description: Deterministically generated canonical single-arm PIPER-X MJCF from the accepted Gate C AgileX source revision
+  mujoco_piperx_build_manifest:
+    kind: report
+    sha256: 87ab99d89b1094efe80f6206ef2841a1483178f3241ff9af3b550abb20fa3d06
+    path: assets/mujoco/piper_x/f6642ce0d7872c686f29c99e9e10cd23d1d49313/manifest.json
+    uri: null
+    description: Source, builder, runtime, mesh, canonical model, empty composition, and task-scene hashes for the deterministic PIPER-X MuJoCo build
+  mujoco_dual_cube_task_scene:
+    kind: model_asset
+    sha256: 26ef8ada17bb6daffe57fb291751e0bcf2ce4465a6cec2bdaa11c097ffac7d6b
+    path: assets/mujoco/scenes/dual_cube_to_matching_plates_v1.xml
+    uri: null
+    description: Frozen bimanual table, dual-cube, matching-plate, lighting, and named-camera MuJoCo task scene
+  mujoco_m1_runtime_config:
+    kind: processor_config
+    sha256: 3664e6880008d7a85e0df635d2aadba228b2287beb988554ff9b9c70111ea1b6
+    path: configs/mujoco_m1_runtime.yaml
+    uri: null
+    description: Concrete M1 task, reset, success, control, camera, D0/native processor, and Gymnasium runtime configuration
+  gate_m1_upstream_audit:
+    kind: report
+    sha256: f020dc2c939ebee10538d0bafee57e9742c121b7539e95b288d3471f5ff99235
+    path: docs/project/GATE_M1_UPSTREAM_AUDIT.md
+    uri: null
+    description: Upstream ownership, exact local gap, environment impact, and code-size re-audit for the MuJoCo M1 implementation increment
+  gate_m1_runtime_result:
+    kind: test_output
+    sha256: 47e9a0e00c0844ec0765d80d9deeb79530110a5b883fe89525ca1b3eb5f6495e
+    path: docs/project/GATE_M1_RUNTIME_RESULT.json
+    uri: null
+    description: Authoritative v20 NVIDIA EGL M1 result with all ten registered checks passing on the continuous 48 x 66 x 2 mm grasp pads
+  gate_m1_runtime_evidence_summary:
+    kind: test_output
+    sha256: 8fc673ce5679f6a604ba76fdc6f01691b58a18fafb5292e17ab50397ab3d75d1
+    path: docs/project/GATE_M1_RUNTIME_EVIDENCE.txt
+    uri: null
+    description: Current v20 human-readable M1 NVIDIA EGL evidence plus retained historical provenance
+  gate_m1_parity_report:
+    kind: parity_report
+    sha256: 9d4fe0569b773d4e0f906a1b8890095e1746e609e554d38af5288eefa3179427
+    path: docs/project/GATE_M1_PARITY_REPORT.json
+    uri: null
+    description: Current v20 Gate C embodiment parity report produced by the passing NVIDIA EGL verifier
   piper_x_authoritative_xacro:
     kind: model_asset
     sha256: 0ee3f52f9acf3060a7f3e439c6e5e46b6a53d4fa509dd495045548be6b7f90cd
@@ -2046,6 +2108,40 @@ evidence:
     path: null
     symbol: null
     notes: Maximum position/orientation errors were 2.450e-7 m and 1.644e-6 rad versus 5e-4 tolerances; zero error was 0 and joint-limit error 1.161e-7 versus 2e-5 tolerances.
+  gate_m1_runtime_verification:
+    kind: command_test
+    status: pass
+    summary: The concrete MuJoCo environment passed Gymnasium lifecycle, deterministic RGB, 1000 resets, gripper-forward camera geometry, bilateral grasp retention, task success/timeout, saturation separation, bounded contact, memory, and NVIDIA EGL performance checks.
+    timestamp: '2026-09-29T13:19:23.490327+00:00'
+    command: MUJOCO_GL=egl UV_CACHE_DIR=/tmp/codex_uv_cache_mujoco_v24 uv run --frozen --no-sync python tools/verify_mujoco_m1.py --resets 1000 --performance-ticks 180
+    artifact_ids:
+    - gate_m1_runtime_result
+    - gate_m1_runtime_evidence_summary
+    - mujoco_m1_runtime_config
+    - mujoco_dual_cube_task_scene
+    repository: null
+    revision_type: null
+    revision: null
+    path: tools/verify_mujoco_m1.py; packages/lerobot_env_piperx_mujoco
+    symbol: main; PiperXDualCubeToMatchingPlateMujocoEnv; PiperXMujocoActionProcessor; PiperXMujocoObservationProcessor
+    notes: The v20 revalidation used NVIDIA EGL on RTX 4090. Gymnasium same-seed state and RGB were exact across 1000 resets; camera approach alignment was 1.0; both offset cubes retained contact for 300/300 smooth-roll ticks; maximum moving-gripper-frame shift was 0.017789 m; maximum closed-grasp symmetry error was 1.961e-6 m; and measured render-control rate was 781.09 ticks/s. No checkpoint evaluation, E2 work, Isaac mutation, CAN access, or physical motion occurred.
+  gate_m1_embodiment_parity:
+    kind: artifact_validation
+    status: pass
+    summary: The canonical MuJoCo PIPER-X matches Gate C names/order, joint limits, zero state, FK references, positive directions, 0-100 mm gripper range, and follower constraints within registered tolerances.
+    timestamp: '2026-09-29T13:19:23.490327+00:00'
+    command: Extract and validate the parity object produced by tools/verify_mujoco_m1.py against configs/piper_x_model_contract.yaml and the canonical MJCF.
+    artifact_ids:
+    - gate_m1_parity_report
+    - mujoco_piperx_canonical_mjcf
+    - mujoco_piperx_build_manifest
+    - gate_m1_runtime_result
+    repository: null
+    revision_type: null
+    revision: null
+    path: tools/verify_mujoco_m1.py; tests/test_mujoco_piperx_model.py
+    symbol: _embodiment_parity; test_mujoco_fk_and_positive_directions_match_gate_c_references
+    notes: Maximum position/orientation errors were 3.258e-7 m and 1.260e-6 rad versus 5e-4 tolerances; zero error was 0 and joint-limit error remained within the 2e-5 tolerance. The same parity check validates direct 2500/60/8 N physical-finger servos, 0.1 kg armature, 2 N s/m damping, flat condim=6 pads, and the physical q1=-q2 symmetry relation.
   gate_s2_upstream_reuse_audit:
     kind: upstream_source
     status: pass
@@ -2262,9 +2358,19 @@ gates:
     notes: No Isaac source parity evidence exists.
   M1:
     state: unresolved
-    evidence_ids: []
-    artifact_ids: []
-    notes: No MuJoCo environment implementation was performed.
+    evidence_ids:
+    - gate_m1_runtime_verification
+    - gate_m1_embodiment_parity
+    artifact_ids:
+    - mujoco_piperx_canonical_mjcf
+    - mujoco_piperx_build_manifest
+    - mujoco_dual_cube_task_scene
+    - mujoco_m1_runtime_config
+    - gate_m1_upstream_audit
+    - gate_m1_runtime_result
+    - gate_m1_runtime_evidence_summary
+    - gate_m1_parity_report
+    notes: Reopened on 2026-09-25 after physical Quest feedback contradicted earlier gripper evidence. Later diagnostics isolated false table contact from the grasp-pad proxies; explicit pad/cube pairs fixed that defect without changing the 8 N clamp or measured pad geometry. Physical Quest v26 still dropped a manually acquired cube, so M1 v28 raises only internal physics from 120 to 240 Hz while preserving 30 Hz control through action repeat 8. Quest v27 separately clears paused/reset relative-pose smoothing history to remove launch-dependent arm motion. Full NVIDIA EGL and physical Quest revalidation remain required. No tests were run by the agent. E2 was not started.
   E1:
     state: unresolved
     evidence_ids: []

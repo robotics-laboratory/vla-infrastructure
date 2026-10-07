@@ -885,13 +885,13 @@ def main() -> int:
     converter = sim_utils.UrdfConverter(
         sim_utils.UrdfConverterCfg(
             asset_path=str(urdf_path),
-            usd_dir=f"/data/ebulochkin/assets/isaac_s1/converted/{urdf_sha}",
+            usd_dir=f"/home/tomik/vla-runtime/assets/isaac_s1/converted/{urdf_sha}",
             fix_base=True,
             merge_fixed_joints=False,
             self_collision=False,
             robot_type="Manipulator",
             run_multi_physics_conversion=False,
-            ros_package_paths=[{"name": "agx_arm_description", "path": "/data/ebulochkin/assets"}],
+            ros_package_paths=[{"name": "agx_arm_description", "path": "/home/tomik/vla-runtime/assets"}],
             joint_drive=sim_utils.UrdfConverterCfg.JointDriveCfg(
                 drive_type="force",
                 target_type="position",
@@ -1041,7 +1041,7 @@ def main() -> int:
         and report["environment"]["isaac_lab_runtime_commit"]
         == report["environment"]["isaac_lab_expected_commit"]
         and Path(report["environment"]["isaac_lab_source_file"]).is_relative_to(
-            Path(config["environment"]["isaac_lab_path"]) / "source/isaaclab"
+            (Path(config["environment"]["isaac_lab_path"]) / "source/isaaclab").resolve()
         )
         and report["environment"]["torch"] == "2.11.0+cu128"
         and report["environment"]["torch_cuda"] == "12.8"

@@ -1,0 +1,132 @@
+GATE M1 AUTHORITATIVE MUJOCO RUNTIME EVIDENCE — v20
+==================================================
+
+Date: 2026-09-29
+Command:
+  MUJOCO_GL=egl UV_CACHE_DIR=/tmp/codex_uv_cache_mujoco_v24 uv run --frozen --no-sync python tools/verify_mujoco_m1.py --resets 1000 --performance-ticks 180
+
+Authoritative result:
+  path: docs/project/GATE_M1_RUNTIME_RESULT.json
+  passed: true
+  all registered checks: PASS
+
+Qualified runtime:
+  MuJoCo 3.9.0; Gymnasium 1.3.0
+  NVIDIA GeForce RTX 4090; NVIDIA Corporation EGL/OpenGL 4.6.0
+
+Current v20 evidence:
+  Gymnasium lifecycle/render/determinism checker: PASS
+  reset stress: 1000/1000; exact same-seed state and RGB: PASS
+  maximum reset cube XY error: 7.507e-12 m
+  maximum reset penetration: 5.713e-5 m
+  memory growth after warm-up: 4096 bytes
+  wrist camera approach-axis alignment: 1.000000 / 1.000000
+  optical-axis marker center offset: 0.080 / 0.080 px (8 px limit)
+  task success and 300-tick timeout lifecycle: PASS
+  contact smoke and finite released settling: PASS
+  open-aperture minimum: 0.096816 / 0.096919 m (0.095 m minimum)
+  open-motion symmetry error: 0.000476 / 0.000476 m (0.003 m limit)
+  retained cube contact: 300/300 ticks per side
+  maximum moving-gripper-frame cube shift: 0.017789 / 0.017789 m (0.020 m limit)
+  maximum closed-grasp finger symmetry error: 1.961e-6 / 1.961e-6 m (0.010 m limit)
+  control plus two-wrist-render rate: 781.09 ticks/s (30 ticks/s minimum)
+  embodiment parity: PASS
+
+Status:
+  Automated M1 v20 revalidation is complete. Gate M1 remains reopened only until
+  the required physical Quest acceptance evidence for profile v24 is retained.
+  E2 was not started; no CAN or real-robot interface was opened.
+
+HISTORICAL v5 EVIDENCE — RETAINED FOR PROVENANCE
+================================================
+
+GATE M1 AUTHORITATIVE MUJOCO RUNTIME EVIDENCE (HISTORICAL v5)
+================================================
+
+Date: 2026-09-24 (narrow revalidation after physical Quest run 4)
+Command:
+  MUJOCO_GL=egl uv run --frozen --no-sync python tools/verify_mujoco_m1.py --resets 1000 --performance-ticks 180
+
+Authoritative result:
+  path: docs/project/GATE_M1_RUNTIME_RESULT.json
+  sha256: 90af58886449eecd3508f1c2232bd0e03a7663d613ea8aa0b03c658424333f85
+  passed: true
+
+Exact environment:
+  MuJoCo 3.9.0
+  Gymnasium 1.3.0
+  Python 3.12.13 core uv environment
+  EGL vendor: NVIDIA Corporation
+  renderer: NVIDIA GeForce RTX 4090/PCIe/SSE2
+  OpenGL: 4.6.0 NVIDIA 580.159.03
+
+Gymnasium lifecycle:
+  gymnasium.utils.env_checker.check_env including render and determinism: PASS
+  advisory warnings: native absolute Box action is not normalized and named qpos bounds are unbounded
+  environment ID: PiperX-DualCubeToMatchingPlate-Mujoco-v0
+  reset/step/render/close: PASS
+  exact 120 Hz physics / 30 Hz control time: PASS
+  monotonic episode capture indices: PASS
+
+Reset and scene stress:
+  deterministic resets: 1000/1000
+  non-finite or invalid spawns: 0
+  maximum D0 home-state error: 3.181e-17
+  maximum cube XY error: 7.507e-12 m
+  maximum standard-reset penetration: 5.714e-5 m (limit 2e-3 m)
+  identical-seed post-settle state and RGB: byte-identical
+  fresh capture serial and non-shared image buffers: PASS
+  resident-memory growth after warm-up: 8192 bytes across the stress run
+
+Cameras:
+  left/right wrist output: uint8 RGB HWC 480x640x3
+  left/right role image hashes differ: PASS
+  camera optical axes align with each gripper's +Z approach axis: 1.000000 / 1.000000
+  optical-axis marker lateral errors: 2.190e-17 / 3.173e-17 m
+  rendered marker center offsets: 0.080 / 0.080 px (8 px limit)
+  left-only joint probe camera translation [left,right]: [0.091814, 0.0] m
+  right-only joint probe camera translation [left,right]: [0.0, 0.091814] m
+  byte-identical fixed-reset rendering uses MuJoCo offsamples=1: PASS
+
+Task/control/contact:
+  D0 label preserved before native radians/metres mapping and clipping: PASS
+  native saturation reported separately: PASS
+  success reached after exactly 5 stable control ticks: terminated=true, truncated=false
+  horizon reached at exactly 300 ticks: terminated=false, truncated=true
+  bounded robot-cube contact ticks: 10
+  maximum deliberate robot-cube contact penetration: 0.001009 m
+  released cube final linear speed after table settling: 5.747e-15 m/s
+  finite contact state and no sustained post-release oscillation: PASS
+  bilateral grasp retention during smooth +/-5 degree wrist roll: PASS
+  left/right cube contact: 300/300 control ticks each
+  maximum cube-relative shift: 0.014065 m (limit 0.020 m)
+  maximum leader/follower mimic error: 0.001737 m (limit 0.002 m)
+
+Performance:
+  measured control plus two-wrist-render rate: 849.82 ticks/s
+  required minimum: 30 ticks/s
+  measured ticks: 180
+  canonical capture indices contiguous: PASS
+  maximum simulation-time error: 8.793e-14 s
+
+Gate C embodiment parity:
+  report: docs/project/GATE_M1_PARITY_REPORT.json
+  sha256: 3bc4d3a0b169115117db7a864843712220fe74092e062d9531d8c9ab62fcc728
+  passed: true
+  maximum FK/direction position error: 3.259e-7 m (tolerance 5e-4 m)
+  maximum FK/direction orientation error: 1.261e-6 rad (tolerance 5e-4 rad)
+  maximum joint-limit error: 4.898e-6 rad-or-m (tolerance 2e-5)
+  zero-position error: 0 (tolerance 2e-5)
+  gripper aperture and stiff mimic constraints: 0..0.1 m, +0.5/-0.5 followers
+
+Revalidation reason and repair:
+  Physical Quest run 4 contradicted the old wrist-camera and gripper-contact assumptions.
+  Wrist cameras had looked along local -Z toward the arm instead of along gripper +Z.
+  Imported tapered finger collision meshes and compliant default equality constraints allowed
+  follower separation and cube loss while the wrist moved. The deterministic builder now emits
+  forward-facing wrist cameras, flat fingertip contact pads, stiff follower constraints, and the
+  validated 125/40/5 N gripper servo. The full M1 evidence command was rerun on NVIDIA EGL.
+
+Scope:
+  This evidence accepts Gate M1 only. No policy evaluation, checkpoint run, E2 work,
+  dataset mutation, Isaac mutation, CAN access, or physical robot motion was performed.

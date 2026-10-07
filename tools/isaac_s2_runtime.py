@@ -6,6 +6,7 @@ from functools import partial
 import hashlib
 import importlib.metadata
 import json
+import os
 from pathlib import Path
 import platform
 import subprocess
@@ -35,6 +36,79 @@ from isaac_s2_upstream import (
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "configs/isaac_s2_runtime.yaml"
+
+
+class _StageProfiler:
+    """Low-overhead wall-clock attribution for the serialized S2 control loop."""
+
+    def __init__(self, *, enabled: bool, warmup_steps: int, window_steps: int) -> None:
+        if warmup_steps < 0:
+            raise ValueError("S2 profiling warmup must be non-negative")
+        if window_steps <= 0:
+            raise ValueError("S2 profiling window must be positive")
+        self.enabled = enabled
+        self.warmup_steps = warmup_steps
+        self.window_steps = window_steps
+        self._window: dict[str, list[float]] = {}
+        self._totals: dict[str, float] = {}
+        self._maximums: dict[str, float] = {}
+        self._sample_count = 0
+
+    def record(self, step: int, samples_s: dict[str, float]) -> None:
+        if not self.enabled or step <= self.warmup_steps:
+            return
+        self._sample_count += 1
+        for name, seconds in samples_s.items():
+            milliseconds = seconds * 1000.0
+            self._window.setdefault(name, []).append(milliseconds)
+            self._totals[name] = self._totals.get(name, 0.0) + milliseconds
+            self._maximums[name] = max(self._maximums.get(name, 0.0), milliseconds)
+        if self._sample_count % self.window_steps == 0:
+            total_ms = float(np.mean(self._window["loop_total"]))
+            stages = {}
+            for name, values in self._window.items():
+                mean_ms = float(np.mean(values))
+                stages[name] = {
+                    "mean_ms": mean_ms,
+                    "p95_ms": float(np.percentile(values, 95)),
+                    "max_ms": float(np.max(values)),
+                    **(
+                        {"loop_share_percent": 100.0 * mean_ms / total_ms}
+                        if name != "loop_total" and total_ms > 0.0
+                        else {}
+                    ),
+                }
+            print(
+                json.dumps(
+                    {
+                        "event": "s2_stage_timing",
+                        "sample_count": self._sample_count,
+                        "step": step,
+                        "window_steps": self.window_steps,
+                        "stages": stages,
+                    },
+                    sort_keys=True,
+                ),
+                flush=True,
+            )
+            self._window.clear()
+
+    def report(self) -> dict[str, Any] | None:
+        if not self.enabled:
+            return None
+        return {
+            "warmup_steps": self.warmup_steps,
+            "window_steps": self.window_steps,
+            "sample_count": self._sample_count,
+            "stages": {
+                name: {
+                    "mean_ms": total / self._sample_count,
+                    "max_ms": self._maximums[name],
+                }
+                for name, total in self._totals.items()
+                if self._sample_count > 0
+            },
+        }
 
 
 def _gpu_observation() -> dict[str, Any]:
@@ -275,6 +349,11 @@ def run_s2(env, args_cli, simulation_app) -> int:
     saturated_frames = 0
     control_steps = 0
     recenter_execution_reset_pending = False
+    profiler = _StageProfiler(
+        enabled=os.environ.get("VLA_PROFILE_STAGES", "").upper() in {"1", "Y", "YES"},
+        warmup_steps=int(os.environ.get("VLA_PROFILE_WARMUP_STEPS", "30")),
+        window_steps=int(os.environ.get("VLA_PROFILE_WINDOW_STEPS", "30")),
+    )
 
     print(
         f"[S2] CloudXR {actual_versions['cloudxr']} profile={args_cli.s2_cloudxr_profile} "
@@ -291,10 +370,13 @@ def run_s2(env, args_cli, simulation_app) -> int:
             for step in range(1, args_cli.s2_max_control_steps + 1):
                 if not simulation_app.is_running():
                     break
+                loop_started = time.perf_counter()
                 control_steps = step
                 before_pose = ik.tcp_poses_base()
+                pre_pose_done = time.perf_counter()
                 action = device.advance()
                 events = poll_control_events(device)
+                xr_input_done = time.perf_counter()
                 recenter_execution_reset = bool(
                     recenter_execution_reset_pending and events.should_reset
                 )
@@ -417,8 +499,11 @@ def run_s2(env, args_cli, simulation_app) -> int:
                         ),
                         flush=True,
                     )
+                control_done = time.perf_counter()
                 saturated_frames += int(ik.apply(command))
+                ik_done = time.perf_counter()
                 env._advance(4)
+                simulation_done = time.perf_counter()
                 after_pose = ik.tcp_poses_base()
 
                 for side, arm, before, after in zip(
@@ -438,13 +523,30 @@ def run_s2(env, args_cli, simulation_app) -> int:
                             maximum_rebase_motion_m[side],
                             float(np.linalg.norm(after[:3] - before[:3])),
                         )
+                state_metrics_done = time.perf_counter()
 
                 camera = _camera_sample(env, previous_camera_indices)
                 previous_camera_indices = camera.pop("frame_indices")
                 camera_valid_frames += int(camera["valid"])
                 camera_advanced_frames += int(camera["strictly_advanced"])
+                camera_done = time.perf_counter()
                 if experiment is not None and control_steps % 15 == 0:
                     gpu_samples.append(_gpu_observation())
+                diagnostics_done = time.perf_counter()
+                profiler.record(
+                    control_steps,
+                    {
+                        "pre_pose": pre_pose_done - loop_started,
+                        "xr_input": xr_input_done - pre_pose_done,
+                        "control_prepare": control_done - xr_input_done,
+                        "ik_apply": ik_done - control_done,
+                        "simulation_render": simulation_done - ik_done,
+                        "state_metrics": state_metrics_done - simulation_done,
+                        "camera_readback_hash": camera_done - state_metrics_done,
+                        "diagnostics": diagnostics_done - camera_done,
+                        "loop_total": diagnostics_done - loop_started,
+                    },
+                )
                 if control_steps % 30 == 0:
                     print(
                         json.dumps(
@@ -496,6 +598,7 @@ def run_s2(env, args_cli, simulation_app) -> int:
         and backdrop_toggle_requirement_met
         and recenter_smoke_requirement_met
     )
+    stage_profiling = profiler.report()
     report = {
         "gate": "NONE_EXPERIMENTAL" if experiment is not None else "S2",
         "status": (
@@ -586,6 +689,9 @@ def run_s2(env, args_cli, simulation_app) -> int:
             "sensitivity_mode_frames": sensitivity_mode_frames,
             "transitions": transition_counts,
             "maximum_rebase_or_clutch_tcp_motion_m": maximum_rebase_motion_m,
+            **(
+                {"stage_profiling": stage_profiling} if stage_profiling is not None else {}
+            ),
         },
         "cameras": {
             "left_wrist": "640x480 uint8 RGB HWC",

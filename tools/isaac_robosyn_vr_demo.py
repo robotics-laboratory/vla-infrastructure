@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, Callable
@@ -22,8 +23,8 @@ from isaaclab.sensors.camera import Camera, CameraCfg  # type: ignore[import-not
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "configs/experiments/robosyn_vr_demo.yaml"
 ASSET_MANIFEST_PATH = ROOT / "configs/experiments/robosyn_test_assets.yaml"
-ROBOSYN_ROOT = Path("/data/ebulochkin/assets/robosyn_vr_demo/RoboSynChallenge")
-CONVERTED_ROOT = Path("/data/ebulochkin/assets/robosyn_vr_demo/converted")
+ROBOSYN_ROOT = Path("/home/tomik/vla-runtime/assets/robosyn_vr_demo/RoboSynChallenge")
+CONVERTED_ROOT = Path("/home/tomik/vla-runtime/assets/robosyn_vr_demo/converted")
 PHYSICS_DT = 1.0 / 120.0
 CAMERA_PERIOD = 1.0 / 30.0
 
@@ -52,7 +53,41 @@ class _CpuStagedFeedPresenter:
         return self._upstream.create_image_source(camera_name, camera, cfg)
 
     def create_panel(self, descriptor: Any, width: int, height: int) -> Any:
-        return self._upstream.create_panel(descriptor, width, height)
+        panel = self._upstream.create_panel(descriptor, width, height)
+        provider = getattr(panel, "_provider", None)
+        if provider is None or not callable(getattr(provider, "set_data_array", None)):
+            raise RuntimeError("XR camera panel has no NumPy-capable ByteImageProvider")
+
+        def upload_cpu_array(image: torch.Tensor) -> None:
+            if image.device.type != "cpu":
+                raise ValueError("strict XR panel upload requires a CPU tensor")
+            if image.dtype != torch.uint8 or image.ndim != 3 or image.shape[-1] != 4:
+                raise ValueError(
+                    "strict XR panel upload requires contiguous uint8 HWC RGBA pixels"
+                )
+            contiguous = image if image.is_contiguous() else image.contiguous()
+            if os.environ.get("VLA_XR_CAMERA_TEST_PATTERN") == "1":
+                pixels = np.asarray([255, 0, 0, 255], dtype=np.uint8)
+                upload_size = [1, 1]
+            else:
+                pixels = contiguous.numpy().reshape(-1)
+                upload_size = [int(contiguous.shape[1]), int(contiguous.shape[0])]
+            # Retain the NumPy view until the following upload. Kit 110's
+            # NumPy-specific API avoids passing ndarray.data (a memoryview) to
+            # the generic Python-sequence overload.
+            panel._cpu_numpy_upload = pixels
+            provider.set_data_array(pixels, upload_size)
+            component = getattr(panel, "_component", None)
+            scene_widget = getattr(component, "scene_widget", None)
+            if scene_widget is not None:
+                scene_widget.invalidate()
+
+        panel.upload = upload_cpu_array
+        print(
+            "[DEMO] XR camera panel uses NumPy ByteImageProvider.set_data_array",
+            flush=True,
+        )
+        return panel
 
     def subscribe_to_frame_updates(self, callback: Callable[[Any], None]) -> Any:
         return self._upstream.subscribe_to_frame_updates(callback)
@@ -953,13 +988,13 @@ def run_robosyn_vr_demo(
     converter = sim_utils.UrdfConverter(
         sim_utils.UrdfConverterCfg(
             asset_path=str(urdf_path),
-            usd_dir=f"/data/ebulochkin/assets/isaac_s1/converted/{urdf_sha}",
+            usd_dir=f"/home/tomik/vla-runtime/assets/isaac_s1/converted/{urdf_sha}",
             fix_base=True,
             merge_fixed_joints=False,
             self_collision=False,
             robot_type="Manipulator",
             run_multi_physics_conversion=False,
-            ros_package_paths=[{"name": "agx_arm_description", "path": "/data/ebulochkin/assets"}],
+            ros_package_paths=[{"name": "agx_arm_description", "path": "/home/tomik/vla-runtime/assets"}],
             joint_drive=sim_utils.UrdfConverterCfg.JointDriveCfg(
                 drive_type="force",
                 target_type="position",

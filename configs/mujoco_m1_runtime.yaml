@@ -1,0 +1,156 @@
+revision: piperx_mujoco_m1_runtime_v28
+status: GATE_M1_REVALIDATION_REQUIRED
+
+baseline:
+  repository_commit: 9591f7f14a82ec33d0969c856b7ff52c97b5b842
+  implementation_scope: Additive MuJoCo M1 files; pre-existing Isaac working-tree changes are out of scope.
+
+environment:
+  id: core
+  mujoco_version: 3.9.0
+  gymnasium_version: 1.3.0
+  headless_gl: egl
+
+model:
+  source_repository: https://github.com/agilexrobotics/agx_arm_urdf
+  source_commit: f6642ce0d7872c686f29c99e9e10cd23d1d49313
+  source_xacro: piper_x/urdf/piper_x_with_gripper_description.xacro
+  source_xacro_sha256: 0ee3f52f9acf3060a7f3e439c6e5e46b6a53d4fa509dd495045548be6b7f90cd
+  base_frame: base_link
+  tcp_frame: gripper_base
+  mesh_strategy: collision_stl_as_initial_visual_v1
+  canonical_mjcf: assets/mujoco/piper_x/f6642ce0d7872c686f29c99e9e10cd23d1d49313/piper_x.xml
+  manifest: assets/mujoco/piper_x/f6642ce0d7872c686f29c99e9e10cd23d1d49313/manifest.json
+  milestone_scene: assets/mujoco/scenes/piper_x_bimanual_empty_v1.xml
+  task_scene: assets/mujoco/scenes/dual_cube_to_matching_plates_v1.xml
+  gravity:
+    world_m_s2: [0.0, 0.0, -9.81]
+    robot_body_gravcomp: 1.0
+  collision:
+    adjacent_urdf_body_pairs: excluded
+    all_other_body_pairs: enabled
+    rationale: Adjacent convex STL hulls overlap at mechanical joints and are not physical contact pairs.
+  gripper:
+    compatibility_joint: gripper
+    aperture_range_m: [0.0, 0.1]
+    actuator_policy: one external aperture target drives q1-q2 through one fixed tendon; one soft equality constrains the passive q1+q2 centre tendon without a second actuator
+    aperture_tendon:
+      name: gripper_aperture
+      relation: "length = q1 - q2"
+      kp: 1250.0
+      kv: 30.0
+      force_limit_n: 8.0
+    center_constraint:
+      relation: "length = q1 + q2"
+      implementation: soft equality on the named fixed centre tendon
+      solref: [0.02, 1.0]
+      solimp: [0.9, 0.95, 0.001]
+    physical_fingers:
+      armature_kg: 0.1
+      damping_n_s_m: 2.0
+    collision_pads:
+      continuous_planar:
+        position_in_finger_frame_m: [0.0, -0.043, 0.001]
+        size_half_extents_m: [0.028, 0.033, 0.001]
+      contact_dimensions: 6
+      friction: [1.5, 0.005, 0.0001]
+      explicit_cube_pairs:
+        contact_dimensions: 6
+        friction: [1.5, 1.5, 0.005, 0.0001, 0.0001]
+        solref: [0.02, 1.0]
+        solimp: [0.9, 0.95, 0.001]
+      source_mesh_collision: disabled_for_fingers
+      generic_pad_collision: disabled_explicit_cube_pairs_only
+      rationale: V20 retained a continuous 66 x 2 mm plane with 48 mm width. Physical V24 still dropped a manually acquired cube and logged prolonged force limiting. The source finger STL spans exactly 56 mm across local X; V21 uses that measured width instead of truncating 4 mm of real surface per side, while remaining a thin planar insert. V21 also replaces the over-constrained two-servo plus hard-equality plant with one aperture tendon and a compliant centred common mode. Explicit pad/cube pairs make the declared anisotropic friction and solver impedance authoritative instead of relying on generic geom mixing. V23 diagnostics proved that both oversized rectangular grasp-surface proxies contacted the table and cancelled the aperture actuator, so the pads now use only explicit cube pairs. Direct-stiffness, high-impedance, and enlarged rotational-friction candidates were rejected because each worsened centred acquisition or retention at 120 Hz without fixing the 3 mm offset case. V27 therefore returned to the centred-grasp-stable 0.9/0.95 impedance and original measured-contact friction while retaining only the proven explicit-pair/table-filtering correction. Physical V26 still dropped the cube. V28 changes no contact coefficient, force, geometry, or control rate; it gives the existing compliant contact model two 240 Hz solver steps for every former 120 Hz step. M1 remains open pending automated and physical Quest evidence.
+
+scene:
+  revision: piperx_mujoco_dual_cube_scene_v15
+  world_frame:
+    name: S
+    axes: {x: forward_from_operator, y: operator_left, z: up}
+    units: {translation: metre, rotation: radian, time: second}
+  robot_bases_m:
+    left: [0.233, 0.300, 0.825]
+    right: [0.233, -0.300, 0.825]
+  robot_base_quat_xyzw: [0.0, 0.0, 0.0, 1.0]
+  home_d0:
+    left: [-20.0, 90.0, -50.0, 0.0, 0.0, 0.0, 50.0]
+    right: [20.0, 90.0, -50.0, 0.0, 0.0, 0.0, 50.0]
+  table:
+    center_m: [0.725, 0.0, 0.775]
+    size_m: [1.0, 1.0, 0.1]
+    top_z_m: 0.825
+    color_rgb: [0.53, 0.49, 0.43]
+    requested_friction: {static: 0.8, dynamic: 0.6}
+    mujoco_contact_friction: [0.8, 0.005, 0.0001]
+    approximation: MuJoCo has one sliding coefficient rather than separate static/dynamic coefficients; M1 uses 0.8.
+  objects:
+    left_cube: {position_m: [0.52, 0.17, 0.847], edge_m: 0.04, mass_kg: 0.035}
+    right_cube: {position_m: [0.52, -0.17, 0.847], edge_m: 0.04, mass_kg: 0.035}
+    left_plate: {position_m: [0.72, 0.17, 0.831], diameter_m: 0.14, height_m: 0.008}
+    right_plate: {position_m: [0.72, -0.17, 0.831], diameter_m: 0.14, height_m: 0.008}
+  cameras:
+    left_wrist: {role: observation.images.left_wrist, resolution_hw: [480, 640], vertical_fov_deg: 47.16855, optical_axis: gripper_local_positive_z}
+    right_wrist: {role: observation.images.right_wrist, resolution_hw: [480, 640], vertical_fov_deg: 47.16855, optical_axis: gripper_local_positive_z}
+    scene: {role: debug_only, resolution_hw: [480, 640], vertical_fov_deg: 46.8264}
+  lights:
+    cool_fill: {pos_m: [0.20, 0.80, 2.30], diffuse_rgb: [0.62, 0.68, 0.78]}
+    warm_key: {pos_m: [0.35, -0.75, 2.40], diffuse_rgb: [1.00, 0.91, 0.78]}
+
+task:
+  task_id: PiperX-DualCubeToMatchingPlate-v1
+  revision: dual_cube_plate_success_v1
+  instruction: Place each colored cube on the matching plate using both arms.
+  horizon_control_ticks: 300
+  reward: 1.0 on the first success tick; otherwise 0.0
+  success:
+    per_side:
+      cube_center_xy_distance_to_plate_center_max_m: 0.06
+      robot_cube_contacts_required: 0
+      cube_linear_speed_strictly_below_m_s: 0.05
+      consecutive_control_ticks: 5
+    episode: Both per-side counters are at least 5 on the same control tick.
+    termination: success sets terminated=true
+    truncation: horizon without success sets truncated=true
+  reset:
+    revision: dual_cube_level0_fixed_seeded_v1
+    distribution: level_0_fixed_initial_conditions
+    cube_orientation_xyzw: [0.0, 0.0, 0.0, 1.0]
+    initial_linear_angular_velocity: zero
+    settling_physics_ticks: 240
+    settling_frames_are_policy_steps: false
+
+execution:
+  physics_dt_s: 0.004166666666666667
+  control_dt_s: 0.03333333333333333
+  action_repeat: 8
+  integrator: implicitfast
+  contact_cone: elliptic
+  impedance_ratio: 10.0
+  noslip_iterations: 0
+  control_mode: absolute_joint_position
+  action_hold: zero_order_hold
+  interpolation: none
+  actuator_candidates:
+    arm: {kp: 400.0, kv: 40.0, force_limit_nm: 100.0}
+    gripper_aperture_tendon: {command_gain: 1250.0, length_bias_stiffness: 1250.0, kv: 30.0, force_limit_n: 8.0}
+    gripper_center_constraint: {relation: q1_plus_q2_equals_zero, solref: [0.02, 1.0], solimp: [0.9, 0.95, 0.001]}
+    physical_fingers: {armature_kg: 0.1, damping_n_s_m: 2.0, joint_stiffness_n_m: 0.0}
+
+environment_api:
+  gymnasium_id: PiperX-DualCubeToMatchingPlate-Mujoco-v0
+  class: lerobot_env_piperx_mujoco.env:PiperXDualCubeToMatchingPlateMujocoEnv
+  registration: package_import
+  native_action: 14 absolute targets in left-then-right joint radians and gripper metres; each scalar aperture maps to one physical-finger difference tendon q1-q2
+  native_observation: named arm qpos plus physical finger aperture and left/right wrist uint8 RGB HWC
+  render_mode: rgb_array from debug-only scene camera
+  renderer_determinism: MuJoCo offscreen multisampling is fixed to offsamples=1. Imported collision meshes remain in group 0 for physics but are excluded from cameras; visual meshes and task geoms use group 1, preventing coincident-mesh z-fighting while preserving byte-identical fixed resets.
+  processor_revision: piper_x_d0_mujoco_edge_v1
+  action_processor: lerobot_env_piperx_mujoco.processors:PiperXMujocoActionProcessor
+  observation_processor: lerobot_env_piperx_mujoco.processors:PiperXMujocoObservationProcessor
+  runner: tools/run_mujoco_m1.py
+  evidence_runner: tools/verify_mujoco_m1.py
+
+gate_status:
+  M1: revalidation_required
+  reason: Physical Quest v26 still dropped a manually acquired cube and exposed launch-dependent arm motion. M1 v28 raises only the internal contact rate to 240 Hz while Quest v27 clears paused/reset controller smoothing history. Full NVIDIA EGL and physical Quest revalidation are required.

@@ -1,0 +1,101 @@
+{
+  "builder": {
+    "path": "tools/build_mujoco_piperx.py",
+    "revision": "piper_x_gate_c_to_mujoco_scene_v28",
+    "sha256": "b570556359e1bd79f8fe9127fa1e9d479bd377ba5097b502b943544dd311bc0d"
+  },
+  "conversion": {
+    "contact_compliance": "explicit pad/cube pairs use centred-grasp-stable solref=0.02/1 and solimp=0.9/0.95/0.001; rejected direct-stiffness, high-impedance and enlarged rotational-friction candidates are documented",
+    "contact_solver": "MuJoCo Newton solver at 240 Hz with elliptic friction cones, impratio=10, and NoSlip disabled",
+    "discardvisual": false,
+    "fusestatic": false,
+    "gripper_collision": "continuous 56x66x2mm planar grasp pads matching the source finger STL width, with condim=6; pads use only explicit task cube pairs so their rectangular proxy cannot create false table contacts; imported finger meshes are visual-only",
+    "gripper_mapping": "one external aperture drives q1-q2; one soft tendon equality constrains passive q1+q2 common mode; no second finger actuator or compatibility-joint actuator",
+    "gripper_servo": "aperture tendon command gain/bias=1250 kv=30 force=8N; passive centre constraint solref=0.02/1 solimp=0.9/0.95/0.001; physical fingers armature=0.1kg damping=2Ns/m zero joint stiffness",
+    "mesh_strategy": "collision_stl_as_initial_visual_v1",
+    "render_groups": "visual meshes and task geoms in group 1; coincident collision group 0 excluded from cameras",
+    "robot_gravcomp": 1.0
+  },
+  "outputs": {
+    "canonical_mjcf": {
+      "path": "piper_x.xml",
+      "sha256": "c7c4a8b638d8314058a52ac643f7335bf30e9818622f883642b1869c8cf8145a"
+    },
+    "empty_bimanual_mjcf": {
+      "path": "../../scenes/piper_x_bimanual_empty_v1.xml",
+      "sha256": "400b68683f34b0a89f429e84156ef881eff1f6cf607e75d55620687f2d0b4765"
+    },
+    "license": {
+      "path": "LICENSE.agx_arm_urdf",
+      "sha256": "247944c63de1573653722ba784f96123da267105b7b48577e0c8826a24b809f6"
+    },
+    "meshes": [
+      {
+        "path": "meshes/base_link.stl",
+        "sha256": "b732cf8a1f8435f51e3ec860f11189c3ec63744d3df008b7d3e9b6505dfc483d"
+      },
+      {
+        "path": "meshes/flange.stl",
+        "sha256": "f9ce752f93a6598858a779e3d8755a09e466b588efcffc3a1c3953773753a22b"
+      },
+      {
+        "path": "meshes/gripper_base.stl",
+        "sha256": "0b839dc0bcb7d94e3422c74f6396b54a0441ba4836448ab5586e7f372d1bdbf3"
+      },
+      {
+        "path": "meshes/gripper_link1.stl",
+        "sha256": "475a7d8db056524d7659fadf5a2c307d62791047b6214d733dfc7846ed1c613d"
+      },
+      {
+        "path": "meshes/gripper_link2.stl",
+        "sha256": "3f88d534a85e28a33ef7d2061adacbd1d25214aa9325f9e464aad0f9e4b74606"
+      },
+      {
+        "path": "meshes/link1.stl",
+        "sha256": "60c53c4d5d20c5b663cc4ced2f5e322d2a857baa6e79cef04a33b5f9f7c1e985"
+      },
+      {
+        "path": "meshes/link2.stl",
+        "sha256": "0316b881cd0bae6c9f8f794fabdee7fbf041f83f2f75980d34b67555fe8a3561"
+      },
+      {
+        "path": "meshes/link3.stl",
+        "sha256": "c51994fa4ca6a0577cfc65fe5a666ad47ad6af8dc98fbe81b71c4a7fe8ad09a5"
+      },
+      {
+        "path": "meshes/link4.stl",
+        "sha256": "10b69bde5305c53fbb4a6dc4e910e8604d54d250a969e6cda8128d8244989831"
+      },
+      {
+        "path": "meshes/link5.stl",
+        "sha256": "fb7ab27270e6b5fa0b2e6df9fa37722062f4ff397cd4f89883d23551bedd0801"
+      },
+      {
+        "path": "meshes/link6.stl",
+        "sha256": "8c391520fd963fe4f9b46afcde82ceeab2a93b73c01fc5debe039fe632f597e6"
+      }
+    ],
+    "task_scene_mjcf": {
+      "path": "../../scenes/dual_cube_to_matching_plates_v1.xml",
+      "sha256": "26ef8ada17bb6daffe57fb291751e0bcf2ce4465a6cec2bdaa11c097ffac7d6b"
+    }
+  },
+  "runtime": {
+    "mujoco_version": "3.9.0"
+  },
+  "schema_version": 1,
+  "source": {
+    "base_urdf": {
+      "path": "piper_x/urdf/piper_x_description.urdf",
+      "sha256": "34126caac7d5b37bc2409f337ac246afbe0bb8cd47fc9f16df5038f19bd21e3a"
+    },
+    "commit": "f6642ce0d7872c686f29c99e9e10cd23d1d49313",
+    "composed_gate_c_urdf_sha256": "103af50b99b17e4ff962b7f563459672ad89556661de79cbd30c1792fea92a6f",
+    "gripper_xacro": {
+      "path": "piper_x/urdf/piper_x_with_gripper_description.xacro",
+      "sha256": "0ee3f52f9acf3060a7f3e439c6e5e46b6a53d4fa509dd495045548be6b7f90cd"
+    },
+    "license_sha256": "247944c63de1573653722ba784f96123da267105b7b48577e0c8826a24b809f6",
+    "repository": "https://github.com/agilexrobotics/agx_arm_urdf"
+  }
+}

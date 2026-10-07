@@ -1,0 +1,378 @@
+MuJoCo Quest profile v24 focused validation passed
+================================================
+
+Date: 2026-09-29
+Profile: piperx_mujoco_quest_teleop_v24
+Gate: NONE (additive profile over reopened M1; E2 not started)
+Status: FOCUSED_AUTOMATED_PASSED; FULL_NVIDIA_EGL_AND_PHYSICAL_QUEST_VALIDATION_REQUIRED
+
+On 2026-09-29 the operator executed the six focused v24 checks. All six passed
+in `2.42 s` with one non-blocking upstream `hppfcl` import deprecation warning.
+The checks cover the continuous `48 x 66 x 2 mm` pad geometry, unchanged
+symmetric 8 N finger limits, unchanged motion profile, bilateral cube
+reachability, open-gripper retention during multijoint motion, and 300-tick
+retention of longitudinally offset cubes during wrist roll.
+
+Focused v24 command executed by the operator:
+MUJOCO_GL=egl UV_CACHE_DIR=/tmp/codex_uv_cache_mujoco_v24 \
+uv run --frozen --no-sync --group isaac-teleop pytest -q \
+  tests/test_mujoco_scene.py::test_gripper_uses_continuous_thin_contact_pads_and_direct_finger_actuators \
+  tests/test_mujoco_quest_teleop.py::test_v24_profile_preserves_validated_motion_and_gripper_force \
+  tests/test_mujoco_quest_teleop.py::test_v24_gripper_uses_symmetric_force_limits_on_both_sides \
+  tests/test_mujoco_quest_teleop.py::test_real_placo_ik_can_reach_both_cubes_within_joint_limits \
+  tests/test_mujoco_quest_teleop.py::test_v8_open_grippers_hold_aperture_during_smooth_multijoint_motion \
+  tests/test_mujoco_quest_teleop.py::test_v24_gripper_retains_longitudinally_offset_cubes_during_wrist_motion
+
+Result: `6 passed, 1 warning in 2.42 s`.
+
+The operator then started the full five-file regression suite. It stopped after
+`35 passed` on one stale diagnostic assertion that still expected the rejected
+v19 directional force experiment (`[-8, 12]` / `[-12, 8] N`). The runtime and
+focused v24 force test correctly reported symmetric `[-8, 8] N`. The stale
+diagnostic assertion was updated to the accepted symmetric limits; no runtime,
+geometry, controller, or contract value changed. The full suite must be rerun.
+
+The operator reran the complete five-file v24 regression suite after that test
+correction. Result: `55 passed, 1 warning in 5.76 s`. The only warning was the
+same upstream `hppfcl` import deprecation. This is the current full pytest
+evidence for M1 v20 / Quest v24; the full NVIDIA EGL verifier and physical Quest
+acceptance remain pending.
+
+Full v24 pytest command executed by the operator:
+MUJOCO_GL=egl UV_CACHE_DIR=/tmp/codex_uv_cache_mujoco_v24 \
+uv run --frozen --no-sync --group isaac-teleop pytest -q \
+  tests/test_mujoco_piperx_model.py \
+  tests/test_mujoco_scene.py \
+  tests/test_mujoco_env.py \
+  tests/test_mujoco_processors.py \
+  tests/test_mujoco_quest_teleop.py -x
+
+The operator then executed the authoritative NVIDIA EGL verifier on an RTX
+4090. All ten registered checks passed, including exact post-settle state/RGB,
+1000 resets, embodiment parity, camera roles and optical axes, bounded contact,
+open-aperture retention, task lifecycle, and bilateral offset-cube retention.
+Both cubes retained contact for 300/300 wrist-roll ticks; maximum relative shift
+was `0.017789 m` against the `0.020 m` bound. Render-control performance was
+`781.09 ticks/s` against the `30 ticks/s` requirement. The attached operator
+output has SHA-256
+`94bc299a428f140fcf6ae94e97bc9a60524f198ba7d7aa456b6bf75e3ca152c8`.
+
+Authoritative v20 verifier result: PASS.
+Physical Quest v24 acceptance remains required.
+
+The operator executed the six focused v23 checks. Five passed and the offset
+grasp regression failed: the left cube lost contact at tick 215 with
+`20.076 mm` aperture and only `0.004 mm` symmetry error. The continuous v23 pad
+was exactly 40 mm wide, leaving a 40 mm cube no lateral margin during wrist
+roll. The attached operator output is SHA-256
+`ec9e2309e33859e279c55cd12caa4176af7be22ca2cd48a58162183d65d8547c`.
+
+V24 changes only the pad width from 40 to 48 mm, restoring the v17 lateral
+margin while retaining the continuous 66 mm length and 2 mm thickness. It
+requires the focused collision, reach, open-motion, and retained-grasp checks.
+
+Focused v23 result: `5 passed, 1 failed, 1 warning in 3.62 s`.
+The warning is the unchanged upstream `hppfcl` import deprecation. The failure
+is retained as contradiction evidence; it is not accepted M1 evidence.
+
+Previously, the operator executed the six focused v22 checks. Five passed and the new
+longitudinal-offset grasp regression failed: the left cube lost contact at tick
+240 with `2.073 mm` aperture and only `0.003 mm` finger symmetry error. This
+contradicts the v18 angled proximal-pad candidate and localizes the failure to
+edge/wedge contact rather than finger coupling. The attached operator output is
+SHA-256 `c6621bbe53ccac04030749f65d0d8de9bc68e102d3447b3e45573ab323cb4b0b`.
+
+Focused v22 result: `5 passed, 1 failed, 1 warning in 2.21 s`.
+The warning is the unchanged upstream `hppfcl` import deprecation. The failure
+is retained as contradiction evidence; it is not accepted M1 evidence.
+
+Focused v21 command executed by the operator:
+MUJOCO_GL=egl UV_CACHE_DIR=/tmp/codex_uv_cache_mujoco_v21 \
+uv run --frozen --no-sync --group isaac-teleop pytest -q \
+  tests/test_mujoco_scene.py::test_gripper_uses_thin_distal_collision_pads_and_direct_finger_actuators \
+  tests/test_mujoco_quest_teleop.py::test_v21_profile_restores_validated_motion_and_gripper_force \
+  tests/test_mujoco_quest_teleop.py::test_v21_gripper_uses_symmetric_force_limits_on_both_sides \
+  tests/test_mujoco_quest_teleop.py::test_real_placo_ik_can_reach_both_cubes_within_joint_limits \
+  tests/test_mujoco_quest_teleop.py::test_v8_open_grippers_hold_aperture_during_smooth_multijoint_motion \
+  tests/test_mujoco_quest_teleop.py::test_v8_gripper_retains_aligned_cubes_during_smooth_wrist_motion
+
+Result: `6 passed, 1 warning in 2.06 s`.
+
+The warning is the upstream `hppfcl` import deprecation recommending the new
+`coal` package name. It does not affect IK or simulation results. The focused
+checks cover the thin distal pad geometry, restored symmetric 8 N actuator
+range, unchanged v21 motion settings, bilateral cube reachability, open-finger
+retention during arm motion, and bilateral retained grasp during wrist motion.
+They do not replace the full NVIDIA EGL verifier or physical Quest validation.
+
+The v18 focused suite and NVIDIA EGL verifier results retained below are
+historical evidence only because M1 v17 changes finger collision geometry.
+They still support the unchanged D0 edge, IK, and rendering path, but do not
+validate the v17 contact model or the v21 physical profile.
+Physical run 8 showed that an open target could collapse to 46.480 mm left and
+9.814 mm right in different poses while opening force was limited at 8 N.
+V19 retains 8 N closing force and adds 12 N only in each mirrored opening
+direction. On 2026-09-28 the operator ran the four focused profile, actuator
+range, open-motion, and bilateral retained-grasp checks: `4 passed in 1.95 s`.
+This validates the narrow directional-force change but is not the full focused
+suite or physical Quest acceptance.
+
+Focused v19 command executed:
+MUJOCO_GL=egl UV_CACHE_DIR=/tmp/codex_uv_cache_mujoco_v19 \
+uv run --frozen --no-sync --group isaac-teleop pytest -q \
+  tests/test_mujoco_quest_teleop.py::test_v19_profile_preserves_motion_gain_and_reduced_deadband \
+  tests/test_mujoco_quest_teleop.py::test_v8_gripper_plant_reports_direct_finger_tracking_and_forces \
+  tests/test_mujoco_quest_teleop.py::test_v8_open_grippers_hold_aperture_during_smooth_multijoint_motion \
+  tests/test_mujoco_quest_teleop.py::test_v8_gripper_retains_aligned_cubes_during_smooth_wrist_motion
+
+Result: `4 passed in 1.95 s`.
+
+Physical run 9 then showed chatter after cube contact. V19 kept the 12 N
+opening direction available even while the accepted target was partial or
+closed; one partial-close status sample reached that `-12 N` opening limit.
+V20 gates the extra opening reserve at an accepted target of at least 95 mm and
+uses symmetric `[-8, +8] N` ranges for both fingers below it. On 2026-09-28 the
+operator ran the four focused profile, force-mode, open-motion, and bilateral
+retained-grasp checks: `4 passed in 1.95 s`.
+
+Focused v20 command executed:
+MUJOCO_GL=egl UV_CACHE_DIR=/tmp/codex_uv_cache_mujoco_v20 \
+uv run --frozen --no-sync --group isaac-teleop pytest -q \
+  tests/test_mujoco_quest_teleop.py::test_v20_profile_preserves_motion_gain_and_reduced_deadband \
+  tests/test_mujoco_quest_teleop.py::test_v20_grasp_mode_disables_opening_force_boost_on_both_sides \
+  tests/test_mujoco_quest_teleop.py::test_v8_open_grippers_hold_aperture_during_smooth_multijoint_motion \
+  tests/test_mujoco_quest_teleop.py::test_v8_gripper_retains_aligned_cubes_during_smooth_wrist_motion
+
+Result: `4 passed in 1.95 s`.
+
+The 53-test results below cover the 8 N v8 profile predecessor and are stale.
+Run 7 used the 10 N v9 direct-finger plant and showed large finger symmetry
+error under cube contact. The first v10 equality candidate compiled and passed
+36 focused checks but lost cube contact in the retained dynamic-grasp test.
+V11 kept the same single physical-finger q1=-q2 relation with the stable MuJoCo
+constraint parameters: symmetry error fell to 0.005 mm, but the left cube was
+lost at tick 293/300. Raising force to 12 N made loss earlier at tick 274/300,
+while symmetry remained below 0.01 mm. V13 therefore used 8 N with the coupled
+fingers to avoid over-clamping and retained contact for 300/300 ticks. V14's
+1.6 friction lost contact at tick 292. V15's 1.51 candidate retained contact,
+but worsened the former world-frame displacement to 25.511 mm. That metric
+counted commanded wrist rotation as cube slip. V16 restores friction 1.5 and
+measures cube translation in the moving gripper frame. The v16 operator probe
+retained contact for 300/300 ticks but measured 20.144 mm, with 19.168 mm along
+the pad tangent and only 0.131 mm along the finger-normal axis. V17 keeps force
+and sliding friction unchanged and sets the pads to `condim=6`, activating the
+already declared torsional and rolling friction terms that default `condim=3`
+ignored. The operator's focused v17 retained-grasp regression passed on
+2026-09-25; no tests were executed by the agent.
+
+Physical Quest run 6 contradicted the old leader/equality/follower model. Run 7
+then contradicted the fully independent physical-finger model: one finger could
+remain displaced under load while the other followed its target. Everything
+below the "HISTORICAL v7" marker is retained only for provenance.
+
+Mandatory upstream audit: MuJoCo/Gymnasium retain physics and lifecycle;
+LeRobot/Placo retain FK/IK; Isaac Teleop/CloudXR/Televiz retain XR acquisition
+and presentation. The exact remaining gap was the overdetermined gripper plant
+and missing per-joint left/right diagnostics. V17 uses the existing concrete
+edge only: one D0 aperture maps directly to +0.5/-0.5 physical-finger targets,
+with one physical q1=-q2 symmetry relation and no compatibility-joint actuator.
+No project framework, duplicate IK, or custom XR protocol was added.
+
+Short command executed:
+MUJOCO_GL=egl UV_CACHE_DIR=/tmp/codex_uv_cache_mujoco_v19 \
+uv run --frozen --no-sync pytest -q \
+  tests/test_mujoco_piperx_model.py tests/test_mujoco_scene.py \
+  tests/test_mujoco_env.py tests/test_mujoco_processors.py \
+  tests/test_mujoco_quest_teleop.py -x
+
+Focused v17 result: 1 passed in 1.69 s. The regression requires both cubes to
+remain in contact for all 300 wrist-roll ticks, less than 20 mm translation in
+the moving gripper frame, and less than 10 mm finger-symmetry error.
+
+Full v17 focused suite result: 53 passed with one upstream `hppfcl` import
+deprecation warning in 5.49 s. The warning does not affect execution. The full
+NVIDIA EGL verifier then stopped at Gymnasium's same-seed step-observation
+determinism check before the 1000-reset phase. The verifier now reports state
+and per-camera pixel differences on that failure instead of weakening or
+skipping the check. It showed exact qpos/qvel and exact left-wrist pixels; only
+22 right-wrist channel values differed by one LSB. V18 excludes coincident
+collision group 0 from cameras while keeping it active in physics, and renders
+visual meshes plus task geoms from group 1. This removes the identified
+z-fighting source without adding a determinism tolerance. Physical Quest
+validation remains pending; historical results below do not validate those
+remaining checks.
+
+The operator's full v18 focused suite passed: 54 tests in 5.62 s with one
+upstream `hppfcl` import deprecation warning. The warning does not affect
+execution. The full v18 NVIDIA EGL verifier then passed all registered checks:
+1000 deterministic resets, Gymnasium lifecycle/render determinism, camera
+contract, task lifecycle, contact smoke, open-aperture retention, bilateral
+grasp retention, performance, parity, and NVIDIA EGL. Both cubes retained
+contact for 300/300 wrist-roll ticks; maximum moving-gripper-frame shift was
+11.699 mm and control-plus-render throughput was 845.85 ticks/s. Only physical
+Quest acceptance remains pending.
+
+Historical v8 helper evidence (not v18 acceptance):
+- embodiment parity PASS: names, limits, FK and positive directions match Gate C;
+- direct fingers: kp=2500, kv=60, force 8 N, armature 0.1 kg,
+  damping 2 N s/m, pad sliding friction 1.5;
+- production 10 mm/control-tick full-range slew is bounded and monotonic;
+- open-motion minimum aperture: 95.848 mm left / 95.298 mm right;
+- wrist-roll grasp: 300/300 contact ticks per side, maximum cube-relative
+  shift 16.551 mm (20 mm limit);
+- Ruff and affected-module bytecode compilation PASS.
+
+Each runtime status now includes arm_plant.left/right arrays for all six joint
+targets, measurements, signed errors, saturation flags, forces, and IK-failed
+state. Static routing is symmetric; no speculative side-specific correction
+was added.
+
+Not executed for v21: automated tests, the full NVIDIA EGL verifier, or a
+physical Quest session. M1 therefore remains unresolved. V21 restores the
+validated symmetric 8 N actuator range and introduces no IK or sensitivity
+change; M1 v17's thin distal collision pads require new evidence.
+
+HISTORICAL v7 EVIDENCE — SUPERSEDED
+===================================
+
+MuJoCo Quest profile automated evidence
+Date: 2026-09-24
+Profile: piperx_mujoco_quest_teleop_v7
+Gate: NONE (additive profile over accepted M1; E2 not started)
+
+Pinned runtime facts checked:
+- isaacteleop 1.3.131
+- bundled CloudXR 6.2.0
+- Televiz import and public VizSession/QuadLayer API present
+- MuJoCo 3.9.0
+- LeRobot 0.6.1 RobotKinematics / Placo 0.9.15
+
+Revalidation command in the existing frozen project environment:
+MUJOCO_GL=egl uv run --frozen --no-sync --group isaac-teleop pytest -q \
+  tests/test_mujoco_env.py tests/test_mujoco_piperx_model.py \
+  tests/test_mujoco_processors.py tests/test_mujoco_scene.py \
+  tests/test_mujoco_quest_teleop.py tests/test_quest_xr_diagnostics.py \
+  tests/test_isaac_s2_processor.py
+
+The managed sandbox used `UV_CACHE_DIR=/tmp/codex_uv_cache_mujoco_v7`; this only
+relocated uv's cache and did not change the frozen environment or command
+semantics.
+
+Result:
+67 passed, 1 dependency deprecation warning in 8.52s
+
+Covered behavior:
+- exact OpenXR-to-M1 `[-z,-x,y]` spatial-delta basis, including explicit
+  forward/right/up semantics for the M1 `+X forward/+Y left/+Z up` frame;
+- one shared upstream LEFT/RIGHT ControllersSource;
+- the Isaac-compatible `teleop_command` message channel, Play/Stop edge
+  sequences, and upstream `DefaultTeleopStateManager` output contract;
+- inactive menu pose/trigger inputs cannot change D0 joints or grippers;
+- absent tracking clears the upstream pose baseline and smoothing;
+- first recovery frame emits zero relative motion;
+- the v7 config retains `0.5` normal translation/rotation gain and `0.125`
+  precise gain, retaining a four-to-one mode ratio after physical run 3 found
+  unit accumulated motion too sensitive;
+- the profile-specific upstream retargeter threshold is `0.25 mm` translation
+  and `0.0025 rad` rotation, so a deliberate `0.6 mm/frame` controller sweep
+  survives filtering while a `0.2 mm/frame` noise sweep remains suppressed;
+- panel poses are composed from one initial HMD WXYZ pose plus head-relative
+  offsets into OpenXR stage space, and the XR clear alpha is zero for upstream
+  ALPHA_BLEND passthrough outside the panels;
+- rebase frames hold the current gripper; after Play/reset/recovery each side
+  ignores held-trigger close intent until a release sample arms that side, and
+  active aperture changes are bounded to 10 mm per control tick;
+- successive Cartesian deltas accumulate from the last accepted D0 target even
+  when measured MuJoCo joints lag, and a zero-delta frame retains that target;
+- gripper slew advances from the prior accepted target rather than measured
+  qpos, so a steady trigger command is monotonic;
+- the Quest gripper parameters match revalidated M1 v5: one external aperture
+  target expands to leader and `+0.5/-0.5` follower targets with bounded
+  follower servos (`kp=1500`, `kv=30`, `5 N`);
+- full-range 0-to-100 mm and 100-to-0 mm v7 slew responses remain bounded and
+  monotonic and reach within 2 mm of the requested endpoint in at most 45
+  control ticks (1.5 s);
+- both wrist-camera optical axes match the corresponding gripper approach axis;
+- flat fingertip pads are the only collidable finger geometry and stiff follower
+  constraints stay within 2 mm leader/follower error;
+- with both grippers commanded fully open, a 300-tick smooth motion of all six
+  arm joints retains at least `96.054 mm` follower aperture; maximum follower
+  error is `3.088 mm`, versus `48.338 mm` in physical run 5;
+- both aligned cubes remain in contact for 300/300 control ticks during smooth
+  +/-5 degree wrist roll, with less than 20 mm relative shift;
+- real Placo IK produces nonzero bounded joint responses for all three Quest
+  rotation-vector axes;
+- real Placo IK reaches both canonical cube centers while preserving the home
+  tool orientation and staying inside every accepted Gate C joint limit;
+- the interactive environment profile continues beyond M1 tick 300 without an
+  implicit home reset, while the default M1 horizon contract remains unchanged;
+- Cartesian jump, joint-step, Gate C limit, gripper slew, and actuator-force
+  saturation are reported; follower aperture, mimic error, and actuator force
+  are present in plant diagnostics;
+- a dedicated Quest-edge audit proves LeRobot IK `joint1..joint6`, D0
+  left/right slots, degree/radian signs, and namespaced MuJoCo actuator targets
+  remain in the accepted Gate C/M1 order;
+- shutdown closes MuJoCo/EGL inside the live graphics-bound TeleopSession,
+  then destroys panels before stopping owned CloudXR; an injected
+  `EGL_NOT_INITIALIZED` failure proves invalid upstream handles are retired and
+  later owners still close;
+- real Placo IK remains continuous below one degree for symmetric 2 mm deltas;
+- existing M1 environment/processors and Gate B/S2 pure semantics regressions pass.
+
+Real upstream IK smoke:
+Two independent LeRobot RobotKinematics instances consumed symmetric 2 mm
+controller deltas from the M1 home state. Both results were finite, neither IK
+branch failed, no saturation occurred, and the maximum joint change was
+0.41167783790290713 degrees.
+
+Stateful MuJoCo actuation smoke:
+Ten consecutive `0.01 rad` controller rotation deltas were followed by 50 zero
+deltas while both analog grippers were held at their endpoints. Both arms
+retained finite nonzero joint changes after input stopped, the grippers reached
+`0.001/99.999 mm` against `0/100 mm` targets, neither side made a wrong-way
+step larger than `0.01 mm`, and no termination or truncation occurred. This is
+automated plant evidence, not physical Quest axis evidence.
+
+Retained Televiz GPU presentation smoke (unchanged upload seam, v4 run):
+On the qualified RTX 4090 / NVIDIA 580.159.03 host, a 640x480 RGB host frame
+was converted to the runtime's CUDA RGBA VizBuffer, submitted to an upstream
+Televiz QuadLayer, rendered in offscreen Vulkan mode, and read back as
+`uint8 (480,640,4)` with the expected green channel value 127. The managed
+Codex sandbox hides NVIDIA device access, so this GPU-only command was executed
+with direct host device visibility. No network, Quest, Isaac, CAN, or robot was
+used by the smoke. This retained smoke does not validate v7 physical panel
+height, passthrough appearance, or head-pose availability.
+
+Static checks:
+- Ruff: PASS for all new source/tests.
+- mypy --explicit-package-bases: PASS for all four MuJoCo Quest runtime modules.
+- CloudXR WSS readiness regression: LAN and loopback certificate endpoints
+  returned HTTP 200 while Televiz was waiting for an HMD.
+- launcher argument/help smoke: PASS.
+
+Accepted M1 regression revalidation command:
+MUJOCO_GL=egl ./.venv/bin/python tools/run_mujoco_m1.py --steps 8
+
+Canonical equivalent:
+uv run --frozen --no-sync python tools/run_mujoco_m1.py --steps 8
+
+Result:
+- environment `PiperX-DualCubeToMatchingPlate-Mujoco-v0`;
+- 8/8 control ticks executed;
+- D0 state shape 14;
+- scene and wrist RGB shapes 480x640x3;
+- processor revision `piper_x_d0_mujoco_edge_v1`;
+- clean exit 0.
+
+Not proved here:
+- a physical Quest connection;
+- physical left/right and axis behavior;
+- comfort/visibility of the three XR panels;
+- tracking-loss and reconnect behavior through a real CloudXR client;
+- complete clean physical-session shutdown;
+- v7 panel height and disappearance of the opaque surrounding XR region;
+- physical confirmation that the corrected cameras show the workspace in front
+  of each gripper and that a moving grasp retains a cube.
+
+Therefore the profile status remains:
+CONFIGURED_PHYSICAL_QUEST_VALIDATION_REQUIRED

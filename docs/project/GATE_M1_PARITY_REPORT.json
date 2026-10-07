@@ -1,0 +1,134 @@
+{
+  "fk_direction_max_orientation_error_rad": 1.2601837224881276e-06,
+  "fk_direction_max_position_error_m": 3.2582482012003225e-07,
+  "gripper_collision_pads": {
+    "gripper_pad1": {
+      "contact_dimensions": 6,
+      "friction": [
+        1.5,
+        0.005,
+        0.0001
+      ],
+      "orientation_wxyz": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "position_m": [
+        0.0,
+        -0.043,
+        0.001
+      ],
+      "size_m": [
+        0.024,
+        0.033,
+        0.001
+      ]
+    },
+    "gripper_pad2": {
+      "contact_dimensions": 6,
+      "friction": [
+        1.5,
+        0.005,
+        0.0001
+      ],
+      "orientation_wxyz": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "position_m": [
+        0.0,
+        -0.043,
+        0.001
+      ],
+      "size_m": [
+        0.024,
+        0.033,
+        0.001
+      ]
+    }
+  },
+  "gripper_control": "one external aperture mapped directly to two physically symmetric fingers",
+  "gripper_finger_symmetry": {
+    "polycoef": [
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "solimp": [
+      0.999,
+      0.9999,
+      1e-05,
+      0.5,
+      2.0
+    ],
+    "solref": [
+      0.017,
+      2.0
+    ]
+  },
+  "gripper_follower_actuators": {
+    "gripper_joint1": {
+      "force_range_n": [
+        -8.0,
+        8.0
+      ],
+      "kp": 2500.0,
+      "kv": 60.0
+    },
+    "gripper_joint2": {
+      "force_range_n": [
+        -8.0,
+        8.0
+      ],
+      "kp": 2500.0,
+      "kv": 60.0
+    }
+  },
+  "gripper_range_m": [
+    0.0,
+    0.1
+  ],
+  "joint_limit_max_error_rad_or_m": 4.897606804554755e-06,
+  "joint_names_actual": [
+    "joint1",
+    "joint2",
+    "joint3",
+    "joint4",
+    "joint5",
+    "joint6",
+    "gripper",
+    "gripper_joint1",
+    "gripper_joint2"
+  ],
+  "joint_names_expected": [
+    "joint1",
+    "joint2",
+    "joint3",
+    "joint4",
+    "joint5",
+    "joint6",
+    "gripper",
+    "gripper_joint1",
+    "gripper_joint2"
+  ],
+  "model_dimensions": {
+    "neq": 1,
+    "nq": 9,
+    "nu": 8,
+    "nv": 9
+  },
+  "passed": true,
+  "tolerances": {
+    "joint_limit": 2e-05,
+    "orientation_rad": 0.0005,
+    "position_m": 0.0005,
+    "zero_position": 2e-05
+  },
+  "zero_position_max_error_rad_or_m": 0.0
+}

@@ -1,0 +1,213 @@
+revision: piperx_mujoco_quest_teleop_v39
+status: CONFIGURED_PHYSICAL_QUEST_VALIDATION_REQUIRED
+
+scope:
+  normative_gate: null
+  reuses_gate: M1
+  starts_e2: false
+  real_robot_motion: false
+
+environment:
+  execution_profile: core
+  gymnasium_id: PiperX-DualCubeToMatchingPlate-Mujoco-v0
+  mujoco_version: 3.9.0
+  lerobot_version: 0.6.1
+  placo_version: 0.9.15
+  isaacteleop_version: 1.3.131
+  cloudxr_runtime_version: 6.2.0
+  webxr_client: https://nvidia.github.io/IsaacTeleop/client/v1.3.131/
+
+control:
+  fps: 30
+  lifecycle:
+    initial_state: stopped
+    channel_uuid: uuid5(NAMESPACE_DNS, teleop_command)
+    play: enter RUNNING and enable MuJoCo stepping/controller actuation
+    stop: enter PAUSED and hold the complete D0 state
+    reset: deterministic M1 reset and pause when requested from the WebXR menu
+    pre_play_presentation: black panels; no MuJoCo camera frame is submitted before first RUNNING
+    episode_end: interactive control continues past the M1 300-tick evaluation horizon; only explicit Reset restores home
+    required_tracking_startup_timeout_s: 10.0
+  controller_to_scene_rotation:
+    formula: scene_xyz = [-controller_z, -controller_x, controller_y]
+    matrix:
+      - [0.0, 0.0, -1.0]
+      - [-1.0, 0.0, 0.0]
+      - [0.0, 1.0, 0.0]
+    semantics: Controller forward/right/up maps to M1 scene forward/right/up. V38 preserves the accepted gripper orientation below a declared rotation threshold and admits deliberate controller rotation independently of positional drift.
+    rationale: Physical v32 disproved the identity candidate; with 1194 valid frames on both sides it made almost no operator action correspond to the intended direction and prevented reaching either cube. V33 restores the pre-v32 map.
+  sensitivity:
+    toggle_control: thumbstick_click
+    toggle_threshold: 0.5
+    initial_mode: normal
+    modes:
+      normal: {translation_scale: 0.5, rotation_scale: 0.5}
+      precise: {translation_scale: 0.125, rotation_scale: 0.125}
+    deadband: {translation_m: 0.00025, rotation_rad: 0.0025}
+    rationale: Physical run 3 found the unit-gain persistent target too sensitive. V7 retains the physically accepted half-scale normal motion and the established four-to-one precise ratio, while lowering only the upstream per-frame deadband so slow deliberate reach motion is not discarded. This is a MuJoCo operator-profile preference, not an Isaac or D0 semantic change.
+  clutch: {control: squeeze, threshold: 0.5}
+  gripper:
+    control: trigger
+    trigger_input_range: [0.0, 1.0]
+    open_aperture_m: 0.1
+    closed_aperture_m: 0.0
+    reset_aperture_m: 0.05
+    actuator:
+      implementation: One external aperture target drives q1-q2; one soft equality constrains the passive q1+q2 common mode
+      aperture_kp: 1250.0
+      aperture_kv: 45.0
+      aperture_force_limit_n: 8.0
+      finger_armature_kg: 0.1
+      finger_damping_n_s_m: 2.0
+      center_constraint_timeconst_s: 0.02
+      center_constraint_damping_ratio: 1.0
+      rationale: >-
+        Physical run 6 showed free-floating fingers in the old compatibility-leader plant, so V8
+        removed that overdetermined arrangement and retained two direct +0.5/-0.5 targets. Run 7
+        then measured large physical-finger symmetry error when one independent finger met the cube.
+        V11 adds one q1=-q2 relation only between the physical fingers, using the previously stable
+        0.017/2 MuJoCo solver reference after the overly stiff first candidate lost cube contact in
+        the retained regression. It does not restore the compatibility actuator or leader/follower
+        constraints. V11 held symmetry to 0.005 mm but lost the left cube at tick 293/300; raising
+        force to 12 N in V12 made loss earlier at tick 274 with 0.006 mm symmetry error. V13 therefore
+        uses 8 N with the coupled fingers to avoid over-clamping/ejection. V13 then retained contact
+        for 300/300 ticks. The old world-frame displacement check also counted the commanded wrist
+        rotation as cube slip. V14's 1.6 friction lost contact at tick 292 and V15's 1.51 candidate
+        worsened that invalid metric to 25.511 mm, so V16 restored 1.5 and measured retained-cube
+        translation in the moving gripper frame. Its 20.144 mm residual shift was almost entirely
+        tangential to the pads. V17 sets pad condim=6 so the already declared torsional and rolling
+        coefficients participate in contact instead of being ignored by the default condim=3. The
+        10 mm/control-tick aperture slew remains bounded and monotonic. Physical run 8 then
+        showed that external load could collapse a commanded-open gripper to 46 mm on the left
+        and 10 mm on the right, which motivated the directional-force V19/V20 experiments.
+        Physical runs 9 and 10 then showed rebound, chatter, impossible apertures up to 111.75 mm,
+        and finger symmetry errors up to 8.454 mm. V21 removes those force-mode experiments and
+        restores the previously validated symmetric +/-8 N limits. Reach sensitivity, IK,
+        joint limits, and the 10 mm/control-tick aperture slew are unchanged. The remaining
+        grasp issue is addressed in the concrete M1 collision geometry rather than actuator force.
+        Physical run 11 confirmed that the distal-only pad grasps the 40 mm cube at a measured
+        36-38 mm aperture but loses it during motion. V22's angled proximal extension then failed
+        the focused offset-grasp regression at tick 240 despite 0.003 mm finger symmetry error.
+        V23 kept every controller and actuator setting from V21 and reused M1 V19's continuous
+        thin planar contact insert, but its width exactly matched the cube and contact was lost
+        earlier during wrist roll. V24 reuses M1 V20's 48 mm-wide continuous thin plane, restoring
+        the v17 lateral margin without restoring the old thick bounding-box collision.
+        Physical V24 still chattered and dropped a manually acquired cube. V25 removes the
+        over-constrained combination of two position servos plus a hard symmetry equality.
+        One aperture tendon preserves the same 8 N clamp law. A soft equality constrains the
+        passive q1+q2 centre tendon without a second actuator.
+        V25 A/B acquisition-and-roll diagnostics then isolated loss along pad-local X even for a
+        centred cube. The source finger STL spans -28..+28 mm on that axis, while the 48 mm proxy
+        truncated 4 mm per side. The active V21 plant therefore uses the measured 56 mm width.
+        An attempted ten-iteration NoSlip post-pass made centred retention fail sooner and
+        prevented the off-centre lift, matching MuJoCo's warning that this secondary solver can
+        destabilize multi-contact systems. The active scene instead follows upstream grasping
+        guidance: Newton with elliptic friction cones and impratio 10, while NoSlip stays disabled.
+        The first elliptic run then exposed alternating unilateral pad contact at the end of closing;
+        its diagnostic aperture of 52.9-61.4 mm on a 40 mm cube proved that the regression had
+        translated the arbitrary home wrist orientation instead of aligning the pad planes with
+        opposite cube faces. A fully vertical replacement pose then missed its Cartesian target by
+        17.65 mm under the accepted joint limits. The acquisition regression now preserves the
+        reachable home approach projected perpendicular to world Y, while aligning local Y as the
+        closing axis. That run then measured -17.9..-18.2 mm common-mode displacement with only
+        unilateral pad contact: the former weak centre let the first finger slide the 35 g cube
+        before the other arrived. A first 4000 N/m, 30 N s/m centre candidate reduced common-mode
+        displacement below 0.9 mm but collapsed commanded-open aperture to 84.26 mm and stopped
+        closing at 69-71 mm. A 1000 N/m, 15 N s/m candidate targeted an approximately 4 mm
+        common-mode bound, but still collapsed open aperture to 90.63 mm and
+        stopped closing at 59-64 mm. Passive spring tuning is therefore rejected. The active model
+        uses one soft MuJoCo equality on q1+q2 with 0.02/1 solref and default damped solimp. Unlike
+        the old over-constrained plant, there remains only one actuator on q1-q2. The active
+        explicit pair retains MuJoCo's damped default 0.02/1 solref and
+        0.9/0.95/0.001 solimp.
+        Physical v27 confirmed repeatable arm motion and successful cube transport at 240 Hz.
+        V28's slower 5 mm/tick closing worsened cube shaking and is rejected. V29 restores the
+        physically better 10 mm/tick closing and changes no other v27 behaviour.
+        Physical v29 then retained a constant zero-aperture command and the 8 N force limit while
+        the loaded aperture oscillated from 44.8 to 52.0 mm. V30 raises only aperture-velocity
+        damping from 30 to 45 so closing velocity is cushioned and opening motion under load is
+        opposed without changing static force, friction, mass, geometry, or the external action
+        contract. Physical v30 could not validate either change because the run contained 907
+        valid left-controller frames and zero right-controller frames. V31 therefore turns the
+        existing --require-tracking option into a bimanual startup interlock and changes no arm,
+        gripper, collision, or action parameter from v30.
+  reset:
+    control: right_primary_click
+    threshold: 0.5
+    behavior: deterministic M1 reset plus upstream retargeter and local processor reset
+  ik:
+    implementation: lerobot.model.RobotKinematics
+    target_frame: gripper_base
+    position_weight: 1.0
+    orientation_weight: 0.01
+    controller_rotation_enabled: true
+    rotation_activation_threshold_rad: 0.006
+    iterations_per_tick: 4
+    max_translation_delta_m: 0.05
+    max_rotation_delta_rad: 0.05
+    max_joint_step_deg: 8.0
+    max_joint_tracking_error_deg: 25.0
+    minimum_translation_alignment: 0.5
+    rotation_step_rationale: >-
+      Physical v32 produced 245 Cartesian saturation frames and repeatedly drove wrist joints
+      tens of degrees by integrating controller rotation. V33 position-only restored coherent
+      translation but underconstrained the chain. V34 re-enabled controller rotation at weight
+      0.001 and a 0.005 rad bound, yet physical v34 accumulated 1096 Cartesian saturation frames
+      and regressed grasp quality. V35 stopped integrating controller rotation and used the
+      upstream default 0.01 orientation weight to hold the accepted gripper orientation; physical
+      v35 confirmed good grasp and translation but, as designed, provided no direct wrist rotation.
+      V36 attempted to infer deliberate rotation from low simultaneous translation, but only 3 of
+      20 sampled rotation requests passed because normal Quest position drift exceeded the gate.
+      V37 attempted to replace that inference with the per-arm secondary button, but physical v37
+      reported rotation_mode_active=false and zero rotation delta in every retained status row.
+      V38 removes both failed gates. Rotation is admitted solely when its scaled magnitude reaches
+      0.006 rad, just above the observed <=0.0055 rad noise band; the same physical logs contain
+      deliberate samples up to 0.05-0.067 rad. Direct EGL joint sweeps then proved that both distal
+      visual chains rotate correctly, isolating the remaining failure to V38 discarding about 90%
+      of each deliberate sample with its 0.005 rad bound. V39 restores the previously declared
+      0.05 rad/control-tick safety bound while retaining the measured activation threshold.
+      Translation, joint limits, gripper and the 8 degree total joint-step guard remain unchanged.
+    tracking_error_rationale: Physical run 5 reached 14.738 degrees against the former 15 degree guard while Cartesian saturation remained zero. The 25 degree guard permits the persistent target to accumulate through normal plant lag; accepted joint limits and the 8 degree per-tick bound remain enforced.
+    max_gripper_step_mm: 10.0
+    gripper_arm_open_threshold_mm: 95.0
+    target_behavior: accumulate IK from the last accepted actuator target, hold it while controller deltas are zero, and reinitialize only on explicit reset
+    gripper_step_behavior: after every Play/reset/tracking recovery, hold until that controller trigger is released to at least 95 mm open intent; then slew-limit by 10 mm/control tick from the last accepted gripper target, hold while inactive/invalid/rebasing, and report saturation separately. This prevents the trigger click used for the WebXR menu from becoming an initial close command. The rejected v28 5 mm/tick closing ramp worsened physical cube shaking.
+    joint_limits_source: accepted Gate C/M1 limits
+
+diagnostics:
+  cadence_session_frames: 30
+  controller_fields: [availability, validity, squeeze, trigger, position_delta, rotation_delta]
+  target_fields: [target_gripper_mm, measured_gripper_mm, finger_aperture_mm, finger_center_offset_mm, aperture_tracking_error_mm, gripper_aperture_force_n, gripper_armed, joint_target_error_deg, gripper_target_error_mm, translation_alignment, achieved_translation_m, cartesian_delta_clipped, arm_plant]
+  saturation_categories: [cartesian, joint, gripper, gripper_force]
+
+xr_presentation:
+  implementation: isaacteleop.viz
+  mode: xr
+  near_m: 0.05
+  far_m: 100.0
+  system_wait_s: 120
+  clear_rgba: [0.0, 0.0, 0.0, 0.0]
+  head_pose_wait_s: 3.0
+  placement_semantics: Capture one valid HMD pose at session start, compose the configured head-relative offsets/orientations into OpenXR stage space, then keep the panels world-stable. Transparent clear preserves the upstream ALPHA_BLEND passthrough outside the panels.
+  layers:
+    scene:
+      camera: scene
+      position_head_m: [0.0, -0.15, -1.55]
+      orientation_head_wxyz: [1.0, 0.0, 0.0, 0.0]
+      size_m: [1.4, 1.05]
+    left_wrist:
+      camera: left_wrist
+      position_head_m: [-0.47, -0.70, -1.30]
+      orientation_head_wxyz: [1.0, 0.0, 0.0, 0.0]
+      size_m: [0.52, 0.39]
+    right_wrist:
+      camera: right_wrist
+      position_head_m: [0.47, -0.70, -1.30]
+      orientation_head_wxyz: [1.0, 0.0, 0.0, 0.0]
+      size_m: [0.52, 0.39]
+  limitation: Fixed mono camera panels; no head-tracked stereoscopic MuJoCo reconstruction is claimed.
+
+runtime:
+  command: uv run --frozen --no-sync --group isaac-teleop python tools/run_mujoco_quest.py
+  external_cloudxr_command: uv run --frozen --no-sync --group isaac-teleop python tools/run_mujoco_quest.py --no-auto-launch-cloudxr
+  physical_validation_required: true

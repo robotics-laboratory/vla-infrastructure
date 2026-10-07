@@ -8,12 +8,14 @@ dependencies = [
     "PyYAML==6.0.3",
     "jsonschema==4.26.0",
     "lerobot[kinematics]==0.6.1",
+    "lerobot-env-piperx-mujoco",
     "lerobot_robot_piperx",
     "mujoco==3.9.0",
     "piper-sdk==0.6.1",
 ]
 
 [tool.uv.sources]
+lerobot-env-piperx-mujoco = { workspace = true }
 lerobot_robot_piperx = { workspace = true }
 
 [tool.uv.workspace]
