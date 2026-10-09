@@ -7,6 +7,7 @@ The optional underscore arguments exist only for CPU fake-codec tests.
 from pathlib import Path
 import json
 import threading
+import time
 
 _QUARANTINE = []  # Failed fences must retain owners even if caller loses self.
 
@@ -109,7 +110,9 @@ class PacketEncoder:
         self.failed = True
         self.errors.append(f"{type(error).__name__}: {error}")
 
-    def _write(self, packets, flushing=False):
+    def _write(self, packets, flushing=False, *, ready_monotonic_ns=None):
+        if ready_monotonic_ns is None:
+            ready_monotonic_ns = time.monotonic_ns()
         for packet in packets:
             ordinal = packet["timestamp"]
             if type(ordinal) is not int or ordinal != self.packets or ordinal not in self.pending:
@@ -123,6 +126,7 @@ class PacketEncoder:
             offset = self.bitstream.tell()
             if self.bitstream.write(payload) != len(payload):
                 raise RuntimeError("Short bitstream write")
+            write_completed_monotonic_ns = time.monotonic_ns()
             row = dict(
                 packet_index=self.packets,
                 encoder_packet_timestamp=ordinal,
@@ -131,6 +135,9 @@ class PacketEncoder:
                 picture_type=picture_type,
                 length=len(payload),
                 flush=flushing,
+                packet_ready_monotonic_ns=ready_monotonic_ns,
+                packet_write_completed_monotonic_ns=write_completed_monotonic_ns,
+                packet_timing_semantics="host Encode/EndEncode returned; Python bitstream write completed, not fsync",
                 source_tag_mapping="exact local ordinal ledger; pixel proof independent",
                 pixel_alignment_proven=False,
             )
@@ -170,9 +177,10 @@ class PacketEncoder:
         self.max_pending = max(self.max_pending, len(self.pending))
         try:
             packets = self.encoder.Encode(frame, picture)
+            ready_monotonic_ns = time.monotonic_ns()
             self.inputs += 1
             self.last_tag = input_tag
-            self._write(packets)
+            self._write(packets, ready_monotonic_ns=ready_monotonic_ns)
         except BaseException as error:
             # Native timestamp advances before driver encode; never retry this instance.
             self._fail(error)

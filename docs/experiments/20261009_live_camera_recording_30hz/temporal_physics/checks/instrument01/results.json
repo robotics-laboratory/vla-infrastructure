@@ -1,0 +1,75 @@
+{
+  "schema": "temporal_instrument_cpu_checks_v1",
+  "checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff",
+        "check",
+        "tools/isaac_vr_standalone_view.py",
+        "tools/isaac_vr_standalone.py",
+        "tools/isaac_vr_live_nvenc.py",
+        "tools/isaac_vr_live_worker.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py",
+        "tests/test_isaac_vr_standalone_owner.py",
+        "tests/test_isaac_vr_live_media.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.009281162172555923,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_isaac_vr_standalone_owner.py",
+        "tests/test_isaac_vr_live_media.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.36677369521930814,
+      "stdout": "..........................................                               [100%]\n42 passed in 0.21s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "tools/isaac_vr_standalone_view.py",
+        "tools/isaac_vr_standalone.py",
+        "tools/isaac_vr_live_nvenc.py",
+        "tools/isaac_vr_live_worker.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py",
+        "tests/test_isaac_vr_standalone_owner.py",
+        "tests/test_isaac_vr_live_media.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.002687001135200262,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "all_passed": true,
+  "gpu_run": false,
+  "source_sha256": {
+    "tools/isaac_vr_standalone_view.py": "e722716b53871d702efdc3e57fd3089af849f05772dbff3f5d9edba0144485e1",
+    "tools/isaac_vr_standalone.py": "a1e8a0680fa63d37fbe74bef8731149a3047f14dc750f5a189f98459f75032e2",
+    "tools/isaac_vr_live_nvenc.py": "97669de787973f905fc858ce540d3247088967d91abbf2aa8bda7485ef4fa887",
+    "tools/isaac_vr_live_worker.py": "48b38356a6c96be185ab7fb8e6db396d2b45c7142597193249ff80c7d8aa7575",
+    "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py": "25ee3d5e82103d5ba3e4e5de44c42e924335c475e9130c321e92469d16f3f215",
+    "tests/test_isaac_vr_standalone_owner.py": "a1104471475ff8f2e972da22f8e73a9b99a3cf275d38e334907a253ce32a2c6c",
+    "tests/test_isaac_vr_live_media.py": "de2e38033fa253748b43b7e77967ef0aaaf28c7bf2a14e1bdeb57a9e4806cc84"
+  },
+  "preimages": {
+    "tools/isaac_vr_standalone_view.py": "0bebc8b47ecd612b469d9ee078dcf943872c5dcff3e50da0c1595f872164b7c4",
+    "tools/isaac_vr_standalone.py": "a28b17cdeacd1d8d514fdce07bd15e2b033aeb703840405a6bc7a54c9fc020ed",
+    "tools/isaac_vr_live_nvenc.py": "f93592e7614cda7f2cc61147134119ca20f2efc56bfad72978d4b92e6118ff44",
+    "tools/isaac_vr_live_worker.py": "0cd13801568971a20caf8225ad324c86a6e3ce1705ab0af62a36c4286e364a97",
+    "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py": "4121031837f606306b675e1e1552c84c89c3eb91fce86182d7de5aaf727bb9f0",
+    "tests/test_isaac_vr_standalone_owner.py": "a650a31352ec713d47d6afc46f747a3383adac6e16dff0fefeaaa914fd215598",
+    "tests/test_isaac_vr_live_media.py": "7e01c3c4e7d24de6316525d610ccb08f9de41c36fcea8f9ba34bafaca18c6c13"
+  }
+}

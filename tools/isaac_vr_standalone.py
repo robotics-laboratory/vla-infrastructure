@@ -245,6 +245,8 @@ class StandaloneState:
         started = time.perf_counter_ns()
         self.conn.send(dict(op="step", seq=self.seq + 1, native_targets=self.targets))
         reply = self._receive()
+        received_monotonic_ns = time.monotonic_ns()
+        received_wall_time = time.time()
         if reply.get("op") != "captured" or not np.array_equal(
             reply["native_targets"], self.targets
         ):
@@ -253,7 +255,8 @@ class StandaloneState:
         self.clock.commit(
             epoch=self.clock.epoch,
             physics_step=self.offset + self.snapshot["physics_steps"],
-            captured_wall_time=time.time(),
+            captured_wall_time=received_wall_time,
+            received_monotonic_ns=received_monotonic_ns,
         )
         self.env._state_physics_step = self.clock.physics_step
         captured = time.perf_counter_ns()

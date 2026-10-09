@@ -203,13 +203,28 @@ def main():
             raise RuntimeError("Fixed root seed pose differs")
         com_local = read(com_pose)
         current_seq = -1
+        diagnostics, diagnostic_properties, contact = {}, {}, None
+        if seed.get("capture_diagnostics", False):
+            # Opt-in observer: native reads only; default live profile unchanged.
+            for name in ("ARTICULATION_LINK_VELOCITY", "RIGID_BODY_VELOCITY"):
+                diagnostics[name] = bind(name, roots if name.startswith("ARTICULATION") else dynamic_paths)
+            for name in ("ARTICULATION_BODY_MASS", "ARTICULATION_BODY_INERTIA",
+                    "ARTICULATION_BODY_COM_POSE", "ARTICULATION_DOF_ARMATURE",
+                    "ARTICULATION_DOF_FRICTION_PROPERTIES", "RIGID_BODY_MASS",
+                    "RIGID_BODY_INERTIA", "RIGID_BODY_COM_POSE"):
+                diagnostic_properties[name] = read(bind(name,
+                    roots if name.startswith("ARTICULATION") else dynamic_paths))
+            contact = physx.create_contact_binding(sensor_patterns=paths)
+            bindings.append(contact)
+            diagnostic_properties["contact_sensor_paths"] = contact.sensor_paths
+            diagnostic_properties["contact_unavailable_paths"] = [p for p in paths if p not in contact.sensor_paths]
 
         def capture(seq):
             rp = read(root_pose)
             if not q.is_fixed_base or not np.allclose(rp, root_reference, rtol=0.0, atol=1e-6):
                 raise RuntimeError("Fixed root native flag/world pose changed")
             q_now = read(q)
-            return dict(
+            snapshot = dict(
                 seq=seq,
                 physics_steps=receipt["physics_steps"],
                 sim_time_s=receipt["physics_steps"] / 120.0,
@@ -224,6 +239,13 @@ def main():
                     [q_now[:, 7] - 0.5 * q_now[:, 6], q_now[:, 8] + 0.5 * q_now[:, 6]], axis=-1
                 ),
             )
+            if diagnostics:
+                snapshot["articulation_link_velocity"] = read(diagnostics["ARTICULATION_LINK_VELOCITY"])
+                snapshot["dynamic_body_velocity"] = read(diagnostics["RIGID_BODY_VELOCITY"])
+                forces = np.empty((contact.sensor_count, 3), np.float32)
+                contact.read_net_forces(forces)
+                snapshot["contact_sensor_force"] = forces.copy()
+            return snapshot
 
         initial_snapshot = capture(-1)
         # Exact initial q/dq is checked after FK and all seed state writes.
@@ -246,6 +268,7 @@ def main():
                 rigid_body_paths=list(body_pose.prim_paths),
                 dof_properties=properties,
                 drive_type=drive_types,
+                diagnostic_properties=diagnostic_properties,
                 mimic_config=seed["mimic_config"],
                 mimic_native_runtime_verified=False,
                 quaternion_order="xyzw",

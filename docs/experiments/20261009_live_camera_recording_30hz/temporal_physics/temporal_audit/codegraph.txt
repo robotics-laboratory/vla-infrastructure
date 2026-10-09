@@ -1,0 +1,522 @@
+**Dynamic boundaries (the static path ends at runtime dispatch)**
+
+- `_capture_new_observation` (tools/isaac_vr_recording.py:472) — getattr dispatch (assigned, called later): `bind_snapshot = getattr(observation, "bind_recording_snapshot", None)`
+  candidates for key `bind_recording_snapshot`: `StateSnapshotObservation::bind_recording_snapshot` (tools/isaac_vr_decision.py:314)
+
+> These sites choose their call target at runtime (registry / bus / reflection) — the site shown IS where the flow continues. To follow it, run codegraph_explore or codegraph_node on a candidate; source for the sites above is included below.
+
+> Full source for these symbols is below — the call flow among them, followed by their bodies.
+**Exploration: tools/isaac_vr_injected_recording.py record_injected_transitions tools/isaac_vr_recording.py _capture_new_observation record_decision**
+
+Found 147 symbols across 5 files. 2 files pinned from the query.
+
+**Blast radius — what depends on these (update/verify before editing)**
+
+- `record_injected_transitions` (tools/isaac_vr_injected_recording.py:98) — 14 callers in `tools/camera_audit/xr_cost.py`, `tools/isaac_vr_recording_smoke.py`, `docs/experiments/20261009_live_camera_recording_30hz/deep_research/full_scene_probe.py`, `tools/run_single_gpu_live_recording.py`; tests: `tests/test_isaac_vr_injected_recording.py`
+- `_capture_new_observation` (tools/isaac_vr_recording.py:459) — 2 callers in `tools/isaac_vr_recording.py`; tested via callers: `tests/test_isaac_vr_recording.py`
+- `capture` (tools/isaac_vr_capture.py:92) — 1 caller in `tools/camera_audit/audit_runtime.py`; no tests found within 3 caller hops
+- `capture_observation` (tools/isaac_vr_recording.py:433) — 7 callers; tests: `tests/test_isaac_vr_recording.py`
+- `observation` (tools/run_isaac_s1.py:644) — 6 callers in `tools/isaac_vr_runtime.py`, `tools/run_isaac_s1.py`, `tools/isaac_s2_runtime.py`; tested via callers: `tests/test_quest_xr_diagnostics.py`
+
+**Source Code**
+
+> The code below is the **verbatim, current on-disk source** of these files — re-read from disk on this call and line-numbered, byte-for-byte identical to what the Read tool returns. It is NOT a summary, outline, or stale cache. Treat each block as a Read you have already performed: do not Read a file shown here.
+
+**`tools/isaac_vr_injected_recording.py`** — add_stage(calls), instantiates(instantiates), begin_step(calls), d0_action_to_native(calls), NativeBimanualTargets(instantiates), end_step(calls), +28 more
+
+```python
+95	    return "motion"
+96	
+97	
+98	def record_injected_transitions(
+99	    recording: Any,
+100	    env: Any,
+101	    *,
+102	    count: int = 3,
+103	    benchmark_logger: Any | None = None,
+104	    resource_sampler: Any | None = None,
+105	    performance_logger: Any | None = None,
+106	    require_distinct_actions: bool = True,
+107	    rgb_e2e_assay: bool = False,
+108	    input_pump: Callable[[], Any] | None = None,
+109	    fixed_input: bool = False,
+110	    clutch_pattern: bool = False,
+111	    start_tick: int = 1,
+112	    target_index_offset: int = 0,
+113	    first_commit_callback: Callable[[], None] | None = None,
+114	    pre_step_callback: Callable[[], None] | None = None,
+115	    decision_solver: Callable[..., SolvedControlDecision] | None = None,
+116	    stop_requested: Callable[[], bool] | None = None,
+117	) -> dict[str, Any]:
+118	    """Write distinct committed transitions through the production causal/writer APIs."""
+119	    if count < 2:
+120	        raise ValueError("injected integration requires at least two transitions")
+121	    if rgb_e2e_assay and count != 6:
+122	        raise ValueError("RGB end-to-end assay requires exactly six transitions")
+123	    if (benchmark_logger is None) is not (resource_sampler is None):
+124	        raise ValueError("benchmark logger and resource sampler must be supplied together")
+125	    validator = None
+126	    initial_state = _audit_reference_state(env) if fixed_input else None
+127	    actions: list[list[float]] = []
+128	    input_digest = hashlib.sha256()
+129	    transition_counts: dict[str, int] = {}
+130	    input_pump_calls = 0
+131	    for index in range(count):
+132	        if stop_requested is not None and stop_requested():
+133	            break
+134	        if pre_step_callback is not None:
+135	            pre_step_callback()
+136	        tick = start_tick + index
+137	        benchmark_started_ns = time.perf_counter_ns()
+138	        if performance_logger is not None:
+139	            performance_logger.begin_step()
+140	            stage_started_ns = time.perf_counter_ns()
+141	        if input_pump is not None:
+142	            input_pump()
+143	            input_pump_calls += 1
+144	        if stop_requested is not None and stop_requested():
+145	            break
+146	        if performance_logger is not None:
+147	            performance_logger.add_stage(
+148	                "teleop_advance", time.perf_counter_ns() - stage_started_ns
+149	            )
+150	            stage_started_ns = time.perf_counter_ns()
+151	        if benchmark_logger is not None:
+152	            benchmark_logger.begin_step(tick)
+153	            with benchmark_logger.stage("state_sampling_ms"):
+154	                token = recording.capture_observation()
+155	        else:
+156	            token = recording.capture_observation()
+157	        if performance_logger is not None:
+158	            performance_logger.add_stage(
+159	                "observation_capture", time.perf_counter_ns() - stage_started_ns
+160	            )
+161	            stage_started_ns = time.perf_counter_ns()
+162	        xr = _xr(tick)
+163	        if validator is None:
+164	            validator = CausalTransactionValidator(
+165	                "isaac",
+166	                "human_vr",
+167	                decision_epoch(
+168	                    recording.run_id,
+169	                    token.observation,
+170	                    xr,
+171	                    episode_id=recording.episode_id,
+172	                ),
+173	                profile="isaac_human_vr_offline_rgb_v2",
+174	            )
+175	        if initial_state is None:
+176	            initial_state = token.state
+177	        target_index = index + target_index_offset
+178	        left_transition = _clutch_transition(target_index) if clutch_pattern else "motion"
+179	        if rgb_e2e_assay:
+180	            # Deliberately separated wrist-camera poses, generated by native
+181	            # actuation before recorder capture. No HDF state is edited.
+182	            action = np.asarray(initial_state, dtype=np.float64).copy()
+183	            action[0] += (0, 22, -18, 24, -22, 12)[index]
+184	            action[7] += (0, -20, 20, -24, 22, -12)[index]
+185	            if index == 2:
+186	                action[:7] = np.asarray(token.state[:7], dtype=np.float64)
+187	            target = d0_action_to_native(action)
+188	        else:
+189	            action = _target(initial_state, target_index)
+190	            if left_transition != "motion":
+191	                action[:7] = np.asarray(token.state[:7], dtype=np.float64)
+192	            target = d0_action_to_native(action)
+193	        native = np.concatenate((target.left_rad_m, target.right_rad_m))
+194	        command = _command(
+195	            (float(target.left_rad_m[6]), float(target.right_rad_m[6])),
+196	            left_clutch=rgb_e2e_assay and index == 2,
+197	            left_transition=left_transition if clutch_pattern else None,
+198	        )
+199	        if decision_solver is None:
+200	            decision = SolvedControlDecision.from_native(
+201	                tick, token.observation, xr, command, native, native.copy(),
+202	            )
+203	        else:
+204	            decision = decision_solver(command, token.observation, xr, tick)
+205	            native = np.asarray(decision.native_clipped, dtype=np.float64)
+206	            target = NativeBimanualTargets(
+207	                native[:7].copy(), native[7:].copy(),
+208	                not np.array_equal(native, np.asarray(decision.native_preclip)),
+209	            )
+210	            command = decision.cartesian_intent
+211	        prepared = decision.prepare(validator)
+212	        if stop_requested is not None and stop_requested():
+213	            validator.abort()
+214	            recording.discard_observation(token, reason="keyboard_interrupt")
+215	            break
+216	        # Once native actuation starts, finish its successor and causal commit
+217	        # before observing a stop again at the next tick boundary.
+218	        input_digest.update(np.asarray(native, dtype="<f8").tobytes())
+219	        transition_counts[command.left.transition] = (
+220	            transition_counts.get(command.left.transition, 0) + 1
+221	        )
+222	        env._apply(
+223	            NativeBimanualTargets(
+224	                target.left_rad_m.copy(),
+225	                target.right_rad_m.copy(),
+226	                target.saturated,
+227	            )
+228	        )
+229	        if performance_logger is not None:
+230	            performance_logger.add_stage(
+231	                "injected_decision_apply", time.perf_counter_ns() - stage_started_ns
+232	            )
+233	            stage_started_ns = time.perf_counter_ns()
+234	        env._advance(4)
+235	        if performance_logger is not None:
+236	            performance_logger.add_stage(
+237	                "simulation_advance", time.perf_counter_ns() - stage_started_ns
+238	            )
+239	            stage_started_ns = time.perf_counter_ns()
+240	        if benchmark_logger is not None:
+241	            with benchmark_logger.stage("state_sampling_ms"):
+242	                successor = recording.capture_successor(token)
+243	        else:
+244	            successor = recording.capture_successor(token)
+245	        if performance_logger is not None:
+246	            performance_logger.add_stage(
+247	                "successor_capture", time.perf_counter_ns() - stage_started_ns
+248	            )
+249	            stage_started_ns = time.perf_counter_ns()
+250	        committed = commit_recording_transition(
+251	            validator,
+252	            decision,
+253	            prepared,
+254	            successor.observation,
+255	        )
+256	        from isaac_vr_recording import build_committed_transition_sample
+257	
+258	        row = build_committed_transition_sample(
+259	            recording,
+```
+
+**`tools/isaac_vr_recording.py`** — calls(calls), fixed_id(calls), _decode_fixed_id(calls), scalar(calls), _timed_boundary(calls), _atomic_write_json(calls), +162 more
+
+```python
+106	        self._backend_context_factory = backend_context_factory or _fabric_backend_context
+107	        self._deferred_groups = frozenset(deferred_groups)
+108	        self._schemas = {
+109	            recordable.group: recordable.describe_channels() for recordable in self.recordables
+110	        }
+111	        self._pose_batch, self._pose_slots = self._build_pose_batch(pose_batch_factory)
+112	        self.failed = False
+
+... (gap) ...
+
+176	            factory = XformPrim
+177	        # Construction failure is fatal: per-recordable ArticulationRecordable
+178	        # sampling can swallow pose-read errors and return zero-filled state.
+179	        batch = factory(paths)
+180	        slots: dict[int, tuple[int, int]] = {}
+181	        cursor = 0
+182	        for recordable, selected in participants:
+
+... (gap) ...
+
+362	
+363	
+364	@dataclass(frozen=True)
+365	class RecordedObservationToken:
+366	    """Single-use handle binding upstream state tracks to the exact native O_t."""
+367	
+368	    token_id: int
+369	    observation: Any
+370	    state: tuple[float, ...]
+371	    physics_step: int
+372	    capture_sequence: int
+373	    reset_epoch: int
+374	    state_generation: int
+375	    scene_state_snapshot_id: str
+376	    scene_state_snapshot_sha256: str
+377	
+378	
+379	@dataclass(frozen=True)
+
+... (gap) ...
+
+430	        self._closed = False
+431	        self._failure_reason: str | None = None
+432	
+433	    def capture_observation(self) -> RecordedObservationToken:
+434	        """Buffer upstream Recordables and the exact native O_t at one fixed boundary."""
+435	        self._require_open()
+436	        if self._pending is not None:
+437	            raise RuntimeError("a prior observation capture is still pending")
+438	        if self._successor is not None:
+439	            raise RuntimeError("a successor capture is awaiting transition commit")
+440	        if self._promoted is not None:
+441	            self._pending, self._promoted = self._promoted, None
+442	            return self._pending[0]
+443	        self._pending = self._capture_new_observation()
+444	        return self._pending[0]
+445	
+446	    def capture_successor(self, token: RecordedObservationToken) -> RecordedObservationToken:
+447	        """Capture full post-action O_(t+1) once, before causal completion/commit."""
+448	        self._require_open()
+449	        self._require_pending_token(token)
+450	        if self._successor is not None:
+451	            raise RuntimeError("a successor observation is already captured")
+452	        successor = self._capture_new_observation()
+453	        if successor[0].physics_step <= token.physics_step:
+454	            self._failure_reason = "successor_capture_failed:physics_did_not_advance"
+455	            raise ValueError("successor physics step must be after O_t")
+456	        self._successor = successor
+457	        return successor[0]
+458	
+459	    def _capture_new_observation(
+460	        self,
+461	    ) -> tuple[RecordedObservationToken, dict[str, dict[str, Any]]]:
+462	        try:
+463	            # Both reads happen on the serialized simulation thread without an
+464	            # intervening app/physics pump.  The factory's own boundary checks
+465	            # reject a changed physics/state generation.
+466	            observation = self._observation_factory()
+467	            frames = self.sampler.capture_frame()
+468	            snapshot_sha256 = _captured_frame_sha256(frames)
+469	            snapshot_id = (
+470	                f"{self.run_id}:{self.episode_id}:scene_state:{self._next_capture_sequence}"
+471	            )
+472	            bind_snapshot = getattr(observation, "bind_recording_snapshot", None)
+473	            if bind_snapshot is not None:
+474	                observation = bind_snapshot(
+475	                    capture_sequence=self._next_capture_sequence,
+476	                    snapshot_id=snapshot_id,
+477	                    snapshot_sha256=snapshot_sha256,
+478	                )
+479	            token = RecordedObservationToken(
+480	                token_id=self._next_capture_sequence,
+481	                observation=observation,
+482	                state=tuple(float(value) for value in observation.state),
+483	                physics_step=int(observation.physics_step),
+484	                capture_sequence=self._next_capture_sequence,
+485	                reset_epoch=int(observation.reset_epoch),
+486	                state_generation=int(observation.state_generation),
+487	                scene_state_snapshot_id=snapshot_id,
+488	                scene_state_snapshot_sha256=snapshot_sha256,
+489	            )
+490	        except Exception as exc:
+491	            self._failure_reason = f"observation_capture_failed:{type(exc).__name__}:{exc}"
+492	            raise
+493	        if len(token.state) != 14 or not np.isfinite(token.state).all():
+494	            self._failure_reason = "observation_capture_failed:invalid_native_state"
+495	            raise ValueError("recorded observation state must be finite float[14]")
+496	        self._next_capture_sequence += 1
+497	        return token, frames
+498	
+499	    def commit_transition(
+500	        self,
+
+... (gap) ...
+
+736	        if int(sample["reset_epoch"]) != token.reset_epoch:
+737	            raise ValueError("committed reset epoch differs from buffered observation")
+738	
+739	    def _require_open(self) -> None:
+740	        if self._closed:
+741	            raise RuntimeError("recording is already closed")
+742	
+743	
+744	@dataclass(frozen=True)
+
+... (gap) ...
+
+2296	    return bytes(array).hex()
+2297	
+2298	
+2299	def _captured_frame_sha256(frames: Mapping[str, Mapping[str, Any]]) -> str:
+2300	    """Content-address an immutable upstream O_t bundle without positional inference."""
+2301	    digest = hashlib.sha256()
+2302	    for group in sorted(frames):
+2303	        group_bytes = group.encode("utf-8")
+2304	        digest.update(len(group_bytes).to_bytes(4, "little"))
+2305	        digest.update(group_bytes)
+2306	        for channel in sorted(frames[group]):
+2307	            name_bytes = channel.encode("utf-8")
+2308	            value = np.ascontiguousarray(np.asarray(frames[group][channel]))
+2309	            dtype_bytes = value.dtype.str.encode("ascii")
+2310	            digest.update(len(name_bytes).to_bytes(4, "little"))
+2311	            digest.update(name_bytes)
+2312	            digest.update(len(dtype_bytes).to_bytes(2, "little"))
+2313	            digest.update(dtype_bytes)
+2314	            digest.update(len(value.shape).to_bytes(2, "little"))
+2315	            for dimension in value.shape:
+2316	                digest.update(int(dimension).to_bytes(8, "little"))
+```
+
+**`tools/run_isaac_s1.py`** — calls(calls), _cpu(calls), _with_mimics(calls), latest(calls), reset(calls), d0_action_to_native(calls), +25 more
+
+```python
+499	            strict=True,
+500	        ):
+501	            position = torch.as_tensor(
+502	                self._with_mimics(values), device=self.sim.device, dtype=torch.float32
+503	            ).unsqueeze(0)
+504	            velocity = torch.zeros_like(position)
+505	            robot.write_joint_position_to_sim_index(position=position, joint_ids=ids)
+
+... (gap) ...
+
+515	            strict=True,
+516	        ):
+517	            target = torch.as_tensor(
+518	                self._with_mimics(values), device=self.sim.device, dtype=torch.float32
+519	            ).unsqueeze(0)
+520	            robot.actuators.target_command.set_position_index(value=target, joint_ids=ids)
+521	
+
+... (gap) ...
+
+529	                torch.tensor([CAMERA_OFFSET_POS_M], device=self.sim.device),
+530	                torch.tensor([CAMERA_OFFSET_QUAT_XYZW], device=self.sim.device),
+531	            )
+532	            result.append((position.detach().clone(), rotation.detach().clone()))
+533	        return result
+534	
+535	    def _advance(self, repeat: int) -> None:
+
+... (gap) ...
+
+631	        _, state = self.capture_measured_state()
+632	        return {"observation.state": np.asarray(state, dtype=np.float32)}
+633	
+634	    def reset(self, seed: int = 0) -> dict[str, np.ndarray]:
+635	        if self.vr_runtime is not None and not self.camera.live_rgb_enabled:
+636	            return self.reset_recording_state(seed)
+637	        self._reset_native(seed)
+638	        if self.vr_runtime is not None:
+639	            self.camera.capture.latest(require_eligible=False)
+640	        if getattr(self, "preview", None) is not None:
+641	            self.preview.refresh()
+642	        return self.observation()
+643	
+644	    def observation(self) -> dict[str, np.ndarray]:
+645	        measured = []
+646	        for robot, ids in zip(self.robots, self.joint_ids, strict=True):
+647	            measured.append(_cpu(robot.data.joint_pos)[0, ids])
+648	        images = _cpu(self.camera.data.output["rgb"])
+649	        if images.shape not in ((2, 480, 640, 3), (2, 600, 960, 3)):
+650	            raise RuntimeError(f"batched camera output shape mismatch: {images.shape}")
+651	        return native_observation_to_d0(measured[0], measured[1], images[0], images[1])
+652	
+653	    def step(self, d0_action: np.ndarray):
+654	        targets = d0_action_to_native(d0_action)
+655	        self._apply(targets)
+656	        self._advance(ACTION_REPEAT)
+657	        self.step_count += 1
+658	        observation = self.observation()
+```
+
+**`tools/isaac_vr_standalone_worker.py`** — bind(calls), array(calls), read(calls), send(calls), resolve(calls), capture(calls), +14 more
+
+```python
+61	    p.add_argument("--seed", type=Path, required=True)
+62	    p.add_argument("--receipt", type=Path, required=True)
+63	    a = p.parse_args()
+64	    connection = Connection(a.fd)
+65	    receipt = dict(
+66	        schema="standalone_cpu_physx_worker_receipt_v1",
+67	        status="starting",
+
+... (gap) ...
+
+80	        import numpy as np
+81	
+82	        seed = json.loads(a.seed.read_text())
+83	        validate_seed(seed)
+84	        import ovphysx
+85	        import ovstage
+86	        from ovphysx import PhysX, PhysXConfig, TensorType
+
+... (gap) ...
+
+204	        com_local = read(com_pose)
+205	        current_seq = -1
+206	
+207	        def capture(seq):
+208	            rp = read(root_pose)
+209	            if not q.is_fixed_base or not np.allclose(rp, root_reference, rtol=0.0, atol=1e-6):
+210	                raise RuntimeError("Fixed root native flag/world pose changed")
+211	            q_now = read(q)
+212	            return dict(
+213	                seq=seq,
+214	                physics_steps=receipt["physics_steps"],
+215	                sim_time_s=receipt["physics_steps"] / 120.0,
+216	                q=q_now,
+217	                dq=read(dq),
+218	                rigid_body_world_pose=read(body_pose),
+219	                articulation_body_com_local_pose=com_local.copy(),
+220	                jacobian=read(jacobian),
+221	                root_pose=rp,
+222	                fixed_base=True,
+223	                mimic_residual=np.stack(
+224	                    [q_now[:, 7] - 0.5 * q_now[:, 6], q_now[:, 8] + 0.5 * q_now[:, 6]], axis=-1
+225	                ),
+226	            )
+227	
+228	        initial_snapshot = capture(-1)
+229	        # Exact initial q/dq is checked after FK and all seed state writes.
+```
+
+**`tools/isaac_vr_capture.py`** — boundary(calls), frame(calls), _check_current(calls), calls(calls), invalidate(calls), _output(calls), +12 more
+
+```python
+68	        self._latest: ObservationCapture | None = None
+69	        self._buffers: dict[str, Any] = {}
+70	
+71	    def invalidate(self) -> None:
+72	        self._latest = None
+73	        self._buffers.clear()
+74	
+75	    @staticmethod
+76	    def _output(camera: Any) -> Any:
+
+... (gap) ...
+
+85	            raise RuntimeError("Unsupported source camera resolution")
+86	        if value is None or tuple(value.shape) not in ((1, height, width, 3), (1, height, width, 4)):
+87	            raise RuntimeError("Camera output missing or wrong shape")
+88	        if str(tensor(value).dtype).split(".")[-1] != "uint8":
+89	            raise RuntimeError("Camera output must be uint8")
+90	        return value
+91	
+92	    def capture(self, dt: float, *, eligible: bool = True) -> ObservationCapture | None:
+93	        self.invalidate()
+94	        try:
+95	            producer = self.boundary()
+96	            state_step, state = self.read_state()
+97	            if state_step != producer.physics_step or self.boundary() != producer:
+98	                raise RuntimeError("Measured state does not belong to capture boundary")
+99	            if len(state) != 14 or not np.isfinite(state).all():
+100	                raise RuntimeError("Invalid measured state")
+101	            identities = []
+102	            buffers = {}
+103	            for role, camera in self.cameras.items():
+104	                previous_frame, generation = frame(camera), camera._data_generation
+105	                camera.update(dt, force_recompute=True)
+106	                if frame(camera) != previous_frame + 1 or camera._data_generation <= generation:
+107	                    raise RuntimeError(f"{role}: camera producer did not advance exactly once")
+108	                buffers[role] = self._output(camera)
+109	                identities.append(CameraIdentity(role, frame(camera), camera._data_generation))
+110	            if self.boundary() != producer:
+111	                raise RuntimeError("Producer changed during three-camera extraction")
+112	            self._buffers = buffers
+113	            candidate = ObservationCapture(
+114	                producer, self.successful_capture_cycle + 1, tuple(identities), state, eligible
+115	            )
+116	            self._check_current(candidate)
+117	            self._latest = candidate
+118	            self.successful_capture_cycle += 1
+119	            self.last_error = None
+120	            return candidate
+121	        except Exception as error:  # Reject the bundle; RUN policy belongs to its caller.
+```
+
+**Not shown above — explore these names for their source**
+
+- docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py: capture:247, LiveMirror:36, _ack:239, _receive:231, ROLES:21, __init__:37, +4 more
+- tools/isaac_s2_performance.py: begin_step:110, add_stage:133, end_step:161, boundary:154, S2PerformanceLogger:56, record_boundary:141
+- ... and 31 more files
+
+> Some file sections were trimmed for size. For a specific symbol you still need, run another `codegraph_explore` (or `codegraph_node`) with its exact name — line-numbered source, cheaper and more complete than Read.

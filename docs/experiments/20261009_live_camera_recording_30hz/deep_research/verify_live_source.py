@@ -2,6 +2,7 @@
 
 import argparse
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import h5py
@@ -12,6 +13,7 @@ from ovrtx_live_probe import pose_matrices
 p = argparse.ArgumentParser()
 p.add_argument("--input", type=Path, required=True)
 p.add_argument("--output", type=Path, required=True)
+p.add_argument("--retained-helper", type=Path)
 a = p.parse_args()
 manifest = json.loads((a.input / "mirror/source-manifest.json").read_text())
 seed = json.loads((a.input / "mirror/seed.json").read_text())
@@ -21,6 +23,15 @@ entries = [
     e for e in manifest["recordables"] if e["type"] in ["articulation", "rigid_body", "camera"]
 ]
 camera_indices = [seed["paths"].index(c) for c in seed["cameras"]]
+temporal_mesh = None
+if seed.get("mesh_freshness"):
+    pinned_path = seed["mesh_freshness"]["helper_path"]
+    helper_path = a.retained_helper or Path(pinned_path)
+    if hashlib.sha256(Path(helper_path).read_bytes()).hexdigest() != seed["helper_hashes"][pinned_path]:
+        raise RuntimeError("Temporal Mesh source helper hash mismatch")
+    spec = importlib.util.spec_from_file_location("verified_temporal_mesh", helper_path)
+    temporal_mesh = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(temporal_mesh)
 errors = []
 with h5py.File(a.input / "episode/session.hdf5", "r") as hdf:
     episode = next(iter(hdf["episodes"].values()))
@@ -41,9 +52,16 @@ with h5py.File(a.input / "episode/session.hdf5", "r") as hdf:
             )
             matrices.append(m if plural else m[None])
         matrices = np.concatenate(matrices)
+        source_intrinsics = np.asarray([
+            [float(episode["state/camera/" + role][key][i])
+             for key in ["focal_length", "horizontal_aperture", "vertical_aperture"]]
+            for role in ["left_wrist", "right_wrist", "scene"]
+        ])
         descendants = seed.get("render_descendants", [])
         if descendants:
             local = np.array([item["mesh_to_body"] for item in descendants], dtype="<f8")
+            if temporal_mesh is not None:
+                local = temporal_mesh.update_locals(descendants, local, source_intrinsics, seq)
             parents = np.array([item["parent_index"] for item in descendants], dtype=np.int64)
             matrices = np.concatenate([matrices, local @ matrices[parents]])
         intrinsics = (

@@ -110,6 +110,13 @@ class AdapterTests(unittest.TestCase):
         rows = [json.loads(row) for row in (self.path / "packets.jsonl").read_text().splitlines()]
         self.assertEqual([r["encoder_packet_timestamp"] for r in rows], list(range(6)))
         self.assertEqual([r["submitted_source_tag"] for r in rows], [10, 20, 30, 40, 50, 60])
+        ready = [r["packet_ready_monotonic_ns"] for r in rows]
+        self.assertEqual(ready, sorted(ready))
+        self.assertTrue(
+            all(r["packet_write_completed_monotonic_ns"] >= t for r, t in zip(rows, ready))
+        )
+        flushed = [r for r in rows if r["flush"]]
+        self.assertEqual(len({r["packet_ready_monotonic_ns"] for r in flushed}), 1)
         self.assertFalse(any(r["pixel_alignment_proven"] for r in rows))
         self.assertIs(enc.finish(), receipt)
 
@@ -671,6 +678,26 @@ class WorkerProtocolTests(unittest.TestCase):
         self.assertEqual(self.consumers, [])
         self.assertEqual([row["kind"] for row in self.conn.sent], ["error"])
         self.assertFalse(json.loads((self.output / "worker.json").read_text())["passed"])
+
+    def test_source_timestamps_survive_worker_without_becoming_packet_completion(self):
+        timing = dict(
+            state_received_unix_s=123.0,
+            state_received_monotonic_ns=10,
+            state_received_origin="initial_native_freeze",
+            observation_sample_monotonic_ns=20,
+            observation_capture_begin_monotonic_ns=15,
+            observation_capture_end_monotonic_ns=25,
+            ipc_send_begin_monotonic_ns=30,
+        )
+        self.conn.incoming[0].update(timing)
+        self.assertEqual(self.execute(), 0)
+        row = json.loads((self.output / "worker-rows.jsonl").read_text().splitlines()[0])
+        for key, value in timing.items():
+            self.assertEqual(row[key], value)
+        self.assertLessEqual(
+            row["ipc_received_monotonic_ns"], row["worker_render_submitted_monotonic_ns"]
+        )
+        self.assertNotIn("packet_ready_monotonic_ns", row)
 
     def test_warmup_cannot_advance_into_future_of_admitted_source(self):
         self.initial["sim_time_s"] = 0.05

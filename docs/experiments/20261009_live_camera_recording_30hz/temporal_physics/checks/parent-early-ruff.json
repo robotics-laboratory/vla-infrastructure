@@ -1,0 +1,16 @@
+{
+  "kind": "retained_check_summary",
+  "checks": [
+    {
+      "command": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff check tools/run_single_gpu_live_recording.py",
+      "returncode": 0,
+      "stdout": "All checks passed!\n"
+    },
+    {
+      "command": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff check docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/analyze_latency.py",
+      "returncode": 0,
+      "stdout": "All checks passed!\n"
+    }
+  ],
+  "execution_provenance": "parent tool calls; full final source checks retained separately"
+}

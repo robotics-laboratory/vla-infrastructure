@@ -1,0 +1,387 @@
+**Exploration: tools/isaac_vr_standalone_view.py SourceClock**
+
+Found 23 symbols across 2 files. 1 file pinned from the query.
+
+**Blast radius — what depends on these (update/verify before editing)**
+
+- `SourceClock` (tools/isaac_vr_standalone_view.py:14) — 2 callers in `tools/isaac_vr_standalone.py`; no tests found within 3 caller hops
+
+**Source Code**
+
+> The code below is the **verbatim, current on-disk source** of these files — re-read from disk on this call and line-numbered, byte-for-byte identical to what the Read tool returns. It is NOT a summary, outline, or stale cache. Treat each block as a Read you have already performed: do not Read a file shown here.
+
+**`tools/isaac_vr_standalone_view.py`** — SourceClock(class), __init__(method), assert_native_frozen(method), commit(method), reset(method), sample(method), +3 more
+
+```python
+1	"""Opt-in diagnostic glue. Import is CPU-only; constructors require live Kit.
+2	
+3	No sim.step/render/forward, robot.data writes, or global SimulationManager overrides.
+4	The caller owns external snapshot identity, admission, recorder and XR lifecycle.
+5	"""
+6	
+7	from __future__ import annotations
+8	
+9	import threading
+10	import time
+11	import numpy as np
+12	
+13	
+14	class SourceClock:
+15	    """Override one sim instance getter while retaining its native-counter guard.
+16	
+17	    install only after builder startup. commit only after a completed worker reply.
+18	    Reset is explicit; do not infer reset from decreasing step count.
+19	    """
+20	
+21	    def __init__(self, sim, *, epoch: int, physics_step: int, dt=1.0 / 120.0):
+22	        if epoch < 0 or physics_step < 0 or dt <= 0:
+23	            raise ValueError("invalid source clock")
+24	        self.sim, self.dt = sim, float(dt)
+25	        self.epoch, self.physics_step = int(epoch), int(physics_step)
+26	        self.wall_time = time.time()
+27	        self._owner = threading.get_ident()
+28	        self._had_override = "get_physics_step_count" in vars(sim)
+29	        self._saved_override = vars(sim).get("get_physics_step_count")
+30	        self._native_getter = sim.get_physics_step_count
+31	        self._native_start = int(self._native_getter())
+32	        self._override = lambda: self.physics_step
+33	        sim.get_physics_step_count = self._override
+34	
+35	    def assert_native_frozen(self):
+36	        if threading.get_ident() != self._owner:
+37	            raise RuntimeError("source clock must be used on its Kit owner thread")
+38	        if int(self._native_getter()) != self._native_start:
+39	            raise RuntimeError("native SimContext stepped during external physics")
+40	
+41	    def commit(self, *, epoch, physics_step, captured_wall_time):
+42	        self.assert_native_frozen()
+43	        if int(epoch) != self.epoch or int(physics_step) != self.physics_step + 4:
+44	            raise RuntimeError("external completed step/epoch discontinuity")
+45	        if not np.isfinite(captured_wall_time):
+46	            raise ValueError("invalid capture wall time")
+47	        self.physics_step = int(physics_step)
+48	        self.wall_time = float(captured_wall_time)
+49	
+50	    def reset(self, *, epoch, physics_step, captured_wall_time):
+51	        self.assert_native_frozen()
+52	        if int(epoch) <= self.epoch or int(physics_step) < 0:
+53	            raise RuntimeError("reset requires a new source epoch")
+54	        if not np.isfinite(captured_wall_time):
+55	            raise ValueError("invalid reset capture wall time")
+56	        self.epoch, self.physics_step = int(epoch), int(physics_step)
+57	        self.wall_time = float(captured_wall_time)
+58	
+59	    def sample(self):
+60	        """Use as the external SimTimeRecordable.sample implementation."""
+61	        self.assert_native_frozen()
+62	        return dict(
+63	            sim_time=self.physics_step * self.dt,
+64	            physics_step=self.physics_step,
+65	            wall_time=self.wall_time,
+66	        )
+67	
+68	    def close(self):
+69	        # Restore only the instance override owned by this adapter.
+70	        if vars(self.sim).get("get_physics_step_count") is not self._override:
+71	            raise RuntimeError("source clock override replaced by another owner")
+72	        if self._had_override:
+73	            self.sim.get_physics_step_count = self._saved_override
+74	        else:
+75	            del self.sim.get_physics_step_count
+76	
+77	
+78	class PassiveKitView:
+79	    """Publish parent-before-child world poses, then pump one XR/UI update.
+80	
+81	    poses are float32 [N,7] xyz+wxyz in EXACT caller path order. Optional
+82	    native_counter should use SimulationManager.get_num_physics_steps; it
+83	    detects engine callbacks not reflected in the frozen SimContext counter.
+84	    This is presentation only. Never feed its readback to IK or recording.
+85	    """
+86	
+87	    def __init__(self, paths, *, native_counter=None):
+88	        import carb
+89	        import omni.kit.app
+90	        from isaacsim.core.experimental.prims import XformPrim
+91	        from isaacsim.core.experimental.utils.backend import use_backend
+92	
+93	        if not paths or len(set(paths)) != len(paths):
+94	            raise ValueError("paths must be nonempty and unique")
+95	        self.paths = tuple(paths)
+96	        self._order = sorted(range(len(paths)), key=lambda i: (paths[i].count("/"), paths[i]))
+97	        ordered = [paths[i] for i in self._order]
+98	        self._batch = XformPrim(ordered, resolve_paths=False, reset_xform_op_properties=False)
+99	        if list(self._batch.paths) != ordered:
+100	            raise RuntimeError("Kit pose path order differs")
+101	        self._backend = use_backend
+102	        self._settings = carb.settings.get_settings()
+103	        self._app = omni.kit.app.get_app()
+104	        self._owner = threading.get_ident()
+105	        self._native_counter = native_counter
+106	
+107	    def update(self, poses_wxyz, *, verify_readback=False):
+108	        if threading.get_ident() != self._owner:
+109	            raise RuntimeError("Kit presentation requires owner thread")
+110	        poses = np.asarray(poses_wxyz, dtype=np.float32)
+111	        if poses.shape != (len(self.paths), 7) or not np.isfinite(poses).all():
+112	            raise ValueError("invalid external world poses")
+113	        if not np.allclose(np.linalg.norm(poses[:, 3:], axis=1), 1, atol=1e-4, rtol=0):
+114	            raise ValueError("nonunit quaternion")
+115	        poses = np.ascontiguousarray(poses[self._order])
+116	        key = "/app/player/playSimulations"
+117	        previous = self._settings.get(key)
+118	        if not isinstance(previous, bool):
+119	            raise RuntimeError("playSimulations must exist as a boolean before passive pump")
+120	        before = self._native_counter() if self._native_counter else None
+121	        self._settings.set_bool(key, False)
+122	        try:
+123	            # Installed fabric setter explicitly falls back to USDRT hierarchy.
+124	            with self._backend("fabric"):
+125	                self._batch.set_world_poses(positions=poses[:, :3], orientations=poses[:, 3:])
+126	            self._app.update()
+127	            if self._native_counter and self._native_counter() != before:
+128	                raise RuntimeError("native physics advanced inside passive app.update")
+129	            if verify_readback:
+130	                with self._backend("usdrt"):
+131	                    p, q = self._batch.get_world_poses()
+132	                p, q = p.numpy(), q.numpy()
+133	                if not np.allclose(p, poses[:, :3], atol=1e-5, rtol=0):
+134	                    raise RuntimeError("external position was overwritten during app.update")
+135	                if not np.allclose(np.abs(np.sum(q * poses[:, 3:], axis=1)), 1, atol=1e-5, rtol=0):
+136	                    raise RuntimeError("external orientation was overwritten during app.update")
+137	        finally:
+138	            self._settings.set_bool(key, previous)
+```
+
+**`tools/isaac_vr_standalone.py`** — calls(calls), assert_native_frozen(calls), imports(imports), poses(calls), update(calls), instantiates(instantiates), +21 more
+
+```python
+9	
+10	import hashlib
+11	import json
+12	from multiprocessing.connection import Connection
+13	import os
+14	from pathlib import Path
+15	import socket
+
+... (gap) ...
+
+18	
+19	import numpy as np
+20	
+21	from isaac_vr_standalone_ik import piper_ik_state
+22	from isaac_vr_standalone_view import PassiveKitView, SourceClock
+23	
+24	
+25	class StandaloneState:
+26	    """Own source snapshots and scoped instance overrides, with explicit restore."""
+27	
+28	    def __init__(self, env, output, *, python, timeout=60):
+29	        self.env, self.output = env, Path(output)
+30	        self.python, self.timeout = str(python), float(timeout)
+31	        self.output.mkdir(parents=True, exist_ok=False)
+32	        self.clock = SourceClock(
+33	            env.sim,
+34	            epoch=int(env.camera.reset_epoch),
+35	            physics_step=int(env.sim.get_physics_step_count()),
+36	        )
+37	        self.offset = self.clock.physics_step
+38	        self.conn = self.proc = self.log = None
+39	        self.snapshot = self.resolver = self.view = None
+40	        self.targets = None
+41	        self.seq = -1
+42	        self.failed = False
+43	        self.closed = False
+44	        self.saved = {}
+45	        self.native_state_step = env._state_physics_step
+46	        self.timings = []
+47	        self.receipt = dict(
+48	            schema="single_gpu_source_owner_v1",
+49	            physical=False,
+50	            dataset_admissible=False,
+51	            controls=0,
+52	            native_physics_frozen=False,
+53	        )
+54	
+55	    def pose_batch(self, paths):
+56	        owner = self
+57	
+58	        class Batch:
+59	            def get_world_poses(self):
+60	                if owner.failed:
+61	                    raise RuntimeError("external physics owner failed closed")
+62	                owner.clock.assert_native_frozen()
+63	                if owner.snapshot is None:
+64	                    raise RuntimeError("external snapshot is not ready")
+65	                poses = owner.resolver.poses(paths, owner.snapshot["rigid_body_world_pose"])
+66	                return poses[:, :3], poses[:, 3:]
+67	
+68	        return Batch()
+69	
+
+... (gap) ...
+
+74	        self.saved[name] = (name in vars(self.env), vars(self.env).get(name))
+75	        setattr(self.env, name, value)
+76	
+77	    def _receive(self):
+78	        if not self.conn.poll(self.timeout):
+79	            raise RuntimeError(f"physics reply timeout: worker={self.proc.poll()}")
+80	        reply = self.conn.recv()
+81	        if reply.get("op") == "error":
+82	            raise RuntimeError(f"physics worker failed: {reply}")
+83	        return reply
+84	
+85	    def start(self, snapshot):
+86	        from isaac_vr_standalone_scene import build_seed, SnapshotPoses
+87	        from isaacsim.core.simulation_manager import SimulationManager
+88	
+89	        seed = build_seed(self.env, Path(snapshot), self.output)
+90	        self.seed = seed
+91	        self.resolver = SnapshotPoses(Path(snapshot), seed["rigid_body_paths"])
+92	        seed_path = self.output / "seed.json"
+93	        seed_path.write_text(json.dumps(seed, indent=2) + "\n")
+94	        parent, child = socket.socketpair()
+95	        self.conn = Connection(parent.detach())
+96	        self.log = (self.output / "worker.log").open("wb")
+97	        worker = Path(__file__).with_name("isaac_vr_standalone_worker.py")
+98	        self.receipt.update(
+99	            worker_sha256=hashlib.sha256(worker.read_bytes()).hexdigest(),
+100	            seed_sha256=hashlib.sha256(seed_path.read_bytes()).hexdigest(),
+101	        )
+
+... (gap) ...
+
+118	            )
+119	        finally:
+120	            child.close()
+121	        ready = self._receive()
+122	        if ready.get("op") != "ready":
+123	            raise RuntimeError(f"invalid physics startup: {ready}")
+124	        self.properties = ready["dof_properties"]
+125	        self._accept(ready["snapshot"], initial=True)
+126	        self.receipt["initial_parity"] = self._initial_parity()
+127	        paths = list(seed["rigid_body_paths"])
+128	        paths += ["/World/LeftPiper", "/World/RightPiper"]
+129	        paths += list(self.env.camera.camera_prim_paths.values())
+130	        self.view = PassiveKitView(paths, native_counter=SimulationManager.get_num_physics_steps)
+131	        self.view.update(
+132	            self.resolver.poses(paths, self.snapshot["rigid_body_world_pose"]), verify_readback=True
+133	        )
+134	        self.clock.assert_native_frozen()
+135	        self.targets = np.asarray(
+136	            seed["initial"].get("position_target", seed["initial"]["q"]), np.float32
+137	        ).copy()
+138	        self._override("standalone_state", self)
+139	        self._override("_apply", self.apply)
+140	        self._override("_advance", self.advance)
+141	        self._override("capture_measured_state", self.capture_measured_state)
+142	        # Resetting the original Kit engine would silently fork the source clock.
+143	        self._override("_reset_native", self.reject_reset)
+144	        self.receipt["native_physics_frozen"] = True
+145	
+146	    def _accept(self, snapshot, *, initial=False):
+
+... (gap) ...
+
+157	                snapshot[key].setflags(write=False)
+158	        if np.max(np.abs(snapshot["mimic_residual"])) > 2e-4:
+159	            raise RuntimeError("imported native mimic constraints diverged")
+160	        ik = piper_ik_state(
+161	            q=snapshot["q"],
+162	            link_poses_xyzw=snapshot["rigid_body_world_pose"][:24].reshape(2, 12, 7),
+163	            com_poses_xyzw=snapshot["articulation_body_com_local_pose"],
+
+... (gap) ...
+
+169	        )
+170	        self.snapshot, self.seq, self._ik = snapshot, expected, ik
+171	
+172	    def _initial_parity(self):
+173	        initial = self.seed["initial"]
+174	        errors = {}
+175	        for key in ("q", "dq", "root_pose", "rigid_body_world_pose"):
+176	            if key in initial:
+177	                errors[key] = float(
+178	                    np.max(np.abs(self.snapshot[key] - np.asarray(initial[key], np.float32)))
+179	                )
+180	                if errors[key] > 3e-5:
+181	                    raise RuntimeError(f"initial Kit/native state mismatch: {key}={errors[key]}")
+182	        for arm, (robot, wrist_id, ids) in enumerate(
+183	            zip(self.env.robots, self.env.wrist_ids, self.env.joint_ids, strict=True)
+184	        ):
+185	            row = wrist_id - 1 if robot.is_fixed_base else wrist_id
+186	            cols = [i + robot.num_base_dofs for i in ids[:6]]
+187	            reference = robot.data.body_link_jacobian_w.torch[:, row, :, cols].cpu().numpy()[0]
+188	            error = float(np.max(np.abs(reference - self._ik["jacobian"][arm])))
+189	            errors[f"jacobian_{arm}"] = error
+190	            if error > 2e-4:
+191	                raise RuntimeError(f"initial Kit/native TCP Jacobian mismatch: {error}")
+192	        return errors
+193	
+194	    def capture_measured_state(self):
+195	        from isaac_s1_runtime import native_state_to_d0
+196	
+197	        if self.failed:
+198	            raise RuntimeError("external physics owner failed closed")
+199	        self.clock.assert_native_frozen()
+200	        q = self.snapshot["q"]
+201	        native = [q[i, ids] for i, ids in enumerate(self.env.joint_ids)]
+202	        return self.clock.physics_step, tuple(float(v) for v in native_state_to_d0(*native))
+203	
+204	    def ik_state(self, arm):
+205	        import torch
+206	
+207	        if self.failed:
+208	            raise RuntimeError("external physics owner failed closed")
+209	        self.clock.assert_native_frozen()
+210	        return {
+211	            k: torch.as_tensor(v[arm].copy(), dtype=torch.float32, device=self.env.sim.device)
+212	            if k == "limits"
+213	            else torch.as_tensor(
+214	                v[arm : arm + 1].copy(), dtype=torch.float32, device=self.env.sim.device
+215	            )
+
+... (gap) ...
+
+238	            self.failed = True
+239	            raise
+240	
+241	    def _advance_completed(self, repeat):
+242	        if repeat != 4:
+243	            raise ValueError("standalone source requires one four-substep control boundary")
+244	        self.clock.assert_native_frozen()
+245	        started = time.perf_counter_ns()
+246	        self.conn.send(dict(op="step", seq=self.seq + 1, native_targets=self.targets))
+247	        reply = self._receive()
+248	        if reply.get("op") != "captured" or not np.array_equal(
+249	            reply["native_targets"], self.targets
+250	        ):
+251	            raise RuntimeError("native completion/command acknowledgment differs")
+252	        self._accept(reply["snapshot"])
+253	        self.clock.commit(
+254	            epoch=self.clock.epoch,
+255	            physics_step=self.offset + self.snapshot["physics_steps"],
+256	            captured_wall_time=time.time(),
+257	        )
+258	        self.env._state_physics_step = self.clock.physics_step
+259	        captured = time.perf_counter_ns()
+260	        poses = self.resolver.poses(self.view.paths, self.snapshot["rigid_body_world_pose"])
+261	        self.view.update(poses, verify_readback=self.seq < 2 or self.seq % 120 == 0)
+262	        self.clock.assert_native_frozen()
+263	        self.timings.append(
+264	            dict(
+265	                seq=self.seq,
+266	                physics_ipc_ns=captured - started,
+267	                passive_view_ns=time.perf_counter_ns() - captured,
+268	                **reply["timings_ns"],
+269	            )
+270	        )
+271	        self.receipt["controls"] += 1
+272	
+273	    def reject_reset(self, seed):
+274	        raise RuntimeError(
+```
+
+
+> Some file sections were trimmed for size. For a specific symbol you still need, run another `codegraph_explore` (or `codegraph_node`) with its exact name — line-numbered source, cheaper and more complete than Read.

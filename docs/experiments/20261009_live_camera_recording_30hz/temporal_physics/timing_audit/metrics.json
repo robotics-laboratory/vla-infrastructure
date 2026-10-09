@@ -1,0 +1,2722 @@
+{
+  "schema": "recording_correctness_timing_summary_v1",
+  "quest_connected": false,
+  "physical": false,
+  "dataset_admissible": false,
+  "gate_bindings": [],
+  "master": "beaedfd1116577fd4d8026232cfb96cba0b030fa",
+  "runs": [
+    {
+      "name": "latency-mesh01",
+      "arguments": {
+        "output": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output",
+        "frames": 180,
+        "warmup": 30,
+        "media_warmup": 20,
+        "media": "gpu",
+        "xr": true,
+        "view_mode": "original",
+        "motion": "benchmark",
+        "witness": false,
+        "witness_depth_scale": 1.0,
+        "pace_hz": 0.0,
+        "audit_host_events": true,
+        "mesh_freshness": true,
+        "physics_python": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/bin/python"
+      },
+      "controls": 210,
+      "sources": 211,
+      "complete_hz": 51.483573149553806,
+      "steady_hz": 55.06962777458101,
+      "run_passed": true,
+      "all_temporal_checks_passed": true,
+      "temporal_checks_count": 649,
+      "failed_checks": [],
+      "intervals": {
+        "state_receipt_to_sample": {
+          "initial_ms": 8123.750716,
+          "steady": {
+            "count": 210,
+            "p50_ms": 10.083123,
+            "p95_ms": 11.4337805,
+            "max_ms": 11.683584,
+            "min_ms": 9.815513
+          }
+        },
+        "sample_to_enqueue": {
+          "initial_ms": 0.938055,
+          "steady": {
+            "count": 210,
+            "p50_ms": 0.973664,
+            "p95_ms": 1.97170525,
+            "max_ms": 2.152375,
+            "min_ms": 0.88395
+          }
+        },
+        "enqueue_to_ipc_receive": {
+          "initial_ms": 0.159593,
+          "steady": {
+            "count": 210,
+            "p50_ms": 105.540916,
+            "p95_ms": 135.1921529,
+            "max_ms": 138.736555,
+            "min_ms": 0.105812
+          }
+        },
+        "enqueue_to_triplet_submission": {
+          "initial_ms": 30.839352,
+          "steady": {
+            "count": 210,
+            "p50_ms": 123.35433599999999,
+            "p95_ms": 153.09529055,
+            "max_ms": 157.336166,
+            "min_ms": 12.371404
+          }
+        },
+        "capture_observation_duration": {
+          "count": 210,
+          "p50_ms": 0.0016610000000000001,
+          "p95_ms": 0.0023731,
+          "max_ms": 1.384423,
+          "min_ms": 0.001386
+        },
+        "decision_solve_duration": {
+          "count": 210,
+          "p50_ms": 1.4129345,
+          "p95_ms": 3.0656158,
+          "max_ms": 13.770119,
+          "min_ms": 1.325025
+        },
+        "_apply_duration": {
+          "count": 210,
+          "p50_ms": 0.021592,
+          "p95_ms": 0.0415425,
+          "max_ms": 0.058276,
+          "min_ms": 0.019843
+        },
+        "_advance_duration": {
+          "count": 210,
+          "p50_ms": 11.562964999999998,
+          "p95_ms": 13.03275925,
+          "max_ms": 14.205394,
+          "min_ms": 11.145309
+        },
+        "capture_successor_duration": {
+          "count": 210,
+          "p50_ms": 1.595453,
+          "p95_ms": 6.317393249999999,
+          "max_ms": 7.989366,
+          "min_ms": 1.243555
+        },
+        "commit_transition_duration": {
+          "count": 210,
+          "p50_ms": 0.7041855,
+          "p95_ms": 1.4960966999999998,
+          "max_ms": 10.529654,
+          "min_ms": 0.652341
+        },
+        "sample_to_apply": {
+          "initial_ms": 15.220164,
+          "steady": {
+            "count": 209,
+            "p50_ms": 4.709644,
+            "p95_ms": 9.865709999999998,
+            "max_ms": 16.882653,
+            "min_ms": 4.02827
+          }
+        },
+        "state_receipt_to_apply": {
+          "initial_ms": 8138.97088,
+          "steady": {
+            "count": 209,
+            "p50_ms": 15.447947,
+            "p95_ms": 20.1262168,
+            "max_ms": 26.822874,
+            "min_ms": 14.013989
+          }
+        },
+        "sample_to_hdf_commit": {
+          "initial_ms": 31.796779,
+          "steady": {
+            "count": 209,
+            "p50_ms": 21.653377,
+            "p95_ms": 27.1406314,
+            "max_ms": 33.091061,
+            "min_ms": 18.266328
+          }
+        }
+      },
+      "packets": [
+        {
+          "role": 0,
+          "count": 211,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 79.674368,
+            "steady": {
+              "count": 210,
+              "p50_ms": 179.102319,
+              "p95_ms": 209.6066849,
+              "max_ms": 212.801425,
+              "min_ms": 62.056636
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 178.307715,
+              "p95_ms": 209.60800460000002,
+              "max_ms": 212.801425,
+              "min_ms": 62.056636
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 80.612423,
+            "steady": {
+              "count": 210,
+              "p50_ms": 180.0223345,
+              "p95_ms": 210.81616945,
+              "max_ms": 213.731229,
+              "min_ms": 62.965454
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 179.246213,
+              "p95_ms": 210.8780023,
+              "max_ms": 213.731229,
+              "min_ms": 62.965454
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8204.363139,
+            "steady": {
+              "count": 210,
+              "p50_ms": 190.509384,
+              "p95_ms": 220.9768785,
+              "max_ms": 223.758194,
+              "min_ms": 74.176483
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 189.248174,
+              "p95_ms": 221.010678,
+              "max_ms": 223.758194,
+              "min_ms": 74.176483
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 211,
+            "p50_ms": 0.045809,
+            "p95_ms": 0.0719825,
+            "max_ms": 0.122883,
+            "min_ms": 0.029654
+          }
+        },
+        {
+          "role": 1,
+          "count": 211,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 79.990274,
+            "steady": {
+              "count": 210,
+              "p50_ms": 179.480658,
+              "p95_ms": 210.0026899,
+              "max_ms": 213.150837,
+              "min_ms": 62.349135
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 178.599088,
+              "p95_ms": 210.0260386,
+              "max_ms": 213.150837,
+              "min_ms": 62.349135
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 80.928329,
+            "steady": {
+              "count": 210,
+              "p50_ms": 180.40067349999998,
+              "p95_ms": 211.1534185,
+              "max_ms": 214.080641,
+              "min_ms": 63.257953
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 179.537586,
+              "p95_ms": 211.221256,
+              "max_ms": 214.080641,
+              "min_ms": 63.257953
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8204.679045,
+            "steady": {
+              "count": 210,
+              "p50_ms": 190.9757975,
+              "p95_ms": 221.343389,
+              "max_ms": 224.107606,
+              "min_ms": 74.468982
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 189.539547,
+              "p95_ms": 221.380256,
+              "max_ms": 224.107606,
+              "min_ms": 74.468982
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 211,
+            "p50_ms": 0.031928,
+            "p95_ms": 0.050103499999999995,
+            "max_ms": 0.107873,
+            "min_ms": 0.021829
+          }
+        },
+        {
+          "role": 2,
+          "count": 211,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 80.257728,
+            "steady": {
+              "count": 210,
+              "p50_ms": 180.752202,
+              "p95_ms": 210.45855995,
+              "max_ms": 214.557845,
+              "min_ms": 62.61517
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 178.827602,
+              "p95_ms": 210.3698628,
+              "max_ms": 213.483998,
+              "min_ms": 62.61517
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 81.195783,
+            "steady": {
+              "count": 210,
+              "p50_ms": 182.1438475,
+              "p95_ms": 211.77990225,
+              "max_ms": 215.620425,
+              "min_ms": 63.523988
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 179.7661,
+              "p95_ms": 211.55034799999999,
+              "max_ms": 214.413802,
+              "min_ms": 63.523988
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8204.946499,
+            "steady": {
+              "count": 210,
+              "p50_ms": 192.8544015,
+              "p95_ms": 221.76309045,
+              "max_ms": 227.027364,
+              "min_ms": 74.735017
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 189.768061,
+              "p95_ms": 221.6887655,
+              "max_ms": 224.440767,
+              "min_ms": 74.735017
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 211,
+            "p50_ms": 0.02939,
+            "p95_ms": 0.0692195,
+            "max_ms": 0.121568,
+            "min_ms": 0.007949
+          }
+        }
+      ],
+      "analysis_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-analysis02.json",
+      "analysis_sha256": "163bf7e9903daaf3556eec047382cd77c91eca563b0ef5ecee53070df95f7944",
+      "result_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/result.json",
+      "result_sha256": "db2b8bf8b9f4276775caaf35c72275acbf71218ef6e942559c770178f0341898",
+      "launch_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01.launch.json",
+      "launch_sha256": "afd94ca06b63253a1e24959a0bc70d77f0f72ea11f64426aa85ccf74219423b3"
+    },
+    {
+      "name": "latency-ordinary03",
+      "arguments": {
+        "output": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-ordinary03-output",
+        "frames": 840,
+        "warmup": 120,
+        "media_warmup": 20,
+        "media": "gpu",
+        "xr": true,
+        "view_mode": "original",
+        "motion": "reach-demo",
+        "witness": false,
+        "witness_depth_scale": 1.0,
+        "pace_hz": 0.0,
+        "audit_host_events": true,
+        "mesh_freshness": false,
+        "source_queue_capacity": 8,
+        "physics_python": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/bin/python"
+      },
+      "controls": 960,
+      "sources": 961,
+      "complete_hz": 52.36717921277882,
+      "steady_hz": 52.76380293239318,
+      "run_passed": true,
+      "all_temporal_checks_passed": true,
+      "temporal_checks_count": 2899,
+      "failed_checks": [],
+      "intervals": {
+        "state_receipt_to_sample": {
+          "initial_ms": 8099.366286,
+          "steady": {
+            "count": 960,
+            "p50_ms": 10.089918,
+            "p95_ms": 11.312871699999999,
+            "max_ms": 13.049007,
+            "min_ms": 9.821673
+          }
+        },
+        "sample_to_enqueue": {
+          "initial_ms": 1.433504,
+          "steady": {
+            "count": 960,
+            "p50_ms": 0.994183,
+            "p95_ms": 1.98731775,
+            "max_ms": 2.071909,
+            "min_ms": 0.866955
+          }
+        },
+        "enqueue_to_ipc_receive": {
+          "initial_ms": 0.101828,
+          "steady": {
+            "count": 960,
+            "p50_ms": 133.09232400000002,
+            "p95_ms": 137.3478369,
+            "max_ms": 178.38879,
+            "min_ms": 0.101379
+          }
+        },
+        "enqueue_to_triplet_submission": {
+          "initial_ms": 27.377869,
+          "steady": {
+            "count": 960,
+            "p50_ms": 151.98405350000002,
+            "p95_ms": 156.4635577,
+            "max_ms": 194.801722,
+            "min_ms": 11.985908
+          }
+        },
+        "capture_observation_duration": {
+          "count": 960,
+          "p50_ms": 0.0016155,
+          "p95_ms": 0.0022993999999999996,
+          "max_ms": 2.027048,
+          "min_ms": 0.001292
+        },
+        "decision_solve_duration": {
+          "count": 960,
+          "p50_ms": 1.4932919999999998,
+          "p95_ms": 3.16811505,
+          "max_ms": 14.586768,
+          "min_ms": 1.360484
+        },
+        "_apply_duration": {
+          "count": 960,
+          "p50_ms": 0.021953,
+          "p95_ms": 0.03475099999999997,
+          "max_ms": 0.070653,
+          "min_ms": 0.019926
+        },
+        "_advance_duration": {
+          "count": 960,
+          "p50_ms": 11.5222985,
+          "p95_ms": 12.9066911,
+          "max_ms": 14.989778,
+          "min_ms": 11.095331
+        },
+        "capture_successor_duration": {
+          "count": 960,
+          "p50_ms": 2.469468,
+          "p95_ms": 7.063466349999999,
+          "max_ms": 45.577413,
+          "min_ms": 1.209462
+        },
+        "commit_transition_duration": {
+          "count": 960,
+          "p50_ms": 0.716261,
+          "p95_ms": 1.49226035,
+          "max_ms": 14.911038,
+          "min_ms": 0.652672
+        },
+        "sample_to_apply": {
+          "initial_ms": 16.612213,
+          "steady": {
+            "count": 959,
+            "p50_ms": 5.826873,
+            "p95_ms": 10.808687499999996,
+            "max_ms": 49.842942,
+            "min_ms": 4.168343
+          }
+        },
+        "state_receipt_to_apply": {
+          "initial_ms": 8115.978499,
+          "steady": {
+            "count": 959,
+            "p50_ms": 16.220635,
+            "p95_ms": 20.743424799999982,
+            "max_ms": 59.936241,
+            "min_ms": 14.101743
+          }
+        },
+        "sample_to_hdf_commit": {
+          "initial_ms": 34.354952,
+          "steady": {
+            "count": 959,
+            "p50_ms": 23.491389,
+            "p95_ms": 27.742102899999992,
+            "max_ms": 64.373729,
+            "min_ms": 18.26767
+          }
+        }
+      },
+      "packets": [
+        {
+          "role": 0,
+          "count": 961,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 78.597704,
+            "steady": {
+              "count": 960,
+              "p50_ms": 207.87566750000002,
+              "p95_ms": 212.10669415,
+              "max_ms": 251.946292,
+              "min_ms": 60.184071
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 207.911141,
+              "p95_ms": 212.1139876,
+              "max_ms": 251.946292,
+              "min_ms": 60.184071
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 80.031208,
+            "steady": {
+              "count": 960,
+              "p50_ms": 209.1454985,
+              "p95_ms": 213.3448545,
+              "max_ms": 253.107749,
+              "min_ms": 61.150647
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 209.151643,
+              "p95_ms": 213.345666,
+              "max_ms": 253.107749,
+              "min_ms": 61.150647
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8179.397494,
+            "steady": {
+              "count": 960,
+              "p50_ms": 219.3421405,
+              "p95_ms": 223.55089185,
+              "max_ms": 263.29747,
+              "min_ms": 71.057764
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 219.344421,
+              "p95_ms": 223.5632844,
+              "max_ms": 263.29747,
+              "min_ms": 71.057764
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 961,
+            "p50_ms": 0.04328,
+            "p95_ms": 0.06544,
+            "max_ms": 7.392692,
+            "min_ms": 0.030902
+          }
+        },
+        {
+          "role": 1,
+          "count": 961,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 78.942856,
+            "steady": {
+              "count": 960,
+              "p50_ms": 208.26280250000002,
+              "p95_ms": 212.49569995,
+              "max_ms": 252.291096,
+              "min_ms": 60.619508
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 208.2692,
+              "p95_ms": 212.4877736,
+              "max_ms": 252.291096,
+              "min_ms": 60.619508
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 80.37636,
+            "steady": {
+              "count": 960,
+              "p50_ms": 209.50755500000002,
+              "p95_ms": 213.712016,
+              "max_ms": 253.452553,
+              "min_ms": 61.586084
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 209.509981,
+              "p95_ms": 213.6985482,
+              "max_ms": 253.452553,
+              "min_ms": 61.586084
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8179.742646,
+            "steady": {
+              "count": 960,
+              "p50_ms": 219.7216625,
+              "p95_ms": 224.00107355,
+              "max_ms": 263.642274,
+              "min_ms": 71.493201
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 219.722069,
+              "p95_ms": 223.9945028,
+              "max_ms": 263.642274,
+              "min_ms": 71.493201
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 961,
+            "p50_ms": 0.030032,
+            "p95_ms": 0.047165,
+            "max_ms": 4.716151,
+            "min_ms": 0.021411
+          }
+        },
+        {
+          "role": 2,
+          "count": 961,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 79.226391,
+            "steady": {
+              "count": 960,
+              "p50_ms": 208.56804449999998,
+              "p95_ms": 212.7782176,
+              "max_ms": 252.541502,
+              "min_ms": 60.89824
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 208.577017,
+              "p95_ms": 212.7706444,
+              "max_ms": 252.541502,
+              "min_ms": 60.89824
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 80.659895,
+            "steady": {
+              "count": 960,
+              "p50_ms": 209.7850455,
+              "p95_ms": 214.11163335,
+              "max_ms": 253.702959,
+              "min_ms": 61.864816
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 209.78713,
+              "p95_ms": 214.04996699999998,
+              "max_ms": 253.702959,
+              "min_ms": 61.864816
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8180.026181,
+            "steady": {
+              "count": 960,
+              "p50_ms": 220.01021300000002,
+              "p95_ms": 224.32802045,
+              "max_ms": 263.89268,
+              "min_ms": 71.771933
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 220.010883,
+              "p95_ms": 224.3247364,
+              "max_ms": 263.89268,
+              "min_ms": 71.771933
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 961,
+            "p50_ms": 0.022833,
+            "p95_ms": 0.063871,
+            "max_ms": 0.100088,
+            "min_ms": 0.003672
+          }
+        }
+      ],
+      "analysis_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-analysis03.json",
+      "analysis_sha256": "8dcb33b313fc717d39a621a0603c7a3bfede2ccc36809d4f08d5af4a99adf78f",
+      "result_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-ordinary03-output/result.json",
+      "result_sha256": "cb53e8dcf37f771e7fd082a7220bdf591c2e91b044055645858ff98e2e9a2078",
+      "launch_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-ordinary03.launch.json",
+      "launch_sha256": "75963af1d4df7729a4dd89f3f354c6a34b0411280db9f95cb2107606b755e4c7"
+    },
+    {
+      "name": "latency-ordinary04",
+      "arguments": {
+        "output": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-ordinary04-output",
+        "frames": 840,
+        "warmup": 120,
+        "media_warmup": 20,
+        "media": "gpu",
+        "xr": true,
+        "view_mode": "original",
+        "motion": "reach-demo",
+        "witness": false,
+        "witness_depth_scale": 1.0,
+        "pace_hz": 0.0,
+        "audit_host_events": true,
+        "mesh_freshness": false,
+        "source_queue_capacity": 1,
+        "physics_python": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/bin/python"
+      },
+      "controls": 960,
+      "sources": 961,
+      "complete_hz": 52.42630185968399,
+      "steady_hz": 52.724758187748684,
+      "run_passed": true,
+      "all_temporal_checks_passed": true,
+      "temporal_checks_count": 2899,
+      "failed_checks": [],
+      "intervals": {
+        "state_receipt_to_sample": {
+          "initial_ms": 8244.041006,
+          "steady": {
+            "count": 960,
+            "p50_ms": 10.1195225,
+            "p95_ms": 11.259280449999999,
+            "max_ms": 13.821397,
+            "min_ms": 9.823041
+          }
+        },
+        "sample_to_enqueue": {
+          "initial_ms": 0.979038,
+          "steady": {
+            "count": 960,
+            "p50_ms": 0.994248,
+            "p95_ms": 1.9785553,
+            "max_ms": 2.07039,
+            "min_ms": 0.893227
+          }
+        },
+        "enqueue_to_ipc_receive": {
+          "initial_ms": 0.097567,
+          "steady": {
+            "count": 960,
+            "p50_ms": 0.385569,
+            "p95_ms": 5.657723799999999,
+            "max_ms": 45.438916,
+            "min_ms": 0.098015
+          }
+        },
+        "enqueue_to_triplet_submission": {
+          "initial_ms": 31.131138,
+          "steady": {
+            "count": 960,
+            "p50_ms": 20.249374,
+            "p95_ms": 22.729205349999997,
+            "max_ms": 61.84809,
+            "min_ms": 11.014088
+          }
+        },
+        "capture_observation_duration": {
+          "count": 960,
+          "p50_ms": 0.0017085,
+          "p95_ms": 0.00249005,
+          "max_ms": 1.43368,
+          "min_ms": 0.001397
+        },
+        "decision_solve_duration": {
+          "count": 960,
+          "p50_ms": 1.509406,
+          "p95_ms": 3.1519383,
+          "max_ms": 13.980536,
+          "min_ms": 1.390498
+        },
+        "_apply_duration": {
+          "count": 960,
+          "p50_ms": 0.022118,
+          "p95_ms": 0.03765609999999999,
+          "max_ms": 0.078646,
+          "min_ms": 0.019528
+        },
+        "_advance_duration": {
+          "count": 960,
+          "p50_ms": 11.5607135,
+          "p95_ms": 12.87089035,
+          "max_ms": 15.441419,
+          "min_ms": 11.13655
+        },
+        "capture_successor_duration": {
+          "count": 960,
+          "p50_ms": 2.608491,
+          "p95_ms": 6.980707949999999,
+          "max_ms": 46.739108,
+          "min_ms": 1.241975
+        },
+        "commit_transition_duration": {
+          "count": 960,
+          "p50_ms": 0.711495,
+          "p95_ms": 1.4918489,
+          "max_ms": 10.133198,
+          "min_ms": 0.667452
+        },
+        "sample_to_apply": {
+          "initial_ms": 15.52105,
+          "steady": {
+            "count": 959,
+            "p50_ms": 5.880627,
+            "p95_ms": 11.016381499999996,
+            "max_ms": 49.854933,
+            "min_ms": 4.216301
+          }
+        },
+        "state_receipt_to_apply": {
+          "initial_ms": 8259.562056,
+          "steady": {
+            "count": 959,
+            "p50_ms": 16.348934,
+            "p95_ms": 21.2211951,
+            "max_ms": 59.788196,
+            "min_ms": 14.103127
+          }
+        },
+        "sample_to_hdf_commit": {
+          "initial_ms": 33.74041,
+          "steady": {
+            "count": 959,
+            "p50_ms": 23.827642,
+            "p95_ms": 27.465660099999994,
+            "max_ms": 66.960995,
+            "min_ms": 18.324983
+          }
+        }
+      },
+      "packets": [
+        {
+          "role": 0,
+          "count": 961,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 77.964166,
+            "steady": {
+              "count": 960,
+              "p50_ms": 75.68484699999999,
+              "p95_ms": 79.92303605,
+              "max_ms": 117.932649,
+              "min_ms": 59.089694
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 75.67805,
+              "p95_ms": 79.91686080000001,
+              "max_ms": 117.932649,
+              "min_ms": 59.089694
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 78.943204,
+            "steady": {
+              "count": 960,
+              "p50_ms": 76.888119,
+              "p95_ms": 81.0723428,
+              "max_ms": 118.915764,
+              "min_ms": 60.068558
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 76.883961,
+              "p95_ms": 81.0551648,
+              "max_ms": 118.915764,
+              "min_ms": 60.068558
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8322.98421,
+            "steady": {
+              "count": 960,
+              "p50_ms": 87.202595,
+              "p95_ms": 91.1295059,
+              "max_ms": 128.889115,
+              "min_ms": 70.143831
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 87.1973,
+              "p95_ms": 91.119031,
+              "max_ms": 128.889115,
+              "min_ms": 70.143831
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 961,
+            "p50_ms": 0.043563,
+            "p95_ms": 0.066935,
+            "max_ms": 0.124294,
+            "min_ms": 0.029548
+          }
+        },
+        {
+          "role": 1,
+          "count": 961,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 78.282507,
+            "steady": {
+              "count": 960,
+              "p50_ms": 76.03365600000001,
+              "p95_ms": 80.3440098,
+              "max_ms": 118.247166,
+              "min_ms": 59.426513
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 76.028094,
+              "p95_ms": 80.30639719999999,
+              "max_ms": 118.247166,
+              "min_ms": 59.426513
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 79.261545,
+            "steady": {
+              "count": 960,
+              "p50_ms": 77.241979,
+              "p95_ms": 81.4396573,
+              "max_ms": 119.230281,
+              "min_ms": 60.405377
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 77.239363,
+              "p95_ms": 81.41903380000001,
+              "max_ms": 119.230281,
+              "min_ms": 60.405377
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8323.302551,
+            "steady": {
+              "count": 960,
+              "p50_ms": 87.565982,
+              "p95_ms": 91.5246399,
+              "max_ms": 129.203632,
+              "min_ms": 70.48065
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 87.562577,
+              "p95_ms": 91.510992,
+              "max_ms": 129.203632,
+              "min_ms": 70.48065
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 961,
+            "p50_ms": 0.029727,
+            "p95_ms": 0.046943,
+            "max_ms": 4.727375,
+            "min_ms": 0.021623
+          }
+        },
+        {
+          "role": 2,
+          "count": 961,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 78.55671,
+            "steady": {
+              "count": 960,
+              "p50_ms": 76.3348255,
+              "p95_ms": 80.61381615,
+              "max_ms": 118.503414,
+              "min_ms": 59.689669
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 76.328772,
+              "p95_ms": 80.594403,
+              "max_ms": 118.503414,
+              "min_ms": 59.689669
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 79.535748,
+            "steady": {
+              "count": 960,
+              "p50_ms": 77.521092,
+              "p95_ms": 81.756625,
+              "max_ms": 119.486529,
+              "min_ms": 60.668533
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 77.511492,
+              "p95_ms": 81.731325,
+              "max_ms": 119.486529,
+              "min_ms": 60.668533
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8323.576754,
+            "steady": {
+              "count": 960,
+              "p50_ms": 87.8469105,
+              "p95_ms": 91.85781075,
+              "max_ms": 129.45988,
+              "min_ms": 70.743806
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 87.824459,
+              "p95_ms": 91.8306212,
+              "max_ms": 129.45988,
+              "min_ms": 70.743806
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 961,
+            "p50_ms": 0.023046,
+            "p95_ms": 0.064254,
+            "max_ms": 0.098853,
+            "min_ms": 0.003997
+          }
+        }
+      ],
+      "analysis_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-analysis04.json",
+      "analysis_sha256": "132f4d7d8fb0e77855d7a11d1f1910fa7a204a93a3abd3b7b9b42d7bd541d598",
+      "result_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-ordinary04-output/result.json",
+      "result_sha256": "c26795c6a54c7cb9a8516376c89bcc694ab2572b80641d229be58e744f194161",
+      "launch_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-ordinary04.launch.json",
+      "launch_sha256": "7e88e0912f057d7c25be1ad1e0fc2c36e4e904c5e3905b712409d7f33b2ff827"
+    },
+    {
+      "name": "latency-mesh05",
+      "arguments": {
+        "output": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh05-output",
+        "frames": 180,
+        "warmup": 30,
+        "media_warmup": 20,
+        "media": "gpu",
+        "xr": true,
+        "view_mode": "original",
+        "motion": "benchmark",
+        "witness": false,
+        "witness_depth_scale": 1.0,
+        "pace_hz": 0.0,
+        "audit_host_events": true,
+        "mesh_freshness": true,
+        "source_queue_capacity": 1,
+        "physics_python": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/bin/python"
+      },
+      "controls": 210,
+      "sources": 211,
+      "complete_hz": 51.52103170714865,
+      "steady_hz": 52.924817027014235,
+      "run_passed": true,
+      "all_temporal_checks_passed": true,
+      "temporal_checks_count": 649,
+      "failed_checks": [],
+      "intervals": {
+        "state_receipt_to_sample": {
+          "initial_ms": 8177.312775,
+          "steady": {
+            "count": 210,
+            "p50_ms": 10.0726005,
+            "p95_ms": 11.22390465,
+            "max_ms": 12.787176,
+            "min_ms": 9.860079
+          }
+        },
+        "sample_to_enqueue": {
+          "initial_ms": 0.945891,
+          "steady": {
+            "count": 210,
+            "p50_ms": 0.9776389999999999,
+            "p95_ms": 1.9728671500000001,
+            "max_ms": 2.089107,
+            "min_ms": 0.889873
+          }
+        },
+        "enqueue_to_ipc_receive": {
+          "initial_ms": 0.171637,
+          "steady": {
+            "count": 210,
+            "p50_ms": 0.178809,
+            "p95_ms": 5.610143799999998,
+            "max_ms": 7.43829,
+            "min_ms": 0.101819
+          }
+        },
+        "enqueue_to_triplet_submission": {
+          "initial_ms": 31.818328,
+          "steady": {
+            "count": 210,
+            "p50_ms": 19.815374499999997,
+            "p95_ms": 22.523747849999996,
+            "max_ms": 23.365447,
+            "min_ms": 12.224694
+          }
+        },
+        "capture_observation_duration": {
+          "count": 210,
+          "p50_ms": 0.001613,
+          "p95_ms": 0.002331,
+          "max_ms": 1.427249,
+          "min_ms": 0.001333
+        },
+        "decision_solve_duration": {
+          "count": 210,
+          "p50_ms": 1.443223,
+          "p95_ms": 3.04851115,
+          "max_ms": 13.470462,
+          "min_ms": 1.362918
+        },
+        "_apply_duration": {
+          "count": 210,
+          "p50_ms": 0.021492,
+          "p95_ms": 0.04162795,
+          "max_ms": 0.04883,
+          "min_ms": 0.019759
+        },
+        "_advance_duration": {
+          "count": 210,
+          "p50_ms": 11.477642,
+          "p95_ms": 12.846013449999997,
+          "max_ms": 14.683292,
+          "min_ms": 11.156774
+        },
+        "capture_successor_duration": {
+          "count": 210,
+          "p50_ms": 2.656027,
+          "p95_ms": 7.048556199999999,
+          "max_ms": 8.701831,
+          "min_ms": 1.27032
+        },
+        "commit_transition_duration": {
+          "count": 210,
+          "p50_ms": 0.7081500000000001,
+          "p95_ms": 1.49731555,
+          "max_ms": 10.379737,
+          "min_ms": 0.672107
+        },
+        "sample_to_apply": {
+          "initial_ms": 14.948662,
+          "steady": {
+            "count": 209,
+            "p50_ms": 5.907083,
+            "p95_ms": 10.436750799999999,
+            "max_ms": 19.977308,
+            "min_ms": 4.185983
+          }
+        },
+        "state_receipt_to_apply": {
+          "initial_ms": 8192.261437,
+          "steady": {
+            "count": 209,
+            "p50_ms": 16.320492,
+            "p95_ms": 20.543587,
+            "max_ms": 29.994595,
+            "min_ms": 14.088141
+          }
+        },
+        "sample_to_hdf_commit": {
+          "initial_ms": 34.506285,
+          "steady": {
+            "count": 209,
+            "p50_ms": 23.624808,
+            "p95_ms": 27.3117636,
+            "max_ms": 34.395925,
+            "min_ms": 18.302522
+          }
+        }
+      },
+      "packets": [
+        {
+          "role": 0,
+          "count": 211,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 82.821675,
+            "steady": {
+              "count": 210,
+              "p50_ms": 75.005323,
+              "p95_ms": 79.53468175,
+              "max_ms": 97.28438,
+              "min_ms": 60.108108
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 74.998734,
+              "p95_ms": 79.4878227,
+              "max_ms": 80.989427,
+              "min_ms": 62.455318
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 83.767566,
+            "steady": {
+              "count": 210,
+              "p50_ms": 76.2762135,
+              "p95_ms": 80.56166555,
+              "max_ms": 99.260333,
+              "min_ms": 61.234028
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 76.268243,
+              "p95_ms": 80.4685346,
+              "max_ms": 81.8793,
+              "min_ms": 63.423895
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8261.080341,
+            "steady": {
+              "count": 210,
+              "p50_ms": 86.3016925,
+              "p95_ms": 90.58792655,
+              "max_ms": 110.71449,
+              "min_ms": 71.252664
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 86.301605,
+              "p95_ms": 90.5096301,
+              "max_ms": 91.770383,
+              "min_ms": 73.5408
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 211,
+            "p50_ms": 0.043478,
+            "p95_ms": 0.070577,
+            "max_ms": 0.10919,
+            "min_ms": 0.028693
+          }
+        },
+        {
+          "role": 1,
+          "count": 211,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 83.175617,
+            "steady": {
+              "count": 210,
+              "p50_ms": 75.46958000000001,
+              "p95_ms": 79.8924579,
+              "max_ms": 105.993548,
+              "min_ms": 62.810513
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 75.462802,
+              "p95_ms": 79.814239,
+              "max_ms": 81.324977,
+              "min_ms": 62.810513
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 84.121508,
+            "steady": {
+              "count": 210,
+              "p50_ms": 76.60831400000001,
+              "p95_ms": 80.90381430000001,
+              "max_ms": 107.969501,
+              "min_ms": 63.894153
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 76.605254,
+              "p95_ms": 80.83637540000001,
+              "max_ms": 82.21485,
+              "min_ms": 63.894153
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8261.434283,
+            "steady": {
+              "count": 210,
+              "p50_ms": 86.77028050000001,
+              "p95_ms": 90.91520245000001,
+              "max_ms": 119.423658,
+              "min_ms": 74.011058
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 86.765848,
+              "p95_ms": 90.8735923,
+              "max_ms": 92.105933,
+              "min_ms": 74.011058
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 211,
+            "p50_ms": 0.030135,
+            "p95_ms": 0.048696500000000004,
+            "max_ms": 0.09519,
+            "min_ms": 0.019907
+          }
+        },
+        {
+          "role": 2,
+          "count": 211,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 83.490834,
+            "steady": {
+              "count": 210,
+              "p50_ms": 75.793439,
+              "p95_ms": 80.1767891,
+              "max_ms": 114.100534,
+              "min_ms": 63.074736
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 75.733155,
+              "p95_ms": 80.0642978,
+              "max_ms": 81.586015,
+              "min_ms": 63.074736
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 84.436725,
+            "steady": {
+              "count": 210,
+              "p50_ms": 76.89668449999999,
+              "p95_ms": 81.18657605,
+              "max_ms": 116.076487,
+              "min_ms": 64.30789
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 76.875031,
+              "p95_ms": 81.0889486,
+              "max_ms": 82.475888,
+              "min_ms": 64.30789
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8261.7495,
+            "steady": {
+              "count": 210,
+              "p50_ms": 87.10143,
+              "p95_ms": 91.1826195,
+              "max_ms": 127.530644,
+              "min_ms": 74.424795
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 87.033561,
+              "p95_ms": 91.1502653,
+              "max_ms": 92.366971,
+              "min_ms": 74.424795
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 211,
+            "p50_ms": 0.030761,
+            "p95_ms": 0.062379500000000004,
+            "max_ms": 0.090921,
+            "min_ms": 0.009471
+          }
+        }
+      ],
+      "analysis_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-analysis05.json",
+      "analysis_sha256": "6dacf285d46da6089440a87761bfea2377f1e75eefb56e52a6470bb706dabcb5",
+      "result_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh05-output/result.json",
+      "result_sha256": "dcdc03d92e3b0f1533fdee5bd486197e5ac869e594f33568cdac931342bd4a0e",
+      "launch_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh05.launch.json",
+      "launch_sha256": "01a16e129a598440f5fdd6fba7a11aba7eae1b26bb38605a6b55b44caa46cbb9"
+    },
+    {
+      "name": "latency-paced06",
+      "arguments": {
+        "output": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-paced06-output",
+        "frames": 180,
+        "warmup": 30,
+        "media_warmup": 20,
+        "media": "gpu",
+        "xr": true,
+        "view_mode": "original",
+        "motion": "benchmark",
+        "witness": false,
+        "witness_depth_scale": 1.0,
+        "pace_hz": 30.0,
+        "audit_host_events": true,
+        "mesh_freshness": true,
+        "source_queue_capacity": 1,
+        "physics_python": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/bin/python"
+      },
+      "controls": 210,
+      "sources": 211,
+      "complete_hz": 29.676297102676447,
+      "steady_hz": 30.000160214263442,
+      "run_passed": true,
+      "all_temporal_checks_passed": true,
+      "temporal_checks_count": 649,
+      "failed_checks": [],
+      "intervals": {
+        "state_receipt_to_sample": {
+          "initial_ms": 8137.565035,
+          "steady": {
+            "count": 210,
+            "p50_ms": 10.0901955,
+            "p95_ms": 11.6117522,
+            "max_ms": 16.582531,
+            "min_ms": 9.905297
+          }
+        },
+        "sample_to_enqueue": {
+          "initial_ms": 1.057748,
+          "steady": {
+            "count": 210,
+            "p50_ms": 0.984058,
+            "p95_ms": 2.001945,
+            "max_ms": 3.890338,
+            "min_ms": 0.918124
+          }
+        },
+        "enqueue_to_ipc_receive": {
+          "initial_ms": 0.135657,
+          "steady": {
+            "count": 210,
+            "p50_ms": 0.13766899999999999,
+            "p95_ms": 0.20408565,
+            "max_ms": 3.778133,
+            "min_ms": 0.111041
+          }
+        },
+        "enqueue_to_triplet_submission": {
+          "initial_ms": 31.581325,
+          "steady": {
+            "count": 210,
+            "p50_ms": 13.4487895,
+            "p95_ms": 16.15300705,
+            "max_ms": 36.064293,
+            "min_ms": 11.716819
+          }
+        },
+        "capture_observation_duration": {
+          "count": 210,
+          "p50_ms": 0.0048185,
+          "p95_ms": 0.006623649999999997,
+          "max_ms": 1.573622,
+          "min_ms": 0.002096
+        },
+        "decision_solve_duration": {
+          "count": 210,
+          "p50_ms": 1.5348955,
+          "p95_ms": 3.1286416,
+          "max_ms": 20.623073,
+          "min_ms": 1.387177
+        },
+        "_apply_duration": {
+          "count": 210,
+          "p50_ms": 0.0236005,
+          "p95_ms": 0.04248169999999999,
+          "max_ms": 0.055662,
+          "min_ms": 0.020968
+        },
+        "_advance_duration": {
+          "count": 210,
+          "p50_ms": 11.7666425,
+          "p95_ms": 13.538767749999998,
+          "max_ms": 32.088052,
+          "min_ms": 11.335686
+        },
+        "capture_successor_duration": {
+          "count": 210,
+          "p50_ms": 1.4745645,
+          "p95_ms": 2.7799549999999997,
+          "max_ms": 4.386968,
+          "min_ms": 1.335218
+        },
+        "commit_transition_duration": {
+          "count": 210,
+          "p50_ms": 0.713684,
+          "p95_ms": 1.50420565,
+          "max_ms": 11.986494,
+          "min_ms": 0.678449
+        },
+        "sample_to_apply": {
+          "initial_ms": 16.205439,
+          "steady": {
+            "count": 209,
+            "p50_ms": 21.139643,
+            "p95_ms": 22.3202058,
+            "max_ms": 39.358896,
+            "min_ms": 4.255176
+          }
+        },
+        "state_receipt_to_apply": {
+          "initial_ms": 8153.770474,
+          "steady": {
+            "count": 209,
+            "p50_ms": 31.278607,
+            "p95_ms": 32.9244884,
+            "max_ms": 49.505897,
+            "min_ms": 15.533394
+          }
+        },
+        "sample_to_hdf_commit": {
+          "initial_ms": 34.345074,
+          "steady": {
+            "count": 209,
+            "p50_ms": 36.01696,
+            "p95_ms": 39.9215544,
+            "max_ms": 55.708924,
+            "min_ms": 20.7362
+          }
+        }
+      },
+      "packets": [
+        {
+          "role": 0,
+          "count": 211,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 91.996037,
+            "steady": {
+              "count": 210,
+              "p50_ms": 112.46026499999999,
+              "p95_ms": 116.74550835000001,
+              "max_ms": 149.944864,
+              "min_ms": 28.21896
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 112.475472,
+              "p95_ms": 116.7515829,
+              "max_ms": 149.944864,
+              "min_ms": 84.459443
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 93.053785,
+            "steady": {
+              "count": 210,
+              "p50_ms": 113.52838700000001,
+              "p95_ms": 118.003939,
+              "max_ms": 150.886784,
+              "min_ms": 30.218972
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 113.652957,
+              "p95_ms": 118.010515,
+              "max_ms": 150.886784,
+              "min_ms": 85.377567
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8230.61882,
+            "steady": {
+              "count": 210,
+              "p50_ms": 123.824417,
+              "p95_ms": 128.36202244999998,
+              "max_ms": 162.189003,
+              "min_ms": 40.946253
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 123.830078,
+              "p95_ms": 128.3885393,
+              "max_ms": 162.189003,
+              "min_ms": 96.655785
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 211,
+            "p50_ms": 0.046527,
+            "p95_ms": 0.0712595,
+            "max_ms": 0.236497,
+            "min_ms": 0.034502
+          }
+        },
+        {
+          "role": 1,
+          "count": 211,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 92.329696,
+            "steady": {
+              "count": 210,
+              "p50_ms": 112.825993,
+              "p95_ms": 117.1668598,
+              "max_ms": 150.269817,
+              "min_ms": 37.337081
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 112.845252,
+              "p95_ms": 117.1769872,
+              "max_ms": 150.269817,
+              "min_ms": 84.775392
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 93.387444,
+            "steady": {
+              "count": 210,
+              "p50_ms": 113.9777935,
+              "p95_ms": 118.43594395,
+              "max_ms": 151.211737,
+              "min_ms": 39.337093
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 114.025398,
+              "p95_ms": 118.4684953,
+              "max_ms": 151.211737,
+              "min_ms": 85.693516
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8230.952479,
+            "steady": {
+              "count": 210,
+              "p50_ms": 124.166976,
+              "p95_ms": 128.74794955000002,
+              "max_ms": 162.513956,
+              "min_ms": 50.064374
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 124.180563,
+              "p95_ms": 128.7655147,
+              "max_ms": 162.513956,
+              "min_ms": 96.971734
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 211,
+            "p50_ms": 0.031648,
+            "p95_ms": 0.049747,
+            "max_ms": 0.11498,
+            "min_ms": 0.020122
+          }
+        },
+        {
+          "role": 2,
+          "count": 211,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 92.587801,
+            "steady": {
+              "count": 210,
+              "p50_ms": 113.10457099999999,
+              "p95_ms": 117.60713555,
+              "max_ms": 150.546737,
+              "min_ms": 45.746539
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 113.122342,
+              "p95_ms": 117.63143269999999,
+              "max_ms": 150.546737,
+              "min_ms": 85.062218
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 93.645549,
+            "steady": {
+              "count": 210,
+              "p50_ms": 114.333668,
+              "p95_ms": 118.83416145,
+              "max_ms": 151.488657,
+              "min_ms": 47.746551
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 114.337089,
+              "p95_ms": 118.87066229999999,
+              "max_ms": 151.488657,
+              "min_ms": 85.980342
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8231.210584,
+            "steady": {
+              "count": 210,
+              "p50_ms": 124.474849,
+              "p95_ms": 129.1096202,
+              "max_ms": 162.790876,
+              "min_ms": 58.473832
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 124.475384,
+              "p95_ms": 129.1211888,
+              "max_ms": 162.790876,
+              "min_ms": 97.25856
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 211,
+            "p50_ms": 0.032083,
+            "p95_ms": 0.0634055,
+            "max_ms": 0.169227,
+            "min_ms": 0.011921
+          }
+        }
+      ],
+      "analysis_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-analysis06.json",
+      "analysis_sha256": "6d7e621a815edcfb38289c667169fcc8c2223b174572485336bb96aa4f08d2c8",
+      "result_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-paced06-output/result.json",
+      "result_sha256": "2851dbff19bbef308b076bd934cf53c84bb362a6f7096791c92cf9926620fe85",
+      "launch_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-paced06.launch.json",
+      "launch_sha256": "047a586c2786fb377d2b48f2115bc67b14bad73ff112a408c92a13b86abaf00a"
+    },
+    {
+      "name": "latency-minimal07",
+      "arguments": {
+        "output": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-minimal07-output",
+        "frames": 840,
+        "warmup": 120,
+        "media_warmup": 20,
+        "media": "gpu",
+        "xr": true,
+        "view_mode": "minimal",
+        "motion": "reach-demo",
+        "witness": false,
+        "witness_depth_scale": 1.0,
+        "pace_hz": 0.0,
+        "audit_host_events": true,
+        "mesh_freshness": false,
+        "source_queue_capacity": 1,
+        "physics_python": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/bin/python"
+      },
+      "controls": 960,
+      "sources": 961,
+      "complete_hz": 56.21670736133016,
+      "steady_hz": 57.115259656234805,
+      "run_passed": true,
+      "all_temporal_checks_passed": true,
+      "temporal_checks_count": 2899,
+      "failed_checks": [],
+      "intervals": {
+        "state_receipt_to_sample": {
+          "initial_ms": 8069.980397,
+          "steady": {
+            "count": 960,
+            "p50_ms": 10.1098555,
+            "p95_ms": 11.34855385,
+            "max_ms": 13.918271,
+            "min_ms": 9.826864
+          }
+        },
+        "sample_to_enqueue": {
+          "initial_ms": 1.320156,
+          "steady": {
+            "count": 960,
+            "p50_ms": 0.944507,
+            "p95_ms": 1.9715633,
+            "max_ms": 2.039987,
+            "min_ms": 0.869885
+          }
+        },
+        "enqueue_to_ipc_receive": {
+          "initial_ms": 0.209885,
+          "steady": {
+            "count": 960,
+            "p50_ms": 0.112495,
+            "p95_ms": 0.17780425,
+            "max_ms": 28.726227,
+            "min_ms": 0.09813
+          }
+        },
+        "enqueue_to_triplet_submission": {
+          "initial_ms": 26.618468,
+          "steady": {
+            "count": 960,
+            "p50_ms": 12.850105,
+            "p95_ms": 15.25877775,
+            "max_ms": 48.246224,
+            "min_ms": 11.247661
+          }
+        },
+        "capture_observation_duration": {
+          "count": 960,
+          "p50_ms": 0.001733,
+          "p95_ms": 0.00257005,
+          "max_ms": 1.893405,
+          "min_ms": 0.001397
+        },
+        "decision_solve_duration": {
+          "count": 960,
+          "p50_ms": 1.495819,
+          "p95_ms": 3.2053654,
+          "max_ms": 16.476878,
+          "min_ms": 1.390266
+        },
+        "_apply_duration": {
+          "count": 960,
+          "p50_ms": 0.021599,
+          "p95_ms": 0.041719849999999996,
+          "max_ms": 0.087149,
+          "min_ms": 0.018993
+        },
+        "_advance_duration": {
+          "count": 960,
+          "p50_ms": 11.5236315,
+          "p95_ms": 13.0018061,
+          "max_ms": 16.498834,
+          "min_ms": 11.105651
+        },
+        "capture_successor_duration": {
+          "count": 960,
+          "p50_ms": 1.4085135,
+          "p95_ms": 2.7061976,
+          "max_ms": 30.041847,
+          "min_ms": 1.245273
+        },
+        "commit_transition_duration": {
+          "count": 960,
+          "p50_ms": 0.7002729999999999,
+          "p95_ms": 1.4951757,
+          "max_ms": 14.302441,
+          "min_ms": 0.604441
+        },
+        "sample_to_apply": {
+          "initial_ms": 18.345718,
+          "steady": {
+            "count": 959,
+            "p50_ms": 4.480938,
+            "p95_ms": 8.814162699999999,
+            "max_ms": 33.147869,
+            "min_ms": 4.121633
+          }
+        },
+        "state_receipt_to_apply": {
+          "initial_ms": 8088.326115,
+          "steady": {
+            "count": 959,
+            "p50_ms": 14.693656,
+            "p95_ms": 19.149284299999998,
+            "max_ms": 43.367429,
+            "min_ms": 14.049107
+          }
+        },
+        "sample_to_hdf_commit": {
+          "initial_ms": 40.218533,
+          "steady": {
+            "count": 959,
+            "p50_ms": 19.770191,
+            "p95_ms": 25.722474799999993,
+            "max_ms": 51.865546,
+            "min_ms": 18.183423
+          }
+        }
+      },
+      "packets": [
+        {
+          "role": 0,
+          "count": 961,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 84.875049,
+            "steady": {
+              "count": 960,
+              "p50_ms": 63.7313635,
+              "p95_ms": 72.0907963,
+              "max_ms": 97.374543,
+              "min_ms": 26.3432
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 63.744471,
+              "p95_ms": 72.10469319999999,
+              "max_ms": 97.374543,
+              "min_ms": 58.577508
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 86.195205,
+            "steady": {
+              "count": 960,
+              "p50_ms": 64.8419945,
+              "p95_ms": 73.56884174999999,
+              "max_ms": 98.747857,
+              "min_ms": 27.242642
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 64.843761,
+              "p95_ms": 73.572426,
+              "max_ms": 98.747857,
+              "min_ms": 59.503122
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8156.175602,
+            "steady": {
+              "count": 960,
+              "p50_ms": 75.020816,
+              "p95_ms": 84.0352456,
+              "max_ms": 108.915154,
+              "min_ms": 37.406476
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 75.021416,
+              "p95_ms": 84.0371374,
+              "max_ms": 108.915154,
+              "min_ms": 69.521043
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 961,
+            "p50_ms": 0.043907,
+            "p95_ms": 0.06821,
+            "max_ms": 0.108426,
+            "min_ms": 0.026049
+          }
+        },
+        {
+          "role": 1,
+          "count": 961,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 85.198386,
+            "steady": {
+              "count": 960,
+              "p50_ms": 64.100594,
+              "p95_ms": 72.53350275,
+              "max_ms": 97.721783,
+              "min_ms": 34.979922
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 64.102939,
+              "p95_ms": 72.542796,
+              "max_ms": 97.721783,
+              "min_ms": 59.096371
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 86.518542,
+            "steady": {
+              "count": 960,
+              "p50_ms": 65.19334799999999,
+              "p95_ms": 73.91678315,
+              "max_ms": 99.095097,
+              "min_ms": 35.879364
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 65.193576,
+              "p95_ms": 73.92665059999999,
+              "max_ms": 99.095097,
+              "min_ms": 60.021985
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8156.498939,
+            "steady": {
+              "count": 960,
+              "p50_ms": 75.4243565,
+              "p95_ms": 84.3565036,
+              "max_ms": 109.262394,
+              "min_ms": 46.043198
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 75.428951,
+              "p95_ms": 84.3705634,
+              "max_ms": 109.262394,
+              "min_ms": 70.039906
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 961,
+            "p50_ms": 0.030473,
+            "p95_ms": 0.048303,
+            "max_ms": 4.6851,
+            "min_ms": 0.021795
+          }
+        },
+        {
+          "role": 2,
+          "count": 961,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 85.460567,
+            "steady": {
+              "count": 960,
+              "p50_ms": 64.3798055,
+              "p95_ms": 72.88200995,
+              "max_ms": 97.971748,
+              "min_ms": 43.63756
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 64.382523,
+              "p95_ms": 72.8468644,
+              "max_ms": 97.971748,
+              "min_ms": 59.60957
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 86.780723,
+            "steady": {
+              "count": 960,
+              "p50_ms": 65.530194,
+              "p95_ms": 74.25103175,
+              "max_ms": 99.345062,
+              "min_ms": 44.537002
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 65.538238,
+              "p95_ms": 74.19291759999999,
+              "max_ms": 99.345062,
+              "min_ms": 60.535184
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8156.76112,
+            "steady": {
+              "count": 960,
+              "p50_ms": 75.7473925,
+              "p95_ms": 84.69517435,
+              "max_ms": 109.512359,
+              "min_ms": 54.700836
+            },
+            "nonflush_steady": {
+              "count": 957,
+              "p50_ms": 75.748917,
+              "p95_ms": 84.6228274,
+              "max_ms": 109.512359,
+              "min_ms": 70.553105
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 961,
+            "p50_ms": 0.024341,
+            "p95_ms": 0.069237,
+            "max_ms": 3.407545,
+            "min_ms": 0.003736
+          }
+        }
+      ],
+      "analysis_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-analysis07.json",
+      "analysis_sha256": "d9b29a80df9e054f9a626ea5c6d5b4ad65a6bbaf87a3c7c1d40cd7bbd0bc6fa5",
+      "result_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-minimal07-output/result.json",
+      "result_sha256": "02203e959010446fb379f4f6f432c34f54edb909e7af47613a6d038fbfbb2749",
+      "launch_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-minimal07.launch.json",
+      "launch_sha256": "ef06e9c9be86a57dcebed98d34d5a3ecdf829324c13ce9b4ee9ced4394928a6c"
+    },
+    {
+      "name": "latency-mesh08",
+      "arguments": {
+        "output": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh08-output",
+        "frames": 180,
+        "warmup": 30,
+        "media_warmup": 20,
+        "media": "gpu",
+        "xr": true,
+        "view_mode": "original",
+        "motion": "benchmark",
+        "witness": false,
+        "witness_depth_scale": 1.0,
+        "pace_hz": 0.0,
+        "audit_host_events": true,
+        "mesh_freshness": true,
+        "source_queue_capacity": 1,
+        "physics_python": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/bin/python"
+      },
+      "controls": 210,
+      "sources": 211,
+      "complete_hz": 51.52643289899574,
+      "steady_hz": 52.75737530216374,
+      "run_passed": true,
+      "all_temporal_checks_passed": true,
+      "temporal_checks_count": 649,
+      "failed_checks": [],
+      "intervals": {
+        "state_receipt_to_sample": {
+          "initial_ms": 8127.786875,
+          "steady": {
+            "count": 210,
+            "p50_ms": 10.092286,
+            "p95_ms": 11.343984349999998,
+            "max_ms": 12.62148,
+            "min_ms": 9.887584
+          }
+        },
+        "sample_to_enqueue": {
+          "initial_ms": 0.94399,
+          "steady": {
+            "count": 210,
+            "p50_ms": 0.981963,
+            "p95_ms": 1.9657121499999999,
+            "max_ms": 2.090987,
+            "min_ms": 0.895354
+          }
+        },
+        "enqueue_to_ipc_receive": {
+          "initial_ms": 0.170559,
+          "steady": {
+            "count": 210,
+            "p50_ms": 0.2720635,
+            "p95_ms": 5.5774715,
+            "max_ms": 8.074105,
+            "min_ms": 0.104118
+          }
+        },
+        "enqueue_to_triplet_submission": {
+          "initial_ms": 30.689356,
+          "steady": {
+            "count": 210,
+            "p50_ms": 19.76216,
+            "p95_ms": 22.6018229,
+            "max_ms": 25.291649,
+            "min_ms": 12.312119
+          }
+        },
+        "capture_observation_duration": {
+          "count": 210,
+          "p50_ms": 0.0018685,
+          "p95_ms": 0.0026806499999999997,
+          "max_ms": 1.41853,
+          "min_ms": 0.001563
+        },
+        "decision_solve_duration": {
+          "count": 210,
+          "p50_ms": 1.4248705,
+          "p95_ms": 3.0503434499999997,
+          "max_ms": 13.609625,
+          "min_ms": 1.333881
+        },
+        "_apply_duration": {
+          "count": 210,
+          "p50_ms": 0.021449999999999997,
+          "p95_ms": 0.04137315,
+          "max_ms": 0.045766,
+          "min_ms": 0.019251
+        },
+        "_advance_duration": {
+          "count": 210,
+          "p50_ms": 11.5585275,
+          "p95_ms": 12.9330481,
+          "max_ms": 14.495381,
+          "min_ms": 11.20914
+        },
+        "capture_successor_duration": {
+          "count": 210,
+          "p50_ms": 2.5632055,
+          "p95_ms": 6.965901199999999,
+          "max_ms": 9.30019,
+          "min_ms": 1.245673
+        },
+        "commit_transition_duration": {
+          "count": 210,
+          "p50_ms": 0.707299,
+          "p95_ms": 1.5049666,
+          "max_ms": 10.179455,
+          "min_ms": 0.673701
+        },
+        "sample_to_apply": {
+          "initial_ms": 15.080633,
+          "steady": {
+            "count": 209,
+            "p50_ms": 5.679102,
+            "p95_ms": 10.5694448,
+            "max_ms": 19.538172,
+            "min_ms": 4.181065
+          }
+        },
+        "state_receipt_to_apply": {
+          "initial_ms": 8142.867508,
+          "steady": {
+            "count": 209,
+            "p50_ms": 16.147673,
+            "p95_ms": 20.8679368,
+            "max_ms": 29.575299,
+            "min_ms": 14.113595
+          }
+        },
+        "sample_to_hdf_commit": {
+          "initial_ms": 33.281894,
+          "steady": {
+            "count": 209,
+            "p50_ms": 23.73318,
+            "p95_ms": 27.571994999999998,
+            "max_ms": 35.377988,
+            "min_ms": 18.27495
+          }
+        }
+      },
+      "packets": [
+        {
+          "role": 0,
+          "count": 211,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 79.624356,
+            "steady": {
+              "count": 210,
+              "p50_ms": 75.37839349999999,
+              "p95_ms": 79.59077115,
+              "max_ms": 98.233236,
+              "min_ms": 60.185375
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 75.372999,
+              "p95_ms": 79.5408375,
+              "max_ms": 84.607582,
+              "min_ms": 60.85798
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 80.568346,
+            "steady": {
+              "count": 210,
+              "p50_ms": 76.3944725,
+              "p95_ms": 81.05572794999999,
+              "max_ms": 99.233872,
+              "min_ms": 61.273854
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 76.372885,
+              "p95_ms": 80.8233927,
+              "max_ms": 85.613032,
+              "min_ms": 61.771055
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8208.355221,
+            "steady": {
+              "count": 210,
+              "p50_ms": 86.77619100000001,
+              "p95_ms": 91.237837,
+              "max_ms": 109.219831,
+              "min_ms": 71.398145
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 86.746926,
+              "p95_ms": 90.9882554,
+              "max_ms": 95.650159,
+              "min_ms": 71.679084
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 211,
+            "p50_ms": 0.04409,
+            "p95_ms": 0.069273,
+            "max_ms": 0.118188,
+            "min_ms": 0.029071
+          }
+        },
+        {
+          "role": 1,
+          "count": 211,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 80.006029,
+            "steady": {
+              "count": 210,
+              "p50_ms": 75.7359215,
+              "p95_ms": 80.22097969999999,
+              "max_ms": 107.63937,
+              "min_ms": 61.352801
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 75.715333,
+              "p95_ms": 79.8731853,
+              "max_ms": 84.93437,
+              "min_ms": 61.352801
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 80.950019,
+            "steady": {
+              "count": 210,
+              "p50_ms": 76.811696,
+              "p95_ms": 81.59761725,
+              "max_ms": 108.640006,
+              "min_ms": 62.265876
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 76.78075,
+              "p95_ms": 81.26759609999999,
+              "max_ms": 85.93982,
+              "min_ms": 62.265876
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8208.736894,
+            "steady": {
+              "count": 210,
+              "p50_ms": 87.10360750000001,
+              "p95_ms": 91.86481479999999,
+              "max_ms": 118.625965,
+              "min_ms": 72.173905
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 87.076115,
+              "p95_ms": 91.3272103,
+              "max_ms": 95.976947,
+              "min_ms": 72.173905
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 211,
+            "p50_ms": 0.030832,
+            "p95_ms": 0.0485275,
+            "max_ms": 0.105813,
+            "min_ms": 0.020777
+          }
+        },
+        {
+          "role": 2,
+          "count": 211,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 80.333395,
+            "steady": {
+              "count": 210,
+              "p50_ms": 76.044493,
+              "p95_ms": 80.5519393,
+              "max_ms": 118.44209,
+              "min_ms": 61.76846
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 76.042342,
+              "p95_ms": 80.1379874,
+              "max_ms": 85.185357,
+              "min_ms": 61.76846
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 81.277385,
+            "steady": {
+              "count": 210,
+              "p50_ms": 77.17865549999999,
+              "p95_ms": 81.8781711,
+              "max_ms": 119.442726,
+              "min_ms": 62.681535
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 77.135802,
+              "p95_ms": 81.6202295,
+              "max_ms": 86.190807,
+              "min_ms": 62.681535
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8209.06426,
+            "steady": {
+              "count": 210,
+              "p50_ms": 87.4504105,
+              "p95_ms": 92.14248094999999,
+              "max_ms": 129.428685,
+              "min_ms": 72.589564
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 87.427227,
+              "p95_ms": 91.5998379,
+              "max_ms": 96.227934,
+              "min_ms": 72.589564
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 211,
+            "p50_ms": 0.033247,
+            "p95_ms": 0.0619795,
+            "max_ms": 0.084245,
+            "min_ms": 0.008368
+          }
+        }
+      ],
+      "analysis_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-analysis08.json",
+      "analysis_sha256": "3c6fdab59fb41f2650003ba264edb9f5b85e1f852f772f263449e595f940f9e2",
+      "result_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh08-output/result.json",
+      "result_sha256": "98e9b41fc9c2078910ddb7cd2c7a71b3a537a82ac94872c0fb9bfaada36e6727",
+      "launch_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh08.launch.json",
+      "launch_sha256": "601ad3960b5cb363fc3b5c4f58eca550ba675151e565b274641ba73787f72bfb"
+    },
+    {
+      "name": "latency-mesh09",
+      "arguments": {
+        "output": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh09-output",
+        "frames": 180,
+        "warmup": 30,
+        "media_warmup": 20,
+        "media": "gpu",
+        "xr": true,
+        "view_mode": "original",
+        "motion": "benchmark",
+        "witness": false,
+        "witness_depth_scale": 1.0,
+        "pace_hz": 0.0,
+        "audit_host_events": true,
+        "mesh_freshness": true,
+        "source_queue_capacity": 1,
+        "physics_python": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/bin/python"
+      },
+      "controls": 210,
+      "sources": 211,
+      "complete_hz": 48.53810586740111,
+      "steady_hz": 50.26138121025622,
+      "run_passed": true,
+      "all_temporal_checks_passed": true,
+      "temporal_checks_count": 649,
+      "failed_checks": [],
+      "intervals": {
+        "state_receipt_to_sample": {
+          "initial_ms": 8212.422062,
+          "steady": {
+            "count": 210,
+            "p50_ms": 10.1040545,
+            "p95_ms": 11.40671355,
+            "max_ms": 12.884085,
+            "min_ms": 9.845276
+          }
+        },
+        "sample_to_enqueue": {
+          "initial_ms": 0.937195,
+          "steady": {
+            "count": 210,
+            "p50_ms": 0.9820614999999999,
+            "p95_ms": 1.9718147,
+            "max_ms": 2.021148,
+            "min_ms": 0.879054
+          }
+        },
+        "enqueue_to_ipc_receive": {
+          "initial_ms": 0.195693,
+          "steady": {
+            "count": 210,
+            "p50_ms": 0.8368804999999999,
+            "p95_ms": 7.288906549999997,
+            "max_ms": 14.400567,
+            "min_ms": 0.103875
+          }
+        },
+        "enqueue_to_triplet_submission": {
+          "initial_ms": 31.650384,
+          "steady": {
+            "count": 210,
+            "p50_ms": 22.1084355,
+            "p95_ms": 24.673368,
+            "max_ms": 35.544691,
+            "min_ms": 12.176613
+          }
+        },
+        "capture_observation_duration": {
+          "count": 210,
+          "p50_ms": 0.001673,
+          "p95_ms": 0.0026381999999999994,
+          "max_ms": 1.434306,
+          "min_ms": 0.001347
+        },
+        "decision_solve_duration": {
+          "count": 210,
+          "p50_ms": 1.397621,
+          "p95_ms": 3.08378655,
+          "max_ms": 13.13939,
+          "min_ms": 1.326814
+        },
+        "_apply_duration": {
+          "count": 210,
+          "p50_ms": 0.0215085,
+          "p95_ms": 0.04220305,
+          "max_ms": 0.047923,
+          "min_ms": 0.01954
+        },
+        "_advance_duration": {
+          "count": 210,
+          "p50_ms": 11.514704,
+          "p95_ms": 13.015632850000001,
+          "max_ms": 14.59166,
+          "min_ms": 11.164557
+        },
+        "capture_successor_duration": {
+          "count": 210,
+          "p50_ms": 2.7175905,
+          "p95_ms": 8.613094649999999,
+          "max_ms": 15.703687,
+          "min_ms": 1.275691
+        },
+        "commit_transition_duration": {
+          "count": 210,
+          "p50_ms": 0.7109415,
+          "p95_ms": 1.51474895,
+          "max_ms": 10.11819,
+          "min_ms": 0.656497
+        },
+        "sample_to_apply": {
+          "initial_ms": 14.613595,
+          "steady": {
+            "count": 209,
+            "p50_ms": 6.96335,
+            "p95_ms": 12.5921732,
+            "max_ms": 18.739484,
+            "min_ms": 4.135779
+          }
+        },
+        "state_receipt_to_apply": {
+          "initial_ms": 8227.035657,
+          "steady": {
+            "count": 209,
+            "p50_ms": 17.430897,
+            "p95_ms": 22.6181186,
+            "max_ms": 28.707848,
+            "min_ms": 14.065793
+          }
+        },
+        "sample_to_hdf_commit": {
+          "initial_ms": 34.338179,
+          "steady": {
+            "count": 209,
+            "p50_ms": 25.701499,
+            "p95_ms": 30.5586496,
+            "max_ms": 38.104135,
+            "min_ms": 18.481532
+          }
+        }
+      },
+      "packets": [
+        {
+          "role": 0,
+          "count": 211,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 84.193647,
+            "steady": {
+              "count": 210,
+              "p50_ms": 79.762363,
+              "p95_ms": 84.8365526,
+              "max_ms": 103.176819,
+              "min_ms": 60.574764
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 79.753593,
+              "p95_ms": 84.6950457,
+              "max_ms": 92.638868,
+              "min_ms": 60.574764
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 85.130842,
+            "steady": {
+              "count": 210,
+              "p50_ms": 81.026622,
+              "p95_ms": 86.4150521,
+              "max_ms": 104.214974,
+              "min_ms": 61.641891
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 81.021962,
+              "p95_ms": 86.3223182,
+              "max_ms": 93.567699,
+              "min_ms": 61.641891
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8297.552904,
+            "steady": {
+              "count": 210,
+              "p50_ms": 91.40270749999999,
+              "p95_ms": 96.5765761,
+              "max_ms": 114.118502,
+              "min_ms": 71.629382
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 91.374084,
+              "p95_ms": 96.3972223,
+              "max_ms": 103.492224,
+              "min_ms": 71.629382
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 211,
+            "p50_ms": 0.044465,
+            "p95_ms": 0.06891549999999999,
+            "max_ms": 0.098907,
+            "min_ms": 0.026455
+          }
+        },
+        {
+          "role": 1,
+          "count": 211,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 84.543064,
+            "steady": {
+              "count": 210,
+              "p50_ms": 80.1605715,
+              "p95_ms": 85.3561086,
+              "max_ms": 112.130049,
+              "min_ms": 61.012371
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 80.105756,
+              "p95_ms": 85.0393611,
+              "max_ms": 92.974307,
+              "min_ms": 61.012371
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 85.480259,
+            "steady": {
+              "count": 210,
+              "p50_ms": 81.364727,
+              "p95_ms": 86.81136095,
+              "max_ms": 113.168204,
+              "min_ms": 62.079498
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 81.34805,
+              "p95_ms": 86.63813909999999,
+              "max_ms": 93.903138,
+              "min_ms": 62.079498
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8297.902321,
+            "steady": {
+              "count": 210,
+              "p50_ms": 91.7893345,
+              "p95_ms": 96.96611585,
+              "max_ms": 123.071732,
+              "min_ms": 72.111918
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 91.771755,
+              "p95_ms": 96.7245564,
+              "max_ms": 103.827663,
+              "min_ms": 72.111918
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 211,
+            "p50_ms": 0.030719,
+            "p95_ms": 0.0497425,
+            "max_ms": 0.09672,
+            "min_ms": 0.020788
+          }
+        },
+        {
+          "role": 2,
+          "count": 211,
+          "flush_packets": 3,
+          "enqueued_ns_to_packet_ready": {
+            "initial_ms": 84.866899,
+            "steady": {
+              "count": 210,
+              "p50_ms": 80.51663049999999,
+              "p95_ms": 85.61059845,
+              "max_ms": 120.208521,
+              "min_ms": 61.288806
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 80.512115,
+              "p95_ms": 85.4086457,
+              "max_ms": 93.275764,
+              "min_ms": 61.288806
+            }
+          },
+          "observation_sample_monotonic_ns_to_packet_ready": {
+            "initial_ms": 85.804094,
+            "steady": {
+              "count": 210,
+              "p50_ms": 81.6691215,
+              "p95_ms": 87.07304385,
+              "max_ms": 121.246676,
+              "min_ms": 62.355933
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 81.649302,
+              "p95_ms": 86.897087,
+              "max_ms": 94.204595,
+              "min_ms": 62.355933
+            }
+          },
+          "state_received_monotonic_ns_to_packet_ready": {
+            "initial_ms": 8298.226156,
+            "steady": {
+              "count": 210,
+              "p50_ms": 92.052296,
+              "p95_ms": 97.22779875,
+              "max_ms": 131.150204,
+              "min_ms": 72.424225
+            },
+            "nonflush_steady": {
+              "count": 207,
+              "p50_ms": 92.026198,
+              "p95_ms": 97.0126722,
+              "max_ms": 104.12912,
+              "min_ms": 72.424225
+            }
+          },
+          "packet_ready_to_python_write": {
+            "count": 211,
+            "p50_ms": 0.033042,
+            "p95_ms": 0.0600175,
+            "max_ms": 0.1291,
+            "min_ms": 0.010408
+          }
+        }
+      ],
+      "analysis_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-analysis09.json",
+      "analysis_sha256": "ea3cdce6c848002e49d791589a41c0c20057d19dea46fac5b154bf6938ef3b51",
+      "result_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh09-output/result.json",
+      "result_sha256": "48ccfc986a80004ad826884b7eb8b4ce6d006cf80253d5eb48e4418fe6440cff",
+      "launch_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh09.launch.json",
+      "launch_sha256": "a3223c323fa7ae0fd0c6962c4e03efd88114e0a303ccf3470f3038491e239f1a"
+    }
+  ],
+  "timing_semantics": "Host CLOCK_MONOTONIC; host Encode/EndEncode return and Python writes, no fsync durability proof"
+}

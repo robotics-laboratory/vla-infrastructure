@@ -1,0 +1,125 @@
+{
+  "trusted_head": "fbdee2055efa325c352e13b321223cdf6c2f3e40",
+  "master": "beaedfd1116577fd4d8026232cfb96cba0b030fa",
+  "commands": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-c",
+        "import h5py"
+      ],
+      "returncode": 1,
+      "stderr": "ModuleNotFoundError: No module named h5py",
+      "purpose": "Read-only environment availability; production Python used next without dependency changes."
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "/tmp/live30-correctness-temporal-analyze.py"
+      ],
+      "returncode": 0,
+      "output": "temporal_audit/analysis.log",
+      "gpu_imports": false
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "/tmp/live30-correctness-temporal-analyze02.py"
+      ],
+      "returncode": 0,
+      "output": "temporal_audit/analysis02.log",
+      "gpu_imports": false
+    }
+  ],
+  "sources": [
+    {
+      "path": "tools/isaac_vr_recording.py",
+      "current_sha256": "726efc6129d495361c651233d536ae0f17124b8079bf205f44f04519249b69fd",
+      "master_exists": true,
+      "master_sha256": "94b5d25903615cb7133fbf9503d7bd24e5e1221e576ba71a26e00c0ce286072c"
+    },
+    {
+      "path": "tools/isaac_vr_injected_recording.py",
+      "current_sha256": "6568bf0e9cf088386312f00541389bd7301257a1216dd4bfa19d7dd5a6bb7bc5",
+      "master_exists": true,
+      "master_sha256": "690b44f30fa088c1ba62846090ba45b26a5161b79711354f0d08023374ef1d81"
+    },
+    {
+      "path": "tools/isaac_vr_decision.py",
+      "current_sha256": "0a9188211bfaadd9d5974788cc125d0eca04c77b9b358f4c42e680774141f025",
+      "master_exists": true,
+      "master_sha256": "0a9188211bfaadd9d5974788cc125d0eca04c77b9b358f4c42e680774141f025"
+    },
+    {
+      "path": "tools/d0_causal.py",
+      "current_sha256": "7ae27bda86ee15b2a4eee40fc7a2ab50ed3af4a5c0cb8af63241919294040642",
+      "master_exists": true,
+      "master_sha256": "7ae27bda86ee15b2a4eee40fc7a2ab50ed3af4a5c0cb8af63241919294040642"
+    },
+    {
+      "path": "tools/isaac_s2_runtime.py",
+      "current_sha256": "2fd601427dfbcd2143e7b6120ece47da83353e4b168e924d73c90325860878f6",
+      "master_exists": true,
+      "master_sha256": "a08edb63da0ccd03de794875950d8e2acb6ec50bbcafdd8d458261ce87280838"
+    },
+    {
+      "path": "tools/isaac_s2_performance.py",
+      "current_sha256": "06ea8e0fee9cfbf1159bf2102fd9c0743014772ba97dd5e9566fb9693ae03c3b",
+      "master_exists": true,
+      "master_sha256": "06ea8e0fee9cfbf1159bf2102fd9c0743014772ba97dd5e9566fb9693ae03c3b"
+    },
+    {
+      "path": "tools/isaac_vr_standalone.py",
+      "current_sha256": "a28b17cdeacd1d8d514fdce07bd15e2b033aeb703840405a6bc7a54c9fc020ed",
+      "master_exists": false,
+      "master_sha256": null
+    },
+    {
+      "path": "tools/isaac_vr_standalone_view.py",
+      "current_sha256": "0bebc8b47ecd612b469d9ee078dcf943872c5dcff3e50da0c1595f872164b7c4",
+      "master_exists": false,
+      "master_sha256": null
+    },
+    {
+      "path": "tools/isaac_vr_live_worker.py",
+      "current_sha256": "0cd13801568971a20caf8225ad324c86a6e3ce1705ab0af62a36c4286e364a97",
+      "master_exists": false,
+      "master_sha256": null
+    },
+    {
+      "path": "tools/isaac_vr_live_gpu.py",
+      "current_sha256": "8bbc05dfbc8a9059b40c247ee0f71a4d730ad8e4e326345fe0aed68809b97389",
+      "master_exists": false,
+      "master_sha256": null
+    },
+    {
+      "path": "tools/isaac_vr_live_nvenc.py",
+      "current_sha256": "f93592e7614cda7f2cc61147134119ca20f2efc56bfad72978d4b92e6118ff44",
+      "master_exists": false,
+      "master_sha256": null
+    },
+    {
+      "path": "tools/run_single_gpu_live_recording.py",
+      "current_sha256": "6b81401020624f2ef511f81befd0dfef73186f229872f39d7f4836ddee9d129d",
+      "master_exists": false,
+      "master_sha256": null
+    },
+    {
+      "path": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py",
+      "current_sha256": "4121031837f606306b675e1e1552c84c89c3eb91fce86182d7de5aaf727bb9f0",
+      "master_exists": false,
+      "master_sha256": null
+    },
+    {
+      "path": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_snapshot.py",
+      "current_sha256": "4d2c67661425b2dce8284e888de5bd775348dc29fc25c95c2a54323d8238d00f",
+      "master_exists": false,
+      "master_sha256": null
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.replicator.episode_recorder/isaacsim/replicator/episode_recorder/recordables/sim_time.py",
+      "current_sha256": "1624f22c24b1ebbda286752af378e75ec35a23cc9302d10153c7c43da76afbcf"
+    }
+  ],
+  "initial_analysis_correction": "analysis01 grouped task-success=false with causal invariants; analysis02 separates task success from execution/identity checks. Both preserved."
+}

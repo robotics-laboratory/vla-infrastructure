@@ -1,0 +1,602 @@
+{
+  "schema": "read_only_temporal_audit_v1",
+  "command": [
+    "/data/vla-infrastructure/isaac61_production/env/bin/python",
+    "/tmp/live30-correctness-temporal-analyze.py"
+  ],
+  "script_sha256": "cec15ad4d6d3eb8977f77d5298fd73f5c8e83d549a82bdc3bcaa68838d87a03e",
+  "python": "3.12.13",
+  "gpu_imports": false,
+  "clock_info": {
+    "time": {
+      "implementation": "clock_gettime(CLOCK_REALTIME)",
+      "monotonic": false,
+      "adjustable": true,
+      "resolution": 1e-09
+    },
+    "perf_counter": {
+      "implementation": "clock_gettime(CLOCK_MONOTONIC)",
+      "monotonic": true,
+      "adjustable": false,
+      "resolution": 1e-09
+    },
+    "monotonic": {
+      "implementation": "clock_gettime(CLOCK_MONOTONIC)",
+      "monotonic": true,
+      "adjustable": false,
+      "resolution": 1e-09
+    }
+  },
+  "runs": [
+    {
+      "run": "reach-demo08",
+      "checks": {
+        "count_960": true,
+        "sequence_0_959": true,
+        "successor_sequence_plus1": true,
+        "physics_plus4": true,
+        "meta_physics_matches_observation": true,
+        "meta_sim_eq_physics_div120": true,
+        "successor_state_promoted_exact": true,
+        "worker_source_seq_exact": true,
+        "worker_physics_matches": true,
+        "worker_sim_matches": true,
+        "source_wall_exact_hdf_conversion": true,
+        "all_committed": true,
+        "all_success": false,
+        "same_epoch": true,
+        "all_injected_deviceio_epochs_match_tick": true,
+        "all_injected_returned_submitted_match": true
+      },
+      "d0_host_event_timestamp_fields": [],
+      "source_wall_clock": "Unix time.time cached at worker reply; initial SourceClock constructor before startup",
+      "time_domains_must_not_subtract": true,
+      "source_sim_range": [
+        1.0,
+        33.0
+      ],
+      "physics_range": [
+        120,
+        3960
+      ],
+      "wall_source_initial_gap_ms": 8268.232345581055,
+      "wall_source_interval_excluding_initial_ms": {
+        "n": 958,
+        "min": 15.700340270996094,
+        "mean": 17.555972479579346,
+        "p50": 16.75236225128174,
+        "p95": 21.56068086624145,
+        "p99": 24.326786994934068,
+        "max": 72.3726749420166
+      },
+      "enqueued_to_worker_triplet_submitted_ms": {
+        "n": 961,
+        "min": 10.948821,
+        "mean": 13.381854703433921,
+        "p50": 12.856858,
+        "p95": 15.183029,
+        "p99": 30.6994436,
+        "max": 51.381162
+      },
+      "worker_total_ms": {
+        "n": 961,
+        "min": 10.759128,
+        "mean": 12.856928334027057,
+        "p50": 12.605265,
+        "p95": 14.417432,
+        "p99": 16.71244319999999,
+        "max": 51.135175
+      },
+      "pre_worker_wait_ms": {
+        "n": 961,
+        "min": 0.16786800000000035,
+        "mean": 0.5249263694068678,
+        "p50": 0.21063600000000093,
+        "p95": 0.3290089999999992,
+        "p99": 12.898279599999976,
+        "max": 34.532937
+      },
+      "relative_clock_offset_span_excluding_initial_ms": 56.167685,
+      "source0_enqueue_offset_deviation_from_later_median_ms": 8239.506432,
+      "previous_observation_enqueue_to_next_decision_loop_begin_approx_ms": {
+        "n": 959,
+        "min": 1.43281,
+        "mean": 1.9757315933263815,
+        "p50": 1.601652,
+        "p95": 3.1026104,
+        "p99": 8.396285559999995,
+        "max": 13.987707
+      },
+      "stage_ms": {
+        "apply_publish_ms": {
+          "n": 961,
+          "min": 2.347382,
+          "mean": 2.89730663371488,
+          "p50": 2.595626,
+          "p95": 3.844519,
+          "p99": 3.9082435999999996,
+          "max": 4.124362
+        },
+        "render_ms": {
+          "n": 961,
+          "min": 6.281368,
+          "mean": 7.813447292403746,
+          "p50": 7.609079,
+          "p95": 9.017252,
+          "p99": 10.337357599999999,
+          "max": 37.532483
+        },
+        "output_consume_ms": {
+          "n": 961,
+          "min": 0.836776,
+          "mean": 1.323948107180021,
+          "p50": 1.16083,
+          "p95": 1.68971,
+          "p99": 1.8191773999999998,
+          "max": 40.709496
+        }
+      },
+      "native_and_view_ms": {
+        "physics_ipc_ns": {
+          "n": 960,
+          "min": 1.753909,
+          "mean": 2.2049195645833333,
+          "p50": 2.1182489999999996,
+          "p95": 2.6820138,
+          "p99": 2.95540426,
+          "max": 11.055675
+        },
+        "passive_view_ns": {
+          "n": 960,
+          "min": 9.234654,
+          "mean": 9.613498416666665,
+          "p50": 9.4213035,
+          "p95": 10.446885,
+          "p99": 10.959928649999998,
+          "max": 65.159628
+        },
+        "physics4": {
+          "n": 960,
+          "min": 1.064359,
+          "mean": 1.3074594208333334,
+          "p50": 1.2281135,
+          "p95": 1.6482896999999996,
+          "p99": 1.87503962,
+          "max": 9.870782
+        },
+        "capture": {
+          "n": 960,
+          "min": 0.193726,
+          "mean": 0.3122557958333333,
+          "p50": 0.273216,
+          "p95": 0.44168565,
+          "p99": 0.5482928699999995,
+          "max": 0.843931
+        }
+      },
+      "camera_end_minus_source_time_maxabs_s": 3.333369136271358e-10,
+      "camera_exposure_duration_maxabs_s": 0.0,
+      "sensor_clock_interval_s": {
+        "n": 961,
+        "min": 0.03333333333333144,
+        "mean": 0.03333333333333333,
+        "p50": 0.033333333333333215,
+        "p95": 0.03333333333333499,
+        "p99": 0.03333333333333499,
+        "max": 0.033333333333338544
+      },
+      "packets": [
+        {
+          "role": 0,
+          "counts": 961,
+          "ordinal_exact": true,
+          "source_tag_exact": true,
+          "flush_packets": 3,
+          "pending_after_encode": {
+            "n": 961,
+            "min": 1.0,
+            "mean": 2.9968782518210197,
+            "p50": 3.0,
+            "p95": 3.0,
+            "p99": 3.0,
+            "max": 3.0
+          },
+          "packet_return_seen_by_triplet_complete_upper_bound_ms": {
+            "n": 958,
+            "min": 59.207261,
+            "mean": 66.04680377453028,
+            "p50": 64.75196600000001,
+            "p95": 72.60705855,
+            "p99": 93.41272471999989,
+            "max": 119.104958
+          },
+          "future_source_submissions_before_packet_visible": {
+            "n": 958,
+            "min": 3.0,
+            "mean": 3.0,
+            "p50": 3.0,
+            "p95": 3.0,
+            "p99": 3.0,
+            "max": 3.0
+          },
+          "unresolved_until_final_drain": 3,
+          "has_wall_timestamp": false
+        },
+        {
+          "role": 1,
+          "counts": 961,
+          "ordinal_exact": true,
+          "source_tag_exact": true,
+          "flush_packets": 3,
+          "pending_after_encode": {
+            "n": 961,
+            "min": 1.0,
+            "mean": 2.9968782518210197,
+            "p50": 3.0,
+            "p95": 3.0,
+            "p99": 3.0,
+            "max": 3.0
+          },
+          "packet_return_seen_by_triplet_complete_upper_bound_ms": {
+            "n": 958,
+            "min": 59.207261,
+            "mean": 66.04680377453028,
+            "p50": 64.75196600000001,
+            "p95": 72.60705855,
+            "p99": 93.41272471999989,
+            "max": 119.104958
+          },
+          "future_source_submissions_before_packet_visible": {
+            "n": 958,
+            "min": 3.0,
+            "mean": 3.0,
+            "p50": 3.0,
+            "p95": 3.0,
+            "p99": 3.0,
+            "max": 3.0
+          },
+          "unresolved_until_final_drain": 3,
+          "has_wall_timestamp": false
+        },
+        {
+          "role": 2,
+          "counts": 961,
+          "ordinal_exact": true,
+          "source_tag_exact": true,
+          "flush_packets": 3,
+          "pending_after_encode": {
+            "n": 961,
+            "min": 1.0,
+            "mean": 2.9968782518210197,
+            "p50": 3.0,
+            "p95": 3.0,
+            "p99": 3.0,
+            "max": 3.0
+          },
+          "packet_return_seen_by_triplet_complete_upper_bound_ms": {
+            "n": 958,
+            "min": 59.207261,
+            "mean": 66.04680377453028,
+            "p50": 64.75196600000001,
+            "p95": 72.60705855,
+            "p99": 93.41272471999989,
+            "max": 119.104958
+          },
+          "future_source_submissions_before_packet_visible": {
+            "n": 958,
+            "min": 3.0,
+            "mean": 3.0,
+            "p50": 3.0,
+            "p95": 3.0,
+            "p99": 3.0,
+            "max": 3.0
+          },
+          "unresolved_until_final_drain": 3,
+          "has_wall_timestamp": false
+        }
+      ],
+      "ack_age_p95_ms": 21.954825,
+      "ack_semantics": "worker consumed snapshot and submitted3GPUframes; encoded completion verified at final drain",
+      "working_s": 16.876597319729626,
+      "physical_sim_rtf": 1.8961168174931995,
+      "logger_wall_rtf": 1.1362584451204454,
+      "input_pump_calls": 0,
+      "provenance": {
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo08/result.json": "68289e0fc8d5b9a4efa852413e35b615acfb8beeea3c219f8017b8e5319dde0c",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo08/mirror/worker-rows.jsonl": "f2f8e62d4a7afa5b1c560c62b7723fd6491c842a82b75674b16e8c47a3923934",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo08/episode/session.hdf5": "c3d9787bd233daf98bcd9ce8b45fef4adb7882da4129a4caa7fe1dbb675a06ef",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo08/performance.jsonl": "34715ce69f14d44847a40792f3af25c656c9b7a89ef9ae7f23a0edc356fc2b51",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo08/physics/timings.json": "261cf8de12233c521fdca4d23e1e37fd1d8c49093c5585bc5858db8dfed97395",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo08/mirror/media/role0/packets.jsonl": "8d5310958f512253d6485235b0e1cc08adb499de675cb12eed0a5ef85f7756b5",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo08/mirror/media/role1/packets.jsonl": "38971ecc4be30dc73bb9f236051dc7d1236e418c85b3df3a33e00bb0055edc58",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo08/mirror/media/role2/packets.jsonl": "3a425c4ffbcf0a636cde628bdabf7f84daf6faac2f01e7f9928c04380cf7aade"
+      }
+    },
+    {
+      "run": "reach-witness10",
+      "checks": {
+        "count_960": true,
+        "sequence_0_959": true,
+        "successor_sequence_plus1": true,
+        "physics_plus4": true,
+        "meta_physics_matches_observation": true,
+        "meta_sim_eq_physics_div120": true,
+        "successor_state_promoted_exact": true,
+        "worker_source_seq_exact": true,
+        "worker_physics_matches": true,
+        "worker_sim_matches": true,
+        "source_wall_exact_hdf_conversion": true,
+        "all_committed": true,
+        "all_success": false,
+        "same_epoch": true,
+        "all_injected_deviceio_epochs_match_tick": true,
+        "all_injected_returned_submitted_match": true
+      },
+      "d0_host_event_timestamp_fields": [],
+      "source_wall_clock": "Unix time.time cached at worker reply; initial SourceClock constructor before startup",
+      "time_domains_must_not_subtract": true,
+      "source_sim_range": [
+        1.0,
+        33.0
+      ],
+      "physics_range": [
+        120,
+        3960
+      ],
+      "wall_source_initial_gap_ms": 8485.383987426758,
+      "wall_source_interval_excluding_initial_ms": {
+        "n": 958,
+        "min": 15.76375961303711,
+        "mean": 17.43185644607703,
+        "p50": 16.72673225402832,
+        "p95": 21.374154090881348,
+        "p99": 23.91496658325195,
+        "max": 27.349472045898438
+      },
+      "enqueued_to_worker_triplet_submitted_ms": {
+        "n": 961,
+        "min": 11.316045,
+        "mean": 13.468338474505723,
+        "p50": 13.064692,
+        "p95": 15.665153,
+        "p99": 20.079348399999994,
+        "max": 44.309
+      },
+      "worker_total_ms": {
+        "n": 961,
+        "min": 11.089763,
+        "mean": 13.113925448491155,
+        "p50": 12.837521,
+        "p95": 15.340296,
+        "p99": 16.627583599999998,
+        "max": 44.115835
+      },
+      "pre_worker_wait_ms": {
+        "n": 961,
+        "min": 0.1734019999999994,
+        "mean": 0.35441302601456814,
+        "p50": 0.20725400000000072,
+        "p95": 0.32557100000000005,
+        "p99": 0.5744767999999973,
+        "max": 28.417264
+      },
+      "relative_clock_offset_span_excluding_initial_ms": 5.00886,
+      "source0_enqueue_offset_deviation_from_later_median_ms": 8457.620224,
+      "previous_observation_enqueue_to_next_decision_loop_begin_approx_ms": {
+        "n": 959,
+        "min": 1.456428,
+        "mean": 1.960558825860271,
+        "p50": 1.587433,
+        "p95": 3.0888379,
+        "p99": 8.370208659999989,
+        "max": 11.730633
+      },
+      "stage_ms": {
+        "apply_publish_ms": {
+          "n": 961,
+          "min": 2.38409,
+          "mean": 2.9802309604578565,
+          "p50": 2.647368,
+          "p95": 3.875327,
+          "p99": 3.9603137999999998,
+          "max": 4.131802
+        },
+        "render_ms": {
+          "n": 961,
+          "min": 6.062561,
+          "mean": 7.800650441207076,
+          "p50": 7.451374,
+          "p95": 9.723667,
+          "p99": 10.698541,
+          "max": 38.264554
+        },
+        "output_consume_ms": {
+          "n": 961,
+          "min": 0.8126,
+          "mean": 1.269401722164412,
+          "p50": 1.13984,
+          "p95": 1.703035,
+          "p99": 1.7967292,
+          "max": 18.461072
+        }
+      },
+      "native_and_view_ms": {
+        "physics_ipc_ns": {
+          "n": 960,
+          "min": 1.715391,
+          "mean": 2.167439783333333,
+          "p50": 2.105777,
+          "p95": 2.62227745,
+          "p99": 2.8464132899999997,
+          "max": 3.411471
+        },
+        "passive_view_ns": {
+          "n": 960,
+          "min": 9.257801,
+          "mean": 9.564347873958335,
+          "p50": 9.392064,
+          "p95": 10.4550112,
+          "p99": 10.5477056,
+          "max": 13.123406
+        },
+        "physics4": {
+          "n": 960,
+          "min": 1.044779,
+          "mean": 1.2729521031250002,
+          "p50": 1.216586,
+          "p95": 1.6249166499999999,
+          "p99": 1.758153669999999,
+          "max": 2.240543
+        },
+        "capture": {
+          "n": 960,
+          "min": 0.200015,
+          "mean": 0.3126869770833333,
+          "p50": 0.2747465,
+          "p95": 0.4384902,
+          "p99": 0.4855059399999994,
+          "max": 1.229891
+        }
+      },
+      "camera_end_minus_source_time_maxabs_s": 3.333369136271358e-10,
+      "camera_exposure_duration_maxabs_s": 0.0,
+      "sensor_clock_interval_s": {
+        "n": 961,
+        "min": 0.03333333333333144,
+        "mean": 0.03333333333333333,
+        "p50": 0.033333333333333215,
+        "p95": 0.03333333333333499,
+        "p99": 0.03333333333333499,
+        "max": 0.033333333333338544
+      },
+      "packets": [
+        {
+          "role": 0,
+          "counts": 961,
+          "ordinal_exact": true,
+          "source_tag_exact": true,
+          "flush_packets": 3,
+          "pending_after_encode": {
+            "n": 961,
+            "min": 1.0,
+            "mean": 2.9968782518210197,
+            "p50": 3.0,
+            "p95": 3.0,
+            "p99": 3.0,
+            "max": 3.0
+          },
+          "packet_return_seen_by_triplet_complete_upper_bound_ms": {
+            "n": 958,
+            "min": 59.584084,
+            "mean": 65.76213381941545,
+            "p50": 65.283598,
+            "p95": 72.47155345,
+            "p99": 76.39874969999998,
+            "max": 94.046625
+          },
+          "future_source_submissions_before_packet_visible": {
+            "n": 958,
+            "min": 3.0,
+            "mean": 3.0,
+            "p50": 3.0,
+            "p95": 3.0,
+            "p99": 3.0,
+            "max": 3.0
+          },
+          "unresolved_until_final_drain": 3,
+          "has_wall_timestamp": false
+        },
+        {
+          "role": 1,
+          "counts": 961,
+          "ordinal_exact": true,
+          "source_tag_exact": true,
+          "flush_packets": 3,
+          "pending_after_encode": {
+            "n": 961,
+            "min": 1.0,
+            "mean": 2.9968782518210197,
+            "p50": 3.0,
+            "p95": 3.0,
+            "p99": 3.0,
+            "max": 3.0
+          },
+          "packet_return_seen_by_triplet_complete_upper_bound_ms": {
+            "n": 958,
+            "min": 59.584084,
+            "mean": 65.76213381941545,
+            "p50": 65.283598,
+            "p95": 72.47155345,
+            "p99": 76.39874969999998,
+            "max": 94.046625
+          },
+          "future_source_submissions_before_packet_visible": {
+            "n": 958,
+            "min": 3.0,
+            "mean": 3.0,
+            "p50": 3.0,
+            "p95": 3.0,
+            "p99": 3.0,
+            "max": 3.0
+          },
+          "unresolved_until_final_drain": 3,
+          "has_wall_timestamp": false
+        },
+        {
+          "role": 2,
+          "counts": 961,
+          "ordinal_exact": true,
+          "source_tag_exact": true,
+          "flush_packets": 3,
+          "pending_after_encode": {
+            "n": 961,
+            "min": 1.0,
+            "mean": 2.9968782518210197,
+            "p50": 3.0,
+            "p95": 3.0,
+            "p99": 3.0,
+            "max": 3.0
+          },
+          "packet_return_seen_by_triplet_complete_upper_bound_ms": {
+            "n": 958,
+            "min": 59.584084,
+            "mean": 65.76213381941545,
+            "p50": 65.283598,
+            "p95": 72.47155345,
+            "p99": 76.39874969999998,
+            "max": 94.046625
+          },
+          "future_source_submissions_before_packet_visible": {
+            "n": 958,
+            "min": 3.0,
+            "mean": 3.0,
+            "p50": 3.0,
+            "p95": 3.0,
+            "p99": 3.0,
+            "max": 3.0
+          },
+          "unresolved_until_final_drain": 3,
+          "has_wall_timestamp": false
+        }
+      ],
+      "ack_age_p95_ms": 21.349062,
+      "ack_semantics": "worker consumed snapshot and submitted3GPUframes; encoded completion verified at final drain",
+      "working_s": 16.759657309856266,
+      "physical_sim_rtf": 1.9093469161318095,
+      "logger_wall_rtf": 1.1455765178177553,
+      "input_pump_calls": 0,
+      "provenance": {
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-witness10/result.json": "9ecca40fc820b9d53d22cd95234adc31d80e021887e3d68a22036bb7bcb9939e",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-witness10/mirror/worker-rows.jsonl": "8a4ccb5d4a6c92bfca18ffb7683c13569138152c655edf7662fe9c39d1d24a76",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-witness10/episode/session.hdf5": "2e56ba490c833e82ef02cd2f8ef3c559ef99fdd36ebc50cd8cf2c33895ef0545",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-witness10/performance.jsonl": "72a8b9fa05c5a4b2e0ee3da82a3a2f8fb122429ab3f6af9b92ace1c306cfd944",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-witness10/physics/timings.json": "7cce0f48f61d63e173fe9a200a2f8a7151a5d1f819abeaac587cb8c20fd333d1",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-witness10/mirror/media/role0/packets.jsonl": "b76bdbf1c22b70ac83726b86299870a98c279265aa6b2d433731804f6db59f28",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-witness10/mirror/media/role1/packets.jsonl": "a6f35cc5ed2b4057b82ff5fd24d4d26542482baaeef73d5ad12a14839b34366c",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-witness10/mirror/media/role2/packets.jsonl": "f1cc009cd9ebd55db63abd057acdf4ae120e5e8294281488cdcb8492d2911fa9"
+      }
+    }
+  ],
+  "head": "fbdee2055efa325c352e13b321223cdf6c2f3e40",
+  "master": "beaedfd1116577fd4d8026232cfb96cba0b030fa"
+}

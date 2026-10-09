@@ -1,0 +1,171 @@
+diff --git a/tools/isaac_vr_injected_recording.py b/tools/isaac_vr_injected_recording.py
+index 7f79c7a..8d88c4e 100644
+--- a/tools/isaac_vr_injected_recording.py
++++ b/tools/isaac_vr_injected_recording.py
+@@ -112,6 +112,7 @@ def record_injected_transitions(
+     target_index_offset: int = 0,
+     first_commit_callback: Callable[[], None] | None = None,
+     pre_step_callback: Callable[[], None] | None = None,
++    decision_solver: Callable[..., SolvedControlDecision] | None = None,
+     stop_requested: Callable[[], bool] | None = None,
+ ) -> dict[str, Any]:
+     """Write distinct committed transitions through the production causal/writer APIs."""
+@@ -195,14 +196,18 @@ def record_injected_transitions(
+             left_clutch=rgb_e2e_assay and index == 2,
+             left_transition=left_transition if clutch_pattern else None,
+         )
+-        decision = SolvedControlDecision.from_native(
+-            tick,
+-            token.observation,
+-            xr,
+-            command,
+-            native,
+-            native.copy(),
+-        )
++        if decision_solver is None:
++            decision = SolvedControlDecision.from_native(
++                tick, token.observation, xr, command, native, native.copy(),
++            )
++        else:
++            decision = decision_solver(command, token.observation, xr, tick)
++            native = np.asarray(decision.native_clipped, dtype=np.float64)
++            target = NativeBimanualTargets(
++                native[:7].copy(), native[7:].copy(),
++                not np.array_equal(native, np.asarray(decision.native_preclip)),
++            )
++            command = decision.cartesian_intent
+         prepared = decision.prepare(validator)
+         if stop_requested is not None and stop_requested():
+             validator.abort()
+diff --git a/tools/isaac_vr_recording.py b/tools/isaac_vr_recording.py
+index f28bc36..7866fdf 100644
+--- a/tools/isaac_vr_recording.py
++++ b/tools/isaac_vr_recording.py
+@@ -16,7 +16,7 @@ from collections import Counter
+ from collections import deque
+ from collections.abc import Callable, Iterable, Mapping, Sequence
+ from concurrent.futures import Future, ThreadPoolExecutor
+-from contextlib import contextmanager
++from contextlib import contextmanager, nullcontext
+ import copy
+ from dataclasses import dataclass
+ import hashlib
+@@ -95,7 +95,10 @@ class ExplicitFrameSampler:
+         unknown_deferred = set(deferred_groups).difference(groups)
+         if unknown_deferred:
+             raise ValueError(f"unknown deferred recordable groups: {sorted(unknown_deferred)}")
+-        if pose_backend != POSE_BACKEND:
++        if pose_backend == "ovphysx_cpu":
++            if backend_context_factory is None or pose_batch_factory is None:
++                raise ValueError("standalone recording requires explicit snapshot/context factories")
++        elif pose_backend != POSE_BACKEND:
+             raise ValueError(
+                 f"recording pose backend must be {POSE_BACKEND!r}, got {pose_backend!r}"
+             )
+@@ -236,6 +239,7 @@ def open_explicit_session(
+     pose_batch_factory: Callable[[Sequence[str]], Any] | None = None,
+     recordables_already_open: bool = False,
+     sampler: ExplicitFrameSampler | None = None,
++    pose_backend: str = POSE_BACKEND,
+ ) -> tuple[Any, ExplicitFrameSampler]:
+     """Open NVIDIA V2 storage and invoke the public Recordable lifecycle."""
+     from isaacsim.replicator.episode_recorder import SessionStorage, build_manifest
+@@ -244,6 +248,8 @@ def open_explicit_session(
+     # Upstream uses this value for both the in-memory buffer and HDF chunks.
+     # Keep the 64-row flush policy; 128-row chunks avoid the 1024-row
+     # allocation cost without moving the whole write into append_frame().
++    if sampler is not None:
++        pose_backend = sampler.pose_backend
+     storage = SessionStorage(output_path, buffer_frames=RECORDING_BUFFER_FRAMES)
+     storage.open()
+     opened: list[Any] = []
+@@ -255,8 +261,8 @@ def open_explicit_session(
+         for key, value in session_metadata.items():
+             storage.set_root_attr(key, value)
+         storage.set_root_attr("transition_schema", TRANSITION_SCHEMA)
+-        storage.set_root_attr("pose_backend_requested", POSE_BACKEND)
+-        storage.set_root_attr("pose_backend_effective", POSE_BACKEND)
++        storage.set_root_attr("pose_backend_requested", pose_backend)
++        storage.set_root_attr("pose_backend_effective", pose_backend)
+         storage.set_root_attr("dataset_admissible", False)
+         if stage_snapshot is not None:
+             storage.set_root_attr("stage_snapshot", stage_snapshot)
+@@ -266,7 +272,7 @@ def open_explicit_session(
+                 sampling={
+                     "mode": "explicit_committed_control_boundary",
+                     "decimation": 1,
+-                    "pose_backend": POSE_BACKEND,
++                    "pose_backend": pose_backend,
+                 },
+                 session_metadata=dict(session_metadata),
+             )
+@@ -282,6 +288,7 @@ def open_explicit_session(
+             deferred_groups=deferred_groups,
+             backend_context_factory=backend_context_factory,
+             pose_batch_factory=pose_batch_factory,
++            pose_backend=pose_backend,
+         )
+     except Exception as exc:
+         cleanup_errors: list[Exception] = []
+@@ -1115,6 +1122,7 @@ def start_live_recording(
+     min_free_bytes: int = 1 << 30,
+     flush_every_frames: int = 64,
+     timing_observer: Callable[[str, int], None] | None = None,
++    standalone_state: Any | None = None,
+ ) -> LiveRecording:
+     """Configure upstream state tracks for committed snapshot-backed transitions."""
+     from isaacsim.replicator.episode_recorder import (
+@@ -1127,6 +1135,8 @@ def start_live_recording(
+     import omni.usd
+     from tools.isaac_vr_decision import capture_state_snapshot
+ 
++    if standalone_state is None:
++        standalone_state = getattr(env, "standalone_state", None)
+     if env.camera.live_rgb_enabled:
+         raise RuntimeError("State-only RECORD requires live RGB to be disabled before setup")
+     _validate_session_metadata(session_metadata)
+@@ -1178,8 +1188,11 @@ def start_live_recording(
+             for role, path in camera_roles.items()
+         },
+     )
++    clock = SimTimeRecordable()
++    if standalone_state is not None:
++        clock.sample = standalone_state.sample_time
+     recordables: list[Any] = [
+-        SimTimeRecordable(),
++        clock,
+         ArticulationRecordable(group="state/left_robot", prim_path="/World/LeftPiper"),
+         ArticulationRecordable(group="state/right_robot", prim_path="/World/RightPiper"),
+         *(
+@@ -1195,6 +1208,10 @@ def start_live_recording(
+             for role in cameras
+         ),
+     ]
++    if standalone_state is not None:
++        recordables.append(RigidBodyRecordable(
++            group="state/validation_probe", prim_path=env.physics_probe.cfg.prim_path,
++        ))
+     d0 = D0()
+     recordables.append(d0)
+     path = output_dir / "session.hdf5"
+@@ -1212,6 +1229,9 @@ def start_live_recording(
+         session_metadata=storage_session_metadata,
+         stage_snapshot=snapshot.name,
+         deferred_groups=(d0.group,),
++        pose_backend="ovphysx_cpu" if standalone_state is not None else POSE_BACKEND,
++        backend_context_factory=nullcontext if standalone_state is not None else None,
++        pose_batch_factory=standalone_state.pose_batch if standalone_state is not None else None,
+     )
+     start_explicit_episode(
+         storage,
+@@ -1239,8 +1259,8 @@ def start_live_recording(
+             ["git", "-C", str(repository), "rev-parse", "HEAD"], text=True
+         ).strip(),
+         "hdf5": path.name,
+-        "pose_backend_effective": POSE_BACKEND,
+-        "pose_backend_requested": POSE_BACKEND,
++        "pose_backend_effective": sampler.pose_backend,
++        "pose_backend_requested": sampler.pose_backend,
+         "recordables": [recordable.to_manifest() for recordable in recordables],
+         "session_metadata": storage_session_metadata,
+         "stage_snapshot": snapshot.name,

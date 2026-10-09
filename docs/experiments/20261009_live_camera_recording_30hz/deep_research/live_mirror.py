@@ -41,18 +41,23 @@ class LiveMirror:
         *,
         gpu=0,
         witness=True,
+        mesh_freshness=False,
         capacity=8,
+        source_queue_capacity=8,
         startup_timeout=180,
         helpers=HERE,
         worker=HERE / "mirror_worker.py",
         worker_env=None,
         guard_path=None,
         extra_seed=None,
+        source_clock=None,
     ):
         if capacity != 8 or record._next_capture_sequence != 0:
             raise ValueError(
                 "Requires capacity8 and installation before first recorder observation"
             )
+        if type(source_queue_capacity) is not int or source_queue_capacity not in (1, 8):
+            raise ValueError("Source queue capacity must be 1 or 8; NVENC owner capacity stays 8")
         guard = json.loads(
             Path(guard_path or Path(__file__).with_name("live_mirror_preimages.json")).read_text()
         )
@@ -60,17 +65,25 @@ class LiveMirror:
             if sha(path) != digest:
                 raise RuntimeError(f"Live mirror source changed: {path}")
         self.record, self.output = record, Path(output)
+        self.source_clock = source_clock
         self.output.mkdir(parents=True, exist_ok=False)
         self.original, self.was_owned = (
             record._capture_new_observation,
             "_capture_new_observation" in vars(record),
         )
         self.previous = vars(record).get("_capture_new_observation")
-        self.capacity, self.pending, self.sent, self.acked = capacity, {}, 0, 0
+        self.capacity, self.pending, self.sent, self.acked = source_queue_capacity, {}, 0, 0
+        self.encoder_capacity = capacity
         self.max_pending, self.blocked_ms, self.ages_ms = 0, 0.0, []
         self.closed, self.reset_epoch, self.last_physics = False, None, None
         self.proc = self.conn = self.log = None
         self.pose = load(helpers / "ovrtx_live_probe.py", "live30_pose").pose_matrices
+        self.temporal_mesh = None
+        if mesh_freshness:
+            helper_path = (
+                Path(__file__).resolve().parent.parent / "temporal_physics/mesh_freshness.py"
+            )
+            self.temporal_mesh = load(helper_path, "live30_temporal_mesh")
         witness_module = load(helpers / "optical_witness.py", "live30_witness")
         metadata = self._seed(helpers, gpu, witness, witness_module)
         if extra_seed:
@@ -164,6 +177,8 @@ class LiveMirror:
         render_stage = Usd.Stage.Open(str(overlay))
         if not render_stage:
             raise ValueError("Overlay USD parse failed")
+        if self.temporal_mesh is not None:
+            self.temporal_mesh.inject(render_stage, cameras)
         # Derived rendering layer only: test native instance expansion without
         # modifying the recorded source or assets. CPU physics keeps its overlay.
         expanded_instances = []
@@ -181,7 +196,12 @@ class LiveMirror:
             if not prim.IsA(UsdGeom.Mesh):
                 continue
             path = str(prim.GetPath())
-            owners = [(i, p) for i, p in enumerate(paths) if path.startswith(p + "/")]
+            temporal = self.temporal_mesh.classify(path, cameras) if self.temporal_mesh else {}
+            if temporal:
+                camera = cameras[temporal["temporal_role"]]
+                owners = [(paths.index(camera), camera)]
+            else:
+                owners = [(i, p) for i, p in enumerate(paths) if path.startswith(p + "/")]
             if not owners:
                 continue
             index, parent = max(owners, key=lambda item: len(item[1]))
@@ -200,6 +220,7 @@ class LiveMirror:
                     mesh_to_body=(mesh_world @ np.linalg.inv(body_world)).tolist(),
                 )
             )
+            render_descendants[-1].update(temporal)
         self.entries, self.paths, self.cameras, self.intrinsics = entries, paths, cameras, None
         metadata = dict(
             output=str(self.output.resolve()),
@@ -216,7 +237,8 @@ class LiveMirror:
             excluded_dynamic_bodies=missing,
             witness=witness,
             gpu=gpu,
-            capacity=self.capacity,
+            capacity=self.encoder_capacity,
+            source_queue_capacity=self.capacity,
             expanded_render_instances=expanded_instances,
             render_descendants=render_descendants,
             dataset_admissible=False,
@@ -225,6 +247,10 @@ class LiveMirror:
             str(helpers / f): sha(helpers / f)
             for f in ["ovrtx_snapshot.py", "ovrtx_gpu_consumer.py", "optical_witness.py"]
         }
+        if self.temporal_mesh is not None:
+            helper_path = str(Path(self.temporal_mesh.__file__).resolve())
+            metadata["mesh_freshness"] = dict(helper_path=helper_path, diagnostic_only=True)
+            metadata["helper_hashes"][helper_path] = sha(helper_path)
         (self.output / "seed.json").write_text(json.dumps(metadata, indent=2) + "\n")
         return metadata
 
@@ -245,9 +271,11 @@ class LiveMirror:
         self.acked += 1
 
     def capture(self):
+        observation_capture_begin_monotonic_ns = time.monotonic_ns()
         token, frames = (
             self.original()
         )  # exact existing immutable-by-copy sampler frame; NO second state read
+        observation_capture_end_monotonic_ns = time.monotonic_ns()
         if token.capture_sequence != self.sent or (
             self.metadata["witness"] and token.capture_sequence >= 4096
         ):
@@ -292,7 +320,19 @@ class LiveMirror:
             matrix_bytes=np.concatenate(matrices).astype("<f8").tobytes(),
             intrinsics=intrinsics.tolist(),
             enqueue_ns=time.perf_counter_ns(),
+            observation_capture_begin_monotonic_ns=observation_capture_begin_monotonic_ns,
+            observation_capture_end_monotonic_ns=observation_capture_end_monotonic_ns,
         )
+        if self.source_clock is not None:
+            clock = self.source_clock
+            if (clock.epoch, clock.physics_step) != (token.reset_epoch, token.physics_step):
+                raise RuntimeError("Source timing clock differs from captured state")
+            payload.update(
+                state_received_unix_s=clock.wall_time,
+                state_received_monotonic_ns=clock.state_received_monotonic_ns,
+                state_received_origin=clock.state_received_origin,
+                observation_sample_monotonic_ns=clock.observation_sample_monotonic_ns,
+            )
         started = time.perf_counter_ns()
         while self.conn.poll():
             self._ack(self._receive())
@@ -300,6 +340,7 @@ class LiveMirror:
             self._ack(self._receive())
         self.blocked_ms += (time.perf_counter_ns() - started) / 1e6
         self.pending[token.capture_sequence] = payload
+        payload["ipc_send_begin_monotonic_ns"] = time.monotonic_ns()
         self.conn.send(payload)
         self.sent += 1
         self.last_physics = token.physics_step
@@ -331,6 +372,8 @@ class LiveMirror:
                 captures=self.sent,
                 acked=self.acked,
                 max_pending=self.max_pending,
+                source_queue_capacity=self.capacity,
+                encoder_owner_capacity=self.encoder_capacity,
                 backpressure_ms=self.blocked_ms,
                 drain_ms=(time.perf_counter_ns() - started) / 1e6,
                 ack_age_p95_ms=float(np.percentile(self.ages_ms, 95)) if self.ages_ms else None,

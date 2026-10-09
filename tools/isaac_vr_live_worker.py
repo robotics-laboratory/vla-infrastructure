@@ -6,6 +6,7 @@ and verification; source IDs and simulation times arrive from the live recorder.
 
 import argparse
 import hashlib
+import importlib.util
 import json
 from multiprocessing.connection import Connection
 import os
@@ -186,6 +187,14 @@ def run(conn, seed):
         import ovrtx
         import ovstage
 
+        temporal_mesh = None
+        if seed.get("mesh_freshness"):
+            helper = seed["mesh_freshness"]["helper_path"]
+            if helper not in seed["helper_hashes"]:
+                raise ValueError("Mesh freshness helper requires pinned source hash")
+            spec = importlib.util.spec_from_file_location("live30_temporal_mesh", helper)
+            temporal_mesh = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(temporal_mesh)
         descendants = seed.get("render_descendants", [])
         paths = (
             seed["paths"]
@@ -201,11 +210,13 @@ def run(conn, seed):
 
         def capture(payload, source_id, sim_time, *, optical_source_id=None):
             matrices, intrinsics = validate_payload(payload, len(seed["paths"]))
+            optical_id = source_id if optical_source_id is None else optical_source_id
             if descendants:
                 local = np.array([item["mesh_to_body"] for item in descendants], dtype="<f8")
+                if temporal_mesh is not None:
+                    local = temporal_mesh.update_locals(descendants, local, intrinsics, optical_id)
                 parents = np.array([item["parent_index"] for item in descendants], dtype=np.int64)
                 matrices = np.concatenate([matrices, local @ matrices[parents]])
-            optical_id = source_id if optical_source_id is None else optical_source_id
             if seed["witness"]:
                 matrices = np.concatenate(
                     [
@@ -313,6 +324,7 @@ def run(conn, seed):
         source_intrinsics = np.asarray(initial["intrinsics"], dtype=float)
         while True:
             payload = conn.recv()
+            ipc_received_monotonic_ns = time.monotonic_ns()
             if payload.get("kind") == "stop":
                 break
             seq = payload["source_id"]
@@ -331,6 +343,22 @@ def run(conn, seed):
                 initial_enqueue_ns = payload["enqueue_ns"]
             begin = time.perf_counter_ns()
             row = capture(payload, seq, payload["sim_time_s"])
+            worker_render_submitted_monotonic_ns = time.monotonic_ns()
+            row.update(
+                {
+                    key: payload[key]
+                    for key in (
+                        "state_received_unix_s",
+                        "state_received_monotonic_ns",
+                        "state_received_origin",
+                        "observation_sample_monotonic_ns",
+                        "observation_capture_begin_monotonic_ns",
+                        "observation_capture_end_monotonic_ns",
+                        "ipc_send_begin_monotonic_ns",
+                    )
+                    if key in payload
+                }
+            )
             row.update(
                 {
                     key: payload[key]
@@ -347,6 +375,8 @@ def run(conn, seed):
                 enqueued_ns=payload["enqueue_ns"],
                 worker_complete_ns=time.perf_counter_ns(),
                 worker_total_ms=(time.perf_counter_ns() - begin) / 1e6,
+                ipc_received_monotonic_ns=ipc_received_monotonic_ns,
+                worker_render_submitted_monotonic_ns=worker_render_submitted_monotonic_ns,
             )
             rows.append(row)
             expected.append(seq)

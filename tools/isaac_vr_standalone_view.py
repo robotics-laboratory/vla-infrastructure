@@ -24,6 +24,9 @@ class SourceClock:
         self.sim, self.dt = sim, float(dt)
         self.epoch, self.physics_step = int(epoch), int(physics_step)
         self.wall_time = time.time()
+        self.state_received_monotonic_ns = time.monotonic_ns()
+        self.state_received_origin = "initial_native_freeze"
+        self.observation_sample_monotonic_ns = None
         self._owner = threading.get_ident()
         self._had_override = "get_physics_step_count" in vars(sim)
         self._saved_override = vars(sim).get("get_physics_step_count")
@@ -38,7 +41,7 @@ class SourceClock:
         if int(self._native_getter()) != self._native_start:
             raise RuntimeError("native SimContext stepped during external physics")
 
-    def commit(self, *, epoch, physics_step, captured_wall_time):
+    def commit(self, *, epoch, physics_step, captured_wall_time, received_monotonic_ns=None):
         self.assert_native_frozen()
         if int(epoch) != self.epoch or int(physics_step) != self.physics_step + 4:
             raise RuntimeError("external completed step/epoch discontinuity")
@@ -46,6 +49,10 @@ class SourceClock:
             raise ValueError("invalid capture wall time")
         self.physics_step = int(physics_step)
         self.wall_time = float(captured_wall_time)
+        self.state_received_monotonic_ns = (
+            time.monotonic_ns() if received_monotonic_ns is None else int(received_monotonic_ns)
+        )
+        self.state_received_origin = "physics_reply_received"
 
     def reset(self, *, epoch, physics_step, captured_wall_time):
         self.assert_native_frozen()
@@ -55,14 +62,19 @@ class SourceClock:
             raise ValueError("invalid reset capture wall time")
         self.epoch, self.physics_step = int(epoch), int(physics_step)
         self.wall_time = float(captured_wall_time)
+        self.state_received_monotonic_ns = time.monotonic_ns()
+        self.state_received_origin = "explicit_reset"
 
     def sample(self):
         """Use as the external SimTimeRecordable.sample implementation."""
         self.assert_native_frozen()
+        self.observation_sample_monotonic_ns = time.monotonic_ns()
         return dict(
             sim_time=self.physics_step * self.dt,
             physics_step=self.physics_step,
-            wall_time=self.wall_time,
+            # Match upstream SimTimeRecordable: wall_time is recorder sampling,
+            # not the cached physical state receipt (kept separately above).
+            wall_time=time.time(),
         )
 
     def close(self):

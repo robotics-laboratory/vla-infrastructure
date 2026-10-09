@@ -1,0 +1,19 @@
+{
+  "schema": "recording_correctness_retention_receipt_v1",
+  "root": "/data/ebulochkin/vla-runtime/live30-correctness-20261009",
+  "inventory_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/proof-inventory01.json",
+  "inventory_sha256": "e13b54bdf85a8264e0780625ee1d20789078e9adcfeea05f0906aa9068cde0c2",
+  "file_count": 1071,
+  "total_bytes": 1296259138,
+  "copy_receipt_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/cpu-retention01.json",
+  "copy_receipt_sha256": "3f9806d486d851aa3c2bf30b565107cd02a000298b91986e31a5a99a7a0b3d41",
+  "all_cpu_copy_hashes_verified": true,
+  "excluded_disposable_paths": [
+    "pair01-output/state/**",
+    "**/__pycache__/**"
+  ],
+  "bulk_files_committed": false,
+  "gate_bindings": [],
+  "physical": false,
+  "dataset_admissible": false
+}

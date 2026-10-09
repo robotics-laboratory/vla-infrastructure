@@ -1,0 +1,659 @@
+{
+  "schema": "live30_camera_temporal_audit_v1",
+  "cases": [
+    {
+      "case": "mesh01",
+      "run": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output",
+      "strict_passed": false,
+      "receipt": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh01/verification.json",
+      "receipt_sha256": "11f4c7b7db002553a10306616086a2aca164f78a08ac16756dd74e3b00faab08",
+      "helper_sha256": "8b8a98acce08f8f9d8f0b7dfe32e729c9cd38a69fd25a7e1881a73afac2507b1",
+      "verifier_sha256": "fac6843a34897e3c1c1c89dad33fcd79dce77b2a04f72c8541a636bc75688f10",
+      "quest_connected": false,
+      "xr_enabled_at_admission": true,
+      "source_queue_capacity": null,
+      "view_mode": "original",
+      "pace_hz": 0.0,
+      "source_join": {
+        "schema": "live30_persisted_source_join_v1",
+        "dataset_admissible": false,
+        "input": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output",
+        "committed_observations": 210,
+        "rendered_observations": 211,
+        "terminal_observation_separately_rendered": true,
+        "source_identity_and_matrix_hash_equal": true,
+        "errors": [],
+        "full_optical_guard_passed": false,
+        "scope": "Joins persisted source observation to matrices actually submitted to renderer; no independent silhouette/contact/photometric parity claim",
+        "source_sha256": "3f3d67e067b8c712ac29551ec7da3623da2e89bf9f0bfa39c08823f0dcf7ade8",
+        "hdf_sha256": "b6efb1e7d2c13edb7b5acfa6da8482fc89eff03ddeb46eb595b7b4ca93bd591c",
+        "worker_rows_sha256": "100634917c5711854f84b0b8a004b991039b8a7a3ad6998b236c7912ddea3695"
+      },
+      "roles": [
+        {
+          "role": 0,
+          "frames": 211,
+          "strict_passed": false,
+          "failed_frames": 211,
+          "source_id_mismatches": 211,
+          "role_id_mismatches": 149,
+          "unconfident_frames": 211,
+          "minimum_bit_contrast": 0.0,
+          "minimum_current_roi": 0.0,
+          "maximum_centroid_error_px": 60.951271635705204,
+          "position_changes": 106,
+          "maximum_previous_roi": 1.0,
+          "video_sha256": "f7f38b77bb14532b4bebdc8e05449050ab81b15559406385c76bd66a7d561e25"
+        },
+        {
+          "role": 1,
+          "frames": 211,
+          "strict_passed": false,
+          "failed_frames": 211,
+          "source_id_mismatches": 211,
+          "role_id_mismatches": 148,
+          "unconfident_frames": 211,
+          "minimum_bit_contrast": 0.0,
+          "minimum_current_roi": 1.0,
+          "maximum_centroid_error_px": 57.26857970752171,
+          "position_changes": 106,
+          "maximum_previous_roi": 1.0,
+          "video_sha256": "4cecb945f40de11f07cafb2f7c8b6be041a2ed3fc2d6e0b4b5381e49ecd378a3"
+        },
+        {
+          "role": 2,
+          "frames": 211,
+          "strict_passed": false,
+          "failed_frames": 211,
+          "source_id_mismatches": 211,
+          "role_id_mismatches": 211,
+          "unconfident_frames": 211,
+          "minimum_bit_contrast": 0.0,
+          "minimum_current_roi": 0.2413483951945491,
+          "maximum_centroid_error_px": 57.04172068778219,
+          "position_changes": 106,
+          "maximum_previous_roi": 0.6300199572844087,
+          "video_sha256": "2c02fde8eae328c44fd7780b92b0c866da03ac858674d7b5ef27adf908e78db3"
+        }
+      ],
+      "capture_end_metadata_max_source_error_s": 3.33333360913457e-10,
+      "packet_return_host_timing": [
+        {
+          "role": 0,
+          "source_sample_to_packet_ready_ms": {
+            "p50": 180.0223345,
+            "p95": 210.81616945,
+            "max": 213.731229
+          },
+          "state_host_receipt_to_packet_ready_ms": {
+            "p50": 190.509384,
+            "p95": 220.9768785,
+            "max": 223.758194
+          },
+          "scope": "Sources1..210 including final drain; host timestamps, not exposure/GPU completion/fsync"
+        },
+        {
+          "role": 1,
+          "source_sample_to_packet_ready_ms": {
+            "p50": 180.40067349999998,
+            "p95": 211.1534185,
+            "max": 214.080641
+          },
+          "state_host_receipt_to_packet_ready_ms": {
+            "p50": 190.9757975,
+            "p95": 221.343389,
+            "max": 224.107606
+          },
+          "scope": "Sources1..210 including final drain; host timestamps, not exposure/GPU completion/fsync"
+        },
+        {
+          "role": 2,
+          "source_sample_to_packet_ready_ms": {
+            "p50": 182.1438475,
+            "p95": 211.77990225,
+            "max": 215.620425
+          },
+          "state_host_receipt_to_packet_ready_ms": {
+            "p50": 192.8544015,
+            "p95": 221.76309045,
+            "max": 227.027364
+          },
+          "scope": "Sources1..210 including final drain; host timestamps, not exposure/GPU completion/fsync"
+        }
+      ]
+    },
+    {
+      "case": "mesh05",
+      "run": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh05-output",
+      "strict_passed": false,
+      "receipt": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh05/verification.json",
+      "receipt_sha256": "8d03b540d5a968c937a27058fb05b70b2205b8e9039051a6a3e4f7f4f2e56f8d",
+      "helper_sha256": "888acf2d4da77eb1ef9b44bea1668238e9775b94cbeb64f379016e9894beac59",
+      "verifier_sha256": "0f1d27b14a5a085e606f5ec39ee90b554807da7cde9065d2325206c49bc971ed",
+      "quest_connected": false,
+      "xr_enabled_at_admission": true,
+      "source_queue_capacity": 1,
+      "view_mode": "original",
+      "pace_hz": 0.0,
+      "source_join": {
+        "schema": "live30_persisted_source_join_v1",
+        "dataset_admissible": false,
+        "input": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh05-output",
+        "committed_observations": 210,
+        "rendered_observations": 211,
+        "terminal_observation_separately_rendered": true,
+        "source_identity_and_matrix_hash_equal": true,
+        "errors": [],
+        "full_optical_guard_passed": false,
+        "scope": "Joins persisted source observation to matrices actually submitted to renderer; no independent silhouette/contact/photometric parity claim",
+        "source_sha256": "d19c07bc6838657ed29d516b463e577edfa80bb6d4bb1ce4fd4df7adc415a91e",
+        "hdf_sha256": "c3f167ddc2b02e73fe79e26dd2baedd72f2255747297516c2bad3c00744f886a",
+        "worker_rows_sha256": "c9d8c6753de7c8cdfcd21a53f522c6920d50a319caaea7b4f78923b7fd09f8c1"
+      },
+      "roles": [
+        {
+          "role": 0,
+          "frames": 211,
+          "strict_passed": false,
+          "failed_frames": 211,
+          "source_id_mismatches": 211,
+          "role_id_mismatches": 0,
+          "unconfident_frames": 211,
+          "minimum_bit_contrast": 2.0,
+          "minimum_current_roi": 0.0,
+          "maximum_centroid_error_px": 19.13765920900464,
+          "position_changes": 106,
+          "maximum_previous_roi": 0.0,
+          "video_sha256": "1afef519c36cee2eb527427d06d8f570ca2d62255fe2d3f58aca0293afd648b7"
+        },
+        {
+          "role": 1,
+          "frames": 211,
+          "strict_passed": false,
+          "failed_frames": 211,
+          "source_id_mismatches": 211,
+          "role_id_mismatches": 211,
+          "unconfident_frames": 211,
+          "minimum_bit_contrast": 0.0,
+          "minimum_current_roi": 0.0,
+          "maximum_centroid_error_px": 67.21025968380941,
+          "position_changes": 106,
+          "maximum_previous_roi": 1.0,
+          "video_sha256": "17ed9ce3d995f56a5a5215483138378d731675ab1f20e0ac15397701e9416e44"
+        },
+        {
+          "role": 2,
+          "frames": 211,
+          "strict_passed": false,
+          "failed_frames": 211,
+          "source_id_mismatches": 211,
+          "role_id_mismatches": 211,
+          "unconfident_frames": 211,
+          "minimum_bit_contrast": 5.0,
+          "minimum_current_roi": 0.0,
+          "maximum_centroid_error_px": 15.525261918230738,
+          "position_changes": 106,
+          "maximum_previous_roi": 0.0,
+          "video_sha256": "1cbcdceb9ff768a005014f04b6bb3e88ad64a3901567ea32105a6ce601d84f2a"
+        }
+      ],
+      "capture_end_metadata_max_source_error_s": 3.33333360913457e-10,
+      "packet_return_host_timing": [
+        {
+          "role": 0,
+          "source_sample_to_packet_ready_ms": {
+            "p50": 76.2762135,
+            "p95": 80.56166555,
+            "max": 99.260333
+          },
+          "state_host_receipt_to_packet_ready_ms": {
+            "p50": 86.3016925,
+            "p95": 90.58792655,
+            "max": 110.71449
+          },
+          "scope": "Sources1..210 including final drain; host timestamps, not exposure/GPU completion/fsync"
+        },
+        {
+          "role": 1,
+          "source_sample_to_packet_ready_ms": {
+            "p50": 76.60831400000001,
+            "p95": 80.90381430000001,
+            "max": 107.969501
+          },
+          "state_host_receipt_to_packet_ready_ms": {
+            "p50": 86.77028050000001,
+            "p95": 90.91520245000001,
+            "max": 119.423658
+          },
+          "scope": "Sources1..210 including final drain; host timestamps, not exposure/GPU completion/fsync"
+        },
+        {
+          "role": 2,
+          "source_sample_to_packet_ready_ms": {
+            "p50": 76.89668449999999,
+            "p95": 81.18657605,
+            "max": 116.076487
+          },
+          "state_host_receipt_to_packet_ready_ms": {
+            "p50": 87.10143,
+            "p95": 91.1826195,
+            "max": 127.530644
+          },
+          "scope": "Sources1..210 including final drain; host timestamps, not exposure/GPU completion/fsync"
+        }
+      ]
+    },
+    {
+      "case": "paced06",
+      "run": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-paced06-output",
+      "strict_passed": false,
+      "receipt": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-paced06/verification.json",
+      "receipt_sha256": "89ea1200398d7f8304faf16aa2faf22bc583832d67d213c17f5e72a7cc61a69f",
+      "helper_sha256": "888acf2d4da77eb1ef9b44bea1668238e9775b94cbeb64f379016e9894beac59",
+      "verifier_sha256": "0f1d27b14a5a085e606f5ec39ee90b554807da7cde9065d2325206c49bc971ed",
+      "quest_connected": false,
+      "xr_enabled_at_admission": true,
+      "source_queue_capacity": 1,
+      "view_mode": "original",
+      "pace_hz": 30.0,
+      "source_join": {
+        "schema": "live30_persisted_source_join_v1",
+        "dataset_admissible": false,
+        "input": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-paced06-output",
+        "committed_observations": 210,
+        "rendered_observations": 211,
+        "terminal_observation_separately_rendered": true,
+        "source_identity_and_matrix_hash_equal": true,
+        "errors": [],
+        "full_optical_guard_passed": false,
+        "scope": "Joins persisted source observation to matrices actually submitted to renderer; no independent silhouette/contact/photometric parity claim",
+        "source_sha256": "d19c07bc6838657ed29d516b463e577edfa80bb6d4bb1ce4fd4df7adc415a91e",
+        "hdf_sha256": "bddcfec6ea7ee054817f337420acd8446b79287999c7bea49c08c6c46886f58a",
+        "worker_rows_sha256": "1daf061cb7ab58c0459e5b6da9fefe9607c6a075e797a73745d5ab1b7a880530"
+      },
+      "roles": [
+        {
+          "role": 0,
+          "frames": 211,
+          "strict_passed": false,
+          "failed_frames": 211,
+          "source_id_mismatches": 211,
+          "role_id_mismatches": 0,
+          "unconfident_frames": 211,
+          "minimum_bit_contrast": 1.0,
+          "minimum_current_roi": 0.0,
+          "maximum_centroid_error_px": 19.14969992540339,
+          "position_changes": 106,
+          "maximum_previous_roi": 0.0,
+          "video_sha256": "3e2f0f7f7d02ff7782f0bbc791865ff32ab2ffdf2843a6ad2fba74297ecdc77f"
+        },
+        {
+          "role": 1,
+          "frames": 211,
+          "strict_passed": false,
+          "failed_frames": 211,
+          "source_id_mismatches": 211,
+          "role_id_mismatches": 211,
+          "unconfident_frames": 211,
+          "minimum_bit_contrast": 0.0,
+          "minimum_current_roi": 0.0,
+          "maximum_centroid_error_px": 67.27012637036692,
+          "position_changes": 106,
+          "maximum_previous_roi": 1.0,
+          "video_sha256": "b7e7ff7a248d516f9006e61ba2003882f192f5b76b88b7d311935b425df69ba8"
+        },
+        {
+          "role": 2,
+          "frames": 211,
+          "strict_passed": false,
+          "failed_frames": 211,
+          "source_id_mismatches": 211,
+          "role_id_mismatches": 211,
+          "unconfident_frames": 211,
+          "minimum_bit_contrast": 4.0,
+          "minimum_current_roi": 0.0,
+          "maximum_centroid_error_px": 15.525640518966336,
+          "position_changes": 106,
+          "maximum_previous_roi": 0.0,
+          "video_sha256": "05469cf546adf7fe885421331fc33e1c13e5e165ab3fa2cea94fec9e2f9b8f02"
+        }
+      ],
+      "capture_end_metadata_max_source_error_s": 3.33333360913457e-10,
+      "packet_return_host_timing": [
+        {
+          "role": 0,
+          "source_sample_to_packet_ready_ms": {
+            "p50": 113.52838700000001,
+            "p95": 118.003939,
+            "max": 150.886784
+          },
+          "state_host_receipt_to_packet_ready_ms": {
+            "p50": 123.824417,
+            "p95": 128.36202244999998,
+            "max": 162.189003
+          },
+          "scope": "Sources1..210 including final drain; host timestamps, not exposure/GPU completion/fsync"
+        },
+        {
+          "role": 1,
+          "source_sample_to_packet_ready_ms": {
+            "p50": 113.9777935,
+            "p95": 118.43594395,
+            "max": 151.211737
+          },
+          "state_host_receipt_to_packet_ready_ms": {
+            "p50": 124.166976,
+            "p95": 128.74794955000002,
+            "max": 162.513956
+          },
+          "scope": "Sources1..210 including final drain; host timestamps, not exposure/GPU completion/fsync"
+        },
+        {
+          "role": 2,
+          "source_sample_to_packet_ready_ms": {
+            "p50": 114.333668,
+            "p95": 118.83416145,
+            "max": 151.488657
+          },
+          "state_host_receipt_to_packet_ready_ms": {
+            "p50": 124.474849,
+            "p95": 129.1096202,
+            "max": 162.790876
+          },
+          "scope": "Sources1..210 including final drain; host timestamps, not exposure/GPU completion/fsync"
+        }
+      ]
+    },
+    {
+      "case": "mesh08",
+      "run": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh08-output",
+      "strict_passed": false,
+      "receipt": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh08/verification.json",
+      "receipt_sha256": "0c795adb78e5cb7b6d10d030ca0799bc6ed4410f68518a8be0a20a5f04f7dbb8",
+      "helper_sha256": "5309d216af1dded582f1e8a7d09dfe977602d75081192db9a08bb9a7895417c4",
+      "verifier_sha256": "71ef88ab5d83e429004637843852fc69fd8859e2ab3d4e12a2c8118b3373ec14",
+      "quest_connected": false,
+      "xr_enabled_at_admission": true,
+      "source_queue_capacity": 1,
+      "view_mode": "original",
+      "pace_hz": 0.0,
+      "source_join": {
+        "schema": "live30_persisted_source_join_v1",
+        "dataset_admissible": false,
+        "input": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh08-output",
+        "committed_observations": 210,
+        "rendered_observations": 211,
+        "terminal_observation_separately_rendered": true,
+        "source_identity_and_matrix_hash_equal": true,
+        "errors": [],
+        "full_optical_guard_passed": false,
+        "scope": "Joins persisted source observation to matrices actually submitted to renderer; no independent silhouette/contact/photometric parity claim",
+        "source_sha256": "d19c07bc6838657ed29d516b463e577edfa80bb6d4bb1ce4fd4df7adc415a91e",
+        "hdf_sha256": "2a9e7c9add8a9f16fa45beecc3c5f93bf9a30f2984bd078164893aab7e0b1ca2",
+        "worker_rows_sha256": "9c418d5d31b48fdb5e3d34ba2345fdb8425c5c08ed9f8c41198bd12740266e08"
+      },
+      "roles": [
+        {
+          "role": 0,
+          "frames": 211,
+          "strict_passed": false,
+          "failed_frames": 211,
+          "source_id_mismatches": 211,
+          "role_id_mismatches": 0,
+          "unconfident_frames": 211,
+          "minimum_bit_contrast": 1.0,
+          "minimum_current_roi": 0.0,
+          "maximum_centroid_error_px": 13.287682265918312,
+          "position_changes": 106,
+          "maximum_previous_roi": 0.0,
+          "video_sha256": "4d2f003ebfa971fe6d13b23ab77cd134b592b4dc228864ad9059abeff2aed94a"
+        },
+        {
+          "role": 1,
+          "frames": 211,
+          "strict_passed": false,
+          "failed_frames": 211,
+          "source_id_mismatches": 211,
+          "role_id_mismatches": 0,
+          "unconfident_frames": 211,
+          "minimum_bit_contrast": 0.0,
+          "minimum_current_roi": 0.11242603550295856,
+          "maximum_centroid_error_px": 13.63519853369409,
+          "position_changes": 106,
+          "maximum_previous_roi": 0.12942660619349416,
+          "video_sha256": "274474510cf74a6dc73800e08a3e58e90b639d73059c196929baac8eab908285"
+        },
+        {
+          "role": 2,
+          "frames": 211,
+          "strict_passed": true,
+          "failed_frames": 0,
+          "source_id_mismatches": 0,
+          "role_id_mismatches": 0,
+          "unconfident_frames": 0,
+          "minimum_bit_contrast": 193.0,
+          "minimum_current_roi": 0.9990186174051089,
+          "maximum_centroid_error_px": 1.0002683184786079,
+          "position_changes": 106,
+          "maximum_previous_roi": 0.057576284951850576,
+          "video_sha256": "5626c87287d7ea466155232dd9a5a39a6d26a167c064086b316ca2e35050ea2e"
+        }
+      ],
+      "capture_end_metadata_max_source_error_s": 3.33333360913457e-10,
+      "packet_return_host_timing": [
+        {
+          "role": 0,
+          "source_sample_to_packet_ready_ms": {
+            "p50": 76.3944725,
+            "p95": 81.05572794999999,
+            "max": 99.233872
+          },
+          "state_host_receipt_to_packet_ready_ms": {
+            "p50": 86.77619100000001,
+            "p95": 91.237837,
+            "max": 109.219831
+          },
+          "scope": "Sources1..210 including final drain; host timestamps, not exposure/GPU completion/fsync"
+        },
+        {
+          "role": 1,
+          "source_sample_to_packet_ready_ms": {
+            "p50": 76.811696,
+            "p95": 81.59761725,
+            "max": 108.640006
+          },
+          "state_host_receipt_to_packet_ready_ms": {
+            "p50": 87.10360750000001,
+            "p95": 91.86481479999999,
+            "max": 118.625965
+          },
+          "scope": "Sources1..210 including final drain; host timestamps, not exposure/GPU completion/fsync"
+        },
+        {
+          "role": 2,
+          "source_sample_to_packet_ready_ms": {
+            "p50": 77.17865549999999,
+            "p95": 81.8781711,
+            "max": 119.442726
+          },
+          "state_host_receipt_to_packet_ready_ms": {
+            "p50": 87.4504105,
+            "p95": 92.14248094999999,
+            "max": 129.428685
+          },
+          "scope": "Sources1..210 including final drain; host timestamps, not exposure/GPU completion/fsync"
+        }
+      ]
+    },
+    {
+      "case": "mesh09",
+      "run": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh09-output",
+      "strict_passed": false,
+      "receipt": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh09/verification.json",
+      "receipt_sha256": "8c09db2742b9b8a0b22c5d4eaad30dfd17639ec9478eff787fd8d0238d52f955",
+      "helper_sha256": "6dd5d05241fc4f45d6fcb489beacacf11ff21a88686032dfce4631a102b41a87",
+      "verifier_sha256": "71ef88ab5d83e429004637843852fc69fd8859e2ab3d4e12a2c8118b3373ec14",
+      "quest_connected": false,
+      "xr_enabled_at_admission": true,
+      "source_queue_capacity": 1,
+      "view_mode": "original",
+      "pace_hz": 0.0,
+      "source_join": {
+        "schema": "live30_persisted_source_join_v1",
+        "dataset_admissible": false,
+        "input": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh09-output",
+        "committed_observations": 210,
+        "rendered_observations": 211,
+        "terminal_observation_separately_rendered": true,
+        "source_identity_and_matrix_hash_equal": true,
+        "errors": [],
+        "full_optical_guard_passed": false,
+        "scope": "Joins persisted source observation to matrices actually submitted to renderer; no independent silhouette/contact/photometric parity claim",
+        "source_sha256": "d19c07bc6838657ed29d516b463e577edfa80bb6d4bb1ce4fd4df7adc415a91e",
+        "hdf_sha256": "daeb4f0a59de67acd814926facd33a2f957fe5fb0f82237599f5747e8b4a5223",
+        "worker_rows_sha256": "ae6e1afab4449445a055e29bbb9cac788b3704e3cb786cc6f63ed9f10e24829e"
+      },
+      "roles": [
+        {
+          "role": 0,
+          "frames": 211,
+          "strict_passed": true,
+          "failed_frames": 0,
+          "source_id_mismatches": 0,
+          "role_id_mismatches": 0,
+          "unconfident_frames": 0,
+          "minimum_bit_contrast": 230.0,
+          "minimum_current_roi": 0.9998992823870074,
+          "maximum_centroid_error_px": 0.9469223860457641,
+          "position_changes": 106,
+          "maximum_previous_roi": 0.025431197280624446,
+          "video_sha256": "bc43e6b7388cf26cf2e9d685e9ae19459b9cd2cbe6cdeccd7ca747d6238d67eb"
+        },
+        {
+          "role": 1,
+          "frames": 211,
+          "strict_passed": false,
+          "failed_frames": 106,
+          "source_id_mismatches": 0,
+          "role_id_mismatches": 0,
+          "unconfident_frames": 0,
+          "minimum_bit_contrast": 216.0,
+          "minimum_current_roi": 0.9999025981931965,
+          "maximum_centroid_error_px": 0.9668508276019427,
+          "position_changes": 106,
+          "maximum_previous_roi": 0.16952784474151997,
+          "video_sha256": "ddfbd4b385443182c8a4eb830d979e1847025de247497a024e76cb4499d20cf3"
+        },
+        {
+          "role": 2,
+          "frames": 211,
+          "strict_passed": true,
+          "failed_frames": 0,
+          "source_id_mismatches": 0,
+          "role_id_mismatches": 0,
+          "unconfident_frames": 0,
+          "minimum_bit_contrast": 204.0,
+          "minimum_current_roi": 0.9985413513141599,
+          "maximum_centroid_error_px": 0.965467847522751,
+          "position_changes": 106,
+          "maximum_previous_roi": 0.07031787532681986,
+          "video_sha256": "8d94c77ea544c75f4d98d33a93c8a1e317e79aade6580b7ce982f8b66725819a"
+        }
+      ],
+      "capture_end_metadata_max_source_error_s": 3.33333360913457e-10,
+      "packet_return_host_timing": [
+        {
+          "role": 0,
+          "source_sample_to_packet_ready_ms": {
+            "p50": 81.026622,
+            "p95": 86.4150521,
+            "max": 104.214974
+          },
+          "state_host_receipt_to_packet_ready_ms": {
+            "p50": 91.40270749999999,
+            "p95": 96.5765761,
+            "max": 114.118502
+          },
+          "scope": "Sources1..210 including final drain; host timestamps, not exposure/GPU completion/fsync"
+        },
+        {
+          "role": 1,
+          "source_sample_to_packet_ready_ms": {
+            "p50": 81.364727,
+            "p95": 86.81136095,
+            "max": 113.168204
+          },
+          "state_host_receipt_to_packet_ready_ms": {
+            "p50": 91.7893345,
+            "p95": 96.96611585,
+            "max": 123.071732
+          },
+          "scope": "Sources1..210 including final drain; host timestamps, not exposure/GPU completion/fsync"
+        },
+        {
+          "role": 2,
+          "source_sample_to_packet_ready_ms": {
+            "p50": 81.6691215,
+            "p95": 87.07304385,
+            "max": 121.246676
+          },
+          "state_host_receipt_to_packet_ready_ms": {
+            "p50": 92.052296,
+            "p95": 97.22779875,
+            "max": 131.150204
+          },
+          "scope": "Sources1..210 including final drain; host timestamps, not exposure/GPU completion/fsync"
+        }
+      ]
+    }
+  ],
+  "strict_final_passed": false,
+  "final09_all_roles_exact_source_and_role_ids": true,
+  "final09_all_roles_current_roi_and_centroid_passed": true,
+  "thresholds": {
+    "minimum_bit_contrast": 30,
+    "current_roi_min": 0.8,
+    "centroid_error_max_px": 2,
+    "previous_roi_max": 0.08
+  },
+  "right09_empty_never_occupied_slot_180_sources0_to15": [
+    0.09620863467017314,
+    0.09579467699125818,
+    0.09516156524703533,
+    0.09572162563615554,
+    0.09567292473275381,
+    0.09586772834636081,
+    0.09589207879806169,
+    0.09603818150826698,
+    0.09637908783207927,
+    0.09667129325248983,
+    0.09676869505929335,
+    0.09664694280078895,
+    0.09669564370419072,
+    0.09669564370419072,
+    0.09623298512187402,
+    0.09637908783207927
+  ],
+  "right09_empty_slot100_held_sources96_to111": [
+    0.135096306036477,
+    0.12394379915747436,
+    0.12138700172888207,
+    0.12104609540506978,
+    0.1208999926948645,
+    0.12082694133976185,
+    0.12075388998465922,
+    0.12060778727445394,
+    0.12070518908125746,
+    0.1212408990186768,
+    0.1213383008254803,
+    0.1213626512771812,
+    0.12155745489078823,
+    0.12170355760099351,
+    0.12153310443908735,
+    0.12150875398738648
+  ],
+  "ghost_interpretation": "Strict absolute old-ROI threshold FAIL retained. Persistent background energy exceeds threshold, so right-camera history/ghost contribution is unresolved, not106provenghostevents.",
+  "physical": false,
+  "dataset_admissible": false,
+  "gate_bindings": []
+}

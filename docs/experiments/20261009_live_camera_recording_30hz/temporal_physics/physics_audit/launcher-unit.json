@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "checks": [
+    "success canonical/assay receipt identical",
+    "error canonical/assay receipt identical"
+  ],
+  "source_sha256": "0d7f505e97ae203ad9cfeac2d9987c8d7fad10a2a03b455e739f659e587e530d",
+  "gpu_launched": false,
+  "python": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+  "format_parity_receipt": "/tmp/live30-correctness-physics-format/result.json",
+  "previous_attempt_preserved": "/tmp/live30-correctness-physics-launcher-unit/result.json"
+}

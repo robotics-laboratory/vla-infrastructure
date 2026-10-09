@@ -1,0 +1,18 @@
+{
+  "schema": "observer_source_review_v1",
+  "run": "latency-mesh01",
+  "runtime_edits_during_run": false,
+  "independent_checks": 32,
+  "all_passed": true,
+  "limitations": [
+    "Observer only logs successful returns; failed calls do not produce a complete phase event.",
+    "physics_step_after plus source/worker totals proves no extra steps at observed normal boundaries, not arbitrary hidden/reverted engine work.",
+    "Nested HDF events use original duration and observer invocation end; not independently timestamped storage-device completion.",
+    "packet_write_completed is Python write, not durable fsync."
+  ],
+  "found_and_reported": [
+    "Original driver restored event wrappers after owner.close, reinstalling closed standalone env methods; parent fixed ordering for subsequent runs, original launch bytes preserved.",
+    "Original parent analyzer omitted capture_successor/phase-step assertions and named HDF-to-worker UNIX roundtrip hdf_wall_is_sampling; independent audit checks all six phases and only_advance_changes_step."
+  ],
+  "separate_scope": "Diagnostic Mesh load; queue latency is not attributed to ordinary unmarked recordings."
+}

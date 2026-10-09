@@ -187,8 +187,25 @@ def test_completed_four_substeps_publish_clock_before_passive_view(owner):
     assert owner.conn.sent[0]["op"] == "step" and owner.conn.sent[0]["seq"] == 0
     assert seen[0][:2] == (104, 0)
     assert owner.env._state_physics_step == 104
-    assert owner.clock.sample() == dict(physics_step=104, sim_time=104 / 120, wall_time=123.5)
+    with patch("isaac_vr_standalone_view.time.time", return_value=124.0):
+        assert owner.clock.sample() == dict(physics_step=104, sim_time=104 / 120, wall_time=124.0)
+    assert owner.clock.wall_time == 123.5
+    assert owner.clock.state_received_origin == "physics_reply_received"
+    assert owner.clock.state_received_monotonic_ns <= owner.clock.observation_sample_monotonic_ns
     assert owner.receipt["controls"] == 1
+
+
+def test_sampling_time_advances_without_refreshing_frozen_state_age(owner):
+    state_time = owner.clock.state_received_monotonic_ns
+    state_wall = owner.clock.wall_time
+    with patch("isaac_vr_standalone_view.time.time", side_effect=[300.0, 299.0]):
+        first, second = owner.sample_time(), owner.sample_time()
+    assert first["wall_time"] == 300.0 and second["wall_time"] == 299.0
+    assert first["physics_step"] == second["physics_step"] == 100
+    assert owner.clock.state_received_monotonic_ns == state_time
+    assert owner.clock.wall_time == state_wall
+    assert owner.clock.state_received_origin == "initial_native_freeze"
+    assert owner.clock.observation_sample_monotonic_ns >= state_time
 
 
 def test_wrong_command_ack_cannot_publish_snapshot_clock_or_view(owner):

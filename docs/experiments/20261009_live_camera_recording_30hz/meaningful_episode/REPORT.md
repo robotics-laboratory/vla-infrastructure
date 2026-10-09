@@ -198,3 +198,5 @@ core environment; реальные GPU/native запуски и CPU geometry aud
 checks проходят, существующие blockers FINAL RC остаются нерешенными.
 Production selection и SDK не меняются. Human lifecycle и physical Quest
 проверка остаются за пределами этого демонстрационного запуска.
+
+Текущая проверка задержек, свежести и различий физики с master: [temporal/physics audit](../temporal_physics/REPORT.md). Высокая частота сама по себе не означает малую задержку камеры или эквивалентность физики.

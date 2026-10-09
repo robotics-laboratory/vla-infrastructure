@@ -1,0 +1,8 @@
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff", "check", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py", "tests/test_isaac_vr_live_source_queue.py"]
+All checks passed!
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "-m", "pytest", "-q", "tests/test_isaac_vr_live_source_queue.py", "tests/test_isaac_vr_live_media.py"]
+.................................                                        [100%]
+33 passed in 0.16s
+
+["git", "diff", "--check", "--", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py", "tests/test_isaac_vr_live_source_queue.py"]

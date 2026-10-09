@@ -1,0 +1,13 @@
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_docs.py", "--base", "fbdee2055efa325c352e13b321223cdf6c2f3e40"]
+INDEX: 1094 entries; classification {'current': 133, 'historical': 961}
+HISTORICAL PRESERVATION: PASS (925 frozen files vs fbdee2055efa325c352e13b321223cdf6c2f3e40)
+KNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.
+DOC GOVERNANCE CHECKS: PASS
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_spec_references.py"]
+SPEC REFERENCE LINT OK
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/generate_manifest.py", "verify"]
+MANIFEST OK: 110 reviewed files
+
+["git", "diff", "--cached", "--check", "--", ".", ":(exclude)**/*.log", ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/clock-codegraph.txt", ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/codegraph.txt", ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/master-s2.diff", ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/master.diff"]

@@ -1,0 +1,20 @@
+{
+  "schema": "correctness_retention_supplement_receipt_v1",
+  "locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/proof-supplement02.json",
+  "sha256": "5086f4b0e6b0ee5ba45aa4c74ada4e4deaf63888ad89a1f6c7cde860cada6719",
+  "files": [
+    {
+      "source": "/tmp/live30-correctness-camera-bundle.py",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-bundle.py",
+      "bytes": 7919,
+      "sha256": "30549da201dd3b0527786576f4ce107f36f76e5b4a61158c9f0c45faf025118a"
+    },
+    {
+      "source": "/tmp/live30-correctness-camera-doclint-attempts.json",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-doclint-attempts.json",
+      "bytes": 1650,
+      "sha256": "706fe5ea4c0b83e9eecd533e2769a479bc21693a82443198b4436f328882762c"
+    }
+  ],
+  "all_copy_hashes_verified": true
+}

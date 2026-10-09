@@ -1,0 +1,51 @@
+{
+  "schema": "source_queue_cpu_checks_v1",
+  "checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff",
+        "check",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py",
+        "tests/test_isaac_vr_live_source_queue.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.009527469053864479,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_isaac_vr_live_source_queue.py",
+        "tests/test_isaac_vr_live_media.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.29327242774888873,
+      "stdout": ".................................                                        [100%]\n33 passed in 0.16s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py",
+        "tests/test_isaac_vr_live_source_queue.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.0023709144443273544,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "all_passed": true,
+  "gpu_run": false,
+  "source_sha256": {
+    "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py": "d86f29cd13c7764b946b5a000c4a31e53e0113f57f03b9b22388321e14a1de19",
+    "tests/test_isaac_vr_live_source_queue.py": "540e753497d07c9e5a794a8ccc056f24d98400bdefa1c5ab4e5e1fe429aca1fb"
+  }
+}

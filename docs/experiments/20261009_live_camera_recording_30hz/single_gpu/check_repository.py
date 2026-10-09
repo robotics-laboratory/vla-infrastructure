@@ -37,6 +37,8 @@ def main():
         ROOT / "docs/experiments/20261009_live_camera_recording_30hz/deep_research/verify_live_source.py",
         ROOT / "docs/experiments/20261009_live_camera_recording_30hz/deep_research/optical_witness.py",
         ROOT / "docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/export_preview.py",
+        *ROOT.glob("docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/*.py"),
+        ROOT / "tests/test_isaac_vr_live_source_queue.py",
         Path(__file__),
     ]
     tests = [
@@ -54,10 +56,16 @@ def main():
         "test_isaac_vr_camera_rendering",
         "test_temporal_recording_path",
         "test_isaac_vr_live_media",
+        "test_isaac_vr_live_source_queue",
         "test_isaac_vr_standalone_owner",
         "test_isaac_vr_standalone_scene",
         "test_isaac_vr_standalone_worker",
     ]
+    raw_transcripts = [
+        "docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/" + name
+        for name in ("clock-codegraph.txt", "codegraph.txt", "master-s2.diff", "master.diff")
+    ]
+    whitespace_paths = [".", ":(exclude)**/*.log", *[":(exclude)" + p for p in raw_transcripts]]
     commands = [
         [py, "tools/lint_docs.py", "--base", args.base],
         [py, "tools/lint_spec_references.py"],
@@ -65,8 +73,8 @@ def main():
         [py, "tools/generate_manifest.py", "verify"],
         [ruff, "check", *map(str, sources)],
         [py, "-m", "pytest", "-q", *[f"tests/{t}.py" for t in tests]],
-        ["git", "diff", "--check", "--", ".", ":(exclude)**/*.log"],
-        ["git", "diff", "--cached", "--check", "--", ".", ":(exclude)**/*.log"],
+        ["git", "diff", "--check", "--", *whitespace_paths],
+        ["git", "diff", "--cached", "--check", "--", *whitespace_paths],
     ]
     receipt = dict(
         schema="single_gpu_repository_checks_v1",
@@ -87,6 +95,8 @@ def main():
                HF_DATASETS_CACHE="/tmp/live30-single-gpu-check-cache/hf-datasets")
     receipt["cache_environment"] = {key: env[key] for key in ("HF_HOME", "HF_DATASETS_CACHE")}
     receipt["raw_log_whitespace_excluded"] = True
+    receipt["raw_transcript_whitespace_excluded"] = raw_transcripts
+    receipt["raw_transcript_semantics"] = "Verbatim CodeGraph/git diff output; preserve trailing source-line tabs and diff context bytes"
     with (output / "results.log").open("w") as log:
         for cmd in commands:
             started = time.monotonic()

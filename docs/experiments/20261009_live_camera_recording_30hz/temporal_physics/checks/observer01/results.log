@@ -1,0 +1,230 @@
+{
+  "schema": "independent_observer_temporal_audit_v1",
+  "input": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output",
+  "controls": 210,
+  "checks": {
+    "counts": true,
+    "phase_intervals_nonnegative": true,
+    "complete_phase_order": true,
+    "only_advance_changes_step": true,
+    "source_ids": true,
+    "source_steps": true,
+    "decision_tick": true,
+    "physical_receipt_inside_advance": true,
+    "successor_sample_inside_successor_event": true,
+    "append_inside_commit": true,
+    "promoted_observation_no_resample": true,
+    "initial_sample_inside_first_observation": true,
+    "native_engine_frozen": true,
+    "native_total_steps_exact": true,
+    "observation_capture_begin_monotonic_ns_strictly_increasing": true,
+    "observation_sample_monotonic_ns_strictly_increasing": true,
+    "observation_capture_end_monotonic_ns_strictly_increasing": true,
+    "enqueued_ns_strictly_increasing": true,
+    "ipc_send_begin_monotonic_ns_strictly_increasing": true,
+    "ipc_received_monotonic_ns_strictly_increasing": true,
+    "worker_render_submitted_monotonic_ns_strictly_increasing": true,
+    "source_sample_ipc_submit_chain": true,
+    "hdf_obs_successor_sequences": true,
+    "hdf_physics_steps_join": true,
+    "promoted_states_exact": true,
+    "cached_state_receipt_not_written_as_sample": true,
+    "packet_role0_full_sequence": true,
+    "packet_role0_valid_order": true,
+    "packet_role1_full_sequence": true,
+    "packet_role1_valid_order": true,
+    "packet_role2_full_sequence": true,
+    "packet_role2_valid_order": true
+  },
+  "all_passed": true,
+  "failures": [],
+  "packet_latency": [
+    {
+      "role": 0,
+      "metrics": {
+        "state_received_monotonic_ns": {
+          "initial_ms": 8204.363139,
+          "all_after_initial": {
+            "n": 210,
+            "p50_ms": 190.509384,
+            "p95_ms": 220.9768785,
+            "max_ms": 223.758194,
+            "min_ms": 74.176483
+          },
+          "nonflush_after_initial": {
+            "n": 207,
+            "p50_ms": 189.248174,
+            "p95_ms": 221.010678,
+            "max_ms": 223.758194,
+            "min_ms": 74.176483
+          }
+        },
+        "observation_sample_monotonic_ns": {
+          "initial_ms": 80.612423,
+          "all_after_initial": {
+            "n": 210,
+            "p50_ms": 180.0223345,
+            "p95_ms": 210.81616945,
+            "max_ms": 213.731229,
+            "min_ms": 62.965454
+          },
+          "nonflush_after_initial": {
+            "n": 207,
+            "p50_ms": 179.246213,
+            "p95_ms": 210.8780023,
+            "max_ms": 213.731229,
+            "min_ms": 62.965454
+          }
+        },
+        "enqueued_ns": {
+          "initial_ms": 79.674368,
+          "all_after_initial": {
+            "n": 210,
+            "p50_ms": 179.102319,
+            "p95_ms": 209.6066849,
+            "max_ms": 212.801425,
+            "min_ms": 62.056636
+          },
+          "nonflush_after_initial": {
+            "n": 207,
+            "p50_ms": 178.307715,
+            "p95_ms": 209.60800460000002,
+            "max_ms": 212.801425,
+            "min_ms": 62.056636
+          }
+        }
+      }
+    },
+    {
+      "role": 1,
+      "metrics": {
+        "state_received_monotonic_ns": {
+          "initial_ms": 8204.679045,
+          "all_after_initial": {
+            "n": 210,
+            "p50_ms": 190.9757975,
+            "p95_ms": 221.343389,
+            "max_ms": 224.107606,
+            "min_ms": 74.468982
+          },
+          "nonflush_after_initial": {
+            "n": 207,
+            "p50_ms": 189.539547,
+            "p95_ms": 221.380256,
+            "max_ms": 224.107606,
+            "min_ms": 74.468982
+          }
+        },
+        "observation_sample_monotonic_ns": {
+          "initial_ms": 80.928329,
+          "all_after_initial": {
+            "n": 210,
+            "p50_ms": 180.40067349999998,
+            "p95_ms": 211.1534185,
+            "max_ms": 214.080641,
+            "min_ms": 63.257953
+          },
+          "nonflush_after_initial": {
+            "n": 207,
+            "p50_ms": 179.537586,
+            "p95_ms": 211.221256,
+            "max_ms": 214.080641,
+            "min_ms": 63.257953
+          }
+        },
+        "enqueued_ns": {
+          "initial_ms": 79.990274,
+          "all_after_initial": {
+            "n": 210,
+            "p50_ms": 179.480658,
+            "p95_ms": 210.0026899,
+            "max_ms": 213.150837,
+            "min_ms": 62.349135
+          },
+          "nonflush_after_initial": {
+            "n": 207,
+            "p50_ms": 178.599088,
+            "p95_ms": 210.0260386,
+            "max_ms": 213.150837,
+            "min_ms": 62.349135
+          }
+        }
+      }
+    },
+    {
+      "role": 2,
+      "metrics": {
+        "state_received_monotonic_ns": {
+          "initial_ms": 8204.946499,
+          "all_after_initial": {
+            "n": 210,
+            "p50_ms": 192.8544015,
+            "p95_ms": 221.76309045,
+            "max_ms": 227.027364,
+            "min_ms": 74.735017
+          },
+          "nonflush_after_initial": {
+            "n": 207,
+            "p50_ms": 189.768061,
+            "p95_ms": 221.6887655,
+            "max_ms": 224.440767,
+            "min_ms": 74.735017
+          }
+        },
+        "observation_sample_monotonic_ns": {
+          "initial_ms": 81.195783,
+          "all_after_initial": {
+            "n": 210,
+            "p50_ms": 182.1438475,
+            "p95_ms": 211.77990225,
+            "max_ms": 215.620425,
+            "min_ms": 63.523988
+          },
+          "nonflush_after_initial": {
+            "n": 207,
+            "p50_ms": 179.7661,
+            "p95_ms": 211.55034799999999,
+            "max_ms": 214.413802,
+            "min_ms": 63.523988
+          }
+        },
+        "enqueued_ns": {
+          "initial_ms": 80.257728,
+          "all_after_initial": {
+            "n": 210,
+            "p50_ms": 180.752202,
+            "p95_ms": 210.45855995,
+            "max_ms": 214.557845,
+            "min_ms": 62.61517
+          },
+          "nonflush_after_initial": {
+            "n": 207,
+            "p50_ms": 178.827602,
+            "p95_ms": 210.3698628,
+            "max_ms": 213.483998,
+            "min_ms": 62.61517
+          }
+        }
+      }
+    }
+  ],
+  "observer_scope": "Only completed normal control phases; no extra physics steps observed in this run. Failed-call events and cleanup restoration are separate source-audit concerns.",
+  "source_sample_initial_age_ms": 8123.750716,
+  "provenance": {
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/result.json": "db2b8bf8b9f4276775caaf35c72275acbf71218ef6e942559c770178f0341898",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/host-events.jsonl": "b8fbfeb6cb4bcb63cc737e90ecd5eb5be21d54967668fbef3071c24f3db4ffce",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/episode/session.hdf5": "b6efb1e7d2c13edb7b5acfa6da8482fc89eff03ddeb46eb595b7b4ca93bd591c",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/mirror/worker-rows.jsonl": "100634917c5711854f84b0b8a004b991039b8a7a3ad6998b236c7912ddea3695",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/mirror/media/role0/packets.jsonl": "cfedf126c1f9567d9f27b05d9c14af4b071aba5e75d0c29e3713ae7bfc8e6812",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/mirror/media/role1/packets.jsonl": "8277c34f9fb35e4dee17dde287d60be2231f2960fc67c18c9932aee81b5c8983",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/mirror/media/role2/packets.jsonl": "0ff13a3bcd253ce1766f63aecf07f27278f4987c044a338230aed952360abc6c"
+  },
+  "command": [
+    "/data/vla-infrastructure/isaac61_production/env/bin/python",
+    "/tmp/live30-correctness-temporal-event-audit.py",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output",
+    "--output",
+    "/tmp/live30-correctness-temporal-event-audit01.json"
+  ],
+  "script_sha256": "ecbbac26fc4e6d963f757f5710c9bfacf27c880f03996cc07fd1310b4c98001d"
+}

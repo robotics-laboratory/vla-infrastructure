@@ -1,0 +1,21 @@
+{
+  "kind": "primary_reference_locators",
+  "scope": "API context; empirical conclusions use retained runs",
+  "sources": [
+    {
+      "title": "OpenUSD UsdRenderProduct",
+      "url": "https://openusd.org/release/api/class_usd_render_product.html",
+      "use": "aspectRatioConformPolicy and pixelAspectRatio defaults"
+    },
+    {
+      "title": "PhysX5.7 Rigid Body Dynamics",
+      "url": "https://nvidia-omniverse.github.io/PhysX/physx/5.7.0/docs/RigidBodyDynamics.html",
+      "use": "CPU/GPU solver and determinism context; installed build parity not inferred"
+    },
+    {
+      "title": "NVENC SDK13.1 programming guide",
+      "url": "https://docs.nvidia.com/video-technologies/video-codec-sdk/13.1/nvenc-video-encoder-api-prog-guide/index.html",
+      "use": "buffering and synchronous bitstream readiness context;3frame lag empirical"
+    }
+  ]
+}

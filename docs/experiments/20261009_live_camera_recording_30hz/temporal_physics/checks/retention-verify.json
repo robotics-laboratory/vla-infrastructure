@@ -1,0 +1,8 @@
+{
+  "schema": "retained_proof_verification_v1",
+  "inventory": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/proof-inventory01.json",
+  "inventory_sha256": "e13b54bdf85a8264e0780625ee1d20789078e9adcfeea05f0906aa9068cde0c2",
+  "checked_files": 1071,
+  "passed": true,
+  "failures": []
+}

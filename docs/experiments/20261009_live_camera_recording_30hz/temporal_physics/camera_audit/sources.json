@@ -1,0 +1,321 @@
+{
+  "schema": "live30_camera_audit_provenance_v1",
+  "tested_checkout": "research/live-camera-recording-30hz",
+  "tested_commit": "fbdee2055efa325c352e13b321223cdf6c2f3e40",
+  "master_baseline": "beaedfd1116577fd4d8026232cfb96cba0b030fa",
+  "local_sdk_master_contract_pin": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d",
+  "cpu_python": "/data/vla-infrastructure/isaac61_production/env/bin/python",
+  "gpu_launcher": "Parent coordinator only; this audit agent ran CPU analysis only.",
+  "retention_root": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit",
+  "retention_mapping": "Each /tmp/live30-correctness-camera* file/directory is retained under camera-audit with exact basename; input SHA permits verification.",
+  "input_sha256": {
+    "/tmp/live30-correctness-camera-mesh01/verification.json": "11f4c7b7db002553a10306616086a2aca164f78a08ac16756dd74e3b00faab08",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/mirror/media/role0/packets.jsonl": "cfedf126c1f9567d9f27b05d9c14af4b071aba5e75d0c29e3713ae7bfc8e6812",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/mirror/media/role1/packets.jsonl": "8277c34f9fb35e4dee17dde287d60be2231f2960fc67c18c9932aee81b5c8983",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/mirror/media/role2/packets.jsonl": "0ff13a3bcd253ce1766f63aecf07f27278f4987c044a338230aed952360abc6c",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/mirror/seed.json": "4db1e913afc6f7eab112cec7dbcd095c58e36e6733d315aed95ae37b74d0ef4f",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/mirror/worker-rows.jsonl": "100634917c5711854f84b0b8a004b991039b8a7a3ad6998b236c7912ddea3695",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/mirror/worker.json": "0238d0c108f9a97cac5dfa39bd5d949060d89bd7ec87496a0a4d59381d4c0d19",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/source-join.json": "ef1017d38b6d3d3085d7c80c5235415919dce82b138404d2ebc79ce251180f4d",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh01-output/result.json": "db2b8bf8b9f4276775caaf35c72275acbf71218ef6e942559c770178f0341898",
+    "/tmp/live30-correctness-camera-mesh05/verification.json": "8d03b540d5a968c937a27058fb05b70b2205b8e9039051a6a3e4f7f4f2e56f8d",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh05-output/mirror/media/role0/packets.jsonl": "64d12d82a7d49854ca30e8840cf5c8557d2b66e2a9ecd1a3e274a791e50ec6f2",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh05-output/mirror/media/role1/packets.jsonl": "44d529682678ac103a0fec83ebac8987cf7bbf75dde3517733e400df42819388",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh05-output/mirror/media/role2/packets.jsonl": "cc39c8e1f32aa0b6f2383c00fe0672fd21693bda1518f35bc7051f94578aafd6",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh05-output/mirror/seed.json": "128a3e80f4cf5feafed942fc44bab2bdfb3a75c5be618896fc7f2564c913a2c8",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh05-output/mirror/worker-rows.jsonl": "c9d8c6753de7c8cdfcd21a53f522c6920d50a319caaea7b4f78923b7fd09f8c1",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh05-output/mirror/worker.json": "241d81bf4cb4b98f1d2f51d2c9f755401a31a61552000fece7ba93d01b53ce8c",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh05-output/source-join.json": "a7b4239ac9f0da04752d2dec831ed8c2d0058165e0c0fb435dee872431f47da8",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh05-output/result.json": "dcdc03d92e3b0f1533fdee5bd486197e5ac869e594f33568cdac931342bd4a0e",
+    "/tmp/live30-correctness-camera-paced06/verification.json": "89ea1200398d7f8304faf16aa2faf22bc583832d67d213c17f5e72a7cc61a69f",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-paced06-output/mirror/media/role0/packets.jsonl": "4c7fdf80dea4cef1381615155416a769c46651c52eda09caba464a265a3eb4b7",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-paced06-output/mirror/media/role1/packets.jsonl": "f2fd8a35e3b9ce7bb4a6558a92c0528a3ca49e6dda182fab137d9192799dc5e5",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-paced06-output/mirror/media/role2/packets.jsonl": "640f1f2545e84ddf680a6d71de519daba8f595903335228c4a0ee363b0f5472b",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-paced06-output/mirror/seed.json": "9db00d728ea0a2ee61ea00a1cb09f6fb27e388be9b908ae2e7cac8b54c574cd0",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-paced06-output/mirror/worker-rows.jsonl": "1daf061cb7ab58c0459e5b6da9fefe9607c6a075e797a73745d5ab1b7a880530",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-paced06-output/mirror/worker.json": "62c8ce41a8ffc7d6813d170b1918452772cb1a41be5fec837f1587b899123ee6",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-paced06-output/source-join.json": "28e634e7f27e32862d21d68f364ff5941d697dd15ab5b5c6092cb028272f50fa",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-paced06-output/result.json": "2851dbff19bbef308b076bd934cf53c84bb362a6f7096791c92cf9926620fe85",
+    "/tmp/live30-correctness-camera-mesh08/verification.json": "0c795adb78e5cb7b6d10d030ca0799bc6ed4410f68518a8be0a20a5f04f7dbb8",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh08-output/mirror/media/role0/packets.jsonl": "d196b19abc4ccea3726fdc404bc4d01f25c45e80c4585616656183f97ecf4b77",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh08-output/mirror/media/role1/packets.jsonl": "92097212a2f6159262d4a7e1bf981b19fef810992c6771166166afe130f769c3",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh08-output/mirror/media/role2/packets.jsonl": "ec15b1745667f1c96dcc960d1b81400b84f37fe93715b0a145597e9be95ee746",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh08-output/mirror/seed.json": "699b239f72981c91d6d796d4021e4950cb7650c427c3f4e83a464caf5cb6289c",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh08-output/mirror/worker-rows.jsonl": "9c418d5d31b48fdb5e3d34ba2345fdb8425c5c08ed9f8c41198bd12740266e08",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh08-output/mirror/worker.json": "7c44c191ffa0defbb8568beffd35b57180ec0cde50ac8cd57fd4914126a10c9c",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh08-output/source-join.json": "b56fd2d6fc3a25ef58cc7426fd540c2fb2448d2c6d169698db90de5335c24598",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh08-output/result.json": "98e9b41fc9c2078910ddb7cd2c7a71b3a537a82ac94872c0fb9bfaada36e6727",
+    "/tmp/live30-correctness-camera-mesh09/verification.json": "8c09db2742b9b8a0b22c5d4eaad30dfd17639ec9478eff787fd8d0238d52f955",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh09-output/mirror/media/role0/packets.jsonl": "96192b08711341ff7a80ee0733df606ca4e562055474fbf636a10dda97d0cb2e",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh09-output/mirror/media/role1/packets.jsonl": "a24ecaa26ca5510f5cc7a55b33451d0bbcc4e26d818efbf0f4cb22181fc4f08d",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh09-output/mirror/media/role2/packets.jsonl": "3851f8ada9d9cf475a1f6da55240bdf8ce6a5a79edb2da8a594846ce701f7f16",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh09-output/mirror/seed.json": "a71f9dc19545f73c57c8b42bef3c425e248f745c4726d9c8fea1aa961eadf9dd",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh09-output/mirror/worker-rows.jsonl": "ae6e1afab4449445a055e29bbb9cac788b3704e3cb786cc6f63ed9f10e24829e",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh09-output/mirror/worker.json": "77d222c05b7689c0345258e9165c9ca4a255c826fdc0c295b0792aa5a47e3810",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh09-output/source-join.json": "9b9ee0d74bc18945193c6990090b274eea49746ab96cb226e2ea7fe6d74e73a1",
+    "/data/ebulochkin/vla-runtime/live30-correctness-20261009/latency-mesh09-output/result.json": "48ccfc986a80004ad826884b7eb8b4ce6d006cf80253d5eb48e4418fe6440cff"
+  },
+  "analysis_source_sha256": "30549da201dd3b0527786576f4ce107f36f76e5b4a61158c9f0c45faf025118a",
+  "analysis_source_locator": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-bundle.py",
+  "upstream_sources": [
+    {
+      "url": "https://openusd.org/release/api/class_usd_geom_imageable.html",
+      "retrieved": "2026-10-09",
+      "supports": "Inherited visibility pruning and ComputeVisibility."
+    },
+    {
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/usdrt.scenegraph/7.6.1/api/classusdrt_1_1_usd_render_product.html",
+      "retrieved": "2026-10-09",
+      "supports": "Render product pixelAspectRatio1 and expandAperture fallback."
+    },
+    {
+      "url": "https://github.com/isaac-sim/IsaacLab/blob/main/source/isaaclab/isaaclab/sensors/camera/camera.py",
+      "retrieved": "2026-10-09",
+      "supports": "Public Camera fallback fx=width*focal/horizontalAperture,fy=fx; current public source is not the installed pin."
+    },
+    {
+      "url": "https://openusd.org/release/spec_usdpreviewsurface.html",
+      "retrieved": "2026-10-09",
+      "supports": "Black diffuse color does not remove specular response of default metallic0/ior1.5."
+    },
+    {
+      "url": "https://nvidia-omniverse.github.io/ovrtx/sensors/cameras/render_modes/real_time_path_tracing.html",
+      "retrieved": "2026-10-09",
+      "supports": "RTPT temporal mechanisms; no universal no-history claim."
+    }
+  ],
+  "local_primary_sources": [
+    {
+      "original": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/sensors/camera/camera.py",
+      "retained": "/tmp/live30-correctness-camera-optics-source/camera.py",
+      "sha256": "2d1fede2b9d46c3af14a1b356a2ea7632ecf492c2f72253e2697158aca79d154",
+      "matches_git_HEAD": true,
+      "git_revision": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d"
+    },
+    {
+      "original": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/renderers/isaac_rtx_renderer.py",
+      "retained": "/tmp/live30-correctness-camera-optics-source/isaac_rtx_renderer.py",
+      "sha256": "3ad084604d4c7d7de07a5082943b8b1939b4f281f8d644dfa3a48456de6a19ca",
+      "matches_git_HEAD": true,
+      "git_revision": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d"
+    },
+    {
+      "original": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_ov/isaaclab_ov/renderers/ovrtx_usd.py",
+      "retained": "/tmp/live30-correctness-camera-optics-source/ovrtx_usd.py",
+      "sha256": "c6891f707b9ef35837fd98f51f700e088fe57df16d43dfcf9cec38c109058b1d",
+      "matches_git_HEAD": true,
+      "git_revision": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d"
+    },
+    {
+      "original": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/ovstage/bin/plugins/usd/usdRender/resources/usdRender/schema.usda",
+      "retained": "/tmp/live30-correctness-camera-optics-source/schema.usda",
+      "sha256": "a3b9e5994c9aa51c11ca220c7239c37c740c4fbaca9e215c6ad263d80dbb0b4d"
+    }
+  ],
+  "failure_causes": {
+    "mesh01": "All camera-parent children invisible; exact frozen helper replay reproduces all measurements.",
+    "mesh05": "Wrong effective vertical pixelK; old ROI FAIL retained.",
+    "paced06": "Same old vertical ROI mismatch; paced variant FAIL retained.",
+    "mesh08": "Scene PASS, wrist code board physically occluded by robot; HDF/triangle ray audit finds depth .0371693 before board .06.",
+    "mesh09": "All IDs/current/centroid PASS, right absolute oldROI FAIL106 due background confound; ghost remains unresolved."
+  },
+  "limits": [
+    "Camera-relative diagnostic Mesh phase, not full robot-material pixel pose equivalence.",
+    "Exact metadata/HDF join does not establish every scene pixel.",
+    "Zero source-ID frame lag does not timestamp exposure on a wall clock.",
+    "No Quest input/display path or physical S2 qualification.",
+    "Source0 startup freeze excluded from steady host latency statistics."
+  ],
+  "retained_top_level_files": [
+    {
+      "original": "/tmp/live30-correctness-camera-baseline08-join.json",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-baseline08-join.json",
+      "sha256": "dc4bd6ceb360643064c167e784137bc95663e2b2444b3b07835358d515d36c51"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-baseline08-join.log",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-baseline08-join.log",
+      "sha256": "dc4bd6ceb360643064c167e784137bc95663e2b2444b3b07835358d515d36c51"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-bundle.py",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-bundle.py",
+      "sha256": "30549da201dd3b0527786576f4ce107f36f76e5b4a61158c9f0c45faf025118a"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-hold09.log",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-hold09.log",
+      "sha256": "d997531c8556720cebf26a620d0b1517e95fefce3cb9a82481f88c46a18a7c75"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-hold09.py",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-hold09.py",
+      "sha256": "b0459554802d85c13c5f1a546072303faadd463a4fd3fdb065ad8ec1a7354062"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh-report.md",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh-report.md",
+      "sha256": "767fdaabad69b59f70925e5eb0308b6b5a4f6d34339b652bae38b43da01b0908"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh-self-test.json",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh-self-test.json",
+      "sha256": "42879db22cc6796714d37ed9f0fff3952a3bdbd07e563a99c99e291b4195ded0"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh-setup02-selftest.json",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh-setup02-selftest.json",
+      "sha256": "283681c833b0a3b49ee176e6aefa1050b0a5066db1b7ff6d9a306601329a9687"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh-setup02.json",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh-setup02.json",
+      "sha256": "42a2f6609965ce207c5b6fe4f6cf2fb90da783011740eeda55149268a84d415d"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh-setup02.log",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh-setup02.log",
+      "sha256": "218afcdde99dfd61b868844cbc4cb43bc2e96262c4dfaea63614b34ad83c1da4"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh-setup02.py",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh-setup02.py",
+      "sha256": "e8adba58ee0e70bfb624ebc3060f81d51f5a7cd28e0d621d3aa2633300db8ea1"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh-setup02.usda",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh-setup02.usda",
+      "sha256": "4488046a701a15090ebd177bda820e78f12068ff95feccb41640190cc366e309"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh-setup08-selftest.json",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh-setup08-selftest.json",
+      "sha256": "283681c833b0a3b49ee176e6aefa1050b0a5066db1b7ff6d9a306601329a9687"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh-setup09-helper.py",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh-setup09-helper.py",
+      "sha256": "6dd5d05241fc4f45d6fcb489beacacf11ff21a88686032dfce4631a102b41a87"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh-setup09-selftest.json",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh-setup09-selftest.json",
+      "sha256": "283681c833b0a3b49ee176e6aefa1050b0a5066db1b7ff6d9a306601329a9687"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh-setup09.json",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh-setup09.json",
+      "sha256": "38e79d8a0c2e7e3f7541c93b1735ca36aee1d1d115ba3328761063425264f95a"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh-setup09.usda",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh-setup09.usda",
+      "sha256": "24f089dbbdd3b62ee22f70c9930f3bb9f3291c91d18743cf970b23bde97bed31"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh01-replay-equivalence.json",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh01-replay-equivalence.json",
+      "sha256": "09b33125216f3d084df9ef9e62dab924fd86e891986378ee727b1ce6b0f1ba17"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh01-replay-source-join.json",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh01-replay-source-join.json",
+      "sha256": "afde299fd9dea0bae5d71060e5cbfb75bc89cfe53cabd0a2b9a3495cfb56edac"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh01-replay-source-join.log",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh01-replay-source-join.log",
+      "sha256": "afde299fd9dea0bae5d71060e5cbfb75bc89cfe53cabd0a2b9a3495cfb56edac"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh01-replay.log",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh01-replay.log",
+      "sha256": "ded29bb2a504d9785ee4850972fdd6ec46fba9efeab7d9e65f7190a7e74e1010"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh01.log",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh01.log",
+      "sha256": "d55e1a4882a858086dac69aa1d8938de4f8080400eec2603c8c88e504d81d014"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh05.log",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh05.log",
+      "sha256": "2396e67e2fa227b27bbb8a4581e37218b720198bb3c814f5e192cc31406f8421"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh08.log",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh08.log",
+      "sha256": "594d722e47e2ff881e87faacc45f3eed76a537839693f30e4b9669183521de84"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-mesh09.log",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-mesh09.log",
+      "sha256": "677cdabfac0b4fa4a5190b07a3c58da21fd6d853fda5acd0eb6cde5a9a7a2e5f"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-occlusion08.json",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-occlusion08.json",
+      "sha256": "45c104da0f1e4ec4dfccb2f2d87a9d277c8c530b835361f3856ed640d6694a0f"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-occlusion08.log",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-occlusion08.log",
+      "sha256": "ebcddf975f33ecc15b382f405236895da6e262a5894d27907261ed2ae18f8fed"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-occlusion08.py",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-occlusion08.py",
+      "sha256": "1d5ffc6954901fee8d2dee269bd2819c821c2a8ca5067d5d1b2ccc37da862274"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-optics-attrs08.json",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-optics-attrs08.json",
+      "sha256": "15334349499c1458861c291b249d32493228d78c77e132a7ccb383f11cbd071e"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-paced06.log",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-paced06.log",
+      "sha256": "784bb25eb00602ace711a9e9fdee9a4e94cebac3132648709c2f6803062b4dc0"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-phase08.json",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-phase08.json",
+      "sha256": "01e16cc71790d0ce2e93f63b5a8bc68bdee591baa21b9ab92d15de1c648a1966"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-phase08.log",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-phase08.log",
+      "sha256": "f4d1a60b8306fdc2cc1f4011c292a1e6fd7e6c9819e7324e920a0d01c81a0ab4"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-phase08.py",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-phase08.py",
+      "sha256": "c93e13af6124b2709d95a4e0ddbf155ccf312c702791d15e83abc74528ce17aa"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-report.md",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-report.md",
+      "sha256": "8d6836bcab8ffca5c859dd6214322aec6323d08b291d9437bed8e1c85b13a077"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-sources.json",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-sources.json",
+      "sha256": "070a765a3a0b57e39fa3742aa30689a48d46e443a6a9dea27706c76ccbd31aff"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-timing.json",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-timing.json",
+      "sha256": "8327739a4690ede7e1de368d2566b433458bef615aa1094a99d6605b7b676e62"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-timing.log",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-timing.log",
+      "sha256": "2fedc46bbd76d411d9cff509db2d0cc005bff06613a8f169ab755c403e482f04"
+    },
+    {
+      "original": "/tmp/live30-correctness-camera-timing.py",
+      "retained": "/data/ebulochkin/vla-runtime/live30-correctness-20261009/camera-audit/live30-correctness-camera-timing.py",
+      "sha256": "619980a47a6a7b929d3e09b1a21b571637e86a3f7459c3e42024c69994fad52d"
+    }
+  ]
+}
