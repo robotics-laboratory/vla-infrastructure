@@ -1,0 +1,43 @@
+{
+  "scope": "three native 960x600 render products, moving USD cube, live H264 disk writes",
+  "excluded": [
+    "physics",
+    "Piper",
+    "actions",
+    "XR",
+    "production temporal qualification"
+  ],
+  "started_utc": "2026-10-09T11:55:04Z",
+  "host": "lab-desktop-1",
+  "script_sha256": "0eff1dd55b722b6987f69294099bcb3b9c5f030adcb051ac8c2439cbfa12d809",
+  "base": "beaedfd1116577fd4d8026232cfb96cba0b030fa",
+  "isaacsim": "6.1.0.0",
+  "arguments": {
+    "output": "/data/ebulochkin/vla-runtime/live30-20261009/native-one-update",
+    "frames": 300,
+    "warmup": 60,
+    "renderer": "minimal",
+    "zero_delay": true,
+    "capture_mode": "app-update"
+  },
+  "passed": true,
+  "packet_counts_including_warmup": [
+    357,
+    357,
+    357
+  ],
+  "warmup_empty_packets": [
+    3,
+    3,
+    3
+  ],
+  "measured_wall_s_including_disk_flush": 2.9347097179852426,
+  "encoded_bundle_hz": 102.22476116171316,
+  "mean_ms": 9.77987512635688,
+  "p95_ms": 12.698612734675407,
+  "p99_ms": 15.684497784823176,
+  "deadline_misses": 0,
+  "actual_render_mode": "MinimalRendering",
+  "decoded_frame_count": "must verify separately; packet count is insufficient",
+  "finished_utc": "2026-10-09T11:55:14Z"
+}

@@ -1,0 +1,103 @@
+{
+  "run": "/data/ebulochkin/vla-runtime/live30-20261009/native-one-update",
+  "scope": "USD witness only; no physics/XR qualification",
+  "views": [
+    {
+      "view": 0,
+      "stream": {
+        "codec_name": "h264",
+        "width": 960,
+        "height": 600,
+        "pix_fmt": "yuvj420p",
+        "nb_read_frames": "357"
+      },
+      "decoded_frames": 357,
+      "distinct_content_hashes": 352,
+      "consecutive_identical_frames": 1,
+      "best_usd_witness_lag_ticks": -2,
+      "lag_fit_rmse_pixels": {
+        "-5": 88.40151259047667,
+        "-4": 60.452584665861814,
+        "-3": 30.754986478762223,
+        "-2": 1.277855765526793,
+        "-1": 30.710597556882224,
+        "0": 60.66883205978868,
+        "1": 88.97129043382454,
+        "2": 114.75575776613293,
+        "3": 137.2261509941773,
+        "4": 155.68429994323432,
+        "5": 169.56251949972574
+      },
+      "centroid_min_max": [
+        222.68697559849127,
+        736.5820568085597
+      ],
+      "stream_sha256": "a903c891aa2f4b0d73bbf3ef55d48f304e40817607e8347b8ff378f83c441528"
+    },
+    {
+      "view": 1,
+      "stream": {
+        "codec_name": "h264",
+        "width": 960,
+        "height": 600,
+        "pix_fmt": "yuvj420p",
+        "nb_read_frames": "357"
+      },
+      "decoded_frames": 357,
+      "distinct_content_hashes": 352,
+      "consecutive_identical_frames": 1,
+      "best_usd_witness_lag_ticks": -2,
+      "lag_fit_rmse_pixels": {
+        "-5": 88.40151259047667,
+        "-4": 60.452584665861814,
+        "-3": 30.754986478762223,
+        "-2": 1.277855765526793,
+        "-1": 30.710597556882224,
+        "0": 60.66883205978868,
+        "1": 88.97129043382454,
+        "2": 114.75575776613293,
+        "3": 137.2261509941773,
+        "4": 155.68429994323432,
+        "5": 169.56251949972574
+      },
+      "centroid_min_max": [
+        222.68697559849127,
+        736.5820568085597
+      ],
+      "stream_sha256": "a903c891aa2f4b0d73bbf3ef55d48f304e40817607e8347b8ff378f83c441528"
+    },
+    {
+      "view": 2,
+      "stream": {
+        "codec_name": "h264",
+        "width": 960,
+        "height": 600,
+        "pix_fmt": "yuvj420p",
+        "nb_read_frames": "357"
+      },
+      "decoded_frames": 357,
+      "distinct_content_hashes": 352,
+      "consecutive_identical_frames": 1,
+      "best_usd_witness_lag_ticks": -2,
+      "lag_fit_rmse_pixels": {
+        "-5": 88.40151259047667,
+        "-4": 60.452584665861814,
+        "-3": 30.754986478762223,
+        "-2": 1.277855765526793,
+        "-1": 30.710597556882224,
+        "0": 60.66883205978868,
+        "1": 88.97129043382454,
+        "2": 114.75575776613293,
+        "3": 137.2261509941773,
+        "4": 155.68429994323432,
+        "5": 169.56251949972574
+      },
+      "centroid_min_max": [
+        222.68697559849127,
+        736.5820568085597
+      ],
+      "stream_sha256": "a903c891aa2f4b0d73bbf3ef55d48f304e40817607e8347b8ff378f83c441528"
+    }
+  ],
+  "passed": false
+}

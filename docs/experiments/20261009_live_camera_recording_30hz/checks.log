@@ -1,0 +1,390 @@
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/generate_manifest.py", "generate"]
+MANIFEST generated: 110 reviewed files
+EXIT 0
+
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_docs.py", "--base", "beaedfd1116577fd4d8026232cfb96cba0b030fa"]
+INDEX: 571 entries; classification {'current': 68, 'historical': 503}
+HISTORICAL PRESERVATION: PASS (481 frozen files vs beaedfd1116577fd4d8026232cfb96cba0b030fa)
+KNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.
+DOC GOVERNANCE CHECKS: PASS
+EXIT 0
+
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_spec_references.py"]
+SPEC REFERENCE LINT OK
+EXIT 0
+
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/validate_resolved_contract.py", "configs/resolved_contract.yaml"]
+CONTRACT STRUCTURALLY VALID
+CONTRACT SEMANTICALLY VALID
+FINAL RC NOT READY
+BLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0
+EXIT 0
+
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/generate_manifest.py", "verify"]
+MANIFEST OK: 110 reviewed files
+EXIT 0
+
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "-m", "pytest", "-q", "tests/test_docs_governance.py", "tests/test_validator_baseline.py", "tests/test_validator_negative.py", "tests/test_manifest.py", "tests/test_isaac_vr_recording.py", "tests/test_isaac_vr_config.py", "tests/test_isaac_vr_camera_rendering.py", "tests/test_temporal_recording_path.py"]
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+...........................................................F.....        [100%]
+=================================== FAILURES ===================================
+_____ test_upstream_record_loop_writes_temporal_features_before_add_frame ______
+
+tmp_path = PosixPath('/tmp/pytest-of-ebulochkin/pytest-675/test_upstream_record_loop_writ0')
+
+    def test_upstream_record_loop_writes_temporal_features_before_add_frame(tmp_path: Path) -> None:
+        from lerobot.datasets.lerobot_dataset import LeRobotDataset
+        from lerobot.processor import make_default_processors
+        from lerobot.scripts.lerobot_record import record_loop
+    
+        contract = _contract()
+        timing = contract["dataset"]["temporal_semantics"]["source_timing"]
+        required = tuple(timing["required_feature_sets_by_source_class"]["automated"])
+        action_spec = {"dtype": "float32", "shape": (1,), "names": ["marker"]}
+        features = {
+            "observation.state": {
+                "dtype": "float32",
+                "shape": (1,),
+                "names": ["marker"],
+            },
+            "observation.images.left_wrist": {"dtype": "image", "shape": (2, 2, 3)},
+            "observation.images.right_wrist": {"dtype": "image", "shape": (2, 2, 3)},
+            "observation.images.scene": {"dtype": "image", "shape": (2, 2, 3)},
+            "action": action_spec,
+            **temporal_feature_specs(timing["feature_sets"], required),
+        }
+        dataset = LeRobotDataset.create(
+            repo_id="tests/temporal-production-path",
+            fps=30,
+            features=features,
+            root=tmp_path / "dataset",
+            use_videos=False,
+        )
+        robot = TimedRobot()
+        adapter, teleop = wrap_lerobot_dataset_for_temporal_recording(
+            dataset,
+            contract,
+            robot=robot,
+            teleop=TestTeleoperator(),
+            source_class="scripted_expert",
+            monotonic=ScriptedClock(100.040, 100.050),
+        )
+        teleop_processor, robot_action_processor, observation_processor = make_default_processors()
+    
+        record_loop(
+            robot=robot,
+            events={"exit_early": False},
+            fps=30,
+            teleop_action_processor=teleop_processor,
+            robot_action_processor=robot_action_processor,
+            robot_observation_processor=observation_processor,
+            dataset=adapter,
+            teleop=teleop,
+            control_time_s=0.001,
+            single_task="synthetic",
+        )
+        adapter.save_episode()
+        dataset.finalize()
+    
+>       loaded = LeRobotDataset(
+            "tests/temporal-production-path",
+            root=tmp_path / "dataset",
+        )
+
+tests/test_temporal_recording_path.py:141: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/lerobot/datasets/lerobot_dataset.py:229: in __init__
+    self.meta = LeRobotDatasetMetadata(
+/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/lerobot/datasets/dataset_metadata.py:139: in __init__
+    self._load_metadata()
+/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/lerobot/datasets/dataset_metadata.py:218: in _load_metadata
+    self.episodes = load_episodes(self.root) if self.total_episodes > 0 else None
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/lerobot/datasets/io_utils.py:213: in load_episodes
+    episodes = load_nested_dataset(local_dir / EPISODES_DIR)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/lerobot/datasets/io_utils.py:82: in load_nested_dataset
+    return Dataset.from_parquet([str(path) for path in paths], filters=filters, features=features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/datasets/arrow_dataset.py:1572: in from_parquet
+    return ParquetDatasetReader(
+/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/datasets/io/parquet.py:43: in __init__
+    self.builder = Parquet(
+/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/datasets/builder.py:389: in __init__
+    with FileLock(lock_path):
+         ^^^^^^^^^^^^^^^^^^^
+/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/filelock/_api.py:951: in __enter__
+    self.acquire()
+/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/filelock/_api.py:1059: in acquire
+    self._poll_until_acquired(
+/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/filelock/_api.py:1220: in _poll_until_acquired
+    self._acquire_with_fork_tracking()
+/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/filelock/_api.py:1278: in _acquire_with_fork_tracking
+    self._acquire()
+/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/filelock/_unix.py:70: in _acquire
+    missing_flock = self._acquire_native()
+                    ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <datasets.utils._filelock.FileLock object at 0x7885c16f2450>
+
+    def _acquire_native(self) -> tuple[int, OSError] | None:
+        ensure_directory_exists(self.lock_file)
+        # Open without O_TRUNC and defer truncation and fchmod until after flock succeeds: a contender that loses
+        # the lock must not truncate the holder's file (erasing caller diagnostics) or change its mode. The winner
+        # truncates and normalizes mode once it owns the lock (#591).
+        open_flags = os.O_RDWR
+        if (o_nofollow := getattr(os, "O_NOFOLLOW", None)) is not None:
+            open_flags |= o_nofollow
+        open_flags |= os.O_CREAT
+        open_mode = self._open_mode()
+        try:
+>           fd = os.open(self.lock_file, open_flags, open_mode)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           OSError: [Errno 30] Read-only file system: '/home/ebulochkin/.cache/huggingface/datasets/_home_ebulochkin_.cache_huggingface_datasets_parquet_default-6eebc1c0c575bbbb_0.0.0_ec3958b52035e87929642b609b5a781870321434b151a14fbe8fd5a26ff494bb.lock'
+
+/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/filelock/_unix.py:85: OSError
+----------------------------- Captured stderr call -----------------------------
+
+Map:   0%|          | 0/1 [00:00<?, ? examples/s]
+Map: 100%|██████████| 1/1 [00:00<00:00, 184.37 examples/s]
+------------------------------ Captured log call -------------------------------
+WARNING  lerobot.utils.import_utils:import_utils.py:80 Could not load libtorchcodec. Likely causes:
+          1. FFmpeg is not properly installed in your environment. We support
+             versions 4, 5, 6, 7, and 8, and we attempt to load libtorchcodec
+             for each of those versions. Errors for versions not installed on
+             your system are expected; only the error for your installed FFmpeg
+             version is relevant. On Windows, ensure you've installed the
+             "full-shared" version which ships DLLs.
+          2. The PyTorch version (2.7.1+cu126) is not compatible with
+             this version of TorchCodec. Refer to the version compatibility
+             table:
+             https://github.com/pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec.
+          3. Another runtime dependency; see exceptions below.
+
+        The following exceptions were raised as we tried to load libtorchcodec:
+        
+[start of libtorchcodec loading traceback]
+FFmpeg version 8:
+Traceback (most recent call last):
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torch/_ops.py", line 1392, in load_library
+    ctypes.CDLL(path)
+  File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.60: cannot open shared object file: No such file or directory
+
+FFmpeg version 7:
+Traceback (most recent call last):
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torch/_ops.py", line 1392, in load_library
+    ctypes.CDLL(path)
+  File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.59: cannot open shared object file: No such file or directory
+
+FFmpeg version 6:
+Traceback (most recent call last):
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torch/_ops.py", line 1392, in load_library
+    ctypes.CDLL(path)
+  File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.58: cannot open shared object file: No such file or directory
+
+FFmpeg version 5:
+Traceback (most recent call last):
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torch/_ops.py", line 1392, in load_library
+    ctypes.CDLL(path)
+  File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.57: cannot open shared object file: No such file or directory
+
+FFmpeg version 4:
+Traceback (most recent call last):
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torch/_ops.py", line 1392, in load_library
+    ctypes.CDLL(path)
+  File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torchcodec/libtorchcodec_core4.so: undefined symbol: torch_dtype_float4_e2m1fn_x2
+[end of libtorchcodec loading traceback].
+'torchcodec' is installed but cannot be loaded (see the error above). Falling back to 'pyav' as a default decoder.
+WARNING  lerobot.utils.import_utils:import_utils.py:80 Could not load libtorchcodec. Likely causes:
+          1. FFmpeg is not properly installed in your environment. We support
+             versions 4, 5, 6, 7, and 8, and we attempt to load libtorchcodec
+             for each of those versions. Errors for versions not installed on
+             your system are expected; only the error for your installed FFmpeg
+             version is relevant. On Windows, ensure you've installed the
+             "full-shared" version which ships DLLs.
+          2. The PyTorch version (2.7.1+cu126) is not compatible with
+             this version of TorchCodec. Refer to the version compatibility
+             table:
+             https://github.com/pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec.
+          3. Another runtime dependency; see exceptions below.
+
+        The following exceptions were raised as we tried to load libtorchcodec:
+        
+[start of libtorchcodec loading traceback]
+FFmpeg version 8:
+Traceback (most recent call last):
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torch/_ops.py", line 1392, in load_library
+    ctypes.CDLL(path)
+  File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.60: cannot open shared object file: No such file or directory
+
+FFmpeg version 7:
+Traceback (most recent call last):
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torch/_ops.py", line 1392, in load_library
+    ctypes.CDLL(path)
+  File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.59: cannot open shared object file: No such file or directory
+
+FFmpeg version 6:
+Traceback (most recent call last):
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torch/_ops.py", line 1392, in load_library
+    ctypes.CDLL(path)
+  File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.58: cannot open shared object file: No such file or directory
+
+FFmpeg version 5:
+Traceback (most recent call last):
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torch/_ops.py", line 1392, in load_library
+    ctypes.CDLL(path)
+  File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libavutil.so.57: cannot open shared object file: No such file or directory
+
+FFmpeg version 4:
+Traceback (most recent call last):
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torchcodec/_internally_replaced_utils.py", line 93, in load_torchcodec_shared_libraries
+    torch.ops.load_library(core_library_path)
+  File "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torch/_ops.py", line 1392, in load_library
+    ctypes.CDLL(path)
+  File "/data/vla-infrastructure/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/ctypes/__init__.py", line 379, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/torchcodec/libtorchcodec_core4.so: undefined symbol: torch_dtype_float4_e2m1fn_x2
+[end of libtorchcodec loading traceback].
+'torchcodec' is installed but cannot be loaded (see the error above). Falling back to 'pyav' as a default decoder.
+=========================== short test summary info ============================
+FAILED tests/test_temporal_recording_path.py::test_upstream_record_loop_writes_temporal_features_before_add_frame
+1 failed, 208 passed in 9.70s
+EXIT 1
+
+VALIDATION RETRY: dedicated writable HF caches, exact core Ruff executable
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_docs.py", "--base", "beaedfd1116577fd4d8026232cfb96cba0b030fa"]
+INDEX: 571 entries; classification {'current': 68, 'historical': 503}
+HISTORICAL PRESERVATION: PASS (481 frozen files vs beaedfd1116577fd4d8026232cfb96cba0b030fa)
+KNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.
+DOC GOVERNANCE CHECKS: PASS
+EXIT 0
+
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_spec_references.py"]
+SPEC REFERENCE LINT OK
+EXIT 0
+
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/validate_resolved_contract.py", "configs/resolved_contract.yaml"]
+CONTRACT STRUCTURALLY VALID
+CONTRACT SEMANTICALLY VALID
+FINAL RC NOT READY
+BLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0
+EXIT 0
+
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/generate_manifest.py", "verify"]
+MANIFEST OK: 110 reviewed files
+EXIT 0
+
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "-m", "pytest", "-q", "tests/test_docs_governance.py", "tests/test_validator_baseline.py", "tests/test_validator_negative.py", "tests/test_manifest.py", "tests/test_isaac_vr_recording.py", "tests/test_isaac_vr_config.py", "tests/test_isaac_vr_camera_rendering.py", "tests/test_temporal_recording_path.py"]
+........................................................................ [ 34%]
+........................................................................ [ 68%]
+.................................................................        [100%]
+209 passed in 9.33s
+EXIT 0
+
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff", "check", "docs/experiments/20261009_live_camera_recording_30hz/native_encode_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/verify_native_encode.py", "docs/experiments/20261009_live_camera_recording_30hz/native_packet_writer.py"]
+All checks passed!
+EXIT 0
+
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "-c", "from pathlib import Path; [compile(p.read_text(), str(p), 'exec') for p in Path('docs/experiments/20261009_live_camera_recording_30hz').glob('*.py')]; print('All experiment Python source snapshots compile; no imports/GPU run for Writer helper')"]
+All experiment Python source snapshots compile; no imports/GPU run for Writer helper
+EXIT 0
+
+COMMAND ["git", "diff", "--check"]
+docs/experiments/20261009_live_camera_recording_30hz/checks.log:40: trailing whitespace.
++    
+docs/experiments/20261009_live_camera_recording_30hz/checks.log:74: trailing whitespace.
++    
+docs/experiments/20261009_live_camera_recording_30hz/checks.log:89: trailing whitespace.
++    
+docs/experiments/20261009_live_camera_recording_30hz/checks.log:95: trailing whitespace.
++tests/test_temporal_recording_path.py:141: 
+docs/experiments/20261009_live_camera_recording_30hz/checks.log:96: trailing whitespace.
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+docs/experiments/20261009_live_camera_recording_30hz/checks.log:128: trailing whitespace.
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+docs/experiments/20261009_live_camera_recording_30hz/checks.log:167: trailing whitespace.
++        
+docs/experiments/20261009_live_camera_recording_30hz/checks.log:239: trailing whitespace.
++        
+docs/experiments/20261009_live_camera_recording_30hz/checks.log:339: new blank line at EOF.
+EXIT 2
+
+COMMAND ["git", "diff", "--cached", "--check"]
+docs/experiments/20261009_live_camera_recording_30hz/failed_probe.log:43: trailing whitespace.
++| Available Cores:  24 
+docs/experiments/20261009_live_camera_recording_30hz/native_probe.log:43: trailing whitespace.
++| Available Cores:  24 
+docs/experiments/20261009_live_camera_recording_30hz/one_update.log:44: trailing whitespace.
++| Available Cores:  24 
+docs/experiments/20261009_live_camera_recording_30hz/piper_probe.log:44: trailing whitespace.
++| Available Cores:  24 
+EXIT 2
+
+FINAL DOCUMENT REVIEW: immutable source-state capture, bounded rollback, helper dispatch limitations. Raw logs retain upstream whitespace intentionally.
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_docs.py", "--base", "beaedfd1116577fd4d8026232cfb96cba0b030fa"]
+INDEX: 571 entries; classification {'current': 68, 'historical': 503}
+HISTORICAL PRESERVATION: PASS (481 frozen files vs beaedfd1116577fd4d8026232cfb96cba0b030fa)
+KNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.
+DOC GOVERNANCE CHECKS: PASS
+EXIT 0
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_spec_references.py"]
+SPEC REFERENCE LINT OK
+EXIT 0
+COMMAND ["git", "diff", "--check", "--", ".", ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/*.log"]
+EXIT 0
+COMMAND ["git", "diff", "--cached", "--check", "--", ".", ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/*.log"]
+EXIT 0
+COMMAND ["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_docs.py", "--base", "beaedfd1116577fd4d8026232cfb96cba0b030fa"]
+INDEX: 571 entries; classification {'current': 68, 'historical': 503}
+HISTORICAL PRESERVATION: PASS (481 frozen files vs beaedfd1116577fd4d8026232cfb96cba0b030fa)
+KNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.
+DOC GOVERNANCE CHECKS: PASS
+EXIT 0

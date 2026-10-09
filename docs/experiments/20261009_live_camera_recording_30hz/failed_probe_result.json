@@ -1,0 +1,24 @@
+{
+  "scope": "three native 960x600 render products, moving USD cube, live H264 disk writes",
+  "excluded": [
+    "physics",
+    "Piper",
+    "actions",
+    "XR",
+    "production temporal qualification"
+  ],
+  "started_utc": "2026-10-09T11:50:11Z",
+  "host": "lab-desktop-1",
+  "script_sha256": "388df5127a68850b3fa859d2858bfcaa57adc756858b4dc5ed1e182eca3b1dd3",
+  "base": "beaedfd1116577fd4d8026232cfb96cba0b030fa",
+  "isaacsim": "6.1.0.0",
+  "arguments": {
+    "output": "/data/ebulochkin/vla-runtime/live30-20261009/native-minimal",
+    "frames": 300,
+    "warmup": 60,
+    "renderer": "minimal"
+  },
+  "passed": false,
+  "error": "Traceback (most recent call last):\n  File \"/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/native_encode_probe.py\", line 83, in <module>\n    raise RuntimeError(f\"empty compressed data at tick {tick}, view {index}\")\nRuntimeError: empty compressed data at tick 1, view 0\n",
+  "finished_utc": "2026-10-09T11:52:39Z"
+}

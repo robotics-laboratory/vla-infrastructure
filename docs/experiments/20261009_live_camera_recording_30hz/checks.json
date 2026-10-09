@@ -1,0 +1,370 @@
+{
+  "trusted_base": "beaedfd1116577fd4d8026232cfb96cba0b030fa",
+  "branch": "research/live-camera-recording-30hz",
+  "tested_scope": "Research documents and experimental source; production unchanged; no Quest qualification",
+  "interpreter": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+  "python": "3.12.13 (main, Jun 23 2026, 15:18:55) [Clang 22.1.3 ]",
+  "environment_overrides": {
+    "HF_HOME": "/tmp/live30-check-cache/hf",
+    "HF_DATASETS_CACHE": "/tmp/live30-check-cache/hf-datasets"
+  },
+  "started_utc": "2026-10-09T12:14:42.126996+00:00",
+  "checks": [
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "beaedfd1116577fd4d8026232cfb96cba0b030fa"
+      ],
+      "started_utc": "2026-10-09T12:14:42.127021+00:00",
+      "exit_code": 0,
+      "stdout_in": "checks.log"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "started_utc": "2026-10-09T12:14:43.491044+00:00",
+      "exit_code": 0,
+      "stdout_in": "checks.log"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/validate_resolved_contract.py",
+        "configs/resolved_contract.yaml"
+      ],
+      "started_utc": "2026-10-09T12:14:43.655465+00:00",
+      "exit_code": 0,
+      "stdout_in": "checks.log"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "started_utc": "2026-10-09T12:14:44.185245+00:00",
+      "exit_code": 0,
+      "stdout_in": "checks.log"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_docs_governance.py",
+        "tests/test_validator_baseline.py",
+        "tests/test_validator_negative.py",
+        "tests/test_manifest.py",
+        "tests/test_isaac_vr_recording.py",
+        "tests/test_isaac_vr_config.py",
+        "tests/test_isaac_vr_camera_rendering.py",
+        "tests/test_temporal_recording_path.py"
+      ],
+      "started_utc": "2026-10-09T12:14:44.210458+00:00",
+      "exit_code": 0,
+      "stdout_in": "checks.log"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff",
+        "check",
+        "docs/experiments/20261009_live_camera_recording_30hz/native_encode_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/verify_native_encode.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/native_packet_writer.py"
+      ],
+      "started_utc": "2026-10-09T12:14:54.190523+00:00",
+      "exit_code": 0,
+      "stdout_in": "checks.log"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-c",
+        "from pathlib import Path; [compile(p.read_text(), str(p), 'exec') for p in Path('docs/experiments/20261009_live_camera_recording_30hz').glob('*.py')]; print('All experiment Python source snapshots compile; no imports/GPU run for Writer helper')"
+      ],
+      "started_utc": "2026-10-09T12:14:54.200020+00:00",
+      "exit_code": 0,
+      "stdout_in": "checks.log"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "started_utc": "2026-10-09T12:14:54.225948+00:00",
+      "exit_code": 2,
+      "stdout_in": "checks.log"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "started_utc": "2026-10-09T12:14:54.229650+00:00",
+      "exit_code": 2,
+      "stdout_in": "checks.log"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "beaedfd1116577fd4d8026232cfb96cba0b030fa"
+      ],
+      "exit_code": 0,
+      "stdout_in": "checks.log",
+      "started_utc": "2026-10-09T12:16:08.374255+00:00"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "exit_code": 0,
+      "stdout_in": "checks.log",
+      "started_utc": "2026-10-09T12:16:08.534748+00:00"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/*.log"
+      ],
+      "exit_code": 0,
+      "stdout_in": "checks.log",
+      "started_utc": "2026-10-09T12:16:08.536597+00:00"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/*.log"
+      ],
+      "exit_code": 0,
+      "stdout_in": "checks.log",
+      "started_utc": "2026-10-09T12:16:08.539850+00:00"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "beaedfd1116577fd4d8026232cfb96cba0b030fa"
+      ],
+      "exit_code": 0,
+      "stdout_in": "checks.log",
+      "started_utc": "2026-10-09T12:17:39.096250+00:00",
+      "reason": "Clarify buffered-flush-only short media window and historical audit scope"
+    }
+  ],
+  "previous_checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_docs_governance.py",
+        "tests/test_validator_baseline.py",
+        "tests/test_validator_negative.py"
+      ],
+      "stdout": "initial_governance_tests.log",
+      "exit_code": 0,
+      "result": "108 passed in 6.01s, before INDEX registration; not final coverage"
+    },
+    {
+      "stdout": "checks.log, first validation block",
+      "manifest_generation_exit": 0,
+      "documentation_and_contract_checks_exit": 0,
+      "pytest_exit": 1,
+      "pytest_result": "208 passed; one failed from read-only Hugging Face dataset cache; retry under dedicated /tmp cache",
+      "runner_error": "shutil.which(ruff) returned None because core bin not on PATH; now exact core ruff path used; no initial Ruff execution"
+    }
+  ],
+  "diagnostic_failures": [
+    "Native minimal and Piper packet probes failed: see run_ledger.json",
+    "Both corrected dynamic-witness verifiers returned exit1: temporal same-step FAIL",
+    "Initial decoder automatic-vsync produced extra frame; original result retained and excluded",
+    "First inventory attempt used system Python lacking hashlib.file_digest; retried successfully in declared core interpreter"
+  ],
+  "historical_artifact_authentication": "Current media and current experiment source SHA256 verified; historical raw scalar comparison only, not full reauthentication",
+  "finished_utc": "2026-10-09T12:16:08.539883+00:00",
+  "passed": true,
+  "working_tree_sources": {
+    "docs/experiments/20261009_live_camera_recording_30hz/GPU_SOURCE_AUDIT.md": "a5dc8c9eadf568960f0453be03585b29241504c847f487adef6343e1c3be2ed4",
+    "docs/experiments/20261009_live_camera_recording_30hz/HISTORY.md": "c5b9a741279caa96157c5b6bb5f9b25bbc8d04497c56c4a886dfd0189cfb8c83",
+    "docs/experiments/20261009_live_camera_recording_30hz/LOW_LEVEL_AUDIT.md": "0cf4634a8a4f002c638e67a770c4ba70e0eb61ec52e27369f9c39bf9cde59282",
+    "docs/experiments/20261009_live_camera_recording_30hz/README.md": "726623cbc1d2b6a2e1aba8c53a561e96882607211bdbeb8cda615bf55f445376",
+    "docs/experiments/20261009_live_camera_recording_30hz/REPORT.md": "169cd21782938f8ae56d75bec2ab37ba6d50e076a693b4cf4dc17a366a8eb96e",
+    "docs/experiments/20261009_live_camera_recording_30hz/artifact_inventory.json": "b36d4d9138f5f27afb5f0ad0b99fbe26052dd06bdeb3c2949ef5a84e76903d82",
+    "docs/experiments/20261009_live_camera_recording_30hz/failed_probe.log": "62bfd05462c774db16885368c1dea2dca34b801c7ecff33acbbf0833e1203da0",
+    "docs/experiments/20261009_live_camera_recording_30hz/failed_probe_result.json": "73537ddd213af53402e0e471cb23c9048ac9a72e74391b931d3a01292bc5a4df",
+    "docs/experiments/20261009_live_camera_recording_30hz/failed_probe_source.py": "388df5127a68850b3fa859d2858bfcaa57adc756858b4dc5ed1e182eca3b1dd3",
+    "docs/experiments/20261009_live_camera_recording_30hz/historical_sources.json": "e9fc6b7adefaa59b12699326b3df26a5f1a44288239f4d7bf6493090e9595e41",
+    "docs/experiments/20261009_live_camera_recording_30hz/initial_governance_tests.log": "43b2e64cd818df94fcf81e598ee97efe0c6b77be1e7d192edb177ca59eebd417",
+    "docs/experiments/20261009_live_camera_recording_30hz/native_decode.json": "aebe08d7dfc2b9eed9ee4b919b43aa2ee05e9f8ccbb53496b80f162a2cd3dcaf",
+    "docs/experiments/20261009_live_camera_recording_30hz/native_encode_probe.py": "5de7b1427b41931f51f62280a4142fe2df7c87fa0511acc7719bdbf24997d1ff",
+    "docs/experiments/20261009_live_camera_recording_30hz/native_packet_writer.py": "15d762bac6eb1ade23683b9e03200723a89930511484e22b207b70e1fd77c83d",
+    "docs/experiments/20261009_live_camera_recording_30hz/native_probe.log": "dd316b0fc12b26130846330d016e79090a6f23c57f6e8ddcb995aff09741fdac",
+    "docs/experiments/20261009_live_camera_recording_30hz/native_probe_result.json": "9226e4045bab1754ce38fb36f46c96437a435a6e1dc53fcf772e6b77de964a2f",
+    "docs/experiments/20261009_live_camera_recording_30hz/one_update.log": "43e5b2203d73dc6991c2b0c2a72350094cb3d1121df0f642fd5c209752d98c91",
+    "docs/experiments/20261009_live_camera_recording_30hz/one_update_decode.json": "36bfe92076923a34cc8ea679bf51c998747728813ed2340b7e3e25d982320d98",
+    "docs/experiments/20261009_live_camera_recording_30hz/one_update_probe_source.py": "0eff1dd55b722b6987f69294099bcb3b9c5f030adcb051ac8c2439cbfa12d809",
+    "docs/experiments/20261009_live_camera_recording_30hz/one_update_result.json": "db5c17d7635645d1bfd9c3874688f7dc4b7bba652db4a64696d0f06673d6094e",
+    "docs/experiments/20261009_live_camera_recording_30hz/orchestrator_probe_source.py": "160b6325e446ba54db7e4c79f8e508dfb861dbfa242c091a093d68a084c5a9e8",
+    "docs/experiments/20261009_live_camera_recording_30hz/piper_probe.log": "4c708d87b63729a7e0b1da2b243501a455e7ecc19d864668f71a9d90322fbcda",
+    "docs/experiments/20261009_live_camera_recording_30hz/piper_probe_result.json": "de0aebb343a9cf7e52708b7fc92389a9abedcf3b492c048ffd6454d5ffae6e5f",
+    "docs/experiments/20261009_live_camera_recording_30hz/piper_probe_source.py": "5de7b1427b41931f51f62280a4142fe2df7c87fa0511acc7719bdbf24997d1ff",
+    "docs/experiments/20261009_live_camera_recording_30hz/run_ledger.json": "f50d9732a248b0ab6f5301b547aae587b28a1d9a7ab99cb1da459cd2a35153c5",
+    "docs/experiments/20261009_live_camera_recording_30hz/verifier_initial_result.json": "0fea8290488e4d115c9625a7404908f73c7d2598921473fa3cee3c9f6d9b1af8",
+    "docs/experiments/20261009_live_camera_recording_30hz/verifier_initial_source.py": "8121d265729ec3f897b4be5dc4117f60f8aa97d0d268114157b37e1d6500362b",
+    "docs/experiments/20261009_live_camera_recording_30hz/verify_native_encode.py": "3245c73902509d7accddce4cbf11ecbd804e1899345b2afff3c3bde26a01f49b"
+  },
+  "raw_log_diff_exception": "Unfiltered diff checks returned2 only for upstream whitespace in preserved capture logs; retained results, explicitly checked all other paths.",
+  "final_required_results": [
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "started_utc": "2026-10-09T12:14:43.491044+00:00",
+      "exit_code": 0,
+      "stdout_in": "checks.log"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/validate_resolved_contract.py",
+        "configs/resolved_contract.yaml"
+      ],
+      "started_utc": "2026-10-09T12:14:43.655465+00:00",
+      "exit_code": 0,
+      "stdout_in": "checks.log"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "started_utc": "2026-10-09T12:14:44.185245+00:00",
+      "exit_code": 0,
+      "stdout_in": "checks.log"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_docs_governance.py",
+        "tests/test_validator_baseline.py",
+        "tests/test_validator_negative.py",
+        "tests/test_manifest.py",
+        "tests/test_isaac_vr_recording.py",
+        "tests/test_isaac_vr_config.py",
+        "tests/test_isaac_vr_camera_rendering.py",
+        "tests/test_temporal_recording_path.py"
+      ],
+      "started_utc": "2026-10-09T12:14:44.210458+00:00",
+      "exit_code": 0,
+      "stdout_in": "checks.log"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff",
+        "check",
+        "docs/experiments/20261009_live_camera_recording_30hz/native_encode_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/verify_native_encode.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/native_packet_writer.py"
+      ],
+      "started_utc": "2026-10-09T12:14:54.190523+00:00",
+      "exit_code": 0,
+      "stdout_in": "checks.log"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-c",
+        "from pathlib import Path; [compile(p.read_text(), str(p), 'exec') for p in Path('docs/experiments/20261009_live_camera_recording_30hz').glob('*.py')]; print('All experiment Python source snapshots compile; no imports/GPU run for Writer helper')"
+      ],
+      "started_utc": "2026-10-09T12:14:54.200020+00:00",
+      "exit_code": 0,
+      "stdout_in": "checks.log"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "beaedfd1116577fd4d8026232cfb96cba0b030fa"
+      ],
+      "exit_code": 0,
+      "stdout_in": "checks.log",
+      "started_utc": "2026-10-09T12:16:08.374255+00:00"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "exit_code": 0,
+      "stdout_in": "checks.log",
+      "started_utc": "2026-10-09T12:16:08.534748+00:00"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/*.log"
+      ],
+      "exit_code": 0,
+      "stdout_in": "checks.log",
+      "started_utc": "2026-10-09T12:16:08.536597+00:00"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/*.log"
+      ],
+      "exit_code": 0,
+      "stdout_in": "checks.log",
+      "started_utc": "2026-10-09T12:16:08.539850+00:00"
+    },
+    {
+      "argv": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "beaedfd1116577fd4d8026232cfb96cba0b030fa"
+      ],
+      "exit_code": 0,
+      "stdout_in": "checks.log",
+      "started_utc": "2026-10-09T12:17:39.096250+00:00",
+      "reason": "Clarify buffered-flush-only short media window and historical audit scope"
+    }
+  ]
+}

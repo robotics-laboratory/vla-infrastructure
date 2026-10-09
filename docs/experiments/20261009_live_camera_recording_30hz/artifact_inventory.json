@@ -1,0 +1,437 @@
+{
+  "schema": "diagnostic_external_inventory_v1",
+  "trusted_base": "beaedfd1116577fd4d8026232cfb96cba0b030fa",
+  "scope": "Current experiments only; raw media SHA256 and ffprobe cardinality, no physical qualification",
+  "limitations": [
+    "External media are local durable locators, not committed payloads",
+    "Snapshot referenced USD assets/textures and complete SDK binary closure were not vendored",
+    "Failed runs retain partial streams; ffprobe decodability does not finalize episodes",
+    "Piper input originals are now copied to durable piper-inputs; runtime paths remain captured original /tmp paths"
+  ],
+  "files": [
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/native-minimal/result.json",
+      "bytes": 998,
+      "sha256": "73537ddd213af53402e0e471cb23c9048ac9a72e74391b931d3a01292bc5a4df"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/native-minimal/view_0.h264",
+      "bytes": 2114,
+      "sha256": "b61d0123022899e4a7d3eeb7bc2545e2e2f66ead62bd1d8dde5528628293ee0c",
+      "inspection_command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=codec_name,width,height,pix_fmt,nb_read_frames",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-20261009/native-minimal/view_0.h264"
+      ],
+      "inspection_exit_code": 0,
+      "inspection": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 600,
+            "pix_fmt": "yuvj420p",
+            "nb_read_frames": "1"
+          }
+        ]
+      },
+      "inspection_stderr": ""
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/native-minimal/view_1.h264",
+      "bytes": 2114,
+      "sha256": "b61d0123022899e4a7d3eeb7bc2545e2e2f66ead62bd1d8dde5528628293ee0c",
+      "inspection_command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=codec_name,width,height,pix_fmt,nb_read_frames",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-20261009/native-minimal/view_1.h264"
+      ],
+      "inspection_exit_code": 0,
+      "inspection": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 600,
+            "pix_fmt": "yuvj420p",
+            "nb_read_frames": "1"
+          }
+        ]
+      },
+      "inspection_stderr": ""
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/native-minimal/view_2.h264",
+      "bytes": 2114,
+      "sha256": "b61d0123022899e4a7d3eeb7bc2545e2e2f66ead62bd1d8dde5528628293ee0c",
+      "inspection_command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=codec_name,width,height,pix_fmt,nb_read_frames",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-20261009/native-minimal/view_2.h264"
+      ],
+      "inspection_exit_code": 0,
+      "inspection": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 600,
+            "pix_fmt": "yuvj420p",
+            "nb_read_frames": "1"
+          }
+        ]
+      },
+      "inspection_stderr": ""
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/native-one-update/packets.json",
+      "bytes": 31906,
+      "sha256": "04efccf4b444a565f5b4e84d5f7d3292112a8167b98e01d60b05ba1b8f0c457b"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/native-one-update/result.json",
+      "bytes": 1196,
+      "sha256": "db5c17d7635645d1bfd9c3874688f7dc4b7bba652db4a64696d0f06673d6094e"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/native-one-update/view_0.h264",
+      "bytes": 991226,
+      "sha256": "a903c891aa2f4b0d73bbf3ef55d48f304e40817607e8347b8ff378f83c441528",
+      "inspection_command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=codec_name,width,height,pix_fmt,nb_read_frames",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-20261009/native-one-update/view_0.h264"
+      ],
+      "inspection_exit_code": 0,
+      "inspection": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 600,
+            "pix_fmt": "yuvj420p",
+            "nb_read_frames": "357"
+          }
+        ]
+      },
+      "inspection_stderr": ""
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/native-one-update/view_1.h264",
+      "bytes": 991226,
+      "sha256": "a903c891aa2f4b0d73bbf3ef55d48f304e40817607e8347b8ff378f83c441528",
+      "inspection_command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=codec_name,width,height,pix_fmt,nb_read_frames",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-20261009/native-one-update/view_1.h264"
+      ],
+      "inspection_exit_code": 0,
+      "inspection": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 600,
+            "pix_fmt": "yuvj420p",
+            "nb_read_frames": "357"
+          }
+        ]
+      },
+      "inspection_stderr": ""
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/native-one-update/view_2.h264",
+      "bytes": 991226,
+      "sha256": "a903c891aa2f4b0d73bbf3ef55d48f304e40817607e8347b8ff378f83c441528",
+      "inspection_command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=codec_name,width,height,pix_fmt,nb_read_frames",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-20261009/native-one-update/view_2.h264"
+      ],
+      "inspection_exit_code": 0,
+      "inspection": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 600,
+            "pix_fmt": "yuvj420p",
+            "nb_read_frames": "357"
+          }
+        ]
+      },
+      "inspection_stderr": ""
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/native-zero-delay/packets.json",
+      "bytes": 31933,
+      "sha256": "afac0199e6695342be27c63b8aad350b805b3b5fda02e85abc3966171ba8971f"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/native-zero-delay/result.json",
+      "bytes": 1163,
+      "sha256": "9226e4045bab1754ce38fb36f46c96437a435a6e1dc53fcf772e6b77de964a2f"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/native-zero-delay/view_0.h264",
+      "bytes": 999518,
+      "sha256": "2798a2d300032294d65a686182003e5396c3d762fbe7dac168c215af72d051ee",
+      "inspection_command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=codec_name,width,height,pix_fmt,nb_read_frames",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-20261009/native-zero-delay/view_0.h264"
+      ],
+      "inspection_exit_code": 0,
+      "inspection": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 600,
+            "pix_fmt": "yuvj420p",
+            "nb_read_frames": "360"
+          }
+        ]
+      },
+      "inspection_stderr": ""
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/native-zero-delay/view_1.h264",
+      "bytes": 1000198,
+      "sha256": "82ffa69497d18ab4de35d77e9d541341ea4aca288cb95cdf861c471185add1e9",
+      "inspection_command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=codec_name,width,height,pix_fmt,nb_read_frames",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-20261009/native-zero-delay/view_1.h264"
+      ],
+      "inspection_exit_code": 0,
+      "inspection": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 600,
+            "pix_fmt": "yuvj420p",
+            "nb_read_frames": "360"
+          }
+        ]
+      },
+      "inspection_stderr": ""
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/native-zero-delay/view_2.h264",
+      "bytes": 1000198,
+      "sha256": "82ffa69497d18ab4de35d77e9d541341ea4aca288cb95cdf861c471185add1e9",
+      "inspection_command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=codec_name,width,height,pix_fmt,nb_read_frames",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-20261009/native-zero-delay/view_2.h264"
+      ],
+      "inspection_exit_code": 0,
+      "inspection": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 600,
+            "pix_fmt": "yuvj420p",
+            "nb_read_frames": "360"
+          }
+        ]
+      },
+      "inspection_stderr": ""
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/piper-inputs/manifest.json",
+      "bytes": 7016542,
+      "sha256": "1a3b3120d9c654798ec3d15f05bd2fe6fa28bae57eaaccd41cdb4500dada159e"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/piper-inputs/stage_snapshot.usd",
+      "bytes": 12081014,
+      "sha256": "03453f4d22eedb40c77cee68aabab241d0c0bf58b824f9c72afb59bef27b812b"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/piper-render-only/result.json",
+      "bytes": 1709,
+      "sha256": "de0aebb343a9cf7e52708b7fc92389a9abedcf3b492c048ffd6454d5ffae6e5f"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/piper-render-only/view_0.h264",
+      "bytes": 69148952,
+      "sha256": "65f014ff64740cb0774525ec4b961b2fe7203df39a3f16da4d8b7056748386be",
+      "inspection_command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=codec_name,width,height,pix_fmt,nb_read_frames",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-20261009/piper-render-only/view_0.h264"
+      ],
+      "inspection_exit_code": 0,
+      "inspection": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 600,
+            "pix_fmt": "yuvj420p",
+            "nb_read_frames": "2067"
+          }
+        ]
+      },
+      "inspection_stderr": ""
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/piper-render-only/view_1.h264",
+      "bytes": 69149041,
+      "sha256": "612d233028f3f07b4f9f03056ecbe55096281323d045d18e7d0007fbdfeaa7bd",
+      "inspection_command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=codec_name,width,height,pix_fmt,nb_read_frames",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-20261009/piper-render-only/view_1.h264"
+      ],
+      "inspection_exit_code": 0,
+      "inspection": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 600,
+            "pix_fmt": "yuvj420p",
+            "nb_read_frames": "2067"
+          }
+        ]
+      },
+      "inspection_stderr": ""
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/piper-render-only/view_2.h264",
+      "bytes": 71084959,
+      "sha256": "3e28cbe16f8221463649a2ab7d32efb92738ae43dcd4908ca1681727b8135021",
+      "inspection_command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=codec_name,width,height,pix_fmt,nb_read_frames",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-20261009/piper-render-only/view_2.h264"
+      ],
+      "inspection_exit_code": 0,
+      "inspection": {
+        "programs": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 960,
+            "height": 600,
+            "pix_fmt": "yuvj420p",
+            "nb_read_frames": "2067"
+          }
+        ]
+      },
+      "inspection_stderr": ""
+    }
+  ]
+}

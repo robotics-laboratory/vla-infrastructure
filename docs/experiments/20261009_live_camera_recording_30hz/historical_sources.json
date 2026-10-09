@@ -1,0 +1,1287 @@
+{
+  "research_checkout": "research/live-camera-recording-30hz",
+  "head": "beaedfd1116577fd4d8026232cfb96cba0b030fa",
+  "method": "read-only git show and external root existence checks; no hardware, Kit or benchmark executions; no all-artifact checksum audit",
+  "sources": [
+    {
+      "id": "H01",
+      "branch": "experiment/vr-live-camera-temporal-cost-audit",
+      "commit": "90e40ded79725d78b249245ab69ea93d024ef8e5",
+      "path": "docs/experiments/20260924_live_camera_temporal_cost_audit/README.md",
+      "locator": "experiment/vr-live-camera-temporal-cost-audit:90e40ded79725d78b249245ab69ea93d024ef8e5:docs/experiments/20260924_live_camera_temporal_cost_audit/README.md",
+      "git_content_sha256": "f9056eed0ff455ff7a45814462fb3b8903f797d00c93febae70c916610fafb11",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla-runtime/evidence/20260924_live_camera_temporal_cost_audit",
+        "/data/ebulochkin/vla-runtime/evidence/camera-audit-new-c0",
+        "/data/ebulochkin/vla-runtime/evidence/camera-audit-new-c3",
+        "/data/ebulochkin/vla-runtime/evidence/camera-audit-new-prime",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61",
+        "/data/vla-infrastructure/isaac61_production/env/bin/python"
+      ]
+    },
+    {
+      "id": "H02",
+      "branch": "experiment/vr-live-camera-temporal-cost-audit",
+      "commit": "90e40ded79725d78b249245ab69ea93d024ef8e5",
+      "path": "docs/experiments/20260924_live_camera_temporal_cost_audit/REPORT.md",
+      "locator": "experiment/vr-live-camera-temporal-cost-audit:90e40ded79725d78b249245ab69ea93d024ef8e5:docs/experiments/20260924_live_camera_temporal_cost_audit/REPORT.md",
+      "git_content_sha256": "ab12ead6882759fc96159f07cd293de64e5cf69e53e50c131fa5d6913766d73c",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla-runtime/evidence/20260924_live_camera_temporal_cost_audit/physical-prime-r1",
+        "/data/ebulochkin/vla-runtime/evidence/20260924_live_camera_temporal_cost_audit/physical-t0-r1",
+        "/data/ebulochkin/vla-runtime/evidence/20260924_live_camera_temporal_cost_audit/physical-t2-r1",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61"
+      ]
+    },
+    {
+      "id": "H03",
+      "branch": "experiment/vr-master-current-physics-rtf-audit",
+      "commit": "fce5ece579769e8a6d948a018613980fc8ebb769",
+      "path": "docs/experiments/20260924_master_current_physics_rtf_audit/README.md",
+      "locator": "experiment/vr-master-current-physics-rtf-audit:fce5ece579769e8a6d948a018613980fc8ebb769:docs/experiments/20260924_master_current_physics_rtf_audit/README.md",
+      "git_content_sha256": "fab77189b30437d365033651242af991b84fd72d232a57fb525095addcd260f5",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla_physics_rtf_20260924/",
+        "/data/vla-infrastructure/isaac61_production/env/bin/python"
+      ]
+    },
+    {
+      "id": "H04",
+      "branch": "experiment/vr-master-current-physics-rtf-audit",
+      "commit": "fce5ece579769e8a6d948a018613980fc8ebb769",
+      "path": "docs/experiments/20260924_master_current_physics_rtf_audit/REPORT.md",
+      "locator": "experiment/vr-master-current-physics-rtf-audit:fce5ece579769e8a6d948a018613980fc8ebb769:docs/experiments/20260924_master_current_physics_rtf_audit/REPORT.md",
+      "git_content_sha256": "7191fd0ab7a7d387288a6228987e244043ecd2a905bafcb311673638df1243af",
+      "raw_external_locators_mentioned": []
+    },
+    {
+      "id": "H05",
+      "branch": "experiment/vr-record-runtime-optimization-audit",
+      "commit": "a36bc5cc302eefef19fe4f94063a3f6179aaf1aa",
+      "path": "docs/experiments/20260924_vr_record_runtime_optimization_audit/README.md",
+      "locator": "experiment/vr-record-runtime-optimization-audit:a36bc5cc302eefef19fe4f94063a3f6179aaf1aa:docs/experiments/20260924_vr_record_runtime_optimization_audit/README.md",
+      "git_content_sha256": "6776cee167cb25a29bd0f9e11508bbae3c62a137de5f3b286ab28d25883963e0",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla-runtime/evidence/20260924_vr_record_runtime_optimization_audit/"
+      ]
+    },
+    {
+      "id": "H06",
+      "branch": "experiment/vr-record-runtime-optimization-audit",
+      "commit": "a36bc5cc302eefef19fe4f94063a3f6179aaf1aa",
+      "path": "docs/experiments/20260924_vr_record_runtime_optimization_audit/REPORT.md",
+      "locator": "experiment/vr-record-runtime-optimization-audit:a36bc5cc302eefef19fe4f94063a3f6179aaf1aa:docs/experiments/20260924_vr_record_runtime_optimization_audit/REPORT.md",
+      "git_content_sha256": "4e62bfbec0f6e430789d362b5822883007c40fba7e394f4fe14d6257d8d26345",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla-runtime/evidence/20260924_vr_record_runtime_optimization_audit/physical-followup/$(date",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61"
+      ]
+    },
+    {
+      "id": "H07",
+      "branch": "experiment/vr-current-record-performance",
+      "commit": "ced416f2489fc1932cc649438c6b624dd8e478c7",
+      "path": "docs/experiments/20260925_current_record_performance/REPORT.md",
+      "locator": "experiment/vr-current-record-performance:ced416f2489fc1932cc649438c6b624dd8e478c7:docs/experiments/20260925_current_record_performance/REPORT.md",
+      "git_content_sha256": "0e87441772da367a7eb7acde3e50f31a150b774c2c40ceab40eec4fb34e43ac6",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/p25/"
+      ]
+    },
+    {
+      "id": "H08",
+      "branch": "experiment/vr-current-v2-v3-rgb-e2e",
+      "commit": "b00c3db3d161eba19e73fd4922e7d6ac39e05122",
+      "path": "docs/experiments/20260925_current_v2_v3_rgb_e2e/REPORT.md",
+      "locator": "experiment/vr-current-v2-v3-rgb-e2e:b00c3db3d161eba19e73fd4922e7d6ac39e05122:docs/experiments/20260925_current_v2_v3_rgb_e2e/REPORT.md",
+      "git_content_sha256": "27f45811c10b5d331a1d33bc82c30e8a780c9564041f92abaa2d2f34db2afef3",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla-runtime/evidence/20260925_current_v2_v3_rgb_e2e",
+        "/data/ebulochkin/vla-runtime/evidence/20260925_current_v2_v3_rgb_e2e/state-h/recordings/source/session.hdf5",
+        "/data/vla-infrastructure/assets",
+        "/data/vla-infrastructure/isaac61_production",
+        "/data/vla-infrastructure/isaac61_production/env/bin/python"
+      ]
+    },
+    {
+      "id": "H09",
+      "branch": "experiment/vr-offline-rgb-state-alignment",
+      "commit": "9800afa6092a97089be06db58a9b1dce2b49abf8",
+      "path": "docs/experiments/20260925_offline_rgb_state_alignment/REPORT.md",
+      "locator": "experiment/vr-offline-rgb-state-alignment:9800afa6092a97089be06db58a9b1dce2b49abf8:docs/experiments/20260925_offline_rgb_state_alignment/REPORT.md",
+      "git_content_sha256": "6a04f6fb9c3eeddc4b8d406cee73ee1dea5e1be40eed00e541fe723dd2fe5a82",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/evidence/20260925_offline_rgb_state_alignment/",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/recorder-pair-current-20260923-v2/session.hdf5",
+        "/data/vla-infrastructure/isaac61_production/env/bin/python"
+      ]
+    },
+    {
+      "id": "H10",
+      "branch": "feat/vr-record-boundary-tail-reduction",
+      "commit": "cfd9f2b87a7e3498d0fcff917070f8563019f290",
+      "path": "docs/experiments/20260925_record_boundary_tail_reduction/REPORT.md",
+      "locator": "feat/vr-record-boundary-tail-reduction:cfd9f2b87a7e3498d0fcff917070f8563019f290:docs/experiments/20260925_record_boundary_tail_reduction/REPORT.md",
+      "git_content_sha256": "fe67e38ef5e5ecfd9f0edce6ff66256e8881de03664e2ff3608fa8f0d8edf9e2",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/p26/"
+      ]
+    },
+    {
+      "id": "H11",
+      "branch": "experiment/vr-zed-upstream-camera-path",
+      "commit": "1b65b610b5365dfeb986b38bf62f0476d1cedb61",
+      "path": "docs/experiments/20261001_zed_upstream_camera_path/REPORT.md",
+      "locator": "experiment/vr-zed-upstream-camera-path:1b65b610b5365dfeb986b38bf62f0476d1cedb61:docs/experiments/20261001_zed_upstream_camera_path/REPORT.md",
+      "git_content_sha256": "eb7fa8e36bc1588a4c4c044625444c07f88f8dddf4fa872e1baff95e20cc5526",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runs/manual-max-svga",
+        "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runs/manual-physical-max-svga",
+        "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runs/manual-project-opt",
+        "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runs/manual-xr-z2",
+        "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runs/manual-z2",
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python"
+      ]
+    },
+    {
+      "id": "H12",
+      "branch": "experiment/vr-zed-upstream-camera-path",
+      "commit": "1b65b610b5365dfeb986b38bf62f0476d1cedb61",
+      "path": "docs/experiments/20261001_zed_upstream_camera_path/final-substep/REPORT.md",
+      "locator": "experiment/vr-zed-upstream-camera-path:1b65b610b5365dfeb986b38bf62f0476d1cedb61:docs/experiments/20261001_zed_upstream_camera_path/final-substep/REPORT.md",
+      "git_content_sha256": "8085d4f29a03e93f144fe30f00e9f95d9a0cd2705f0231ded25d7bf8d665e2b8",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla-runtime/zed-upstream-experiment/current-final-substep-20261001/project-snapshot",
+        "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runs/manual-current-zed-final-substep",
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python"
+      ]
+    },
+    {
+      "id": "H13",
+      "branch": "experiment/vr-zed-upstream-camera-path",
+      "commit": "1b65b610b5365dfeb986b38bf62f0476d1cedb61",
+      "path": "docs/experiments/20261001_zed_upstream_camera_path/max-fps/REPORT.md",
+      "locator": "experiment/vr-zed-upstream-camera-path:1b65b610b5365dfeb986b38bf62f0476d1cedb61:docs/experiments/20261001_zed_upstream_camera_path/max-fps/REPORT.md",
+      "git_content_sha256": "b0d239654c217b30f8a90fc3da95cf7548eb6a48c85b7c6fd5fa356a1d143323",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla-runtime/zed-upstream-experiment/current-final-substep-20261001/project-snapshot",
+        "/data/ebulochkin/vla-runtime/zed-upstream-experiment/max-fps-20261001",
+        "/data/ebulochkin/vla-runtime/zed-upstream-experiment/max-fps-20261001/physical-unique",
+        "/data/vla-infrastructure/assets/zed-isaac-sim",
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python"
+      ]
+    },
+    {
+      "id": "H14",
+      "branch": "experiment/vr-zed-upstream-camera-path",
+      "commit": "1b65b610b5365dfeb986b38bf62f0476d1cedb61",
+      "path": "docs/experiments/20261003_vr_runtime_ablations/REPORT.md",
+      "locator": "experiment/vr-zed-upstream-camera-path:1b65b610b5365dfeb986b38bf62f0476d1cedb61:docs/experiments/20261003_vr_runtime_ablations/REPORT.md",
+      "git_content_sha256": "64ff1e4ca0cbf964290b3a71624c8eb82b167450f072efdc4a27f4ffdd6b1d9d",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003"
+      ]
+    },
+    {
+      "id": "H15",
+      "branch": "experiment/vr-zed-upstream-camera-path",
+      "commit": "1b65b610b5365dfeb986b38bf62f0476d1cedb61",
+      "path": "docs/experiments/20261003_zed_live_rgb_episodes/REPORT.md",
+      "locator": "experiment/vr-zed-upstream-camera-path:1b65b610b5365dfeb986b38bf62f0476d1cedb61:docs/experiments/20261003_zed_live_rgb_episodes/REPORT.md",
+      "git_content_sha256": "eceaa32471fe31a7cfde3eeceb939e9c13760cf684bdaef64b14ee400dbbdfb4",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla-runtime/zed-upstream-experiment/current-final-substep-20261001/project-snapshot",
+        "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003",
+        "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/new-A0",
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python"
+      ]
+    },
+    {
+      "id": "H16",
+      "branch": "codex/vr-zed-native-cameras",
+      "commit": "59a7645ddbeb1aedebfd8d0ec0cf705966975c02",
+      "path": "docs/evidence/S1/20261006_zed_native_cameras/README.md",
+      "locator": "codex/vr-zed-native-cameras:59a7645ddbeb1aedebfd8d0ec0cf705966975c02:docs/evidence/S1/20261006_zed_native_cameras/README.md",
+      "git_content_sha256": "eebc472c0745743d8b1405e5c77e9376961af6c9e6d28bfe91a003aea35d3a5f",
+      "raw_external_locators_mentioned": [
+        "/data/<account>/vla-runtime/zed-native-<unique-id>",
+        "/data/ebulochkin/vla-runtime/evidence/20261006_zed_native_cameras",
+        "/data/vla-infrastructure/assets",
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env",
+        "/data/vla-infrastructure/isaac61_production",
+        "/data/vla-infrastructure/isaac61_production/env/bin/python"
+      ]
+    },
+    {
+      "id": "H17",
+      "branch": "codex/upstream-validation-refresh",
+      "commit": "3bc87e0d218b3a867d1b388e3be6443bd2c1dd19",
+      "path": "docs/evidence/E0/20261007_upstream_dependency_refresh/README.md",
+      "locator": "codex/upstream-validation-refresh:3bc87e0d218b3a867d1b388e3be6443bd2c1dd19:docs/evidence/E0/20261007_upstream_dependency_refresh/README.md",
+      "git_content_sha256": "2e554cea98de6fe39aaf268e0cbe56b59c916278e353497658ce82a0e4a77039",
+      "raw_external_locators_mentioned": []
+    },
+    {
+      "id": "H18",
+      "branch": "codex/upstream-validation-refresh",
+      "commit": "3bc87e0d218b3a867d1b388e3be6443bd2c1dd19",
+      "path": "docs/evidence/S1/20261006_zed_ffft_cameras/README.md",
+      "locator": "codex/upstream-validation-refresh:3bc87e0d218b3a867d1b388e3be6443bd2c1dd19:docs/evidence/S1/20261006_zed_ffft_cameras/README.md",
+      "git_content_sha256": "e813256641bfc26fbd0571c8813c61885265ec790a9217a2ebee27eb533e9a2d",
+      "raw_external_locators_mentioned": [
+        "/data/vla-infrastructure/assets",
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "/data/vla-infrastructure/isaac61_production",
+        "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "/tmp/vr-zed-ffft-hf",
+        "/tmp/vr-zed-ffft-hf/datasets",
+        "/tmp/vr-zed-ffft-lifecycle/recordings",
+        "/tmp/vr-zed-ffft-lifecycle/run",
+        "/tmp/vr-zed-ffft-preview",
+        "/tmp/vr-zed-ffft-preview-60",
+        "/tmp/vr-zed-ffft-record/alignment",
+        "/tmp/vr-zed-ffft-record/episode",
+        "/tmp/vr-zed-ffft-record/episode/session.hdf5",
+        "/tmp/vr-zed-ffft-record/lerobot",
+        "/tmp/vr-zed-ffft-record/projection",
+        "/tmp/vr-zed-ffft-record/replay-rgb",
+        "/tmp/vr-zed-ffft-record/replay-run",
+        "/tmp/vr-zed-ffft-record/replay-run/result.json",
+        "/tmp/vr-zed-ffft-record/run"
+      ]
+    },
+    {
+      "id": "H19",
+      "branch": "codex/upstream-validation-refresh",
+      "commit": "3bc87e0d218b3a867d1b388e3be6443bd2c1dd19",
+      "path": "docs/evidence/S2/20261006_operator_recording_audit/README.md",
+      "locator": "codex/upstream-validation-refresh:3bc87e0d218b3a867d1b388e3be6443bd2c1dd19:docs/evidence/S2/20261006_operator_recording_audit/README.md",
+      "git_content_sha256": "a09102ca2cabe400db2a1b6019e7ee4c26f2d62299fabf31c09119651c86617a",
+      "raw_external_locators_mentioned": []
+    },
+    {
+      "id": "H20",
+      "branch": "codex/upstream-validation-refresh",
+      "commit": "3bc87e0d218b3a867d1b388e3be6443bd2c1dd19",
+      "path": "docs/evidence/S2/20261006_preview_layouts/README.md",
+      "locator": "codex/upstream-validation-refresh:3bc87e0d218b3a867d1b388e3be6443bd2c1dd19:docs/evidence/S2/20261006_preview_layouts/README.md",
+      "git_content_sha256": "1f348b8fcec79e6ad9a8c97e1290159066439a625b8d83b2828346fdb9cf6ce1",
+      "raw_external_locators_mentioned": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "/tmp/vr-zed-ffft-hf"
+      ]
+    },
+    {
+      "id": "H21",
+      "branch": "codex/vr-post-63c-local-snapshot",
+      "commit": "2e9fa49737070d532f6ef6f74b749cdead41ba68",
+      "path": "docs/evidence/S2/20261003_operator_confirmation/DUAL_CUBE_RECORD_REVIEW.md",
+      "locator": "codex/vr-post-63c-local-snapshot:2e9fa49737070d532f6ef6f74b749cdead41ba68:docs/evidence/S2/20261003_operator_confirmation/DUAL_CUBE_RECORD_REVIEW.md",
+      "git_content_sha256": "2d290a13c8f32fc1c69998f27ca08f29d5b7bfd0a1cb3b096fc0bf28ac63209d",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla-runtime/evidence/20261003_dual_cube_gate_review",
+        "/data/ebulochkin/vla-runtime/evidence/20261003_dual_cube_gate_review/success-lerobot",
+        "/data/ebulochkin/vla-runtime/evidence/20261003_dual_cube_gate_review/success-projection",
+        "/data/ebulochkin/vla-runtime/manual-record-04/20260926T173138",
+        "/data/ebulochkin/vla-runtime/manual-record-04/20260926T173138/recordings",
+        "/data/ebulochkin/vla-runtime/manual-record-04/20260926T173138/rendered-videos-20260926/success/replay_report.json",
+        "/data/ebulochkin/vla-runtime/manual-record-04/20260926T173138/run",
+        "/data/ebulochkin/vla-runtime/manual-record-04/20260926T173138/run/host",
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python"
+      ]
+    },
+    {
+      "id": "H22",
+      "branch": "codex/vr-post-63c-local-snapshot",
+      "commit": "2e9fa49737070d532f6ef6f74b749cdead41ba68",
+      "path": "docs/evidence/S2/20261003_operator_confirmation/RUNTIME_REASSESSMENT.md",
+      "locator": "codex/vr-post-63c-local-snapshot:2e9fa49737070d532f6ef6f74b749cdead41ba68:docs/evidence/S2/20261003_operator_confirmation/RUNTIME_REASSESSMENT.md",
+      "git_content_sha256": "7bf01a6baf97994f573bd69e6e782104bd16e364232a2be9e7cf9b6804bb0ce4",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/kit/logs/Kit/IsaacLab/3.0/kit_20260927_185003.log\":",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260927T154956149597Z-run-robotwin_bowls_bin-hud-off/result.json\":",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260927T154956149597Z-run-robotwin_bowls_bin-hud-off/run_manifest.json\":",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260927T154956149597Z-run-robotwin_bowls_bin-hud-off/runtime.yaml\":"
+      ]
+    },
+    {
+      "id": "H23",
+      "branch": "master",
+      "commit": "beaedfd1116577fd4d8026232cfb96cba0b030fa",
+      "path": "docs/evidence/S2/20261006_operator_recording_audit/operator_stop_acceptance.json",
+      "locator": "master:beaedfd1116577fd4d8026232cfb96cba0b030fa:docs/evidence/S2/20261006_operator_recording_audit/operator_stop_acceptance.json",
+      "git_content_sha256": "45182821b4a6ffd83df75937f071b43d14640a64de51aa79f9ff24c0e9444728",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/20261006T185931122784Z-record-dual_cube_to_matching_plates-hud-off\",",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/20261006T185931122784Z-record-dual_cube_to_matching_plates-hud-off-4cb3c310cbd34e2b87fc75ae2bb18a6d-episode_000000\",",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/20261006T185931122784Z-record-dual_cube_to_matching_plates-hud-off-e7847a6cd8e6450da8b922f47254ba40-episode_000000\",",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/recordings/saved_demos\",",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20261006T185745976179Z-run-dual_cube_to_matching_plates-hud-on\",",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20261006T185745976179Z-run-dual_cube_to_matching_plates-hud-on/stdout.log\",",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20261006T185931122784Z-record-dual_cube_to_matching_plates-hud-off\",",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20261006T185931122784Z-record-dual_cube_to_matching_plates-hud-off/result.before_operator_stop_reassessment.json\",",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20261006T185931122784Z-record-dual_cube_to_matching_plates-hud-off/result.json\",",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20261006T185931122784Z-record-dual_cube_to_matching_plates-hud-off/stdout.log\","
+      ]
+    },
+    {
+      "id": "H24",
+      "branch": "master",
+      "commit": "beaedfd1116577fd4d8026232cfb96cba0b030fa",
+      "path": "docs/evidence/S2/20261006_operator_recording_audit/human_observations.json",
+      "locator": "master:beaedfd1116577fd4d8026232cfb96cba0b030fa:docs/evidence/S2/20261006_operator_recording_audit/human_observations.json",
+      "git_content_sha256": "85c8e12e20400fd57abf227a5afe75579a1aa144944122c681d60eb2a31c1d3a",
+      "raw_external_locators_mentioned": [
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20261006T185745976179Z-run-dual_cube_to_matching_plates-hud-on/run_manifest.json\",",
+        "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20261006T185931122784Z-record-dual_cube_to_matching_plates-hud-off/run_manifest.json\","
+      ]
+    },
+    {
+      "id": "H25",
+      "branch": "codex/upstream-validation-refresh",
+      "commit": "3bc87e0d218b3a867d1b388e3be6443bd2c1dd19",
+      "path": "docs/evidence/E0/20261007_upstream_dependency_refresh/streaming_benchmark.json",
+      "locator": "codex/upstream-validation-refresh:3bc87e0d218b3a867d1b388e3be6443bd2c1dd19:docs/evidence/E0/20261007_upstream_dependency_refresh/streaming_benchmark.json",
+      "git_content_sha256": "bfcec0d2a09e7ec42dc60f33d74b0ebe2707cd176b8e33f8e1f1eeb4c4e6e963",
+      "raw_external_locators_mentioned": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env",
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env\","
+      ]
+    },
+    {
+      "id": "M_20261003_zed_live_rgb_episodes",
+      "branch": "experiment/vr-zed-upstream-camera-path",
+      "commit": "1b65b610b5365dfeb986b38bf62f0476d1cedb61",
+      "path": "docs/experiments/20261003_zed_live_rgb_episodes/results.json",
+      "locator": "experiment/vr-zed-upstream-camera-path:1b65b610b5365dfeb986b38bf62f0476d1cedb61:docs/experiments/20261003_zed_live_rgb_episodes/results.json",
+      "git_content_sha256": "dff4323a81512ebef58e748bbe685bf9b8775476a01e958af02c15f614c6b7db",
+      "raw_file_checks": [
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/no-xr-A0/metrics.json",
+          "size": 4310,
+          "readability": true,
+          "wall_control_hz": 43.64890921117469,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/no-xr-A0/host.log",
+          "size": 21219,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/no-xr-Z640/metrics.json",
+          "size": 10784,
+          "readability": true,
+          "wall_control_hz": 40.14689971868533,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/no-xr-Z640/host.log",
+          "size": 34890,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/smoke-A0/metrics.json",
+          "size": 4287,
+          "readability": true,
+          "wall_control_hz": 43.702998301828465,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/smoke-A0/host.log",
+          "size": 21219,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/smoke-Z2-rp640/metrics.json",
+          "size": 10744,
+          "readability": true,
+          "wall_control_hz": 39.188281265023974,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/smoke-Z2-rp640/host.log",
+          "size": 34849,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-full-A0/metrics.json",
+          "size": 4580,
+          "readability": true,
+          "wall_control_hz": 20.203639841392807,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-full-A0/host.log",
+          "size": 38095,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-full-Z640/metrics.json",
+          "size": 11056,
+          "readability": true,
+          "wall_control_hz": 20.068527756560226,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-full-Z640/host.log",
+          "size": 52435,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-full-Znative/metrics.json",
+          "size": 11056,
+          "readability": true,
+          "wall_control_hz": 19.624418197596828,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-full-Znative/host.log",
+          "size": 52279,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-A0/metrics.json",
+          "size": 4585,
+          "readability": true,
+          "wall_control_hz": 30.176650743637538,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-A0/host.log",
+          "size": 37934,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-A0-png/metrics.json",
+          "size": 4596,
+          "readability": true,
+          "wall_control_hz": 27.547267475105528,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-A0-png/host.log",
+          "size": 37812,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-A0-repeat/metrics.json",
+          "size": 4594,
+          "readability": true,
+          "wall_control_hz": 29.985769932169188,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-A0-repeat/host.log",
+          "size": 37942,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-Z640/metrics.json",
+          "size": 11060,
+          "readability": true,
+          "wall_control_hz": 28.807948566501935,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-Z640/host.log",
+          "size": 52271,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-Z640-png/metrics.json",
+          "size": 11057,
+          "readability": true,
+          "wall_control_hz": 26.138648675213627,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-Z640-png/host.log",
+          "size": 51594,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-Z640-repeat/metrics.json",
+          "size": 11059,
+          "readability": true,
+          "wall_control_hz": 28.912896042025473,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-Z640-repeat/host.log",
+          "size": 52255,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-Znative/metrics.json",
+          "size": 11059,
+          "readability": true,
+          "wall_control_hz": 28.613834375856438,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-Znative/host.log",
+          "size": 52263,
+          "readability": true
+        }
+      ],
+      "runs": [
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/no-xr-A0",
+          "wall_control_hz": 43.64890921117469,
+          "fps_including_rgb_flush": 43.43800863241651,
+          "elapsed_s": 20.619071959983557,
+          "consumer_flush_s": 0.10010988870635629,
+          "unique_counts_per_view": {
+            "left_wrist": 900,
+            "right_wrist": 900,
+            "scene": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/no-xr-Z640",
+          "wall_control_hz": 40.14689971868533,
+          "fps_including_rgb_flush": 39.968411370797355,
+          "elapsed_s": 22.417671259958297,
+          "consumer_flush_s": 0.10011138720437884,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/smoke-A0",
+          "wall_control_hz": 43.702998301828465,
+          "fps_including_rgb_flush": 39.39400081886397,
+          "elapsed_s": 0.9152690102346241,
+          "consumer_flush_s": 0.10011402191594243,
+          "unique_counts_per_view": {
+            "left_wrist": 40,
+            "right_wrist": 40,
+            "scene": 40
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/smoke-Z2-rp640",
+          "wall_control_hz": 39.188281265023974,
+          "fps_including_rgb_flush": 35.688244934323336,
+          "elapsed_s": 1.0207133027724922,
+          "consumer_flush_s": 0.10010393196716905,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 40,
+            "right_wrist/Left": 40,
+            "scene/Left": 40
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-full-A0",
+          "wall_control_hz": 20.203639841392807,
+          "fps_including_rgb_flush": 20.20362083350818,
+          "elapsed_s": 44.54642861708999,
+          "consumer_flush_s": 4.190998151898384e-05,
+          "unique_counts_per_view": {
+            "left_wrist": 900,
+            "right_wrist": 900,
+            "scene": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-full-Z640",
+          "wall_control_hz": 20.068527756560226,
+          "fps_including_rgb_flush": 20.068510681397854,
+          "elapsed_s": 44.846339049749076,
+          "consumer_flush_s": 3.815721720457077e-05,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-full-Znative",
+          "wall_control_hz": 19.624418197596828,
+          "fps_including_rgb_flush": 19.581670335319924,
+          "elapsed_s": 45.86123221274465,
+          "consumer_flush_s": 0.10011758981272578,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-A0",
+          "wall_control_hz": 30.176650743637538,
+          "fps_including_rgb_flush": 30.07563594761718,
+          "elapsed_s": 29.824383350089192,
+          "consumer_flush_s": 0.1001709159463644,
+          "unique_counts_per_view": {
+            "left_wrist": 900,
+            "right_wrist": 900,
+            "scene": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-A0-png",
+          "wall_control_hz": 27.547267475105528,
+          "fps_including_rgb_flush": 27.463100402194932,
+          "elapsed_s": 32.67111704684794,
+          "consumer_flush_s": 0.10012825392186642,
+          "unique_counts_per_view": {
+            "left_wrist": 900,
+            "right_wrist": 900,
+            "scene": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-A0-repeat",
+          "wall_control_hz": 29.985769932169188,
+          "fps_including_rgb_flush": 29.886016359548172,
+          "elapsed_s": 30.014236820861697,
+          "consumer_flush_s": 0.10018154699355364,
+          "unique_counts_per_view": {
+            "left_wrist": 900,
+            "right_wrist": 900,
+            "scene": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-Z640",
+          "wall_control_hz": 28.807948566501935,
+          "fps_including_rgb_flush": 28.71593347076945,
+          "elapsed_s": 31.241377633064985,
+          "consumer_flush_s": 0.10010743187740445,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-Z640-png",
+          "wall_control_hz": 26.138648675213627,
+          "fps_including_rgb_flush": 26.06287297204892,
+          "elapsed_s": 34.431772322393954,
+          "consumer_flush_s": 0.10010760370641947,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-Z640-repeat",
+          "wall_control_hz": 28.912896042025473,
+          "fps_including_rgb_flush": 28.820123448801937,
+          "elapsed_s": 31.127978279720992,
+          "consumer_flush_s": 0.10020162723958492,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003/runs/xr-tuned-Znative",
+          "wall_control_hz": 28.613834375856438,
+          "fps_including_rgb_flush": 28.523036804980975,
+          "elapsed_s": 31.45331688784063,
+          "consumer_flush_s": 0.1001255507580936,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        }
+      ]
+    },
+    {
+      "id": "M_20261003_vr_runtime_ablations",
+      "branch": "experiment/vr-zed-upstream-camera-path",
+      "commit": "1b65b610b5365dfeb986b38bf62f0476d1cedb61",
+      "path": "docs/experiments/20261003_vr_runtime_ablations/results.json",
+      "locator": "experiment/vr-zed-upstream-camera-path:1b65b610b5365dfeb986b38bf62f0476d1cedb61:docs/experiments/20261003_vr_runtime_ablations/results.json",
+      "git_content_sha256": "3e9cdfc474db54a53a23efcaeef3d8badd51f1b6dbb0cb9048b0176dd4d60646",
+      "raw_file_checks": [
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/baseline-A0/metrics.json",
+          "size": 5726,
+          "readability": true,
+          "wall_control_hz": 29.856506723589657,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/baseline-A0/host.log",
+          "size": 38997,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/baseline-Z640/metrics.json",
+          "size": 12214,
+          "readability": true,
+          "wall_control_hz": 28.95466846077198,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/baseline-Z640/host.log",
+          "size": 53164,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/baseline-repeat-A0/metrics.json",
+          "size": 5713,
+          "readability": true,
+          "wall_control_hz": 29.9644842215065,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/baseline-repeat-A0/host.log",
+          "size": 38817,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/baseline-repeat-Z640/metrics.json",
+          "size": 12189,
+          "readability": true,
+          "wall_control_hz": 28.95511765203956,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/baseline-repeat-Z640/host.log",
+          "size": 53145,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/headless-A0/metrics.json",
+          "size": 5700,
+          "readability": true,
+          "wall_control_hz": 29.87592797086758,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/headless-A0/host.log",
+          "size": 38899,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/headless-Z640/metrics.json",
+          "size": 12209,
+          "readability": true,
+          "wall_control_hz": 28.95547934485242,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/headless-Z640/host.log",
+          "size": 53262,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/headless-smoke-A0/metrics.json",
+          "size": 4542,
+          "readability": true,
+          "wall_control_hz": 30.17763282954159,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/headless-smoke-A0/host.log",
+          "size": 37978,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/no-report-A0/metrics.json",
+          "size": 5719,
+          "readability": true,
+          "wall_control_hz": 29.803990793698812,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/no-report-A0/host.log",
+          "size": 38836,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/no-report-Z640/metrics.json",
+          "size": 12235,
+          "readability": true,
+          "wall_control_hz": 28.98965900900719,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/no-report-Z640/host.log",
+          "size": 53367,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/report-only-A0/metrics.json",
+          "size": 5714,
+          "readability": true,
+          "wall_control_hz": 29.95175389047989,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/report-only-A0/host.log",
+          "size": 38825,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/report-only-Z640/metrics.json",
+          "size": 12225,
+          "readability": true,
+          "wall_control_hz": 28.99164050847327,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/report-only-Z640/host.log",
+          "size": 53342,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/reuse-A0/metrics.json",
+          "size": 5741,
+          "readability": true,
+          "wall_control_hz": 30.427894068790856,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/reuse-A0/host.log",
+          "size": 38857,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/reuse-Z640/metrics.json",
+          "size": 12225,
+          "readability": true,
+          "wall_control_hz": 29.226488134363528,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/reuse-Z640/host.log",
+          "size": 53344,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/reuse-repeat-A0/metrics.json",
+          "size": 5722,
+          "readability": true,
+          "wall_control_hz": 30.460812846816474,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/reuse-repeat-A0/host.log",
+          "size": 38825,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/reuse-repeat-Z640/metrics.json",
+          "size": 12200,
+          "readability": true,
+          "wall_control_hz": 29.177369064686946,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/reuse-repeat-Z640/host.log",
+          "size": 53143,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/solver4-A0/metrics.json",
+          "size": 5763,
+          "readability": true,
+          "wall_control_hz": 30.145488954508515,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/solver4-A0/host.log",
+          "size": 39035,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/solver4-Z640/metrics.json",
+          "size": 12203,
+          "readability": true,
+          "wall_control_hz": 29.17148741467924,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/solver4-Z640/host.log",
+          "size": 53327,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/solver4-repeat-A0/metrics.json",
+          "size": 5716,
+          "readability": true,
+          "wall_control_hz": 30.2481757735926,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/solver4-repeat-A0/host.log",
+          "size": 38833,
+          "readability": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/solver4-repeat-Z640/metrics.json",
+          "size": 12187,
+          "readability": true,
+          "wall_control_hz": 29.206348420920662,
+          "matches_git_result_wall_control_hz": true
+        },
+        {
+          "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/solver4-repeat-Z640/host.log",
+          "size": 53137,
+          "readability": true
+        }
+      ],
+      "runs": [
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/baseline-A0",
+          "wall_control_hz": 29.856506723589657,
+          "fps_including_rgb_flush": 29.757675399862638,
+          "elapsed_s": 30.14418291905895,
+          "consumer_flush_s": 0.10011499421671033,
+          "unique_counts_per_view": {
+            "left_wrist": 900,
+            "right_wrist": 900,
+            "scene": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/baseline-Z640",
+          "wall_control_hz": 28.95466846077198,
+          "fps_including_rgb_flush": 28.8616976814224,
+          "elapsed_s": 31.083070463035256,
+          "consumer_flush_s": 0.10012637916952372,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/baseline-repeat-A0",
+          "wall_control_hz": 29.9644842215065,
+          "fps_including_rgb_flush": 29.86490533927105,
+          "elapsed_s": 30.03555787401274,
+          "consumer_flush_s": 0.10014789085835218,
+          "unique_counts_per_view": {
+            "left_wrist": 900,
+            "right_wrist": 900,
+            "scene": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/baseline-repeat-Z640",
+          "wall_control_hz": 28.95511765203956,
+          "fps_including_rgb_flush": 28.86213651297333,
+          "elapsed_s": 31.08258826006204,
+          "consumer_flush_s": 0.10013446025550365,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/headless-A0",
+          "wall_control_hz": 29.87592797086758,
+          "fps_including_rgb_flush": 29.77692319980867,
+          "elapsed_s": 30.124587289057672,
+          "consumer_flush_s": 0.10016071330755949,
+          "unique_counts_per_view": {
+            "left_wrist": 900,
+            "right_wrist": 900,
+            "scene": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/headless-Z640",
+          "wall_control_hz": 28.95547934485242,
+          "fps_including_rgb_flush": 28.86243805698669,
+          "elapsed_s": 31.082199996802956,
+          "consumer_flush_s": 0.10019693803042173,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/headless-smoke-A0",
+          "wall_control_hz": 30.17763282954159,
+          "fps_including_rgb_flush": 28.0579159095022,
+          "elapsed_s": 1.325485011562705,
+          "consumer_flush_s": 0.10013762302696705,
+          "unique_counts_per_view": {
+            "left_wrist": 40,
+            "right_wrist": 40,
+            "scene": 40
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/no-report-A0",
+          "wall_control_hz": 29.803990793698812,
+          "fps_including_rgb_flush": 29.705411044038083,
+          "elapsed_s": 30.19729828229174,
+          "consumer_flush_s": 0.10021211626008153,
+          "unique_counts_per_view": {
+            "left_wrist": 900,
+            "right_wrist": 900,
+            "scene": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/no-report-Z640",
+          "wall_control_hz": 28.98965900900719,
+          "fps_including_rgb_flush": 28.89646089041843,
+          "elapsed_s": 31.045553165022284,
+          "consumer_flush_s": 0.10012946417555213,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/report-only-A0",
+          "wall_control_hz": 29.95175389047989,
+          "fps_including_rgb_flush": 29.85228730000305,
+          "elapsed_s": 30.048323824070394,
+          "consumer_flush_s": 0.10011977609246969,
+          "unique_counts_per_view": {
+            "left_wrist": 900,
+            "right_wrist": 900,
+            "scene": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/report-only-Z640",
+          "wall_control_hz": 28.99164050847327,
+          "fps_including_rgb_flush": 28.898368105497937,
+          "elapsed_s": 31.04343128623441,
+          "consumer_flush_s": 0.10019581113010645,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/reuse-A0",
+          "wall_control_hz": 30.427894068790856,
+          "fps_including_rgb_flush": 30.325226819095953,
+          "elapsed_s": 29.57812321698293,
+          "consumer_flush_s": 0.10013790102675557,
+          "unique_counts_per_view": {
+            "left_wrist": 900,
+            "right_wrist": 900,
+            "scene": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/reuse-Z640",
+          "wall_control_hz": 29.226488134363528,
+          "fps_including_rgb_flush": 29.131776172012266,
+          "elapsed_s": 30.793983726762235,
+          "consumer_flush_s": 0.1001160591840744,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/reuse-repeat-A0",
+          "wall_control_hz": 30.460812846816474,
+          "fps_including_rgb_flush": 30.35794890468927,
+          "elapsed_s": 29.546158355195075,
+          "consumer_flush_s": 0.10011329594999552,
+          "unique_counts_per_view": {
+            "left_wrist": 900,
+            "right_wrist": 900,
+            "scene": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/reuse-repeat-Z640",
+          "wall_control_hz": 29.177369064686946,
+          "fps_including_rgb_flush": 29.082831727538657,
+          "elapsed_s": 30.845824310090393,
+          "consumer_flush_s": 0.10026816232129931,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/solver4-A0",
+          "wall_control_hz": 30.145488954508515,
+          "fps_including_rgb_flush": 30.044708409700714,
+          "elapsed_s": 29.85521320812404,
+          "consumer_flush_s": 0.1001449110917747,
+          "unique_counts_per_view": {
+            "left_wrist": 900,
+            "right_wrist": 900,
+            "scene": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/solver4-Z640",
+          "wall_control_hz": 29.17148741467924,
+          "fps_including_rgb_flush": 29.077096967108954,
+          "elapsed_s": 30.852043545339257,
+          "consumer_flush_s": 0.10015230206772685,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/solver4-repeat-A0",
+          "wall_control_hz": 30.2481757735926,
+          "fps_including_rgb_flush": 30.14674104408458,
+          "elapsed_s": 29.75386042241007,
+          "consumer_flush_s": 0.10011280421167612,
+          "unique_counts_per_view": {
+            "left_wrist": 900,
+            "right_wrist": 900,
+            "scene": 900
+          },
+          "physical_client": false
+        },
+        {
+          "run": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003/runs/solver4-repeat-Z640",
+          "wall_control_hz": 29.206348420920662,
+          "fps_including_rgb_flush": 29.111752192679482,
+          "elapsed_s": 30.815218219999224,
+          "consumer_flush_s": 0.10013150004670024,
+          "unique_counts_per_view": {
+            "left_wrist/Left": 900,
+            "right_wrist/Left": 900,
+            "scene/Left": 900
+          },
+          "physical_client": false
+        }
+      ]
+    }
+  ],
+  "external_root_checks": [
+    {
+      "path": "/data/ebulochkin/vla-runtime/evidence/20260924_live_camera_temporal_cost_audit",
+      "exists": true,
+      "is_directory": true,
+      "full_digest_audit": "not performed"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/evidence/20260924_vr_record_runtime_optimization_audit",
+      "exists": true,
+      "is_directory": true,
+      "full_digest_audit": "not performed"
+    },
+    {
+      "path": "/data/ebulochkin/vla_physics_rtf_20260924",
+      "exists": true,
+      "is_directory": true,
+      "full_digest_audit": "not performed"
+    },
+    {
+      "path": "/data/ebulochkin/p25",
+      "exists": true,
+      "is_directory": true,
+      "full_digest_audit": "not performed"
+    },
+    {
+      "path": "/data/ebulochkin/p26",
+      "exists": true,
+      "is_directory": true,
+      "full_digest_audit": "not performed"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/current-final-substep-20261001",
+      "exists": true,
+      "is_directory": true,
+      "full_digest_audit": "not performed"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/max-fps-20261001",
+      "exists": true,
+      "is_directory": true,
+      "full_digest_audit": "not performed"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/live-episodes-20261003",
+      "exists": true,
+      "is_directory": true,
+      "full_digest_audit": "not performed"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/zed-upstream-experiment/runtime-ablations-20261003",
+      "exists": true,
+      "is_directory": true,
+      "full_digest_audit": "not performed"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/evidence/20261006_zed_native_cameras",
+      "exists": true,
+      "is_directory": true,
+      "full_digest_audit": "not performed"
+    },
+    {
+      "path": "/tmp/vr-zed-ffft-record",
+      "exists": true,
+      "is_directory": true,
+      "full_digest_audit": "not performed"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/manual-record-04/20260926T173138",
+      "exists": true,
+      "is_directory": true,
+      "full_digest_audit": "not performed"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20260927T154956149597Z-run-robotwin_bowls_bin-hud-off",
+      "exists": true,
+      "is_directory": true,
+      "full_digest_audit": "not performed"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/isaac-isaac61/runs/20261006T185931122784Z-record-dual_cube_to_matching_plates-hud-off",
+      "exists": true,
+      "is_directory": true,
+      "full_digest_audit": "not performed"
+    }
+  ]
+}
