@@ -1,0 +1,15 @@
+{
+  "schema": "live30_persisted_source_join_v1",
+  "dataset_admissible": false,
+  "input": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-witness10",
+  "committed_observations": 960,
+  "rendered_observations": 961,
+  "terminal_observation_separately_rendered": true,
+  "source_identity_and_matrix_hash_equal": true,
+  "errors": [],
+  "full_optical_guard_passed": true,
+  "scope": "Joins persisted source observation to matrices actually submitted to renderer; no independent silhouette/contact/photometric parity claim",
+  "source_sha256": "6cca636e77f168c1f7ef2f020a36da642253861bf2c0d0a35aa2bbf9425fe71a",
+  "hdf_sha256": "2e56ba490c833e82ef02cd2f8ef3c559ef99fdd36ebc50cd8cf2c33895ef0545",
+  "worker_rows_sha256": "8a4ccb5d4a6c92bfca18ffb7683c13569138152c655edf7662fe9c39d1d24a76"
+}

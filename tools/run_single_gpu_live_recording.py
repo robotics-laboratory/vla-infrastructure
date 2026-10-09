@@ -31,7 +31,9 @@ p.add_argument("--media-warmup", type=int, default=20)
 p.add_argument("--media", choices=("none", "gpu"), default="gpu")
 p.add_argument("--xr", action="store_true")
 p.add_argument("--view-mode", choices=("original", "minimal"), default="original")
+p.add_argument("--motion", choices=("benchmark", "reach-demo"), default="benchmark")
 p.add_argument("--witness", action=argparse.BooleanOptionalAction, default=True)
+p.add_argument("--witness-depth-scale", type=float, choices=(0.5, 1.0), default=1.0)
 p.add_argument(
     "--physics-python",
     type=Path,
@@ -107,6 +109,44 @@ def benchmark(env, cli, app, **unused):
 
             receipt["xr_enabled_at_admission"] = XRCore.get_singleton().is_xr_enabled()
         ik = _BimanualDifferentialIk(env)
+        motion_rows = []
+        home = owner.snapshot["rigid_body_world_pose"][[8, 20], :3].copy()
+        # World Cartesian intent only: existing upstream DLS and native physics
+        # still own targets, joint limits, articulation motion and contacts.
+        # This is an approach/transfer gesture, with no claimed cube grasp.
+        waypoints = np.array(
+            [
+                [0, 0, 0, 0, 0.05],
+                [2, 0, 0, 0, 0.09],
+                [6, -0.14, 0.028, 0, 0.09],
+                [9, -0.14, 0.028, -0.05, 0.09],
+                [11, -0.14, 0.028, -0.05, 0.015],
+                [15, -0.14, 0.028, 0.07, 0.015],
+                [19, 0.04, 0.028, 0.07, 0.015],
+                [21, 0.04, 0.028, 0.07, 0.09],
+                [26, 0, 0, 0, 0.05],
+                [28, 0, 0, 0, 0.05],
+            ]
+        )
+        if args.motion == "reach-demo":
+            (args.output / "motion-plan.json").write_text(
+                json.dumps(
+                    dict(
+                        schema="bimanual_cartesian_reach_demo_v1",
+                        home_tcp_world_m=home.tolist(),
+                        waypoint_columns=["time_s", "dx_m", "outward_dy_m", "dz_m", "aperture_m"],
+                        waypoints=waypoints.tolist(),
+                        warmup_hold_steps=args.warmup,
+                        control_period_sim_s=1 / 30,
+                        maximum_cartesian_delta_per_step_m=0.003,
+                        orientation_delta_rad=[0, 0, 0],
+                        task="open, approach above cubes, lower, close, lift, reach toward plates, open, return",
+                        object_grasp_claimed=False,
+                    ),
+                    indent=2,
+                )
+                + "\n"
+            )
         if args.media == "gpu":
             guard = args.output / "mirror-source-preimages.json"
             protected = [
@@ -162,11 +202,56 @@ def benchmark(env, cli, app, **unused):
                         warmup_frames=args.media_warmup,
                         source_minimum_time=initial["sim_time_s"],
                         gpu_preimage_path=str(gpu_guard.resolve()),
+                        witness_depth_scale=args.witness_depth_scale,
                     )
                 },
             )
 
         def solve(command, observation, xr, tick):
+            if args.motion == "reach-demo":
+                sim_s = max(0, tick - 1 - args.warmup) / 30
+                index = min(
+                    np.searchsorted(waypoints[:, 0], sim_s, side="right") - 1, len(waypoints) - 2
+                )
+                first, last = waypoints[index : index + 2]
+                fraction = np.clip((sim_s - first[0]) / (last[0] - first[0]), 0, 1)
+                smooth = fraction * fraction * (3 - 2 * fraction)
+                point = first + smooth * (last - first)
+                target = home + point[1:4] * np.array([[1, 1, 1], [1, -1, 1]])
+                actual = owner.snapshot["rigid_body_world_pose"][[8, 20], :3]
+                error = target - actual
+                delta = (
+                    error
+                    * np.minimum(1, 0.003 / np.maximum(np.linalg.norm(error, axis=1), 1e-12))[
+                        :, None
+                    ]
+                )
+                aperture = float(point[4])
+                command = replace(
+                    command,
+                    left=replace(
+                        command.left,
+                        delta_pose=np.r_[delta[0], [0, 0, 0]],
+                        gripper_aperture_m=aperture,
+                    ),
+                    right=replace(
+                        command.right,
+                        delta_pose=np.r_[delta[1], [0, 0, 0]],
+                        gripper_aperture_m=aperture,
+                    ),
+                )
+                motion_rows.append(
+                    dict(
+                        tick=tick,
+                        motion_time_s=sim_s,
+                        target_tcp_world_m=target.tolist(),
+                        actual_tcp_world_m=actual.tolist(),
+                        position_error_m=np.linalg.norm(error, axis=1).tolist(),
+                        desired_aperture_m=aperture,
+                        actual_aperture_m=owner.snapshot["q"][:, 6].tolist(),
+                    )
+                )
+                return ik.solve(command, observation, xr, tick)
             # Bounded periodic Cartesian intent, solved against the same O_t.
             phase = tick * 2 * np.pi / 120
             delta = np.array([0, 0.00015 * np.cos(phase), 0.0001 * np.sin(phase), 0, 0, 0])
@@ -192,6 +277,11 @@ def benchmark(env, cli, app, **unused):
             decision_solver=solve,
         )
         working_end = time.perf_counter()
+        if motion_rows:
+            # Persist outside the measured loop; HDF5 remains the source record.
+            (args.output / "motion-trace.jsonl").write_text(
+                "".join(json.dumps(row) + "\n" for row in motion_rows)
+            )
         summary = perf.close()
         if mirror:
             receipt["mirror"] = mirror.finish()
@@ -230,6 +320,7 @@ def benchmark(env, cli, app, **unused):
             if run.returncode:
                 raise RuntimeError("persisted state/media source join failed")
             receipt["camera_source_alignment_proven"] = True
+            receipt["independent_pixel_source_id_check"] = bool(args.witness)
         receipt["passed"] = True
         return 0
     finally:

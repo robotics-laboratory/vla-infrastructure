@@ -1,0 +1,174 @@
+{
+  "schema": "single_gpu_repository_checks_v1",
+  "preservation_base": "bc6d6a387b195025fded5c954fea8954e667c73c",
+  "python": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+  "tested_head": "bc6d6a387b195025fded5c954fea8954e667c73c",
+  "dataset_admissible": false,
+  "gate_bindings": [],
+  "started_ns": 1791571127515036211,
+  "source_sha256": "59775da7b700c274856d00d9007fc052af5c83d2805bb42893bd22835fc21dde",
+  "tested_sources": {
+    "tools/isaac_vr_standalone.py": "a28b17cdeacd1d8d514fdce07bd15e2b033aeb703840405a6bc7a54c9fc020ed",
+    "tools/isaac_vr_standalone_view.py": "0bebc8b47ecd612b469d9ee078dcf943872c5dcff3e50da0c1595f872164b7c4",
+    "tools/isaac_vr_standalone_scene.py": "be1a16c3be7ce8cc13c96aa7acbd38047f7910d96afd0ebfda8146cb7fc8e0f2",
+    "tools/isaac_vr_standalone_worker.py": "b361f1a19348e8b84b156f5ef95a4e4976c8440f0a50d854d879a83b32adcf4b",
+    "tools/isaac_vr_standalone_ik.py": "179f0a0795f98cfafc61cac27dbecc6a983af0a062238f99443eee2d877c73d3",
+    "tools/isaac_vr_live_worker.py": "0cd13801568971a20caf8225ad324c86a6e3ce1705ab0af62a36c4286e364a97",
+    "tools/isaac_vr_live_gpu.py": "8bbc05dfbc8a9059b40c247ee0f71a4d730ad8e4e326345fe0aed68809b97389",
+    "tools/isaac_vr_live_nvenc.py": "f93592e7614cda7f2cc61147134119ca20f2efc56bfad72978d4b92e6118ff44",
+    "tools/run_single_gpu_live_recording.py": "6b81401020624f2ef511f81befd0dfef73186f229872f39d7f4836ddee9d129d",
+    "tools/isaac_s2_runtime.py": "2fd601427dfbcd2143e7b6120ece47da83353e4b168e924d73c90325860878f6",
+    "tools/isaac_vr_injected_recording.py": "6568bf0e9cf088386312f00541389bd7301257a1216dd4bfa19d7dd5a6bb7bc5",
+    "tools/isaac_vr_recording.py": "726efc6129d495361c651233d536ae0f17124b8079bf205f44f04519249b69fd",
+    "tests/test_isaac_vr_standalone_scene.py": "bf4cd2b4090031c3669e426ee78e92ec6aa5b115a0785b386c0c922bb7f866a6",
+    "tests/test_isaac_vr_standalone_owner.py": "a650a31352ec713d47d6afc46f747a3383adac6e16dff0fefeaaa914fd215598",
+    "tests/test_isaac_vr_standalone_worker.py": "83c6e4fc8500e1b5ecc24b07358d477a30256251ecad1ee06f663e356234c1b5",
+    "tests/test_isaac_vr_live_media.py": "7e01c3c4e7d24de6316525d610ccb08f9de41c36fcea8f9ba34bafaca18c6c13",
+    "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py": "4121031837f606306b675e1e1552c84c89c3eb91fce86182d7de5aaf727bb9f0",
+    "docs/experiments/20261009_live_camera_recording_30hz/deep_research/verify_live_source.py": "c9e6e47e2a0681ef5b5b1cb9b1dae3b7867d5ed29203ebc41213dce06c307e14",
+    "docs/experiments/20261009_live_camera_recording_30hz/deep_research/optical_witness.py": "defc1be20d6fd10999ea66b9073adaa772162767c8c7cc633059a459345a0f1e",
+    "docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/export_preview.py": "d9916180ef7142b822e33d09e1fbbe219d586716b378ff79d233647fe1dc0bce",
+    "docs/experiments/20261009_live_camera_recording_30hz/single_gpu/check_repository.py": "59775da7b700c274856d00d9007fc052af5c83d2805bb42893bd22835fc21dde"
+  },
+  "checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "bc6d6a387b195025fded5c954fea8954e667c73c"
+      ],
+      "returncode": 0,
+      "elapsed_s": 2.103174763265997,
+      "stdout": "INDEX: 1046 entries; classification {'current': 122, 'historical': 924}\nHISTORICAL PRESERVATION: PASS (819 frozen files vs bc6d6a387b195025fded5c954fea8954e667c73c)\nKNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.\nDOC GOVERNANCE CHECKS: PASS\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.17910065921023488,
+      "stdout": "SPEC REFERENCE LINT OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/validate_resolved_contract.py",
+        "configs/resolved_contract.yaml"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.5269940332509577,
+      "stdout": "CONTRACT STRUCTURALLY VALID\nCONTRACT SEMANTICALLY VALID\nFINAL RC NOT READY\nBLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.02514958707615733,
+      "stdout": "MANIFEST OK: 110 reviewed files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff",
+        "check",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_view.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_scene.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_worker.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_ik.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_worker.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_gpu.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_nvenc.py",
+        "/home/ebulochkin/vla_infrastructure/tools/run_single_gpu_live_recording.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_s2_runtime.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_injected_recording.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_recording.py",
+        "/home/ebulochkin/vla_infrastructure/tests/test_isaac_vr_standalone_scene.py",
+        "/home/ebulochkin/vla_infrastructure/tests/test_isaac_vr_standalone_owner.py",
+        "/home/ebulochkin/vla_infrastructure/tests/test_isaac_vr_standalone_worker.py",
+        "/home/ebulochkin/vla_infrastructure/tests/test_isaac_vr_live_media.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/verify_live_source.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/optical_witness.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/export_preview.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/single_gpu/check_repository.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.009360862895846367,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_docs_governance.py",
+        "tests/test_validator_baseline.py",
+        "tests/test_validator_negative.py",
+        "tests/test_manifest.py",
+        "tests/test_isaac_vr_recording.py",
+        "tests/test_isaac_vr_injected_recording.py",
+        "tests/test_isaac_s2_recording_runtime.py",
+        "tests/test_isaac_vr_recording_contract.py",
+        "tests/test_isaac_s2_processor.py",
+        "tests/test_isaac_s2_upstream.py",
+        "tests/test_isaac_vr_config.py",
+        "tests/test_isaac_vr_camera_rendering.py",
+        "tests/test_temporal_recording_path.py",
+        "tests/test_isaac_vr_live_media.py",
+        "tests/test_isaac_vr_standalone_owner.py",
+        "tests/test_isaac_vr_standalone_scene.py",
+        "tests/test_isaac_vr_standalone_worker.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 13.557734369300306,
+      "stdout": "........................................................................ [ 20%]\n........................................................................ [ 41%]\n........................................................................ [ 62%]\n...................................ssssssssssssssssssssssssssss......... [ 83%]\n................................................ssssssssss               [100%]\n308 passed, 38 skipped in 12.91s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)**/*.log"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.003514881245791912,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)**/*.log"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.016416253987699747,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "cache_environment": {
+    "HF_HOME": "/tmp/live30-single-gpu-check-cache/hf",
+    "HF_DATASETS_CACHE": "/tmp/live30-single-gpu-check-cache/hf-datasets"
+  },
+  "raw_log_whitespace_excluded": true,
+  "all_passed": true
+}

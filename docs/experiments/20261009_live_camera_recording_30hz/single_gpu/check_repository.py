@@ -16,7 +16,9 @@ BASE = "d1676c5c05f3bf6ae300f47533526085fdab4204"
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
-    output = parser.parse_args().output
+    parser.add_argument("--base", default=BASE, help="Reviewer-supplied trusted preservation commit")
+    args = parser.parse_args()
+    output = args.output
     output.mkdir(parents=True, exist_ok=True)
     if (output / "results.json").exists() and json.loads((output / "results.json").read_text()).get("checks"):
         raise FileExistsError("Preserve previous attempt; select a new output")
@@ -31,6 +33,11 @@ def main():
         ROOT / "tools/isaac_vr_recording.py",
         *ROOT.glob("tests/test_isaac_vr_standalone*.py"),
         ROOT / "tests/test_isaac_vr_live_media.py",
+        ROOT / "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py",
+        ROOT / "docs/experiments/20261009_live_camera_recording_30hz/deep_research/verify_live_source.py",
+        ROOT / "docs/experiments/20261009_live_camera_recording_30hz/deep_research/optical_witness.py",
+        ROOT / "docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/export_preview.py",
+        Path(__file__),
     ]
     tests = [
         "test_docs_governance",
@@ -52,7 +59,7 @@ def main():
         "test_isaac_vr_standalone_worker",
     ]
     commands = [
-        [py, "tools/lint_docs.py", "--base", BASE],
+        [py, "tools/lint_docs.py", "--base", args.base],
         [py, "tools/lint_spec_references.py"],
         [py, "tools/validate_resolved_contract.py", "configs/resolved_contract.yaml"],
         [py, "tools/generate_manifest.py", "verify"],
@@ -63,7 +70,7 @@ def main():
     ]
     receipt = dict(
         schema="single_gpu_repository_checks_v1",
-        preservation_base=BASE,
+        preservation_base=args.base,
         python=py,
         tested_head=subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
         dataset_admissible=False,

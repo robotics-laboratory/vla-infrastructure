@@ -1,0 +1,15 @@
+{
+  "schema": "live30_persisted_source_join_v1",
+  "dataset_admissible": false,
+  "input": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo04",
+  "committed_observations": 960,
+  "rendered_observations": 961,
+  "terminal_observation_separately_rendered": true,
+  "source_identity_and_matrix_hash_equal": true,
+  "errors": [],
+  "full_optical_guard_passed": false,
+  "scope": "Joins persisted source observation to matrices actually submitted to renderer; no independent silhouette/contact/photometric parity claim",
+  "source_sha256": "2b383113676520b88161b39327bfa05eeddd4dd2b831beffc08983c02498acb3",
+  "hdf_sha256": "d8f355127542816009a5ca28efa06176ceb0d3d0bb2e84921cb4badcf627d0f0",
+  "worker_rows_sha256": "a408ad3011449223c30f31098d7f85017e1e4a7dce633e6a1669aa5f1578858c"
+}

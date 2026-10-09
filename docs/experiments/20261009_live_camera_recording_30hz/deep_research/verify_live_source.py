@@ -41,6 +41,11 @@ with h5py.File(a.input / "episode/session.hdf5", "r") as hdf:
             )
             matrices.append(m if plural else m[None])
         matrices = np.concatenate(matrices)
+        descendants = seed.get("render_descendants", [])
+        if descendants:
+            local = np.array([item["mesh_to_body"] for item in descendants], dtype="<f8")
+            parents = np.array([item["parent_index"] for item in descendants], dtype=np.int64)
+            matrices = np.concatenate([matrices, local @ matrices[parents]])
         intrinsics = (
             [
                 [
@@ -59,7 +64,13 @@ with h5py.File(a.input / "episode/session.hdf5", "r") as hdf:
             ]
         )
         boards = [
-            witness.matrices(matrices[c], intrinsics[r], seq, r)
+            witness.matrices(
+                matrices[c],
+                intrinsics[r],
+                seq,
+                r,
+                depth_scale=seed.get("single_gpu", {}).get("witness_depth_scale", 1.0),
+            )
             for r, c in enumerate(camera_indices)
         ]
         full = np.concatenate([matrices, *boards]) if seed["witness"] else matrices

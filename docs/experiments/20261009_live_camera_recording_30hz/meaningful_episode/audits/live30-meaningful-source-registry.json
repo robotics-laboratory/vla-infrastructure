@@ -1,0 +1,52 @@
+{
+  "retrieved": "2026-10-09",
+  "files": {
+    "/tmp/live30-meaningful-cpu-hierarchy.py": "e804a7c69506764c5bdcbe5a5dccf6f2aea06617ad766881865a97528602650b",
+    "/tmp/live30-meaningful-cpu-hierarchy.json": "9c7709fd0434632db66c2979fa1adf8e84d684b33d037b887a868b63decfd9e0",
+    "/tmp/live30-meaningful-cpu-hierarchy.log": "88753b1197ba9ba94dabb270329e309cbed39239227fa0f277fd9c4888ec4a03",
+    "/tmp/live30-meaningful-cpu-delta.py": "ecbf677f1fcf972fae7c7943784190ca5c137bc80ab4d64edfef2d03b45875e0",
+    "/tmp/live30-meaningful-cpu-delta.json": "db236ac9abc5129bcfa10588ebf6280919d3c5e94a5fc1e4e38b9a57bf22bf43",
+    "/tmp/live30-meaningful-cpu-delta.log": "9899b250871b58ef06b29a54cc89f03372bbd69e98bac851261e62e73ff51713",
+    "/tmp/s0-isaac-develop.O0fHSu/source/isaaclab_ov/isaaclab_ov/renderers/ovrtx_renderer.py": "0eb044576e9d0aa733de96331b21e38bbc4153b56c7328b3f4eb1cfb0b05acbe",
+    "/tmp/s0-isaac-develop.O0fHSu/source/isaaclab_ov/isaaclab_ov/stage.py": "fe44dc944cb5130bcc09a9275635b2167720220c4c5deb7486dd21f2417756a4",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/renderer.py": "d431ac3a02a43c01a5c57c3ff9214a420cfd001f67a3db6b8dd4b306b5b23efd",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovstage/_src/types.py": "faeaf0bcc37b2678386695c5d347dd4fcdd601a78ccb8e359d5770db807c5cf7",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovstage/_src/stage.py": "7595c4fec9b9d0012c8cd3e126cfa58d77a3eb2f41283893ef767ab9f2a0770e",
+    "/tmp/live30-meaningful-render-update.md": "af34e49b20441848ae680fe590c311ccbe8d31735cf0ad9287a77f0d0c69852c",
+    "/tmp/live30-meaningful-domain-audit.json": "dc161061a907cedd96b7e821cea3ebf07aac6e8f3e2ad4e67747e7a8785d0ee0",
+    "/tmp/live30-geometry-projection07.py": "30461cfdd3fa4c971d282362e9f241c5464eaa64716b0d2ee7033d06860b74fa",
+    "/tmp/live30-geometry-projection07.json": "f59e73c4335bfb607044825e43ebd3ebc1e16c7ca50e3f6afe1985eb5e670ba1",
+    "/tmp/live30-geometry-projection07.log": "ed29abcb5bc44abe85b4be59286402a197f886a46822d766638494312d385f55",
+    "/tmp/live30-geometry-projection07.png": "666620264c87b3e7ab2376d8edf477e27dbc8dd4e8da393ae04695327f2dcc62"
+  },
+  "sources": [
+    {
+      "url": "https://nvidia-omniverse.github.io/ovstage/scene/transforms.html",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "url": "https://nvidia-omniverse.github.io/ovstage/c_api/index.html",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "url": "https://nvidia-omniverse.github.io/ovrtx/core/ovstage_integration.html",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "url": "https://nvidia-omniverse.github.io/ovrtx/scene/transforms.html",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/NVIDIA-Omniverse/ovrtx/main/CHANGELOG.md",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "url": "https://github.com/isaac-sim/IsaacLab/blob/develop/source/isaaclab_ov/isaaclab_ov/renderers/ovrtx_renderer.py",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "url": "https://nvidia-omniverse.github.io/PhysX/ovphysx/latest/ovstage_integration.html",
+      "retrieved": "2026-10-09"
+    }
+  ]
+}

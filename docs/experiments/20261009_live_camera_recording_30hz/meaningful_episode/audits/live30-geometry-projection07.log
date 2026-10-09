@@ -1,0 +1,68 @@
+{
+  "left": {
+    "roi_pixels": 4937,
+    "max_channel_mean_abs_delta": 151.0593477820539,
+    "fraction_pixels_delta_gt20": 0.902572412396192,
+    "fraction_pixels_delta_gt50": 0.8847478225643103,
+    "projected_centroid_delta_px": 93.34693925429218,
+    "projected_centroid_before": [
+      383.1676687334466,
+      349.9531139647768
+    ],
+    "projected_centroid_after": [
+      374.72861975918175,
+      256.9884243210498
+    ],
+    "projected_hull_dark_occupancy": [
+      {
+        "projected_source": 390,
+        "opposite_source": 690,
+        "core_roi_pixels": 2766,
+        "threshold_mean_rgb_lt100": 100,
+        "matching_frame_dark_fraction": 0.8785249457700651,
+        "opposite_frame_dark_fraction": 0.0
+      },
+      {
+        "projected_source": 690,
+        "opposite_source": 390,
+        "core_roi_pixels": 1447,
+        "threshold_mean_rgb_lt100": 100,
+        "matching_frame_dark_fraction": 0.8908085694540429,
+        "opposite_frame_dark_fraction": 0.0
+      }
+    ]
+  },
+  "right": {
+    "roi_pixels": 4641,
+    "max_channel_mean_abs_delta": 147.3953889248007,
+    "fraction_pixels_delta_gt20": 0.8769661710838181,
+    "fraction_pixels_delta_gt50": 0.8360267183796596,
+    "projected_centroid_delta_px": 90.25105555113244,
+    "projected_centroid_before": [
+      588.3799639055943,
+      333.88642547938207
+    ],
+    "projected_centroid_after": [
+      588.0453178213459,
+      243.63599035526818
+    ],
+    "projected_hull_dark_occupancy": [
+      {
+        "projected_source": 390,
+        "opposite_source": 690,
+        "core_roi_pixels": 2596,
+        "threshold_mean_rgb_lt100": 100,
+        "matching_frame_dark_fraction": 0.8412942989214176,
+        "opposite_frame_dark_fraction": 0.0
+      },
+      {
+        "projected_source": 690,
+        "opposite_source": 390,
+        "core_roi_pixels": 1379,
+        "threshold_mean_rgb_lt100": 100,
+        "matching_frame_dark_fraction": 0.8332124728063814,
+        "opposite_frame_dark_fraction": 0.0
+      }
+    ]
+  }
+}

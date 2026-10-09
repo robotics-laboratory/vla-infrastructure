@@ -1,0 +1,2100 @@
+{
+  "dataset_admissible": false,
+  "live_physical_quest_qualified": false,
+  "scope": "single GPU live immutable producer snapshots; standalone renderer/NVENC",
+  "excluded_dynamic_bodies": [],
+  "witness": true,
+  "passed": false,
+  "read_gpu_transforms": false,
+  "population_domains": "RENDERING",
+  "warmup": {
+    "frames": 20,
+    "passed": true,
+    "recording_admitted": false,
+    "optical_source_id": 0,
+    "warmup_start_time_s": 0.33333333333333337,
+    "initial_snapshot_id": "warmup_only",
+    "initial_snapshot_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "initial_matrices_sha256": "7b1b82b4e9c645543f4c79ab48fb5ab1aa7d52d3269302c1b5191a8565f531b2",
+    "intrinsics": [
+      [
+        2.2079999446868896,
+        5.760000228881836,
+        3.240000009536743
+      ],
+      [
+        2.2079999446868896,
+        5.760000228881836,
+        3.240000009536743
+      ],
+      [
+        2.2079999446868896,
+        5.760000228881836,
+        3.240000009536743
+      ]
+    ],
+    "rows": [
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 0,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.33333333333333337,
+        "source_wall_ns": 0,
+        "ordinal": 2,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.30000000000000004,
+          0.33333333333333337
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.333333333,
+            "capture_end": 0.333333333,
+            "progression": 51,
+            "gpu": {
+              "role": 0,
+              "source_tag": 0,
+              "encoder_local_ordinal": 0,
+              "producer_wait_event": 569161248,
+              "clone_done_event": 654003024,
+              "pending": 1,
+              "map_host_ms": 0.317547,
+              "clone_enqueue_host_ms": 2.112164,
+              "encode_host_ms": 38.455822,
+              "unmap_host_ms": 0.061456,
+              "total_host_ms": 40.95957,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.333333333,
+            "capture_end": 0.333333333,
+            "progression": 51,
+            "gpu": {
+              "role": 1,
+              "source_tag": 0,
+              "encoder_local_ordinal": 0,
+              "producer_wait_event": 569161248,
+              "clone_done_event": 710267344,
+              "pending": 1,
+              "map_host_ms": 0.085024,
+              "clone_enqueue_host_ms": 0.132621,
+              "encode_host_ms": 0.530986,
+              "unmap_host_ms": 0.036544,
+              "total_host_ms": 0.794155,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.333333333,
+            "capture_end": 0.333333333,
+            "progression": 51,
+            "gpu": {
+              "role": 2,
+              "source_tag": 0,
+              "encoder_local_ordinal": 0,
+              "producer_wait_event": 569161248,
+              "clone_done_event": 726588848,
+              "pending": 1,
+              "map_host_ms": 0.052618,
+              "clone_enqueue_host_ms": 0.074907,
+              "encode_host_ms": 0.441988,
+              "unmap_host_ms": 0.027453,
+              "total_host_ms": 0.602904,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 5.82262,
+        "render_ms": 1285.593037,
+        "output_consume_ms": 42.49403,
+        "total_ms": 1333.909687,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 1,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.3666666666666667,
+        "source_wall_ns": 0,
+        "ordinal": 3,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.33333333333333337,
+          0.3666666666666667
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.3666666666666667,
+            "capture_end": 0.3666666666666667,
+            "progression": 52,
+            "gpu": {
+              "role": 0,
+              "source_tag": 1,
+              "encoder_local_ordinal": 1,
+              "producer_wait_event": 630298320,
+              "clone_done_event": 656568512,
+              "pending": 2,
+              "map_host_ms": 0.101613,
+              "clone_enqueue_host_ms": 0.100735,
+              "encode_host_ms": 0.07994,
+              "unmap_host_ms": 0.022514,
+              "total_host_ms": 0.310819,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.3666666666666667,
+            "capture_end": 0.3666666666666667,
+            "progression": 52,
+            "gpu": {
+              "role": 1,
+              "source_tag": 1,
+              "encoder_local_ordinal": 1,
+              "producer_wait_event": 630298320,
+              "clone_done_event": 709863424,
+              "pending": 2,
+              "map_host_ms": 0.045293,
+              "clone_enqueue_host_ms": 0.066684,
+              "encode_host_ms": 0.043955,
+              "unmap_host_ms": 0.015846,
+              "total_host_ms": 0.175874,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.3666666666666667,
+            "capture_end": 0.3666666666666667,
+            "progression": 52,
+            "gpu": {
+              "role": 2,
+              "source_tag": 1,
+              "encoder_local_ordinal": 1,
+              "producer_wait_event": 630298320,
+              "clone_done_event": 709866144,
+              "pending": 2,
+              "map_host_ms": 0.034294,
+              "clone_enqueue_host_ms": 0.050875,
+              "encode_host_ms": 0.039329,
+              "unmap_host_ms": 0.013474,
+              "total_host_ms": 0.141535,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.099049,
+        "render_ms": 6.292595,
+        "output_consume_ms": 0.740496,
+        "total_ms": 9.13214,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 2,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.4,
+        "source_wall_ns": 0,
+        "ordinal": 4,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.3666666666666667,
+          0.4
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.4,
+            "capture_end": 0.4,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 2,
+              "encoder_local_ordinal": 2,
+              "producer_wait_event": 684636544,
+              "clone_done_event": 684637696,
+              "pending": 3,
+              "map_host_ms": 0.084208,
+              "clone_enqueue_host_ms": 0.087231,
+              "encode_host_ms": 0.065972,
+              "unmap_host_ms": 0.020829,
+              "total_host_ms": 0.263473,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.4,
+            "capture_end": 0.4,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 2,
+              "encoder_local_ordinal": 2,
+              "producer_wait_event": 684636544,
+              "clone_done_event": 709870048,
+              "pending": 3,
+              "map_host_ms": 0.041507,
+              "clone_enqueue_host_ms": 0.058277,
+              "encode_host_ms": 0.042011,
+              "unmap_host_ms": 0.01474,
+              "total_host_ms": 0.160343,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.4,
+            "capture_end": 0.4,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 2,
+              "encoder_local_ordinal": 2,
+              "producer_wait_event": 654005712,
+              "clone_done_event": 654006720,
+              "pending": 3,
+              "map_host_ms": 0.033394,
+              "clone_enqueue_host_ms": 0.051364,
+              "encode_host_ms": 0.036693,
+              "unmap_host_ms": 0.015148,
+              "total_host_ms": 0.140251,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.503016,
+        "render_ms": 6.491186,
+        "output_consume_ms": 0.659015,
+        "total_ms": 9.653217,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 3,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.43333333333333335,
+        "source_wall_ns": 0,
+        "ordinal": 5,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.4,
+          0.43333333333333335
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.433333333,
+            "capture_end": 0.433333333,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 3,
+              "encoder_local_ordinal": 3,
+              "producer_wait_event": 654011392,
+              "clone_done_event": 654007600,
+              "pending": 3,
+              "map_host_ms": 0.092913,
+              "clone_enqueue_host_ms": 0.106414,
+              "encode_host_ms": 0.195462,
+              "unmap_host_ms": 0.024742,
+              "total_host_ms": 0.425995,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.433333333,
+            "capture_end": 0.433333333,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 3,
+              "encoder_local_ordinal": 3,
+              "producer_wait_event": 582172736,
+              "clone_done_event": 654011392,
+              "pending": 3,
+              "map_host_ms": 0.054793,
+              "clone_enqueue_host_ms": 0.086549,
+              "encode_host_ms": 0.141245,
+              "unmap_host_ms": 0.021346,
+              "total_host_ms": 0.309529,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.433333333,
+            "capture_end": 0.433333333,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 3,
+              "encoder_local_ordinal": 3,
+              "producer_wait_event": 654009472,
+              "clone_done_event": 654002816,
+              "pending": 3,
+              "map_host_ms": 0.053471,
+              "clone_enqueue_host_ms": 0.080223,
+              "encode_host_ms": 0.187685,
+              "unmap_host_ms": 0.023682,
+              "total_host_ms": 0.350712,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.318853,
+        "render_ms": 7.148302,
+        "output_consume_ms": 1.196953,
+        "total_ms": 10.664108,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 4,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.4666666666666667,
+        "source_wall_ns": 0,
+        "ordinal": 6,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.43333333333333335,
+          0.4666666666666667
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.4666666666666667,
+            "capture_end": 0.4666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 4,
+              "encoder_local_ordinal": 4,
+              "producer_wait_event": 726588848,
+              "clone_done_event": 654009472,
+              "pending": 3,
+              "map_host_ms": 0.0955,
+              "clone_enqueue_host_ms": 0.104095,
+              "encode_host_ms": 0.16741,
+              "unmap_host_ms": 0.024751,
+              "total_host_ms": 0.39829,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.4666666666666667,
+            "capture_end": 0.4666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 4,
+              "encoder_local_ordinal": 4,
+              "producer_wait_event": 656568512,
+              "clone_done_event": 726588848,
+              "pending": 3,
+              "map_host_ms": 0.052828,
+              "clone_enqueue_host_ms": 0.085266,
+              "encode_host_ms": 0.140227,
+              "unmap_host_ms": 0.020785,
+              "total_host_ms": 0.304375,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.4666666666666667,
+            "capture_end": 0.4666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 4,
+              "encoder_local_ordinal": 4,
+              "producer_wait_event": 711171760,
+              "clone_done_event": 656568512,
+              "pending": 3,
+              "map_host_ms": 0.048154,
+              "clone_enqueue_host_ms": 0.073039,
+              "encode_host_ms": 0.094746,
+              "unmap_host_ms": 0.020199,
+              "total_host_ms": 0.241136,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.299827,
+        "render_ms": 6.008605,
+        "output_consume_ms": 1.057737,
+        "total_ms": 9.366169,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 5,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.5,
+        "source_wall_ns": 0,
+        "ordinal": 7,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.4666666666666667,
+          0.5
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.5,
+            "capture_end": 0.5,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 5,
+              "encoder_local_ordinal": 5,
+              "producer_wait_event": 709864512,
+              "clone_done_event": 709864816,
+              "pending": 3,
+              "map_host_ms": 0.121938,
+              "clone_enqueue_host_ms": 0.135725,
+              "encode_host_ms": 0.219962,
+              "unmap_host_ms": 0.03292,
+              "total_host_ms": 0.519009,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.5,
+            "capture_end": 0.5,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 5,
+              "encoder_local_ordinal": 5,
+              "producer_wait_event": 709863424,
+              "clone_done_event": 709864512,
+              "pending": 3,
+              "map_host_ms": 0.075449,
+              "clone_enqueue_host_ms": 0.1154,
+              "encode_host_ms": 0.181666,
+              "unmap_host_ms": 0.030041,
+              "total_host_ms": 0.41002,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.5,
+            "capture_end": 0.5,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 5,
+              "encoder_local_ordinal": 5,
+              "producer_wait_event": 709863424,
+              "clone_done_event": 709876176,
+              "pending": 3,
+              "map_host_ms": 0.072067,
+              "clone_enqueue_host_ms": 0.105,
+              "encode_host_ms": 0.136939,
+              "unmap_host_ms": 0.032014,
+              "total_host_ms": 0.353547,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.248251,
+        "render_ms": 5.383902,
+        "output_consume_ms": 1.416475,
+        "total_ms": 9.048628,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 6,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.5333333333333334,
+        "source_wall_ns": 0,
+        "ordinal": 8,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.5,
+          0.5333333333333334
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.533333333,
+            "capture_end": 0.533333333,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 6,
+              "encoder_local_ordinal": 6,
+              "producer_wait_event": 656568112,
+              "clone_done_event": 709871664,
+              "pending": 3,
+              "map_host_ms": 0.136105,
+              "clone_enqueue_host_ms": 0.099665,
+              "encode_host_ms": 0.144346,
+              "unmap_host_ms": 0.022608,
+              "total_host_ms": 0.408313,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.533333333,
+            "capture_end": 0.533333333,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 6,
+              "encoder_local_ordinal": 6,
+              "producer_wait_event": 709869472,
+              "clone_done_event": 709869776,
+              "pending": 3,
+              "map_host_ms": 0.049329,
+              "clone_enqueue_host_ms": 0.069016,
+              "encode_host_ms": 0.111871,
+              "unmap_host_ms": 0.0163,
+              "total_host_ms": 0.250705,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.533333333,
+            "capture_end": 0.533333333,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 6,
+              "encoder_local_ordinal": 6,
+              "producer_wait_event": 654011392,
+              "clone_done_event": 709869472,
+              "pending": 3,
+              "map_host_ms": 0.039354,
+              "clone_enqueue_host_ms": 0.057657,
+              "encode_host_ms": 0.080663,
+              "unmap_host_ms": 0.016202,
+              "total_host_ms": 0.197895,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.234792,
+        "render_ms": 5.298976,
+        "output_consume_ms": 0.943182,
+        "total_ms": 8.47695,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 7,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.5666666666666667,
+        "source_wall_ns": 0,
+        "ordinal": 9,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.5333333333333334,
+          0.5666666666666667
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.5666666666666667,
+            "capture_end": 0.5666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 7,
+              "encoder_local_ordinal": 7,
+              "producer_wait_event": 654011392,
+              "clone_done_event": 654009168,
+              "pending": 3,
+              "map_host_ms": 0.079997,
+              "clone_enqueue_host_ms": 0.084119,
+              "encode_host_ms": 0.138967,
+              "unmap_host_ms": 0.020451,
+              "total_host_ms": 0.329048,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.5666666666666667,
+            "capture_end": 0.5666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 7,
+              "encoder_local_ordinal": 7,
+              "producer_wait_event": 654009472,
+              "clone_done_event": 654011392,
+              "pending": 3,
+              "map_host_ms": 0.043427,
+              "clone_enqueue_host_ms": 0.066835,
+              "encode_host_ms": 0.11523,
+              "unmap_host_ms": 0.016779,
+              "total_host_ms": 0.246492,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.5666666666666667,
+            "capture_end": 0.5666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 7,
+              "encoder_local_ordinal": 7,
+              "producer_wait_event": 726588848,
+              "clone_done_event": 654009472,
+              "pending": 3,
+              "map_host_ms": 0.039385,
+              "clone_enqueue_host_ms": 0.060055,
+              "encode_host_ms": 0.12751,
+              "unmap_host_ms": 0.018175,
+              "total_host_ms": 0.24925,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.239357,
+        "render_ms": 5.910745,
+        "output_consume_ms": 0.917755,
+        "total_ms": 9.067857,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 8,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.6000000000000001,
+        "source_wall_ns": 0,
+        "ordinal": 10,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.5666666666666667,
+          0.6000000000000001
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.6,
+            "capture_end": 0.6,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 8,
+              "encoder_local_ordinal": 8,
+              "producer_wait_event": 656568512,
+              "clone_done_event": 726588848,
+              "pending": 3,
+              "map_host_ms": 0.081176,
+              "clone_enqueue_host_ms": 0.089927,
+              "encode_host_ms": 0.13974,
+              "unmap_host_ms": 0.022038,
+              "total_host_ms": 0.338011,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.6,
+            "capture_end": 0.6,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 8,
+              "encoder_local_ordinal": 8,
+              "producer_wait_event": 656568512,
+              "clone_done_event": 569161248,
+              "pending": 3,
+              "map_host_ms": 0.046459,
+              "clone_enqueue_host_ms": 0.068899,
+              "encode_host_ms": 0.111904,
+              "unmap_host_ms": 0.016998,
+              "total_host_ms": 0.248655,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.6,
+            "capture_end": 0.6,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 8,
+              "encoder_local_ordinal": 8,
+              "producer_wait_event": 656568512,
+              "clone_done_event": 654003024,
+              "pending": 3,
+              "map_host_ms": 0.043555,
+              "clone_enqueue_host_ms": 0.064784,
+              "encode_host_ms": 0.136408,
+              "unmap_host_ms": 0.018665,
+              "total_host_ms": 0.267907,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.175741,
+        "render_ms": 10.960061,
+        "output_consume_ms": 0.949337,
+        "total_ms": 14.085139,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 9,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.6333333333333333,
+        "source_wall_ns": 0,
+        "ordinal": 11,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.6000000000000001,
+          0.6333333333333333
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.633333333,
+            "capture_end": 0.633333333,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 9,
+              "encoder_local_ordinal": 9,
+              "producer_wait_event": 709876176,
+              "clone_done_event": 709866208,
+              "pending": 3,
+              "map_host_ms": 0.078469,
+              "clone_enqueue_host_ms": 0.080245,
+              "encode_host_ms": 0.131132,
+              "unmap_host_ms": 0.019335,
+              "total_host_ms": 0.3146,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.633333333,
+            "capture_end": 0.633333333,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 9,
+              "encoder_local_ordinal": 9,
+              "producer_wait_event": 709871664,
+              "clone_done_event": 684637696,
+              "pending": 3,
+              "map_host_ms": 0.043594,
+              "clone_enqueue_host_ms": 0.063522,
+              "encode_host_ms": 0.101134,
+              "unmap_host_ms": 0.014963,
+              "total_host_ms": 0.227284,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.633333333,
+            "capture_end": 0.633333333,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 9,
+              "encoder_local_ordinal": 9,
+              "producer_wait_event": 709869776,
+              "clone_done_event": 656568448,
+              "pending": 3,
+              "map_host_ms": 0.036192,
+              "clone_enqueue_host_ms": 0.054845,
+              "encode_host_ms": 0.13429,
+              "unmap_host_ms": 0.017503,
+              "total_host_ms": 0.246785,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.222921,
+        "render_ms": 11.010807,
+        "output_consume_ms": 0.876687,
+        "total_ms": 14.110415,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 10,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.6666666666666667,
+        "source_wall_ns": 0,
+        "ordinal": 12,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.6333333333333333,
+          0.6666666666666667
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.6666666666666667,
+            "capture_end": 0.6666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 10,
+              "encoder_local_ordinal": 10,
+              "producer_wait_event": 663345376,
+              "clone_done_event": 709875024,
+              "pending": 3,
+              "map_host_ms": 0.073616,
+              "clone_enqueue_host_ms": 0.080009,
+              "encode_host_ms": 0.136792,
+              "unmap_host_ms": 0.020364,
+              "total_host_ms": 0.315761,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.6666666666666667,
+            "capture_end": 0.6666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 10,
+              "encoder_local_ordinal": 10,
+              "producer_wait_event": 709863424,
+              "clone_done_event": 654007664,
+              "pending": 3,
+              "map_host_ms": 0.043209,
+              "clone_enqueue_host_ms": 0.064993,
+              "encode_host_ms": 0.101662,
+              "unmap_host_ms": 0.015467,
+              "total_host_ms": 0.229418,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.6666666666666667,
+            "capture_end": 0.6666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 10,
+              "encoder_local_ordinal": 10,
+              "producer_wait_event": 654011392,
+              "clone_done_event": 709863424,
+              "pending": 3,
+              "map_host_ms": 0.039556,
+              "clone_enqueue_host_ms": 0.059607,
+              "encode_host_ms": 0.104298,
+              "unmap_host_ms": 0.017097,
+              "total_host_ms": 0.224444,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.150674,
+        "render_ms": 11.041269,
+        "output_consume_ms": 0.853375,
+        "total_ms": 14.045318,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 11,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.7,
+        "source_wall_ns": 0,
+        "ordinal": 13,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.6666666666666667,
+          0.7
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.7,
+            "capture_end": 0.7,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 11,
+              "encoder_local_ordinal": 11,
+              "producer_wait_event": 709876176,
+              "clone_done_event": 630297552,
+              "pending": 3,
+              "map_host_ms": 0.075484,
+              "clone_enqueue_host_ms": 0.078876,
+              "encode_host_ms": 0.151881,
+              "unmap_host_ms": 0.019344,
+              "total_host_ms": 0.330407,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.7,
+            "capture_end": 0.7,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 11,
+              "encoder_local_ordinal": 11,
+              "producer_wait_event": 726588848,
+              "clone_done_event": 709876176,
+              "pending": 3,
+              "map_host_ms": 0.04391,
+              "clone_enqueue_host_ms": 0.064737,
+              "encode_host_ms": 0.099772,
+              "unmap_host_ms": 0.015015,
+              "total_host_ms": 0.227376,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.7,
+            "capture_end": 0.7,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 11,
+              "encoder_local_ordinal": 11,
+              "producer_wait_event": 726588848,
+              "clone_done_event": 569161248,
+              "pending": 3,
+              "map_host_ms": 0.037719,
+              "clone_enqueue_host_ms": 0.055167,
+              "encode_host_ms": 0.074313,
+              "unmap_host_ms": 0.015137,
+              "total_host_ms": 0.186074,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.170352,
+        "render_ms": 11.220319,
+        "output_consume_ms": 0.831996,
+        "total_ms": 14.222667,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 12,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.7333333333333334,
+        "source_wall_ns": 0,
+        "ordinal": 14,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.7,
+          0.7333333333333334
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.733333333,
+            "capture_end": 0.733333333,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 12,
+              "encoder_local_ordinal": 12,
+              "producer_wait_event": 726588848,
+              "clone_done_event": 654003024,
+              "pending": 3,
+              "map_host_ms": 0.071198,
+              "clone_enqueue_host_ms": 0.07943,
+              "encode_host_ms": 0.135483,
+              "unmap_host_ms": 0.019623,
+              "total_host_ms": 0.310539,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.733333333,
+            "capture_end": 0.733333333,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 12,
+              "encoder_local_ordinal": 12,
+              "producer_wait_event": 709866208,
+              "clone_done_event": 726588848,
+              "pending": 3,
+              "map_host_ms": 0.04243,
+              "clone_enqueue_host_ms": 0.064749,
+              "encode_host_ms": 0.10102,
+              "unmap_host_ms": 0.015396,
+              "total_host_ms": 0.227668,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.733333333,
+            "capture_end": 0.733333333,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 12,
+              "encoder_local_ordinal": 12,
+              "producer_wait_event": 684637696,
+              "clone_done_event": 709866208,
+              "pending": 3,
+              "map_host_ms": 0.038142,
+              "clone_enqueue_host_ms": 0.056373,
+              "encode_host_ms": 0.075473,
+              "unmap_host_ms": 0.015702,
+              "total_host_ms": 0.189722,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.1938,
+        "render_ms": 11.061741,
+        "output_consume_ms": 0.814735,
+        "total_ms": 14.070276,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 13,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.7666666666666667,
+        "source_wall_ns": 0,
+        "ordinal": 15,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.7333333333333334,
+          0.7666666666666667
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.7666666666666667,
+            "capture_end": 0.7666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 13,
+              "encoder_local_ordinal": 13,
+              "producer_wait_event": 684637696,
+              "clone_done_event": 663345376,
+              "pending": 3,
+              "map_host_ms": 0.073785,
+              "clone_enqueue_host_ms": 0.08209,
+              "encode_host_ms": 0.129719,
+              "unmap_host_ms": 0.020337,
+              "total_host_ms": 0.311243,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.7666666666666667,
+            "capture_end": 0.7666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 13,
+              "encoder_local_ordinal": 13,
+              "producer_wait_event": 654011392,
+              "clone_done_event": 684637696,
+              "pending": 3,
+              "map_host_ms": 0.043951,
+              "clone_enqueue_host_ms": 0.06626,
+              "encode_host_ms": 0.111473,
+              "unmap_host_ms": 0.016531,
+              "total_host_ms": 0.242705,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.7666666666666667,
+            "capture_end": 0.7666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 13,
+              "encoder_local_ordinal": 13,
+              "producer_wait_event": 654007664,
+              "clone_done_event": 654011392,
+              "pending": 3,
+              "map_host_ms": 0.040496,
+              "clone_enqueue_host_ms": 0.058579,
+              "encode_host_ms": 0.077506,
+              "unmap_host_ms": 0.014682,
+              "total_host_ms": 0.19513,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.193555,
+        "render_ms": 12.102908,
+        "output_consume_ms": 0.835636,
+        "total_ms": 15.132099,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 14,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.8,
+        "source_wall_ns": 0,
+        "ordinal": 16,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.7666666666666667,
+          0.8
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.8,
+            "capture_end": 0.8,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 14,
+              "encoder_local_ordinal": 14,
+              "producer_wait_event": 649418608,
+              "clone_done_event": 709875024,
+              "pending": 3,
+              "map_host_ms": 0.07528,
+              "clone_enqueue_host_ms": 0.080869,
+              "encode_host_ms": 0.136141,
+              "unmap_host_ms": 0.020022,
+              "total_host_ms": 0.31752,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.8,
+            "capture_end": 0.8,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 14,
+              "encoder_local_ordinal": 14,
+              "producer_wait_event": 654008448,
+              "clone_done_event": 709863424,
+              "pending": 3,
+              "map_host_ms": 0.042349,
+              "clone_enqueue_host_ms": 0.063174,
+              "encode_host_ms": 5.002828,
+              "unmap_host_ms": 0.020224,
+              "total_host_ms": 5.13374,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.8,
+            "capture_end": 0.8,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 14,
+              "encoder_local_ordinal": 14,
+              "producer_wait_event": 654008448,
+              "clone_done_event": 709876176,
+              "pending": 3,
+              "map_host_ms": 0.05097,
+              "clone_enqueue_host_ms": 0.057398,
+              "encode_host_ms": 0.080548,
+              "unmap_host_ms": 0.016343,
+              "total_host_ms": 0.209265,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.233016,
+        "render_ms": 10.133024,
+        "output_consume_ms": 5.752605,
+        "total_ms": 18.118645,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 15,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.8333333333333334,
+        "source_wall_ns": 0,
+        "ordinal": 17,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.8,
+          0.8333333333333334
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.833333333,
+            "capture_end": 0.833333333,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 15,
+              "encoder_local_ordinal": 15,
+              "producer_wait_event": 654008448,
+              "clone_done_event": 569161248,
+              "pending": 3,
+              "map_host_ms": 0.075776,
+              "clone_enqueue_host_ms": 0.080455,
+              "encode_host_ms": 0.131113,
+              "unmap_host_ms": 0.019332,
+              "total_host_ms": 0.311677,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.833333333,
+            "capture_end": 0.833333333,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 15,
+              "encoder_local_ordinal": 15,
+              "producer_wait_event": 654008448,
+              "clone_done_event": 654003024,
+              "pending": 3,
+              "map_host_ms": 0.04317,
+              "clone_enqueue_host_ms": 0.064743,
+              "encode_host_ms": 0.110356,
+              "unmap_host_ms": 0.016011,
+              "total_host_ms": 0.238474,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.833333333,
+            "capture_end": 0.833333333,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 15,
+              "encoder_local_ordinal": 15,
+              "producer_wait_event": 726588848,
+              "clone_done_event": 654008448,
+              "pending": 3,
+              "map_host_ms": 0.038803,
+              "clone_enqueue_host_ms": 0.058051,
+              "encode_host_ms": 0.129341,
+              "unmap_host_ms": 0.01746,
+              "total_host_ms": 0.247832,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.232836,
+        "render_ms": 5.874313,
+        "output_consume_ms": 0.886565,
+        "total_ms": 8.993714,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 16,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.8666666666666667,
+        "source_wall_ns": 0,
+        "ordinal": 18,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.8333333333333334,
+          0.8666666666666667
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.8666666666666667,
+            "capture_end": 0.8666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 16,
+              "encoder_local_ordinal": 16,
+              "producer_wait_event": 649418608,
+              "clone_done_event": 647818064,
+              "pending": 3,
+              "map_host_ms": 0.072263,
+              "clone_enqueue_host_ms": 0.181308,
+              "encode_host_ms": 0.139562,
+              "unmap_host_ms": 0.021816,
+              "total_host_ms": 0.420094,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.8666666666666667,
+            "capture_end": 0.8666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 16,
+              "encoder_local_ordinal": 16,
+              "producer_wait_event": 663345376,
+              "clone_done_event": 707016128,
+              "pending": 3,
+              "map_host_ms": 0.04781,
+              "clone_enqueue_host_ms": 0.06863,
+              "encode_host_ms": 0.097757,
+              "unmap_host_ms": 0.015681,
+              "total_host_ms": 0.233871,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.8666666666666667,
+            "capture_end": 0.8666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 16,
+              "encoder_local_ordinal": 16,
+              "producer_wait_event": 663345376,
+              "clone_done_event": 707016432,
+              "pending": 3,
+              "map_host_ms": 0.038503,
+              "clone_enqueue_host_ms": 0.056408,
+              "encode_host_ms": 0.12631,
+              "unmap_host_ms": 0.017681,
+              "total_host_ms": 0.24281,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.169688,
+        "render_ms": 11.061454,
+        "output_consume_ms": 0.987248,
+        "total_ms": 14.21839,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 17,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.9,
+        "source_wall_ns": 0,
+        "ordinal": 19,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.8666666666666667,
+          0.9
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.9,
+            "capture_end": 0.9,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 17,
+              "encoder_local_ordinal": 17,
+              "producer_wait_event": 663345376,
+              "clone_done_event": 709231808,
+              "pending": 3,
+              "map_host_ms": 0.072534,
+              "clone_enqueue_host_ms": 0.079643,
+              "encode_host_ms": 0.13164,
+              "unmap_host_ms": 0.019779,
+              "total_host_ms": 0.308611,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.9,
+            "capture_end": 0.9,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 17,
+              "encoder_local_ordinal": 17,
+              "producer_wait_event": 654011392,
+              "clone_done_event": 709866208,
+              "pending": 3,
+              "map_host_ms": 0.043326,
+              "clone_enqueue_host_ms": 0.066344,
+              "encode_host_ms": 0.102036,
+              "unmap_host_ms": 0.016061,
+              "total_host_ms": 0.231925,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.9,
+            "capture_end": 0.9,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 17,
+              "encoder_local_ordinal": 17,
+              "producer_wait_event": 709863424,
+              "clone_done_event": 654011392,
+              "pending": 3,
+              "map_host_ms": 0.039407,
+              "clone_enqueue_host_ms": 0.057766,
+              "encode_host_ms": 0.138248,
+              "unmap_host_ms": 0.018178,
+              "total_host_ms": 0.25767,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.238324,
+        "render_ms": 10.930745,
+        "output_consume_ms": 0.886009,
+        "total_ms": 14.055078,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 18,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.9333333333333333,
+        "source_wall_ns": 0,
+        "ordinal": 20,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.9,
+          0.9333333333333333
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.933333333,
+            "capture_end": 0.933333333,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 18,
+              "encoder_local_ordinal": 18,
+              "producer_wait_event": 709863424,
+              "clone_done_event": 709876176,
+              "pending": 3,
+              "map_host_ms": 0.078567,
+              "clone_enqueue_host_ms": 0.080556,
+              "encode_host_ms": 0.134321,
+              "unmap_host_ms": 0.019545,
+              "total_host_ms": 0.317678,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.933333333,
+            "capture_end": 0.933333333,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 18,
+              "encoder_local_ordinal": 18,
+              "producer_wait_event": 709863424,
+              "clone_done_event": 569161248,
+              "pending": 3,
+              "map_host_ms": 0.043786,
+              "clone_enqueue_host_ms": 0.066287,
+              "encode_host_ms": 0.100184,
+              "unmap_host_ms": 0.015464,
+              "total_host_ms": 0.229778,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.933333333,
+            "capture_end": 0.933333333,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 18,
+              "encoder_local_ordinal": 18,
+              "producer_wait_event": 654003024,
+              "clone_done_event": 709863424,
+              "pending": 3,
+              "map_host_ms": 0.038623,
+              "clone_enqueue_host_ms": 0.056633,
+              "encode_host_ms": 0.098516,
+              "unmap_host_ms": 0.017014,
+              "total_host_ms": 0.21474,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.165937,
+        "render_ms": 11.090238,
+        "output_consume_ms": 0.846805,
+        "total_ms": 14.10298,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      },
+      {
+        "dataset_admissible": false,
+        "optical_phase_verified": false,
+        "source_id": 19,
+        "episode_id": "single_gpu_episode",
+        "scene_generation": "aa1ab4a25b00940f28e7d4dd2dcb80d605fe496074560265bda9dc098b156f8d",
+        "source_sim_time_s": 0.9666666666666667,
+        "source_wall_ns": 0,
+        "ordinal": 21,
+        "transform_sha256": "d2db411d8b45e64e4a484465cb99bc548a13a8a96ef4892e5ff2f387df34e6e8",
+        "sensor_clock": [
+          0.9333333333333333,
+          0.9666666666666667
+        ],
+        "frames": [
+          {
+            "role": 0,
+            "camera": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera0",
+            "capture_start": 0.9666666666666667,
+            "capture_end": 0.9666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 0,
+              "source_tag": 19,
+              "encoder_local_ordinal": 19,
+              "producer_wait_event": 654008448,
+              "clone_done_event": 654003024,
+              "pending": 3,
+              "map_host_ms": 0.092562,
+              "clone_enqueue_host_ms": 0.095725,
+              "encode_host_ms": 0.156207,
+              "unmap_host_ms": 0.021629,
+              "total_host_ms": 0.371533,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 1,
+            "camera": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera1",
+            "capture_start": 0.9666666666666667,
+            "capture_end": 0.9666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 1,
+              "source_tag": 19,
+              "encoder_local_ordinal": 19,
+              "producer_wait_event": 654008448,
+              "clone_done_event": 663345376,
+              "pending": 3,
+              "map_host_ms": 0.044768,
+              "clone_enqueue_host_ms": 0.065257,
+              "encode_host_ms": 0.108934,
+              "unmap_host_ms": 0.021713,
+              "total_host_ms": 0.244942,
+              "pixel_alignment_proven": false
+            }
+          },
+          {
+            "role": 2,
+            "camera": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera",
+            "product": "/Live30/Camera2",
+            "capture_start": 0.9666666666666667,
+            "capture_end": 0.9666666666666667,
+            "progression": 1,
+            "gpu": {
+              "role": 2,
+              "source_tag": 19,
+              "encoder_local_ordinal": 19,
+              "producer_wait_event": 707016128,
+              "clone_done_event": 654008448,
+              "pending": 3,
+              "map_host_ms": 0.042005,
+              "clone_enqueue_host_ms": 0.056136,
+              "encode_host_ms": 0.077045,
+              "unmap_host_ms": 0.015896,
+              "total_host_ms": 0.194834,
+              "pixel_alignment_proven": false
+            }
+          }
+        ],
+        "output_path": "owned GPU NVENC",
+        "apply_publish_ms": 2.225552,
+        "render_ms": 11.281439,
+        "output_consume_ms": 0.914266,
+        "total_ms": 14.421257,
+        "recording_admitted": false,
+        "optical_source_id": 0
+      }
+    ],
+    "encoder": {
+      "dataset_admissible": false,
+      "passed": true,
+      "counts": [
+        20,
+        20,
+        20
+      ],
+      "max_pending": [
+        4,
+        4,
+        4
+      ],
+      "encoder_receipts": [
+        {
+          "schema": "live30_strict_packet_encoder_v1",
+          "passed": true,
+          "inputs": 20,
+          "packets": 20,
+          "max_pending": 4,
+          "capacity": 8,
+          "unacknowledged_ordinals": [],
+          "owners_retained": 0,
+          "errors": [],
+          "cpu": false,
+          "dataset_admissible": false,
+          "pixel_alignment_proven": false,
+          "unacknowledged_at_drain": []
+        },
+        {
+          "schema": "live30_strict_packet_encoder_v1",
+          "passed": true,
+          "inputs": 20,
+          "packets": 20,
+          "max_pending": 4,
+          "capacity": 8,
+          "unacknowledged_ordinals": [],
+          "owners_retained": 0,
+          "errors": [],
+          "cpu": false,
+          "dataset_admissible": false,
+          "pixel_alignment_proven": false,
+          "unacknowledged_at_drain": []
+        },
+        {
+          "schema": "live30_strict_packet_encoder_v1",
+          "passed": true,
+          "inputs": 20,
+          "packets": 20,
+          "max_pending": 4,
+          "capacity": 8,
+          "unacknowledged_ordinals": [],
+          "owners_retained": 0,
+          "errors": [],
+          "cpu": false,
+          "dataset_admissible": false,
+          "pixel_alignment_proven": false,
+          "unacknowledged_at_drain": []
+        }
+      ],
+      "drain_ms": 232.542661,
+      "cuda_device_max_connections": "1",
+      "errors": [],
+      "owners_quarantined": false,
+      "synchronization": "producer wait -> owned clone -> same-stream NVENC; strict packet ACK plus clone fence; drain fence before failure release",
+      "pixel_alignment_proven": false
+    },
+    "elapsed_ms": 1821.358202
+  },
+  "encoder": {
+    "dataset_admissible": false,
+    "passed": true,
+    "counts": [
+      961,
+      961,
+      961
+    ],
+    "max_pending": [
+      4,
+      4,
+      4
+    ],
+    "encoder_receipts": [
+      {
+        "schema": "live30_strict_packet_encoder_v1",
+        "passed": true,
+        "inputs": 961,
+        "packets": 961,
+        "max_pending": 4,
+        "capacity": 8,
+        "unacknowledged_ordinals": [],
+        "owners_retained": 0,
+        "errors": [],
+        "cpu": false,
+        "dataset_admissible": false,
+        "pixel_alignment_proven": false,
+        "unacknowledged_at_drain": []
+      },
+      {
+        "schema": "live30_strict_packet_encoder_v1",
+        "passed": true,
+        "inputs": 961,
+        "packets": 961,
+        "max_pending": 4,
+        "capacity": 8,
+        "unacknowledged_ordinals": [],
+        "owners_retained": 0,
+        "errors": [],
+        "cpu": false,
+        "dataset_admissible": false,
+        "pixel_alignment_proven": false,
+        "unacknowledged_at_drain": []
+      },
+      {
+        "schema": "live30_strict_packet_encoder_v1",
+        "passed": true,
+        "inputs": 961,
+        "packets": 961,
+        "max_pending": 4,
+        "capacity": 8,
+        "unacknowledged_ordinals": [],
+        "owners_retained": 0,
+        "errors": [],
+        "cpu": false,
+        "dataset_admissible": false,
+        "pixel_alignment_proven": false,
+        "unacknowledged_at_drain": []
+      }
+    ],
+    "drain_ms": 62.762072,
+    "cuda_device_max_connections": "1",
+    "errors": [],
+    "owners_quarantined": false,
+    "synchronization": "producer wait -> owned clone -> same-stream NVENC; strict packet ACK plus clone fence; drain fence before failure release",
+    "pixel_alignment_proven": false
+  },
+  "captures": 961,
+  "encode_done_ns": 3796896623739680,
+  "encode_drain_ms": 62.773066,
+  "completed_elapsed_s": 17.070148378,
+  "steady_worker_mean_ms": 13.252312620187304,
+  "decoded": [
+    {
+      "role": 0,
+      "count": 961,
+      "expected": 961,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "role": 1,
+      "count": 961,
+      "expected": 961,
+      "errors": [
+        {
+          "frame": 544,
+          "decoded": {
+            "row": 544,
+            "role": 1,
+            "min_contrast": 13.0,
+            "anchors_ok": true,
+            "cell_contrasts": [
+              -212.0,
+              -193.0,
+              -94.0,
+              -30.0,
+              -13.0,
+              203.0,
+              -221.0,
+              -222.0,
+              -225.0,
+              229.0,
+              -226.0,
+              -227.0,
+              234.0,
+              -227.0,
+              234.0,
+              -228.0
+            ],
+            "confident": false
+          }
+        }
+      ],
+      "passed": false
+    },
+    {
+      "role": 2,
+      "count": 961,
+      "expected": 961,
+      "errors": [],
+      "passed": true
+    }
+  ],
+  "verification_ms": 3780.538923,
+  "final_media": {
+    "dataset_admissible": false,
+    "passed": true,
+    "counts": [
+      961,
+      961,
+      961
+    ],
+    "max_pending": [
+      4,
+      4,
+      4
+    ],
+    "encoder_receipts": [
+      {
+        "schema": "live30_strict_packet_encoder_v1",
+        "passed": true,
+        "inputs": 961,
+        "packets": 961,
+        "max_pending": 4,
+        "capacity": 8,
+        "unacknowledged_ordinals": [],
+        "owners_retained": 0,
+        "errors": [],
+        "cpu": false,
+        "dataset_admissible": false,
+        "pixel_alignment_proven": false,
+        "unacknowledged_at_drain": []
+      },
+      {
+        "schema": "live30_strict_packet_encoder_v1",
+        "passed": true,
+        "inputs": 961,
+        "packets": 961,
+        "max_pending": 4,
+        "capacity": 8,
+        "unacknowledged_ordinals": [],
+        "owners_retained": 0,
+        "errors": [],
+        "cpu": false,
+        "dataset_admissible": false,
+        "pixel_alignment_proven": false,
+        "unacknowledged_at_drain": []
+      },
+      {
+        "schema": "live30_strict_packet_encoder_v1",
+        "passed": true,
+        "inputs": 961,
+        "packets": 961,
+        "max_pending": 4,
+        "capacity": 8,
+        "unacknowledged_ordinals": [],
+        "owners_retained": 0,
+        "errors": [],
+        "cpu": false,
+        "dataset_admissible": false,
+        "pixel_alignment_proven": false,
+        "unacknowledged_at_drain": []
+      }
+    ],
+    "drain_ms": 62.762072,
+    "cuda_device_max_connections": "1",
+    "errors": [],
+    "owners_quarantined": false,
+    "synchronization": "producer wait -> owned clone -> same-stream NVENC; strict packet ACK plus clone fence; drain fence before failure release",
+    "pixel_alignment_proven": false
+  },
+  "cleanup_errors": []
+}

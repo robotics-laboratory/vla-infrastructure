@@ -53,7 +53,9 @@ class LiveMirror:
             raise ValueError(
                 "Requires capacity8 and installation before first recorder observation"
             )
-        guard = json.loads(Path(guard_path or Path(__file__).with_name("live_mirror_preimages.json")).read_text())
+        guard = json.loads(
+            Path(guard_path or Path(__file__).with_name("live_mirror_preimages.json")).read_text()
+        )
         for path, digest in guard.items():
             if sha(path) != digest:
                 raise RuntimeError(f"Live mirror source changed: {path}")
@@ -159,8 +161,45 @@ class LiveMirror:
             usd += witness_module.usd()
         overlay = self.output / "mirror.usda"
         overlay.write_text(usd)
-        if not Usd.Stage.Open(str(overlay)):
+        render_stage = Usd.Stage.Open(str(overlay))
+        if not render_stage:
             raise ValueError("Overlay USD parse failed")
+        # Derived rendering layer only: test native instance expansion without
+        # modifying the recorded source or assets. CPU physics keeps its overlay.
+        expanded_instances = []
+        for prim in list(render_stage.Traverse()):
+            if prim.IsInstance() and str(prim.GetPath()).startswith(
+                ("/World/LeftPiper/", "/World/RightPiper/")
+            ):
+                expanded_instances.append(str(prim.GetPath()))
+                prim.SetInstanceable(False)
+        render_stage.GetRootLayer().Save()
+        # Diagnostic bypass: publish each descendant mesh world pose directly.
+        # Static mesh-to-rigid transforms come from the recorded USD, never FK.
+        render_descendants = []
+        for prim in render_stage.Traverse():
+            if not prim.IsA(UsdGeom.Mesh):
+                continue
+            path = str(prim.GetPath())
+            owners = [(i, p) for i, p in enumerate(paths) if path.startswith(p + "/")]
+            if not owners:
+                continue
+            index, parent = max(owners, key=lambda item: len(item[1]))
+            mesh_world = np.array(
+                UsdGeom.Xformable(prim).ComputeLocalToWorldTransform(Usd.TimeCode.Default())
+            )
+            body_world = np.array(
+                UsdGeom.Xformable(render_stage.GetPrimAtPath(parent)).ComputeLocalToWorldTransform(
+                    Usd.TimeCode.Default()
+                )
+            )
+            render_descendants.append(
+                dict(
+                    path=path,
+                    parent_index=index,
+                    mesh_to_body=(mesh_world @ np.linalg.inv(body_world)).tolist(),
+                )
+            )
         self.entries, self.paths, self.cameras, self.intrinsics = entries, paths, cameras, None
         metadata = dict(
             output=str(self.output.resolve()),
@@ -178,6 +217,8 @@ class LiveMirror:
             witness=witness,
             gpu=gpu,
             capacity=self.capacity,
+            expanded_render_instances=expanded_instances,
+            render_descendants=render_descendants,
             dataset_admissible=False,
         )
         metadata["helper_hashes"] = {

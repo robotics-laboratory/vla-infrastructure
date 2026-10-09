@@ -186,21 +186,38 @@ def run(conn, seed):
         import ovrtx
         import ovstage
 
-        paths = seed["paths"] + (
-            [path for role in range(3) for path in witness.paths(role)] if seed["witness"] else []
+        descendants = seed.get("render_descendants", [])
+        paths = (
+            seed["paths"]
+            + [item["path"] for item in descendants]
+            + (
+                [path for role in range(3) for path in witness.paths(role)]
+                if seed["witness"]
+                else []
+            )
         )
         camera_indices = [seed["paths"].index(camera) for camera in seed["cameras"]]
         fps, delta = 30, 1 / 30
 
         def capture(payload, source_id, sim_time, *, optical_source_id=None):
             matrices, intrinsics = validate_payload(payload, len(seed["paths"]))
+            if descendants:
+                local = np.array([item["mesh_to_body"] for item in descendants], dtype="<f8")
+                parents = np.array([item["parent_index"] for item in descendants], dtype=np.int64)
+                matrices = np.concatenate([matrices, local @ matrices[parents]])
             optical_id = source_id if optical_source_id is None else optical_source_id
             if seed["witness"]:
                 matrices = np.concatenate(
                     [
                         matrices,
                         *[
-                            witness.matrices(matrices[camera], intrinsics[role], optical_id, role)
+                            witness.matrices(
+                                matrices[camera],
+                                intrinsics[role],
+                                optical_id,
+                                role,
+                                depth_scale=options.get("witness_depth_scale", 1.0),
+                            )
                             for role, camera in enumerate(camera_indices)
                         ],
                     ]
@@ -249,10 +266,12 @@ def run(conn, seed):
         warm_start = float(initial["sim_time_s"]) - warmup_frames * delta
         if warm_start < delta:
             raise ValueError("Initial source time must leave a positive full-frame warmup prefix")
-        renderer = ovrtx.Renderer()
+        renderer = ovrtx.Renderer(ovrtx.RendererConfig(read_gpu_transforms=False))
+        receipt["read_gpu_transforms"] = False
         stage = ovstage.Stage("live30.single.gpu.live.mirror")
         renderer.attach_ovstage(stage)
         ovstage.population.open_usd(stage, seed["overlay"], ordinal=1)
+        receipt["population_domains"] = "RENDERING"
         stage.advance_write_floor(1, ovstage.Scope.ALL).wait()
         consumer = new_consumer(output / "warmup-media")
         mirror = new_mirror(1)

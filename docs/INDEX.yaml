@@ -5906,3 +5906,766 @@ documents:
   owner: vr.performance
   mutable: false
   gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/PLAN.md
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/REPORT.md
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/export_preview.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo01-config.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo01-launch.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo01-process.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo01-result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo01-source-join.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo01-gpu-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo01-mirror-source-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo01-motion-plan.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo02-config.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo02-launch.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo02-process.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo02-result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo02-source-join.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo02-gpu-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo02-mirror-source-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo02-motion-plan.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo03-config.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo03-launch.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo03-process.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo03-result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo03-source-join.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo03-gpu-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo03-mirror-source-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo03-motion-plan.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo04-config.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo04-launch.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo04-process.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo04-result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo04-source-join.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo04-gpu-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo04-mirror-source-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo04-motion-plan.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo05-config.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo05-launch.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo05-process.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo05-result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo05-source-join.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo05-gpu-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo05-mirror-source-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo05-motion-plan.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo06-config.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo06-launch.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo06-process.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo06-result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo06-source-join.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo06-gpu-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo06-mirror-source-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo06-motion-plan.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo07-config.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo07-launch.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo07-process.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo07-result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo07-source-join.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo07-gpu-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo07-mirror-source-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo07-motion-plan.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo08-config.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo08-launch.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo08-process.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo08-result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo08-source-join.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo08-gpu-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo08-mirror-source-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-demo08-motion-plan.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness09-config.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness09-launch.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness09-process.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness09-result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness09-gpu-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness09-mirror-source-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness09-motion-plan.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/audits/live30-meaningful-domain-audit.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/audits/live30-meaningful-cpu-hierarchy.py
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/audits/live30-meaningful-cpu-hierarchy.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/audits/live30-meaningful-cpu-hierarchy.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/audits/live30-meaningful-cpu-delta.py
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/audits/live30-meaningful-cpu-delta.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/audits/live30-meaningful-cpu-delta.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/preview07-export.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/preview08-export.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness09-worker.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/audits/live30-geometry-projection07.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/audits/live30-geometry-projection07.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/audits/live30-geometry-projection07.png
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/audits/live30-geometry-projection07.py
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/audits/live30-meaningful-render-update.md
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/audits/live30-meaningful-source-registry.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/checks/repository01/results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/checks/repository01/results.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness10-config.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness10-launch.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness10-process.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness10-result.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness10-source-join.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness10-gpu-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness10-mirror-source-preimages.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness10-motion-plan.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/reach-witness10-worker.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/run_ledger.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/artifact_inventory.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/audits/live30-meaningful-source-recovery.py
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/checks/format-ast-parity.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/receipts/source-recovery.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/checks/repository02/results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/checks/repository02/results.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/checks/final-review.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []

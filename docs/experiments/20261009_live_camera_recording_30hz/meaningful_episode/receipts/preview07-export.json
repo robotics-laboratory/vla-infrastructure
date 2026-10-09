@@ -1,0 +1,271 @@
+{
+  "schema": "live_episode_preview_export_v1",
+  "passed": true,
+  "input": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo07",
+  "source_sha256": "2ab2ef99ec124e63b5e9cbf7e59c8a07cd3150861bdf87d2c25f48e2caff3fdb",
+  "commands": [
+    {
+      "command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=width,height,nb_read_frames,r_frame_rate,duration",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo07/mirror/media/role0/stream.h264"
+      ],
+      "returncode": 0,
+      "elapsed_s": 3.8084598258137703,
+      "stdout": "{\n    \"programs\": [\n\n    ],\n    \"streams\": [\n        {\n            \"width\": 960,\n            \"height\": 600,\n            \"r_frame_rate\": \"30/1\",\n            \"nb_read_frames\": \"961\"\n        }\n    ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=width,height,nb_read_frames,r_frame_rate,duration",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo07/mirror/media/role1/stream.h264"
+      ],
+      "returncode": 0,
+      "elapsed_s": 3.8264853176660836,
+      "stdout": "{\n    \"programs\": [\n\n    ],\n    \"streams\": [\n        {\n            \"width\": 960,\n            \"height\": 600,\n            \"r_frame_rate\": \"30/1\",\n            \"nb_read_frames\": \"961\"\n        }\n    ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=width,height,nb_read_frames,r_frame_rate,duration",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo07/mirror/media/role2/stream.h264"
+      ],
+      "returncode": 0,
+      "elapsed_s": 3.9499307977966964,
+      "stdout": "{\n    \"programs\": [\n\n    ],\n    \"streams\": [\n        {\n            \"width\": 960,\n            \"height\": 600,\n            \"r_frame_rate\": \"30/1\",\n            \"nb_read_frames\": \"961\"\n        }\n    ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "ffmpeg",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-r",
+        "30",
+        "-i",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo07/mirror/media/role2/stream.h264",
+        "-r",
+        "30",
+        "-i",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo07/mirror/media/role0/stream.h264",
+        "-r",
+        "30",
+        "-i",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo07/mirror/media/role1/stream.h264",
+        "-filter_complex",
+        "[0:v]drawtext=text='SCENE - live recorded RGB':x=10:y=10:fontsize=20:fontcolor=white:box=1:boxcolor=black@0.65[scene];[1:v]scale=480:300,drawtext=text='LEFT WRIST':x=10:y=10:fontsize=20:fontcolor=white:box=1:boxcolor=black@0.65[left];[2:v]scale=480:300,drawtext=text='RIGHT WRIST':x=10:y=10:fontsize=20:fontcolor=white:box=1:boxcolor=black@0.65[right];[left][right]hstack=inputs=2[wrists];[scene][wrists]vstack=inputs=2[out]",
+        "-map",
+        "[out]",
+        "-an",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "fast",
+        "-crf",
+        "22",
+        "-threads",
+        "4",
+        "-pix_fmt",
+        "yuv420p",
+        "-movflags",
+        "+faststart",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/episode-three-views.mp4"
+      ],
+      "returncode": 0,
+      "elapsed_s": 3.5196021958254278,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "ffmpeg",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-r",
+        "30",
+        "-i",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo07/mirror/media/role2/stream.h264",
+        "-c:v",
+        "copy",
+        "-movflags",
+        "+faststart",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/episode-scene.mp4"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.12539346609264612,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-count_frames",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=width,height,nb_read_frames,r_frame_rate,duration",
+        "-of",
+        "json",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/episode-three-views.mp4"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.6330269118770957,
+      "stdout": "{\n    \"programs\": [\n\n    ],\n    \"streams\": [\n        {\n            \"width\": 960,\n            \"height\": 900,\n            \"r_frame_rate\": \"30/1\",\n            \"duration\": \"32.033333\",\n            \"nb_read_frames\": \"961\"\n        }\n    ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "ffmpeg",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-i",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo07/mirror/media/role2/stream.h264",
+        "-vf",
+        "select=eq(n\\,0)+eq(n\\,390)+eq(n\\,690)",
+        "-vsync",
+        "0",
+        "-frames:v",
+        "3",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/scene-sample-%02d.png"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.8164633102715015,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "ffmpeg",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-ss",
+        "13",
+        "-i",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/episode-three-views.mp4",
+        "-frames:v",
+        "1",
+        "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/preview.png"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.11160012008622289,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "playback_fps": 30,
+  "source_re_rendered": false,
+  "preview_processing_excluded_from_recording_hz": true,
+  "source_probes": [
+    {
+      "width": 960,
+      "height": 600,
+      "r_frame_rate": "30/1",
+      "nb_read_frames": "961"
+    },
+    {
+      "width": 960,
+      "height": 600,
+      "r_frame_rate": "30/1",
+      "nb_read_frames": "961"
+    },
+    {
+      "width": 960,
+      "height": 600,
+      "r_frame_rate": "30/1",
+      "nb_read_frames": "961"
+    }
+  ],
+  "preview_probe": {
+    "width": 960,
+    "height": 900,
+    "r_frame_rate": "30/1",
+    "duration": "32.033333",
+    "nb_read_frames": "961"
+  },
+  "motion_metrics": {
+    "maximum_tcp_displacement_m": [
+      0.1513291890434442,
+      0.15132921353909545
+    ],
+    "actual_aperture_range_m": [
+      [
+        0.014999883249402046,
+        0.09000005573034286
+      ],
+      [
+        0.014999943785369396,
+        0.09000007063150406
+      ]
+    ],
+    "maximum_cartesian_tracking_error_m": 0.09931598105729512,
+    "final_home_error_m": [
+      4.844596447649258e-07,
+      9.804239362237441e-07
+    ],
+    "object_grasp_claimed": false
+  },
+  "files": [
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/episode-scene.mp4",
+      "bytes": 64544986,
+      "sha256": "7ed2e8938e73aef3d304a86a224e00eee7af14e201d7777002d769e096c95248"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/episode-three-views.mp4",
+      "bytes": 2247782,
+      "sha256": "c95d28fbfa58f2f42ebb1189a0b3a35765d61281069a65d8bdbd8ab529a73665"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/preview.png",
+      "bytes": 520827,
+      "sha256": "05a24931282b3b6f9fd5b12b4cf2457df0d41f66f689ce8d8e854a5d97fd9612"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/scene-sample-01.png",
+      "bytes": 354204,
+      "sha256": "a69ff89dddcdb28fbe7726db95f0e95bbdb41d698f161d0e9361598ba779f86b"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/scene-sample-02.png",
+      "bytes": 356187,
+      "sha256": "f00f472478ec038cbe64fa26e5f12788470a2eae578345a03c106d308bc0351d"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/scene-sample-03.png",
+      "bytes": 359556,
+      "sha256": "bd101a956ded2133537788485e721413baef6e3faf02a28873d3251c68236d60"
+    }
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "schema": "meaningful_episode_run_ledger_v1",
+  "physical_quest_qualified": false,
+  "primary_video_run": "reach-demo08",
+  "optical_proof_run": "reach-witness10",
+  "runs": [
+    {
+      "run": "reach-demo01",
+      "raw_passed": true,
+      "geometry_scope": "FAIL frozen meshes",
+      "strict_optical_scope": "not requested",
+      "encode_tail_hz": 56.935878124775904,
+      "steady_action_hz": 57.297963136876405,
+      "full_finish_hz": 52.90733044253636,
+      "captures": 961,
+      "encoder_counts": [
+        961,
+        961,
+        961
+      ],
+      "result": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo01/result.json",
+      "started_utc": "2026-10-09T18:12:44Z",
+      "finished_utc": "2026-10-09T18:13:27Z"
+    },
+    {
+      "run": "reach-demo02",
+      "raw_passed": true,
+      "geometry_scope": "FAIL frozen meshes",
+      "strict_optical_scope": "not requested",
+      "encode_tail_hz": 56.12007422178655,
+      "steady_action_hz": 56.89874816676922,
+      "full_finish_hz": 52.90822582644263,
+      "captures": 961,
+      "encoder_counts": [
+        961,
+        961,
+        961
+      ],
+      "result": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo02/result.json",
+      "started_utc": "2026-10-09T18:16:16Z",
+      "finished_utc": "2026-10-09T18:16:58Z"
+    },
+    {
+      "run": "reach-demo03",
+      "raw_passed": true,
+      "geometry_scope": "FAIL frozen meshes",
+      "strict_optical_scope": "not requested",
+      "encode_tail_hz": 56.94847101154605,
+      "steady_action_hz": 57.554210560454244,
+      "full_finish_hz": 52.967061491730604,
+      "captures": 961,
+      "encoder_counts": [
+        961,
+        961,
+        961
+      ],
+      "result": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo03/result.json",
+      "started_utc": "2026-10-09T18:17:46Z",
+      "finished_utc": "2026-10-09T18:18:28Z"
+    },
+    {
+      "run": "reach-demo04",
+      "raw_passed": true,
+      "geometry_scope": "FAIL frozen meshes",
+      "strict_optical_scope": "not requested",
+      "encode_tail_hz": 56.119033871831505,
+      "steady_action_hz": 57.159465976574694,
+      "full_finish_hz": 52.82614141425906,
+      "captures": 961,
+      "encoder_counts": [
+        961,
+        961,
+        961
+      ],
+      "result": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo04/result.json",
+      "started_utc": "2026-10-09T18:19:49Z",
+      "finished_utc": "2026-10-09T18:20:31Z"
+    },
+    {
+      "run": "reach-demo05",
+      "raw_passed": true,
+      "geometry_scope": "FAIL frozen meshes",
+      "strict_optical_scope": "not requested",
+      "encode_tail_hz": 41.564869457542464,
+      "steady_action_hz": 41.84959659890916,
+      "full_finish_hz": 39.71214910492206,
+      "captures": 961,
+      "encoder_counts": [
+        961,
+        961,
+        961
+      ],
+      "result": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo05/result.json",
+      "started_utc": "2026-10-09T18:20:57Z",
+      "finished_utc": "2026-10-09T18:21:45Z"
+    },
+    {
+      "run": "reach-demo06",
+      "raw_passed": true,
+      "geometry_scope": "FAIL frozen meshes",
+      "strict_optical_scope": "not requested",
+      "encode_tail_hz": 56.954873014522185,
+      "steady_action_hz": 57.728593283574924,
+      "full_finish_hz": 52.85925623360123,
+      "captures": 961,
+      "encoder_counts": [
+        961,
+        961,
+        961
+      ],
+      "result": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo06/result.json",
+      "started_utc": "2026-10-09T18:23:06Z",
+      "finished_utc": "2026-10-09T18:23:48Z"
+    },
+    {
+      "run": "reach-demo07",
+      "raw_passed": true,
+      "geometry_scope": "sampled pixels PASS",
+      "strict_optical_scope": "not requested",
+      "encode_tail_hz": 56.213639086992615,
+      "steady_action_hz": 57.141083794180346,
+      "full_finish_hz": 52.92930059224631,
+      "captures": 961,
+      "encoder_counts": [
+        961,
+        961,
+        961
+      ],
+      "result": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo07/result.json",
+      "started_utc": "2026-10-09T18:25:05Z",
+      "finished_utc": "2026-10-09T18:25:48Z"
+    },
+    {
+      "run": "reach-demo08",
+      "raw_passed": true,
+      "geometry_scope": "sampled pixels PASS",
+      "strict_optical_scope": "not requested",
+      "encode_tail_hz": 56.20322762018623,
+      "steady_action_hz": 56.81292225602227,
+      "full_finish_hz": 53.069655547198586,
+      "captures": 961,
+      "encoder_counts": [
+        961,
+        961,
+        961
+      ],
+      "result": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo08/result.json",
+      "started_utc": "2026-10-09T18:27:01Z",
+      "finished_utc": "2026-10-09T18:27:43Z"
+    },
+    {
+      "run": "reach-witness09",
+      "raw_passed": false,
+      "geometry_scope": "not separately sampled in this run",
+      "strict_optical_scope": "FAIL low contrast; decoded ID matched",
+      "encode_tail_hz": null,
+      "steady_action_hz": null,
+      "full_finish_hz": null,
+      "captures": 961,
+      "encoder_counts": [
+        961,
+        961,
+        961
+      ],
+      "result": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-witness09/result.json",
+      "started_utc": "2026-10-09T18:28:14Z",
+      "finished_utc": "2026-10-09T18:28:57Z"
+    },
+    {
+      "run": "reach-witness10",
+      "raw_passed": true,
+      "geometry_scope": "not separately sampled in this run",
+      "strict_optical_scope": "PASS all 961x3 exact IDs and role, contrast >=30",
+      "encode_tail_hz": 57.023328822429846,
+      "steady_action_hz": 57.27882589088777,
+      "full_finish_hz": 44.05088976422541,
+      "captures": 961,
+      "encoder_counts": [
+        961,
+        961,
+        961
+      ],
+      "result": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-witness10/result.json",
+      "started_utc": "2026-10-09T18:32:20Z",
+      "finished_utc": "2026-10-09T18:33:07Z"
+    }
+  ]
+}

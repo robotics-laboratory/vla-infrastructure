@@ -7,13 +7,38 @@ Kind: experiment; status: current; owner: `vr.performance`; mutable: true.
 
 ## Результат
 
-Реализован и проверен полный диагностический пайплайн: текущая сцена Piper,
+**Уточнение после [эпизода с заметными движениями](../meaningful_episode/REPORT.md):
+прежняя формулировка о проверенном полном live-camera пайплайне отозвана.**
+В шести новых запусках native TCP и wrist-камеры изменялись, но видимая геометрия
+роботов в Scene camera оставалась у home. Предыдущие optical source-ID и
+HDF→submitted matrices проверки этого не обнаруживали. Поэтому приведенные
+ниже прежние Hz подтверждают state/action, transport/render submission и encode
+cadence, но не частоту корректных изображений движущихся роботов. Historical
+receipts и их исходные PASS/FAIL bytes сохраняются.
+
+В новом `reach-demo08` явная публикация world transforms 696 robot meshes
+устранила наблюдаемое замирание: координатор подтвердил движение в Scene camera.
+Измерено **56,20 Hz с encoder tail**, 960 transitions и 961 capture каждой из
+трех камер на одной GPU, XR включен, Quest отсутствует. Source join дополнен
+проверкой mesh matrices из persisted HDF и static USD mapping. Optical boards
+в этом демонстрационном видео отключены; независимый pixel source-ID proof
+каждого кадра нового запуска не заявляется. Полные условия, шесть неудачных
+попыток, повтор и артефакты находятся в новом отчете.
+
+Дополнительный `reach-witness10` того же исправленного пути прошел строгий
+optical guard всех 961×3 кадров при пороге контраста≥30 и точном source/role ID:
+57,02 Hz с encoder tail. Для viewing08 доски отключены, для proof10 — включены
+на половинной глубине при прежнем projected размере. Это разные записи;
+их scope и отрицательная optical попытка09 явно сохранены в новом отчете.
+
+Собран диагностический пайплайн: текущая сцена Piper,
 standalone CPU PhysX, настоящий upstream DifferentialIKController, причинные
 state/action переходы в текущем NVIDIA HDF recorder, пассивное отображение Kit/XR,
-три живые камеры 960×600 в OVRTX и GPU NVENC. Камеры рендерят состояния во время
-симуляции, а не материализуют завершённую запись позднее.
+три камеры 960×600 в OVRTX и GPU NVENC. Render/encode выполняются во время
+симуляции. Исправление публикации видимых meshes и его новые измерения описаны
+в linked meaningful-episode отчете; старые числа ниже сохраняют прежний scope.
 
-На одной RTX4090 получены **52,06 полных перехода/с** с исходным Kit render mode и
+На одной RTX4090 измерены **52,06 перехода/с** с исходным Kit render mode и
 **56,52/с** с MinimalRendering только для Kit view. Числа включают завершение
 кодирования последнего кадра всех камер. В обоих matched прогонах — 1320 принятых
 действий, по1321 реальному кадру/пакету/декодированному optical source-ID каждой
@@ -24,8 +49,8 @@ state/action переходы в текущем NVIDIA HDF recorder, пасси�
 **Главная цель >30 Гц с физически подключённым Quest3 пока не доказана.** Клиента
 Quest не было, XR/DeviceIO движения оператора не подавались. Команды имеют
 детерминированный Cartesian intent, решаемый настоящим IK; это не проверка живого
-human processor/lifecycle. Ориентир около50 Гц без Quest достигнут с полными
-камерами и кодированием. Обычный `run-vr record` остаётся прежним; новый runner
+human processor/lifecycle. Около50 Гц без Quest измерены у transport/encode пути;
+screening корректного camera candidate этим не завершен. Обычный `run-vr record` остаётся прежним; новый runner
 является явным диагностическим opt-in. S2 и D1 не квалифицированы.
 
 ## Архитектура и изменения

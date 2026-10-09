@@ -1,0 +1,19 @@
+{
+  "schema": "isaac_vr_live_gpu_preimages_v1",
+  "adapter": "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_nvenc.py",
+  "sha256": {
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/types.py": "5ab31921e0d9544f693d25ef79ac77be5a86cd8577df5e56d3ba8b458caefd8b",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/dlpack.py": "20137c0e53fb9768d92076194f3790512be97604ab1cbfdbf166ba507b57e2f0",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/renderer.py": "d431ac3a02a43c01a5c57c3ff9214a420cfd001f67a3db6b8dd4b306b5b23efd",
+    "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/warp/_src/context.py": "1ef32ace4bb46fffda232f8a099fa36945a14b671e1c0774f1286de89a37ba90",
+    "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/warp/_src/dlpack.py": "52a1d1dab26d150a35bc3ad6753b6216c332409c5bbd6555c05e8e82383a50ef",
+    "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/warp/_src/utils.py": "a8994f2cdb524f273ac69ccc941a3a57e9ac3f69ec835ffd530f1b0d4cfafe49",
+    "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_nvenc.py": "f93592e7614cda7f2cc61147134119ca20f2efc56bfad72978d4b92e6118ff44",
+    "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_gpu.py": "8bbc05dfbc8a9059b40c247ee0f71a4d730ad8e4e326345fe0aed68809b97389",
+    "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_worker.py": "c45af8c16fa131f226c7c8fb082fb588cddf25345a8e038eed9aa53e8d32cdd8",
+    "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_snapshot.py": "4d2c67661425b2dce8284e888de5bd775348dc29fc25c95c2a54323d8238d00f",
+    "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/optical_witness.py": "defc1be20d6fd10999ea66b9073adaa772162767c8c7cc633059a459345a0f1e"
+  },
+  "reference": "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_gpu_consumer_preimages.json",
+  "gpu_run": false
+}

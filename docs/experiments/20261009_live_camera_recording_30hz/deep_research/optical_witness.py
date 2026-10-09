@@ -35,20 +35,22 @@ def usd():
     return 'def Scope "LiveWitness" {\n' + "\n".join(materials + objects) + "\n}\n"
 
 
-def matrices(camera_world, intrinsics, source_index, role, width=960, height=600):
+def matrices(camera_world, intrinsics, source_index, role, width=960, height=600, depth_scale=1.0):
     if not 0 <= source_index < 4096 or not 0 <= role < 3:
         raise ValueError("Witness supports source rows0..4095 and roles0..2")
+    if depth_scale not in (0.5, 1.0):
+        raise ValueError("Witness depth scale must be 0.5 or 1.0")
     focal, aperture_x, aperture_y = intrinsics
     fx, fy = width * focal / aperture_x, height * focal / aperture_y
     bits = [(source_index >> i) & 1 for i in range(12)] + [role & 1, (role >> 1) & 1, 1, 0]
-    pixel_specs = [(width / 2, height / 2, 342, 72, 0.061)]
+    pixel_specs = [(width / 2, height / 2, 342, 72, 0.061 * depth_scale)]
     pixel_specs += [
-        (width / 2 - 150 + 20 * i, height / 2 + (-20 if bit else 20), 12, 12, 0.06)
+        (width / 2 - 150 + 20 * i, height / 2 + (-20 if bit else 20), 12, 12, 0.06 * depth_scale)
         for i, bit in enumerate(bits)
     ]
     result = []
     for x, y, sx, sy, z in pixel_specs:
-        matrix = np.diag([sx * z / fx, sy * z / fy, 0.00015, 1.0])
+        matrix = np.diag([sx * z / fx, sy * z / fy, 0.00015 * depth_scale, 1.0])
         matrix[3, :3] = [(x - width / 2) * z / fx, -(y - height / 2) * z / fy, -z]
         result.append(matrix @ camera_world)
     return np.asarray(result)

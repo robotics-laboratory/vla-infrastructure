@@ -510,6 +510,9 @@ class WorkerProtocolTests(unittest.TestCase):
         test = self
 
         class Renderer:
+            def __init__(self, config):
+                test.assertFalse(config.read_gpu_transforms)
+
             def attach_ovstage(self, stage):
                 test.events.append("attach")
 
@@ -577,7 +580,7 @@ class WorkerProtocolTests(unittest.TestCase):
 
         self.consumer_class = FakeConsumer
         self.modules = {
-            "ovrtx": types.SimpleNamespace(Renderer=Renderer),
+            "ovrtx": types.SimpleNamespace(Renderer=Renderer, RendererConfig=types.SimpleNamespace),
             "ovstage": types.SimpleNamespace(
                 Stage=Stage,
                 Scope=types.SimpleNamespace(ALL="all"),
@@ -586,7 +589,7 @@ class WorkerProtocolTests(unittest.TestCase):
             "ovrtx_snapshot": types.SimpleNamespace(Snapshot=Snapshot, SnapshotRenderer=Mirror),
             "optical_witness": types.SimpleNamespace(
                 paths=lambda role: [],
-                matrices=lambda camera, intrinsics, source, role: (
+                matrices=lambda camera, intrinsics, source, role, depth_scale=1.0: (
                     test.optical_calls.append((source, role)) or np.empty((0, 4, 4))
                 ),
             ),

@@ -1,0 +1,1935 @@
+{
+  "schema": "live30_sampled_geometry_projection_v1",
+  "date": "2026-10-09",
+  "mode": "CPU only; no Renderer; no FK; retained USD mesh vertices and recorded HDF world poses",
+  "source_indices": [
+    0,
+    390,
+    690
+  ],
+  "samples": [
+    {
+      "source_index": 0,
+      "camera_world": [
+        [
+          -0.09053572930720799,
+          -0.9958932079890939,
+          5.413350578908904e-08,
+          0.0
+        ],
+        [
+          0.7027523305591785,
+          -0.06388652508348058,
+          0.7085602824082089,
+          0.0
+        ],
+        [
+          -0.705650369242768,
+          0.0641500599683959,
+          0.7056502860437288,
+          0.0
+        ],
+        [
+          0.10000000149011612,
+          0.05000000074505806,
+          1.4299999475479126,
+          1.0
+        ]
+      ],
+      "intrinsics": {
+        "fx": 367.99997615814306,
+        "fy": 408.8888774421807,
+        "cx": 480.0,
+        "cy": 300.0
+      },
+      "meshes": [
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 552,
+          "bbox": [
+            [
+              410.1395201731178,
+              265.9419440572893
+            ],
+            [
+              424.1155246989761,
+              278.80655602848276
+            ]
+          ],
+          "centroid": [
+            417.31128797587365,
+            272.167103531101
+          ]
+        },
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 1499,
+          "bbox": [
+            [
+              409.15212324132847,
+              254.0166578661917
+            ],
+            [
+              427.41457728045776,
+              289.0256227386649
+            ]
+          ],
+          "centroid": [
+            420.50917629690485,
+            271.5536050788284
+          ]
+        },
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 6,
+          "bbox": [
+            [
+              421.08892356920666,
+              260.8393229645551
+            ],
+            [
+              424.2173742476103,
+              274.8146592360131
+            ]
+          ],
+          "centroid": [
+            422.7073547961213,
+            267.62729553801995
+          ]
+        },
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__mesha095dd4b2fc946da91d382fabb105222_vq0DINS/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 552,
+          "bbox": [
+            [
+              369.8176027996384,
+              258.0384900082846
+            ],
+            [
+              383.44045279527063,
+              270.5440780982
+            ]
+          ],
+          "centroid": [
+            377.4022225574176,
+            264.224627478988
+          ]
+        },
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__meshace13aa1610d431782c790b0d2454e35_vq0DINS/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 1499,
+          "bbox": [
+            [
+              371.1982905058054,
+              247.31211592916048
+            ],
+            [
+              401.19385253561666,
+              281.50418881928584
+            ]
+          ],
+          "centroid": [
+            382.67902175790164,
+            263.0746070640756
+          ]
+        },
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__mesha018df111b36463f9330b9351d9d4c3e_vq0DINS/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 6,
+          "bbox": [
+            [
+              397.9341158516848,
+              256.3397955955489
+            ],
+            [
+              401.19385253561666,
+              270.17375322190026
+            ]
+          ],
+          "centroid": [
+            399.6043348109915,
+            263.08794489586995
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 552,
+          "bbox": [
+            [
+              573.7943743055284,
+              244.76296428736396
+            ],
+            [
+              587.0739384252805,
+              257.76869993539754
+            ]
+          ],
+          "centroid": [
+            579.5906640209126,
+            251.29545747489644
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 1499,
+          "bbox": [
+            [
+              552.5043076220383,
+              235.15284386180426
+            ],
+            [
+              586.1632806537605,
+              268.82287629503304
+            ]
+          ],
+          "centroid": [
+            573.4660408031268,
+            251.81489270918397
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 6,
+          "bbox": [
+            [
+              552.5043076220383,
+              246.57919254253744
+            ],
+            [
+              557.2767660217161,
+              259.79709785839054
+            ]
+          ],
+          "centroid": [
+            554.7962779830619,
+            253.1666438139483
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__mesha095dd4b2fc946da91d382fabb105222_vq0DINS/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 552,
+          "bbox": [
+            [
+              537.8814046214176,
+              257.18810425132835
+            ],
+            [
+              551.8555085994831,
+              270.79114753175
+            ]
+          ],
+          "centroid": [
+            544.5294442669425,
+            263.82709080131525
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__meshace13aa1610d431782c790b0d2454e35_vq0DINS/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 1499,
+          "bbox": [
+            [
+              529.0929620475165,
+              245.61144523344382
+            ],
+            [
+              551.8403478404914,
+              280.1693448270958
+            ]
+          ],
+          "centroid": [
+            539.8446711855986,
+            262.7902120699335
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__mesha018df111b36463f9330b9351d9d4c3e_vq0DINS/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 6,
+          "bbox": [
+            [
+              531.9212261153357,
+              253.73266891965278
+            ],
+            [
+              536.6648936504095,
+              267.16505344417976
+            ]
+          ],
+          "centroid": [
+            534.1842939733955,
+            260.3837193432296
+          ]
+        }
+      ],
+      "fingers": [
+        {
+          "role": "left",
+          "hull": [
+            [
+              372.005980071622,
+              276.4457635373052
+            ],
+            [
+              369.8176027996384,
+              268.29755964345924
+            ],
+            [
+              370.65461960692664,
+              258.2455800833567
+            ],
+            [
+              373.01540345268523,
+              250.9425677682056
+            ],
+            [
+              373.6265102810359,
+              249.60573369433445
+            ],
+            [
+              374.5120338541939,
+              248.5247088041636
+            ],
+            [
+              375.6124126332969,
+              247.7738306409748
+            ],
+            [
+              376.85305391708005,
+              247.40537988826742
+            ],
+            [
+              378.17823859457735,
+              247.31211592916048
+            ],
+            [
+              378.5835613948406,
+              247.32261930618458
+            ],
+            [
+              379.04460582665325,
+              247.38697258196618
+            ],
+            [
+              386.2094247430363,
+              248.74997771787545
+            ],
+            [
+              420.8154817189384,
+              255.33329876391508
+            ],
+            [
+              421.32641586743324,
+              255.45403109469677
+            ],
+            [
+              421.7808341121163,
+              255.59767471343733
+            ],
+            [
+              422.25229508225505,
+              255.7790457318672
+            ],
+            [
+              422.55814083471876,
+              255.91303078041688
+            ],
+            [
+              423.1084080297722,
+              256.18415681191107
+            ],
+            [
+              423.8638383013721,
+              256.61462806527226
+            ],
+            [
+              424.5472847632906,
+              257.05701906008704
+            ],
+            [
+              424.9051802037414,
+              257.3070512285477
+            ],
+            [
+              425.07533440403563,
+              257.44399543043755
+            ],
+            [
+              425.1851603925346,
+              257.6483803791177
+            ],
+            [
+              425.2793482103453,
+              257.8547571024694
+            ],
+            [
+              427.41457728045776,
+              263.2710142803313
+            ],
+            [
+              426.3632547148988,
+              272.8777746470683
+            ],
+            [
+              422.52114206794226,
+              286.1374939220142
+            ],
+            [
+              422.48700546621365,
+              286.2507671534808
+            ],
+            [
+              422.35872431933905,
+              286.6238645614336
+            ],
+            [
+              422.225374685618,
+              286.93337855470907
+            ],
+            [
+              422.1763613491372,
+              287.02987180700046
+            ],
+            [
+              422.0151142721667,
+              287.26785983891847
+            ],
+            [
+              421.83499032728145,
+              287.4632638144662
+            ],
+            [
+              421.7932615397382,
+              287.5017467805267
+            ],
+            [
+              421.6325157072993,
+              287.61158652695985
+            ],
+            [
+              421.2284693975352,
+              287.83897159440323
+            ],
+            [
+              420.3466228128095,
+              288.25769229683357
+            ],
+            [
+              419.1966691788439,
+              288.69160870440254
+            ],
+            [
+              417.9055147867325,
+              289.0256227386649
+            ],
+            [
+              416.56817134385875,
+              288.9524287388025
+            ],
+            [
+              409.22901823794604,
+              287.42338190561134
+            ],
+            [
+              375.9509318456891,
+              280.20100333001415
+            ],
+            [
+              374.7139970855035,
+              279.7434676134476
+            ],
+            [
+              373.5961840213662,
+              278.9246160263918
+            ],
+            [
+              372.6727881599057,
+              277.8000778048168
+            ]
+          ],
+          "bbox": [
+            [
+              369.8176027996384,
+              247.31211592916048
+            ],
+            [
+              427.41457728045776,
+              289.0256227386649
+            ]
+          ],
+          "centroid": [
+            400.4848898483671,
+            267.5450211381582
+          ]
+        },
+        {
+          "role": "right",
+          "hull": [
+            [
+              530.9499507155499,
+              265.952383080353
+            ],
+            [
+              529.0929620475165,
+              256.70520714157396
+            ],
+            [
+              529.4448113055084,
+              255.94998608220754
+            ],
+            [
+              535.4042019700078,
+              250.43992471005225
+            ],
+            [
+              535.5500629136744,
+              250.31481964941406
+            ],
+            [
+              535.9158583686778,
+              250.0243174378841
+            ],
+            [
+              536.7109869453401,
+              249.42549008786213
+            ],
+            [
+              537.5905526621294,
+              248.8285081040836
+            ],
+            [
+              538.0571721557718,
+              248.54606494059252
+            ],
+            [
+              538.5352375788237,
+              248.28603054075185
+            ],
+            [
+              539.013039305391,
+              248.06056103430262
+            ],
+            [
+              539.4784344273945,
+              247.88025016816522
+            ],
+            [
+              570.5073009220323,
+              237.33163875335606
+            ],
+            [
+              576.3219071017821,
+              235.35489931950326
+            ],
+            [
+              576.7154873197004,
+              235.24207897363402
+            ],
+            [
+              577.016296252084,
+              235.19074453056737
+            ],
+            [
+              577.77083565823,
+              235.15284386180426
+            ],
+            [
+              578.8984261557904,
+              235.3657083401941
+            ],
+            [
+              579.9351326095687,
+              235.9597970013897
+            ],
+            [
+              580.8108540944845,
+              236.89321933566686
+            ],
+            [
+              585.4561634250388,
+              244.76296428736396
+            ],
+            [
+              587.0739384252805,
+              254.28779156126114
+            ],
+            [
+              585.9719889611235,
+              262.43916990661023
+            ],
+            [
+              585.501883237518,
+              263.8218337215079
+            ],
+            [
+              584.7844929591195,
+              265.01577492844376
+            ],
+            [
+              583.86774581453,
+              265.9405030579878
+            ],
+            [
+              582.8130198976837,
+              266.53311685229426
+            ],
+            [
+              576.6793036164645,
+              268.82287629503304
+            ],
+            [
+              545.9723716171872,
+              279.9262428719494
+            ],
+            [
+              544.768619394776,
+              280.1693448270958
+            ],
+            [
+              544.0091017125883,
+              280.09128294352644
+            ],
+            [
+              543.4132436816974,
+              280.02558668724254
+            ],
+            [
+              542.5505532359273,
+              279.8439134956432
+            ],
+            [
+              541.7258753428846,
+              279.59153688444223
+            ],
+            [
+              541.2771048184359,
+              279.4266635169833
+            ],
+            [
+              541.0490495953201,
+              279.31853470125844
+            ],
+            [
+              540.8971565897242,
+              279.1853343486126
+            ],
+            [
+              540.7481216960582,
+              279.0290636585711
+            ],
+            [
+              540.683526322801,
+              278.951389619404
+            ]
+          ],
+          "bbox": [
+            [
+              529.0929620475165,
+              235.15284386180426
+            ],
+            [
+              587.0739384252805,
+              280.1693448270958
+            ]
+          ],
+          "centroid": [
+            558.0702334656629,
+            257.3704426084853
+          ]
+        }
+      ]
+    },
+    {
+      "source_index": 390,
+      "camera_world": [
+        [
+          -0.09053572930720799,
+          -0.9958932079890939,
+          5.413350578908904e-08,
+          0.0
+        ],
+        [
+          0.7027523305591785,
+          -0.06388652508348058,
+          0.7085602824082089,
+          0.0
+        ],
+        [
+          -0.705650369242768,
+          0.0641500599683959,
+          0.7056502860437288,
+          0.0
+        ],
+        [
+          0.10000000149011612,
+          0.05000000074505806,
+          1.4299999475479126,
+          1.0
+        ]
+      ],
+      "intrinsics": {
+        "fx": 367.99997615814306,
+        "fy": 408.8888774421807,
+        "cx": 480.0,
+        "cy": 300.0
+      },
+      "meshes": [
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 552,
+          "bbox": [
+            [
+              404.31276785938115,
+              353.42960239241853
+            ],
+            [
+              419.9689087822301,
+              368.9216770092573
+            ]
+          ],
+          "centroid": [
+            412.3643919074356,
+            360.62372653017496
+          ]
+        },
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 1499,
+          "bbox": [
+            [
+              403.2953007258328,
+              340.0052692736674
+            ],
+            [
+              424.0796878286113,
+              378.766285579023
+            ]
+          ],
+          "centroid": [
+            416.078559126056,
+            357.297864041527
+          ]
+        },
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 6,
+          "bbox": [
+            [
+              417.04076416556495,
+              340.0052692736674
+            ],
+            [
+              420.54383368311323,
+              355.0209130848391
+            ]
+          ],
+          "centroid": [
+            418.85047922329505,
+            346.776767258377
+          ]
+        },
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__mesha095dd4b2fc946da91d382fabb105222_vq0DINS/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 552,
+          "bbox": [
+            [
+              337.8586190132937,
+              337.2804987467793
+            ],
+            [
+              352.8604676005664,
+              352.0339502699717
+            ]
+          ],
+          "centroid": [
+            346.3108780746334,
+            344.32658237377206
+          ]
+        },
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__meshace13aa1610d431782c790b0d2454e35_vq0DINS/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 1499,
+          "bbox": [
+            [
+              339.67019520506693,
+              325.64112460126205
+            ],
+            [
+              375.2755326878299,
+              362.5510233121935
+            ]
+          ],
+          "centroid": [
+            352.97378577498176,
+            340.8197742539082
+          ]
+        },
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__mesha018df111b36463f9330b9351d9d4c3e_vq0DINS/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 6,
+          "bbox": [
+            [
+              371.49207104085815,
+              329.2748372739727
+            ],
+            [
+              375.2755326878299,
+              343.9325714911453
+            ]
+          ],
+          "centroid": [
+            373.41204288351497,
+            335.9233212838456
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 552,
+          "bbox": [
+            [
+              615.4487803525699,
+              315.6605337211473
+            ],
+            [
+              629.6499996349988,
+              330.8336531334657
+            ]
+          ],
+          "centroid": [
+            621.5147686040292,
+            323.054830030144
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 1499,
+          "bbox": [
+            [
+              588.6672158882826,
+              305.4469769773103
+            ],
+            [
+              628.1414033214854,
+              341.86904236141135
+            ]
+          ],
+          "centroid": [
+            613.7745724487917,
+            321.74740400764756
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 6,
+          "bbox": [
+            [
+              588.6672158882826,
+              312.86337748235144
+            ],
+            [
+              594.0726299167316,
+              326.68016627094795
+            ]
+          ],
+          "centroid": [
+            591.2908807726961,
+            319.3274459198465
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__mesha095dd4b2fc946da91d382fabb105222_vq0DINS/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 552,
+          "bbox": [
+            [
+              557.9473792123501,
+              340.519862913608
+            ],
+            [
+              573.3902048797216,
+              356.97635159039424
+            ]
+          ],
+          "centroid": [
+            565.2217419395447,
+            348.268327698961
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__meshace13aa1610d431782c790b0d2454e35_vq0DINS/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 1499,
+          "bbox": [
+            [
+              546.1477467296265,
+              327.7259435055891
+            ],
+            [
+              572.8828262840804,
+              365.4621186877433
+            ]
+          ],
+          "centroid": [
+            559.4463233262976,
+            344.76660364176604
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__mesha018df111b36463f9330b9351d9d4c3e_vq0DINS/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 6,
+          "bbox": [
+            [
+              549.2216692781392,
+              329.7747329370964
+            ],
+            [
+              554.5795558256601,
+              344.0104934114244
+            ]
+          ],
+          "centroid": [
+            551.7916060103885,
+            336.31820228640873
+          ]
+        }
+      ],
+      "fingers": [
+        {
+          "role": "left",
+          "hull": [
+            [
+              403.38690361490546,
+              376.5041903502546
+            ],
+            [
+              345.1290491998475,
+              360.8612434051171
+            ],
+            [
+              343.7850457979727,
+              360.30423235863395
+            ],
+            [
+              342.56504259693315,
+              359.3685380150188
+            ],
+            [
+              341.5511198664225,
+              358.11766401572197
+            ],
+            [
+              340.8114598069244,
+              356.6359551823872
+            ],
+            [
+              337.8586190132937,
+              349.0124899021264
+            ],
+            [
+              338.6226290451132,
+              338.3155454347759
+            ],
+            [
+              341.4132098067262,
+              329.7982201170381
+            ],
+            [
+              342.05644252479635,
+              328.40150556997344
+            ],
+            [
+              343.0005634147054,
+              327.2929545252048
+            ],
+            [
+              344.1821839035811,
+              326.5489566828417
+            ],
+            [
+              346.1597562874708,
+              325.71463338538155
+            ],
+            [
+              346.5290668637899,
+              325.6429203664934
+            ],
+            [
+              346.8101767565588,
+              325.64112460126205
+            ],
+            [
+              347.1637913359178,
+              325.6701558366086
+            ],
+            [
+              371.06751126725356,
+              328.57887535635865
+            ],
+            [
+              371.49665020534445,
+              328.63395237703065
+            ],
+            [
+              372.39085008149425,
+              328.8343022535889
+            ],
+            [
+              423.50283259715997,
+              340.84524669334576
+            ],
+            [
+              423.609893558706,
+              340.87985283213834
+            ],
+            [
+              424.0796878286113,
+              341.7016632174801
+            ],
+            [
+              422.9297378317176,
+              351.95796026304777
+            ],
+            [
+              418.53777737344706,
+              374.08310590148125
+            ],
+            [
+              418.4634512234219,
+              374.41690716899575
+            ],
+            [
+              418.4543112964419,
+              374.4536373622923
+            ],
+            [
+              418.3590169319674,
+              374.7884542580797
+            ],
+            [
+              418.2559083739672,
+              375.0677262191674
+            ],
+            [
+              418.22000666910554,
+              375.1475312801856
+            ],
+            [
+              418.08576138056975,
+              375.3760613873904
+            ],
+            [
+              417.9297966611796,
+              375.6340205444817
+            ],
+            [
+              417.870224266542,
+              375.73156415991633
+            ],
+            [
+              417.6415938142353,
+              376.01404428111147
+            ],
+            [
+              415.7965280577383,
+              377.7796592689481
+            ],
+            [
+              414.5063631155542,
+              378.4852613846117
+            ],
+            [
+              413.066132393556,
+              378.766285579023
+            ],
+            [
+              411.57387385988307,
+              378.6049744088443
+            ]
+          ],
+          "bbox": [
+            [
+              337.8586190132937,
+              325.64112460126205
+            ],
+            [
+              424.0796878286113,
+              378.766285579023
+            ]
+          ],
+          "centroid": [
+            383.1676687334466,
+            349.9531139647768
+          ]
+        },
+        {
+          "role": "right",
+          "hull": [
+            [
+              548.1058429045049,
+              341.9589662522738
+            ],
+            [
+              546.1477467296265,
+              332.16479894998747
+            ],
+            [
+              546.5334685667159,
+              331.3199447261903
+            ],
+            [
+              588.6672158882826,
+              313.4904060016969
+            ],
+            [
+              591.1654167496228,
+              312.4332559991284
+            ],
+            [
+              591.354577448771,
+              312.36234738628315
+            ],
+            [
+              592.2045986854147,
+              312.09942462680954
+            ],
+            [
+              619.0007786147163,
+              305.49461247110315
+            ],
+            [
+              619.1358959447449,
+              305.46545241721253
+            ],
+            [
+              619.3220064550887,
+              305.4469769773103
+            ],
+            [
+              620.7975572686478,
+              305.75515962158505
+            ],
+            [
+              621.8660627312838,
+              306.29907076374775
+            ],
+            [
+              622.7619177529743,
+              307.2178396742217
+            ],
+            [
+              628.1186619386756,
+              316.2831227888797
+            ],
+            [
+              629.6499996349988,
+              326.2751257349843
+            ],
+            [
+              627.9203227903093,
+              334.2568275863652
+            ],
+            [
+              627.4115062923843,
+              335.767663411521
+            ],
+            [
+              626.6490295450476,
+              337.0999827914205
+            ],
+            [
+              625.6837527269857,
+              338.16409698741813
+            ],
+            [
+              624.5802112950329,
+              338.88773470796366
+            ],
+            [
+              618.1760993923572,
+              341.86904236141135
+            ],
+            [
+              566.5562782359661,
+              365.07447245077844
+            ],
+            [
+              565.2439645068832,
+              365.4621186877433
+            ],
+            [
+              563.9387196627806,
+              365.4159047431618
+            ],
+            [
+              562.729451296624,
+              364.9370537317192
+            ],
+            [
+              561.2425480681036,
+              364.1612748584351
+            ],
+            [
+              561.2049353614095,
+              364.14061148462304
+            ],
+            [
+              560.9789815771107,
+              364.00006927508826
+            ],
+            [
+              560.8128164581351,
+              363.86425668255265
+            ],
+            [
+              560.6469086150278,
+              363.69043380635406
+            ],
+            [
+              560.5738627639341,
+              363.5992253608131
+            ],
+            [
+              560.4740881527669,
+              363.45635119005135
+            ]
+          ],
+          "bbox": [
+            [
+              546.1477467296265,
+              305.4469769773103
+            ],
+            [
+              629.6499996349988,
+              365.4621186877433
+            ]
+          ],
+          "centroid": [
+            588.3799639055943,
+            333.88642547938207
+          ]
+        }
+      ]
+    },
+    {
+      "source_index": 690,
+      "camera_world": [
+        [
+          -0.09053572930720799,
+          -0.9958932079890939,
+          5.413350578908904e-08,
+          0.0
+        ],
+        [
+          0.7027523305591785,
+          -0.06388652508348058,
+          0.7085602824082089,
+          0.0
+        ],
+        [
+          -0.705650369242768,
+          0.0641500599683959,
+          0.7056502860437288,
+          0.0
+        ],
+        [
+          0.10000000149011612,
+          0.05000000074505806,
+          1.4299999475479126,
+          1.0
+        ]
+      ],
+      "intrinsics": {
+        "fx": 367.99997615814306,
+        "fy": 408.8888774421807,
+        "cx": 480.0,
+        "cy": 300.0
+      },
+      "meshes": [
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 552,
+          "bbox": [
+            [
+              374.9193952423145,
+              252.90035266376134
+            ],
+            [
+              390.85902379854605,
+              267.4873671159247
+            ]
+          ],
+          "centroid": [
+            383.2220602614779,
+            259.991860913412
+          ]
+        },
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 1499,
+          "bbox": [
+            [
+              374.3487178310927,
+              239.23698039520724
+            ],
+            [
+              398.2029292499194,
+              279.3670647145151
+            ]
+          ],
+          "centroid": [
+            387.90164336600924,
+            259.6441886821556
+          ]
+        },
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 6,
+          "bbox": [
+            [
+              390.86356340136433,
+              248.2247316490629
+            ],
+            [
+              394.63806563569494,
+              264.1132563430313
+            ]
+          ],
+          "centroid": [
+            392.7921672380301,
+            256.02167496044206
+          ]
+        },
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__mesha095dd4b2fc946da91d382fabb105222_vq0DINS/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 552,
+          "bbox": [
+            [
+              349.1155606435196,
+              247.9348624516367
+            ],
+            [
+              364.791059274349,
+              262.2574974544791
+            ]
+          ],
+          "centroid": [
+            357.90881344135,
+            255.04035009799247
+          ]
+        },
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__meshace13aa1610d431782c790b0d2454e35_vq0DINS/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 1499,
+          "bbox": [
+            [
+              350.9024847357308,
+              235.52649920896522
+            ],
+            [
+              386.89604520511443,
+              275.0375047120562
+            ]
+          ],
+          "centroid": [
+            364.50824537208814,
+            253.95777826641947
+          ]
+        },
+        {
+          "path": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__mesha018df111b36463f9330b9351d9d4c3e_vq0DINS/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS",
+          "body": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 6,
+          "bbox": [
+            [
+              383.07288407640016,
+              246.73913143393014
+            ],
+            [
+              386.89604520511443,
+              262.5724094842326
+            ]
+          ],
+          "centroid": [
+            385.02053057908944,
+            254.51977880438167
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 552,
+          "bbox": [
+            [
+              597.547669213716,
+              232.208033294858
+            ],
+            [
+              612.5666677726232,
+              247.05418670268983
+            ]
+          ],
+          "centroid": [
+            604.022736956574,
+            239.74125526115301
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 1499,
+          "bbox": [
+            [
+              571.2170694726973,
+              221.2256534186476
+            ],
+            [
+              611.1900907123265,
+              259.8376332333024
+            ]
+          ],
+          "centroid": [
+            596.3962689921766,
+            240.6210453581531
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "vertices": 6,
+          "bbox": [
+            [
+              571.2170694726973,
+              235.1789952999836
+            ],
+            [
+              576.735615806725,
+              250.24280542065435
+            ]
+          ],
+          "centroid": [
+            573.8828182193066,
+            242.75118543229573
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__mesha095dd4b2fc946da91d382fabb105222_vq0DINS/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 552,
+          "bbox": [
+            [
+              575.1259555516893,
+              239.9084954658515
+            ],
+            [
+              590.644414421152,
+              255.12517051494655
+            ]
+          ],
+          "centroid": [
+            582.3730398618573,
+            247.4206934926386
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__meshace13aa1610d431782c790b0d2454e35_vq0DINS/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 1499,
+          "bbox": [
+            [
+              561.3733338957342,
+              226.78609898696396
+            ],
+            [
+              589.7257929859027,
+              266.0610177086423
+            ]
+          ],
+          "centroid": [
+            576.0400674253963,
+            246.6891384986669
+          ]
+        },
+        {
+          "path": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__mesha018df111b36463f9330b9351d9d4c3e_vq0DINS/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS",
+          "body": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "vertices": 6,
+          "bbox": [
+            [
+              564.4442668678171,
+              237.50113640105013
+            ],
+            [
+              569.954592817211,
+              252.64778758259024
+            ]
+          ],
+          "centroid": [
+            567.1005856648591,
+            245.09931591882824
+          ]
+        }
+      ],
+      "fingers": [
+        {
+          "role": "left",
+          "hull": [
+            [
+              398.2029292499194,
+              251.1349358858924
+            ],
+            [
+              397.170488033858,
+              262.03985365058895
+            ],
+            [
+              389.6132417495269,
+              276.9307904700501
+            ],
+            [
+              389.4772232935423,
+              277.1912349885401
+            ],
+            [
+              389.284946039269,
+              277.46073391045246
+            ],
+            [
+              389.07905751571843,
+              277.68384199051576
+            ],
+            [
+              389.0322079479677,
+              277.7280164156972
+            ],
+            [
+              388.83377123563514,
+              277.8493997333984
+            ],
+            [
+              388.3416005234645,
+              278.1007918683483
+            ],
+            [
+              387.27876594396776,
+              278.56427444282133
+            ],
+            [
+              386.1183759820125,
+              278.9288068399718
+            ],
+            [
+              384.20494957340316,
+              279.3670647145151
+            ],
+            [
+              382.70657525698255,
+              279.2922852646648
+            ],
+            [
+              374.47063176221906,
+              277.5893539627039
+            ],
+            [
+              356.53366022805835,
+              273.55594348445874
+            ],
+            [
+              355.1228524361701,
+              273.03410149508227
+            ],
+            [
+              353.8438759811604,
+              272.0948267769466
+            ],
+            [
+              352.7827210398992,
+              270.8018895652525
+            ],
+            [
+              352.0107029761597,
+              269.24243180254746
+            ],
+            [
+              349.1155606435196,
+              259.7250693146208
+            ],
+            [
+              349.959089867681,
+              248.07492409658687
+            ],
+            [
+              352.7965477427466,
+              239.7019903411762
+            ],
+            [
+              353.47853186939346,
+              238.1474810826411
+            ],
+            [
+              354.47611026863535,
+              236.88677422942573
+            ],
+            [
+              355.72234321901476,
+              236.00669339426454
+            ],
+            [
+              357.13283487477133,
+              235.56870357523215
+            ],
+            [
+              358.7790923309775,
+              235.52649920896522
+            ],
+            [
+              359.23270039991206,
+              235.53042381257802
+            ],
+            [
+              359.75588208755966,
+              235.5993995005415
+            ],
+            [
+              367.9405131004745,
+              237.11878270764933
+            ],
+            [
+              387.1312539654101,
+              240.68143775751201
+            ],
+            [
+              387.7113142310253,
+              240.81727603937327
+            ],
+            [
+              388.23547746660904,
+              240.98302578176379
+            ],
+            [
+              388.7867942241324,
+              241.19511916434763
+            ],
+            [
+              389.14831507760374,
+              241.35300047007223
+            ],
+            [
+              389.8061569290658,
+              241.67453017429682
+            ],
+            [
+              390.7245742719137,
+              242.18891774094013
+            ],
+            [
+              391.57091370500456,
+              242.7211781962582
+            ],
+            [
+              392.0201580900379,
+              243.02337064676067
+            ],
+            [
+              392.23894941710444,
+              243.1898436256376
+            ],
+            [
+              397.7219947429924,
+              250.29347325262592
+            ]
+          ],
+          "bbox": [
+            [
+              349.1155606435196,
+              235.52649920896522
+            ],
+            [
+              398.2029292499194,
+              279.3670647145151
+            ]
+          ],
+          "centroid": [
+            374.72861975918175,
+            256.9884243210498
+          ]
+        },
+        {
+          "role": "right",
+          "hull": [
+            [
+              563.2588065765376,
+              251.41825463952352
+            ],
+            [
+              561.3733338957342,
+              241.00403137547042
+            ],
+            [
+              561.7624970612986,
+              240.16245080268942
+            ],
+            [
+              562.6247573218669,
+              239.4846207811193
+            ],
+            [
+              572.6817436774012,
+              231.79401236312702
+            ],
+            [
+              573.6497632378268,
+              231.08500999493896
+            ],
+            [
+              574.6962465038234,
+              230.38619400427493
+            ],
+            [
+              575.2403214212192,
+              230.0594769335621
+            ],
+            [
+              575.7890116671042,
+              229.76208016427827
+            ],
+            [
+              576.3275659454091,
+              229.50846291593584
+            ],
+            [
+              576.8411785471366,
+              229.31110290497884
+            ],
+            [
+              584.0643978346454,
+              226.89916239741774
+            ],
+            [
+              600.3621401551574,
+              221.45716033471032
+            ],
+            [
+              600.7980245718849,
+              221.3364663192159
+            ],
+            [
+              601.1245076173294,
+              221.28778171366542
+            ],
+            [
+              602.0239869903177,
+              221.2256534186476
+            ],
+            [
+              603.27724183632,
+              221.4907338718987
+            ],
+            [
+              604.424770291668,
+              222.1924519883465
+            ],
+            [
+              605.389085612275,
+              223.28114331119383
+            ],
+            [
+              610.875948270255,
+              232.208033294858
+            ],
+            [
+              612.5666677726232,
+              243.18121073751013
+            ],
+            [
+              610.9613723158908,
+              252.631782674598
+            ],
+            [
+              610.4243423994094,
+              254.21056372223734
+            ],
+            [
+              609.6149373722095,
+              255.56999837614558
+            ],
+            [
+              608.5870866168189,
+              256.6185854592195
+            ],
+            [
+              607.409432764144,
+              257.2850180079479
+            ],
+            [
+              600.5665126376014,
+              259.8376332333024
+            ],
+            [
+              583.469733646338,
+              265.8064603206424
+            ],
+            [
+              582.1633515219365,
+              266.0610177086423
+            ],
+            [
+              581.2121056911111,
+              266.00603867886196
+            ],
+            [
+              580.5264814973954,
+              265.9361875141456
+            ],
+            [
+              579.5214254025952,
+              265.74195822436513
+            ],
+            [
+              578.5484628958172,
+              265.4720566102544
+            ],
+            [
+              578.0143434265281,
+              265.29589821379403
+            ],
+            [
+              577.739212297386,
+              265.1803065637382
+            ],
+            [
+              577.573559664343,
+              265.0278980588489
+            ]
+          ],
+          "bbox": [
+            [
+              561.3733338957342,
+              221.2256534186476
+            ],
+            [
+              612.5666677726232,
+              266.0610177086423
+            ]
+          ],
+          "centroid": [
+            588.0453178213459,
+            243.63599035526818
+          ]
+        }
+      ]
+    }
+  ],
+  "pixel_comparison": {
+    "left": {
+      "roi_pixels": 4937,
+      "max_channel_mean_abs_delta": 151.0593477820539,
+      "fraction_pixels_delta_gt20": 0.902572412396192,
+      "fraction_pixels_delta_gt50": 0.8847478225643103,
+      "projected_centroid_delta_px": 93.34693925429218,
+      "projected_centroid_before": [
+        383.1676687334466,
+        349.9531139647768
+      ],
+      "projected_centroid_after": [
+        374.72861975918175,
+        256.9884243210498
+      ],
+      "projected_hull_dark_occupancy": [
+        {
+          "projected_source": 390,
+          "opposite_source": 690,
+          "core_roi_pixels": 2766,
+          "threshold_mean_rgb_lt100": 100,
+          "matching_frame_dark_fraction": 0.8785249457700651,
+          "opposite_frame_dark_fraction": 0.0
+        },
+        {
+          "projected_source": 690,
+          "opposite_source": 390,
+          "core_roi_pixels": 1447,
+          "threshold_mean_rgb_lt100": 100,
+          "matching_frame_dark_fraction": 0.8908085694540429,
+          "opposite_frame_dark_fraction": 0.0
+        }
+      ]
+    },
+    "right": {
+      "roi_pixels": 4641,
+      "max_channel_mean_abs_delta": 147.3953889248007,
+      "fraction_pixels_delta_gt20": 0.8769661710838181,
+      "fraction_pixels_delta_gt50": 0.8360267183796596,
+      "projected_centroid_delta_px": 90.25105555113244,
+      "projected_centroid_before": [
+        588.3799639055943,
+        333.88642547938207
+      ],
+      "projected_centroid_after": [
+        588.0453178213459,
+        243.63599035526818
+      ],
+      "projected_hull_dark_occupancy": [
+        {
+          "projected_source": 390,
+          "opposite_source": 690,
+          "core_roi_pixels": 2596,
+          "threshold_mean_rgb_lt100": 100,
+          "matching_frame_dark_fraction": 0.8412942989214176,
+          "opposite_frame_dark_fraction": 0.0
+        },
+        {
+          "projected_source": 690,
+          "opposite_source": 390,
+          "core_roi_pixels": 1379,
+          "threshold_mean_rgb_lt100": 100,
+          "matching_frame_dark_fraction": 0.8332124728063814,
+          "opposite_frame_dark_fraction": 0.0
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Three sampled scene frames only; not all-frame optical source verification.",
+    "Projected convex hull is not an occlusion-aware rasterizer or segmentation label.",
+    "Pixel differences include path-tracing/codec noise; thresholds are descriptive."
+  ],
+  "input_sha256": {
+    "/tmp/live30-geometry-projection07.py": "30461cfdd3fa4c971d282362e9f241c5464eaa64716b0d2ee7033d06860b74fa",
+    "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo07/episode/stage_snapshot.usd": "3bd79ecef0138c9c0a708fa3102cf0aa10fdf4e7e65a3119754a2fe41207dd95",
+    "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo07/episode/session.hdf5": "73c0003558918ac14e67c61ea449d7c44063e8d707af62085789a171a57d486d",
+    "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo07/mirror/source-manifest.json": "2917439c5f19c8b09dfe64519b728c9a46b3a7614f82fcd3910a58fc1c3c96e6",
+    "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo07/mirror/worker-rows.jsonl": "54804afffcaf1782c2de57f5283cc884daa8404fc6ba9a5a18620a48f3a21699",
+    "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/export.json": "83d438de6a3d175afdac7bed925256de60fe29f24042f292ec69171e078121a7",
+    "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/scene-sample-01.png": "a69ff89dddcdb28fbe7726db95f0e95bbdb41d698f161d0e9361598ba779f86b",
+    "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/scene-sample-02.png": "f00f472478ec038cbe64fa26e5f12788470a2eae578345a03c106d308bc0351d",
+    "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/preview07/scene-sample-03.png": "bd101a956ded2133537788485e721413baef6e3faf02a28873d3251c68236d60"
+  },
+  "overlay": {
+    "path": "/tmp/live30-geometry-projection07.png",
+    "sha256": "666620264c87b3e7ab2376d8edf477e27dbc8dd4e8da393ae04695327f2dcc62"
+  }
+}

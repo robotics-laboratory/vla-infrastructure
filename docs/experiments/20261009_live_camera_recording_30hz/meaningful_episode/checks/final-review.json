@@ -1,0 +1,76 @@
+{
+  "schema": "meaningful_episode_final_review_v1",
+  "passed": true,
+  "base": "bc6d6a387b195025fded5c954fea8954e667c73c",
+  "script_sha256": "9c622fc9da203837454d47b1726e05425130f5c7980298c0d13059ba9803a1bc",
+  "artifact_inventory_sha256": "1276ae6cd8f74a75d7c31c8260ee795f9bbcaa7c2681ca9d8ce45774c4186d4c",
+  "inventory_errors": [],
+  "commands": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "bc6d6a387b195025fded5c954fea8954e667c73c"
+      ],
+      "returncode": 0,
+      "elapsed_s": 2.136974658817053,
+      "stdout": "INDEX: 1047 entries; classification {'current': 122, 'historical': 925}\nHISTORICAL PRESERVATION: PASS (819 frozen files vs bc6d6a387b195025fded5c954fea8954e667c73c)\nKNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.\nDOC GOVERNANCE CHECKS: PASS\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.16162621788680553,
+      "stdout": "SPEC REFERENCE LINT OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.02316363574936986,
+      "stdout": "MANIFEST OK: 110 reviewed files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)**/*.log"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.015034173615276814,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)**/*.log"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.00292750122025609,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "retained_files_verified": 100,
+  "external_files_verified": 1192,
+  "shared_video_sha256": "1f15b86bdf6aca61034fafdb8542167b5e332011b83932748d86067a79165948",
+  "shared_video_identical": true
+}

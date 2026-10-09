@@ -1,0 +1,409 @@
+{
+  "date": "2026-10-09",
+  "mode": "CPU USD/HDF source geometry arithmetic; no renderer, no ovstage native run, no GPU execution",
+  "root": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo01",
+  "head": "bc6d6a387b195025fded5c954fea8954e667c73c",
+  "sha256": {
+    "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo01/mirror/mirror.usda": "972b1027071de2a902b9f4f3d91f69a5e3ec8d80b62068a4913f6ff12b15e81a",
+    "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo01/mirror/seed.json": "b89216e3d2e1a0380231ee3586aa74fcc9c1dbb6b2c77f1b8580877663ddcb4a",
+    "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo01/episode/stage_snapshot.usd": "8fa50bfa48c2ef41214ef640f52b3cc91488262fca31742cc1b746892d596bed",
+    "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo01/episode/session.hdf5": "6905b15acba4fa8bc459e3f48164fffacc2ffb079715aeaafcc6e84a1d07cdbc"
+  },
+  "source_indices": [
+    390,
+    690
+  ],
+  "robots": {
+    "left": {
+      "descendant_mesh_count": 348,
+      "instance_proxy_mesh_count": 251,
+      "instance_roots": 491,
+      "usd_reset_xform_stack_paths": [],
+      "mesh_counts_per_snapshot_body": {
+        "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1": 4,
+        "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2": 4,
+        "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base": 102,
+        "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link": 2,
+        "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6": 5,
+        "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5": 18,
+        "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4": 8,
+        "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3": 39,
+        "/World/LeftPiper/Geometry/world/base_link/link1/link2": 147,
+        "/World/LeftPiper/Geometry/world/base_link/link1": 12,
+        "/World/LeftPiper/Geometry/world/base_link": 7
+      },
+      "max_expected_world_delta_m": 0.15355841716126092,
+      "max_expected_scene_centroid_delta_px": 137.15951412672814,
+      "mesh_examples": [
+        {
+          "mesh": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS",
+          "owner": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "instance_proxy": true,
+          "expected_world_centroid_390": [
+            0.5266470793219241,
+            0.1223922761939346,
+            0.9057509612062039
+          ],
+          "expected_world_centroid_690": [
+            0.6245759733019719,
+            0.15782092669337316,
+            1.0186001079850122
+          ],
+          "expected_world_delta_m": 0.15355841716126092,
+          "scene_uv_390": [
+            418.8530833741444,
+            346.79438843615094
+          ],
+          "scene_uv_690": [
+            392.79611073496756,
+            256.0444755736089
+          ],
+          "expected_scene_centroid_delta_px": 94.41669612773889
+        },
+        {
+          "mesh": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS",
+          "owner": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "instance_proxy": true,
+          "expected_world_centroid_390": [
+            0.4858203210054338,
+            0.1227768998054528,
+            0.9317379143511731
+          ],
+          "expected_world_centroid_690": [
+            0.5837055678829355,
+            0.15820878923279724,
+            1.0445183246312242
+          ],
+          "expected_world_delta_m": 0.15348081732776137,
+          "scene_uv_390": [
+            416.1638386455627,
+            357.1626919815834
+          ],
+          "scene_uv_690": [
+            388.02616282977806,
+            259.6268686873884
+          ],
+          "expected_scene_centroid_delta_px": 101.51337658649041
+        },
+        {
+          "mesh": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1_1/gripper_link1_1",
+          "owner": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "instance_proxy": true,
+          "expected_world_centroid_390": [
+            0.4843076770238599,
+            0.12219949039638606,
+            0.9330552966383298
+          ],
+          "expected_world_centroid_690": [
+            0.5821909666224081,
+            0.1576317838022732,
+            1.0458336335944136
+          ],
+          "expected_world_delta_m": 0.15347813878599817,
+          "scene_uv_390": [
+            416.3856286153423,
+            357.4056071241612
+          ],
+          "scene_uv_690": [
+            388.1612753944533,
+            259.5605957949923
+          ],
+          "expected_scene_centroid_delta_px": 101.83447528584165
+        },
+        {
+          "mesh": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS",
+          "owner": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+          "instance_proxy": true,
+          "expected_world_centroid_390": [
+            0.4708232185968335,
+            0.127016190071454,
+            0.9436134543179651
+          ],
+          "expected_world_centroid_690": [
+            0.5686867715918504,
+            0.16245113325131785,
+            1.0563653288873278
+          ],
+          "expected_world_delta_m": 0.15344671851126038,
+          "scene_uv_390": [
+            412.36042558909367,
+            360.62800921958285
+          ],
+          "scene_uv_690": [
+            383.2182843488656,
+            259.99765967446683
+          ],
+          "expected_scene_centroid_delta_px": 104.76512609469638
+        },
+        {
+          "mesh": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link3/tn__mesha77f8cc1d2a740ddbac0e0e0046176fa_vq0DINS/tn__mesha77f8cc1d2a740ddbac0e0e0046176fa_vq0DINS",
+          "owner": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3",
+          "instance_proxy": true,
+          "expected_world_centroid_390": [
+            0.3607475264664798,
+            0.21127854044419364,
+            1.0296668390565757
+          ],
+          "expected_world_centroid_690": [
+            0.45180689462490237,
+            0.20302481323798127,
+            1.1514965507238586
+          ],
+          "expected_world_delta_m": 0.15232337702118803,
+          "scene_uv_390": [
+            331.3761576851125,
+            399.2518155378613
+          ],
+          "scene_uv_690": [
+            324.117300531394,
+            262.2845153954476
+          ],
+          "expected_scene_centroid_delta_px": 137.15951412672814
+        }
+      ]
+    },
+    "right": {
+      "descendant_mesh_count": 348,
+      "instance_proxy_mesh_count": 251,
+      "instance_roots": 491,
+      "usd_reset_xform_stack_paths": [],
+      "mesh_counts_per_snapshot_body": {
+        "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1": 4,
+        "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2": 4,
+        "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base": 102,
+        "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link": 2,
+        "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6": 5,
+        "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5": 18,
+        "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4": 8,
+        "/World/RightPiper/Geometry/world/base_link/link1/link2/link3": 39,
+        "/World/RightPiper/Geometry/world/base_link/link1/link2": 147,
+        "/World/RightPiper/Geometry/world/base_link/link1": 12,
+        "/World/RightPiper/Geometry/world/base_link": 7
+      },
+      "max_expected_world_delta_m": 0.15355933790808135,
+      "max_expected_scene_centroid_delta_px": 126.51544496850192,
+      "mesh_examples": [
+        {
+          "mesh": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__mesha018df111b36463f9330b9351d9d4c3e_vq0DINS/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS",
+          "owner": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "instance_proxy": true,
+          "expected_world_centroid_390": [
+            0.5266509230169907,
+            -0.12239129607202533,
+            0.9057559447215702
+          ],
+          "expected_world_centroid_690": [
+            0.6245803082775826,
+            -0.15782159777203134,
+            1.0186053996723914
+          ],
+          "expected_world_delta_m": 0.15355933790808135,
+          "scene_uv_390": [
+            551.7895561464452,
+            336.33828325216996
+          ],
+          "scene_uv_690": [
+            567.0978019272255,
+            245.12415338864514
+          ],
+          "expected_scene_centroid_delta_px": 92.4897825472887
+        },
+        {
+          "mesh": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__meshace13aa1610d431782c790b0d2454e35_vq0DINS/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS",
+          "owner": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "instance_proxy": true,
+          "expected_world_centroid_390": [
+            0.48668163884057797,
+            -0.12246298446143952,
+            0.9330459708913885
+          ],
+          "expected_world_centroid_690": [
+            0.5845654072969158,
+            -0.15789806685172947,
+            1.0458284709317074
+          ],
+          "expected_world_delta_m": 0.15348214719166886,
+          "scene_uv_390": [
+            559.2979713607908,
+            344.6918403465824
+          ],
+          "scene_uv_690": [
+            575.867928143003,
+            246.72970857915098
+          ],
+          "expected_scene_centroid_delta_px": 99.35362463535982
+        },
+        {
+          "mesh": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2_1/gripper_link2_1",
+          "owner": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "instance_proxy": true,
+          "expected_world_centroid_390": [
+            0.48476242861488816,
+            -0.12203371501651773,
+            0.9337455068116537
+          ],
+          "expected_world_centroid_690": [
+            0.5826452124605362,
+            -0.1574685386887314,
+            1.0465251393787403
+          ],
+          "expected_world_delta_m": 0.15347935243550448,
+          "scene_uv_390": [
+            559.3854344319741,
+            345.393313946479
+          ],
+          "scene_uv_690": [
+            576.0060072138787,
+            247.1481433189429
+          ],
+          "expected_scene_centroid_delta_px": 99.64114105745811
+        },
+        {
+          "mesh": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2/gripper_link2/tn__mesha095dd4b2fc946da91d382fabb105222_vq0DINS/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS",
+          "owner": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+          "instance_proxy": true,
+          "expected_world_centroid_390": [
+            0.4708101933245138,
+            -0.127020701938997,
+            0.943592894075822
+          ],
+          "expected_world_centroid_690": [
+            0.5686744064800819,
+            -0.16245744868466533,
+            1.0563451819650886
+          ],
+          "expected_world_delta_m": 0.15344785974636196,
+          "scene_uv_390": [
+            565.2277605004017,
+            348.2714945433728
+          ],
+          "scene_uv_690": [
+            582.3789522523558,
+            247.42561033855435
+          ],
+          "expected_scene_centroid_delta_px": 102.29396726867108
+        },
+        {
+          "mesh": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link3/tn__meshc01a723852064c00bb781a61375be730_vq0DINS/tn__meshc01a723852064c00bb781a61375be730_vq0DINS",
+          "owner": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3",
+          "instance_proxy": true,
+          "expected_world_centroid_390": [
+            0.37574579485372883,
+            -0.24146051423068776,
+            1.0295506712516531
+          ],
+          "expected_world_centroid_690": [
+            0.46256344810224315,
+            -0.23496629801046182,
+            1.1514381955338557
+          ],
+          "expected_world_delta_m": 0.14978667609483443,
+          "scene_uv_390": [
+            676.8922611071569,
+            358.82887867225355
+          ],
+          "scene_uv_690": [
+            676.2165740320979,
+            234.30892252892681
+          ],
+          "expected_scene_centroid_delta_px": 124.52178938225798
+        }
+      ]
+    }
+  },
+  "scene_camera_world_delta_m": 0.0,
+  "existing_screenshot_difference": {
+    "mean_absolute_rgb_difference": 0.8160190972222222,
+    "fraction_pixels_any_channel_gt20": 0.0002916666666666667,
+    "shape": [
+      600,
+      960,
+      3
+    ],
+    "independently_rendered": false
+  },
+  "population_audit": {
+    "current_default": "RENDERING = 1",
+    "proposed": "ALL = 3 = RENDERING|PHYSICS",
+    "native_population_tested": true,
+    "cpu_hierarchy_is_supported_for_usd_populated_chains": true,
+    "guarantee_for_instanced_mesh_propagation": "CPU native runtime readback PASS on selected chain; renderer pixel propagation remains UNPROVEN",
+    "read_gpu_transforms": "RendererConfig(read_gpu_transforms=True) is upstream GPU propagation path; not tested by this audit"
+  },
+  "sources": [
+    {
+      "url": "https://nvidia-omniverse.github.io/ovstage/scene/population.html",
+      "retrieved_date": "2026-10-09",
+      "type": "primary"
+    },
+    {
+      "url": "https://nvidia-omniverse.github.io/ovstage/scene/transforms.html",
+      "retrieved_date": "2026-10-09",
+      "type": "primary"
+    },
+    {
+      "url": "https://nvidia-omniverse.github.io/ovstage/python_api/index.html",
+      "retrieved_date": "2026-10-09",
+      "type": "primary"
+    },
+    {
+      "url": "https://nvidia-omniverse.github.io/ovrtx/_modules/ovrtx/_src/renderer.html",
+      "retrieved_date": "2026-10-09",
+      "type": "primary"
+    },
+    {
+      "url": "https://github.com/NVIDIA-Omniverse/ovstage/releases",
+      "retrieved_date": "2026-10-09",
+      "type": "primary"
+    },
+    {
+      "url": "https://openusd.org/release/api/class_usd_prim.html",
+      "retrieved_date": "2026-10-09",
+      "type": "primary"
+    }
+  ],
+  "deinstance_memory_only": {
+    "saved_source_or_overlay": false,
+    "passes": [
+      {
+        "pass": 0,
+        "count": 502,
+        "examples": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS",
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS",
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS"
+        ]
+      },
+      {
+        "pass": 1,
+        "count": 480,
+        "examples": [
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__meshe99b91976e0e4fbcb8344819d35b4d25_vq0DINS/VisualMaterials/tn__Material003_qGMgtWAYmv5",
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha355752339b64b2caa624f2525141b76_vq0DINS/VisualMaterials/tn__Material037_qGMWqm9Vhb4",
+          "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1/gripper_link1/tn__mesha9c4362f38ef4e05911a27609b059007_vq0DINS/VisualMaterials/tn__a0000000000000000000000000000000001_lp0DINj1"
+        ]
+      }
+    ],
+    "edit_layer_bytes": 343763,
+    "api": "SetInstanceable(False) on non-proxy instance roots in strongest anonymous layer; repeat normal Traverse until none"
+  },
+  "native_cpu_hierarchy_probe": {
+    "receipt": "/tmp/live30-meaningful-cpu-hierarchy.json",
+    "sha256": "9c7709fd0434632db66c2979fa1adf8e84d684b33d037b887a868b63decfd9e0",
+    "script": "/tmp/live30-meaningful-cpu-hierarchy.py",
+    "log": "/tmp/live30-meaningful-cpu-hierarchy.log",
+    "renderer_created": false,
+    "cuda_visible_devices": "",
+    "domains_tested": [
+      1,
+      3
+    ],
+    "body_x_delta_m": 0.2,
+    "instance_root_x_delta_m": 0.2,
+    "instance_proxy_mesh_x_delta_m": 0.2,
+    "result": "PASS both domains; sparse population and missing CPU hierarchy not explanatory for observed rendering failure",
+    "read_changes_can_trigger_runtime_default_propagation": true
+  },
+  "derived_change_membership_receipt": "/tmp/live30-meaningful-cpu-delta.json",
+  "derived_change_membership_observation": "Correct child world payload changes +0.2m, but read_group ordinal remains 0; between(2,2) selects authored body only. Intentional derived nonrecorded output vs defect unresolved; not independently proof of renderer dirty-tracking defect."
+}
