@@ -1,0 +1,77 @@
+{
+  "schema": "live30_thin_media_audit_v1",
+  "base_head": "d1676c5c05f3bf6ae300f47533526085fdab4204",
+  "sources": [
+    {
+      "path": "/tmp/live30-media-upstream/pynv223-source/PyNvVideoCodec_2.2.3/src/VideoCodecSDKUtils/helper_classes/NvCodec/NvEncoder/NvEncoder_130.cpp",
+      "sha256": "6cebab5db535a8115ac8c7463fedf6fafc1c0eb86f4f363365ee6762c821b4a2"
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/pynv223_adapter.py",
+      "sha256": "d41b6128ab4886b9fee91e3cf28435adb28aaea34cc8e151e1b689b40fd3d0bb"
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_gpu_consumer.py",
+      "sha256": "4e31857e2521ad4a178db7a4e77508ce3d0c7103d7611b3de2a0e78685e4e95b"
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/mirror_worker.py",
+      "sha256": "c28685d5c84f6dc216de0395f9f94020e24a53622881d1f6a76a04435aa6cb3f"
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/MEDIA_EXACT_SOURCE.md",
+      "sha256": "a381380868be493980541e7d38e18cc86929dd73529efc621ea829ade9cf2303"
+    },
+    {
+      "path": "/tmp/live30-media-upstream/pynv223-source/PyNvVideoCodec_2.2.3/src/PyNvVideoCodec/src/NvEncoderClInterface.cpp",
+      "sha256": "ac72cf4184ad18a56ca24397218f9edceee11ebe862776015d38953877cc21bd"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/warp/_src/context.py",
+      "sha256": "1ef32ace4bb46fffda232f8a099fa36945a14b671e1c0774f1286de89a37ba90"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/warp/native/warp.cu",
+      "sha256": "674441bbec1e6da931d17df46a7d83b8b49d0ca44fe4c4ea196826c989db90da"
+    }
+  ],
+  "query_ledger": [
+    {
+      "tool": "codegraph explore",
+      "query": "pynv223_adapter.py PacketEncoder.submit PacketEncoder.finish ovrtx_gpu_consumer.py GPUConsumer.__call__ GPUConsumer.finish mirror_worker.py main",
+      "artifact": "/tmp/live30-single-gpu-media/original-helper-codegraph.txt"
+    },
+    {
+      "tool": "exact local source read",
+      "query": "NvEncoder_130.cpp lines 691-825: native timestamp replacement, output wait/lock/unmap",
+      "artifact": "/tmp/live30-single-gpu-media/exact-nvenc-source-excerpt.txt"
+    },
+    {
+      "tool": "exact local source read",
+      "query": "NvEncoderClInterface.cpp 1138-1152: lookahead=0 explicitly disables lookahead",
+      "artifact": "/tmp/live30-single-gpu-media/exact-lookahead-options-excerpt.txt"
+    },
+    {
+      "tool": "exact local source read",
+      "query": "Warp context.py fence ctypes restype=None and native/warp.cu void wrappers; checked driver status required",
+      "artifact": "/tmp/live30-single-gpu-media/warp-void-fence-source-excerpt.txt"
+    }
+  ],
+  "guard_results": {
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/types.py": true,
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/dlpack.py": true,
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/renderer.py": true,
+    "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/warp/_src/context.py": true,
+    "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/warp/_src/dlpack.py": true,
+    "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/warp/_src/utils.py": true,
+    "/tmp/live30-single-gpu-media/pynv223_adapter.py": true
+  },
+  "candidate_sha256": {
+    "mirror_worker.py": "a80e5e9fafaef70ff8807224e8227289d6200a306af55bf5cbd6a00ed72c3665",
+    "pynv223_adapter.py": "3c71322d6660207394be29564950e430a71464dc3dc8efedc3585cb3b972de8f",
+    "ovrtx_gpu_consumer.py": "31f235b5d5f5b7a8c858f5b580dfda61a13297770a6092422389129e0b896bc3",
+    "test_media_cpu.py": "150561002ac53484d267c83ba3b138935c7828791d921f5a2b763fe5b83a2c61"
+  },
+  "gpu_run": false,
+  "physical_run": false
+}

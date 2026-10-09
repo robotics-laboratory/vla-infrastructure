@@ -1,0 +1,15 @@
+{
+  "schema": "live30_persisted_source_join_v1",
+  "dataset_admissible": false,
+  "input": "/data/ebulochkin/vla-runtime/live30-single-gpu-20261009/live-minimal01",
+  "committed_observations": 1320,
+  "rendered_observations": 1321,
+  "terminal_observation_separately_rendered": true,
+  "source_identity_and_matrix_hash_equal": true,
+  "errors": [],
+  "full_optical_guard_passed": true,
+  "scope": "Joins persisted source observation to matrices actually submitted to renderer; no independent silhouette/contact/photometric parity claim",
+  "source_sha256": "2b383113676520b88161b39327bfa05eeddd4dd2b831beffc08983c02498acb3",
+  "hdf_sha256": "c084d8bab0bf57eeb00b9d72d111c2059a77cd14780c83572056d27978adde96",
+  "worker_rows_sha256": "4c5a924bf4025b2cbfd64cab529cb4111b5bec9b11a7713b72f3a4dccad9d5a0"
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "live30_persisted_source_join_v1",
+  "dataset_admissible": false,
+  "input": "/data/ebulochkin/vla-runtime/live30-single-gpu-20261009/live-smoke02",
+  "committed_observations": 150,
+  "rendered_observations": 151,
+  "terminal_observation_separately_rendered": true,
+  "source_identity_and_matrix_hash_equal": true,
+  "errors": [],
+  "full_optical_guard_passed": true,
+  "scope": "Joins persisted source observation to matrices actually submitted to renderer; no independent silhouette/contact/photometric parity claim",
+  "source_sha256": "2b383113676520b88161b39327bfa05eeddd4dd2b831beffc08983c02498acb3",
+  "hdf_sha256": "3871a94967460b9b4910392905670a1e3d63c53496edf98f4670757abeed4186",
+  "worker_rows_sha256": "2c36778d1517e1decfa2005fb44eb86e6559d9996d3d7f22c2a0b92bf829ab92"
+}

@@ -1,0 +1,56 @@
+{
+  "schema": "standalone_scene_cpu_audit_v1",
+  "gpu_runs": false,
+  "physics_runs": false,
+  "checks": [
+    {
+      "command": "/data/vla-infrastructure/isaac61_production/env/bin/python -m unittest tests.test_isaac_vr_standalone_scene -v",
+      "result": "PASS 3 tests",
+      "scope": "synthetic OpenUSD authoring/native-read mocks/pose transforms; no Kit or physics engine"
+    }
+  ],
+  "sources": {
+    "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_scene.py": "23b60819d55d8127e3ce3d9868edc742c62fd8043661a7f1ca43a7d802f0f473",
+    "/home/ebulochkin/vla_infrastructure/tests/test_isaac_vr_standalone_scene.py": "5ff5345853fe3d5a22d3ead0f65ae2696d343495ec538b09d363f1a254e24e6c",
+    "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/articulation/articulation.py": "5f3e151aa040a58c8821eb3789e1368f4232e84a1f49858097fe094b4e42fbc0",
+    "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/articulation/articulation_data.py": "9f25446dff165278af62147c50d5153cc1a1236ccc308cb83a316892cdeb54bf",
+    "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.physics.tensors-110.3.2+110.3.0.lx64.r.cp312.u7f4/omni/physics/tensors/api.py": "1ba654210857a63b98236512e5f225723c3eb1dee64e867eaa4fade0578ccb7b",
+    "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/omni.usd.schema.newton/usd/schema/newton/newton_usd_schemas/generatedSchema.usda": "ef4a5494bd62e624beace159c17a1dba862fea2f644bbbe217682ecfb4ceac6f"
+  },
+  "references": [
+    "https://docs.omniverse.nvidia.com/kit/docs/omni_physics/latest/dev_guide/schemas/newtonSchema.html",
+    "https://docs.isaacsim.omniverse.nvidia.com/latest/importer_exporter/ext_isaacsim_asset_importer_urdf.html",
+    "https://nvidia-omniverse.github.io/PhysX/ovphysx/latest/tutorials/tensor_bindings.html"
+  ],
+  "limitations": [
+    "Derived Newton->PhysxMimic translation follows separate-agent CPU native fixture PASS; actual-scene seed remains runtime_verified=False until its own parity checks.",
+    "Native floating metadata with existing world weld is allowed; standalone fixed root derived from that exact existing weld.",
+    "Joint signs/dynamics/contact parity and live passive presentation not qualified by synthetic tests."
+  ],
+  "verified_recipe_source": {
+    "/tmp/live30-single-gpu-native-tests/author_mimic_overlay.py": "8c3b21ff780761327ba26c0b4a0690c09da75b2c38b31ac1912d189058c26a47"
+  },
+  "native_fixture_reported_by_agent": {
+    "agent": "standalone_physx",
+    "controls": 90,
+    "max_mimic_residual_m": 0.000122770667,
+    "followers_passive": true,
+    "follower_targets_intentionally_wrong_zero": true,
+    "not_reexecuted_by_this_agent": true
+  },
+  "schema_audit": {
+    "file": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/omni.usd.schema.newton/usd/schema/newton/newton_usd_schemas/generatedSchema.usda",
+    "lines": "342-367",
+    "finding": "NewtonArticulationRootAPI includes built-in PhysicsArticulationRootAPI; relocate both alias and root-owned authored properties to same existing world weld.",
+    "root_owned_properties": [
+      "newton:selfCollisionEnabled",
+      "newton:jointsAddMobility"
+    ],
+    "retained_on_links": [
+      "NewtonMassAPI",
+      "IsaacLinkAPI",
+      "PhysicsRigidBodyAPI",
+      "PhysxRigidBodyAPI"
+    ]
+  }
+}

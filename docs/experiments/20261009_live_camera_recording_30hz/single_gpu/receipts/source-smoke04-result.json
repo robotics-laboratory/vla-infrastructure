@@ -1,0 +1,221 @@
+{
+  "schema": "single_gpu_live_recording_diagnostic_v1",
+  "passed": true,
+  "dataset_admissible": false,
+  "physical": false,
+  "quest_connected": false,
+  "input_source": "deterministic_injected_xr_v1",
+  "upstream_dls_used_for_actuation": true,
+  "arguments": {
+    "output": "/data/ebulochkin/vla-runtime/live30-single-gpu-20261009/source-smoke04",
+    "frames": 10,
+    "warmup": 0,
+    "media_warmup": 20,
+    "media": "none",
+    "xr": true,
+    "witness": true,
+    "physics_python": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/bin/python"
+  },
+  "started_utc": "2026-10-09T17:35:34Z",
+  "commit": "d1676c5c05f3bf6ae300f47533526085fdab4204",
+  "sources": {
+    "/home/ebulochkin/vla_infrastructure/tools/run_single_gpu_live_recording.py": "4b8d83cb265a9ffb0666f6c17cb43eea16af231e6acecc597e562cbc7f579423",
+    "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone.py": "12b04789f40e4bb4266bd9706f3c3ff27f7e7c51029c5e518628450639a82238",
+    "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_view.py": "a32157c33cf71b16a05ea0ab58ff6f9075c5c086392dde5a60b6fa38bf41525c",
+    "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_scene.py": "23b60819d55d8127e3ce3d9868edc742c62fd8043661a7f1ca43a7d802f0f473",
+    "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_worker.py": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+    "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_ik.py": "f1f07de1e6306160b3a5280299911f660fad531837e2c60262a60005d4fb7e25"
+  },
+  "base_command": [
+    "/home/ebulochkin/vla_infrastructure/tools/run_isaac_s1.py",
+    "--config",
+    "/data/ebulochkin/vla-runtime/live30-single-gpu-20261009/source-smoke04/runtime.yaml",
+    "--device",
+    "cpu",
+    "--vr-runtime",
+    "--s2-record",
+    "--viz",
+    "kit",
+    "--kit_args",
+    "--portable-root /data/ebulochkin/vla-runtime/isaac-isaac61/kit --enable isaacsim.replicator.episode_recorder --enable omni.kit.scene_view.xr --enable omni.kit.scene_view.xr_utils",
+    "--xr"
+  ],
+  "xr_profile_enabled": false,
+  "transitions": {
+    "accepted_transactions": 10,
+    "committed_frames": 10,
+    "requested_control_steps": 10,
+    "completed_control_budget": true,
+    "stopped_by_user": false,
+    "input_pump_calls": 0,
+    "processor_revision": "piper_x_isaac_s2_bimanual_relative_v3",
+    "source": "deterministic_injected_xr_v1",
+    "rgb_e2e_assay": false,
+    "input_targets_sha256": "7fa4accf2496187c4a76afdc0e0ba86606f6144de6589483da00d6dddbabf486",
+    "left_transition_counts": {
+      "motion": 10
+    }
+  },
+  "performance": {
+    "event": "performance_summary",
+    "schema": "piper_x_isaac_s2_performance_v1",
+    "monotonic_ns": 3793715376451395,
+    "step_first": 1,
+    "step_last": 10,
+    "control": {
+      "samples": 10,
+      "mean_ms": 26.1969439,
+      "p50_ms": 23.719851,
+      "p90_ms": 28.675905799999992,
+      "p95_ms": 39.009794899999974,
+      "p99_ms": 47.276906180000005,
+      "p99_9_ms": 49.137006217999996,
+      "max_ms": 49.343684
+    },
+    "wall_control": {
+      "samples": 9,
+      "mean_ms": 26.200629888888887,
+      "p50_ms": 23.736789,
+      "p90_ms": 30.887474400000002,
+      "p95_ms": 40.134209199999994,
+      "p99_ms": 47.531597039999994,
+      "p99_9_ms": 49.196009304,
+      "max_ms": 49.380944
+    },
+    "effective_wall_hz": 38.16702133653963,
+    "wall_rtf": 0.7633404267307925,
+    "wall_deadline_misses": 9,
+    "wall_deadline_miss_fraction": 1.0,
+    "effective_hz": 38.17239155136718,
+    "deadline_ms": 20.0,
+    "deadline_misses": 10,
+    "deadline_miss_fraction": 1.0,
+    "stages": {
+      "causal_commit_and_record": {
+        "samples": 10,
+        "mean_ms": 1.7319064000000002,
+        "p50_ms": 1.421759,
+        "p90_ms": 2.8026111,
+        "p95_ms": 2.8836565499999995,
+        "p99_ms": 2.94849291,
+        "p99_9_ms": 2.963081091,
+        "max_ms": 2.964702
+      },
+      "injected_decision_apply": {
+        "samples": 10,
+        "mean_ms": 3.0383492,
+        "p50_ms": 1.591459,
+        "p90_ms": 4.501955999999996,
+        "p95_ms": 9.410555999999989,
+        "p99_ms": 13.337436,
+        "p99_9_ms": 14.220983999999996,
+        "max_ms": 14.319156
+      },
+      "observation_capture": {
+        "samples": 10,
+        "mean_ms": 0.7407638,
+        "p50_ms": 0.0013085,
+        "p90_ms": 0.7414302999999973,
+        "p95_ms": 4.068101649999992,
+        "p99_ms": 6.729438730000001,
+        "p99_9_ms": 7.328239572999998,
+        "max_ms": 7.394773
+      },
+      "runtime_bookkeeping": {
+        "samples": 10,
+        "mean_ms": 0.0070829000000000005,
+        "p50_ms": 0.006426,
+        "p90_ms": 0.0098456,
+        "p95_ms": 0.009960799999999999,
+        "p99_ms": 0.01005296,
+        "p99_9_ms": 0.010073696,
+        "max_ms": 0.010076
+      },
+      "simulation_advance": {
+        "samples": 10,
+        "mean_ms": 14.788701800000002,
+        "p50_ms": 14.188627499999999,
+        "p90_ms": 16.9839676,
+        "p95_ms": 17.5814758,
+        "p99_ms": 18.05948236,
+        "p99_9_ms": 18.167033836,
+        "max_ms": 18.178984
+      },
+      "successor_capture": {
+        "samples": 10,
+        "mean_ms": 5.877197300000001,
+        "p50_ms": 6.403620500000001,
+        "p90_ms": 7.727356599999999,
+        "p95_ms": 7.7543323,
+        "p99_ms": 7.77591286,
+        "p99_9_ms": 7.780768486,
+        "max_ms": 7.781308
+      },
+      "teleop_advance": {
+        "samples": 10,
+        "mean_ms": 0.0002555,
+        "p50_ms": 0.00021050000000000002,
+        "p90_ms": 0.0004406,
+        "p95_ms": 0.0004837999999999999,
+        "p99_ms": 0.00051836,
+        "p99_9_ms": 0.000526136,
+        "max_ms": 0.000527
+      }
+    },
+    "nested_stages_not_additive": {},
+    "instrumentation_write": {
+      "samples": 10,
+      "mean_ms": 0.01763,
+      "p50_ms": 0.0161595,
+      "p90_ms": 0.0227923,
+      "p95_ms": 0.02386915,
+      "p99_ms": 0.02473063,
+      "p99_9_ms": 0.024924462999999997,
+      "max_ms": 0.024946
+    },
+    "unattributed": {
+      "samples": 10,
+      "mean_ms": 0.012687000000000736,
+      "p50_ms": 0.011616500000000585,
+      "p90_ms": 0.013841400000000444,
+      "p95_ms": 0.017897700000000672,
+      "p99_ms": 0.02114274000000087,
+      "p99_9_ms": 0.02187287400000091,
+      "max_ms": 0.021954000000000917
+    },
+    "log_path": "/data/ebulochkin/vla-runtime/live30-single-gpu-20261009/source-smoke04/performance.jsonl",
+    "warmup_steps_excluded": 0,
+    "total_logged_steps": 10,
+    "host_timing_only_no_added_cuda_synchronization": true,
+    "boundaries": {}
+  },
+  "working_s": 0.26226013991981745,
+  "drain_and_optical_decode_s": 0.00029507512226700783,
+  "complete_hz_including_drain": 38.087226713044416,
+  "source_owner": {
+    "schema": "single_gpu_source_owner_v1",
+    "physical": false,
+    "dataset_admissible": false,
+    "controls": 10,
+    "native_physics_frozen": true,
+    "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+    "seed_sha256": "179eab0f56b9bef6ef19b7fa7f8843038c8c30b52a04e3c2b0e20b7281fda8f0",
+    "initial_parity": {
+      "q": 0.0,
+      "dq": 0.0,
+      "root_pose": 0.0,
+      "rigid_body_world_pose": 1.1920928955078125e-07,
+      "jacobian_0": 9.685754776000977e-08,
+      "jacobian_1": 1.4901161193847656e-07
+    },
+    "tail": {
+      "op": "closed",
+      "controls": 10,
+      "physics_steps": 40
+    },
+    "cleanup_errors": [],
+    "timing_rows": 10
+  },
+  "camera_source_alignment_proven": false,
+  "finished_utc": "2026-10-09T17:35:51Z"
+}

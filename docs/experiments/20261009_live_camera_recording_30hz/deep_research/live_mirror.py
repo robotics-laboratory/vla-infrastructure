@@ -46,12 +46,14 @@ class LiveMirror:
         helpers=HERE,
         worker=HERE / "mirror_worker.py",
         worker_env=None,
+        guard_path=None,
+        extra_seed=None,
     ):
         if capacity != 8 or record._next_capture_sequence != 0:
             raise ValueError(
                 "Requires capacity8 and installation before first recorder observation"
             )
-        guard = json.loads(Path(__file__).with_name("live_mirror_preimages.json").read_text())
+        guard = json.loads(Path(guard_path or Path(__file__).with_name("live_mirror_preimages.json")).read_text())
         for path, digest in guard.items():
             if sha(path) != digest:
                 raise RuntimeError(f"Live mirror source changed: {path}")
@@ -69,6 +71,11 @@ class LiveMirror:
         self.pose = load(helpers / "ovrtx_live_probe.py", "live30_pose").pose_matrices
         witness_module = load(helpers / "optical_witness.py", "live30_witness")
         metadata = self._seed(helpers, gpu, witness, witness_module)
+        if extra_seed:
+            if set(extra_seed).intersection(metadata):
+                raise ValueError("Extra seed cannot overwrite recorder provenance")
+            metadata.update(extra_seed)
+            (self.output / "seed.json").write_text(json.dumps(metadata, indent=2) + "\n")
         self.metadata = metadata
         parent, child = socket.socketpair()
         self.conn = Connection(parent.detach())
@@ -200,7 +207,9 @@ class LiveMirror:
         token, frames = (
             self.original()
         )  # exact existing immutable-by-copy sampler frame; NO second state read
-        if token.capture_sequence != self.sent or token.capture_sequence >= 4096:
+        if token.capture_sequence != self.sent or (
+            self.metadata["witness"] and token.capture_sequence >= 4096
+        ):
             raise RuntimeError("Source sequence/board range")
         if self.reset_epoch is None:
             self.reset_epoch = token.reset_epoch

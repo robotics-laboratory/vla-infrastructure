@@ -126,13 +126,29 @@ class _BimanualDifferentialIk:
         for controller in self.controllers:
             controller.reset()
 
+    def _state(self, arm, robot, wrist_id, ids):
+        standalone = getattr(self.env, "standalone_state", None)
+        if standalone is not None:
+            return standalone.ik_state(arm)
+        jacobian_index = wrist_id - 1 if robot.is_fixed_base else wrist_id
+        joint_ids = [joint_id + robot.num_base_dofs for joint_id in ids[:6]]
+        return {
+            "tcp_pose_w": robot.data.body_link_pose_w.torch[:, wrist_id],
+            "root_pose_w": robot.data.root_pose_w.torch,
+            "q": robot.data.joint_pos.torch[:, ids[:6]],
+            "jacobian": robot.data.body_link_jacobian_w.torch[:, jacobian_index, :, joint_ids],
+            "limits": robot.data.joint_limits.torch[0, ids[:6], :],
+        }
+
     def tcp_poses_base(self) -> list[np.ndarray]:
         from isaaclab.utils.math import subtract_frame_transforms  # type: ignore[import-not-found]
 
         poses = []
-        for robot, wrist_id in zip(self.env.robots, self.env.wrist_ids, strict=True):
-            tcp_world = robot.data.body_link_pose_w.torch[:, wrist_id]
-            root_world = robot.data.root_pose_w.torch
+        for arm, (robot, wrist_id, ids) in enumerate(zip(
+            self.env.robots, self.env.wrist_ids, self.env.joint_ids, strict=True,
+        )):
+            state = self._state(arm, robot, wrist_id, ids)
+            tcp_world, root_world = state["tcp_pose_w"], state["root_pose_w"]
             position, quaternion = subtract_frame_transforms(
                 root_world[:, :3], root_world[:, 3:], tcp_world[:, :3], tcp_world[:, 3:]
             )
@@ -143,23 +159,19 @@ class _BimanualDifferentialIk:
         check_observation(self.env, observation)
         native = []
         preclip: list[float] = []
-        for robot, wrist_id, ids, controller, arm_command in zip(
+        for arm, (robot, wrist_id, ids, controller, arm_command) in enumerate(zip(
             self.env.robots,
             self.env.wrist_ids,
             self.env.joint_ids,
             self.controllers,
             (command.left, command.right),
             strict=True,
-        ):
-            tcp_world = robot.data.body_link_pose_w.torch[:, wrist_id]
+        )):
+            state = self._state(arm, robot, wrist_id, ids)
+            tcp_world = state["tcp_pose_w"]
             # Pose, spatial delta and Jacobian share the Isaac world frame.
             ee_pos, ee_quat = tcp_world[:, :3], tcp_world[:, 3:]
-            joint_pos = robot.data.joint_pos.torch[:, ids[:6]]
-            jacobian_index = wrist_id - 1 if robot.is_fixed_base else wrist_id
-            jacobian_joint_ids = [joint_id + robot.num_base_dofs for joint_id in ids[:6]]
-            jacobian = robot.data.body_link_jacobian_w.torch[
-                :, jacobian_index, :, jacobian_joint_ids
-            ]
+            joint_pos, jacobian = state["q"], state["jacobian"]
             delta = self.torch.as_tensor(
                 arm_command.delta_pose.copy(),
                 dtype=self.torch.float32,
@@ -169,7 +181,7 @@ class _BimanualDifferentialIk:
             desired = controller.compute(ee_pos, ee_quat, jacobian, joint_pos)[0]
             if not bool(self.torch.isfinite(desired).all()):
                 raise RuntimeError("Non-finite IK target")
-            limits = robot.data.joint_limits.torch[0, ids[:6], :]
+            limits = state["limits"]
             clipped = desired.clamp(limits[:, 0], limits[:, 1])
             preclip.extend((*desired.detach().cpu().numpy(), arm_command.gripper_aperture_m))
             values = clipped.detach().cpu().numpy()

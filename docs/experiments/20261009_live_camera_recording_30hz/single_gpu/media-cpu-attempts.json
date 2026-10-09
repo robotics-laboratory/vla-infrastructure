@@ -1,0 +1,32 @@
+{
+  "schema": "isaac_vr_live_media_integration_attempts_v1",
+  "base": "d1676c5c05f3bf6ae300f47533526085fdab4204",
+  "files": {
+    "tools/isaac_vr_live_nvenc.py": "90ba1fd05521c10109752d205656014b7b87a8ac3d35922c60709c4500ade7f3",
+    "tools/isaac_vr_live_gpu.py": "303994bf092b0f742b399c7c52c510c813db3f5b54ca478fff613e69c9fd45e2",
+    "tools/isaac_vr_live_worker.py": "ed44e38f31d7c74d52a8a1558772280c4a6efc5af91c7d4777d6db73d92570d7",
+    "tests/test_isaac_vr_live_media.py": "8add8967d6939c401c0093ccc9559ac55b7eba7d714d16ca6a5ce70d839dd955"
+  },
+  "ast_pass": true,
+  "preimages_match": true,
+  "gpu_executed": false,
+  "actual_nvenc_executed": false,
+  "attempts": [
+    {
+      "command": "core Python tests/test_isaac_vr_live_media.py",
+      "log": "production-cpu-attempt-1.log",
+      "tests": 22,
+      "passed": true
+    },
+    {
+      "command": "core Python -m pytest -q tests/test_isaac_vr_live_media.py",
+      "log": "production-pytest-attempt-2.log",
+      "status": "see log",
+      "tests": 22,
+      "passed": true
+    }
+  ],
+  "producer_protocol": "existing Connection(fd), ready/ack(source_id)/done(receipt)/error(error)",
+  "dataset_admissible": false,
+  "live_physical_quest_qualified": false
+}

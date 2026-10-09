@@ -112,6 +112,7 @@ def record_injected_transitions(
     target_index_offset: int = 0,
     first_commit_callback: Callable[[], None] | None = None,
     pre_step_callback: Callable[[], None] | None = None,
+    decision_solver: Callable[..., SolvedControlDecision] | None = None,
     stop_requested: Callable[[], bool] | None = None,
 ) -> dict[str, Any]:
     """Write distinct committed transitions through the production causal/writer APIs."""
@@ -195,14 +196,18 @@ def record_injected_transitions(
             left_clutch=rgb_e2e_assay and index == 2,
             left_transition=left_transition if clutch_pattern else None,
         )
-        decision = SolvedControlDecision.from_native(
-            tick,
-            token.observation,
-            xr,
-            command,
-            native,
-            native.copy(),
-        )
+        if decision_solver is None:
+            decision = SolvedControlDecision.from_native(
+                tick, token.observation, xr, command, native, native.copy(),
+            )
+        else:
+            decision = decision_solver(command, token.observation, xr, tick)
+            native = np.asarray(decision.native_clipped, dtype=np.float64)
+            target = NativeBimanualTargets(
+                native[:7].copy(), native[7:].copy(),
+                not np.array_equal(native, np.asarray(decision.native_preclip)),
+            )
+            command = decision.cartesian_intent
         prepared = decision.prepare(validator)
         if stop_requested is not None and stop_requested():
             validator.abort()

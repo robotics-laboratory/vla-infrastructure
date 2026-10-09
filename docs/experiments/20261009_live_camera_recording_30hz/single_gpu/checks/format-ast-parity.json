@@ -1,0 +1,110 @@
+{
+  "command": [
+    "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff",
+    "format",
+    "tools/isaac_vr_standalone.py",
+    "tools/isaac_vr_standalone_view.py",
+    "tools/isaac_vr_standalone_scene.py",
+    "tools/isaac_vr_standalone_worker.py",
+    "tools/isaac_vr_standalone_ik.py",
+    "tools/isaac_vr_live_worker.py",
+    "tools/isaac_vr_live_gpu.py",
+    "tools/isaac_vr_live_nvenc.py",
+    "tools/run_single_gpu_live_recording.py",
+    "tests/test_isaac_vr_standalone_scene.py",
+    "tests/test_isaac_vr_standalone_owner.py",
+    "tests/test_isaac_vr_standalone_worker.py",
+    "tests/test_isaac_vr_live_media.py",
+    "docs/experiments/20261009_live_camera_recording_30hz/single_gpu/check_repository.py"
+  ],
+  "returncode": 0,
+  "stdout": "14 files reformatted\n",
+  "stderr": "",
+  "rows": [
+    {
+      "path": "tools/isaac_vr_standalone.py",
+      "before_sha256": "2ff27df11a43e09ab47954f1683172284adb6f5f829adb18b32954e129aeedb8",
+      "after_sha256": "a28b17cdeacd1d8d514fdce07bd15e2b033aeb703840405a6bc7a54c9fc020ed",
+      "ast_equal": true
+    },
+    {
+      "path": "tools/isaac_vr_standalone_view.py",
+      "before_sha256": "a32157c33cf71b16a05ea0ab58ff6f9075c5c086392dde5a60b6fa38bf41525c",
+      "after_sha256": "0bebc8b47ecd612b469d9ee078dcf943872c5dcff3e50da0c1595f872164b7c4",
+      "ast_equal": true
+    },
+    {
+      "path": "tools/isaac_vr_standalone_scene.py",
+      "before_sha256": "794faf1edb55e981f758090cd5b2ee1c47ed8096d5119d789cee327d3c0d0fd7",
+      "after_sha256": "be1a16c3be7ce8cc13c96aa7acbd38047f7910d96afd0ebfda8146cb7fc8e0f2",
+      "ast_equal": true
+    },
+    {
+      "path": "tools/isaac_vr_standalone_worker.py",
+      "before_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "after_sha256": "b361f1a19348e8b84b156f5ef95a4e4976c8440f0a50d854d879a83b32adcf4b",
+      "ast_equal": true
+    },
+    {
+      "path": "tools/isaac_vr_standalone_ik.py",
+      "before_sha256": "f1f07de1e6306160b3a5280299911f660fad531837e2c60262a60005d4fb7e25",
+      "after_sha256": "179f0a0795f98cfafc61cac27dbecc6a983af0a062238f99443eee2d877c73d3",
+      "ast_equal": true
+    },
+    {
+      "path": "tools/isaac_vr_live_worker.py",
+      "before_sha256": "175d640bdf81708ff402f3092eef509cbba33322f6cf063f7586ca6df01fa683",
+      "after_sha256": "ba3777bc318e34687dbcb34e503cc9b6f07959b176710273d866339a7cc9da75",
+      "ast_equal": true
+    },
+    {
+      "path": "tools/isaac_vr_live_gpu.py",
+      "before_sha256": "303994bf092b0f742b399c7c52c510c813db3f5b54ca478fff613e69c9fd45e2",
+      "after_sha256": "8bbc05dfbc8a9059b40c247ee0f71a4d730ad8e4e326345fe0aed68809b97389",
+      "ast_equal": true
+    },
+    {
+      "path": "tools/isaac_vr_live_nvenc.py",
+      "before_sha256": "90ba1fd05521c10109752d205656014b7b87a8ac3d35922c60709c4500ade7f3",
+      "after_sha256": "f93592e7614cda7f2cc61147134119ca20f2efc56bfad72978d4b92e6118ff44",
+      "ast_equal": true
+    },
+    {
+      "path": "tools/run_single_gpu_live_recording.py",
+      "before_sha256": "066ea18d8c2520a88681c0cc8b725ff73babc89575503b3726541f24a2645af5",
+      "after_sha256": "a0692d0711c0c775aa8f1ab11bca58e7b3398383845b3db2656dd18b49a4d6da",
+      "ast_equal": true
+    },
+    {
+      "path": "tests/test_isaac_vr_standalone_scene.py",
+      "before_sha256": "5ff5345853fe3d5a22d3ead0f65ae2696d343495ec538b09d363f1a254e24e6c",
+      "after_sha256": "bf4cd2b4090031c3669e426ee78e92ec6aa5b115a0785b386c0c922bb7f866a6",
+      "ast_equal": true
+    },
+    {
+      "path": "tests/test_isaac_vr_standalone_owner.py",
+      "before_sha256": "69478ba436cb559e67efecd3265b9606f714a0224b8f4d24ffd48ef6dd66285f",
+      "after_sha256": "a650a31352ec713d47d6afc46f747a3383adac6e16dff0fefeaaa914fd215598",
+      "ast_equal": true
+    },
+    {
+      "path": "tests/test_isaac_vr_standalone_worker.py",
+      "before_sha256": "2a944f046ee53edbfadfb43c9395a982dd6fe30f6cb3902deb6028fc87d81524",
+      "after_sha256": "83c6e4fc8500e1b5ecc24b07358d477a30256251ecad1ee06f663e356234c1b5",
+      "ast_equal": true
+    },
+    {
+      "path": "tests/test_isaac_vr_live_media.py",
+      "before_sha256": "6d5a1730e1e704c0a37fd5737082aa50efbbf7366ab366ddeabddd8490645228",
+      "after_sha256": "7d123b4cf315f9c2522aaf01894a605bc7dd116e5d65a849fa5db6f905564b51",
+      "ast_equal": true
+    },
+    {
+      "path": "docs/experiments/20261009_live_camera_recording_30hz/single_gpu/check_repository.py",
+      "before_sha256": "f41d80783eacc4fa82354fd033c94a5904e90dddc795d382c15a5382df7773bd",
+      "after_sha256": "f970ee9dc8d542945012177e1b9f0c559cdafbdf53be3d18c918b8213e7d06e9",
+      "ast_equal": true
+    }
+  ],
+  "passed": true
+}

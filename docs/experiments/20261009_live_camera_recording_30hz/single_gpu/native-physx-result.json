@@ -1,0 +1,527 @@
+{
+  "schema": "standalone_cpu_native_fixture_verification_v1",
+  "repo_head": "d1676c5c05f3bf6ae300f47533526085fdab4204",
+  "tests": 7,
+  "passed": 7,
+  "elapsed_s": 15.243,
+  "gpu_execution": false,
+  "physical": false,
+  "dataset_admissible": false,
+  "full_kit_parity": false,
+  "receipt_count": 22,
+  "cleanup_errors": 0,
+  "files": [
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_worker.py",
+      "lines": 241,
+      "sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c"
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/tests/test_isaac_vr_standalone_worker.py",
+      "lines": 234,
+      "sha256": "ab2860230002b3285e4bd7cc7ef1994849b8f423f5e24831ba19565c75673f01"
+    }
+  ],
+  "metrics": {
+    "mimic": {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/passive-mimic-018b8369/motion.npz",
+      "max_residual_m": 0.00012277066707611084,
+      "final_gripper_positions": [
+        [
+          0.020000075921416283,
+          0.010000037960708141,
+          -0.010000037029385567
+        ],
+        [
+          0.020000077784061432,
+          0.010000038892030716,
+          -0.010000037960708141
+        ]
+      ]
+    },
+    "jacobian": {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/jacobian-baseline-b0cd374b/jacobian-fd.npz",
+      "max_linear_error": 0.00011921102850465104,
+      "max_angular_error": 0.00018034875392913818,
+      "atol": 0.00015,
+      "rtol": 0.0008
+    },
+    "preserved_original_failure": {
+      "path": "/tmp/live30-single-gpu-native-tests/native-suite/passive-mimic-f0ca3938/motion.npz",
+      "sha256": "0aef6bb2707afd21da4ac5294b64b296ad44ef3bc810a2c73a5d10546ff78f2f",
+      "max_residual_m": 0.028250303119421005
+    }
+  },
+  "receipts": [
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/bad-seed-dof_units-f1ba64f3/receipt.json",
+      "sha256": "ae914171ba2ff6c261976b24a76cfe44a5ff307e61b092315007ae855d9eb481",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "failed",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "1349e81c8058ae1042bdf0f753f0d3b8080d006361c28838ca2aff1c8cb7743b",
+      "error": "ValueError: Native DOF units must be six radians and three metres",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/bad-seed-schema-da3e5604/receipt.json",
+      "sha256": "0a603e55d888add3406ccd3e036f2a71dd60870c8bf7e8447445afded720ab0b",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "failed",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "a18e5f0f65caf8cef6cc17726b7006c0ca2ee283df308f81917159fb1f609b81",
+      "error": "ValueError: Unsupported seed schema",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/bad-step-51f7bd7a/receipt.json",
+      "sha256": "873921b5d5e8a0838046bbcd4467dfceef30c7910764ddbb9b63fcbabe52ff4c",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "failed",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "2ceb77673fdfff21da3d483981076d5c2bba00109c24204ade6185a831861ad7",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "error": "ValueError: Require monotonically consecutive integer step seq starting0",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/bad-step-7faf86da/receipt.json",
+      "sha256": "9db39c1bf17af7bbc10485dca5289fe815240ddb62f1da22889fb9dbfe8ea66c",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "failed",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "2ceb77673fdfff21da3d483981076d5c2bba00109c24204ade6185a831861ad7",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "error": "ValueError: Expected finite float32 array(2, 9), got(2, 9)",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/bad-step-ffd88e06/receipt.json",
+      "sha256": "84d577fcf49420f560e2597b0d13cd9457c22e8c5adee1335c87b65440d0f98a",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "failed",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "2ceb77673fdfff21da3d483981076d5c2bba00109c24204ade6185a831861ad7",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "error": "ValueError: Expected finite float32 array(2, 9), got(2, 8)",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/dynamic-velocity-1674bf1f/receipt.json",
+      "sha256": "1741b0cb982e3f70ce0a0391d4d3e70c23b08623bccb1b0b5127c790776e47a7",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 1,
+      "physics_steps": 4,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "ebbde4359931db4ef74b4283fca460ca19a983f3e92018bccf699d4d0409896c",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/initial-roundtrip-6e02ab7e/receipt.json",
+      "sha256": "401272b246b90b3c808e8933099f66f3b72f7b4aa196cd373b645ceb14cbe235",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "2ceb77673fdfff21da3d483981076d5c2bba00109c24204ade6185a831861ad7",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/jacobian-baseline-b0cd374b/receipt.json",
+      "sha256": "401272b246b90b3c808e8933099f66f3b72f7b4aa196cd373b645ceb14cbe235",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "2ceb77673fdfff21da3d483981076d5c2bba00109c24204ade6185a831861ad7",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/jacobian-joint0-sign-1-e109d2ac/receipt.json",
+      "sha256": "ecbdf25806d5857f6a0b99810a095329007efd369150fca510a91a0b463d9563",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "9b06b27e425fea4e9d322049fb513bd9cbf7640394cf0b16ebaf6fe6e5b2c80c",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/jacobian-joint0-sign1-59bdb610/receipt.json",
+      "sha256": "fda00344de6cc13047c896d16f6f02be8ac62d62b4adac6333722948c70352d7",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "981ce2892c65452df2dd5bc2e8f0723d6c5746ad2ad0e5dbeeeace75dd985644",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/jacobian-joint1-sign-1-be279de8/receipt.json",
+      "sha256": "c11259ecb833ec80691f42934898478e246df72766d76cc46c86819d7a6b6ff0",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "50b5a6feddaba65a7585e34d25e764cb3f0125e88dfca12a1148524edaddd059",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/jacobian-joint1-sign1-914b0730/receipt.json",
+      "sha256": "86adbebf7583b66f2b85617f509114614dc85f7c88fcc864c04f7f7d75a17e4d",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "a48c067fc646c5055320fb505145ca54b46f0c15f1d86648d3a246a95a33acfd",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/jacobian-joint2-sign-1-a66d3400/receipt.json",
+      "sha256": "55024ee7852f4361ded1e2314d8647c736e937d1c60c836854d04cfc79d41982",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "6cad21a3b6a2774361a7ab3a159553debeebebf22eb803d6c5a29b46617be396",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/jacobian-joint2-sign1-3fc19fc3/receipt.json",
+      "sha256": "b67f90ada084e27bad3c97827ea8618c40b7266bc0d02040abfbfeb27ba7b91f",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "32dd6878aae9b9c4625cd5bf35b4c981ba5463dbb7e1cd4d7f6249a20283d199",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/jacobian-joint3-sign-1-13a1f802/receipt.json",
+      "sha256": "b9981305083e260335b6fb6bd73862dc2190e9d9d788041e7bb536f8b9db608a",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "252dfc08943b65de6a2f5a59b5844ed037ceffd2d9e67af4bc83d9ad42039327",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/jacobian-joint3-sign1-0b6098db/receipt.json",
+      "sha256": "5b5e13f1d3eeecc6631a115479f1ef46d882da860283b04f31ab4af66d9f9a10",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "7fdc6ac856852f6caacba3301da23298495bab9486c496be63c1b4f00269a310",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/jacobian-joint4-sign-1-44d9124e/receipt.json",
+      "sha256": "781ea5d803558b93352b89d78384689165ce0b7e62359a6663952ddfdcc313b3",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "8b95850d21e871bce6945d20d24d7f14385c5ad35d3673f01f132d32587726df",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/jacobian-joint4-sign1-862d2774/receipt.json",
+      "sha256": "4c45031653ef1d71547262df02d279e75b468504fe74eddfe3aa408a67444dd4",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "a163f44204e0b950a223bed1fb0393e02279a2faa04dbc3cf56d4fd2ea1e596e",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/jacobian-joint5-sign-1-215df358/receipt.json",
+      "sha256": "33d761c9776ffb68fffd544df96c762308638fc2f10c348c2e112c738df8ce8c",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "7cd55c8cc4f3936b31327a20de1adb1db051701e155117a22362b26ba5953df8",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/jacobian-joint5-sign1-4462aedc/receipt.json",
+      "sha256": "321cc9bc43a2d20cbf6951c84dbdfe7689f9609db070dab04f830f49aed5e278",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 0,
+      "physics_steps": 0,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "09fd10f862098ac4483a34c4f060bb0b0e74e6f2f069d059ec5c147c8733c406",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/passive-mimic-018b8369/receipt.json",
+      "sha256": "5871dc96a2ad2d7ff6339e63cd57ce89e9657d75c20f5e5d1233f02e911a40f0",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "completed_diagnostic",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 90,
+      "physics_steps": 360,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "2ceb77673fdfff21da3d483981076d5c2bba00109c24204ade6185a831861ad7",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "reason": "",
+      "cleanup_errors": []
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite/wrong-sequence-687e5e81/receipt.json",
+      "sha256": "a17310a16e2ff56bd060878ab1b87652dcb4cf3a0004558519a7e30fd4ed1ffc",
+      "schema": "standalone_cpu_physx_worker_receipt_v1",
+      "status": "failed",
+      "physical": false,
+      "dataset_admissible": false,
+      "gpu_execution": false,
+      "controls": 1,
+      "physics_steps": 4,
+      "worker_sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "seed_sha256": "2ceb77673fdfff21da3d483981076d5c2bba00109c24204ade6185a831861ad7",
+      "profile": "retained_scene_current_vr_drives_physx_mimic_translation_diagnostic",
+      "packages": {
+        "ovphysx": "0.6.3",
+        "ovstage": "0.2.0.377349",
+        "warp-lang": "1.16.0",
+        "numpy": "2.5.1"
+      },
+      "error": "ValueError: Require monotonically consecutive integer step seq starting0",
+      "cleanup_errors": []
+    }
+  ]
+}

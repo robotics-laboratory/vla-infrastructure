@@ -1,0 +1,54 @@
+E701 Multiple statements on one line (colon)
+   --> tests/test_isaac_vr_live_media.py:401:31
+    |
+399 |                 self.receipt = dict(passed=not self.failed, owners_quarantined=False, counts=self.counts)
+400 |                 test.events.append('media-drain')
+401 |                 if self.failed: raise RuntimeError('fake media failure')
+    |                               ^
+402 |                 return self.receipt
+403 |         class Snapshot:
+    |
+
+E701 Multiple statements on one line (colon)
+   --> tests/test_isaac_vr_live_media.py:495:39
+    |
+493 |                 raise RuntimeError('fatal CUDA fence')
+494 |         self.consumer_class = FatalConsumer
+495 |         class FatalExit(BaseException): pass
+    |                                       ^
+496 |         with patch.object(self.worker.os, '_exit', side_effect=FatalExit):
+497 |             with self.assertRaises(FatalExit): self.execute()
+    |
+
+E701 Multiple statements on one line (colon)
+   --> tests/test_isaac_vr_live_media.py:497:46
+    |
+495 |         class FatalExit(BaseException): pass
+496 |         with patch.object(self.worker.os, '_exit', side_effect=FatalExit):
+497 |             with self.assertRaises(FatalExit): self.execute()
+    |                                              ^
+498 |         self.assertNotIn('detach', self.events)
+499 |         self.assertNotIn('destroy-stage', self.events)
+    |
+
+F401 [*] `isaac_vr_standalone_view.SourceClock` imported but unused
+  --> tests/test_isaac_vr_standalone_owner.py:15:38
+   |
+13 | from isaac_vr_standalone import StandaloneState
+14 | from isaac_vr_standalone_ik import BODIES, DOFS
+15 | from isaac_vr_standalone_view import SourceClock
+   |                                      ^^^^^^^^^^^
+   |
+help: Remove unused import: `isaac_vr_standalone_view.SourceClock`
+
+E402 Module level import not at top of file
+  --> tests/test_isaac_vr_standalone_worker.py:25:1
+   |
+23 | REPO = Path(__file__).resolve().parents[1]
+24 | sys.path.insert(0, str(REPO))
+25 | from tools.isaac_vr_standalone_ik import piper_ik_state
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+
+Found 5 errors.
+[*] 1 fixable with the `--fix` option.

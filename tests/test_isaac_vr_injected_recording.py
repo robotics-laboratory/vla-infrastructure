@@ -119,6 +119,40 @@ class FakeRecording:
         self.promoted = successor
 
 
+def test_decision_solver_preserves_preclip_labels_and_applies_clipped_native():
+    from tools.isaac_vr_decision import SolvedControlDecision
+
+    env = FakeEnvironment()
+    recording = FakeRecording(env)
+    decisions, applied = [], []
+    original_apply = env._apply
+
+    def solve(command, observation, xr, tick):
+        preclip = np.array([0.2, 1.0, -0.5, 0, 0, 0, 0.05] * 2)
+        clipped = preclip.copy()
+        clipped[0] = 0.1
+        decision = SolvedControlDecision.from_native(
+            tick, observation, xr, command, preclip, clipped,
+        )
+        decisions.append(decision)
+        return decision
+
+    def apply(target):
+        applied.append(target)
+        original_apply(target)
+
+    env._apply = apply
+    result = record_injected_transitions(
+        recording, env, count=2, decision_solver=solve, require_distinct_actions=False,
+    )
+    assert result["accepted_transactions"] == 2
+    for decision, target, row in zip(decisions, applied, recording.rows, strict=True):
+        np.testing.assert_array_equal(row["dataset_action"], decision.dataset_action)
+        np.testing.assert_array_equal(target.left_rad_m, decision.native_clipped[:7])
+        assert target.saturated
+        assert decision.native_preclip[0] != target.left_rad_m[0]
+
+
 @pytest.mark.parametrize("record", [False, True])
 @pytest.mark.parametrize("stop_at", ["before", "input_pump", "capture", "transition"])
 def test_injected_stop_preserves_only_completed_transitions(tmp_path, monkeypatch, record, stop_at):

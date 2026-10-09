@@ -1,0 +1,14 @@
+Repository research/live-camera-recording-30hz HEAD d1676c5c05f3bf6ae300f47533526085fdab4204; concurrent WIP preserved.
+Existing CodeGraph used before repository code search/read; canonical implementation/VR/documentation owners read previously.
+CPU native initial-roundtrip attempt01 PASS; original Newton-only full suite3PASS1FAIL preserved.
+Read-only default schema population NewtonMimicAPI count0; extraNewton descriptor count4; physics_execution=false/gpu_execution=false.
+Derived immutablePhysxMimic overlay sourceSHA unchanged;1475initialworldtransforms unchanged; followers retainK0/D0.
+Translated passive-only nativeCPU PASS; translated full6tests PASS; six-dimensional Jacobian FD PASS; all3prop velocity/freefall PASS.
+Final native7/7PASS in15.243s;22worker receipts; zero cleanup errors; all gpu_execution=false.
+Final worker/test AST parse PASS; exact source hashes in final-result.json and34source ledger.
+Final mimic maximum residual0.00012277066707611084m<2e-4m; original failure0.028250303119421005m retained.
+Native Jacobian FD all6armjoints/botharms maxlinearerror0.00011921102850465104; maxangularerror0.00018034875392913818; atol1.5e-4+rtol8e-4 PASS.
+`.venv/bin/python -m pytest -q tests/test_isaac_vr_standalone_worker.py` FAIL dependency missing pytest; no installation attempted.
+`.venv/bin/python tools/lint_docs.py --base d1676c5c05f3bf6ae300f47533526085fdab4204` FAIL dependency missing yaml; no installation attempted.
+Parent notified required declared core final checks; no repository documentation lint claimed.
+No GPU simulation, renderer test, physical actuation, SDK mutation/install, S2qualification, D1admission or full currentKit parity claimed.

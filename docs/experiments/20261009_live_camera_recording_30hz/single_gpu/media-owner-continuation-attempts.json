@@ -1,0 +1,66 @@
+{
+  "schema": "live30_owner_review_and_warm_continuation_v1",
+  "base": "d1676c5c05f3bf6ae300f47533526085fdab4204",
+  "gpu_executed_by_agent": false,
+  "files": {
+    "tools/isaac_vr_standalone.py": "940520d82fec9c0dc6126dd51264867f0ca672f1d2da598ff97974c41acb8dab",
+    "tools/run_single_gpu_live_recording.py": "f91cccfee697cc890cdff952e5de91cb6005f1ffe29d12acedc24e02d50c1bb5",
+    "tools/isaac_vr_recording.py": "726efc6129d495361c651233d536ae0f17124b8079bf205f44f04519249b69fd",
+    "tools/isaac_s2_runtime.py": "2fd601427dfbcd2143e7b6120ece47da83353e4b168e924d73c90325860878f6",
+    "tools/isaac_vr_standalone_ik.py": "f1f07de1e6306160b3a5280299911f660fad531837e2c60262a60005d4fb7e25",
+    "tools/isaac_vr_live_worker.py": "175d640bdf81708ff402f3092eef509cbba33322f6cf063f7586ca6df01fa683",
+    "tests/test_isaac_vr_standalone_owner.py": "29e37afbf907f80c3c950a8fb04e881960acafdc130e42d98a1d99b7e0c0e8bd",
+    "tests/test_isaac_vr_live_media.py": "c8d7e29f39af5cd4d3d148bdda764869c07c56d02cdad94ba1495cd94d533ae6",
+    "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_snapshot.py": "4d2c67661425b2dce8284e888de5bd775348dc29fc25c95c2a54323d8238d00f"
+  },
+  "attempts": [
+    {
+      "log": "owner-review-attempt-1.log",
+      "passed": false,
+      "tests": 14,
+      "failures": [
+        "testfloat32 float64 exact comparison corrected",
+        "native guard now poisons owner; test message corrected"
+      ]
+    },
+    {
+      "log": "owner-review-attempt-2.log",
+      "passed": true,
+      "tests": 14
+    },
+    {
+      "log": "owner-review-attempt-3.log",
+      "passed": false,
+      "tests": 17,
+      "failures": [
+        "wrongterminalACKaccepted",
+        "nonzerochildexitaccepted"
+      ]
+    },
+    {
+      "log": "production-continuation-attempt-3.log",
+      "passed": true,
+      "tests": 40,
+      "includes": "23media +17owner; root fixed both close paths"
+    }
+  ],
+  "owned_files_changed": [
+    "tools/isaac_vr_live_worker.py",
+    "tests/test_isaac_vr_live_media.py",
+    "tests/test_isaac_vr_standalone_owner.py"
+  ],
+  "root_fixes_observed": [
+    "canonicalcameraepochpreserved",
+    "snapshotIKvalidationbeforepublication",
+    "failedownerclosedtofuturesteps",
+    "benchmarkcleanupattemptallandfailstatus",
+    "terminalACKreturncodeandchildcleanuperrorschecked"
+  ],
+  "candidate_limitations": [
+    "noactualGPUthroughputmeasuredbyagent",
+    "warmup_prefix_requiresinitial_time >= (W+1)/30",
+    "native already-exited nonzero child returncode notcheckedwhenproc.poll()!=None"
+  ],
+  "dataset_admissible": false,
+  "physical_qualified": false
+}

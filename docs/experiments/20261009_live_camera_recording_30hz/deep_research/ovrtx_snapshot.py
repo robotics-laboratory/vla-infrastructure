@@ -87,6 +87,7 @@ class SnapshotRenderer:
         width=960,
         height=600,
         consumer=None,
+        continuation_time_s=None,
     ):
         verify_preimages()
         import ovstage
@@ -112,6 +113,15 @@ class SnapshotRenderer:
             raise RuntimeError("Path list reordered; refuse ambiguous snapshot binding")
         self.query = stage.query_from_path_list(self.path_list)
         self.first = True
+        if continuation_time_s is not None:
+            import math
+            if not math.isfinite(continuation_time_s) or continuation_time_s < 0:
+                raise ValueError("Invalid already-rendered continuation time")
+            # The same stage/path set has already received resetXformStack and
+            # rendered warmup. Preserve renderer caches and its current clock;
+            # admitted source IDs and encoder ordinals still start afresh.
+            self.last_time = float(continuation_time_s)
+            self.first = False
 
     def _guard(self):
         if self.closed or self.failed or self.busy or threading.get_ident() != self.thread:

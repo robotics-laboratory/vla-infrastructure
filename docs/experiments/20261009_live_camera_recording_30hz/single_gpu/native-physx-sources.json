@@ -1,0 +1,225 @@
+{
+  "repo_head": "d1676c5c05f3bf6ae300f47533526085fdab4204",
+  "source_commit": "da950a3537927784951853c66618036f332ca0ce",
+  "lab_commit": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d",
+  "gpu_execution": false,
+  "physical": false,
+  "simulation_executed": "CPU only",
+  "full_kit_parity": false,
+  "search_ledger": [
+    "Checkout branch/HEAD/WIP checked; shared concurrent changes preserved; CodeGraph used before repository source location/read.",
+    "Exact0.6.3 ParseMimicJoint/loader previously fetched primary NVIDIA source retained byteforbyte; followed Newton\u2192Physx gearing/offset and singleDOF axes.",
+    "Native CPU failed passive Newton-only coupling with selectedVR effective drives; original logs/seed/NPZ/receipt preserved.",
+    "Read-only OVStage schema population query default vs explicit codelessNewton descriptor; no physics/GPU construction.",
+    "Immutable PhysxMimic derived overlay retained1475worldtransforms andsourcehash; passive coupling nativeCPU90tickverified.",
+    "Allbody27/fixedroot/q/dq/effectiveproperties native roundtrips; strictseq/schema/units/shape/finite guards; native FK6Dfinite differences and3propfreefall.",
+    "Exact Lab package closure/manager GPU-onlywarmup_gpu call andinstalled0.6.3 API/missingwarmup_gpu read; no production import/install/patch.",
+    "Native final7/7PASS22receipts zero cleanup errors; core pytest/docs attempts missingdependencies explicitly reported."
+  ],
+  "sources": [
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physics.parse/ParseMimicJoint.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physics.parse/ParseMimicJoint.cpp",
+      "sha256": "90870d26b747e411eec7d0a91506527175da6b3e8d2cedc2bf07c3234ef3e782",
+      "bytes": 19101
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physx/plugins/usdLoad/MimicJoint.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physx/plugins/usdLoad/MimicJoint.cpp",
+      "sha256": "92117bb2dbb5daa173b5cdbbe69334f5bff1dfd2445d86bd75c1607d25699ace",
+      "bytes": 6545
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physx/plugins/tensors/cpu/CpuArticulationView.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physx/plugins/tensors/cpu/CpuArticulationView.cpp",
+      "sha256": "2bed7933eeb67be6278c5c6b929c6d7767640229495349d3013fb627c497bf44",
+      "bytes": 141486
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physx/plugins/tensors/base/BaseArticulationView.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physx/plugins/tensors/base/BaseArticulationView.cpp",
+      "sha256": "83965f0f2005cf62415c0a6ad7c781c5ec572596a47aaf6143968791adeac56e",
+      "bytes": 101350
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/docs/read_write/readable.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/docs/read_write/readable.md",
+      "sha256": "44c7802dda31dd4401c2c2aeeea9cb6ab59606fa3b3d05951d18fbc89ede31ab",
+      "bytes": 14196
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/actuators/actuator_pd.py",
+      "url": "https://github.com/isaac-sim/IsaacLab/blob/0c2e2c64e51922d088b695d72ffe03faa5c6b95d/source/isaaclab/isaaclab/actuators/actuator_pd.py",
+      "sha256": "337063e932c619b513119dc7ed0a34fc96f28208158c519ababc031987364fdf",
+      "bytes": 26974
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/articulation/articulation_data.py",
+      "url": "https://github.com/isaac-sim/IsaacLab/blob/0c2e2c64e51922d088b695d72ffe03faa5c6b95d/source/isaaclab_physx/isaaclab_physx/assets/articulation/articulation_data.py",
+      "sha256": "9f25446dff165278af62147c50d5153cc1a1236ccc308cb83a316892cdeb54bf",
+      "bytes": 111298
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/articulation/kernels.py",
+      "url": "https://github.com/isaac-sim/IsaacLab/blob/0c2e2c64e51922d088b695d72ffe03faa5c6b95d/source/isaaclab_physx/isaaclab_physx/assets/articulation/kernels.py",
+      "sha256": "e3265b1fb6b9fae18a0b0e65fb48c04541fd34a93b0f4c4bb96fe0c21376918e",
+      "bytes": 32997
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/physics/physx_manager_cfg.py",
+      "url": "https://github.com/isaac-sim/IsaacLab/blob/0c2e2c64e51922d088b695d72ffe03faa5c6b95d/source/isaaclab_physx/isaaclab_physx/physics/physx_manager_cfg.py",
+      "sha256": "b28ec403c4d534101eab541aff92952b96eb63f0526b0dc0a53277638ca732b2",
+      "bytes": 9951
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_ov/isaaclab_ov/physics/ovphysx_manager_cfg.py",
+      "url": "https://github.com/isaac-sim/IsaacLab/blob/0c2e2c64e51922d088b695d72ffe03faa5c6b95d/source/isaaclab_ov/isaaclab_ov/physics/ovphysx_manager_cfg.py",
+      "sha256": "346d89d12356bca8ca055a3bfac43206be00f9406ec6f58d5513d47a5e36609b",
+      "bytes": 3044
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_worker.py",
+      "url": null,
+      "sha256": "1d4cfb0e393024620762064355b6695bcc2a24ba2cdd54ae7aa5a3371892629c",
+      "bytes": 13040
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/tests/test_isaac_vr_standalone_worker.py",
+      "url": null,
+      "sha256": "ab2860230002b3285e4bd7cc7ef1994849b8f423f5e24831ba19565c75673f01",
+      "bytes": 12698
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_ik.py",
+      "url": null,
+      "sha256": "f1f07de1e6306160b3a5280299911f660fad531837e2c60262a60005d4fb7e25",
+      "bytes": 2517
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/configs/isaac61_vr_runtime.yaml",
+      "url": null,
+      "sha256": "29af05723bb358fb88a519e57e64b61f5ee3cae024a75083ffccf0d7811ab758",
+      "bytes": 9328
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/pyproject.toml",
+      "url": "https://github.com/isaac-sim/IsaacLab/blob/0c2e2c64e51922d088b695d72ffe03faa5c6b95d/pyproject.toml",
+      "sha256": "2780d507882950e64ca8f972fcad4c19e74b9681af1d830e0b34fa09e79e116b",
+      "bytes": 16103
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/uv.lock",
+      "url": "https://github.com/isaac-sim/IsaacLab/blob/0c2e2c64e51922d088b695d72ffe03faa5c6b95d/uv.lock",
+      "sha256": "f633120f145944672d9ba3d6a7bda9a145a01b6295e9fc08f0997e60dc6a40e7",
+      "bytes": 451834
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_ov/pyproject.toml",
+      "url": "https://github.com/isaac-sim/IsaacLab/blob/0c2e2c64e51922d088b695d72ffe03faa5c6b95d/source/isaaclab_ov/pyproject.toml",
+      "sha256": "32504224576bc0035f6e06f2df5d9d6c8c6fd3dbb40014fb56f84e64d8975625",
+      "bytes": 1183
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_ov/isaaclab_ov/physics/ovphysx_manager.py",
+      "url": "https://github.com/isaac-sim/IsaacLab/blob/0c2e2c64e51922d088b695d72ffe03faa5c6b95d/source/isaaclab_ov/isaaclab_ov/physics/ovphysx_manager.py",
+      "sha256": "6146f43586169896610defa1a06706a8c4aa13a5d4378506a0b5a7a39f563bb4",
+      "bytes": 52798
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_ov/isaaclab_ov/assets/articulation/kernels.py",
+      "url": "https://github.com/isaac-sim/IsaacLab/blob/0c2e2c64e51922d088b695d72ffe03faa5c6b95d/source/isaaclab_ov/isaaclab_ov/assets/articulation/kernels.py",
+      "sha256": "41717212ab7daad6b20dd7c35557976d157e38107cc187b0c1d7a08d1dcda9a6",
+      "bytes": 19299
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/lib/python3.12/site-packages/ovphysx/api.py",
+      "url": null,
+      "sha256": "90d30f9cf5e4cbf3589888c1f12232e7b6aed82c0c28948009398f82fd18e375",
+      "bytes": 251968
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/lib/python3.12/site-packages/ovphysx-0.6.3.dist-info/METADATA",
+      "url": null,
+      "sha256": "52fd4c707f2bf4ccda38725293f8ae39ca9e55d3ea209945af1e301eed54f23b",
+      "bytes": 3178
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/ovstage/bin/ovstage_usd_schemas/newton/resources/plugInfo.json",
+      "url": null,
+      "sha256": "230a98589a08eac99c71ab7d68bcde3ba3fa9715f7b85ec2b344661f373bc2e7",
+      "bytes": 9873
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/ovstage/bin/ovstage_usd_schemas/newton/resources/generatedSchema.usda",
+      "url": null,
+      "sha256": "56424d9ff0988e996c0faeaaae9f43d278fe2bdd1dc0378adbd5a1d749f91939",
+      "bytes": 40113
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/schema-population-default.json",
+      "url": null,
+      "sha256": "be6c239cf45b7b1597e3671133ef79b10f6c97962f6fd942cd9b97eb33ff7609",
+      "bytes": 345
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/schema-population-newton.json",
+      "url": null,
+      "sha256": "7578eccbbad19366cd106c12a343eaf1a92c73fdf58fc439f29a90b8471f91f2",
+      "bytes": 491
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/schema_population.py",
+      "url": null,
+      "sha256": "3f1ed3b8679d3522574603f7e972d3fbba713b5b1aa91441b16d0f11b5564aa5",
+      "bytes": 1126
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/author_mimic_overlay.py",
+      "url": null,
+      "sha256": "8c3b21ff780761327ba26c0b4a0690c09da75b2c38b31ac1912d189058c26a47",
+      "bytes": 2839
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/physx-mimic-overlay.usda",
+      "url": null,
+      "sha256": "58c5f53928931e901d24361f964dda5bc08647e6dc2b44bb378916892a73a6ad",
+      "bytes": 2840
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/physx-mimic-overlay.manifest.json",
+      "url": null,
+      "sha256": "373f87362179578c6409b84e91f2352eb1a92207b12bce02b03585a3cefabf93",
+      "bytes": 1372
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/fixture.seed.json",
+      "url": null,
+      "sha256": "e1019f48ac3be4c7a351b2deb805125cd9af2b15fb75c977cc074c65d59d517b",
+      "bytes": 8399
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/fixture-physx-mimic.seed.json",
+      "url": null,
+      "sha256": "2ceb77673fdfff21da3d483981076d5c2bba00109c24204ade6185a831861ad7",
+      "bytes": 8791
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-suite.log",
+      "url": null,
+      "sha256": "a5b102b68f17cafa3dcf7b72b3857bc158be29feb1045a481407f9a10db0e48b",
+      "bytes": 1248
+    },
+    {
+      "path": "/tmp/live30-single-gpu-native-tests/final-result.json",
+      "url": null,
+      "sha256": "bb406edbb8ceb377fa802490090d1aa4a86e05472a425c316e1ff7fab5159fe5",
+      "bytes": 21412
+    },
+    {
+      "path": "/tmp/live30-single-gpu-physx-native-followup.md",
+      "url": null,
+      "sha256": "00710f74e7a74dd916e9751bc992cc68b02d7063513f22147e66040b38038d9c",
+      "bytes": 9339
+    }
+  ]
+}
