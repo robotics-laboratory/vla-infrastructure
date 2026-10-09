@@ -1,0 +1,360 @@
+{
+  "dataset_admissible": false,
+  "quest_connected": false,
+  "source": "deterministic_injected_xr_v1",
+  "synthetic_joint_targets": true,
+  "camera_source_alignment_proven": false,
+  "arguments": {
+    "output": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror",
+    "frames": 90,
+    "warmup": 30,
+    "media": "mirror",
+    "physics_variant": "baseline",
+    "render_mode": "original",
+    "async_render": false,
+    "wait_idle": "original",
+    "texture_streaming_off": false,
+    "xr": true,
+    "device": "cpu",
+    "ik_workload": true,
+    "witness": false,
+    "profile": false
+  },
+  "source_sha256": "991f59872f9f252fe33c7b57dbb2beabe876c95c5c4b395a88308d6c321d5db0",
+  "base": "d5566834d29ef8bb56e4fb62bb324e23e0869100",
+  "started_utc": "2026-10-09T13:53:16Z",
+  "passed": true,
+  "base_command": [
+    "/home/ebulochkin/vla_infrastructure/tools/run_isaac_s1.py",
+    "--config",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/runtime.yaml",
+    "--device",
+    "cpu",
+    "--vr-runtime",
+    "--s2-record",
+    "--viz",
+    "kit",
+    "--kit_args",
+    "--portable-root /data/ebulochkin/vla-runtime/isaac-isaac61/kit --enable isaacsim.replicator.episode_recorder --enable omni.kit.scene_view.xr --enable omni.kit.scene_view.xr_utils",
+    "--xr"
+  ],
+  "settings": {
+    "/app/asyncRendering": true,
+    "/app/asyncRenderingLowLatency": true,
+    "/app/omni.usd/asyncHandshake": false,
+    "/omni/replicator/asyncRendering": false,
+    "/app/hydraEngine/waitIdle": false,
+    "/rtx/rendermode": "RealTimePathTracing",
+    "/rtx-transient/resourcemanager/enableTextureStreaming": false
+  },
+  "xr_status": {
+    "enabled": true,
+    "active_profile": "ar",
+    "client_connected": false,
+    "live_device_input_pumped": false
+  },
+  "mirror": {
+    "dataset_admissible": false,
+    "captures": 121,
+    "acked": 121,
+    "max_pending": 8,
+    "backpressure_ms": 1149.5316000000003,
+    "drain_ms": 1825.615253,
+    "ack_age_p95_ms": 1277.803964,
+    "worker": {
+      "dataset_admissible": false,
+      "live_physical_quest_qualified": false,
+      "scope": "live producer separate renderer process",
+      "excluded_dynamic_bodies": [
+        "/World/RobosynDemo/ValidationProbe"
+      ],
+      "witness": true,
+      "passed": true,
+      "encoder": {
+        "dataset_admissible": false,
+        "counts": [
+          121,
+          121,
+          121
+        ],
+        "max_pending": [
+          3,
+          3,
+          3
+        ],
+        "drain_ms": 138.266804,
+        "cuda_device_max_connections": "1",
+        "errors": [],
+        "synchronization": "OVRTX map producer-event wait -> clone -> NVENC copy/encode on one stream; packet ordinal ACK owns lifetime",
+        "pixel_alignment_proven": false
+      },
+      "captures": 121,
+      "encode_done_ns": 3780382983942806,
+      "encode_drain_ms": 138.282098,
+      "completed_elapsed_s": 3.833039396,
+      "steady_worker_mean_ms": 12.164259016393444,
+      "decoded": [
+        {
+          "role": 0,
+          "count": 121,
+          "expected": 121,
+          "errors": [],
+          "passed": true
+        },
+        {
+          "role": 1,
+          "count": 121,
+          "expected": 121,
+          "errors": [],
+          "passed": true
+        },
+        {
+          "role": 2,
+          "count": 121,
+          "expected": 121,
+          "errors": [],
+          "passed": true
+        }
+      ],
+      "verification_ms": 625.055874
+    },
+    "excluded_dynamic_bodies": [
+      "/World/RobosynDemo/ValidationProbe"
+    ],
+    "ack_semantics": "worker consumed snapshot and submitted3GPUframes; encoded completion verified at final drain"
+  },
+  "transitions": {
+    "accepted_transactions": 120,
+    "committed_frames": 120,
+    "requested_control_steps": 120,
+    "completed_control_budget": true,
+    "stopped_by_user": false,
+    "input_pump_calls": 0,
+    "processor_revision": "piper_x_isaac_s2_bimanual_relative_v3",
+    "source": "deterministic_injected_xr_v1",
+    "rgb_e2e_assay": false,
+    "input_targets_sha256": "de361c66dea57f9b8c07484cf054bcc870e3788a5754883fd14a56d22c34e1e9",
+    "left_transition_counts": {
+      "motion": 120
+    }
+  },
+  "performance": {
+    "event": "performance_summary",
+    "schema": "piper_x_isaac_s2_performance_v1",
+    "monotonic_ns": 3780382836215473,
+    "step_first": 31,
+    "step_last": 120,
+    "control": {
+      "samples": 90,
+      "mean_ms": 19.092083955555555,
+      "p50_ms": 18.518608,
+      "p90_ms": 20.8379807,
+      "p95_ms": 21.6275731,
+      "p99_ms": 23.350664679999994,
+      "p99_9_ms": 31.19460776800001,
+      "max_ms": 32.066157
+    },
+    "wall_control": {
+      "samples": 89,
+      "mean_ms": 20.983547426966293,
+      "p50_ms": 20.1818,
+      "p90_ms": 23.6123188,
+      "p95_ms": 24.039844199999997,
+      "p99_ms": 26.38787308000004,
+      "p99_9_ms": 33.00068420800005,
+      "max_ms": 33.735441
+    },
+    "effective_wall_hz": 47.656384292528344,
+    "wall_rtf": 0.9531276858505668,
+    "wall_deadline_misses": 50,
+    "wall_deadline_miss_fraction": 0.5617977528089888,
+    "effective_hz": 52.37772902779493,
+    "deadline_ms": 20.0,
+    "deadline_misses": 26,
+    "deadline_miss_fraction": 0.28888888888888886,
+    "stages": {
+      "causal_commit_and_record": {
+        "samples": 90,
+        "mean_ms": 1.9285289666666667,
+        "p50_ms": 1.487042,
+        "p90_ms": 2.8399880000000004,
+        "p95_ms": 2.8611702,
+        "p99_ms": 4.221731019999994,
+        "p99_9_ms": 13.479514402000017,
+        "max_ms": 14.508157
+      },
+      "injected_decision_apply": {
+        "samples": 90,
+        "mean_ms": 0.7493611,
+        "p50_ms": 0.680723,
+        "p90_ms": 1.0573591,
+        "p95_ms": 1.12152515,
+        "p99_ms": 1.1656453799999997,
+        "p99_9_ms": 1.177466538,
+        "max_ms": 1.17878
+      },
+      "observation_capture": {
+        "samples": 90,
+        "mean_ms": 0.0028074,
+        "p50_ms": 0.0026915000000000003,
+        "p90_ms": 0.0034145000000000017,
+        "p95_ms": 0.0039421000000000005,
+        "p99_ms": 0.0042213,
+        "p99_9_ms": 0.00440553,
+        "max_ms": 0.004426
+      },
+      "runtime_bookkeeping": {
+        "samples": 90,
+        "mean_ms": 0.007096366666666667,
+        "p50_ms": 0.006257499999999999,
+        "p90_ms": 0.0100288,
+        "p95_ms": 0.0104339,
+        "p99_ms": 0.012549639999999997,
+        "p99_9_ms": 0.014811664000000004,
+        "max_ms": 0.015063
+      },
+      "simulation_advance": {
+        "samples": 90,
+        "mean_ms": 14.430640388888888,
+        "p50_ms": 14.155086,
+        "p90_ms": 15.364698500000003,
+        "p95_ms": 15.57326755,
+        "p99_ms": 17.17675166,
+        "p99_9_ms": 17.504525666000003,
+        "max_ms": 17.540945
+      },
+      "successor_capture": {
+        "samples": 90,
+        "mean_ms": 1.9617887999999999,
+        "p50_ms": 1.6295675,
+        "p90_ms": 2.8565851999999996,
+        "p95_ms": 2.87903325,
+        "p99_ms": 2.92412149,
+        "p99_9_ms": 2.926011049,
+        "max_ms": 2.926221
+      },
+      "teleop_advance": {
+        "samples": 90,
+        "mean_ms": 0.0002717777777777778,
+        "p50_ms": 0.00025049999999999996,
+        "p90_ms": 0.0003577000000000001,
+        "p95_ms": 0.0003942,
+        "p99_ms": 0.0005288499999999999,
+        "p99_9_ms": 0.0007170850000000003,
+        "max_ms": 0.000738
+      }
+    },
+    "nested_stages_not_additive": {
+      "camera_update": {
+        "samples": 90,
+        "mean_ms": 0.004810522222222223,
+        "p50_ms": 0.0047045,
+        "p90_ms": 0.0054845000000000015,
+        "p95_ms": 0.0056097000000000004,
+        "p99_ms": 0.00595853,
+        "p99_9_ms": 0.006457553,
+        "max_ms": 0.006513
+      },
+      "experiment_update": {
+        "samples": 90,
+        "mean_ms": 0.011359155555555556,
+        "p50_ms": 0.0112645,
+        "p90_ms": 0.0132385,
+        "p95_ms": 0.013805999999999999,
+        "p99_ms": 0.014167949999999999,
+        "p99_9_ms": 0.015405495000000002,
+        "max_ms": 0.015543
+      },
+      "physics_probe_update": {
+        "samples": 90,
+        "mean_ms": 0.007566122222222222,
+        "p50_ms": 0.007515,
+        "p90_ms": 0.0087361,
+        "p95_ms": 0.008982,
+        "p99_ms": 0.009343770000000001,
+        "p99_9_ms": 0.009349376999999999,
+        "max_ms": 0.00935
+      },
+      "physics_target_write": {
+        "samples": 90,
+        "mean_ms": 0.9261751333333333,
+        "p50_ms": 0.8651709999999999,
+        "p90_ms": 1.2100186,
+        "p95_ms": 1.3035579999999998,
+        "p99_ms": 1.3766599300000002,
+        "p99_9_ms": 1.383999493,
+        "max_ms": 1.384815
+      },
+      "robot_update": {
+        "samples": 90,
+        "mean_ms": 0.5106557333333334,
+        "p50_ms": 0.5012265,
+        "p90_ms": 0.5996753,
+        "p95_ms": 0.6210725,
+        "p99_ms": 0.64480962,
+        "p99_9_ms": 0.666710562,
+        "max_ms": 0.669144
+      },
+      "sim_step": {
+        "samples": 90,
+        "mean_ms": 12.9319718,
+        "p50_ms": 12.765814500000001,
+        "p90_ms": 13.516584900000002,
+        "p95_ms": 13.8113642,
+        "p99_ms": 15.81940983,
+        "p99_9_ms": 16.124793483,
+        "max_ms": 16.158725
+      }
+    },
+    "instrumentation_write": {
+      "samples": 90,
+      "mean_ms": 0.024408344444444445,
+      "p50_ms": 0.019769500000000002,
+      "p90_ms": 0.032454000000000045,
+      "p95_ms": 0.04037684999999999,
+      "p99_ms": 0.06548648999999998,
+      "p99_9_ms": 0.08772144900000003,
+      "max_ms": 0.090192
+    },
+    "unattributed": {
+      "samples": 90,
+      "mean_ms": 0.011589155555555229,
+      "p50_ms": 0.011004999999999043,
+      "p90_ms": 0.013738600000000645,
+      "p95_ms": 0.014433649999997833,
+      "p99_ms": 0.01655261000000017,
+      "p99_9_ms": 0.019557161000001117,
+      "max_ms": 0.019891000000001213
+    },
+    "log_path": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/performance.jsonl",
+    "warmup_steps_excluded": 30,
+    "total_logged_steps": 90,
+    "host_timing_only_no_added_cuda_synchronization": true,
+    "boundaries": {}
+  },
+  "packet_counts": [
+    0,
+    0,
+    0
+  ],
+  "empty_packets": [
+    0,
+    0,
+    0
+  ],
+  "whole_working_s": 3.7037287610583007,
+  "drain_s": 2.075863114092499,
+  "physics_ablation": {
+    "variant": "baseline",
+    "dataset_admissible": false,
+    "physics_dt_unchanged": true,
+    "per_substep_submit_preserved": true,
+    "acceleration_semantics": "unchanged",
+    "effort_telemetry_semantics": "unchanged",
+    "groups": 120,
+    "full_writes": 0,
+    "cached_submits": 0,
+    "lazy_updates": 0
+  },
+  "finished_utc": "2026-10-09T13:53:40Z"
+}

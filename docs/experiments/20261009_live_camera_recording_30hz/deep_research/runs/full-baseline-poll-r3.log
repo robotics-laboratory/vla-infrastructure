@@ -1,0 +1,1014 @@
+Loading user config located at: '/data/ebulochkin/vla-runtime/isaac-isaac61/kit/data/Kit/IsaacLab/3.0/user.config.json'
+2026-10-09T12:44:40Z [Info] [carb] Logging to file: /data/ebulochkin/vla-runtime/isaac-isaac61/kit/logs/Kit/IsaacLab/3.0/kit_20261009_154440.log
+2026-10-09T12:44:41Z [23ms] [Warning] [omni.ext.plugin] [ext: isaaclab_ov] Extensions config 'extension.toml' doesn't exist '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_ov' or '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_ov/config'
+2026-10-09T12:44:41Z [23ms] [Warning] [omni.ext.plugin] [ext: isaaclab_tasks] Extensions config 'extension.toml' doesn't exist '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_tasks' or '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_tasks/config'
+2026-10-09T12:44:41Z [26ms] [Warning] [omni.ext.plugin] [ext: isaaclab_tasks_experimental] Extensions config 'extension.toml' doesn't exist '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_tasks_experimental' or '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_tasks_experimental/config'
+2026-10-09T12:44:41Z [28ms] [Warning] [omni.ext.plugin] [ext: isaaclab_mimic] Extensions config 'extension.toml' doesn't exist '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_mimic' or '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_mimic/config'
+2026-10-09T12:44:41Z [29ms] [Warning] [omni.ext.plugin] [ext: isaaclab_assets] Extensions config 'extension.toml' doesn't exist '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_assets' or '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_assets/config'
+2026-10-09T12:44:41Z [29ms] [Warning] [omni.ext.plugin] [ext: isaaclab_ovphysx] Extensions config 'extension.toml' doesn't exist '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_ovphysx' or '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_ovphysx/config'
+2026-10-09T12:44:41Z [29ms] [Warning] [omni.ext.plugin] [ext: isaaclab_rl] Extensions config 'extension.toml' doesn't exist '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_rl' or '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_rl/config'
+2026-10-09T12:44:41Z [29ms] [Warning] [omni.ext.plugin] [ext: isaaclab_ppisp] Extensions config 'extension.toml' doesn't exist '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_ppisp' or '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_ppisp/config'
+2026-10-09T12:44:41Z [29ms] [Warning] [omni.ext.plugin] [ext: isaaclab_physx] Extensions config 'extension.toml' doesn't exist '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx' or '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/config'
+2026-10-09T12:44:41Z [30ms] [Warning] [omni.ext.plugin] [ext: isaaclab_teleop] Extensions config 'extension.toml' doesn't exist '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_teleop' or '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_teleop/config'
+2026-10-09T12:44:41Z [31ms] [Warning] [omni.ext.plugin] [ext: isaaclab_contrib] Extensions config 'extension.toml' doesn't exist '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_contrib' or '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_contrib/config'
+2026-10-09T12:44:41Z [31ms] [Warning] [omni.ext.plugin] [ext: isaaclab_visualizers] Extensions config 'extension.toml' doesn't exist '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_visualizers' or '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_visualizers/config'
+2026-10-09T12:44:41Z [33ms] [Warning] [omni.ext.plugin] [ext: isaaclab] Extensions config 'extension.toml' doesn't exist '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab' or '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/config'
+2026-10-09T12:44:41Z [33ms] [Warning] [omni.ext.plugin] [ext: isaaclab_experimental] Extensions config 'extension.toml' doesn't exist '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_experimental' or '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_experimental/config'
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1791549881.083431 2713950 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto
+W0000 00:00:1791549881.083468 2713950 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto
+2026-10-09T12:44:41Z [34ms] [Warning] [omni.ext.plugin] [ext: isaaclab_newton] Extensions config 'extension.toml' doesn't exist '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_newton' or '/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_newton/config'
+2026-10-09T12:44:41Z [334ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.
+2026-10-09T12:44:41Z [717ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-10-09T12:44:41Z [717ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-10-09T12:44:41Z [871ms] [Warning] [omni.rtx] Skipping unsupported non-NVIDIA GPU: Intel(R) Graphics (RPL-S)
+2026-10-09T12:44:41Z [872ms] [Warning] [omni.rtx] Skipping unsupported non-NVIDIA GPU: Intel(R) Graphics (RPL-S)
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 580.159.03    | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA GeForce RTX 4090          | Yes: 0 |     | 24564   MB | 10de      | 0          |
+|     |                                  |        |     |            | 2684      | 0b554a02.. |
+|     |                                  |        |     |            | 1         |            |
+|---------------------------------------------------------------------------------------------|
+| 1   | Intel(R) Graphics (RPL-S)        |        |     | 23894   MB | 8086      | 0          |
+|     |                                  |        |     |            | a780      | 868080a7.. |
+|     |                                  |        |     |            | 0         |            |
+|=============================================================================================|
+| OS: 22.04.5 LTS (Jammy Jellyfish) ubuntu, Version: 22.04.5, Kernel: 6.8.0-124-generic
+| Processor: 13th Gen Intel(R) Core(TM) i7-13700K
+| Bare Metal Cores: 16 | Bare Metal Logical Cores: 32
+| Available Cores:  24 
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 31859 | Free Memory: 24194
+| Total Page/Swap (MB): 67583 | Free Page/Swap: 64446
+|---------------------------------------------------------------------------------------------|
+2026-10-09T12:44:42Z [1,273ms] [Warning] [omni.rtx] CPU performance profile is set to powersave. This profile sets the CPU to the lowest frequency reducing performance.
+2026-10-09T12:44:42Z [1,282ms] [Warning] [omni.rtx] IOMMU is enabled.
+2026-10-09T12:44:42Z [1,781ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-10-09T12:44:42Z [1,781ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-10-09T12:44:42Z [1,848ms] [Warning] [omni.log] Source: omni.hydra was already registered.
+2026-10-09T12:44:42Z [1,867ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-10-09T12:44:42Z [1,867ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-10-09T12:44:42Z [1,868ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-10-09T12:44:42Z [1,868ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+[ISAACLAB] AppLauncher initialization complete
+[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl
+[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl
+[ISAACLAB] Kit hash:    00c488ae
+[S1] loading checked configuration
+[VR] profile=dual_cube_to_matching_plates physical_human_gate=required
+[INFO]: Registered backend 'physx' for factory RigidObject.
+[INFO]: Registered backend 'physx' for factory Articulation.
+[INFO]: Registered backend 'physx' for factory ContactSensor.
+2026-10-09T12:44:43Z [2,235ms] [Warning] [pxr.Semantics] pxr.Semantics is deprecated - please use Semantics instead
+2026-10-09T12:44:43Z [2,293ms] [Warning] [omni.replicator.core.scripts.extension] No material configuration file, adding configuration to material settings directly.
+2026-10-09T12:44:44Z [3,527ms] [Warning] [rtx.hydra] RenderDelegate : Warning /rtx/hydra/readTransformsFromFabricInRenderDelegate and geometry streaming are enabled together but this can cause issues with dynamic objects not streaming correctly due to problems in the transform update.
+2026-10-09T12:44:48Z [7,725ms] [Warning] [omni.usd] Encountered USD Warnings but USD Diagnostics are currently muted. To view USD Warnings, please set the '/persistent/app/usd/muteUsdDiagnostics' setting to false in Preferences page.
+2026-10-09T12:44:48Z [7,829ms] [Error] [omni.physx.fabric.plugin] cuMemAlloc failed (CUresult 2) at /builds/omniverse/physics/omni/ovruntime/source/omni.physx.fabric/plugins/DirectGpuHelper.cpp:293
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper - Cuda error in allocate on device: out of memory
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 128).
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper: paths and attributes arrays size mismatch for omni:fabric:worldMatrix
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper - Cuda error in allocate on device: out of memory
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 12).
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper: paths and attributes arrays size mismatch for physics:velocity
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper - Cuda error in allocate on device: out of memory
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 12).
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper: paths and attributes arrays size mismatch for physics:angularVelocity
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper - Cuda error in allocate on device: out of memory
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 24).
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper: paths and attributes arrays size mismatch for _rigidBodyWorldPosition
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper - Cuda error in allocate on device: out of memory
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 16).
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper: paths and attributes arrays size mismatch for _rigidBodyWorldOrientation
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper - Cuda error in allocate on device: out of memory
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 12).
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper: paths and attributes arrays size mismatch for _rigidBodyWorldScale
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper - Cuda error in allocate on device: out of memory
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper: paths and attributes arrays size mismatch for omni:fabric:worldMatrix
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper - Cuda error in allocate on device: out of memory
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper: paths and attributes arrays size mismatch for physics:velocity
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper - Cuda error in allocate on device: out of memory
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper: paths and attributes arrays size mismatch for physics:angularVelocity
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper - Cuda error in allocate on device: out of memory
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper: paths and attributes arrays size mismatch for _rigidBodyWorldPosition
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper - Cuda error in allocate on device: out of memory
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper: paths and attributes arrays size mismatch for _rigidBodyWorldOrientation
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper - Cuda error in allocate on device: out of memory
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.physx.fabric.plugin] FabricMapper: paths and attributes arrays size mismatch for _rigidBodyWorldScale
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 256).
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 24).
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 24).
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 48).
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 32).
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 24).
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 2816).
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,833ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 264).
+2026-10-09T12:44:48Z [7,833ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 264).
+2026-10-09T12:44:48Z [7,834ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 528).
+2026-10-09T12:44:48Z [7,834ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 352).
+2026-10-09T12:44:48Z [7,834ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 264).
+2026-10-09T12:44:48Z [7,834ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 256).
+2026-10-09T12:44:48Z [7,834ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 24).
+2026-10-09T12:44:48Z [7,834ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 24).
+2026-10-09T12:44:48Z [7,834ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 48).
+2026-10-09T12:44:48Z [7,834ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 32).
+2026-10-09T12:44:48Z [7,834ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] CUDA error 2: cudaErrorMemoryAllocation - out of memory)
+2026-10-09T12:44:48Z [7,834ms] [Error] [carb.cudainterop.plugin] Failed to allocate CUDA device memory (size: 24).
+2026-10-09T12:44:48Z [7,834ms] [Error] [omni.rtx] CUDA error in mallocAsyncM: out of memory: ../../../source/plugins/omni.gpucompute-cuda/GpuCompute-Cuda.cpp: 323 (device 0)
+2026-10-09T12:44:48Z [7,849ms] [Error] [omni.physx.fabric.plugin] CUDA driver shim call failed at /builds/omniverse/physics/omni/ovruntime/source/omni.physx.fabric/plugins/DirectGpuHelper.cpp:1043
+../../../source/sharedlibs/cubric/lib/cubric_update_compute.cu(1330)[compile_kernel]: [cubric error] Failure on cudaGetFuncBySymbol, error (700)
+../../../source/sharedlibs/cubric/lib/cubric_update_compute.cu(1330)[compile_kernel]: [cubric error] Failure on cudaGetFuncBySymbol, error (700)
+../../../source/sharedlibs/cubric/lib/cubric_update_compute.cu(1330)[compile_kernel]: [cubric error] Failure on cudaGetFuncBySymbol, error (700)
+../../../source/sharedlibs/cubric/lib/cubric_update_compute.cu(1330)[compile_kernel]: [cubric error] Failure on cudaGetFuncBySymbol, error (700)
+../../../source/sharedlibs/cubric/lib/cubric_update_compute.cu(1330)[compile_kernel]: [cubric error] Failure on cudaGetFuncBySymbol, error (700)
+../../../source/sharedlibs/cubric/lib/cubric_update_compute.cu(1330)[compile_kernel]: [cubric error] Failure on cudaGetFuncBySymbol, error (700)
+2026-10-09T12:44:49Z [0ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash] A crash has occurred.  If a debugger should be attached, please set the '/crashreporter/debuggerAttachTimeoutMs' setting to a timeout in milliseconds.  This can be used to allow the crash reporter to wait for up to that long for a debugger to attach before processing or sending the crash report.
+2026-10-09T12:44:49Z [95ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash] compressing 4 files into '/data/ebulochkin/vla-runtime/isaac-isaac61/kit/data/Kit/IsaacLab/3.0/565906a5-06a2-4226-2a95c981-b56b22a1.dmp.zip' for upload.
+2026-10-09T12:44:49Z [97ms] [Warning] [carb.crashreporter-breakpad.plugin] failed to open the input file '/data/ebulochkin/vla-runtime/isaac-isaac61/kit/logs/Kit/IsaacLab/3.0/kit_20261009_154440.nvcudmp' for read.
+2026-10-09T12:44:49Z [288ms] [Info] [carb.crashreporter-breakpad.plugin] attempting to delete the file '/data/ebulochkin/vla-runtime/isaac-isaac61/kit/data/Kit/IsaacLab/3.0/565906a5-06a2-4226-2a95c981-b56b22a1.dmp' with 10 retries remaining.
+2026-10-09T12:44:49Z [290ms] [Info] [carb.crashreporter-breakpad.plugin] attempting to delete the file '/data/ebulochkin/vla-runtime/isaac-isaac61/kit/data/Kit/IsaacLab/3.0/565906a5-06a2-4226-2a95c981-b56b22a1.dmp.toml' with 10 retries remaining.
+2026-10-09T12:44:49Z [293ms] [Error] [carb.crashreporter-breakpad.plugin] [crash] Wrote dump file '/data/ebulochkin/vla-runtime/isaac-isaac61/kit/data/Kit/IsaacLab/3.0/565906a5-06a2-4226-2a95c981-b56b22a1.dmp.zip'
+2026-10-09T12:44:49Z [294ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash] Uploading minidump: file:'/data/ebulochkin/vla-runtime/isaac-isaac61/kit/data/Kit/IsaacLab/3.0/565906a5-06a2-4226-2a95c981-b56b22a1.dmp.zip' svr:'https://services.nvidia.com/submit'
+2026-10-09T12:44:49Z [296ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash] Crash metadata for upload:
+2026-10-09T12:44:49Z [297ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'BuildGitlabJobID' = '413372077'
+2026-10-09T12:44:49Z [298ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'CarbSdkVersion' = '210.3.2+release.14366.2926fc80.gl'
+2026-10-09T12:44:49Z [299ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'CrashTime' = 'Fri Oct  9 12:44:49 2026 GMT'
+2026-10-09T12:44:49Z [300ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'DriverShaderCacheWrapper' = 'disabled'
+2026-10-09T12:44:49Z [301ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'DumpId' = '565906a5-06a2-4226-2a95c981-b56b22a1'
+2026-10-09T12:44:49Z [303ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'GlibcVersion' = '2.35'
+2026-10-09T12:44:49Z [304ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'LastUploadStatus' = ''
+2026-10-09T12:44:49Z [305ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'ProductName' = 'OmniverseKit'
+2026-10-09T12:44:49Z [306ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'PythonTracebackStatus' = ''py-spy' successfully wrote info to '/data/ebulochkin/vla-runtime/isaac-isaac61/kit/data/Kit/IsaacLab/3.0/565906a5-06a2-4226-2a95c981-b56b22a1.py.txt''
+2026-10-09T12:44:49Z [307ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'RetryCount' = '0'
+2026-10-09T12:44:49Z [308ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'StartupTime' = '1791549880'
+2026-10-09T12:44:49Z [310ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'UploadSuccessful' = '0'
+2026-10-09T12:44:49Z [311ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'UptimeSeconds' = '9'
+2026-10-09T12:44:49Z [312ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'UserEmail' = ''
+2026-10-09T12:44:49Z [313ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'UserStory' = ''
+2026-10-09T12:44:49Z [315ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'UserStoryStatus' = 'Running in headless mode; not gathering user story'
+2026-10-09T12:44:49Z [316ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'Version' = '110.3.0+feature.371399.00c488ae.gl'
+2026-10-09T12:44:49Z [317ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'aftermath_enabled' = '1'
+2026-10-09T12:44:49Z [319ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'aftermath_flags' = '3'
+2026-10-09T12:44:49Z [321ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'aftermath_status' = 'auto-enabled'
+2026-10-09T12:44:49Z [322ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'aftermath_version' = '2025.5'
+2026-10-09T12:44:49Z [323ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'appName' = 'IsaacLab'
+2026-10-09T12:44:49Z [325ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'appState' = 'started'
+2026-10-09T12:44:49Z [326ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'appVersion' = '3.0.0'
+2026-10-09T12:44:49Z [327ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'autoloadExts' = ''
+2026-10-09T12:44:49Z [328ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'buildBranch' = 'feature'
+2026-10-09T12:44:49Z [329ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'buildCi' = 'gl'
+2026-10-09T12:44:49Z [330ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'buildConfig' = 'release'
+2026-10-09T12:44:49Z [331ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'buildGitlabJobName' = 'kit-build-release-linux-x86_64'
+2026-10-09T12:44:49Z [332ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'buildGitlabJobStage' = 'kit-build'
+2026-10-09T12:44:49Z [333ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'buildGitlabPipelineID' = '64742269'
+2026-10-09T12:44:49Z [334ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'buildHash' = '00c488ae'
+2026-10-09T12:44:49Z [335ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'buildMajor' = '110'
+2026-10-09T12:44:49Z [336ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'buildMinor' = '3'
+2026-10-09T12:44:49Z [338ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'buildNumber' = '371399'
+2026-10-09T12:44:49Z [339ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'buildPatch' = '0'
+2026-10-09T12:44:49Z [340ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'buildVersion' = '110.3.0'
+2026-10-09T12:44:49Z [341ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'carboniteFrameworkVersion' = '210.3.2+release.14366.2926fc80.gl'
+2026-10-09T12:44:49Z [342ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'carboniteSdkVersion' = '210.3.2+release.14366.2926fc80.gl'
+2026-10-09T12:44:49Z [343ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'commandLine' = '/data/vla-infrastructure/isaac61_production/env/bin/python /home/<username>/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/full_scene_probe.py --output /data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r3 --media poll --frames 300 --warmup 120'
+2026-10-09T12:44:49Z [345ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'cpuCoreLimited' = '24'
+2026-10-09T12:44:49Z [346ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'cpuId' = 'Intel64 Family 6 Model 183 Stepping 1'
+2026-10-09T12:44:49Z [347ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'cpuLogicalCoresBareMetal' = '32'
+2026-10-09T12:44:49Z [348ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'cpuName' = '13th Gen Intel(R) Core(TM) i7-13700K'
+2026-10-09T12:44:49Z [349ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'cpuPhysicalCoresBareMetal' = '16'
+2026-10-09T12:44:49Z [350ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'cpuUsageQuota' = '-1.000000'
+2026-10-09T12:44:49Z [352ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'cpuVendor' = 'GenuineIntel'
+2026-10-09T12:44:49Z [355ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'cuda_core_dumps_enabled' = '1'
+2026-10-09T12:44:49Z [359ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'environmentName' = 'Individual'
+2026-10-09T12:44:49Z [362ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'experience' = 'Isaac Sim'
+2026-10-09T12:44:49Z [366ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'externalBuild' = '1'
+2026-10-09T12:44:49Z [370ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'gpuDriver_0' = '580.159.3'
+2026-10-09T12:44:49Z [374ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'gpuVRAM_0' = '25757220864'
+2026-10-09T12:44:49Z [378ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'gpu_0' = 'NVIDIA GeForce RTX 4090'
+2026-10-09T12:44:49Z [381ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'graphicsApi' = 'vulkan'
+2026-10-09T12:44:49Z [382ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'kitRendererDriverVersion' = '580.159.3'
+2026-10-09T12:44:49Z [383ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'lib_isaacSim_buildBranch' = 'release'
+2026-10-09T12:44:49Z [384ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'lib_isaacSim_buildDate' = 'Fri Sep 4 19:36:03 2026 +0000'
+2026-10-09T12:44:49Z [385ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'lib_isaacSim_buildHash' = '2d230af'
+2026-10-09T12:44:49Z [386ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'lib_isaacSim_buildRepo' = 'https://gitlab-master.nvidia.com/omniverse/isaac/omni_isaac_sim.git'
+2026-10-09T12:44:49Z [387ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'lib_isaacSim_buildVersion' = '6.1.0-rc.26'
+2026-10-09T12:44:49Z [388ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'lib_physx_buildBranch' = 'HEAD'
+2026-10-09T12:44:49Z [390ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'lib_physx_buildDate' = 'Aug-20-2026'
+2026-10-09T12:44:49Z [391ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'lib_physx_buildHash' = '47ed92f'
+2026-10-09T12:44:49Z [392ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'lib_physx_buildRepo' = 'omniverse/physics'
+2026-10-09T12:44:49Z [393ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'lib_physx_buildVersion' = '110.3.2'
+2026-10-09T12:44:49Z [394ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'memoryStats' = '(avail/total) RAM: 19.2569/31.1125GB, Swap: 62.9359/66GB, VM: 1.71799e+10/1.71799e+10GB'
+2026-10-09T12:44:49Z [395ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'nvidia-smi' = '
+==============NVSMI LOG==============
+
+Timestamp                                              : Fri Oct  9 15:44:41 2026
+Driver Version                                         : 580.159.03
+CUDA Version                                           : 13.0
+
+Attached GPUs                                          : 1
+GPU 00000000:01:00.0
+    Product Name                                       : NVIDIA GeForce RTX 4090
+    Product Brand                                      : GeForce
+    Product Architecture                               : Ada Lovelace
+    Display Mode                                       : Requested functionality has been deprecated
+    Display Attached                                   : No
+    Display Active                                     : Disabled
+    Persistence Mode                                   : Disabled
+    Addressing Mode                                    : None
+    MIG Mode
+        Current                                        : N/A
+        Pending                                        : N/A
+    Accounting Mode                                    : Disabled
+    Accounting Mode Buffer Size                        : 4000
+    Driver Model
+        Current                                        : N/A
+        Pending                                        : N/A
+    Serial Number                                      : N/A
+    GPU UUID                                           : GPU-0b554a02-6a7f-2ffc-0af5-fdfaebe2736c
+    GPU PDI                                            : 0xe6f858d6a1fc220
+    Minor Number                                       : 0
+    VBIOS Version                                      : 95.02.18.80.53
+    MultiGPU Board                                     : No
+    Board ID                                           : 0x100
+    Board Part Number                                  : N/A
+    GPU Part Number                                    : 2684-300-A1
+    FRU Part Number                                    : N/A
+    Platform Info
+        Chassis Serial Number                          : N/A
+        Slot Number                                    : N/A
+        Tray Index                                     : N/A
+        Host ID                                        : N/A
+        Peer Type                                      : N/A
+        Module Id                                      : 1
+        GPU Fabric GUID                                : N/A
+    Inforom Version
+        Image Version                                  : G002.0000.00.03
+        OEM Object                                     : 2.0
+        ECC Object                                     : 6.16
+        Power Management Object                        : N/A
+    Inforom BBX Object Flush
+        Latest Timestamp                               : N/A
+        Latest Duration                                : N/A
+    GPU Operation Mode
+        Current                                        : N/A
+        Pending                                        : N/A
+    GPU C2C Mode                                       : N/A
+    GPU Virtualization Mode
+        Virtualization Mode                            : None
+        Host VGPU Mode                                 : N/A
+        vGPU Heterogeneous Mode                        : N/A
+    GPU Recovery Action                                : None
+    GSP Firmware Version                               : 580.159.03
+    IBMNPU
+        Relaxed Ordering Mode                          : N/A
+    PCI
+        Bus                                            : 0x01
+        Device                                         : 0x00
+        Domain                                         : 0x0000
+        Base Classcode                                 : 0x3
+        Sub Classcode                                  : 0x0
+        Device Id                                      : 0x268410DE
+        Bus Id                                         : 00000000:01:00.0
+        Sub System Id                                  : 0xF2961569
+        GPU Link Info
+            PCIe Generation
+                Max                                    : 4
+                Current                                : 4
+                Device Current                         : 4
+                Device Max                             : 4
+                Host Max                               : 4
+            Link Width
+                Max                                    : 16x
+                Current                                : 16x
+        Bridge Chip
+            Type                                       : N/A
+            Firmware                                   : N/A
+        Replays Since Reset                            : 0
+        Replay Number Rollovers                        : 0
+        Tx Throughput                                  : 1079931 KB/s
+        Rx Throughput                                  : 10058740 KB/s
+        Atomic Caps Outbound                           : N/A
+        Atomic Caps Inbound                            : N/A
+    Fan Speed                                          : 32 %
+    Performance State                                  : P2
+    Clocks Event Reasons
+        Idle                                           : Not Active
+        Applications Clocks Setting                    : Not Active
+        SW Power Cap                                   : Not Active
+        HW Slowdown                                    : Not Active
+            HW Thermal Slowdown                        : Not Active
+            HW Power Brake Slowdown                    : Not Active
+        Sync Boost                                     : Not Active
+        SW Thermal Slowdown                            : Not Active
+        Display Clock Setting                          : Not Active
+    Clocks Event Reasons Counters
+        SW Power Capping                               : 0 us
+        Sync Boost                                     : 0 us
+        SW Thermal Slowdown                            : 0 us
+        HW Thermal Slowdown                            : 0 us
+        HW Power Braking                               : 0 us
+    Sparse Operation Mode                              : N/A
+    FB Memory Usage
+        Total                                          : 24564 MiB
+        Reserved                                       : 484 MiB
+        Used                                           : 20190 MiB
+        Free                                           : 3892 MiB
+    BAR1 Memory Usage
+        Total                                          : 32768 MiB
+        Used                                           : 20192 MiB
+        Free                                           : 12576 MiB
+    Conf Compute Protected Memory Usage
+        Total                                          : 0 MiB
+        Used                                           : 0 MiB
+        Free                                           : 0 MiB
+    Compute Mode                                       : Default
+    Utilization
+        GPU                                            : 90 %
+        Memory                                         : 40 %
+        Encoder                                        : 0 %
+        Decoder                                        : 0 %
+        JPEG                                           : 0 %
+        OFA                                            : 0 %
+    Encoder Stats
+        Active Sessions                                : 0
+        Average FPS                                    : 0
+        Average Latency                                : 0
+    FBC Stats
+        Active Sessions                                : 0
+        Average FPS                                    : 0
+        Average Latency                                : 0
+    DRAM Encryption Mode
+        Current                                        : N/A
+        Pending                                        : N/A
+    ECC Mode
+        Current                                        : Disabled
+        Pending                                        : Disabled
+    ECC Errors
+        Volatile
+            SRAM Correctable                           : N/A
+            SRAM Uncorrectable Parity                  : N/A
+            SRAM Uncorrectable SEC-DED                 : N/A
+            DRAM Correctable                           : N/A
+            DRAM Uncorrectable                         : N/A
+        Aggregate
+            SRAM Correctable                           : N/A
+            SRAM Uncorrectable Parity                  : N/A
+            SRAM Uncorrectable SEC-DED                 : N/A
+            DRAM Correctable                           : N/A
+            DRAM Uncorrectable                         : N/A
+            SRAM Threshold Exceeded                    : N/A
+        Aggregate Uncorrectable SRAM Sources
+            SRAM L2                                    : N/A
+            SRAM SM                                    : N/A
+            SRAM Microcontroller                       : N/A
+            SRAM PCIE                                  : N/A
+            SRAM Other                                 : N/A
+        Channel Repair Pending                         : No
+        TPC Repair Pending                             : No
+        Unrepairable Memory                            : N/A
+    Retired Pages
+        Single Bit ECC                                 : N/A
+        Double Bit ECC                                 : N/A
+        Pending Page Blacklist                         : N/A
+    Remapped Rows
+        Correctable Error                              : 0
+        Inactive Correctable Error                     : 0
+        Uncorrectable Error                            : 0
+        Inactive Uncorrectable Error                   : 0
+        Pending                                        : No
+        Remapping Failure Occurred                     : No
+        Bank Remap Availability Histogram
+            Max                                        : 192 bank(s)
+            High                                       : 0 bank(s)
+            Partial                                    : 0 bank(s)
+            Low                                        : 0 bank(s)
+            None                                       : 0 bank(s)
+    Temperature
+        GPU Current Temp                               : 61 C
+        GPU T.Limit Temp                               : 25 C
+        GPU Shutdown T.Limit Temp                      : -7 C
+        GPU Slowdown T.Limit Temp                      : -2 C
+        GPU Max Operating T.Limit Temp                 : 0 C
+        GPU Target Temperature                         : 84 C
+        Memory Current Temp                            : N/A
+        Memory Max Operating T.Limit Temp              : N/A
+    GPU Power Readings
+        Average Power Draw                             : 204.38 W
+        Instantaneous Power Draw                       : 173.71 W
+        Current Power Limit                            : 450.00 W
+        Requested Power Limit                          : 450.00 W
+        Default Power Limit                            : 450.00 W
+        Min Power Limit                                : 150.00 W
+        Max Power Limit                                : 450.00 W
+    GPU Memory Power Readings 
+        Average Power Draw                             : N/A
+        Instantaneous Power Draw                       : N/A
+    Module Power Readings
+        Average Power Draw                             : N/A
+        Instantaneous Power Draw                       : N/A
+        Current Power Limit                            : N/A
+        Requested Power Limit                          : N/A
+        Default Power Limit                            : N/A
+        Min Power Limit                                : N/A
+        Max Power Limit                                : N/A
+    Power Smoothing                                    : N/A
+    Workload Power Profiles
+        Requested Profiles                             : N/A
+        Enforced Profiles                              : N/A
+    Clocks
+        Graphics                                       : 2730 MHz
+        SM                                             : 2730 MHz
+        Memory                                         : 10251 MHz
+        Video                                          : 2100 MHz
+    Applications Clocks
+        Graphics                                       : N/A
+        Memory                                         : N/A
+    Default Applications Clocks
+        Graphics                                       : N/A
+        Memory                                         : N/A
+    Deferred Clocks
+        Memory                                         : N/A
+    Max Clocks
+        Graphics                                       : 3105 MHz
+        SM                                             : 3105 MHz
+        Memory                                         : 10501 MHz
+        Video                                          : 2415 MHz
+    Max Customer Boost Clocks
+        Graphics                                       : N/A
+    Clock Policy
+        Auto Boost                                     : N/A
+        Auto Boost Default                             : N/A
+    Fabric
+        State                                          : N/A
+        Status                                         : N/A
+        CliqueId                                       : N/A
+        ClusterUUID                                    : N/A
+        Health
+            Summary                                    : N/A
+            Bandwidth                                  : N/A
+            Route Recovery in progress                 : N/A
+            Route Unhealthy                            : N/A
+            Access Timeout Recovery                    : N/A
+            Incorrect Configuration                    : N/A
+            Partition Assigned                         : N/A
+    Processes
+        GPU instance ID                   : N/A
+        Compute instance ID               : N/A
+        Process ID                        : 2305
+            Type                          : G
+            Name                          : ............./Xorg
+            Used GPU Memory               : 58 MiB
+        GPU instance ID                   : N/A
+        Compute instance ID               : N/A
+        Process ID                        : 2371
+            Type                          : G
+            Name                          : ......../gnome-shell
+            Used GPU Memory               : 10 MiB
+        GPU instance ID                   : N/A
+        Compute instance ID               : N/A
+        Process ID                        : 3293
+            Type                          : G
+            Name                          : xfwm4
+            Used GPU Memory               : 7 MiB
+        GPU instance ID                   : N/A
+        Compute instance ID               : N/A
+        Process ID                        : 2710393
+            Type                          : C
+            Name                          : .................................../python
+            Used GPU Memory               : 20064 MiB
+    Capabilities
+        EGM                                            : disabled
+
+'
+2026-10-09T12:44:49Z [397ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'osDistro' = 'ubuntu'
+2026-10-09T12:44:49Z [398ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'osName' = '22.04.5 LTS (Jammy Jellyfish)'
+2026-10-09T12:44:49Z [399ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'osVersion' = '22.04.5'
+2026-10-09T12:44:49Z [400ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'portableMode' = '1'
+2026-10-09T12:44:49Z [401ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'runEnvironment' = 'Individual'
+2026-10-09T12:44:49Z [402ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'runningInContainer' = '0'
+2026-10-09T12:44:49Z [403ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'shaderdb_debugSymbols' = '0'
+2026-10-09T12:44:49Z [405ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'shaderdb_dumpIncludeOverrides' = '0'
+2026-10-09T12:44:49Z [406ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'shaderdb_dumpIntermediates' = '0'
+2026-10-09T12:44:49Z [407ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'shaderdb_obfuscateCode' = '1'
+2026-10-09T12:44:49Z [408ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'shaderdb_optimizationLevel' = '1'
+2026-10-09T12:44:49Z [409ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'shaderdb_separateDebugSymbols' = '0'
+2026-10-09T12:44:49Z [410ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'systemInfo' = '
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 580.159.03    | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA GeForce RTX 4090          | Yes: 0 |     | 24564   MB | 10de      | 0          |
+|     |                                  |        |     |            | 2684      | 0b554a02.. |
+|     |                                  |        |     |            | 1         |            |
+|---------------------------------------------------------------------------------------------|
+| 1   | Intel(R) Graphics (RPL-S)        |        |     | 23894   MB | 8086      | 0          |
+|     |                                  |        |     |            | a780      | 868080a7.. |
+|     |                                  |        |     |            | 0         |            |
+|=============================================================================================|
+| OS: 22.04.5 LTS (Jammy Jellyfish) ubuntu, Version: 22.04.5, Kernel: 6.8.0-124-generic
+| Processor: 13th Gen Intel(R) Core(TM) i7-13700K
+| Bare Metal Cores: 16 | Bare Metal Logical Cores: 32
+| Available Cores:  24 
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 31859 | Free Memory: 24194
+| Total Page/Swap (MB): 67583 | Free Page/Swap: 64446
+|---------------------------------------------------------------------------------------------|
+'
+2026-10-09T12:44:49Z [412ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'telemetrySessionId' = '9262620533412896769'
+2026-10-09T12:44:49Z [413ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'terminatedByAbort' = '0'
+2026-10-09T12:44:49Z [414ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'totalRamBareMetalMB' = '31859'
+2026-10-09T12:44:49Z [415ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'totalRamLimitedMB' = '31859'
+2026-10-09T12:44:49Z [417ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'totalSwapBareMetalMB' = '67583'
+2026-10-09T12:44:49Z [418ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'totalSwapLimitedMB' = '67583'
+2026-10-09T12:44:49Z [419ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'userId' = 'default'
+2026-10-09T12:44:49Z [420ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'workingDirectory' = '/home/<username>/vla_infrastructure'
+2026-10-09T12:44:49Z [421ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash] Crash report files for upload:
+2026-10-09T12:44:49Z [422ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]   'upload_file_minidump' = '/data/ebulochkin/vla-runtime/isaac-isaac61/kit/data/Kit/IsaacLab/3.0/565906a5-06a2-4226-2a95c981-b56b22a1.dmp.zip'
+2026-10-09T12:44:51Z [2,447ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash] uploaded minidump: file: '/data/ebulochkin/vla-runtime/isaac-isaac61/kit/data/Kit/IsaacLab/3.0/565906a5-06a2-4226-2a95c981-b56b22a1.dmp.zip', code:200, response:
+2026-10-09T12:44:51Z [2,453ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]     53210361-30e9-4678-8efd-e6fbff15c111
+2026-10-09T12:44:51Z [2,454ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash] Deleting file: '/data/ebulochkin/vla-runtime/isaac-isaac61/kit/data/Kit/IsaacLab/3.0/565906a5-06a2-4226-2a95c981-b56b22a1.dmp.zip' (use setting "/crashreporter/preserveDump=true" to save)
+2026-10-09T12:44:51Z [2,455ms] [Info] [carb.crashreporter-breakpad.plugin] attempting to delete the file '/data/ebulochkin/vla-runtime/isaac-isaac61/kit/data/Kit/IsaacLab/3.0/565906a5-06a2-4226-2a95c981-b56b22a1.dmp.zip' with 10 retries remaining.
+2026-10-09T12:44:51Z [2,457ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash] Deleting file: '/data/ebulochkin/vla-runtime/isaac-isaac61/kit/data/Kit/IsaacLab/3.0/565906a5-06a2-4226-2a95c981-b56b22a1.dmp.zip.toml'
+2026-10-09T12:44:51Z [2,458ms] [Info] [carb.crashreporter-breakpad.plugin] attempting to delete the file '/data/ebulochkin/vla-runtime/isaac-isaac61/kit/data/Kit/IsaacLab/3.0/565906a5-06a2-4226-2a95c981-b56b22a1.dmp.zip.toml' with 10 retries remaining.
+2026-10-09T12:44:51Z [2,459ms] [Error] [carb.crashreporter-breakpad.plugin] [crash]     dump file size is 0 bytes, file is readable.
+2026-10-09T12:44:51Z [2,467ms] [Fatal] [carb.crashreporter-breakpad.plugin] [crash] Crash detected in pid 2713950 thread 2713950
+2026-10-09T12:44:51Z [2,470ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash] Crash metadata:
+2026-10-09T12:44:51Z [2,471ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  BuildGitlabJobID = '413372077'
+2026-10-09T12:44:51Z [2,472ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  CarbSdkVersion = '210.3.2+release.14366.2926fc80.gl'
+2026-10-09T12:44:51Z [2,473ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  CrashTime = 'Fri Oct  9 12:44:49 2026 GMT'
+2026-10-09T12:44:51Z [2,474ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  DriverShaderCacheWrapper = 'disabled'
+2026-10-09T12:44:51Z [2,475ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  DumpId = '565906a5-06a2-4226-2a95c981-b56b22a1'
+2026-10-09T12:44:51Z [2,477ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  GlibcVersion = '2.35'
+2026-10-09T12:44:51Z [2,478ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  LastUploadStatus = '200'
+2026-10-09T12:44:51Z [2,479ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  ProductName = 'OmniverseKit'
+2026-10-09T12:44:51Z [2,480ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  PythonTracebackStatus = ''py-spy' successfully wrote info to '/data/ebulochkin/vla-runtime/isaac-isaac61/kit/data/Kit/IsaacLab/3.0/565906a5-06a2-4226-2a95c981-b56b22a1.py.txt''
+2026-10-09T12:44:51Z [2,481ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  RetryCount = '0'
+2026-10-09T12:44:51Z [2,482ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  StartupTime = '1791549880'
+2026-10-09T12:44:51Z [2,483ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  UploadSuccessful = '0'
+2026-10-09T12:44:51Z [2,484ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  UptimeSeconds = '9'
+2026-10-09T12:44:51Z [2,485ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  UserEmail = ''
+2026-10-09T12:44:51Z [2,486ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  UserStory = ''
+2026-10-09T12:44:51Z [2,487ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  UserStoryStatus = 'Running in headless mode; not gathering user story'
+2026-10-09T12:44:51Z [2,489ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  Version = '110.3.0+feature.371399.00c488ae.gl'
+2026-10-09T12:44:51Z [2,490ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  aftermath_enabled = '1'
+2026-10-09T12:44:51Z [2,491ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  aftermath_flags = '3'
+2026-10-09T12:44:51Z [2,492ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  aftermath_status = 'auto-enabled'
+2026-10-09T12:44:51Z [2,493ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  aftermath_version = '2025.5'
+2026-10-09T12:44:51Z [2,494ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  appName = 'IsaacLab'
+2026-10-09T12:44:51Z [2,495ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  appState = 'started'
+2026-10-09T12:44:51Z [2,496ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  appVersion = '3.0.0'
+2026-10-09T12:44:51Z [2,497ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  autoloadExts = ''
+2026-10-09T12:44:51Z [2,498ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  buildBranch = 'feature'
+2026-10-09T12:44:51Z [2,499ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  buildCi = 'gl'
+2026-10-09T12:44:51Z [2,500ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  buildConfig = 'release'
+2026-10-09T12:44:51Z [2,501ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  buildGitlabJobName = 'kit-build-release-linux-x86_64'
+2026-10-09T12:44:51Z [2,502ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  buildGitlabJobStage = 'kit-build'
+2026-10-09T12:44:51Z [2,504ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  buildGitlabPipelineID = '64742269'
+2026-10-09T12:44:51Z [2,505ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  buildHash = '00c488ae'
+2026-10-09T12:44:51Z [2,506ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  buildMajor = '110'
+2026-10-09T12:44:51Z [2,507ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  buildMinor = '3'
+2026-10-09T12:44:51Z [2,508ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  buildNumber = '371399'
+2026-10-09T12:44:51Z [2,509ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  buildPatch = '0'
+2026-10-09T12:44:51Z [2,510ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  buildVersion = '110.3.0'
+2026-10-09T12:44:51Z [2,511ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  carboniteFrameworkVersion = '210.3.2+release.14366.2926fc80.gl'
+2026-10-09T12:44:51Z [2,512ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  carboniteSdkVersion = '210.3.2+release.14366.2926fc80.gl'
+2026-10-09T12:44:51Z [2,513ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  commandLine = '/data/vla-infrastructure/isaac61_production/env/bin/python /home/<username>/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/full_scene_probe.py --output /data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r3 --media poll --frames 300 --warmup 120'
+2026-10-09T12:44:51Z [2,514ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  cpuCoreLimited = '24'
+2026-10-09T12:44:51Z [2,515ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  cpuId = 'Intel64 Family 6 Model 183 Stepping 1'
+2026-10-09T12:44:51Z [2,517ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  cpuLogicalCoresBareMetal = '32'
+2026-10-09T12:44:51Z [2,518ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  cpuName = '13th Gen Intel(R) Core(TM) i7-13700K'
+2026-10-09T12:44:51Z [2,519ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  cpuPhysicalCoresBareMetal = '16'
+2026-10-09T12:44:51Z [2,520ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  cpuUsageQuota = '-1.000000'
+2026-10-09T12:44:51Z [2,521ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  cpuVendor = 'GenuineIntel'
+2026-10-09T12:44:51Z [2,522ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  cuda_core_dumps_enabled = '1'
+2026-10-09T12:44:51Z [2,523ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  environmentName = 'Individual'
+2026-10-09T12:44:51Z [2,523ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  experience = 'Isaac Sim'
+2026-10-09T12:44:51Z [2,525ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  externalBuild = '1'
+2026-10-09T12:44:51Z [2,526ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  gpuDriver_0 = '580.159.3'
+2026-10-09T12:44:51Z [2,527ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  gpuVRAM_0 = '25757220864'
+2026-10-09T12:44:51Z [2,528ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  gpu_0 = 'NVIDIA GeForce RTX 4090'
+2026-10-09T12:44:51Z [2,529ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  graphicsApi = 'vulkan'
+2026-10-09T12:44:51Z [2,530ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  kitRendererDriverVersion = '580.159.3'
+2026-10-09T12:44:51Z [2,531ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  lib_isaacSim_buildBranch = 'release'
+2026-10-09T12:44:51Z [2,532ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  lib_isaacSim_buildDate = 'Fri Sep 4 19:36:03 2026 +0000'
+2026-10-09T12:44:51Z [2,533ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  lib_isaacSim_buildHash = '2d230af'
+2026-10-09T12:44:51Z [2,534ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  lib_isaacSim_buildRepo = 'https://gitlab-master.nvidia.com/omniverse/isaac/omni_isaac_sim.git'
+2026-10-09T12:44:51Z [2,535ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  lib_isaacSim_buildVersion = '6.1.0-rc.26'
+2026-10-09T12:44:51Z [2,536ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  lib_physx_buildBranch = 'HEAD'
+2026-10-09T12:44:51Z [2,538ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  lib_physx_buildDate = 'Aug-20-2026'
+2026-10-09T12:44:51Z [2,539ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  lib_physx_buildHash = '47ed92f'
+2026-10-09T12:44:51Z [2,540ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  lib_physx_buildRepo = 'omniverse/physics'
+2026-10-09T12:44:51Z [2,541ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  lib_physx_buildVersion = '110.3.2'
+2026-10-09T12:44:51Z [2,542ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  memoryStats = '(avail/total) RAM: 19.2569/31.1125GB, Swap: 62.9359/66GB, VM: 1.71799e+10/1.71799e+10GB'
+2026-10-09T12:44:51Z [2,543ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  nvidia-smi = '
+==============NVSMI LOG==============
+
+Timestamp                                              : Fri Oct  9 15:44:41 2026
+Driver Version                                         : 580.159.03
+CUDA Version                                           : 13.0
+
+Attached GPUs                                          : 1
+GPU 00000000:01:00.0
+    Product Name                                       : NVIDIA GeForce RTX 4090
+    Product Brand                                      : GeForce
+    Product Architecture                               : Ada Lovelace
+    Display Mode                                       : Requested functionality has been deprecated
+    Display Attached                                   : No
+    Display Active                                     : Disabled
+    Persistence Mode                                   : Disabled
+    Addressing Mode                                    : None
+    MIG Mode
+        Current                                        : N/A
+        Pending                                        : N/A
+    Accounting Mode                                    : Disabled
+    Accounting Mode Buffer Size                        : 4000
+    Driver Model
+        Current                                        : N/A
+        Pending                                        : N/A
+    Serial Number                                      : N/A
+    GPU UUID                                           : GPU-0b554a02-6a7f-2ffc-0af5-fdfaebe2736c
+    GPU PDI                                            : 0xe6f858d6a1fc220
+    Minor Number                                       : 0
+    VBIOS Version                                      : 95.02.18.80.53
+    MultiGPU Board                                     : No
+    Board ID                                           : 0x100
+    Board Part Number                                  : N/A
+    GPU Part Number                                    : 2684-300-A1
+    FRU Part Number                                    : N/A
+    Platform Info
+        Chassis Serial Number                          : N/A
+        Slot Number                                    : N/A
+        Tray Index                                     : N/A
+        Host ID                                        : N/A
+        Peer Type                                      : N/A
+        Module Id                                      : 1
+        GPU Fabric GUID                                : N/A
+    Inforom Version
+        Image Version                                  : G002.0000.00.03
+        OEM Object                                     : 2.0
+        ECC Object                                     : 6.16
+        Power Management Object                        : N/A
+    Inforom BBX Object Flush
+        Latest Timestamp                               : N/A
+        Latest Duration                                : N/A
+    GPU Operation Mode
+        Current                                        : N/A
+        Pending                                        : N/A
+    GPU C2C Mode                                       : N/A
+    GPU Virtualization Mode
+        Virtualization Mode                            : None
+        Host VGPU Mode                                 : N/A
+        vGPU Heterogeneous Mode                        : N/A
+    GPU Recovery Action                                : None
+    GSP Firmware Version                               : 580.159.03
+    IBMNPU
+        Relaxed Ordering Mode                          : N/A
+    PCI
+        Bus                                            : 0x01
+        Device                                         : 0x00
+        Domain                                         : 0x0000
+        Base Classcode                                 : 0x3
+        Sub Classcode                                  : 0x0
+        Device Id                                      : 0x268410DE
+        Bus Id                                         : 00000000:01:00.0
+        Sub System Id                                  : 0xF2961569
+        GPU Link Info
+            PCIe Generation
+                Max                                    : 4
+                Current                                : 4
+                Device Current                         : 4
+                Device Max                             : 4
+                Host Max                               : 4
+            Link Width
+                Max                                    : 16x
+                Current                                : 16x
+        Bridge Chip
+            Type                                       : N/A
+            Firmware                                   : N/A
+        Replays Since Reset                            : 0
+        Replay Number Rollovers                        : 0
+        Tx Throughput                                  : 1079931 KB/s
+        Rx Throughput                                  : 10058740 KB/s
+        Atomic Caps Outbound                           : N/A
+        Atomic Caps Inbound                            : N/A
+    Fan Speed                                          : 32 %
+    Performance State                                  : P2
+    Clocks Event Reasons
+        Idle                                           : Not Active
+        Applications Clocks Setting                    : Not Active
+        SW Power Cap                                   : Not Active
+        HW Slowdown                                    : Not Active
+            HW Thermal Slowdown                        : Not Active
+            HW Power Brake Slowdown                    : Not Active
+        Sync Boost                                     : Not Active
+        SW Thermal Slowdown                            : Not Active
+        Display Clock Setting                          : Not Active
+    Clocks Event Reasons Counters
+        SW Power Capping                               : 0 us
+        Sync Boost                                     : 0 us
+        SW Thermal Slowdown                            : 0 us
+        HW Thermal Slowdown                            : 0 us
+        HW Power Braking                               : 0 us
+    Sparse Operation Mode                              : N/A
+    FB Memory Usage
+        Total                                          : 24564 MiB
+        Reserved                                       : 484 MiB
+        Used                                           : 20190 MiB
+        Free                                           : 3892 MiB
+    BAR1 Memory Usage
+        Total                                          : 32768 MiB
+        Used                                           : 20192 MiB
+        Free                                           : 12576 MiB
+    Conf Compute Protected Memory Usage
+        Total                                          : 0 MiB
+        Used                                           : 0 MiB
+        Free                                           : 0 MiB
+    Compute Mode                                       : Default
+    Utilization
+        GPU                                            : 90 %
+        Memory                                         : 40 %
+        Encoder                                        : 0 %
+        Decoder                                        : 0 %
+        JPEG                                           : 0 %
+        OFA                                            : 0 %
+    Encoder Stats
+        Active Sessions                                : 0
+        Average FPS                                    : 0
+        Average Latency                                : 0
+    FBC Stats
+        Active Sessions                                : 0
+        Average FPS                                    : 0
+        Average Latency                                : 0
+    DRAM Encryption Mode
+        Current                                        : N/A
+        Pending                                        : N/A
+    ECC Mode
+        Current                                        : Disabled
+        Pending                                        : Disabled
+    ECC Errors
+        Volatile
+            SRAM Correctable                           : N/A
+            SRAM Uncorrectable Parity                  : N/A
+            SRAM Uncorrectable SEC-DED                 : N/A
+            DRAM Correctable                           : N/A
+            DRAM Uncorrectable                         : N/A
+        Aggregate
+            SRAM Correctable                           : N/A
+            SRAM Uncorrectable Parity                  : N/A
+            SRAM Uncorrectable SEC-DED                 : N/A
+            DRAM Correctable                           : N/A
+            DRAM Uncorrectable                         : N/A
+            SRAM Threshold Exceeded                    : N/A
+        Aggregate Uncorrectable SRAM Sources
+            SRAM L2                                    : N/A
+            SRAM SM                                    : N/A
+            SRAM Microcontroller                       : N/A
+            SRAM PCIE                                  : N/A
+            SRAM Other                                 : N/A
+        Channel Repair Pending                         : No
+        TPC Repair Pending                             : No
+        Unrepairable Memory                            : N/A
+    Retired Pages
+        Single Bit ECC                                 : N/A
+        Double Bit ECC                                 : N/A
+        Pending Page Blacklist                         : N/A
+    Remapped Rows
+        Correctable Error                              : 0
+        Inactive Correctable Error                     : 0
+        Uncorrectable Error                            : 0
+        Inactive Uncorrectable Error                   : 0
+        Pending                                        : No
+        Remapping Failure Occurred                     : No
+        Bank Remap Availability Histogram
+            Max                                        : 192 bank(s)
+            High                                       : 0 bank(s)
+            Partial                                    : 0 bank(s)
+            Low                                        : 0 bank(s)
+            None                                       : 0 bank(s)
+    Temperature
+        GPU Current Temp                               : 61 C
+        GPU T.Limit Temp                               : 25 C
+        GPU Shutdown T.Limit Temp                      : -7 C
+        GPU Slowdown T.Limit Temp                      : -2 C
+        GPU Max Operating T.Limit Temp                 : 0 C
+        GPU Target Temperature                         : 84 C
+        Memory Current Temp                            : N/A
+        Memory Max Operating T.Limit Temp              : N/A
+    GPU Power Readings
+        Average Power Draw                             : 204.38 W
+        Instantaneous Power Draw                       : 173.71 W
+        Current Power Limit                            : 450.00 W
+        Requested Power Limit                          : 450.00 W
+        Default Power Limit                            : 450.00 W
+        Min Power Limit                                : 150.00 W
+        Max Power Limit                                : 450.00 W
+    GPU Memory Power Readings 
+        Average Power Draw                             : N/A
+        Instantaneous Power Draw                       : N/A
+    Module Power Readings
+        Average Power Draw                             : N/A
+        Instantaneous Power Draw                       : N/A
+        Current Power Limit                            : N/A
+        Requested Power Limit                          : N/A
+        Default Power Limit                            : N/A
+        Min Power Limit                                : N/A
+        Max Power Limit                                : N/A
+    Power Smoothing                                    : N/A
+    Workload Power Profiles
+        Requested Profiles                             : N/A
+        Enforced Profiles                              : N/A
+    Clocks
+        Graphics                                       : 2730 MHz
+        SM                                             : 2730 MHz
+        Memory                                         : 10251 MHz
+        Video                                          : 2100 MHz
+    Applications Clocks
+        Graphics                                       : N/A
+        Memory                                         : N/A
+    Default Applications Clocks
+        Graphics                                       : N/A
+        Memory                                         : N/A
+    Deferred Clocks
+        Memory                                         : N/A
+    Max Clocks
+        Graphics                                       : 3105 MHz
+        SM                                             : 3105 MHz
+        Memory                                         : 10501 MHz
+        Video                                          : 2415 MHz
+    Max Customer Boost Clocks
+        Graphics                                       : N/A
+    Clock Policy
+        Auto Boost                                     : N/A
+        Auto Boost Default                             : N/A
+    Fabric
+        State                                          : N/A
+        Status                                         : N/A
+        CliqueId                                       : N/A
+        ClusterUUID                                    : N/A
+        Health
+            Summary                                    : N/A
+            Bandwidth                                  : N/A
+            Route Recovery in progress                 : N/A
+            Route Unhealthy                            : N/A
+            Access Timeout Recovery                    : N/A
+            Incorrect Configuration                    : N/A
+            Partition Assigned                         : N/A
+    Processes
+        GPU instance ID                   : N/A
+        Compute instance ID               : N/A
+        Process ID                        : 2305
+            Type                          : G
+            Name                          : ............./Xorg
+            Used GPU Memory               : 58 MiB
+        GPU instance ID                   : N/A
+        Compute instance ID               : N/A
+        Process ID                        : 2371
+            Type                          : G
+            Name                          : ......../gnome-shell
+            Used GPU Memory               : 10 MiB
+        GPU instance ID                   : N/A
+        Compute instance ID               : N/A
+        Process ID                        : 3293
+            Type                          : G
+            Name                          : xfwm4
+            Used GPU Memory               : 7 MiB
+        GPU instance ID                   : N/A
+        Compute instance ID               : N/A
+        Process ID                        : 2710393
+            Type                          : C
+            Name                          : .................................../python
+            Used GPU Memory               : 20064 MiB
+    Capabilities
+        EGM                                            : disabled
+
+'
+2026-10-09T12:44:51Z [2,544ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  osDistro = 'ubuntu'
+2026-10-09T12:44:51Z [2,545ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  osName = '22.04.5 LTS (Jammy Jellyfish)'
+2026-10-09T12:44:51Z [2,546ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  osVersion = '22.04.5'
+2026-10-09T12:44:51Z [2,547ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  portableMode = '1'
+2026-10-09T12:44:51Z [2,548ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  runEnvironment = 'Individual'
+2026-10-09T12:44:51Z [2,550ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  runningInContainer = '0'
+2026-10-09T12:44:51Z [2,551ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  shaderdb_debugSymbols = '0'
+2026-10-09T12:44:51Z [2,552ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  shaderdb_dumpIncludeOverrides = '0'
+2026-10-09T12:44:51Z [2,553ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  shaderdb_dumpIntermediates = '0'
+2026-10-09T12:44:51Z [2,554ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  shaderdb_obfuscateCode = '1'
+2026-10-09T12:44:51Z [2,555ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  shaderdb_optimizationLevel = '1'
+2026-10-09T12:44:51Z [2,556ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  shaderdb_separateDebugSymbols = '0'
+2026-10-09T12:44:51Z [2,557ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  systemInfo = '
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 580.159.03    | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA GeForce RTX 4090          | Yes: 0 |     | 24564   MB | 10de      | 0          |
+|     |                                  |        |     |            | 2684      | 0b554a02.. |
+|     |                                  |        |     |            | 1         |            |
+|---------------------------------------------------------------------------------------------|
+| 1   | Intel(R) Graphics (RPL-S)        |        |     | 23894   MB | 8086      | 0          |
+|     |                                  |        |     |            | a780      | 868080a7.. |
+|     |                                  |        |     |            | 0         |            |
+|=============================================================================================|
+| OS: 22.04.5 LTS (Jammy Jellyfish) ubuntu, Version: 22.04.5, Kernel: 6.8.0-124-generic
+| Processor: 13th Gen Intel(R) Core(TM) i7-13700K
+| Bare Metal Cores: 16 | Bare Metal Logical Cores: 32
+| Available Cores:  24 
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 31859 | Free Memory: 24194
+| Total Page/Swap (MB): 67583 | Free Page/Swap: 64446
+|---------------------------------------------------------------------------------------------|
+'
+2026-10-09T12:44:51Z [2,558ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  telemetrySessionId = '9262620533412896769'
+2026-10-09T12:44:51Z [2,560ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  terminatedByAbort = '0'
+2026-10-09T12:44:51Z [2,561ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  totalRamBareMetalMB = '31859'
+2026-10-09T12:44:51Z [2,562ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  totalRamLimitedMB = '31859'
+2026-10-09T12:44:51Z [2,563ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  totalSwapBareMetalMB = '67583'
+2026-10-09T12:44:51Z [2,564ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  totalSwapLimitedMB = '67583'
+2026-10-09T12:44:51Z [2,565ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  userId = 'default'
+2026-10-09T12:44:51Z [2,566ms] [Warning] [carb.crashreporter-breakpad.plugin] [crash]  workingDirectory = '/home/<username>/vla_infrastructure'
+2026-10-09T12:44:51Z [2,567ms] [Fatal] [carb.crashreporter-breakpad.plugin] [crash] Thread 2713950 backtrace follows:
+2026-10-09T12:44:51Z [2,577ms] [Fatal] [carb.crashreporter-breakpad.plugin] 000: libcarb.crashreporter-breakpad.plugin.so!google_breakpad::ExceptionHandler::SignalHandler(int, siginfo_t*, void*)+0x17d ***
+2026-10-09T12:44:51Z [2,625ms] [Fatal] [carb.crashreporter-breakpad.plugin] 001: libc.so.6!__sigaction+0x50 (libc_sigaction.c:?)
+2026-10-09T12:44:51Z [2,630ms] [Fatal] [carb.crashreporter-breakpad.plugin] 002: libomni.cubric.plugin.so!carbOnPluginPreStartup+0xa046 ***
+2026-10-09T12:44:51Z [2,633ms] [Fatal] [carb.crashreporter-breakpad.plugin] 003: libomni.cubric.plugin.so!carbOnPluginPreStartup+0xcdce ***
+2026-10-09T12:44:51Z [2,635ms] [Fatal] [carb.crashreporter-breakpad.plugin] 004: libomni.cubric.plugin.so!+0xeca8 ***
+2026-10-09T12:44:51Z [2,637ms] [Fatal] [carb.crashreporter-breakpad.plugin] 005: libomni.cubric.plugin.so!+0x14e15 ***
+2026-10-09T12:44:51Z [2,640ms] [Fatal] [carb.crashreporter-breakpad.plugin] 006: libomni.physx.fabric.plugin.so!std::__throw_regex_error(std::regex_constants::error_type, char const*)+0x5523 ***
+2026-10-09T12:44:51Z [2,643ms] [Fatal] [carb.crashreporter-breakpad.plugin] 007: libomni.physx.fabric.plugin.so!std::__throw_regex_error(std::regex_constants::error_type, char const*)+0xbe1c ***
+2026-10-09T12:44:51Z [2,645ms] [Fatal] [carb.crashreporter-breakpad.plugin] 008: libomni.physx.fabric.plugin.so!std::__throw_regex_error(std::regex_constants::error_type, char const*)+0xc389 ***
+2026-10-09T12:44:51Z [2,648ms] [Fatal] [carb.crashreporter-breakpad.plugin] 009: libomni.physx.fabric.plugin.so!void std::vector<unsigned int, std::allocator<unsigned int> >::_M_realloc_insert<unsigned int const&>(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, unsigned int const&)+0x270cd ***
+2026-10-09T12:44:51Z [2,651ms] [Fatal] [carb.crashreporter-breakpad.plugin] 010: libomni.physx.plugin.so!std::_Rb_tree<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, void*>, std::_Select1st<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, void*> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, void*> > >::_M_get_insert_hint_unique_pos(std::_Rb_tree_const_iterator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, void*> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)+0x5b00 ***
+2026-10-09T12:44:51Z [2,654ms] [Fatal] [carb.crashreporter-breakpad.plugin] 011: libomni.physx.plugin.so!std::_Rb_tree<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, void*>, std::_Select1st<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, void*> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, void*> > >::_M_get_insert_hint_unique_pos(std::_Rb_tree_const_iterator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, void*> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)+0x6838 ***
+2026-10-09T12:44:51Z [2,657ms] [Fatal] [carb.crashreporter-breakpad.plugin] 012: _physx.cpython-312-x86_64-linux-gnu.so!void std::vector<unsigned long, std::allocator<unsigned long> >::_M_realloc_insert<unsigned long const&>(__gnu_cxx::__normal_iterator<unsigned long*, std::vector<unsigned long, std::allocator<unsigned long> > >, unsigned long const&)+0x20cee ***
+2026-10-09T12:44:51Z [2,660ms] [Fatal] [carb.crashreporter-breakpad.plugin] 013: _physx.cpython-312-x86_64-linux-gnu.so!void std::vector<char*, std::allocator<char*> >::_M_realloc_insert<char* const&>(__gnu_cxx::__normal_iterator<char**, std::vector<char*, std::allocator<char*> > >, char* const&)+0x166b9 ***
+2026-10-09T12:44:51Z [2,668ms] [Fatal] [carb.crashreporter-breakpad.plugin] 014: python!cfunction_call+0x3f ***
+2026-10-09T12:44:51Z [2,678ms] [Fatal] [carb.crashreporter-breakpad.plugin] 015: python!_PyEval_EvalFrameDefault+0x30e6 ***
+2026-10-09T12:44:51Z [2,687ms] [Fatal] [carb.crashreporter-breakpad.plugin] 016: python!PyEval_EvalCode+0xde ***
+2026-10-09T12:44:51Z [2,697ms] [Fatal] [carb.crashreporter-breakpad.plugin] 017: python!run_mod.llvm.10765962669227346324+0x109 ***
+2026-10-09T12:44:51Z [2,705ms] [Fatal] [carb.crashreporter-breakpad.plugin] 018: python!pyrun_file+0x85 ***
+2026-10-09T12:44:51Z [2,713ms] [Fatal] [carb.crashreporter-breakpad.plugin] 019: python!_PyRun_SimpleFileObject+0x106 ***
+2026-10-09T12:44:51Z [2,723ms] [Fatal] [carb.crashreporter-breakpad.plugin] 020: python!_PyRun_AnyFileObject+0x4a ***
+2026-10-09T12:44:51Z [2,732ms] [Fatal] [carb.crashreporter-breakpad.plugin] 021: python!pymain_run_file_obj+0xb8 ***
+2026-10-09T12:44:51Z [2,742ms] [Fatal] [carb.crashreporter-breakpad.plugin] 022: python!pymain_run_file+0x5d ***
+2026-10-09T12:44:51Z [2,751ms] [Fatal] [carb.crashreporter-breakpad.plugin] 023: python!Py_RunMain.warm+0x23 ***
+2026-10-09T12:44:51Z [2,759ms] [Fatal] [carb.crashreporter-breakpad.plugin] 024: python!pymain_main.llvm.12225469820353354614+0x1d8 ***
+2026-10-09T12:44:51Z [2,768ms] [Fatal] [carb.crashreporter-breakpad.plugin] 025: python!main+0x2c ***
+2026-10-09T12:44:52Z [2,808ms] [Fatal] [carb.crashreporter-breakpad.plugin] 026: libc.so.6!__libc_init_first+0x90 (./csu/../sysdeps/nptl/libc_start_call_main.h:58)
+2026-10-09T12:44:52Z [2,849ms] [Fatal] [carb.crashreporter-breakpad.plugin] 027: libc.so.6!__libc_start_main+0x80 (./csu/../csu/libc-start.c:128)
+2026-10-09T12:44:52Z [2,857ms] [Fatal] [carb.crashreporter-breakpad.plugin] 028: python!_start+0x29 ***
+2026-10-09T12:44:52Z [2,858ms] [Fatal] [carb.crashreporter-breakpad.plugin] [crash] NOTE: *** indicates a low-confidence frame, such as when symbols cannot be found
+2026-10-09T12:44:52Z [2,859ms] [Warning] [carb.crashreporter-breakpad.plugin] terminating this process with exit code 139.

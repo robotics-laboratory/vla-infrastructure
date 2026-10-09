@@ -1,0 +1,216 @@
+{
+  "date": "2026-10-09",
+  "release_commit": "da950a3537927784951853c66618036f332ca0ce",
+  "simulation_run_by_this_agent": false,
+  "root_original_run_status": "failed_fixed_base_false",
+  "checks": [
+    "Native flag traced to eFIX_BASE; no placeholder",
+    "Read-only original USD root, anchors and rawschema tokens inspected",
+    "Firstoverlayrejected:wrong default0.01m/Yunits",
+    "V2rootstage metadata preserved1m/Z/kg/timebase",
+    "1475 initial authored world transforms unchanged",
+    "Originalsourcehash unchanged",
+    "V2author+benchmark AST PASS",
+    "V2benchmark CLIhelp PASS",
+    "NoSDKpatch,noinstallation,noGPUorsimulationrun bythisagent",
+    "V3 exact27rigid inventory from read-only USD traversal",
+    "V3 AST PASS",
+    "V3 CLI help PASS",
+    "V2 failure and script preserved"
+  ],
+  "sources": [
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/VERSION",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/VERSION",
+      "sha256": "4aa4fe9e08f545cad40a66c24fe282603a2133fc83dd531dec73c478f0578acb",
+      "bytes": 7
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/include/omni/physics/tensors/IArticulationMetatype.h",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/include/omni/physics/tensors/IArticulationMetatype.h",
+      "sha256": "38fc8f72caa1226ac25977933c07da312d7f8832e08dfeabff87d3b36b92a290",
+      "bytes": 1438
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physics.ovstage/OvstageParseBackend.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physics.ovstage/OvstageParseBackend.cpp",
+      "sha256": "48ac8d3442afecdd366025dda3929d8d8c12f01cf6b89373418618a1b8ee99dd",
+      "bytes": 2879
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physics.parse/ArticulationGraph.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physics.parse/ArticulationGraph.cpp",
+      "sha256": "4f38517808fc53092896185d2848932d6e58511feb96087252f049aeb438970d",
+      "bytes": 17249
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physics.parse/ParseArticulation.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physics.parse/ParseArticulation.cpp",
+      "sha256": "52ba1416a3710e0aab9c6cd15003707e621f72c4db060d83701e274507b3d7a2",
+      "bytes": 3487
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physics.parse/ParseJoint.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physics.parse/ParseJoint.cpp",
+      "sha256": "103154c94a3b459573b670b26f180d181dfc7b3202639c7d80a2b24f4c847f25",
+      "bytes": 31041
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physx/plugins/PhysX.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physx/plugins/PhysX.cpp",
+      "sha256": "c1362abb02e0ce29a56b22de44b59c6cd1c2c30d85096155529e3da6fb64c218",
+      "bytes": 109146
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physx/plugins/tensors/ArticulationMetatype.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physx/plugins/tensors/ArticulationMetatype.cpp",
+      "sha256": "a6d298407801fa9bb8ee0327d503b60b394c7195448a51a1dbbe207a1f7f5c8d",
+      "bytes": 6256
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physx/plugins/tensors/ArticulationMetatype.h",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physx/plugins/tensors/ArticulationMetatype.h",
+      "sha256": "674a5c20e3fac29c11098217b9862691df2ea74aa2c1522873908d319a2a0243",
+      "bytes": 4586
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physx/plugins/tensors/SimulationBackend.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physx/plugins/tensors/SimulationBackend.cpp",
+      "sha256": "fb8ea533551bc3036a39dffd42cf0b1b7d99bb523823bac81d3f4b8e2933ab5d",
+      "bytes": 34176
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physx/plugins/tensors/base/BaseArticulationView.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physx/plugins/tensors/base/BaseArticulationView.cpp",
+      "sha256": "83965f0f2005cf62415c0a6ad7c781c5ec572596a47aaf6143968791adeac56e",
+      "bytes": 101350
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physx/plugins/tensors/base/BaseSimulationView.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physx/plugins/tensors/base/BaseSimulationView.cpp",
+      "sha256": "956f7aa1209c014976794d30c3899bb36a5b76bb8fe1a6e2ff1e2018fa6c3c0a",
+      "bytes": 112282
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physx/plugins/tensors/cpu/CpuArticulationView.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physx/plugins/tensors/cpu/CpuArticulationView.cpp",
+      "sha256": "2bed7933eeb67be6278c5c6b929c6d7767640229495349d3013fb627c497bf44",
+      "bytes": 141486
+    },
+    {
+      "path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/source/omni.physx/plugins/usdLoad/Articulation.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/source/omni.physx/plugins/usdLoad/Articulation.cpp",
+      "sha256": "0f3428fcc8e9e2a5730d949e531f64d884e333ca1015d1a488a9c0e93e401bdd",
+      "bytes": 25308
+    },
+    {
+      "path": "/tmp/live30-deep-ovphysx-fixedbase-bench-v2.py",
+      "sha256": "6d9084d3ceacf6f8088c85270597f12b0ee669f9610c0f7119731a2fbd06dcdf",
+      "bytes": 12963,
+      "status": "reviewed_unexecuted_v2"
+    },
+    {
+      "path": "/tmp/live30-deep-ovphysx-fixedbase-bench.py",
+      "sha256": "5768a9ac4d47b568a1be5b8ed24dd68f9e56d0a21fb328795f945f02e15fb86a",
+      "bytes": 12351,
+      "status": "rejected_wrong_root_stage_units"
+    },
+    {
+      "path": "/tmp/live30-deep-ovphysx-fixedbase-checks.log",
+      "sha256": "1528d299ee3c2262df49a39c344db8958c8975bbfcc1cf3d6243859baa8ce2d6",
+      "bytes": 1354,
+      "status": "reviewed_unexecuted_v2"
+    },
+    {
+      "path": "/tmp/live30-deep-ovphysx-fixedbase-followup.md",
+      "sha256": "b5f8479965af6dd7d2b5e0bf9a997eee5928aba39c9fb38f010c839f334c8271",
+      "bytes": 11060,
+      "status": "reviewed_unexecuted_v2"
+    },
+    {
+      "path": "/tmp/live30-deep-ovphysx-fixedbase-overlay-v2.py",
+      "sha256": "7d48cf61dc23da71a617a1d9209dfc2b062968bc092e9cfbd93700db0d49e4e5",
+      "bytes": 5821,
+      "status": "reviewed_unexecuted_v2"
+    },
+    {
+      "path": "/tmp/live30-deep-ovphysx-fixedbase-overlay.py",
+      "sha256": "e77c41751d937313d1e645af623e126e234f92265d452641d0fcce7fbc01afc1",
+      "bytes": 5114,
+      "status": "rejected_wrong_root_stage_units"
+    },
+    {
+      "path": "/tmp/live30-deep-ovphysx-fixedbase-v2.manifest.json",
+      "sha256": "6b825acabc00e9ef0d397d6494e450f7aa2243f9ae4e17d7355c35119ddebbb9",
+      "bytes": 2408,
+      "status": "reviewed_unexecuted_v2"
+    },
+    {
+      "path": "/tmp/live30-deep-ovphysx-fixedbase-v2.usda",
+      "sha256": "548320594048c8f96b5a1b1de68eeb0a3803214bae9dc53db816e1bb399ed8df",
+      "bytes": 1888,
+      "status": "reviewed_unexecuted_v2"
+    },
+    {
+      "path": "/tmp/live30-deep-ovphysx-fixedbase.manifest.json",
+      "sha256": "eba0aa781d413091e6c0dd7d697688765e410167df269764c013e70a732b54f8",
+      "bytes": 2147,
+      "status": "rejected_wrong_root_stage_units"
+    },
+    {
+      "path": "/tmp/live30-deep-ovphysx-fixedbase.usda",
+      "sha256": "95b66891d28cd93e9db7e2e684db8034f9b43470421bdc813fae9ae6cbf22610",
+      "bytes": 1706,
+      "status": "rejected_wrong_root_stage_units"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-batch/result.json",
+      "sha256": "2b352771e79f27676466d97efbd5ed59b6243301590b3c2e8d76959b1330664c",
+      "bytes": 1472,
+      "scope": "original failed attempt/source preserved"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-batch.log",
+      "sha256": "19950268c5e93d1c59ff205ace3bc0408c00693dfe45e58c4020ff6f7d42cae6",
+      "bytes": 1039,
+      "scope": "original failed attempt/source preserved"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-20261009/piper-inputs/stage_snapshot.usd",
+      "sha256": "03453f4d22eedb40c77cee68aabab241d0c0bf58b824f9c72afb59bef27b812b",
+      "bytes": 12081014,
+      "scope": "original failed attempt/source preserved"
+    },
+    {
+      "path": "/tmp/live30-deep-ovphysx-fixedbase-bench-v3.py",
+      "url": null,
+      "sha256": "0bdf3c46312c93d4bff9e654d17e4d42014deb4e3a011bc7301c7990c2f31fac",
+      "bytes": 15335
+    },
+    {
+      "path": "/tmp/live30-deep-ovphysx-rigid-paths.json",
+      "url": null,
+      "sha256": "bcd4fa467e68a01a650e3dbca3844ed7523fefb1fee58d5a4c247ea8a1b92902",
+      "bytes": 2168
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-fixedbase/result.json",
+      "url": null,
+      "sha256": "b0f17c10ec1617e6508e112b3b0a2fc370ecefe98b3114306232c7c02436cf08",
+      "bytes": 5196
+    }
+  ],
+  "root_v2_run_status": "fixed_base_true_and_force_drive_types_verified_then_rigid_pattern_empty",
+  "search_ledger": [
+    {
+      "kind": "local_exact_release_source",
+      "query": "BaseSimulationView recursive wildcard/getRigidBodyAtPath",
+      "result": "Bare star immediate children; double star recursive; exact dynamic/link paths chosen"
+    },
+    {
+      "kind": "readonly_usd",
+      "query": "Usd.Stage.Traverse PhysicsRigidBodyAPI V2",
+      "result": "27paths:24links+3dynamicprops"
+    }
+  ]
+}

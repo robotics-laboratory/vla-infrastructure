@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/usr/bin/ffmpeg",
+    "-y",
+    "-hide_banner",
+    "-loglevel",
+    "error",
+    "-i",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/atlas.h264",
+    "-vf",
+    "select=eq(n\\,250),scale=960:600",
+    "-vsync",
+    "0",
+    "-frames:v",
+    "1",
+    "/tmp/live30-atlas-preview.png"
+  ],
+  "returncode": 0,
+  "stderr": ""
+}

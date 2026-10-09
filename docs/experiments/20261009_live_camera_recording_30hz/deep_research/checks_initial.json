@@ -1,0 +1,198 @@
+{
+  "schema": "live30_repository_checks_v1",
+  "started_utc": "2026-10-09T14:49:27.096943+00:00",
+  "preservation_base": "d5566834d29ef8bb56e4fb62bb324e23e0869100",
+  "tested_head": "d5566834d29ef8bb56e4fb62bb324e23e0869100",
+  "python": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+  "gate_bindings": [],
+  "physical_qualification": false,
+  "source_sha256": "a2fb1027e89058f620e1bd686d973ce14a6c84e0b0279ca8b6a9dacfdd247662",
+  "immutable_ruff_exclusions": [
+    "decode_clock_initial.py",
+    "matched_cpu_map_optical_witness.py",
+    "matched_cpu_map_ovrtx_snapshot.py",
+    "ovphysx_fixedbase_author.py",
+    "ovphysx_fixedbase_probe.py",
+    "pynv223_adapter_initial.py"
+  ],
+  "raw_log_whitespace_excluded": true,
+  "checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "d5566834d29ef8bb56e4fb62bb324e23e0869100"
+      ],
+      "returncode": 1,
+      "elapsed_s": 1.737990448717028,
+      "stdout": "INDEX: 880 entries; classification {'current': 116, 'historical': 764}\nHISTORICAL PRESERVATION: PASS (503 frozen files vs d5566834d29ef8bb56e4fb62bb324e23e0869100)\nKNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.\n- docs/experiments/20261009_live_camera_recording_30hz/deep_research/INDEPENDENT_SURVEY.md: missing/unsafe local target: live30-independent-survey-sources.json\nDOC GOVERNANCE CHECKS: FAIL\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.1912002470344305,
+      "stdout": "SPEC REFERENCE LINT OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/validate_resolved_contract.py",
+        "configs/resolved_contract.yaml"
+      ],
+      "returncode": 0,
+      "elapsed_s": 1.4050856167450547,
+      "stdout": "CONTRACT STRUCTURALLY VALID\nCONTRACT SEMANTICALLY VALID\nFINAL RC NOT READY\nBLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.024511948227882385,
+      "stdout": "MANIFEST OK: 110 reviewed files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff",
+        "check",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/atlas_media.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/check_bundle.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/codec_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/decode_clock_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/fabric_boundary.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ffmpeg_workers.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full_scene_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/kit_witness_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/mirror_worker.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/newton_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/nsight_analyze.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/optical_witness.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_probe_v3.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_capture_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_gpu_consumer.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_live_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_snapshot.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/physics_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/profiler_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/pynv223_adapter.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/run_receipted.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/stage_mimic_audit.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/storage_cpu_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/tiled_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/verify_live_source.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/xr_gpu_preview.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.007338857743889093,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff",
+        "format",
+        "--check",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/atlas_media.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/check_bundle.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/codec_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/decode_clock_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/fabric_boundary.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ffmpeg_workers.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full_scene_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/kit_witness_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/mirror_worker.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/newton_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/nsight_analyze.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/optical_witness.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_probe_v3.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_capture_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_gpu_consumer.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_live_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_snapshot.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/physics_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/profiler_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/pynv223_adapter.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/run_receipted.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/stage_mimic_audit.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/storage_cpu_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/tiled_probe.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/verify_live_source.py",
+        "docs/experiments/20261009_live_camera_recording_30hz/deep_research/xr_gpu_preview.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.006552643608301878,
+      "stdout": "28 files already formatted\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_docs_governance.py",
+        "tests/test_validator_baseline.py",
+        "tests/test_validator_negative.py",
+        "tests/test_manifest.py",
+        "tests/test_isaac_vr_recording.py",
+        "tests/test_isaac_vr_config.py",
+        "tests/test_isaac_vr_camera_rendering.py",
+        "tests/test_temporal_recording_path.py"
+      ],
+      "returncode": 1,
+      "elapsed_s": 13.672605894971639,
+      "stdout": ".F...................................................................... [ 34%]\n........................................................................ [ 68%]\n.................................................................        [100%]\n=================================== FAILURES ===================================\n___________ test_repository_coverage_is_part_of_normal_offline_tests ___________\n\n    def test_repository_coverage_is_part_of_normal_offline_tests():\n        found, _ = docs.check(Path(__file__).resolve().parents[1])\n>       assert found == []\nE       AssertionError: assert ['docs/experi...sources.json'] == []\nE         \nE         Left contains one more item: 'docs/experiments/20261009_live_camera_recording_30hz/deep_research/INDEPENDENT_SURVEY.md: missing/unsafe local target: live30-independent-survey-sources.json'\nE         Use -v to get more diff\n\ntests/test_docs_governance.py:90: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_docs_governance.py::test_repository_coverage_is_part_of_normal_offline_tests\n1 failed, 208 passed in 12.76s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)**/*.log"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.0029858946800231934,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)**/*.log"
+      ],
+      "returncode": 2,
+      "elapsed_s": 0.023868749849498272,
+      "stdout": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_v2.usda:74: new blank line at EOF.\ndocs/experiments/20261009_live_camera_recording_30hz/deep_research/pynv223_adapter_initial.py:84: new blank line at EOF.\n",
+      "stderr": ""
+    }
+  ],
+  "syntax_compile": {
+    "files": 34,
+    "errors": [],
+    "passed": true,
+    "scope": "Syntax only, including immutable failed-attempt snapshots"
+  },
+  "all_passed": false
+}

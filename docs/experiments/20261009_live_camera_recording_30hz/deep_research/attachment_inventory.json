@@ -1,0 +1,2196 @@
+{
+  "schema": "live30_deep_attachment_inventory_v1",
+  "created_utc": "2026-10-09T14:55:18.528185+00:00",
+  "owner": "vr.performance",
+  "kind": "experiment",
+  "gate_bindings": [],
+  "dataset_admissible": false,
+  "self_hash_excluded": true,
+  "scope": "All deep-research attachments except this inventory itself; original phase has its own inventory. Git records/index and manifest are separate integrity scopes.",
+  "verification": {
+    "bulk_files_checked": 507,
+    "tested_python_sources_checked": 34,
+    "attachment_count": 310,
+    "errors": [],
+    "all_passed": true,
+    "elapsed_s": 0.8025766522623599,
+    "command": [
+      "python",
+      "/tmp/live30-final-inventory.py"
+    ],
+    "script_sha256": "200b07b00df82f3eeaaaa552fe728dba27bbcd8438c1938e9fd478c81b3111b2",
+    "script_snapshot": "from pathlib import Path\nimport datetime\nimport hashlib\nimport json\nimport time\n\nbundle = Path('/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research')\n\ndef sha(path):\n    digest = hashlib.sha256()\n    with path.open('rb') as stream:\n        for chunk in iter(lambda: stream.read(1048576), b''):\n            digest.update(chunk)\n    return digest.hexdigest()\n\nstart = time.monotonic()\nbulk = json.loads((bundle / 'artifact_inventory.json').read_text())\nerrors = []\nidentities = set()\nfor row in bulk['artifacts']:\n    path = Path(row['locator'])\n    if row['id'] in identities:\n        errors.append({'duplicate_id': row['id']})\n    identities.add(row['id'])\n    if not path.is_file():\n        errors.append({'missing': str(path)})\n    elif path.stat().st_size != row['bytes'] or sha(path) != row['sha256']:\n        errors.append({'mismatch': str(path)})\n\nchecks = json.loads((bundle / 'checks.json').read_text())\nfor name, expected in checks['tested_python_sources'].items():\n    path = Path('/home/ebulochkin/vla_infrastructure') / name\n    if sha(path) != expected:\n        errors.append({'tested_python_drift': name})\n\nfiles = []\nfor path in sorted(bundle.rglob('*')):\n    if not path.is_file() or path.name == 'attachment_inventory.json':\n        continue\n    if '__pycache__' in path.parts:\n        errors.append({'unintended_cache': str(path)})\n    files.append({\n        'id': 'experiment.live30.deep.attachment.' + str(path.relative_to(bundle)).replace('/', '.'),\n        'locator': str(path.relative_to(bundle.parents[3])),\n        'bytes': path.stat().st_size,\n        'sha256': sha(path),\n        'tracked': True,\n    })\nresult = {\n    'schema': 'live30_deep_attachment_inventory_v1',\n    'created_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),\n    'owner': 'vr.performance',\n    'kind': 'experiment',\n    'gate_bindings': [],\n    'dataset_admissible': False,\n    'self_hash_excluded': True,\n    'scope': 'All deep-research attachments except this inventory itself; original phase has its own inventory. Git records/index and manifest are separate integrity scopes.',\n    'verification': {\n        'bulk_files_checked': len(bulk['artifacts']),\n        'tested_python_sources_checked': len(checks['tested_python_sources']),\n        'attachment_count': len(files),\n        'errors': errors,\n        'all_passed': not errors and checks['all_passed'],\n        'elapsed_s': time.monotonic() - start,\n        'command': ['python', '/tmp/live30-final-inventory.py'],\n        'script_sha256': sha(Path(__file__)),\n        'script_snapshot': Path(__file__).read_text(),\n    },\n    'artifacts': files,\n}\n(bundle / 'attachment_inventory.json').write_text(json.dumps(result, indent=2) + '\\n')\nprint(json.dumps({key: value for key, value in result['verification'].items() if key != 'script_snapshot'}, indent=2))\nassert result['verification']['all_passed']\n"
+  },
+  "artifacts": [
+    {
+      "id": "experiment.live30.deep.attachment.INDEPENDENT_SURVEY.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/INDEPENDENT_SURVEY.md",
+      "bytes": 20693,
+      "sha256": "b249cbd243b891b10443489028fb2c3a14396ea5983dae1e9e0cd4f87f0fb038",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.LIVE_MIRROR_NOTES.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/LIVE_MIRROR_NOTES.md",
+      "bytes": 6574,
+      "sha256": "d8c8a06d167805e09b381cd1b17c6e65a5de7876b79ce83d204b24e15083e608",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.MEDIA_AUDIT.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/MEDIA_AUDIT.md",
+      "bytes": 40117,
+      "sha256": "6ab9039ebcdfb746150948ff28e8162bc93c4a3bee8423222cc731e9eb30d874",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.MEDIA_EXACT_SOURCE.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/MEDIA_EXACT_SOURCE.md",
+      "bytes": 28334,
+      "sha256": "a381380868be493980541e7d38e18cc86929dd73529efc621ea829ade9cf2303",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.NSIGHT_ANALYSIS.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/NSIGHT_ANALYSIS.md",
+      "bytes": 11847,
+      "sha256": "cb31189ca56250a6933522398f130c0a4b7c774ef090ed9cda83de92b8854cb5",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.OVPHYSX_AUDIT.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/OVPHYSX_AUDIT.md",
+      "bytes": 15778,
+      "sha256": "47f4877c4cfb13f883af4e3904eac1e109240be92b02cdfac1123558b3c5421c",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.OVPHYSX_FIXEDBASE_FOLLOWUP.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/OVPHYSX_FIXEDBASE_FOLLOWUP.md",
+      "bytes": 13903,
+      "sha256": "e7fd0c5aad7cbf4a4b5b59db56ce2985a85da2f58293fc739ec36e51cf7afe12",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.OVRTX_GPU_NOTES.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/OVRTX_GPU_NOTES.md",
+      "bytes": 5758,
+      "sha256": "83ce422d3658b07fd9087f180b9b99def2ade0fd54f7840ad5a5b1215d9faea7",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.OVRTX_MIRROR_NOTES.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/OVRTX_MIRROR_NOTES.md",
+      "bytes": 3978,
+      "sha256": "b12c5399361396d479b2a73ec7031110f8eb2fc5078423ec8cc18117e2657eca",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.PHYSICS_AUDIT.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/PHYSICS_AUDIT.md",
+      "bytes": 26253,
+      "sha256": "9f0f5d4ad0df547e66e449ee43e2770b35fc5d240aa308fd47c08a5fb3123f02",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.PLAN.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/PLAN.md",
+      "bytes": 2937,
+      "sha256": "f59d682c0e47ff5e81ad0abe54c8d4f0ba252aff71651511a1bb61c8b8379378",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.RENDER_AUDIT.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/RENDER_AUDIT.md",
+      "bytes": 39313,
+      "sha256": "2806af158c6258a152996bf586583631d523a4fa8acf2a6f09ff38154f2cc4b7",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.REPORT.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/REPORT.md",
+      "bytes": 74534,
+      "sha256": "ffaceebc28f56b4e0267d9a6fd68624bfd91c82d8fa39eed5ed335c06cbdd8f3",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.SCHEDULER_AUDIT.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/SCHEDULER_AUDIT.md",
+      "bytes": 18124,
+      "sha256": "0dc1618fb7c3fce4c727633fd68e5baa6dd7f3fe4a1d0c6c3c0f3b2fa6733c40",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.SOURCE_COVERAGE.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/SOURCE_COVERAGE.md",
+      "bytes": 5371,
+      "sha256": "638208bc5bfc2c34d610a01227f79aa92ec67d0784eada725e30f906844c20cd",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.STORAGE_AUDIT.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/STORAGE_AUDIT.md",
+      "bytes": 24448,
+      "sha256": "c7957404a54dbd301a0672a0d75a9d04e0f578fd3c9ac4cb834418bcbae55576",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.TILED_AUDIT.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/TILED_AUDIT.md",
+      "bytes": 16710,
+      "sha256": "d81c30a2fc0018e1af9ae1a271c3c94ffc8b2a46d83c2513be65ab32c724d110",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.WARP_NEWTON_AUDIT.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/WARP_NEWTON_AUDIT.md",
+      "bytes": 14944,
+      "sha256": "f942aabb6a8bc67159307c5897c534eabeefa8429597b4a1bb80bf8c0226034f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.XR_AUDIT.md",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/XR_AUDIT.md",
+      "bytes": 28557,
+      "sha256": "5e5be0772687e1a04ce30fc8c84fb4b74b33af8924157205e5b15b2a43a4fee7",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.artifact_inventory.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/artifact_inventory.json",
+      "bytes": 170207,
+      "sha256": "3788dd5209b773c3b3aca52f6bda425db3afd957934daa85dc01342cf6ba1d8b",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.atlas-decode-role0.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/atlas-decode-role0.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.atlas-decode-role1.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/atlas-decode-role1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.atlas-decode-role2.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/atlas-decode-role2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.atlas-decode.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/atlas-decode.json",
+      "bytes": 16841,
+      "sha256": "3656f1ea508322f45fffc5be833c762542fd8138b53df931f549d136b3bf6dfb",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.atlas-decode.rows.jsonl",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/atlas-decode.rows.jsonl",
+      "bytes": 283074,
+      "sha256": "53e6d8ccc9a69fdb75579fedefd32ef26a7e41eb7bfa06d9fb3453540a35ad76",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.atlas-preview.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/atlas-preview.json",
+      "bytes": 378,
+      "sha256": "21816cdd87adba62abcb073d8b01882625b99517072e21ec4bd01b7aa08194cd",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.atlas-preview.png",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/atlas-preview.png",
+      "bytes": 13479,
+      "sha256": "443b7c6365bd265b923112ae111a8ddf7e0d5f43242437a839a6bbc90a020970",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.atlas_media.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/atlas_media.py",
+      "bytes": 6167,
+      "sha256": "7147d5115fcce114f8ebf2708176f68d38aa32591444bd48b20b2edce285c92c",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.check_bundle.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/check_bundle.py",
+      "bytes": 5133,
+      "sha256": "f57ebb16a8d46db34c4e129f413cfc89e543080f215980b3a2474922bc59ee19",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.checks.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/checks.json",
+      "bytes": 18104,
+      "sha256": "4ac61aa42053bda4b05444a5724396664f41005b5128816ffa701764922e7d7f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.checks.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/checks.log",
+      "bytes": 8747,
+      "sha256": "cb1a25a5a656b71b7036a5bf8517efbbed0b203bda43c22ebbfd9f7a937b45db",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.checks_initial.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/checks_initial.json",
+      "bytes": 11504,
+      "sha256": "597d989cce0def8b7563cc38da19d4eadfe2c6c5c1414b72b1bbc7e82b405b79",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.checks_initial.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/checks_initial.log",
+      "bytes": 8574,
+      "sha256": "0fc91e378249bf3b5652ca2af588d9defe6ddaedf53854ff170e07f0d5d46bc1",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.codec_probe.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/codec_probe.py",
+      "bytes": 5195,
+      "sha256": "9f4a849f7949086d7b625664e6887470c8e55c5440132455df7b1536bf08a5ef",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.decode_clock_initial.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/decode_clock_initial.py",
+      "bytes": 3293,
+      "sha256": "f52573189ac0eea4ea0880e1d8a574d7d4b28cc2d79b1d947d60927cf6fceaeb",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.decode_clock_probe.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/decode_clock_probe.py",
+      "bytes": 3672,
+      "sha256": "55eec4ce1dc2110abf70e81db8d694d689e01e1015b2d2a12042575a13c097b1",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.fabric_boundary.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/fabric_boundary.py",
+      "bytes": 3573,
+      "sha256": "b28181b8879e15ca178201bb4372ad34a6384828c31e7586bf838562ba828c77",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.fabric_boundary_cpu_check.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/fabric_boundary_cpu_check.log",
+      "bytes": 195,
+      "sha256": "5ed83c354ee2faa64d1f643311e4266497ce1b2eca9fadfe49cfd5634778dede",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.fabric_native_comparison.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/fabric_native_comparison.json",
+      "bytes": 29216,
+      "sha256": "de4aaea9841df606e2f5546b225cae63b7348e4c8ea79d465d9bd1aa71ebcbc0",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ffmpeg_workers.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ffmpeg_workers.py",
+      "bytes": 7192,
+      "sha256": "1ae4ea185ab91cc5db8ff13720f8d9841b3aa78cb6258e1732f9a85b35f6a079",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.final_primary_sources.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/final_primary_sources.json",
+      "bytes": 513,
+      "sha256": "d4a3d2c70e4506a7c2cc458ab3654928cdb806c37a9856b01bff466448f544a9",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.full-first-decode-counts.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full-first-decode-counts.json",
+      "bytes": 3252,
+      "sha256": "aec0ff620ec2322534e59ce6a55e4ff0526af40efe604c137af483dc689f6af9",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.full-xr-clock-decode-r2-role0.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full-xr-clock-decode-r2-role0.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.full-xr-clock-decode-r2-role1.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full-xr-clock-decode-r2-role1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.full-xr-clock-decode-r2-role2.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full-xr-clock-decode-r2-role2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.full-xr-clock-decode-r2.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full-xr-clock-decode-r2.json",
+      "bytes": 19692,
+      "sha256": "378386946bff20755fdbf8a238d77f4b8aebfc36dd05796980c4bd0d557e76c4",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.full-xr-clock-decode-r2.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full-xr-clock-decode-r2.log",
+      "bytes": 3037,
+      "sha256": "59e6fc828bedd4bad1c60a6f3e1a2aedbba85d572faf76d0a893ade3a0a532b0",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.full-xr-clock-decode-r2.rows.jsonl",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full-xr-clock-decode-r2.rows.jsonl",
+      "bytes": 303843,
+      "sha256": "fd4d92d981baa8e6e9d4a525d772591cff2a9788cba7966a39eed1cc88dce6a0",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.full-xr-clock-decode-role0.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full-xr-clock-decode-role0.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.full-xr-clock-decode.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full-xr-clock-decode.log",
+      "bytes": 632,
+      "sha256": "15f2e9d22c98f0e178d1aa6f557c16794a67ecef99bbd130ac8234adf1137bdd",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.full_baseline_r3_crash.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full_baseline_r3_crash.json",
+      "bytes": 658,
+      "sha256": "2d95cb0cbca6d57e6f097e4b865ab4630303a3b66e917ad33e2779955e2751a0",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.full_scene_probe.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full_scene_probe.py",
+      "bytes": 14793,
+      "sha256": "485c436deaa534f5a6970181a3d9346780aff5465507164dda0ed9ac7bd7351e",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.independent_sources.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/independent_sources.json",
+      "bytes": 52428,
+      "sha256": "ccf541c15a9a56bbc287f47ab012d5c2e652649fa52272e7e98c9017c5d1b6cd",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.intermediate_results_snapshot.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/intermediate_results_snapshot.json",
+      "bytes": 219229,
+      "sha256": "bf9c76786f34be51abb1d4bb3d654c2d7d004a4c65a8ee2e5c42c37f2084d011",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.kit-sibling-decode-role0.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/kit-sibling-decode-role0.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.kit-sibling-decode-role1.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/kit-sibling-decode-role1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.kit-sibling-decode-role2.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/kit-sibling-decode-role2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.kit-sibling-decode.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/kit-sibling-decode.json",
+      "bytes": 7360,
+      "sha256": "30b15ee8a048654f2547da5a979ff2281735fb2f89c8022e4c66874009731260",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.kit-sibling-decode.rows.jsonl",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/kit-sibling-decode.rows.jsonl",
+      "bytes": 95253,
+      "sha256": "f6c106a21ebb11d32a01f259643a73a9ee191c909b54523f7fda436fa1a15ddb",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.kit_witness_probe.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/kit_witness_probe.py",
+      "bytes": 2798,
+      "sha256": "f4ef0e348543ec0b0546cbb4138d7d6f1b266ccaf3927eae1c7e07f315fd8d43",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.live-source-join.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live-source-join.json",
+      "bytes": 810,
+      "sha256": "9faf3066946e671d325c499daf8fecc9846c2e2484002af6bf05059ff6f604c5",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.live-source-join.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live-source-join.log",
+      "bytes": 810,
+      "sha256": "9faf3066946e671d325c499daf8fecc9846c2e2484002af6bf05059ff6f604c5",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.live_mirror.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py",
+      "bytes": 13241,
+      "sha256": "327d6d24b836f9dc39e892d38b6e2acbdce2e101a92ebe526b830a74c93ae652",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.live_mirror_preimages.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror_preimages.json",
+      "bytes": 140,
+      "sha256": "052e337900a9de83ed2e685e33497fb80688de3b1226a6beeef9860cd2a8efc0",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.matched_cpu_map_optical_witness.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/matched_cpu_map_optical_witness.py",
+      "bytes": 2898,
+      "sha256": "b9a05e0975c8e69ac8b49376b06ef738a4c6c138a652a1bac016693573c1d783",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.matched_cpu_map_ovrtx_snapshot.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/matched_cpu_map_ovrtx_snapshot.py",
+      "bytes": 9687,
+      "sha256": "67dd6843d2445b87609b1feffe5449a7e0158ca1d199aafad22fbc64ba0edbc5",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.media_exact_sources.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/media_exact_sources.json",
+      "bytes": 6482,
+      "sha256": "b762f5f12db0d410394113f74d2205f1f12b061b92862dbc935b01d4ed3043fa",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.media_sources.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/media_sources.json",
+      "bytes": 13249,
+      "sha256": "e44d782cb080bd15540fe1eb4f3b349c652b9e8916642c9617dd0cf8016b34de",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.mirror_worker.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/mirror_worker.py",
+      "bytes": 8945,
+      "sha256": "c28685d5c84f6dc216de0395f9f94020e24a53622881d1f6a76a04435aa6cb3f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.newton_preimages.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/newton_preimages.json",
+      "bytes": 731,
+      "sha256": "c1d5927302d9494d455a15b4ab6ea6b40517df99052e0f3d4afa99d359e4f867",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.newton_probe.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/newton_probe.py",
+      "bytes": 11622,
+      "sha256": "e4885c1e61ac7e0246f5f8300d108233d40b4061ad49d0030da50fa3a6781ac2",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.nsight-analysis-command.stdout.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/nsight-analysis-command.stdout.log",
+      "bytes": 731,
+      "sha256": "52218a5a33a77909fd2e910f8ae23f9ff13c1a288791c22f4dd4a7a9900eb2e9",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.nsight-fabric-export.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/nsight-fabric-export.log",
+      "bytes": 8129,
+      "sha256": "8c14f6e9a24bdc4dfc412c8d60dc3acf7b5e5340266e86fb92c17e814a9416d9",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.nsight-stats-command.stdout.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/nsight-stats-command.stdout.log",
+      "bytes": 1919,
+      "sha256": "d47d90387559f9d5bd39661ee20f273506d5dde9afcbe03e30913f1d4bad7072",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.nsight_analysis.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/nsight_analysis.json",
+      "bytes": 632411,
+      "sha256": "8f000f967e4136217ac55ee2a154c23d8da06a7caa47d783b8fdac132d205ce8",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.nsight_analyze.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/nsight_analyze.py",
+      "bytes": 9281,
+      "sha256": "932e43ff09142fac72b5c25913fc917f5cb7bd71cae8f4c98a8c2ce99844b5ec",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.optical_witness.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/optical_witness.py",
+      "bytes": 2986,
+      "sha256": "13a662f0cc7cdc40fb1fc92cfeeecbe7b4482c85d35bfd3109c17b098088f701",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.optional_package_pins.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/optional_package_pins.json",
+      "bytes": 3598,
+      "sha256": "eb7b962854d63c23d38d7762e655aed10ac718ee8568680f696642ea416116d6",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovphysx_adapter_checks.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_adapter_checks.log",
+      "bytes": 1047,
+      "sha256": "5da2e45b64afb0cfe8cc9b290152aca9ab4bd7acf01a486b29aef35256132cd3",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovphysx_fixedbase_author.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_author.py",
+      "bytes": 5114,
+      "sha256": "e77c41751d937313d1e645af623e126e234f92265d452641d0fcce7fbc01afc1",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovphysx_fixedbase_probe.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_probe.py",
+      "bytes": 12963,
+      "sha256": "6d9084d3ceacf6f8088c85270597f12b0ee669f9610c0f7119731a2fbd06dcdf",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovphysx_fixedbase_probe_v3.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_probe_v3.py",
+      "bytes": 16118,
+      "sha256": "6c5871cb1e473134c02257a84552daf8bb8d9ff02258941dd4c20f319739a560",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovphysx_fixedbase_sources.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_sources.json",
+      "bytes": 10737,
+      "sha256": "14e9484c371355ebb92d61a4d26501c225b245bc5282c31e8899576e75018f8f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovphysx_fixedbase_v2.manifest.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_v2.manifest.json",
+      "bytes": 2408,
+      "sha256": "6b825acabc00e9ef0d397d6494e450f7aa2243f9ae4e17d7355c35119ddebbb9",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovphysx_fixedbase_v2.usda",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_v2.usda",
+      "bytes": 1888,
+      "sha256": "548320594048c8f96b5a1b1de68eeb0a3803214bae9dc53db816e1bb399ed8df",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovphysx_probe.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_probe.py",
+      "bytes": 11494,
+      "sha256": "d66c8394bdb39c9e1a0cddeed282df87c80ef16d6795526d153745e5077a4bab",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovphysx_sources.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_sources.json",
+      "bytes": 19309,
+      "sha256": "daee6745e976648d399ad616aa97ac79815f0b2a3feb3560ed404d2ac1198f47",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovphysx_stage_audit.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_stage_audit.json",
+      "bytes": 26295,
+      "sha256": "7d8e0f40994aeb8824807bcb92b47336d86d629084240bb0ce4284b858ec9eb8",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovrtx-gpu-decode-role0.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx-gpu-decode-role0.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovrtx-gpu-decode-role1.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx-gpu-decode-role1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovrtx-gpu-decode-role2.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx-gpu-decode-role2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovrtx-gpu-decode.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx-gpu-decode.json",
+      "bytes": 19147,
+      "sha256": "0d43f399cdfff5043c43ac6c71fb57c5dfa0fd95abf759cc40164235371459e8",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovrtx-gpu-decode.rows.jsonl",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx-gpu-decode.rows.jsonl",
+      "bytes": 339718,
+      "sha256": "3ba87bcc4e0245b76e748d326d00bea50403ff485b8e93de0ae60cdcd82b8651",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovrtx_capture_probe.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_capture_probe.py",
+      "bytes": 6584,
+      "sha256": "239a6b43a6d0019b61fae0fac8b9c640893520f39c17db90b417d1997bc46af6",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovrtx_gpu_consumer.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_gpu_consumer.py",
+      "bytes": 7844,
+      "sha256": "4e31857e2521ad4a178db7a4e77508ce3d0c7103d7611b3de2a0e78685e4e95b",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovrtx_gpu_consumer_preimages.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_gpu_consumer_preimages.json",
+      "bytes": 1400,
+      "sha256": "aff78ea0c4bf4112a2569f355c5382ac8a18b484bea79687de4c2985629c1308",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovrtx_live_probe.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_live_probe.py",
+      "bytes": 15437,
+      "sha256": "2d5c6a0ddb6a40142bde67ad834d7eac4ea4b985676336599015a4f6dd34b62e",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovrtx_snapshot.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_snapshot.py",
+      "bytes": 10721,
+      "sha256": "530f116ff99203cbbffa4e76ab19f866ebb55c0246746b91b08987fc7e04f0ab",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.ovrtx_snapshot_preimages.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_snapshot_preimages.json",
+      "bytes": 941,
+      "sha256": "10de3c0d066fa8f08dd05f479a8a27baccc0b00bec222397d5ee2dac1328c48f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.physics_preimages.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/physics_preimages.json",
+      "bytes": 1827,
+      "sha256": "d1940a3c1a0b3c4b01bf3d7c2d9427094c97ba5b18370c872f19e1e9e5f90964",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.physics_probe.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/physics_probe.py",
+      "bytes": 7288,
+      "sha256": "4facf9a9f7fdb018f1bbb159da84c8b1883d51412dc267a36247cf33004a9f0b",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.profiler_probe.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/profiler_probe.py",
+      "bytes": 5632,
+      "sha256": "e1aa33bf0ba6ae6001ab96b73361f082cd3dbdd9820eb46006ab1e953d846b00",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.pynv223_adapter.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/pynv223_adapter.py",
+      "bytes": 4882,
+      "sha256": "d41b6128ab4886b9fee91e3cf28435adb28aaea34cc8e151e1b689b40fd3d0bb",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.pynv223_adapter_initial.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/pynv223_adapter_initial.py",
+      "bytes": 3545,
+      "sha256": "d19f82b5c31f0744a18466f3ee265b76cceb6f96d593c24dc0f27706ce5278f8",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.render_sources.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/render_sources.json",
+      "bytes": 27731,
+      "sha256": "b2192c22aa1ea6d0f61ab58743e4fa30fb4838b4eecee75d6d527edae985a683",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.run_ledger.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/run_ledger.json",
+      "bytes": 33213,
+      "sha256": "2e9b4ec39d894ca6b9878bbb5241edc52e2c3426342765beb0546e34ee908ffc",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.run_receipted.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/run_receipted.py",
+      "bytes": 2578,
+      "sha256": "e20728bdfdbebebcf221bc5c8796cca17c586816f446c3e546b96547ef094575",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.codec-cpu-gop50-r2.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/codec-cpu-gop50-r2.launch.json",
+      "bytes": 9076,
+      "sha256": "163b444eb0f8b360d18ac491a5def8c215709b0b321a232d9a2d79c2547bb707",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.codec-cpu-gop50-r2.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/codec-cpu-gop50-r2.log",
+      "bytes": 44992,
+      "sha256": "9983d05eec7de609aee5e463aaeef948da7a1a7f2214686e2ef9863fc46f81fa",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.codec-cpu-gop50-r2.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/codec-cpu-gop50-r2.result.json",
+      "bytes": 44992,
+      "sha256": "9983d05eec7de609aee5e463aaeef948da7a1a7f2214686e2ef9863fc46f81fa",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.codec-cpu-gop50.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/codec-cpu-gop50.launch.json",
+      "bytes": 5278,
+      "sha256": "edb6dcc2b708f1c426640817557a995bd6cfd633e519f01223c72e2b7002c891",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.codec-cpu-gop50.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/codec-cpu-gop50.log",
+      "bytes": 1703,
+      "sha256": "1d5b298950e3915d5af7cc3f55b43c9b9d54b0da608ba7419403fa8f0cb2ee3a",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.codec-cpu-gop50.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/codec-cpu-gop50.result.json",
+      "bytes": 1667,
+      "sha256": "52f261c8c30bf5cdce208525e931daead2946b72fe3c55847df22f7cc58c0c83",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.codec-gpu-gop50-r2.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/codec-gpu-gop50-r2.launch.json",
+      "bytes": 129617,
+      "sha256": "9a77cabc612237b3309d5ef36f081b474b3c1c0e8e60e403f16b7ae91c84b488",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.codec-gpu-gop50-r2.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/codec-gpu-gop50-r2.log",
+      "bytes": 1195,
+      "sha256": "6621e8b3c5e91a7180db9df02f6b30a584ff7791952d89ccbb41e85313463e60",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.codec-gpu-gop50-r2.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/codec-gpu-gop50-r2.process.json",
+      "bytes": 346,
+      "sha256": "8aacc835a30064e182ce777fa9ec6a84efec4bc8e4d129fb6ed7f84f3e2c52e8",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.codec-gpu-gop50-r2.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/codec-gpu-gop50-r2.result.json",
+      "bytes": 962,
+      "sha256": "44df43016edcf85f7d9b24ffb5639739c55d9140d7662b2637b884bd1021104b",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.codec-gpu-gop50.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/codec-gpu-gop50.launch.json",
+      "bytes": 112489,
+      "sha256": "b865303a270004ec076ebd204726f2ba855603c66971dc9ca84cc71606ea2fe9",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.codec-gpu-gop50.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/codec-gpu-gop50.log",
+      "bytes": 721,
+      "sha256": "6bac679b4b0427548ec65842569517ddbc75b95cea011b08c60005ce907e7c68",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.codec-gpu-gop50.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/codec-gpu-gop50.process.json",
+      "bytes": 257,
+      "sha256": "2fdb0604fb81fca5458218e16eabe780d20f93f3453b8b2037d3631d9a737887",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-baseline-poll-r2.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-baseline-poll-r2.launch.json",
+      "bytes": 12265,
+      "sha256": "1fbe29f3942336bf8f7b4cb6c03bbf741dee498a99288f5b111519dcd4f1fe86",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-baseline-poll-r2.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-baseline-poll-r2.log",
+      "bytes": 24300,
+      "sha256": "a6fe2f75a75607e49d21e6e587fa67c44d94bc51ff8c9cb623f83c390ead1f63",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-baseline-poll-r2.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-baseline-poll-r2.packets.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-baseline-poll-r2.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-baseline-poll-r2.result.json",
+      "bytes": 4806,
+      "sha256": "2744c12dc3bab74eb999c123caa3ba38a5632947eff3ce99a90c664ba78b3860",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-baseline-poll-r3.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-baseline-poll-r3.launch.json",
+      "bytes": 12321,
+      "sha256": "07bdaef7239404e0ac8281359bdbbf698b920183d33aee8d87eb211ce7a59d79",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-baseline-poll-r3.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-baseline-poll-r3.log",
+      "bytes": 91746,
+      "sha256": "0115fdbf3669a21325881c29eeefbc5b6778b48dcdd33744f5e8b5e48ac8e818",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-baseline-poll-r4.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-baseline-poll-r4.launch.json",
+      "bytes": 19910,
+      "sha256": "0cdc0b0c0ba8aef846c3177f97ae231ce774288f32fee3d7fb186ede822215cf",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-baseline-poll-r5-contention.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-baseline-poll-r5-contention.launch.json",
+      "bytes": 19962,
+      "sha256": "20eb6c14ad4c4a8c97e9bc2470cf0134b5f10346d8abad98565dcf2f42dc364e",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-baseline-poll-r5-contention.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-baseline-poll-r5-contention.log",
+      "bytes": 19791,
+      "sha256": "998f52c8f70d222be724de421e600ec44b3c40d6848287b460f30e01afe9e34f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-baseline-poll-r5-contention.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-baseline-poll-r5-contention.result.json",
+      "bytes": 4948,
+      "sha256": "5f5fde085b105e8f3f24c6054bbdc24118456e10274e38147da7b7fcdae8f18e",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-baseline-poll.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-baseline-poll.log",
+      "bytes": 11380,
+      "sha256": "1cc7e46a9ce8c12d848fdacf611a9ee8624c128ba040aac35f40628210354f15",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-baseline-poll.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-baseline-poll.result.json",
+      "bytes": 2966,
+      "sha256": "85da1b8eac85236595737744fa833ec7547880464bfa5c3df521a31c8c76bdda",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-original.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-original.launch.json",
+      "bytes": 83447,
+      "sha256": "65857fcf704a18cbd1614d2c32095a9d746487127cbff6ecebe3fd40870274de",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-original.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-original.log",
+      "bytes": 23112,
+      "sha256": "c30aaf8b01f744e87c4f7ab600c4645268b5776404bc5cb89543f9bf9f022fb0",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-original.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-original.packets.json",
+      "bytes": 75264,
+      "sha256": "632bdf87e382038513a020a4fc694c0508e477a2cb8459933b157a5a7f3ff78c",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-original.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-original.process.json",
+      "bytes": 2036,
+      "sha256": "2232ce657f90985b17fb179184cd848c80860def757417673723a8336ba14b79",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-original.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-original.result.json",
+      "bytes": 8533,
+      "sha256": "00b5b00e7bed6f777a0fdb6d7c726aef6fe376cf5e3acb652c80d2682c3ff9e5",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-poll-contention.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-poll-contention.launch.json",
+      "bytes": 19962,
+      "sha256": "0e1dda686f9a9ebfaeb5732065e7731444167e46c2da64ad511ec7e661907540",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-poll-contention.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-poll-contention.log",
+      "bytes": 22986,
+      "sha256": "1c043d0c9adb4dac3b841bb927b103443e8cbee3cfd30949c265910a6289f5f1",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-poll-contention.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-poll-contention.packets.json",
+      "bytes": 75265,
+      "sha256": "d471286e9a5e71d0f3dc3562d752d80f8f188fed5376d6ba5f4533185f1ff934",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-poll-contention.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-poll-contention.result.json",
+      "bytes": 8537,
+      "sha256": "a1bbaa53b05077c987e3e35a1e573859c1333ac612f9266cdd226e2e5e0a7c49",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-original.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-original.launch.json",
+      "bytes": 174419,
+      "sha256": "974159824f7b8fcd2bae82a4023dd3a38dda8faead72a5adfa32e8af20ea84d3",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-original.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-original.log",
+      "bytes": 39800,
+      "sha256": "caaab2f034bb1515a90b763c608bd441e9cc4042836dd0f350c424f778be24ae",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-original.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-original.packets.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-original.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-original.process.json",
+      "bytes": 1798,
+      "sha256": "3fb3232cc8f8cbda764a105812cd1293a0f482287893a111b4cc536785e10f1a",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-original.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-original.result.json",
+      "bytes": 5273,
+      "sha256": "0d8bbd3d58eb6fa4efee65c112dfea486260eee642870842d200a15be9c77537",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-restored.atlas_manifest.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-restored.atlas_manifest.json",
+      "bytes": 9678,
+      "sha256": "82775c48f3797ab2f46af2b3e627a4c8f3c2398866cb9a176b85555889d19e51",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-restored.atlas_result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-restored.atlas_result.json",
+      "bytes": 10484,
+      "sha256": "5e8d4d95541b1c4377bf84b900fefee8e46827aae1c4e7139a58e0cc66198ddc",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-restored.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-restored.launch.json",
+      "bytes": 191750,
+      "sha256": "14176c6b3153dc9f73fe3d9f616a08a4fe0aac215ce894b3b7ce6e6ce5d96462",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-restored.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-restored.log",
+      "bytes": 39331,
+      "sha256": "2252568102ef666acc45ada7f9f6b598f46413562fea0e3f2234955bc3322099",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-restored.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-restored.packets.json",
+      "bytes": 318233,
+      "sha256": "cde71f7f9018d90544bf48e61ebe6ea8f0fee51d99d06d73b36047dc5968418d",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-restored.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-restored.process.json",
+      "bytes": 2653,
+      "sha256": "5590d463fc592ba480814738dab734cf25a028aa3baf896d3bbc2e433b63da70",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-restored.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-restored.result.json",
+      "bytes": 19661,
+      "sha256": "2b1cbe14b7921a9fb90dd441144fa4086ace15d297c047777257fd326e7c366d",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-signature.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-signature.launch.json",
+      "bytes": 190669,
+      "sha256": "3f8bad7676107eb1911ccfbf9e167045a9b5cf90adf4bc5ca5318f4fd5f6d15d",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-signature.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-signature.log",
+      "bytes": 40848,
+      "sha256": "b4950b5f208d0063208ed47ba99d6bed3902713707d853ac7eb2f683bae35997",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-signature.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-signature.packets.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-signature.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-signature.process.json",
+      "bytes": 1710,
+      "sha256": "2618cc50fcb2478b66bb3810a66bda0619363d04801de7186bf1416968d7901f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-atlas-signature.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-atlas-signature.result.json",
+      "bytes": 6311,
+      "sha256": "61a2fce7de66f8bfeb5f314717b154f5ad4b50dbf836f2dfb9dc40cd5761eae6",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-implicit-lazy.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-implicit-lazy.launch.json",
+      "bytes": 167894,
+      "sha256": "808709fd95b4095105a95c7d3a74a48f0f1217017592039c346a5dd6b5fc82bb",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-implicit-lazy.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-implicit-lazy.log",
+      "bytes": 39061,
+      "sha256": "3e49f65deb595982d75344760aaba7a7b223316ec66cf9b6b364c84660d0736a",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-implicit-lazy.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-implicit-lazy.packets.json",
+      "bytes": 75252,
+      "sha256": "a9e717cb6f49efe4410e99437689ed935df950a68b1ee59a75271d2c58bdd754",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-implicit-lazy.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-implicit-lazy.process.json",
+      "bytes": 2583,
+      "sha256": "fc751ed0b6930a612aae02fd70a9dc53af9dbc91c1dc25f933c18189712d82d8",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-implicit-lazy.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-implicit-lazy.result.json",
+      "bytes": 8908,
+      "sha256": "151c8aceb0ee5911d69ae0ccbbb057d301c737f42de1b642ac2ad2a7354928c4",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-fabric-t1.derived_measurement.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-fabric-t1.derived_measurement.json",
+      "bytes": 6231,
+      "sha256": "3069c489d4c7c179f364eeacb9460b1e33db1a1eb7edec9473e1a71e44e98424",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-fabric-t1.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-fabric-t1.launch.json",
+      "bytes": 218037,
+      "sha256": "742ded581c0217941d1f70668c5b952213d7854dd757e0da4f462d4572b80d25",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-fabric-t1.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-fabric-t1.log",
+      "bytes": 39660,
+      "sha256": "28894fd2a8ebd98cb6d682bc9abff192a33c3766fa46ea0508ea3f5222c6a48a",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-fabric-t1.mirror.producer.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-fabric-t1.mirror.producer.json",
+      "bytes": 2418,
+      "sha256": "c1ced3bbc253e47f89c9c69b4a74b5c5ee1c168f41be79b127d396f799d87e43",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-fabric-t1.mirror.seed.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-fabric-t1.mirror.seed.json",
+      "bytes": 6720,
+      "sha256": "ec548d9f9c6aea2e1a86f94bdc8295b92923b4bee47049fc2a97ac301c5cd99f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-fabric-t1.mirror.worker.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-fabric-t1.mirror.worker.json",
+      "bytes": 1855,
+      "sha256": "4a15981815ef737655fcdfdb738796b4a98929556abefa3cd5b8364b3f053c69",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-fabric-t1.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-fabric-t1.packets.json",
+      "bytes": 98316,
+      "sha256": "eabad2965766d505be012389c3c86268fae07b0eeb4b3079cdec53c211a4f7b9",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-fabric-t1.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-fabric-t1.process.json",
+      "bytes": 4369,
+      "sha256": "ed430b8c3ea532abf3491d0fb581a00ba64951c935b0a72205e03fa198fa0922",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-fabric-t1.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-fabric-t1.result.json",
+      "bytes": 4803,
+      "sha256": "4ee4d46623505056f6eebd580ba584f753afe1bc7bad63a7041681f8cb1f71c7",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-long.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-long.launch.json",
+      "bytes": 213772,
+      "sha256": "dbf12541956a79b643baf0b4364fe49e459b1c6aca94efaf112eeccadcd2b60c",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-long.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-long.log",
+      "bytes": 38544,
+      "sha256": "8d6a21ba86351bca94bb837ec7c575da02c30e2c97ce262892c6f74f50a0a5d7",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-long.mirror.producer.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-long.mirror.producer.json",
+      "bytes": 1748,
+      "sha256": "2dc604d669255c602b450b4461800caab7831d7fe8b6639474dfcb11a2d6fe7c",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-long.mirror.seed.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-long.mirror.seed.json",
+      "bytes": 6705,
+      "sha256": "dde23569320974a3901ac928ee9ffdfd3d186e4d4260d1d1a6ad60936f69e130",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-long.mirror.worker.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-long.mirror.worker.json",
+      "bytes": 1241,
+      "sha256": "f97ce4e6389e446a4b69faa01b16600c70b9748e97688f46e96dfadd528230c1",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-long.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-long.packets.json",
+      "bytes": 197397,
+      "sha256": "8032598521bc705e9b428414e9b305dd2b1ab8c7e16a5f219e5ecc80116269ac",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-long.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-long.process.json",
+      "bytes": 6639,
+      "sha256": "5becdd65d5943b45d29b289c017479f7dbc3de99026ec8271e021473a76b16ce",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror-long.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror-long.result.json",
+      "bytes": 10719,
+      "sha256": "7652477137ffee40beed15e3fa6aca2eb040222ada4c311ef47c98230fa352bf",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror.launch.json",
+      "bytes": 211793,
+      "sha256": "fe2db47db058f285f07d90aae71684804cf0bf0d79d9bd975963c5e9bd2c4915",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror.log",
+      "bytes": 38325,
+      "sha256": "c692b6358a5609d719798d93c1655519ff9c4a76194f6a92c59a5ed3f673308c",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror.mirror.producer.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror.mirror.producer.json",
+      "bytes": 1738,
+      "sha256": "5b7439e920b4eac3e891efe65061e362d9c62968ac7432a765c119c485f95bb2",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror.mirror.seed.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror.mirror.seed.json",
+      "bytes": 6690,
+      "sha256": "7dac3fe142c398b04dee56232151b470081f330700c37ca7644359925aace20f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror.mirror.worker.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror.mirror.worker.json",
+      "bytes": 1231,
+      "sha256": "6bfb2bf657785ac75e69821ddd2e402e9a623c002f704ddf895e6c9d49408413",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror.packets.json",
+      "bytes": 16215,
+      "sha256": "b3890d1530f9ffc5911fa103156f6a2c503cbb3e48ccc7ce912fdcbc318bf280",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror.process.json",
+      "bytes": 2716,
+      "sha256": "9ae15dd2334b4f94ca9f75db856dce9515a62360205f5fdd3a745d2e5ed3b085",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-live-mirror.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-live-mirror.result.json",
+      "bytes": 10619,
+      "sha256": "04c8eb20683c1796d29706f1d2fa77432985551fc3435bc9c7facb7ac57f8398",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-minimal-ik.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-minimal-ik.launch.json",
+      "bytes": 83866,
+      "sha256": "54045855332df6e7b2c03d234a08510537836f08f8c86d46ffe610303c980c11",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-minimal-ik.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-minimal-ik.log",
+      "bytes": 38042,
+      "sha256": "5a18791fd48343cd23d6bb1743cc85b2839256ae4f72acfa0d737bc815a1460e",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-minimal-ik.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-minimal-ik.packets.json",
+      "bytes": 75253,
+      "sha256": "25463480fe49bd9638e9fa5e02d62d290a9186f5539e58ae9bcba51f16796204",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-minimal-ik.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-minimal-ik.process.json",
+      "bytes": 2673,
+      "sha256": "34960cd51da6df1032e0739b35aba267784b4ee60d67121e85e3f94b08922a3c",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-minimal-ik.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-minimal-ik.result.json",
+      "bytes": 8743,
+      "sha256": "cc9e248f2935353b576912c716d45aa2ba3a59c4998e4149266a6c1ff0d430c6",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-original-ik-enabled.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-original-ik-enabled.launch.json",
+      "bytes": 97650,
+      "sha256": "14747b748b59c408d386dd59957eed18ea1ab57869c425f1f9811e30e5d2e17f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-original-ik-enabled.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-original-ik-enabled.log",
+      "bytes": 39077,
+      "sha256": "08f63a6db014f552e323ebb5f370b37c0468b0eafd68674acfd515c849d43302",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-original-ik-enabled.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-original-ik-enabled.packets.json",
+      "bytes": 75252,
+      "sha256": "602d501240ab6600e3c07bfea96029b60001a8b4ce8e47ab37f21f6bacba7f25",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-original-ik-enabled.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-original-ik-enabled.process.json",
+      "bytes": 2673,
+      "sha256": "9ff8d3a1fff9bcac0330c6efff8cdceb9dc5d6c8a9b54727e238133e5bfdb332",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-original-ik-enabled.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-original-ik-enabled.result.json",
+      "bytes": 8754,
+      "sha256": "4c4be5627cacdcb7b193ab7e008b2bebaa81641d0af07278bd56d6d508442433",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-witness-original.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-witness-original.launch.json",
+      "bytes": 133037,
+      "sha256": "4ac1528171fef5289c96d6d9372b1e934b30381a53813471e383026b87d2ea4e",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-witness-original.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-witness-original.log",
+      "bytes": 39085,
+      "sha256": "fcc95a67170b337d67fe464a3a21dc5b14f3c836b34a1e333c0d44f6e3133103",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-witness-original.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-witness-original.packets.json",
+      "bytes": 75252,
+      "sha256": "d8abea0284a28e4992a6cded78e739ee3c6494e2ca0e7df43b2c5c7fa01d6b26",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-witness-original.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-witness-original.process.json",
+      "bytes": 2691,
+      "sha256": "69dc6733e8e0ad1c851246ad85f3c880f900df426ee972f2cf99de9069f94f85",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-witness-original.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-witness-original.result.json",
+      "bytes": 8891,
+      "sha256": "0643445916c76ed460b9a2ea98cb4e6c23eb14bfbf6efdaeca327489e2755f9c",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-witness-sibling.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-witness-sibling.launch.json",
+      "bytes": 147653,
+      "sha256": "70c84a5e9800d956fdd04f742e32aff8ae5d21202a93015994bc0f44d21c6fde",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-witness-sibling.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-witness-sibling.log",
+      "bytes": 38873,
+      "sha256": "b46ca0ff7a939d04dfa3a7f36ccf652d7da015b904b19e910b613b6afb5294fe",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-witness-sibling.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-witness-sibling.packets.json",
+      "bytes": 21351,
+      "sha256": "8dbb7783a8b5dd0aec2896e6eb9dd84012c9759c6ad525d6ba0aa63f219f68c6",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-witness-sibling.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-witness-sibling.process.json",
+      "bytes": 2119,
+      "sha256": "5e0cc4a96c986e7a1348638216938500d921a3fa747debc75935b67958644d70",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-cpu-xr-witness-sibling.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-cpu-xr-witness-sibling.result.json",
+      "bytes": 8796,
+      "sha256": "e714896037fbdb39fee665a65698503f0e2ed232957de975d413d938e6df38e2",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-fabric-boundary.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-fabric-boundary.launch.json",
+      "bytes": 217629,
+      "sha256": "71c54d5cd51faa85af580d831d594d4fb57c95125aed12edec1e1a2bbaeb896b",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-fabric-boundary.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-fabric-boundary.log",
+      "bytes": 23113,
+      "sha256": "3314be12778e156a2cd7cfd7af5df10ed60be656c37210459be269e4773fec91",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-fabric-boundary.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-fabric-boundary.packets.json",
+      "bytes": 75265,
+      "sha256": "81be0934740795ccc1948d7413e9bb5711f0b1ff54cbc9a6b4bd66d40e3f613f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-fabric-boundary.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-fabric-boundary.process.json",
+      "bytes": 1928,
+      "sha256": "d1c258387b7a570794a6e7de85ea3b7cd6a626e996496770eed247582a2febad",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-fabric-boundary.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-fabric-boundary.result.json",
+      "bytes": 9935,
+      "sha256": "d460755ed500a60526764cbcd9c1d4cf4deb086928dd0a87e448aa219b381273",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-nsight-fabric.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-nsight-fabric.launch.json",
+      "bytes": 227624,
+      "sha256": "d81b6a8927f71fe8317fa8d7c661e5d25f40354ac6f1b52768f5e1e8352dda72",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-nsight-fabric.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-nsight-fabric.log",
+      "bytes": 27090,
+      "sha256": "531864edcc6d2b5f46d86fe2a315cdfc938eb39154a92c5033a8d6a0144f1d75",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-nsight-fabric.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-nsight-fabric.packets.json",
+      "bytes": 32104,
+      "sha256": "0ea59831b85649097af15abcbc34e64366e191e50eb27a203f253ea77d6f68bc",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-nsight-fabric.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-nsight-fabric.process.json",
+      "bytes": 2602,
+      "sha256": "45e7ab6482387c8bd5a9eb967c8e6690575cbd4d45914b8180ea1877d7a81df3",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-nsight-fabric.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-nsight-fabric.result.json",
+      "bytes": 10964,
+      "sha256": "4e064951420dd4725e1ad2bbebcee8a2484e228f4daead73541aed714b96b785",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-nsight-registered.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-nsight-registered.launch.json",
+      "bytes": 174815,
+      "sha256": "8b45b9c5ec999c5538b82a9b896f84e29f51bb9931fa5c9057636cb27d378f97",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-nsight-registered.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-nsight-registered.log",
+      "bytes": 27400,
+      "sha256": "5bf0d4fd3acac3a766c890bfbd5bd3e428c1c77cdbbaef2eb27a48d95dfa0794",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-nsight-registered.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-nsight-registered.packets.json",
+      "bytes": 32104,
+      "sha256": "0ea59831b85649097af15abcbc34e64366e191e50eb27a203f253ea77d6f68bc",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-nsight-registered.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-nsight-registered.process.json",
+      "bytes": 2959,
+      "sha256": "86674d19b1e8adb6e3ef143070ab06a43c7f03da63a800d11c758f65ee55228b",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-nsight-registered.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-nsight-registered.result.json",
+      "bytes": 9569,
+      "sha256": "cbd1e92814aaa0cfdf4e21a8f625168167fc05dd13a257c3bb1945bc8b9d52eb",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-nsight.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-nsight.launch.json",
+      "bytes": 168249,
+      "sha256": "e2f13b25e4997b552c50d38eb87d4123d68fc21119653a2320f2b61169c1a389",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-nsight.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-nsight.log",
+      "bytes": 23266,
+      "sha256": "7a7ce3ad375209b811cadc6d49f72f465c8108a4e6c027f3f131da3f75f62619",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-nsight.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-nsight.packets.json",
+      "bytes": 32104,
+      "sha256": "0ea59831b85649097af15abcbc34e64366e191e50eb27a203f253ea77d6f68bc",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-nsight.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-nsight.process.json",
+      "bytes": 1940,
+      "sha256": "2a7be4795d4b022b444b3ba639bc62284eaed73c1ef5aa50e06713ef66fab816",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-nsight.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-nsight.result.json",
+      "bytes": 9546,
+      "sha256": "303d86e1a6da82b93fef3e6e5405cb8ca1d9a5c5d726d555faef01d34d846a96",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-poll-r6.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-poll-r6.launch.json",
+      "bytes": 73238,
+      "sha256": "e9b30ce56a6540114abef387175965943b9accb359c21b20f069a097c60c4bf6",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-poll-r6.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-poll-r6.log",
+      "bytes": 22996,
+      "sha256": "790daf41c84c5f72787ea4659ead83e5e06d4517a2f1476e03f9eb64f11c40ab",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-poll-r6.packets.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-poll-r6.packets.json",
+      "bytes": 75265,
+      "sha256": "81be0934740795ccc1948d7413e9bb5711f0b1ff54cbc9a6b4bd66d40e3f613f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-poll-r6.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-poll-r6.process.json",
+      "bytes": 2125,
+      "sha256": "18a035762578e8a08f33ae2533f89341629f3d716e405f1e9a335a8c520d0ceb",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.full-gpu-poll-r6.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/full-gpu-poll-r6.result.json",
+      "bytes": 8558,
+      "sha256": "48b69cafdddc5295dfd4a387bac38748ad6096734f7a88feedfc4035d24042b0",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.install-ovphysx.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/install-ovphysx.log",
+      "bytes": 1119,
+      "sha256": "369ac6d01c77125939272d18d87435ac8d663179e7b496d4f22359030e1b8836",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.install-pynvcodec.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/install-pynvcodec.log",
+      "bytes": 596,
+      "sha256": "fdbf7fc2c2d08b2752f0b8db832f7e6764ce27a147707f317e8947b9ddc821e6",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.newton-cpu-authored-mimics.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/newton-cpu-authored-mimics.launch.json",
+      "bytes": 227323,
+      "sha256": "4570944502f625bd3c784163a16144018317a106f635a46840e453bd22773f07",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.newton-cpu-authored-mimics.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/newton-cpu-authored-mimics.log",
+      "bytes": 1595,
+      "sha256": "8a087886aa4e03fc3e3a719bd9dcce2b14f69fcfacfca570761855cb12b264d7",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.newton-cpu-authored-mimics.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/newton-cpu-authored-mimics.process.json",
+      "bytes": 1150,
+      "sha256": "4bf25aa2737660693e1c5c06e6207bde3cb016be8f615b9279754ffe468324a9",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.newton-cpu-authored-mimics.receipt.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/newton-cpu-authored-mimics.receipt.json",
+      "bytes": 161761,
+      "sha256": "c84d4f096c6193b8e502815d0be3a6301ceb6412ea1905f102ecaeec8d65222f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.newton-cpu-fullscene.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/newton-cpu-fullscene.launch.json",
+      "bytes": 190745,
+      "sha256": "a91234d449acc68fcd3152244c8be26c2a23d1052b08e0dedff8f5ebf622056f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.newton-cpu-fullscene.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/newton-cpu-fullscene.log",
+      "bytes": 1676,
+      "sha256": "2c6864abfb58a4bf923e5a2c8c8439279db293620792a3806ed0949aa31c5762",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.newton-cpu-fullscene.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/newton-cpu-fullscene.process.json",
+      "bytes": 519,
+      "sha256": "6c88c996d642c81ce9bf9c8f20d62ac87d4ceae6328e0678d92a0ebf6b8269bf",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.newton-cpu-fullscene.receipt.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/newton-cpu-fullscene.receipt.json",
+      "bytes": 155263,
+      "sha256": "75aa16c09ad51da16270ed12bf8dc93ba9fbeeb6af6607049e25162d2ceec666",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.newton-mimic-diagnostic.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/newton-mimic-diagnostic.launch.json",
+      "bytes": 226581,
+      "sha256": "9d2e074cef5b1ec26c35400a9ade73a24c9a0ddad5877f65cf2372c83e80016e",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.newton-mimic-diagnostic.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/newton-mimic-diagnostic.log",
+      "bytes": 1679,
+      "sha256": "70c456f026c8dc9409ed1e65fb50122db38a92c5048d784a736427d9c7dc7e69",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.newton-mimic-diagnostic.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/newton-mimic-diagnostic.process.json",
+      "bytes": 519,
+      "sha256": "95a2640070618a6728fd18983b009dfa958acd1cf32a5fc415be953d3e7f4b21",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.newton-mimic-diagnostic.receipt.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/newton-mimic-diagnostic.receipt.json",
+      "bytes": 156182,
+      "sha256": "e394a5aafdbf4d26660bef8d3b9e0e9ac5dac6f6fff8a56f364a4cc4c5440f58",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovphysx-cpu-batch.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovphysx-cpu-batch.launch.json",
+      "bytes": 136474,
+      "sha256": "47048c3626a290e7993fcaae5bb243990ae96dbbe74dfe233897ff70926657ba",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovphysx-cpu-batch.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovphysx-cpu-batch.log",
+      "bytes": 1039,
+      "sha256": "19950268c5e93d1c59ff205ace3bc0408c00693dfe45e58c4020ff6f7d42cae6",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovphysx-cpu-batch.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovphysx-cpu-batch.process.json",
+      "bytes": 258,
+      "sha256": "9544eb89b3f6897902e1e144d81ed1a57de496c03e31f1bd10b47da299a3a130",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovphysx-cpu-batch.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovphysx-cpu-batch.result.json",
+      "bytes": 1472,
+      "sha256": "2b352771e79f27676466d97efbd5ed59b6243301590b3c2e8d76959b1330664c",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovphysx-cpu-fixedbase-v3.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovphysx-cpu-fixedbase-v3.launch.json",
+      "bytes": 190841,
+      "sha256": "fba8fb998bc37601cc074bf07f23ed4c9dd9c0a48f1c74aabb49559a72c5e6ec",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovphysx-cpu-fixedbase-v3.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovphysx-cpu-fixedbase-v3.log",
+      "bytes": 1457,
+      "sha256": "0e38c28f8818285f83c01af475c575f269efc7df3d14d0e46fc8ddab8b9d1b74",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovphysx-cpu-fixedbase-v3.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovphysx-cpu-fixedbase-v3.process.json",
+      "bytes": 521,
+      "sha256": "9dbbb0c8c535bae139be9e4aca528a8b095a310803abac6e08ff3a5fb30beb22",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovphysx-cpu-fixedbase-v3.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovphysx-cpu-fixedbase-v3.result.json",
+      "bytes": 7990,
+      "sha256": "ecef402e44932c805974c4d4515920760dc1bb4333607ab9d35affd1c520bfcc",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovphysx-cpu-fixedbase.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovphysx-cpu-fixedbase.launch.json",
+      "bytes": 168056,
+      "sha256": "bddeec3a88e1e17f3b5815d0fcbf66e6c14ca4188492935eb00bb5db17576259",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovphysx-cpu-fixedbase.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovphysx-cpu-fixedbase.log",
+      "bytes": 2508,
+      "sha256": "21fe08232b031d723afd76853fa843466106ef8bdbf493e30fa8f4e0ccc39452",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovphysx-cpu-fixedbase.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovphysx-cpu-fixedbase.process.json",
+      "bytes": 257,
+      "sha256": "a94ad9a3f8471013a9679d7aa360defaed4d6ab44128dbd70ed43358f3d8938e",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovphysx-cpu-fixedbase.result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovphysx-cpu-fixedbase.result.json",
+      "bytes": 5196,
+      "sha256": "b0f17c10ec1617e6508e112b3b0a2fc370ecefe98b3114306232c7c02436cf08",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-cpu-map-matched.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-cpu-map-matched.launch.json",
+      "bytes": 252318,
+      "sha256": "aa4734ac678ff4c328197cbde2094fcaf389f7078e78f95eec74b067f1b85f3a",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-cpu-map-matched.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-cpu-map-matched.log",
+      "bytes": 5830,
+      "sha256": "18b6123b1dfea5fe7db1b0634e1ed9b6b2e77c944e2d87ab73162efc10967ede",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-cpu-map-matched.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-cpu-map-matched.process.json",
+      "bytes": 1415,
+      "sha256": "b7fd638805ab18557d8a05d5e1201d1b3c467f92bf16a724fa7e605d18fb43b9",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-cpu-map-matched.receipt.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-cpu-map-matched.receipt.json",
+      "bytes": 4871,
+      "sha256": "1ba2d089893f0496c95e89524fee28b9e9a100d3a4c6d894355cdf0bdbb2f9ad",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-gpu-encoded.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-gpu-encoded.launch.json",
+      "bytes": 148955,
+      "sha256": "cbfd1d235630a7b1c8e1ab8f6d295aecd09ad073908751fa48af302651e1fdf1",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-gpu-encoded.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-gpu-encoded.log",
+      "bytes": 6665,
+      "sha256": "a8b05c35e06b2dd26bd31dfcc2af129207b19a24b7feb29233b5827f2357541d",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-gpu-encoded.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-gpu-encoded.process.json",
+      "bytes": 1059,
+      "sha256": "0a381acf4016a963274f1a4a3dd26400d1814df2c21751301dbbad64f96f3f8b",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-gpu-encoded.receipt.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-gpu-encoded.receipt.json",
+      "bytes": 5348,
+      "sha256": "0a382609b6245201619ae24b638499c584414aa9dcc983f75c1e3845d6999404",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-prepare-gpu.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-prepare-gpu.launch.json",
+      "bytes": 148762,
+      "sha256": "323a2cf9b7b9b947489115d7a5c47f3ba5f7f7fb5008e4ceee1ca1bba9e3578d",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-prepare-gpu.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-prepare-gpu.log",
+      "bytes": 6250,
+      "sha256": "bcebd68d740e9e9f152a690ee51c3036b449eb09b4eb753c38f46372218e38e0",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-prepare-gpu.prepared.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-prepare-gpu.prepared.json",
+      "bytes": 62891,
+      "sha256": "408c1840e3df650d242ded8a6e5633973214187dc7cfa92aad27493e79a555ce",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-prepare-gpu.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-prepare-gpu.process.json",
+      "bytes": 171,
+      "sha256": "dc09467c8eed22cd4c70ad39b319f16df88a0b50631bf9d3e5c923ef94cd53b4",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-prepare.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-prepare.launch.json",
+      "bytes": 129588,
+      "sha256": "4f0349b155941ba7684acbd2d7a29b3bc439f973f790a3d3e64fb7d39e580cf4",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-prepare.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-prepare.log",
+      "bytes": 6250,
+      "sha256": "580b75a8b4aa097f5c421ad38fef6fb5b9fbe08df7949e83468c5d6cafda5341",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-prepare.prepared.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-prepare.prepared.json",
+      "bytes": 62891,
+      "sha256": "5809dc65504f4f84c4371b32b9737d436b16c440ef14a9c9af6f942430a90b51",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-prepare.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-prepare.process.json",
+      "bytes": 170,
+      "sha256": "39acbc27c298b097c99b63b0dd67bdce57478b964bf7c8466d3abc4d9609a1db",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-witness.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-witness.launch.json",
+      "bytes": 129715,
+      "sha256": "ff0c8b2c71ef02be6a04df4d719425e2c93845f6957dedb3b21c78b3a678a99f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-witness.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-witness.log",
+      "bytes": 5772,
+      "sha256": "8bdbe398996921017f14c3607c56927b8456d23f6a2073cd863e868169446d3b",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-witness.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-witness.process.json",
+      "bytes": 1415,
+      "sha256": "698cb7bb329c44dbeeacc15a0778ba0c4b2956a229b4d2a6e0fb4e5075da9fbb",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-live-witness.receipt.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-live-witness.receipt.json",
+      "bytes": 4813,
+      "sha256": "18204d55cd277dae52087c0bd757d7a68550970eb6559c885ca2899f062023ec",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-piper-rtx-cpu-r2.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-piper-rtx-cpu-r2.launch.json",
+      "bytes": 84380,
+      "sha256": "db4dd46e576db6f9ead609e4c23a786d7959df861441119e208cefbc68f18aff",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-piper-rtx-cpu-r2.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-piper-rtx-cpu-r2.log",
+      "bytes": 2412,
+      "sha256": "4992695036bb0255644919c41933b549c3223de4ad6428ba5c4e3036e13d703e",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-piper-rtx-cpu-r2.process.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-piper-rtx-cpu-r2.process.json",
+      "bytes": 1396,
+      "sha256": "088b8d72ca6f8d6a179c011a7b100ea8f37eed64d78fae87f79378b5d64939ba",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-piper-rtx-cpu-r2.receipt.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-piper-rtx-cpu-r2.receipt.json",
+      "bytes": 1328,
+      "sha256": "5cc1c78368361c6ebb21dc21534092b2a96dd00c6b8c882cb3c836e9e6026e5a",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-piper-rtx-cpu.launch.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-piper-rtx-cpu.launch.json",
+      "bytes": 7658,
+      "sha256": "b34775fad35639ff5b34c65f7d3b7d5fe7acc475fe88aed39de96acaf3ba4ca5",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-piper-rtx-cpu.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-piper-rtx-cpu.log",
+      "bytes": 1948,
+      "sha256": "08beea5481113baa075bc169b5c6475b44cc1d3488a33c16ac624c66c4c753c6",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovrtx-piper-rtx-cpu.receipt.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovrtx-piper-rtx-cpu.receipt.json",
+      "bytes": 1333,
+      "sha256": "ba1b3ede3d56069eb9d88f88350a624ae535a98b69bdef8cf8dbf332c3fa0154",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovstage-overlay-parse.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovstage-overlay-parse.json",
+      "bytes": 1029,
+      "sha256": "85e3b2693d3a6493f5d462a56fa21e32c3f808f35e784d36534f3897dd26ea98",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.runs.ovstage-overlay-parse.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/runs/ovstage-overlay-parse.log",
+      "bytes": 1029,
+      "sha256": "85e3b2693d3a6493f5d462a56fa21e32c3f808f35e784d36534f3897dd26ea98",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.scheduler_local_receipts.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/scheduler_local_receipts.json",
+      "bytes": 38874,
+      "sha256": "c9c5b1b8357305bc0fe649356fb729836a38079ebc9bde3f87383981eb0710b0",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.scheduler_sources.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/scheduler_sources.json",
+      "bytes": 9784,
+      "sha256": "2171dc5364cba560068d4c004f2b73418afbd6c490ba11aa815d6c2228cc2047",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.sdk_preimage_verification.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/sdk_preimage_verification.json",
+      "bytes": 11572,
+      "sha256": "ad37d0e578966438574015876a51f2617d1577377c971a7aed224df6e7f3e2a3",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.sibling-preview.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/sibling-preview.json",
+      "bytes": 370,
+      "sha256": "de8d708d5e5714518d108539134d693a82c23400176521de0e8f01bc30fac437",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.sibling-r1-frame24.png",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/sibling-r1-frame24.png",
+      "bytes": 166302,
+      "sha256": "9e67adee3f50f652b09b380b5e613e74cebca5a9f29df02a687fc9f761077d39",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.source_coverage.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/source_coverage.json",
+      "bytes": 72059,
+      "sha256": "e794a72253c47ed39626c8bf128edaefac7d333702392171b688d35cd59e625c",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.stage-mimic-audit-all.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/stage-mimic-audit-all.json",
+      "bytes": 1895,
+      "sha256": "1c373dced75ba329f868f2f27740e192ae95ecf28a517fe99e39e2d9dd60e64c",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.stage-mimic-audit-all.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/stage-mimic-audit-all.log",
+      "bytes": 1895,
+      "sha256": "1c373dced75ba329f868f2f27740e192ae95ecf28a517fe99e39e2d9dd60e64c",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.stage-mimic-audit.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/stage-mimic-audit.json",
+      "bytes": 419,
+      "sha256": "1ecbdc08f5d2b55b2b3d3cd0cc91840ed8fbaf15944904efcda3e425a07e9c21",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.stage-mimic-audit.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/stage-mimic-audit.log",
+      "bytes": 419,
+      "sha256": "1ecbdc08f5d2b55b2b3d3cd0cc91840ed8fbaf15944904efcda3e425a07e9c21",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.stage_mimic_audit.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/stage_mimic_audit.py",
+      "bytes": 2035,
+      "sha256": "1a9b9a466b3547e33ca9ab7c701482c1b1e2e09fda267ca8ce868b434b49938f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.storage_cpu_probe.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/storage_cpu_probe.py",
+      "bytes": 7889,
+      "sha256": "b532e6040e6fe5aaf1a64b40ce01adb3d609a90dd63e00e1a9a90093ed32bf25",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.storage_cpu_result.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/storage_cpu_result.json",
+      "bytes": 4981,
+      "sha256": "934394cba660f4c449199db6372357122820fb70397e8a1e135e30d7cf48a249",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.storage_sources.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/storage_sources.json",
+      "bytes": 11857,
+      "sha256": "c831c751949e223da019e28cc349c2db8eaab35e4a5416a56f6558efa1da7557",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.tiled_probe.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/tiled_probe.py",
+      "bytes": 16772,
+      "sha256": "45369428fc749c0a6a20b7c50c2899feeaaf6b75ef146dd5cb6af124904362dc",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.tiled_sources.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/tiled_sources.json",
+      "bytes": 12357,
+      "sha256": "b3ddf7df781ebc1091efc6a1fd91249ebaa2c74824889d72d22b9721fec9a466",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.verify_live_source.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/verify_live_source.py",
+      "bytes": 4170,
+      "sha256": "2b383113676520b88161b39327bfa05eeddd4dd2b831beffc08983c02498acb3",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.warp_newton_sources.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/warp_newton_sources.json",
+      "bytes": 16198,
+      "sha256": "a4af78c69d190a666f0b9d6d08b5994eaad4cbebdc1b52377405f2cb3535d9ed",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.xr_adapter_checks.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/xr_adapter_checks.json",
+      "bytes": 746,
+      "sha256": "eea545d8b6101592cebb4cd6ab17975a291f3527af8a1fe4ac0435423b8ee1a3",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.xr_adapter_checks.log",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/xr_adapter_checks.log",
+      "bytes": 457,
+      "sha256": "3268ce7dc293c8ce51c5086eb446b86fd0b5b9e279ba1c1e48e8a4352bf48d87",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.xr_gpu_preview.py",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/xr_gpu_preview.py",
+      "bytes": 4073,
+      "sha256": "c6699f4565bafd0e61d0f2a4b3e9c1bffedd3f8576ee97332af5da9d0b42447f",
+      "tracked": true
+    },
+    {
+      "id": "experiment.live30.deep.attachment.xr_sources.json",
+      "locator": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/xr_sources.json",
+      "bytes": 41277,
+      "sha256": "82596f5cf41e56a4b9ecc1e81598370533c895e8680702e96fae68d49fb262c2",
+      "tracked": true
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "dataset_admissible": false,
+  "scope": "static scene, no physics, no XR, no encoder",
+  "unique_live_source_frames_verified": false,
+  "versions": {
+    "ovrtx": "0.5.1.385782",
+    "ovstage": "0.2.1.385922"
+  },
+  "stage": "/data/ebulochkin/vla-runtime/live30-20261009/piper-inputs/stage_snapshot.usd",
+  "stage_sha256": "03453f4d22eedb40c77cee68aabab241d0c0bf58b824f9c72afb59bef27b812b",
+  "settings": {
+    "stage": "/data/ebulochkin/vla-runtime/live30-20261009/piper-inputs/stage_snapshot.usd",
+    "camera": [
+      "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+      "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+      "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera"
+    ],
+    "output": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu",
+    "width": 960,
+    "height": 600,
+    "warmup": 60,
+    "frames": 300,
+    "device": 0,
+    "readback": "cpu",
+    "mode": "RealTimePathTracing"
+  },
+  "cuda_device_max_connections": "1",
+  "error": "OvstageError: OP_FAILED: failed to open USD layer: /data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu/capture-overlay.usda"
+}

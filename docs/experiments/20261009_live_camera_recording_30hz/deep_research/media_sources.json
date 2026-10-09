@@ -1,0 +1,295 @@
+{
+  "retrieved_date": "2026-10-09",
+  "scope": "Deep media audit, no GPU runs/install/import of optional packages",
+  "sources": [
+    {
+      "url": "https://discourse.gstreamer.org/t/cuda-encoder-stream-synchronization-without-cpu-block/1191",
+      "retrieved_date": "2026-10-09",
+      "classification": "forum_anecdote"
+    },
+    {
+      "url": "https://docs.nvidia.com/cuda/cuda-programming-guide/04-special-topics/graphics-interop.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/cuda/nvimagecodec/codec_options.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/cuda/nvimagecodec/py_api.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/cuda/nvjpeg/",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/holoscan/sdk-user-guide/4-3/faq/faq",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/holoscan/sdk-user-guide/using-the-sdk/cuda-stream-handling",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/holoscan/sdk-user-guide/using-the-sdk/gpu-resident-execution",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/metropolis/deepstream/7.1/text/DS_plugin_gst-nvstreammux.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvdsxfer.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvvideo4linux2.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/video-technologies/pynvvideocodec/index.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/video-technologies/pynvvideocodec/pynvc-api-reference/encoder.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/video-technologies/pynvvideocodec/read-me/system-requirements-common.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/video-technologies/video-codec-sdk/13.0/nvenc-video-encoder-api-prog-guide/index.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/video-technologies/video-codec-sdk/13.1/ffmpeg-with-nvidia-gpu/index.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/video-technologies/video-codec-sdk/13.1/nvenc-application-note/index.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.nvidia.com/video-technologies/video-codec-sdk/13.1/nvenc-video-encoder-api-prog-guide/index.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/omni.kit.hydra_texture/1.4.1/omni.kit.hydra_texture/omni.kit.hydra_texture.IHydraTexture.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/omni.kit.hydra_texture/latest/Overview.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/omni.kit.livestream.core/latest/Overview.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/omni.kit.livestream.rtsp/latest/Overview.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/omni.kit.viewport.utility/latest/omni.kit.viewport.utility/omni.kit.viewport.utility.capture_viewport_to_buffer.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/omni.rtx.spg/0.4.0/Overview.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/omni_replicator/1.13.30/source/extensions/omni.replicator.core/docs/API.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://forums.developer.nvidia.com/t/camera-class-from-omni-isaac-sensor-significantly-reduces-sim-performance/306269",
+      "retrieved_date": "2026-10-09",
+      "classification": "forum_anecdote"
+    },
+    {
+      "url": "https://forums.developer.nvidia.com/t/low-frame-rate-30-in-isaacsim-on-g6e-12xlarge/334049",
+      "retrieved_date": "2026-10-09",
+      "classification": "forum_anecdote"
+    },
+    {
+      "url": "https://forums.developer.nvidia.com/t/performance-of-render-product-in-action-graph/322300",
+      "retrieved_date": "2026-10-09",
+      "classification": "forum_anecdote"
+    },
+    {
+      "url": "https://github.com/FFmpeg/FFmpeg/blob/n4.4.2/libavcodec/nvenc.c",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_implementation"
+    },
+    {
+      "url": "https://github.com/NVIDIA-AI-IOT/deepstream_libraries",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_implementation"
+    },
+    {
+      "url": "https://github.com/NVIDIA-AI-IOT/deepstream_libraries/blob/d31deae34bb4f443d54cc98be84a3c08afc2e3fa/encode_video/encode.py",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_implementation"
+    },
+    {
+      "url": "https://github.com/NVIDIA/VideoProcessingFramework",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_implementation"
+    },
+    {
+      "url": "https://github.com/NVIDIA/VideoProcessingFramework/blob/529fb192f22ec305b8b237ed9e6014e171339c81/samples/SampleEncodeMultiThread.py",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_implementation"
+    },
+    {
+      "url": "https://github.com/NVIDIA/cuda-samples/blob/master/Samples/5_Domain_Specific/simpleVulkan/main.cpp",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_implementation"
+    },
+    {
+      "url": "https://github.com/nvidia-holoscan/holohub/blob/8a6c0bdfc70df1469a0cac1d2dade03940ec1f75/applications/nvidia_video_codec/nvc_encode_writer/README.md",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_implementation"
+    },
+    {
+      "url": "https://github.com/nvidia-holoscan/holohub/blob/8a6c0bdfc70df1469a0cac1d2dade03940ec1f75/operators/nvidia_video_codec/nv_video_encoder/nv_video_encoder.cpp",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_implementation"
+    },
+    {
+      "url": "https://gstreamer.freedesktop.org/documentation/cuda/gstcudamemory.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://gstreamer.freedesktop.org/documentation/nvcodec/nvautogpuh264enc.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://gstreamer.freedesktop.org/releases/1.24/",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://nvidia-isaac-ros.github.io/v/release-3.1/concepts/nitros/cuda_with_nitros.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://nvidia-isaac-ros.github.io/v/release-3.2/concepts/nitros/index.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://nvidia-isaac-ros.github.io/v/release-3.2/repositories_and_packages/isaac_ros_compression/isaac_ros_h264_encoder/index.html",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://origin.gstreamer.freedesktop.org/releases/1.22/",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    },
+    {
+      "url": "https://pypi.org/project/pynvvideocodec/2.2.3/",
+      "retrieved_date": "2026-10-09",
+      "classification": "primary_documentation"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "/tmp/live30-deep-media.md",
+      "sha256": "6ab9039ebcdfb746150948ff28e8162bc93c4a3bee8423222cc731e9eb30d874",
+      "runtime_validation": false
+    },
+    {
+      "path": "/tmp/live30-ffmpeg-workers.py",
+      "sha256": "13d7ffd0c44c661b14a81229225a17f29df72ffab96698d6578f4205da4877b2",
+      "runtime_validation": false
+    },
+    {
+      "path": "/tmp/live30-pynv223-adapter.py",
+      "sha256": "d19f82b5c31f0744a18466f3ee265b76cceb6f96d593c24dc0f27706ce5278f8",
+      "runtime_validation": false
+    }
+  ],
+  "pins": {
+    "holohub": "8a6c0bdfc70df1469a0cac1d2dade03940ec1f75",
+    "deepstream_libraries": "d31deae34bb4f443d54cc98be84a3c08afc2e3fa",
+    "VPF": "529fb192f22ec305b8b237ed9e6014e171339c81",
+    "pynvvideocodec": "2.2.3"
+  },
+  "search_queries": [
+    "site.docs.nvidia.com holoscan video encoder request response operator cuda memory",
+    "site:docs.nvidia.com metropolis deepstream Gst-nvvideo4linux2 encoder CUDA memory",
+    "site:gstreamer.freedesktop.org nvh264enc cuda-device-id zerolatency multi-pass since",
+    "site:github.com/nvidia-holoscan/holohub video_encoder_request video_encoder_response",
+    "site:docs.omniverse.nvidia.com Kit viewport capture buffer texture CUDA external memory",
+    "site:docs.nvidia.com video codec SDK split frame encoding Ada multi NVENC 4090",
+    "site:nvidia-isaac-ros.github.io release-3.2 isaac_ros_h264_encoder QP cuda",
+    "site:github.com/nvidia-holoscan/holohub \"video_encoder\" \"VideoEncoder\"",
+    "site:docs.nvidia.com holoscan \"VideoStreamRecorderOp\" tensor",
+    "site:docs.omniverse.nvidia.com \"SdRenderVarPtr\" \"cuda\"",
+    "site:docs.omniverse.nvidia.com \"capture_viewport_to_buffer\"",
+    "site:docs.omniverse.nvidia.com \"HydraTexture\" \"get\" \"gpu\"",
+    "site:github.com/NVIDIA \"PyNvVideoCodec\" \"cuda_stream\" encoder",
+    "site:gstreamer.freedesktop.org nvcudah264enc removed renamed 1.24",
+    "site:forums.developer.nvidia.com Isaac Sim cameras fps 3 cameras render 30 annotator gpu recording",
+    "site:github.com NVIDIA Omniverse CUDA camera video encoder Kit issue Replicator",
+    "site:nvidia-isaac-ros.github.io release-3.2 nitros image builder cuda event GPU memory",
+    "site:github.com/NVIDIA-ISAAC-ROS/isaac_ros_nitros \"WithGpuData\" \"WithCudaEvent\"",
+    "site:nvidia-isaac-ros.github.io \"NitrosImageBuilder\" \"GPU\"",
+    "site:nvidia-isaac-ros.github.io release-3.2 nitros shared memory CUDA IPC bridge",
+    "site:docs.omniverse.nvidia.com omni replicator srtx compression hw GPU h264 settings",
+    "site:docs.omniverse.nvidia.com RTX SPG pack cameras tiled rendering RenderProduct",
+    "site:github.com/NVIDIA/cuda-samples \"simpleVulkan\" \"cudaImportExternalMemory\"",
+    "site:docs.omniverse.nvidia.com \"get_frame_info\" \"frame_number\" HydraTexture",
+    "site:github.com/NVIDIA-Omniverse/kit-app-template \"video\" \"encode\"",
+    "site:docs.nvidia.com pynvvideocodec system requirements Linux driver CUDA 12",
+    "site:docs.nvidia.com cuda nvjpeg encoding GPU baseline hybrid encoding",
+    "site:docs.nvidia.com cuda nvimagecodec JPEG encode nvJPEG lossless PNG",
+    "site:docs.omniverse.nvidia.com Kit renderer GPU resource external Vulkan export texture RpResource",
+    "site:docs.isaacsim.omniverse.nvidia.com 6.1.0 tiled camera performance rendering"
+  ],
+  "wheel": {
+    "filename": "pynvvideocodec-2.2.3-cp312-cp312-manylinux_2_28_x86_64.whl",
+    "url": "https://files.pythonhosted.org/packages/60/a9/e4b692f63f7e4085838e7d444b7e5d4a01c6e43843abeff0e31e27ebaf81/pynvvideocodec-2.2.3-cp312-cp312-manylinux_2_28_x86_64.whl",
+    "size": 26860478,
+    "digests": {
+      "blake2b_256": "60a9e4b692f63f7e4085838e7d444b7e5d4a01c6e43843abeff0e31e27ebaf81",
+      "md5": "f5d38df360296750fa05f3cdd11f2d39",
+      "sha256": "126224753a41655c72c1576cb23a835cb853a1a3c3568d78360ff07d24627b42"
+    },
+    "upload_time_iso_8601": "2026-09-15T09:55:22.472676Z",
+    "metadata_url": "https://pypi.org/pypi/pynvvideocodec/json",
+    "installed_by_this_agent": false,
+    "zip_only_inspection": true
+  }
+}

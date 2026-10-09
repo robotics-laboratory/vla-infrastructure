@@ -1,0 +1,28 @@
+{
+  "output": "/tmp/live30-nsight-analysis.json",
+  "controls": 120,
+  "capture_ms": 3651.027193,
+  "fabric_count_distribution": {
+    "5": 120
+  },
+  "kernel_count": 144600,
+  "kernel_summed_ms": 904.986431,
+  "largest_control": {
+    "name": "control:160",
+    "start": 2871058587,
+    "end": 3069148823,
+    "duration_ms": 198.090236,
+    "native_counts": {
+      "FabricManager::update": 5,
+      "fetchResults::updateRenderTransforms": 4,
+      "fetchResults::waitForCompletion": 4,
+      "sim_render": 1
+    },
+    "native_sum_ms": {
+      "FabricManager::update": 5.455739,
+      "fetchResults::updateRenderTransforms": 4.720331,
+      "fetchResults::waitForCompletion": 9.645927,
+      "sim_render": 175.434722
+    }
+  }
+}

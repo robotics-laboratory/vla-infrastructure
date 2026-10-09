@@ -1,0 +1,141 @@
+{
+  "dataset_admissible": false,
+  "scope": "optical clock freshness, not full physical-pose alignment",
+  "input": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original",
+  "streams": [
+    {
+      "role": 0,
+      "frames": 418,
+      "source_sha256": "23f2e89a15ecfb4d53f2252b7e6b64729f86ea32719e70d7c37ca73103e63762",
+      "first": [
+        1023,
+        1023,
+        382,
+        191,
+        2303,
+        3326
+      ],
+      "last": [
+        127,
+        127,
+        127,
+        127,
+        127,
+        127
+      ],
+      "unique": 36,
+      "consecutive": false,
+      "all_confident": false,
+      "min_contrast": 0.0,
+      "phase_min": -313,
+      "phase_max": 3829,
+      "decoder_command": [
+        "/usr/bin/ffmpeg",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-i",
+        "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/view_0.h264",
+        "-vf",
+        "crop=360:80:300:260",
+        "-vsync",
+        "0",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "pipe:1"
+      ]
+    },
+    {
+      "role": 1,
+      "frames": 418,
+      "source_sha256": "6b92cafc498b3536faf331926b996a6d3e5d8f57b0e93e70492424edf457435f",
+      "first": [
+        3073,
+        2049,
+        0,
+        260,
+        0,
+        4
+      ],
+      "last": [
+        3588,
+        3584,
+        3588,
+        3584,
+        3588,
+        3588
+      ],
+      "unique": 21,
+      "consecutive": false,
+      "all_confident": false,
+      "min_contrast": 0.0,
+      "phase_min": -6,
+      "phase_max": 3870,
+      "decoder_command": [
+        "/usr/bin/ffmpeg",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-i",
+        "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/view_1.h264",
+        "-vf",
+        "crop=360:80:300:260",
+        "-vsync",
+        "0",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "pipe:1"
+      ]
+    },
+    {
+      "role": 2,
+      "frames": 418,
+      "source_sha256": "1ffef82046841252cb11e17043ed05d25b44f35899c4eaac25396d344aa4f5f8",
+      "first": [
+        0,
+        128,
+        0,
+        256,
+        256,
+        0
+      ],
+      "last": [
+        0,
+        0,
+        448,
+        384,
+        384,
+        384
+      ],
+      "unique": 9,
+      "consecutive": false,
+      "all_confident": false,
+      "min_contrast": 0.0,
+      "phase_min": -415,
+      "phase_max": 615,
+      "decoder_command": [
+        "/usr/bin/ffmpeg",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-i",
+        "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/view_2.h264",
+        "-vf",
+        "crop=360:80:300:260",
+        "-vsync",
+        "0",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "pipe:1"
+      ]
+    }
+  ],
+  "passed": false,
+  "source_sha256": "faa162c191d8fabf45bf75feb14782a375592e0f3c275a8986868759e9faf359"
+}

@@ -1,0 +1,99 @@
+{
+  "dataset_admissible": false,
+  "captures": 721,
+  "acked": 721,
+  "max_pending": 8,
+  "backpressure_ms": 1212.1506480000007,
+  "drain_ms": 4144.175468,
+  "ack_age_p95_ms": 96.783745,
+  "worker": {
+    "dataset_admissible": false,
+    "live_physical_quest_qualified": false,
+    "scope": "live producer separate renderer process",
+    "excluded_dynamic_bodies": [
+      "/World/RobosynDemo/ValidationProbe"
+    ],
+    "witness": true,
+    "passed": false,
+    "encoder": {
+      "dataset_admissible": false,
+      "counts": [
+        721,
+        721,
+        721
+      ],
+      "max_pending": [
+        3,
+        3,
+        3
+      ],
+      "drain_ms": 222.222864,
+      "cuda_device_max_connections": "1",
+      "errors": [],
+      "synchronization": "OVRTX map producer-event wait -> clone -> NVENC copy/encode on one stream; packet ordinal ACK owns lifetime",
+      "pixel_alignment_proven": false
+    },
+    "captures": 721,
+    "encode_done_ns": 3780852085655961,
+    "encode_drain_ms": 222.240354,
+    "completed_elapsed_s": 15.580108836,
+    "steady_worker_mean_ms": 12.898753748865355,
+    "decoded": [
+      {
+        "role": 0,
+        "count": 721,
+        "expected": 721,
+        "errors": [],
+        "passed": true
+      },
+      {
+        "role": 1,
+        "count": 721,
+        "expected": 721,
+        "errors": [],
+        "passed": true
+      },
+      {
+        "role": 2,
+        "count": 721,
+        "expected": 721,
+        "errors": [
+          {
+            "frame": 1,
+            "decoded": {
+              "row": 1,
+              "role": 2,
+              "min_contrast": 22.0,
+              "anchors_ok": true,
+              "cell_contrasts": [
+                22.0,
+                -218.0,
+                -220.0,
+                -223.0,
+                -226.0,
+                -228.0,
+                -229.0,
+                -228.0,
+                -226.0,
+                -225.0,
+                -221.0,
+                -218.0,
+                -214.0,
+                214.0,
+                213.0,
+                -211.0
+              ],
+              "confident": false
+            }
+          }
+        ],
+        "passed": false
+      }
+    ],
+    "verification_ms": 2318.664258
+  },
+  "excluded_dynamic_bodies": [
+    "/World/RobosynDemo/ValidationProbe"
+  ],
+  "ack_semantics": "worker consumed snapshot and submitted3GPUframes; encoded completion verified at final drain"
+}

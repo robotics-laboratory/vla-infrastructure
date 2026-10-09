@@ -1,0 +1,13 @@
+[
+  {
+    "source": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu/capture-overlay.usda",
+    "passed": false,
+    "error": "Traceback (most recent call last):\n  File \"<stdin>\", line 10, in <module>\n  File \"/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovstage/_src/population.py\", line 292, in open_usd\n    open_usd_async(stage, path, ordinal, time_code, domains).wait()\n  File \"/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovstage/_src/population.py\", line 270, in wait\n    raise OvstageError(code if code != _b.OVSTAGE_OK else _b.OVSTAGE_ERROR_OP_FAILED, message)\novstage._src.types.OvstageError: OP_FAILED: failed to open USD layer: /data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu/capture-overlay.usda\n",
+    "elapsed_s": 0.4353720466606319
+  },
+  {
+    "source": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu/capture-overlay-fixed.usda",
+    "passed": true,
+    "elapsed_s": 0.11140964785590768
+  }
+]

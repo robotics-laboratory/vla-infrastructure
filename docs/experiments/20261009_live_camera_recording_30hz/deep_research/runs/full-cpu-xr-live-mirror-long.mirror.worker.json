@@ -1,0 +1,57 @@
+{
+  "dataset_admissible": false,
+  "live_physical_quest_qualified": false,
+  "scope": "live producer separate renderer process",
+  "excluded_dynamic_bodies": [
+    "/World/RobosynDemo/ValidationProbe"
+  ],
+  "witness": true,
+  "passed": true,
+  "encoder": {
+    "dataset_admissible": false,
+    "counts": [
+      1441,
+      1441,
+      1441
+    ],
+    "max_pending": [
+      3,
+      3,
+      3
+    ],
+    "drain_ms": 59.752359,
+    "cuda_device_max_connections": "1",
+    "errors": [],
+    "synchronization": "OVRTX map producer-event wait -> clone -> NVENC copy/encode on one stream; packet ordinal ACK owns lifetime",
+    "pixel_alignment_proven": false
+  },
+  "captures": 1441,
+  "encode_done_ns": 3780568920570619,
+  "encode_drain_ms": 59.770788,
+  "completed_elapsed_s": 31.323170369,
+  "steady_worker_mean_ms": 11.474886044895005,
+  "decoded": [
+    {
+      "role": 0,
+      "count": 1441,
+      "expected": 1441,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "role": 1,
+      "count": 1441,
+      "expected": 1441,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "role": 2,
+      "count": 1441,
+      "expected": 1441,
+      "errors": [],
+      "passed": true
+    }
+  ],
+  "verification_ms": 4487.541777
+}

@@ -1,0 +1,18 @@
+I: Initializing Version 2.75.1-release.7540+gl.d3c5c5b8
+I: Client ID: X8C0ZL4F
+I: ThreadId(02) hub_client::client::Client::new Launching client mode=Shared with_cleaner=false cache_path=None cache_size=None
+I: ThreadId(03) launch self=Launcher { discovery_lock: RwLock { lock: RwLock { inner: File { fd: 11, path: "/tmp/hub-ebulochkin.lock", read: false, write: true } } }, mode: Shared, with_cleaner: false, config_file: "/tmp/hub-ebulochkin-F6FFCA83.config.json" } cmd="hub" "--mode=shared" "--write-config" "/tmp/hub-ebulochkin-F6FFCA83.config.json" "--"
+I: Not using Hub: Hub not found
+2026-10-09T12:34:32Z [200ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.
+2026-10-09T12:34:32Z [716ms] [Warning] [omni.rtx] CPU performance profile is set to powersave. This profile sets the CPU to the lowest frequency reducing performance.
+2026-10-09T12:34:32Z [718ms] [Warning] [omni.rtx] IOMMU is enabled.
+Traceback (most recent call last):
+  File "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_capture_probe.py", line 126, in <module>
+    main()
+  File "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_capture_probe.py", line 65, in main
+    ovstage.population.open_usd(stage, str(overlay), ordinal=1)
+  File "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovstage/_src/population.py", line 292, in open_usd
+    open_usd_async(stage, path, ordinal, time_code, domains).wait()
+  File "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovstage/_src/population.py", line 270, in wait
+    raise OvstageError(code if code != _b.OVSTAGE_OK else _b.OVSTAGE_ERROR_OP_FAILED, message)
+ovstage._src.types.OvstageError: OP_FAILED: failed to open USD layer: /data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu/capture-overlay.usda

@@ -1,0 +1,840 @@
+{
+  "research_date": "2026-10-09",
+  "repo_head": "d5566834d29ef8bb56e4fb62bb324e23e0869100",
+  "no_gpu_launch": true,
+  "local_files": [
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_runtime.py",
+      "sha256": "c1b2a2d4a39cb60b0e936cc4227a067f8615819a8bca43e95769fa29d15ea56a",
+      "bytes": 62924,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_capture.py",
+      "sha256": "a45fea9cd2521ecd4a83d8b6128e9bc63f51beb26fd676fad2c71cf5a593ee50",
+      "bytes": 6554,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/tools/isaac_s2_upstream.py",
+      "sha256": "d950ac2425c2350bec5c6039e491714576f219caffe3fcb863c2193014c89271",
+      "bytes": 27857,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_decision.py",
+      "sha256": "0a9188211bfaadd9d5974788cc125d0eca04c77b9b358f4c42e680774141f025",
+      "bytes": 27108,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/configs/isaac61_vr_runtime.yaml",
+      "sha256": "29af05723bb358fb88a519e57e64b61f5ee3cae024a75083ffccf0d7811ab758",
+      "bytes": 9328,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/configs/isaac61_s2_runtime.yaml",
+      "sha256": "8bf47ae99191b9f63317e5f5ff5aa557f533b6a1890df14d8c45e60b15a02977",
+      "bytes": 5382,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/configs/environments/isaac1103/ENVIRONMENT.yaml",
+      "sha256": "fe997db42e9d91e64c4820b5f073cd3ff69625a89ef299cb7db28b58d82ac0c6",
+      "bytes": 1987,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacteleop/teleop_session_manager/config.py",
+      "sha256": "5b951ed3909d4231b7d3c9aad5fed2ed665fa983423140b7da724282a81f99a0",
+      "bytes": 18276,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacteleop/teleop_session_manager/teleop_session.py",
+      "sha256": "349e07f268662565da1da2251e0da3432cf0f7fc56ed750bb19abff0e579a709",
+      "bytes": 47986,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacteleop/teleop_session_manager/async_retarget_runner.py",
+      "sha256": "a6e21b7ce67c5bd0d1603940ff40b190252449a09a1aca2c510fcb6999ada9ae",
+      "bytes": 17071,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacteleop/cloudxr/env_config.py",
+      "sha256": "8ae54e2a6c69d237006e3b8114ea91d87befe0eac5b717031144d47b6b34e9c6",
+      "bytes": 9886,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacteleop/cloudxr/launcher.py",
+      "sha256": "fa61010408cf9d25a74c20d3b550b122122b41723563e62af55ad2b476077b0c",
+      "bytes": 28266,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacteleop/cloudxr/runtime.py",
+      "sha256": "5587b208c9c140bb3b81ce27f1b546a9749aaef45c9ea29620dfbf13ce4094e1",
+      "bytes": 12111,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacteleop/cloudxr/native/libcloudxr.so",
+      "sha256": "9b894c42f5fb4851cbe9b0bbb2cb7f6f0fad7e0ec7b2f978b84f5ca04631a881",
+      "bytes": 5643672,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacteleop/viz/_viz.pyi",
+      "sha256": "44cfad11ce59e50a9527c74753487ac046838a21f863a4153d32044d4b3eae18",
+      "bytes": 19415,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacteleop/viz/_viz.cpython-312-x86_64-linux-gnu.so",
+      "sha256": "e78974d4672c9b002633788cb7edbc69145b90508025aff28fc9136ca058295a",
+      "bytes": 2420688,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_teleop/isaaclab_teleop/session_lifecycle.py",
+      "sha256": "0b1ee5a0c09a1dc8330e42cf8efccae307144371c282ae2e0775441e639f1930",
+      "bytes": 70669,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_teleop/isaaclab_teleop/camera_feed.py",
+      "sha256": "8d98015004a7ee106a638b9755226b658292cc51a469b617f15e0cb21df1616b",
+      "bytes": 23016,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_teleop/isaaclab_teleop/camera_feed_kit_scene_ui.py",
+      "sha256": "978ef400c41e4393e4fceb4bb1750fb80b15102b4e04f8a58e7706788497de2b",
+      "bytes": 26736,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_teleop/isaaclab_teleop/cloudxrjs-cloudxr.env",
+      "sha256": "9bbc04f7ad03013e6de9e12eb7b7d7209e8c16b299c2067de2bdcabfc423a186",
+      "bytes": 81,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_teleop/isaaclab_teleop/xr_cfg.py",
+      "sha256": "6ea6b7fd94c1db0cb80799fb463ce49c2194f70d63f28c6ff40910edbb4fb141",
+      "bytes": 5959,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.kit.xr.core-109.1.0+00c488ae.lx64.r.cp312/config/extension.toml",
+      "sha256": "41637c627881bf97f537d229c8bcf292568684761a047314a6facab2daf034e6",
+      "bytes": 7978,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.kit.xr.system.openxr-109.1.0+00c488ae.lx64.r.cp312/config/extension.toml",
+      "sha256": "8988494dc4233d0389d671732831dc52e78fcd08c7aca5c1346f58f6e8f87a77",
+      "bytes": 2525,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.kit.xr.core-109.1.0+00c488ae.lx64.r.cp312/bin/libomni.kit.xr.core.plugin.so",
+      "sha256": "a11ea3f685040c8b117105386d0000a22cf0fc746b4d21c9ab7614d3b70d5815",
+      "bytes": 4181752,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.kit.xr.system.openxr-109.1.0+00c488ae.lx64.r.cp312/bin/libomni.ext-system.openxr.plugin.so",
+      "sha256": "c268c13b9b7ddbabd776c8a6a47773d3f0113682add9ab69a4bc012ba1a2aa46",
+      "bytes": 1052920,
+      "observed_utc": "2026-10-09T12:49:11.747977+00:00"
+    }
+  ],
+  "primary_doc_and_forum_snapshots": [
+    {
+      "id": 0,
+      "url": "https://api.github.com/repos/NVIDIA/IsaacCapture/tags?per_page=100",
+      "final_url": "https://api.github.com/repos/NVIDIA/IsaacCapture/tags?per_page=100",
+      "path": "/tmp/live30-xr-public/0.json",
+      "retrieved_utc": "2026-10-09T12:42:18.057184+00:00",
+      "sha256": "33ef5b7284872b00603d7f38bce8ad456f33f5e9cf1a1876390534bd648ba767",
+      "bytes": 4667
+    },
+    {
+      "id": 1,
+      "url": "https://api.github.com/repos/NVIDIA/IsaacCapture/commits/release/1.4.x",
+      "final_url": "https://api.github.com/repos/NVIDIA/IsaacCapture/commits/release/1.4.x",
+      "path": "/tmp/live30-xr-public/1.json",
+      "retrieved_utc": "2026-10-09T12:42:19.829211+00:00",
+      "sha256": "307f2dcf51571cdb5396e2c40bc65ca95db5d687433f1dd3b45f358281e06db3",
+      "bytes": 5789
+    },
+    {
+      "id": 2,
+      "url": "https://nvidia.github.io/IsaacCapture/client/release-1.4.x/",
+      "final_url": "https://nvidia.github.io/IsaacCapture/client/release-1.4.x/",
+      "path": "/tmp/live30-xr-public/2.html",
+      "retrieved_utc": "2026-10-09T12:42:18.003297+00:00",
+      "sha256": "3c85813404a84eadab71f84a2332bd92cd1494cee9d206fc2e1cf3bf309aca52",
+      "bytes": 26867
+    },
+    {
+      "id": 3,
+      "url": "https://docs.nvidia.com/cloudxr-sdk/latest/usr_guide/cloudxr_runtime/runtime_mgmt_api.html",
+      "final_url": "https://docs.nvidia.com/cloudxr-sdk/latest/usr_guide/cloudxr_runtime/runtime_mgmt_api.html",
+      "path": "/tmp/live30-xr-public/3.html",
+      "retrieved_utc": "2026-10-09T12:42:19.946425+00:00",
+      "sha256": "5993d5d6ec8305dd8a7ae4ffe4888b42b4f56045d19e78f7f32f3cdf3a18cf22",
+      "bytes": 71338
+    },
+    {
+      "id": 4,
+      "url": "https://docs.nvidia.com/cloudxr-sdk/latest/usr_guide/cloudxr_js/performance.html",
+      "final_url": "https://docs.nvidia.com/cloudxr-sdk/latest/usr_guide/cloudxr_js/performance.html",
+      "path": "/tmp/live30-xr-public/4.html",
+      "retrieved_utc": "2026-10-09T12:42:20.058978+00:00",
+      "sha256": "5a82b532a18baf9d67017d0573718a434d3ff1718d448e6bbbf0ccdc37796a16",
+      "bytes": 40856
+    },
+    {
+      "id": 5,
+      "url": "https://docs.nvidia.com/cloudxr-sdk/release/6/release_notes/release_notes.html",
+      "final_url": "https://docs.nvidia.com/cloudxr-sdk/release/6/release_notes/release_notes.html",
+      "path": "/tmp/live30-xr-public/5.html",
+      "retrieved_utc": "2026-10-09T12:42:19.668407+00:00",
+      "sha256": "92bde300a201d7b1bee81fbeece5a0a6ce426aff9aab737f1f73fbda4c726828",
+      "bytes": 59778
+    },
+    {
+      "id": 6,
+      "url": "https://docs.omniverse.nvidia.com/xr/omniverse-spatial-docs/latest/development/core-concepts.html",
+      "final_url": "https://docs.omniverse.nvidia.com/xr/omniverse-spatial-docs/latest/development/core-concepts.html",
+      "path": "/tmp/live30-xr-public/6.html",
+      "retrieved_utc": "2026-10-09T12:42:20.885718+00:00",
+      "sha256": "186414fa3b24c2c2d8f54b935ea8862c2ffdf5a9bba61e43b980146461a1fd35",
+      "bytes": 73451
+    },
+    {
+      "id": 7,
+      "url": "https://docs.omniverse.nvidia.com/xr/omniverse-spatial-docs/latest/server/03-xr-settings.html",
+      "final_url": "https://docs.omniverse.nvidia.com/xr/omniverse-spatial-docs/latest/server/03-xr-settings.html",
+      "path": "/tmp/live30-xr-public/7.html",
+      "retrieved_utc": "2026-10-09T12:42:21.479627+00:00",
+      "sha256": "b454b1dc7ca73824ec472b71eb9ad5c2afbf91d78a27c73d725924d02169da7a",
+      "bytes": 97269
+    },
+    {
+      "id": 8,
+      "url": "https://developer.nvidia.com/video-encode-decode-support-matrix",
+      "final_url": "https://developer.nvidia.com/video-encode-decode-support-matrix",
+      "path": "/tmp/live30-xr-public/8.html",
+      "retrieved_utc": "2026-10-09T12:42:41.363775+00:00",
+      "sha256": "94aef2a9d9f440bf5e262bdd4e4c03495383e0e6e36f52384ba987a27e3e6684",
+      "bytes": 531789
+    },
+    {
+      "id": 9,
+      "url": "https://docs.nvidia.com/video-technologies/video-codec-sdk/13.1/nvenc-application-note/index.html",
+      "final_url": "https://docs.nvidia.com/video-technologies/video-codec-sdk/13.1/nvenc-application-note/index.html",
+      "path": "/tmp/live30-xr-public/9.html",
+      "retrieved_utc": "2026-10-09T12:42:23.373892+00:00",
+      "sha256": "c22e62537a17b9cf3624a7fc295ca6c0b439b471c9d8b0788546e6653f7908b6",
+      "bytes": 40148
+    },
+    {
+      "id": 10,
+      "url": "https://nvidia-omniverse.github.io/omniverse-performance/workflows/troubleshooting.html",
+      "final_url": "https://nvidia-omniverse.github.io/omniverse-performance/workflows/troubleshooting.html",
+      "path": "/tmp/live30-xr-public/10.html",
+      "retrieved_utc": "2026-10-09T12:42:26.752086+00:00",
+      "sha256": "d7eb249c580a6875a47dd40704785c4face16d96dfef01117801ff5bf0f3eb2e",
+      "bytes": 48027
+    },
+    {
+      "id": 11,
+      "url": "https://forums.developer.nvidia.com/t/fluctuating-performance-with-two-instances-of-nvenc/247778.json",
+      "final_url": "https://forums.developer.nvidia.com/t/fluctuating-performance-with-two-instances-of-nvenc/247778.json",
+      "path": "/tmp/live30-xr-public/11.json",
+      "retrieved_utc": "2026-10-09T12:42:40.322978+00:00",
+      "sha256": "f702214ebf1341dd90932c8d4f66894eb8018c7110d49cab421846e84731b96c",
+      "bytes": 22499
+    },
+    {
+      "id": 12,
+      "url": "https://forums.developer.nvidia.com/t/cloudxr6-windows-server-bug/371160.json",
+      "final_url": "https://forums.developer.nvidia.com/t/cloudxr6-windows-server-bug/371160.json",
+      "path": "/tmp/live30-xr-public/12.json",
+      "retrieved_utc": "2026-10-09T12:42:23.404062+00:00",
+      "sha256": "ffdd292b239f2d0699fbc52ab6d0f8d1cc995e0c183a5d4c5387d79b4934d133",
+      "bytes": 45276
+    },
+    {
+      "id": 13,
+      "url": "https://github.com/NVlabs/GR00T-WholeBodyControl/issues/206",
+      "final_url": "https://github.com/NVlabs/GR00T-WholeBodyControl/issues/206",
+      "path": "/tmp/live30-xr-public/13.html",
+      "retrieved_utc": "2026-10-09T12:42:39.130225+00:00",
+      "sha256": "0930cf0843963a803b07f1917df1ede69f81169f2807e12a6a46a3fb9d96c107",
+      "bytes": 342379
+    }
+  ],
+  "upstream_source_snapshot": {
+    "branch": "release/1.4.x",
+    "commit": "5bbe49d4c92746076196216c3f74e08ae509809a",
+    "files": [
+      {
+        "path": "deps/cloudxr/webxr_client/src/config/params.ts",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/deps/cloudxr/webxr_client/src/config/params.ts",
+        "retrieved_utc": "2026-10-09T12:40:01.311436+00:00",
+        "sha256": "9b0ce4e8591d4c8acfd065e6a78080311144c5c6f216d3f0948ab61b940e0dac",
+        "bytes": 8559
+      },
+      {
+        "path": "deps/cloudxr/webxr_client/src/config/frameRate.ts",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/deps/cloudxr/webxr_client/src/config/frameRate.ts",
+        "retrieved_utc": "2026-10-09T12:40:01.319963+00:00",
+        "sha256": "4ad50712b2235acc5ff1f9159a959af748de0a80e8971fe4c8caca2253054320",
+        "bytes": 9921
+      },
+      {
+        "path": "deps/cloudxr/webxr_client/src/config/resolve.ts",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/deps/cloudxr/webxr_client/src/config/resolve.ts",
+        "retrieved_utc": "2026-10-09T12:40:01.310827+00:00",
+        "sha256": "8e028ae914b4e6db47a12ba8cfa59b8d4fafc51aa8b9947d2d426d52c406d3d6",
+        "bytes": 2197
+      },
+      {
+        "path": "deps/cloudxr/webxr_client/src/App.tsx",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/deps/cloudxr/webxr_client/src/App.tsx",
+        "retrieved_utc": "2026-10-09T12:40:01.358768+00:00",
+        "sha256": "020ea9f6bdc0d3783908b5f63d19b07756b619bda0d5f120ac5571d3d6f79d0d",
+        "bytes": 48542
+      },
+      {
+        "path": "deps/cloudxr/webxr_client/src/CloudXRUI.tsx",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/deps/cloudxr/webxr_client/src/CloudXRUI.tsx",
+        "retrieved_utc": "2026-10-09T12:40:01.482087+00:00",
+        "sha256": "a4acba68ae248b58086421ba5f262cfbcafd88f660d7fde37ebb14b241a246ec",
+        "bytes": 34336
+      },
+      {
+        "path": "deps/cloudxr/webxr_client/package.json",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/deps/cloudxr/webxr_client/package.json",
+        "retrieved_utc": "2026-10-09T12:40:01.292088+00:00",
+        "sha256": "f4432950171c3b0295bb874a797c39d685855a887e48d253d43947190c67e174",
+        "bytes": 2970
+      },
+      {
+        "path": "src/viz/layers/cpp/inc/viz/layers/quad_layer.hpp",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/src/viz/layers/cpp/inc/viz/layers/quad_layer.hpp",
+        "retrieved_utc": "2026-10-09T12:40:01.660007+00:00",
+        "sha256": "cb6b3760ecadd87f7b444a0989d04c57565452c5d8e1ee8328161e0cdcc5aa04",
+        "bytes": 10168
+      },
+      {
+        "path": "src/viz/layers/cpp/quad_layer.cpp",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/src/viz/layers/cpp/quad_layer.cpp",
+        "retrieved_utc": "2026-10-09T12:40:02.034820+00:00",
+        "sha256": "25ce7e43498ba224c58a18b9d5489c38876bf6bcb33f2161d9652a748a3169fe",
+        "bytes": 29634
+      },
+      {
+        "path": "src/viz/session/cpp/viz_compositor.cpp",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/src/viz/session/cpp/viz_compositor.cpp",
+        "retrieved_utc": "2026-10-09T12:40:01.663242+00:00",
+        "sha256": "e5ebc44b31b698b852660cf60d7706d2d78575f1db3ff5b5f4275d6dd864ea73",
+        "bytes": 22728
+      },
+      {
+        "path": "src/viz/session/cpp/xr_backend.cpp",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/src/viz/session/cpp/xr_backend.cpp",
+        "retrieved_utc": "2026-10-09T12:40:01.771173+00:00",
+        "sha256": "c4edd5a4cdb1930625ec0b3cbc947df17e46b117fd7647a66f0e1ade259cd2e6",
+        "bytes": 57632
+      },
+      {
+        "path": "src/viz/core/cpp/device_image.cpp",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/src/viz/core/cpp/device_image.cpp",
+        "retrieved_utc": "2026-10-09T12:40:01.900258+00:00",
+        "sha256": "a52f5dd40280f19531b13ac37fa8d987b51f05f23534fa3810de5a02f659f883",
+        "bytes": 20803
+      },
+      {
+        "path": "src/viz/xr/cpp/openxr_session.cpp",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/src/viz/xr/cpp/openxr_session.cpp",
+        "retrieved_utc": "2026-10-09T12:40:02.080055+00:00",
+        "sha256": "ab37da4540d32b246f4ce79cc8bad410dd358522952f47f9a13e99f886952aa1",
+        "bytes": 21067
+      },
+      {
+        "path": "src/viz/python/layers_bindings.cpp",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/src/viz/python/layers_bindings.cpp",
+        "retrieved_utc": "2026-10-09T12:40:02.083311+00:00",
+        "sha256": "3b44da8ad044f42de56ea9363f7f5a9b060546a62e321553b0d0e2967edf82e0",
+        "bytes": 26885
+      },
+      {
+        "path": "src/core/python/isaacteleop/teleop_session_manager/config.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/src/core/python/isaacteleop/teleop_session_manager/config.py",
+        "error": "<HTTPError 404: 'Not Found'>"
+      },
+      {
+        "path": "src/core/python/isaacteleop/teleop_session_manager/teleop_session.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/src/core/python/isaacteleop/teleop_session_manager/teleop_session.py",
+        "error": "<HTTPError 404: 'Not Found'>"
+      },
+      {
+        "path": "docs/source/getting_started/teleop_session.rst",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/docs/source/getting_started/teleop_session.rst",
+        "retrieved_utc": "2026-10-09T12:40:02.316528+00:00",
+        "sha256": "e09aa9de18ed52c943d42a229104778481a8dcdb6dd651ac0f23cfc99ecce95d",
+        "bytes": 21728
+      },
+      {
+        "path": "examples/camera_viz/README.md",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/README.md",
+        "retrieved_utc": "2026-10-09T12:40:02.390577+00:00",
+        "sha256": "b066fca6f18091a962747e2d37f845affffd745559facbdf505f9a6d19578646",
+        "bytes": 10654
+      },
+      {
+        "path": "examples/camera_viz/camera_streamer.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/camera_streamer.py",
+        "retrieved_utc": "2026-10-09T12:40:02.434201+00:00",
+        "sha256": "68451553a2f9be5ccc17265bdd6511b158000381cd32b155fd9850b63906d7ec",
+        "bytes": 12451
+      },
+      {
+        "path": "examples/camera_viz/camera_viz.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/camera_viz.py",
+        "retrieved_utc": "2026-10-09T12:40:02.478521+00:00",
+        "sha256": "c4e5c20b7c42483c21525a9bd837b88cc4901e80e677b7a097fd013d5855ba8c",
+        "bytes": 20413
+      },
+      {
+        "path": "examples/camera_viz/codec/__init__.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/codec/__init__.py",
+        "retrieved_utc": "2026-10-09T12:40:02.456113+00:00",
+        "sha256": "78a0ddd9ed170cf9d42ab0394c528b3edb18cb7cd0907e7007c5ec755fdcc19a",
+        "bytes": 812
+      },
+      {
+        "path": "examples/camera_viz/configs/multi_camera.yaml",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/configs/multi_camera.yaml",
+        "retrieved_utc": "2026-10-09T12:40:02.646935+00:00",
+        "sha256": "e761a686c55bdadecc6ac33e20f42de2bce1d0bd7e6d5ed7d24ad27b57b2f6c1",
+        "bytes": 1904
+      },
+      {
+        "path": "examples/camera_viz/configs/oakd.yaml",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/configs/oakd.yaml",
+        "retrieved_utc": "2026-10-09T12:40:02.744608+00:00",
+        "sha256": "e59b41fafc4d1f81f2ef62117262e7e5e90d38a04f209e5225cf23cad1dffca3",
+        "bytes": 2104
+      },
+      {
+        "path": "examples/camera_viz/configs/realsense.yaml",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/configs/realsense.yaml",
+        "retrieved_utc": "2026-10-09T12:40:02.775187+00:00",
+        "sha256": "26c30e9905fe1f23f6b8bdf301f2df23ad9308120453865c1308329aa68f0cdd",
+        "bytes": 2005
+      },
+      {
+        "path": "examples/camera_viz/configs/replay.yaml",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/configs/replay.yaml",
+        "retrieved_utc": "2026-10-09T12:40:02.828911+00:00",
+        "sha256": "3d1fae021c6ae6814c9b4542ca75b7f1df0ce1653af52cda9cebef6b500bf366",
+        "bytes": 2809
+      },
+      {
+        "path": "examples/camera_viz/configs/synthetic.yaml",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/configs/synthetic.yaml",
+        "retrieved_utc": "2026-10-09T12:40:02.831879+00:00",
+        "sha256": "a5b06a07cc4bc43a38425ee4e46d87260f3100d43766a67f0ce49d22b36f9751",
+        "bytes": 1251
+      },
+      {
+        "path": "examples/camera_viz/configs/synthetic_stereo.yaml",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/configs/synthetic_stereo.yaml",
+        "retrieved_utc": "2026-10-09T12:40:02.860091+00:00",
+        "sha256": "919ec665cab2b8b680d4cbc1dbaa7a4c46d1278ed90bb843ec9fb2cd4c562394",
+        "bytes": 1551
+      },
+      {
+        "path": "examples/camera_viz/configs/synthetic_xr_3up.yaml",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/configs/synthetic_xr_3up.yaml",
+        "retrieved_utc": "2026-10-09T12:40:03.024837+00:00",
+        "sha256": "331e28ff57600f4f714ea422175e06432bb23cebccfbacd64fb0d9ce79ac6db3",
+        "bytes": 1541
+      },
+      {
+        "path": "examples/camera_viz/configs/v4l2.yaml",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/configs/v4l2.yaml",
+        "retrieved_utc": "2026-10-09T12:40:03.186514+00:00",
+        "sha256": "dec51a841d05a72e171b36f64dd15f74df5e57ea52ea18f165b70d85293261a0",
+        "bytes": 1746
+      },
+      {
+        "path": "examples/camera_viz/configs/zed.yaml",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/configs/zed.yaml",
+        "retrieved_utc": "2026-10-09T12:40:03.139068+00:00",
+        "sha256": "99e948c9da33f9fe95b26e8afc248d182a77d92bf6ee51117ab44e138e82904a",
+        "bytes": 2047
+      },
+      {
+        "path": "examples/camera_viz/pipeline/__init__.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/pipeline/__init__.py",
+        "retrieved_utc": "2026-10-09T12:40:03.212753+00:00",
+        "sha256": "2aaddd60c69c1221773569be9e0b81bcbc277252e8f7efdc923bbcfb1ec3d0c5",
+        "bytes": 893
+      },
+      {
+        "path": "examples/camera_viz/pipeline/interface.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/pipeline/interface.py",
+        "retrieved_utc": "2026-10-09T12:40:03.244306+00:00",
+        "sha256": "51a4afdc42b03c38e7caa069e6d37dc61bd4d0fd861d9727a7cc7a64af875225",
+        "bytes": 2092
+      },
+      {
+        "path": "examples/camera_viz/pipeline/runner.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/pipeline/runner.py",
+        "retrieved_utc": "2026-10-09T12:40:03.294677+00:00",
+        "sha256": "1118726eea27e5ea8051dace35592778b205c7a17e1ac8a2171bc6ba1c1b0017",
+        "bytes": 14657
+      },
+      {
+        "path": "examples/camera_viz/placements/__init__.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/placements/__init__.py",
+        "retrieved_utc": "2026-10-09T12:40:03.445365+00:00",
+        "sha256": "5ac66c7c6e4bdf02e2aefcc6df8a4475c2d1270c7380c90343fb9deb60cb164e",
+        "bytes": 571
+      },
+      {
+        "path": "examples/camera_viz/placements/_math.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/placements/_math.py",
+        "retrieved_utc": "2026-10-09T12:40:03.573146+00:00",
+        "sha256": "116edf905e81e0d0b7bf50bda8beade355ddf7686c529de7030ff783bd07d09c",
+        "bytes": 2855
+      },
+      {
+        "path": "examples/camera_viz/placements/lock_modes.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/placements/lock_modes.py",
+        "retrieved_utc": "2026-10-09T12:40:03.568709+00:00",
+        "sha256": "3a6ac87f380207757946a558c99537997be2f9a30aea3cf0d5b9871a55765d5f",
+        "bytes": 12062
+      },
+      {
+        "path": "examples/camera_viz/sources/__init__.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/sources/__init__.py",
+        "retrieved_utc": "2026-10-09T12:40:03.615052+00:00",
+        "sha256": "fb1703b4ec320d8ee4cd9b4a62ce24b43a0aea37582254e2fb7400958de141e4",
+        "bytes": 5836
+      },
+      {
+        "path": "examples/camera_viz/sources/_helpers.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/sources/_helpers.py",
+        "retrieved_utc": "2026-10-09T12:40:03.670696+00:00",
+        "sha256": "91b70b267a6fb7c998b9d81fade9a712542da78f27530baab346871865a6bf0c",
+        "bytes": 16215
+      },
+      {
+        "path": "examples/camera_viz/sources/_nv_decode.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/sources/_nv_decode.py",
+        "retrieved_utc": "2026-10-09T12:40:03.673281+00:00",
+        "sha256": "71dfe79aae459c8fc2c507120e24724550fcdad675858b0318efccb6bffb17f4",
+        "bytes": 1939
+      },
+      {
+        "path": "examples/camera_viz/sources/oakd.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/sources/oakd.py",
+        "retrieved_utc": "2026-10-09T12:40:04.168731+00:00",
+        "sha256": "3620a431a7f07459795400833b5510a3ba7dd804d64206d0363012fede503da6",
+        "bytes": 18797
+      },
+      {
+        "path": "examples/camera_viz/sources/rtp_h264.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/sources/rtp_h264.py",
+        "retrieved_utc": "2026-10-09T12:40:04.000903+00:00",
+        "sha256": "04c8fec9aa2ecc7f9e517730f8d9e88822630f897d872380ce6699a0a50c5897",
+        "bytes": 9793
+      },
+      {
+        "path": "examples/camera_viz/sources/synthetic.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/examples/camera_viz/sources/synthetic.py",
+        "retrieved_utc": "2026-10-09T12:40:03.954692+00:00",
+        "sha256": "69d0a2fe65bd0839563455982efa02f609366eff0a6cd462fda4164a938f339a",
+        "bytes": 10073
+      },
+      {
+        "path": "src/core/teleop_session_manager/python/config.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/src/core/teleop_session_manager/python/config.py",
+        "retrieved_utc": "2026-10-09T12:40:50.594629+00:00",
+        "sha256": "4f742a450311114277aed91f13c6e9bbdff0bb42a55f25fd1e031218976bda0d",
+        "bytes": 18824
+      },
+      {
+        "path": "src/core/teleop_session_manager/python/teleop_session.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/src/core/teleop_session_manager/python/teleop_session.py",
+        "retrieved_utc": "2026-10-09T12:40:50.661448+00:00",
+        "sha256": "99464a117639b699b07ccd76dc34ba16f51c8d32813eab485d871ab853339d03",
+        "bytes": 48499
+      },
+      {
+        "path": "src/core/teleop_session_manager/python/async_retarget_runner.py",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/src/core/teleop_session_manager/python/async_retarget_runner.py",
+        "retrieved_utc": "2026-10-09T12:40:50.555065+00:00",
+        "sha256": "a6e21b7ce67c5bd0d1603940ff40b190252449a09a1aca2c510fcb6999ada9ae",
+        "bytes": 17071
+      },
+      {
+        "path": "deps/cloudxr/webxr_client/src/CloudXR2DUI.tsx",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/deps/cloudxr/webxr_client/src/CloudXR2DUI.tsx",
+        "retrieved_utc": "2026-10-09T12:40:50.636167+00:00",
+        "sha256": "330d8e724bbb8ff8f2aa60dc0d4b76c56720c16e82504835c7d21313cb888e1e",
+        "bytes": 58593
+      },
+      {
+        "path": "src/viz/layers/cpp/inc/viz/layers/image_layer_base.hpp",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/src/viz/layers/cpp/inc/viz/layers/image_layer_base.hpp",
+        "retrieved_utc": "2026-10-09T12:40:50.590161+00:00",
+        "sha256": "9663119d7e7e21cf22b269222ed22adbc296b424a7d56da4588c2fe6e60ca862",
+        "bytes": 9761
+      },
+      {
+        "path": "src/viz/layers/cpp/image_layer_base.cpp",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/src/viz/layers/cpp/image_layer_base.cpp",
+        "retrieved_utc": "2026-10-09T12:40:50.600931+00:00",
+        "sha256": "5bded36fc20a2cff2b53918190123558cb713d47724e83f9e5694122babfc37b",
+        "bytes": 11869
+      },
+      {
+        "path": "deps/cloudxr/webxr_client/helpers/DeviceProfiles.ts",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/deps/cloudxr/webxr_client/helpers/DeviceProfiles.ts",
+        "retrieved_utc": "2026-10-09T12:44:54.809826+00:00",
+        "sha256": "92931bd4d0a5088e5894f5a1df9b18284dd3375491209e392a1ed0fc876276d3",
+        "bytes": 6590
+      },
+      {
+        "path": "deps/cloudxr/webxr_client/PerformanceOptions.ts",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/deps/cloudxr/webxr_client/PerformanceOptions.ts",
+        "error": "<HTTPError 404: 'Not Found'>"
+      },
+      {
+        "path": "deps/cloudxr/webxr_client/helpers/PerformanceOptions.ts",
+        "url": "https://raw.githubusercontent.com/NVIDIA/IsaacCapture/5bbe49d4c92746076196216c3f74e08ae509809a/deps/cloudxr/webxr_client/helpers/PerformanceOptions.ts",
+        "error": "<HTTPError 404: 'Not Found'>"
+      },
+      {
+        "path": "hosted-release-bundle.js",
+        "url": "https://nvidia.github.io/IsaacCapture/client/release-1.4.x/bundle.js",
+        "retrieved_utc": "2026-10-09T12:44:58.190323+00:00",
+        "sha256": "deaa300c4d4c6b01c9395d49484b548142c299347857ba2edfcc03e5718d3729",
+        "bytes": 3460744
+      }
+    ]
+  },
+  "additional_web_sources": [
+    {
+      "url": "https://github.com/NVIDIA/IsaacCapture/releases",
+      "retrieved_date": "2026-10-09",
+      "method": "web.run",
+      "snapshot_hash": null
+    },
+    {
+      "url": "https://nvidia.github.io/IsaacCapture/main/getting_started/teleop_session.html",
+      "retrieved_date": "2026-10-09",
+      "method": "web.run",
+      "snapshot_hash": null
+    },
+    {
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/omni.kit.window.status_bar/0.1.11/SETTINGS.html",
+      "retrieved_date": "2026-10-09",
+      "method": "web.run",
+      "snapshot_hash": null
+    },
+    {
+      "url": "https://isaac-sim.github.io/IsaacLab/develop/source/features/isaac_teleop.html",
+      "retrieved_date": "2026-10-09",
+      "method": "web.run",
+      "snapshot_hash": null
+    },
+    {
+      "url": "https://forums.developer.nvidia.com/t/meta-quest-3s-teleop-no-tracked-devices-xr-error-form-factor-unsupported-isaac-lab-arena-3-0-cloudxr-6-1-0/382201",
+      "retrieved_date": "2026-10-09",
+      "method": "web.run",
+      "snapshot_hash": null
+    },
+    {
+      "url": "https://forums.developer.nvidia.com/t/system-requirements-cloudxr-teleoperation/334089",
+      "retrieved_date": "2026-10-09",
+      "method": "web.run",
+      "snapshot_hash": null
+    },
+    {
+      "url": "https://developer.nvidia.com/blog/stream-high-fidelity-spatial-computing-content-to-any-device-with-nvidia-cloudxr-6-0/",
+      "retrieved_date": "2026-10-09",
+      "method": "web.run",
+      "snapshot_hash": null
+    },
+    {
+      "url": "https://docs.nvidia.com/cloudxr-sdk/apis/cloudxr-js/6.2.0/api/CloudXR/interfaces/SessionOptions.html",
+      "retrieved_date": "2026-10-09",
+      "method": "web.run",
+      "snapshot_hash": null
+    }
+  ],
+  "query_ledger": [
+    {
+      "date": "2026-10-09",
+      "query": "site.docs.nvidia.com cloudxr 6.2 maxfps foveation",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.github.com NVIDIA IsaacCapture RetargetingExecutionMode PIPELINED",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.docs.omniverse.nvidia.com XR waitIdle lateLatch",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.docs.nvidia.com cloudxr \"NV_CXR_MAX_FPS\"",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.docs.omniverse.nvidia.com \"waitIdle\" \"xr\"",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.github.com/NVIDIA/IsaacCapture \"quad\" \"camera\"",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.forums.developer.nvidia.com CloudXR 6 fps Quest max-fps",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.docs.omniverse.nvidia.com xr \"lateLatch\"",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.docs.omniverse.nvidia.com xr \"waitIdle\"",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.github.com/NVIDIA/IsaacCapture \"use_openxr_quad_layer\"",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.forums.developer.nvidia.com \"NV_MAX_FPS\"",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.forums.developer.nvidia.com \"CloudXR\" \"encoder\" \"session\"",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.github.com/NVIDIA/IsaacCapture \"GPU\" \"QuadLayer\" \"benchmark\"",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.docs.nvidia.com video codec sdk \"4090\" \"8\" sessions",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.docs.nvidia.com \"NVENC\" \"multiple concurrent\" \"2\" Ada",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.forums.developer.nvidia.com \"CloudXR\" \"NV_MAX\"",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.forums.developer.nvidia.com Isaac Lab Quest camera fps 30 CloudXR",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.github.com/isaac-sim/IsaacLab \"pipelined\" \"camera\" \"teleop\"",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.github.com/NVIDIA/IsaacCapture \"openxr_composition\"",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.docs.nvidia.com \"CloudXR\" \"6.3.0\" \"6.x\" compatible",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.github.com/NVIDIA/IsaacCapture \"QuadLayer\" \"30\" \"fps\"",
+      "method": "web.run search_query"
+    },
+    {
+      "date": "2026-10-09",
+      "query": "site.github.com/NVIDIA/IsaacCapture \"deadline\" \"performance\" \"retarget\"",
+      "method": "web.run search_query"
+    }
+  ],
+  "limitations": [
+    "Local source audit does not measure GPU runtime",
+    "Hosted bundle current6.3.0 differs from server6.2.1",
+    "Binary env aliases need actual startup log/readback",
+    "No exactly matching connectedQuest3 three-camera benchmark located"
+  ],
+  "final_canonical_startup_local_files": [
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/apps/isaaclab.python.xr.openxr.kit",
+      "sha256": "313ef3c9b47596ecbaec73e4e94152a1905a6e89d1abece898fdd541bd3542b6",
+      "bytes": 4537,
+      "observed_utc": "2026-10-09T12:51:46.325162+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/apps/isaaclab.python.xr.openxr.headless.kit",
+      "sha256": "1cf9c09bb0df71f14bac9e1319daaf1733c9d957fdc938630d7cd43c3b342953",
+      "bytes": 3111,
+      "observed_utc": "2026-10-09T12:51:46.325215+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/app/app_launcher.py",
+      "sha256": "af8a09c87a05221f309892e24788a59c9776e7e9097b3cde0b57e607d4eb3675",
+      "bytes": 83138,
+      "observed_utc": "2026-10-09T12:51:46.325294+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_teleop/isaaclab_teleop/isaac_teleop_device.py",
+      "sha256": "0ecc4784017b631b6a9e74d1024b00bd27c7472a091ccc7febbb989004cc491d",
+      "bytes": 29677,
+      "observed_utc": "2026-10-09T12:51:46.325341+00:00"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_teleop/isaaclab_teleop/session_lifecycle.py",
+      "sha256": "0b1ee5a0c09a1dc8330e42cf8efccae307144371c282ae2e0775441e639f1930",
+      "bytes": 70669,
+      "observed_utc": "2026-10-09T12:51:46.325407+00:00"
+    }
+  ]
+}

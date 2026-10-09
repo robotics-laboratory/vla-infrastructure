@@ -1,0 +1,14 @@
+{
+  "versions": {
+    "ovrtx": "0.5.1.385782",
+    "ovstage": "0.2.1.385922"
+  },
+  "sha256": {
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/renderer.py": "d431ac3a02a43c01a5c57c3ff9214a420cfd001f67a3db6b8dd4b306b5b23efd",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/types.py": "5ab31921e0d9544f693d25ef79ac77be5a86cd8577df5e56d3ba8b458caefd8b",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovstage/_src/stage.py": "7595c4fec9b9d0012c8cd3e126cfa58d77a3eb2f41283893ef767ab9f2a0770e",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovstage/_src/path_dictionary.py": "f6e2b0ccdfbe36764358898b86de3dba7fff332b62682d9438acf6288403d30a",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovstage/_src/dlpack.py": "14e88c9cac0bf3fb26f9f0faad360fc3d8910ba373a8ebb373868d9df456a5a8"
+  },
+  "gpu_run": false
+}

@@ -1,0 +1,1137 @@
+{
+  "date": "2026-10-09",
+  "scope": "Independent 40-query screening; search relevance is not implementation proof",
+  "query_ledger": [
+    {
+      "id": "Q01",
+      "query": "site:docs.isaacsim.omniverse.nvidia.com 6.0 performance handbook multi GPU cameras"
+    },
+    {
+      "id": "Q02",
+      "query": "site:docs.isaacsim.omniverse.nvidia.com standalone camera capture streaming CUDA"
+    },
+    {
+      "id": "Q03",
+      "query": "site:github.com NVIDIA IsaacSim camera benchmark tiled rendering"
+    },
+    {
+      "id": "Q04",
+      "query": "site:stereolabs.com Isaac Sim ZED camera simulator performance"
+    },
+    {
+      "id": "Q05",
+      "query": "site:github.com/NVIDIA-Omniverse Hydra camera render Vulkan CUDA interop"
+    },
+    {
+      "id": "Q06",
+      "query": "site:github.com/NVIDIA IsaacSim benchmark_camera.py 6.1"
+    },
+    {
+      "id": "Q07",
+      "query": "site:github.com/isaac-sim IsaacLab tiled camera OpenXR performance"
+    },
+    {
+      "id": "Q08",
+      "query": "site:github.com/stereolabs zed-isaac-sim CUDA IPC stream"
+    },
+    {
+      "id": "Q09",
+      "query": "site:developer.nvidia.com OptiX render camera real time robotics Isaac Sim"
+    },
+    {
+      "id": "Q10",
+      "query": "site:github.com/NVIDIA nvdiffrast rendering physics cameras"
+    },
+    {
+      "id": "Q11",
+      "query": "site:github.com/NVlabs instant-ngp camera robotics dynamic objects"
+    },
+    {
+      "id": "Q12",
+      "query": "site:github.com/NVIDIA neural physics robotics PhysX Newton performance"
+    },
+    {
+      "id": "Q13",
+      "query": "site:docs.omniverse.nvidia.com RTX renderer multi GPU camera render product assign GPU"
+    },
+    {
+      "id": "Q14",
+      "query": "site:docs.omniverse.nvidia.com XR remove viewport headless camera render products"
+    },
+    {
+      "id": "Q15",
+      "query": "site:developer.nvidia.com Nsight Graphics Vulkan CUDA external memory semaphore"
+    },
+    {
+      "id": "Q16",
+      "query": "site:docs.isaacsim.omniverse.nvidia.com Isaac Sim camera RGB latency frame delay render pipeline"
+    },
+    {
+      "id": "Q17",
+      "query": "site:github.com/NVIDIA-Omniverse kit-app-template XR disable viewport performance"
+    },
+    {
+      "id": "Q18",
+      "query": "site:github.com/NVIDIA-Omniverse usd-exchange samples render OptiX"
+    },
+    {
+      "id": "Q19",
+      "query": "site:github.com/NVIDIA/cuda-samples vulkanImageCUDA vulkanCudaMipMap"
+    },
+    {
+      "id": "Q20",
+      "query": "site:github.com/jspaulding-nv/isaac-sim-tests T4 FPS tiled"
+    },
+    {
+      "id": "Q21",
+      "query": "site:docs.isaacsim.omniverse.nvidia.com 6.1 RTSP streaming customwriter camera gpu"
+    },
+    {
+      "id": "Q22",
+      "query": "site:github.com NVIDIA IsaacSim RTX camera benchmark 960 600"
+    },
+    {
+      "id": "Q23",
+      "query": "site:docs.omniverse.nvidia.com RTX minimal multi GPU restrictions"
+    },
+    {
+      "id": "Q24",
+      "query": "site:forums.developer.nvidia.com Isaac Sim XR disable cameras render product Quest performance"
+    },
+    {
+      "id": "Q25",
+      "query": "site:github.com NVIDIA IsaacSim async rendering camera frame delay XR"
+    },
+    {
+      "id": "Q26",
+      "query": "site:docs.omniverse.nvidia.com xr swapchain eye viewport rendering"
+    },
+    {
+      "id": "Q27",
+      "query": "site:github.com NVIDIA PhysX neural physics camera rendering performance"
+    },
+    {
+      "id": "Q28",
+      "query": "site:github.com NVIDIA OptiX_Apps USD MDL renderer import"
+    },
+    {
+      "id": "Q29",
+      "query": "site:docs.isaacsim.omniverse.nvidia.com 6.1 Isaac Sim benchmarks camera fps RTX 4090"
+    },
+    {
+      "id": "Q30",
+      "query": "site:github.com stereolabs zed-isaac-sim performance get_data fps tick"
+    },
+    {
+      "id": "Q31",
+      "query": "site:docs.isaacsim.omniverse.nvidia.com OVRTX renderer USD standalone"
+    },
+    {
+      "id": "Q32",
+      "query": "site:github.com NVIDIA Omniverse sensor renderer multi device camera parallel"
+    },
+    {
+      "id": "Q33",
+      "query": "site:docs.omniverse.nvidia.com render product per camera rendermode MinimalRendering"
+    },
+    {
+      "id": "Q34",
+      "query": "site:github.com/isaac-sim/IsaacSim render_product rtx rendermode minimal camera"
+    },
+    {
+      "id": "Q35",
+      "query": "site:docs.omniverse.nvidia.com multi-view camera renderer settings per render product"
+    },
+    {
+      "id": "Q36",
+      "query": "site:forums.developer.nvidia.com Isaac Sim different rendering settings cameras viewport"
+    },
+    {
+      "id": "Q37",
+      "query": "site:github.com/NVIDIA holohub Isaac Sim Holoscan bridge CUDA camera"
+    },
+    {
+      "id": "Q38",
+      "query": "site:docs.isaacsim.omniverse.nvidia.com UCX camera zero copy 6.1"
+    },
+    {
+      "id": "Q39",
+      "query": "site:docs.isaacsim.omniverse.nvidia.com 6.1 HSB camera streaming GPU"
+    },
+    {
+      "id": "Q40",
+      "query": "site:docs.omniverse.nvidia.com 110.3 RTX minimal mode"
+    }
+  ],
+  "web_sources": [
+    {
+      "title": "Setting up the ZED in Isaac\u2122 Sim | StereoLabs",
+      "url": "https://docs.stereolabs.com/docs/integrations/isaac-sim/setting-up-the-zed-in-isaac-sim",
+      "response": "s1"
+    },
+    {
+      "title": "GitHub - jspaulding-nv/isaac-sim-tests \u00b7 GitHub",
+      "url": "https://github.com/jspaulding-nv/isaac-sim-tests",
+      "response": "s1"
+    },
+    {
+      "title": "GitHub - NVIDIA-AI-IOT/isaac_camera_benchmark: Benchmark your camera with this simple tool \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA-AI-IOT/isaac_camera_benchmark",
+      "response": "s1"
+    },
+    {
+      "title": "Isaac Sim Benchmarks \u2014 Isaac Sim Documentation",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.0.0/reference_material/benchmarks.html",
+      "response": "s1"
+    },
+    {
+      "title": "Using the ZED in Isaac\u2122 Lab | StereoLabs",
+      "url": "https://docs.stereolabs.com/docs/integrations/isaac-sim/using-the-zed-in-isaac-lab",
+      "response": "s1"
+    },
+    {
+      "title": "Multi-camera simulation in Isaac Sim with Zed Extension - Stereolabs Forums",
+      "url": "https://community.stereolabs.com/t/multi-camera-simulation-in-isaac-sim-with-zed-extension/8036",
+      "response": "s1"
+    },
+    {
+      "title": "isaac-sim-event-camera-plugin/README.md at main \u00b7 spikelab-jhu/isaac-sim-event-camera-plugin \u00b7 GitHub",
+      "url": "https://github.com/spikelab-jhu/isaac-sim-event-camera-plugin/blob/main/README.md",
+      "response": "s1"
+    },
+    {
+      "title": "Isaac Sim Performance Optimization Handbook \u2014 Isaac Sim Documentation",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/5.1.0/reference_material/sim_performance_optimization_handbook.html",
+      "response": "s1"
+    },
+    {
+      "title": "IsaacSim/premake5-tests.lua at main \u00b7 isaac-sim/IsaacSim \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacSim/blob/main/premake5-tests.lua",
+      "response": "s1"
+    },
+    {
+      "title": "render_product_tiled produces image with artifacts when distortion and non-squared camera number is used \u00b7 Issue #488 \u00b7 isaac-sim/IsaacSim \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacSim/issues/488",
+      "response": "s1"
+    },
+    {
+      "title": "Isaac Sim ZED Extension keep crashing - Stereolabs Forums",
+      "url": "https://community.stereolabs.com/t/isaac-sim-zed-extension-keep-crashing/9270",
+      "response": "s1"
+    },
+    {
+      "title": "IsaacSim/skills/isaac-camera/SKILL.md at develop \u00b7 isaac-sim/IsaacSim \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacSim/blob/develop/skills/isaac-camera/SKILL.md",
+      "response": "s1"
+    },
+    {
+      "title": "Camera Overview",
+      "url": "https://support.stereolabs.com/hc/en-us/article_attachments/27901442249879",
+      "response": "s1"
+    },
+    {
+      "title": "Application Notes \u2013 GMSL I/O",
+      "url": "https://support.stereolabs.com/hc/en-us/article_attachments/15188996941975",
+      "response": "s1"
+    },
+    {
+      "title": "Overview &",
+      "url": "https://support.stereolabs.com/hc/en-us/article_attachments/27901419895703",
+      "response": "s1"
+    },
+    {
+      "title": "The ZED X stereo camera combines",
+      "url": "https://support.stereolabs.com/hc/article_attachments/27901419903255",
+      "response": "s1"
+    },
+    {
+      "title": "The ZED 2i ste",
+      "url": "https://support.stereolabs.com/hc/en-us/article_attachments/27901419901463",
+      "response": "s1"
+    },
+    {
+      "title": "GitHub - stereolabs/zed-isaac-sim: NVIDIA Isaac Sim integration for ZED SDK \u00b7 GitHub",
+      "url": "https://github.com/stereolabs/zed-isaac-sim",
+      "response": "g0"
+    },
+    {
+      "title": "[Question] Performance Bottleneck in Lift Task with Tiled Camera Rendering \u00b7 Issue #2124 \u00b7 isaac-sim/IsaacLab \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacLab/issues/2124",
+      "response": "g0"
+    },
+    {
+      "title": "Isaac Sim 6.0.1: understanding an apparently under-utilized headless sensor workload \u00b7 isaac-sim IsaacSim \u00b7 Discussion #741 \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacSim/discussions/741",
+      "response": "g0"
+    },
+    {
+      "title": "Releases \u00b7 isaac-sim/IsaacLab \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacLab/releases",
+      "response": "g0"
+    },
+    {
+      "title": "Isaac Lab v1.2.0 is out! \u00b7 isaac-sim IsaacLab \u00b7 Discussion #1008 \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacLab/discussions/1008",
+      "response": "g0"
+    },
+    {
+      "title": "Docker + Tests \u00b7 Workflow runs \u00b7 isaac-sim/IsaacLab \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacLab/actions/workflows/build.yaml",
+      "response": "g0"
+    },
+    {
+      "title": "Releases \u00b7 isaac-sim/IsaacLab \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacLab/releases/",
+      "response": "g0"
+    },
+    {
+      "title": "[Bug Report] TiledCamera does not follow robot \u00b7 Issue #745 \u00b7 isaac-sim/IsaacLab",
+      "url": "https://github.com/isaac-sim/IsaacLab/issues/745",
+      "response": "g0"
+    },
+    {
+      "title": "usd-content-agents/world_understanding/agentic/usd_tasks/render_scene_preview.py at main \u00b7 NVIDIA-Omniverse/usd-content-agents \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA-Omniverse/usd-content-agents/blob/main/world_understanding/agentic/usd_tasks/render_scene_preview.py",
+      "response": "g0"
+    },
+    {
+      "title": "Camera update delay \u00b7 isaac-sim IsaacLab \u00b7 Discussion #671 \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacLab/discussions/671",
+      "response": "g0"
+    },
+    {
+      "title": "GitHub - NVlabs/instant-ngp: Instant neural graphics primitives: lightning fast NeRF and more \u00b7 GitHub",
+      "url": "https://github.com/nvlabs/instant-ngp",
+      "response": "g1"
+    },
+    {
+      "title": "Seamless camera loop \u00b7 NVlabs instant-ngp \u00b7 Discussion #876 \u00b7 GitHub",
+      "url": "https://github.com/NVlabs/instant-ngp/discussions/876",
+      "response": "g1"
+    },
+    {
+      "title": "RoboLab/docs/camera.md at main \u00b7 NVlabs/RoboLab \u00b7 GitHub",
+      "url": "https://github.com/NVlabs/RoboLab/blob/main/docs/camera.md",
+      "response": "g1"
+    },
+    {
+      "title": "physx-newton-bench/report.md at main \u00b7 yusufdxb/physx-newton-bench \u00b7 GitHub",
+      "url": "https://github.com/yusufdxb/physx-newton-bench/blob/main/report.md",
+      "response": "g1"
+    },
+    {
+      "title": "nvdiffrast/docs/index.html at main \u00b7 NVlabs/nvdiffrast \u00b7 GitHub",
+      "url": "https://github.com/NVlabs/nvdiffrast/blob/main/docs/index.html",
+      "response": "g1"
+    },
+    {
+      "title": "nvdiffrast/samples/torch/envphong.py at main \u00b7 NVlabs/nvdiffrast \u00b7 GitHub",
+      "url": "https://github.com/NVlabs/nvdiffrast/blob/main/samples/torch/envphong.py",
+      "response": "g1"
+    },
+    {
+      "title": "Newton Physics \u00b7 GitHub",
+      "url": "https://github.com/newton-physics",
+      "response": "g1"
+    },
+    {
+      "title": "newton/docs/guide/overview.rst at main \u00b7 newton-physics/newton \u00b7 GitHub",
+      "url": "https://github.com/newton-physics/newton/blob/main/docs/guide/overview.rst",
+      "response": "g1"
+    },
+    {
+      "title": "instant-ngp/src/marching_cubes.cu at master \u00b7 NVlabs/instant-ngp \u00b7 GitHub",
+      "url": "https://github.com/NVlabs/instant-ngp/blob/master/src/marching_cubes.cu",
+      "response": "g1"
+    },
+    {
+      "title": "instant-ngp/include/neural-graphics-primitives/testbed.h at master \u00b7 NVlabs/instant-ngp \u00b7 GitHub",
+      "url": "https://github.com/NVlabs/instant-ngp/blob/master/include/neural-graphics-primitives/testbed.h",
+      "response": "g1"
+    },
+    {
+      "title": "Newton 1.0 GA Release Announcement & Roadmap \u00b7 newton-physics newton \u00b7 Discussion #2176 \u00b7 GitHub",
+      "url": "https://github.com/newton-physics/newton/discussions/2176",
+      "response": "g1"
+    },
+    {
+      "title": "NVIDIA Research Projects \u00b7 GitHub",
+      "url": "https://github.com/nvlabs",
+      "response": "g1"
+    },
+    {
+      "title": "RoboCup 2015 - homer@UniKoblenz (Germany)",
+      "url": "https://github.com/RoboCupAtHome/AtHomeCommunityWiki/wiki/files/tdp/2015-homeratunikoblenz.pdf",
+      "response": "g1"
+    },
+    {
+      "title": "MRL @Home 2013 Team Description Paper",
+      "url": "https://github.com/RoboCupAtHome/AtHomeCommunityWiki/wiki/files/tdp/2013-mrl.pdf",
+      "response": "g1"
+    },
+    {
+      "title": "AISL-TUT @Home League",
+      "url": "https://github.com/RoboCupAtHome/AtHomeCommunityWiki/wiki/files/tdp/2017-dspl-aisl-tut.pdf",
+      "response": "g1"
+    },
+    {
+      "title": "KITCHEN AUTOMATION",
+      "url": "https://developer.nvidia.com/downloads/isaac/images/miso-robotics-isaac-ros-success-story.pdf",
+      "response": "g1"
+    },
+    {
+      "title": "9 December 2020",
+      "url": "https://github.com/osrf/vorc/wiki/files/VORC2020_technical_guide_latest.pdf",
+      "response": "g1"
+    },
+    {
+      "title": "Univ",
+      "url": "https://raw.github.com/Ecstasy-EC/Ecstasy-EC.github.io/main/pdf/CV_YixiCAI.pdf",
+      "response": "g1"
+    },
+    {
+      "title": "Building Custom IPC OmniGraph Nodes \u2014 Isaac Sim Documentation",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/latest/omnigraph/omnigraph_custom_ipc_nodes.html",
+      "response": "g2"
+    },
+    {
+      "title": "Camera Sensors \u2014 Isaac Sim Documentation",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/latest/sensors/isaacsim_sensors_camera.html",
+      "response": "g2"
+    },
+    {
+      "title": "[isaacsim.sensors.camera] Isaac Sim Camera Simulation \u2014 Isaac Sim API",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/latest/py/source/deprecated/isaacsim.sensors.camera/docs/index.html",
+      "response": "g2"
+    },
+    {
+      "title": "Rendering modes \u2014 Isaac Sim Documentation",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/latest/reference_material/rendering_modes.html",
+      "response": "g2"
+    },
+    {
+      "title": "NuRec Rendering Utilities \u2014 Isaac Sim Documentation",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/latest/assets/nurec_utils.html",
+      "response": "g2"
+    },
+    {
+      "title": "Multi-Tick Rendering \u2014 Isaac Sim Documentation",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/latest/sensors/isaacsim_sensors_multitick_rendering.html",
+      "response": "g2"
+    },
+    {
+      "title": "Util Snippets \u2014 Isaac Sim Documentation",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/5.1.0/python_scripting/util_snippets.html",
+      "response": "g2"
+    },
+    {
+      "title": "Multi-GPU \u2014 Omniverse Materials and Rendering",
+      "url": "https://docs.omniverse.nvidia.com/materials-and-rendering/latest/rtx-renderer_mgpu.html",
+      "response": "g2"
+    },
+    {
+      "title": "ROS2 Setting Publish Rates \u2014 Isaac Sim Documentation",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/5.1.0/ros2_tutorials/tutorial_ros2_publish_rate.html",
+      "response": "g2"
+    },
+    {
+      "title": "Omniverse RTX Renderer \u2014 Omniverse Materials and Rendering",
+      "url": "https://docs.omniverse.nvidia.com/materials-and-rendering/latest/rtx-renderer.html",
+      "response": "g2"
+    },
+    {
+      "title": "[isaacsim.core.rendering_manager] Isaac Sim Core Rendering Manager \u2014 Isaac Sim API",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/latest/py/source/extensions/isaacsim.core.rendering_manager/docs/index.html",
+      "response": "g2"
+    },
+    {
+      "title": "Structured Light Cameras \u2014 Isaac Sim Documentation",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/latest/sensors/isaacsim_sensors_camera_structured_light.html",
+      "response": "g2"
+    },
+    {
+      "title": "NVIDIA DRIVE OS Linux SDK Developer Guide",
+      "url": "https://developer.nvidia.com/docs/drive/drive-os/6.0.8/public/drive-os-linux-sdk/drive_os_v5l_sdk_dev_guide.pdf",
+      "response": "g2"
+    },
+    {
+      "title": "GitHub - NVIDIA-Omniverse/usd-exchange-samples: The samples use the OpenUSD and the OpenUSD Exchange SDK to demonstrate how to author consistent and correct USD. \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA-Omniverse/usd-exchange-samples",
+      "response": "g3"
+    },
+    {
+      "title": "usd-exchange-samples/README.md at main \u00b7 NVIDIA-Omniverse/usd-exchange-samples \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA-Omniverse/usd-exchange-samples/blob/main/README.md",
+      "response": "g3"
+    },
+    {
+      "title": "omniverse-performance/docs/reference/memory-and-resources.md at main \u00b7 NVIDIA-Omniverse/omniverse-performance \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA-Omniverse/omniverse-performance/blob/main/docs/reference/memory-and-resources.md",
+      "response": "g3"
+    },
+    {
+      "title": "usd-exchange/docs/devtools.md at main \u00b7 NVIDIA-Omniverse/usd-exchange \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA-Omniverse/usd-exchange/blob/main/docs/devtools.md",
+      "response": "g3"
+    },
+    {
+      "title": "Releases \u00b7 NVIDIA-Omniverse/usd-exchange \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA-Omniverse/usd-exchange/releases",
+      "response": "g3"
+    },
+    {
+      "title": "cuda-samples/cpp/5_Domain_Specific/README.md at master \u00b7 NVIDIA/cuda-samples \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA/cuda-samples/blob/master/cpp/5_Domain_Specific/README.md",
+      "response": "g3"
+    },
+    {
+      "title": "GitHub - NVIDIA/cuda-samples: Samples for CUDA Developers which demonstrates features in CUDA Toolkit \u00b7 GitHub",
+      "url": "https://github.com/nvidia/cuda-samples",
+      "response": "g3"
+    },
+    {
+      "title": "GitHub - NVIDIA-Omniverse/OpenUSD-plugin-samples: OpenUSD schema extension samples, build tools, and sample Kit extensions that use those schema extensions. \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA-Omniverse/OpenUSD-plugin-samples",
+      "response": "g3"
+    },
+    {
+      "title": "omniverse-labs/articles/ovrtx_agents/ovrtx_agent_article.md at main \u00b7 NVIDIA-Omniverse/omniverse-labs \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA-Omniverse/omniverse-labs/blob/main/articles/ovrtx_agents/ovrtx_agent_article.md",
+      "response": "g3"
+    },
+    {
+      "title": "Isaac-sim crash with error \"Exceeding capacity of resource descriptors\" \u00b7 Issue #1 \u00b7 NVIDIA-Omniverse/kit-xr-samples",
+      "url": "https://github.com/NVIDIA-Omniverse/kit-xr-samples/issues/1",
+      "response": "g3"
+    },
+    {
+      "title": "omniperf/dev/docs/profiling-guide.md at main \u00b7 NVIDIA/omniperf \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA/omniperf/blob/main/dev/docs/profiling-guide.md",
+      "response": "g3"
+    },
+    {
+      "title": "Adding VR to CARLA \u2013 Technical Guide",
+      "url": "https://github.com/carla-simulator/carla/files/9333229/Adding.VR.to.CARLA.pdf",
+      "response": "g3"
+    },
+    {
+      "title": "Disable camera rendering - Isaac Sim - NVIDIA Developer Forums",
+      "url": "https://forums.developer.nvidia.com/t/disable-camera-rendering/249768",
+      "response": "g4"
+    },
+    {
+      "title": "Live Camera Streaming over RTSP \u2014 Isaac Sim Documentation",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/digital_twin/rtsp_camera_streaming.html",
+      "response": "g4"
+    },
+    {
+      "title": "Performance of render product in action graph - Isaac Sim - NVIDIA Developer Forums",
+      "url": "https://forums.developer.nvidia.com/t/performance-of-render-product-in-action-graph/322300",
+      "response": "g4"
+    },
+    {
+      "title": "RTX - Real-Time 2.0 mode \u2014 Omniverse Materials and Rendering",
+      "url": "https://docs.omniverse.nvidia.com/materials-and-rendering/latest/rtx-renderer_rt.html",
+      "response": "g4"
+    },
+    {
+      "title": "Speeding up simulation - 2023.1.1 - Isaac Sim - NVIDIA Developer Forums",
+      "url": "https://forums.developer.nvidia.com/t/speeding-up-simulation-2023-1-1/300072",
+      "response": "g4"
+    },
+    {
+      "title": "Example: RTSP Streaming with CustomWriter \u2014 Isaac Sim Documentation",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.0.0/action_and_event_data_generation/ext_replicator-agent/ext_isaacsim_replicator_agent_custom_writer_example.html",
+      "response": "g4"
+    },
+    {
+      "title": "Camera class from omni.isaac.sensor significantly reduces Sim performance - Isaac Sim - NVIDIA Developer Forums",
+      "url": "https://forums.developer.nvidia.com/t/camera-class-from-omni-isaac-sensor-significantly-reduces-sim-performance/306269",
+      "response": "g4"
+    },
+    {
+      "title": "How to get camera input when VR is running? - Isaac Sim - NVIDIA Developer Forums",
+      "url": "https://forums.developer.nvidia.com/t/how-to-get-camera-input-when-vr-is-running/358922",
+      "response": "g4"
+    },
+    {
+      "title": "Controlling fps of CreateRenderProduct/CreateRenderProductFromViewport - Isaac Sim - NVIDIA Developer Forums",
+      "url": "https://forums.developer.nvidia.com/t/controlling-fps-of-createrenderproduct-createrenderproductfromviewport/273238",
+      "response": "g4"
+    },
+    {
+      "title": "Disable rendering of unused cameras (ROS 2) - Isaac Sim - NVIDIA Developer Forums",
+      "url": "https://forums.developer.nvidia.com/t/disable-rendering-of-unused-cameras-ros-2/247349",
+      "response": "g4"
+    },
+    {
+      "title": "Application is GPU intensive at startup/ GPU cache is not properly released - Isaac Sim - NVIDIA Developer Forums",
+      "url": "https://forums.developer.nvidia.com/t/application-is-gpu-intensive-at-startup-gpu-cache-is-not-properly-released/261421",
+      "response": "g4"
+    },
+    {
+      "title": "Merge Static Meshes (Public white paper)",
+      "url": "https://docs.omniverse.nvidia.com/extensions/latest/_downloads/08c629e35213d0a1eca5e8ccd2a14281/Merge_Static_Meshes.pdf",
+      "response": "g4"
+    },
+    {
+      "title": "GitHub - NVIDIA/OptiX_Apps: Advanced Samples for the NVIDIA OptiX 7 Ray Tracing SDK \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA/OptiX_Apps",
+      "response": "g5"
+    },
+    {
+      "title": "  * Go to",
+      "url": "https://github.com/NVIDIA/MDL-SDK",
+      "response": "g5"
+    },
+    {
+      "title": "Headless rendering hangs (~10s/frame) \u2014 viewport window creates a surfaceless render product that deadlocks RTX sync schedule \u00b7 Issue #701 \u00b7 isaac-sim/IsaacSim \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacSim/issues/701",
+      "response": "g5"
+    },
+    {
+      "title": "OptiX_Apps/data/scene_mdl_demo.txt at master \u00b7 NVIDIA/OptiX_Apps \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA/OptiX_Apps/blob/master/data/scene_mdl_demo.txt",
+      "response": "g5"
+    },
+    {
+      "title": "IsaacSim/source/extensions/isaacsim.core.rendering_manager/docs/Overview.md at main \u00b7 isaac-sim/IsaacSim \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacSim/blob/main/source/extensions/isaacsim.core.rendering_manager/docs/Overview.md",
+      "response": "g5"
+    },
+    {
+      "title": "OptiX_Apps/apps/GLTF_renderer/doc/README.md at master \u00b7 NVIDIA/OptiX_Apps \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA/OptiX_Apps/blob/master/apps/GLTF_renderer/doc/README.md",
+      "response": "g5"
+    },
+    {
+      "title": "How to improve Rendering Performance? \u00b7 isaac-sim IsaacSim \u00b7 Discussion #442 \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacSim/discussions/442",
+      "response": "g5"
+    },
+    {
+      "title": "Isaac Sim 5.1.0 Async Rendering in Standalone Python App \u00b7 isaac-sim IsaacSim \u00b7 Discussion #285 \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacSim/discussions/285",
+      "response": "g5"
+    },
+    {
+      "title": "Rendering issues with async/await \u00b7 isaac-sim IsaacSim \u00b7 Discussion #375 \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacSim/discussions/375",
+      "response": "g5"
+    },
+    {
+      "title": "Adopt Isaac Teleop + CloudXR to resolve XR streaming latency in xr_teleoperate \u00b7 Issue #867 \u00b7 NVIDIA/IsaacCapture \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA/IsaacCapture/issues/867",
+      "response": "g5"
+    },
+    {
+      "title": "RTX Lidar 'get_current_frame()' returns data at inconsistent intervals despite render_dt and scan rate alignment \u00b7 isaac-sim IsaacSim \u00b7 Discussion #674 \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacSim/discussions/674",
+      "response": "g5"
+    },
+    {
+      "title": "Data Adapter Pivot  (Public white paper)",
+      "url": "https://docs.omniverse.nvidia.com/extensions/latest/_downloads/1d1f0b3894d73e3b335f07ba4211b0ba/Data_Adapter_Pivot.pdf",
+      "response": "g5"
+    },
+    {
+      "title": "[isaacsim.benchmark.services] Benchmark Services \u2014 Isaac Sim API",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/py/source/extensions/isaacsim.benchmark.services/docs/index.html",
+      "response": "g6"
+    },
+    {
+      "title": "GitHub - NVIDIA-Omniverse/connect-samples: Samples for the Omniverse Connect SDK that demonstrate consistent and correct USD authoring \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA-Omniverse/connect-samples",
+      "response": "g6"
+    },
+    {
+      "title": "Camera Sensors \u2014 Isaac Sim Documentation",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.0.0/sensors/isaacsim_sensors_camera.html",
+      "response": "g6"
+    },
+    {
+      "title": "cosmos-transfer2.5/docs/inference_auto_multiview.md at main \u00b7 nvidia-cosmos/cosmos-transfer2.5 \u00b7 GitHub",
+      "url": "https://github.com/nvidia-cosmos/cosmos-transfer2.5/blob/main/docs/inference_auto_multiview.md",
+      "response": "g6"
+    },
+    {
+      "title": "Isaac Sim Performance Optimization Handbook \u2014 Isaac Sim Documentation",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/latest/reference_material/sim_performance_optimization_handbook.html",
+      "response": "g6"
+    },
+    {
+      "title": "Standalone Examples Reference List \u2014 Isaac Sim API",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.0.0/py/docs/api/source/standalone_examples_list.html",
+      "response": "g6"
+    },
+    {
+      "title": "ovrtx/examples/python/lidar/README.md at main \u00b7 NVIDIA-Omniverse/ovrtx \u00b7 GitHub",
+      "url": "https://github.com/nvidia-omniverse/ovrtx/blob/main/examples/python/lidar/README.md",
+      "response": "g6"
+    },
+    {
+      "title": "PhysX/ovphysx/docs/developer_guide.md at main \u00b7 NVIDIA-Omniverse/PhysX \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/main/ovphysx/docs/developer_guide.md",
+      "response": "g6"
+    },
+    {
+      "title": "IsaacSim/skills/isaac-sim-rendering/SKILL.md at main \u00b7 isaac-sim/IsaacSim \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacSim/blob/main/skills/isaac-sim-rendering/SKILL.md",
+      "response": "g7"
+    },
+    {
+      "title": "CameraInfo does not follow render product resolution in Isaac Sim 5.1 (intended or bug?) \u00b7 isaac-sim IsaacSim \u00b7 Discussion #545 \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacSim/discussions/545",
+      "response": "g7"
+    },
+    {
+      "title": "IsaacLab/source/isaaclab_physx/isaaclab_physx/renderers/isaac_rtx_renderer.py at release/3.0.0-beta2 \u00b7 isaac-sim/IsaacLab \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacLab/blob/release/3.0.0-beta2/source/isaaclab_physx/isaaclab_physx/renderers/isaac_rtx_renderer.py",
+      "response": "g7"
+    },
+    {
+      "title": "[Bug] RectLight isProjector pattern only resolves when the camera is stationary (RTPT radiance cache) \u00b7 Issue #822 \u00b7 isaac-sim/IsaacSim \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacSim/issues/822",
+      "response": "g7"
+    },
+    {
+      "title": "IsaacLab/docs/source/how-to/configure_rendering.rst at release/3.0.0-beta2 \u00b7 isaac-sim/IsaacLab \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacLab/blob/release/3.0.0-beta2/docs/source/how-to/configure_rendering.rst",
+      "response": "g7"
+    },
+    {
+      "title": "[Bug] Official RTX SingleViewDepthCameraSensor depth_sensor_distance always zero on Lab 3 + Sim 6.0.0.1 (RTPT) \u00b7 Issue #7361 \u00b7 isaac-sim/IsaacLab \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacLab/issues/7361",
+      "response": "g7"
+    },
+    {
+      "title": "[Bug] Geometry closer than ~1 m to camera does not render in headless; set_clipping_range() has no effect \u2014 4.5.0 \u00b7 Issue #752 \u00b7 isaac-sim/IsaacSim \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacSim/issues/752",
+      "response": "g7"
+    },
+    {
+      "title": "librtx.scenedb.plugin.so crashes on startup with RTX PRO 5000 Blackwell Laptop GPU (sm_120) \u00b7 Issue #619 \u00b7 isaac-sim/IsaacSim \u00b7 GitHub",
+      "url": "https://github.com/isaac-sim/IsaacSim/issues/619",
+      "response": "g7"
+    },
+    {
+      "title": "Hydra Viewport \u2014 Omniverse USD",
+      "url": "https://docs.omniverse.nvidia.com/usd/latest/usdview/viewport.html",
+      "response": "g7"
+    },
+    {
+      "title": "DATA SHEET",
+      "url": "https://forums.developer.nvidia.com/uploads/short-url/4pA0RhQeOC4TEwqPuGNml7uV4Nb.pdf",
+      "response": "g7"
+    },
+    {
+      "title": "Universal Serial Bus",
+      "url": "https://forums.developer.nvidia.com/uploads/short-url/ig1j25sqsBdPWvS8gAD62hF6ysB.pdf",
+      "response": "g7"
+    },
+    {
+      "title": "Data Adapter Deduplication (Public white paper)",
+      "url": "https://docs.omniverse.nvidia.com/extensions/latest/_downloads/cf12f42b084e35e52e6e5ed29cd18bfe/Data_Adapter_Deduplication.pdf",
+      "response": "g7"
+    },
+    {
+      "title": "GitHub - nvidia-holoscan/holohub: Central repository for the Holoscan Ecosystem \u00b7 GitHub",
+      "url": "https://github.com/nvidia-holoscan/holohub",
+      "response": "g8"
+    },
+    {
+      "title": "GitHub - nvidia-holoscan/holoscan-sensor-bridge: NVIDIA Holoscan Sensor Bridge - Bring Your Own Sensor (BYOS) over Ethernet \u00b7 GitHub",
+      "url": "https://github.com/nvidia-holoscan/holoscan-sensor-bridge",
+      "response": "g8"
+    },
+    {
+      "title": "holoscan-sensor-bridge/examples/linux_imx274_player.py at main \u00b7 nvidia-holoscan/holoscan-sensor-bridge \u00b7 GitHub",
+      "url": "https://github.com/nvidia-holoscan/holoscan-sensor-bridge/blob/main/examples/linux_imx274_player.py",
+      "response": "g8"
+    },
+    {
+      "title": "NVIDIA Holoscan \u00b7 GitHub",
+      "url": "https://github.com/nvidia-holoscan",
+      "response": "g8"
+    },
+    {
+      "title": "holohub/skills/holohub-app-lifecycle/references/holohub-cli-contract.md at main \u00b7 nvidia-holoscan/holohub \u00b7 GitHub",
+      "url": "https://github.com/nvidia-holoscan/holohub/blob/main/skills/holohub-app-lifecycle/references/holohub-cli-contract.md",
+      "response": "g8"
+    },
+    {
+      "title": "GitHub - NVIDIA/skills at explainx \u00b7 GitHub",
+      "url": "https://github.com/nvidia/skills?ref=explainx",
+      "response": "g8"
+    },
+    {
+      "title": "skills/skills/hsb-setup/references/phase-details.md at main \u00b7 NVIDIA/skills \u00b7 GitHub",
+      "url": "https://github.com/nvidia/skills/blob/main/skills/hsb-setup/references/phase-details.md",
+      "response": "g8"
+    },
+    {
+      "title": "holohub/benchmarks/release_benchmarking/README.md at main \u00b7 nvidia-holoscan/holohub \u00b7 GitHub",
+      "url": "https://github.com/nvidia-holoscan/holohub/blob/main/benchmarks/release_benchmarking/README.md",
+      "response": "g8"
+    },
+    {
+      "title": "skills/skills/holohub-module-lifecycle/references/module-development.md at main \u00b7 NVIDIA/skills \u00b7 GitHub",
+      "url": "https://github.com/NVIDIA/skills/blob/main/skills/holohub-module-lifecycle/references/module-development.md",
+      "response": "g8"
+    },
+    {
+      "title": "holohub/applications/endoscopy_tool_tracking/README.md at main \u00b7 nvidia-holoscan/holohub \u00b7 GitHub",
+      "url": "https://github.com/nvidia-holoscan/holohub/blob/main/applications/endoscopy_tool_tracking/README.md",
+      "response": "g8"
+    },
+    {
+      "title": "[isaacsim.hsb.bridge] Holoscan Sensor Bridge \u2014 Isaac Sim API",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/py/source/extensions/isaacsim.hsb.bridge/docs/index.html",
+      "response": "g8"
+    },
+    {
+      "title": "holoscan-docs/devkits/clara-agx/clara_agx_user_guide.md at main \u00b7 nvidia-holoscan/holoscan-docs \u00b7 GitHub",
+      "url": "https://github.com/nvidia-holoscan/holoscan-docs/blob/main/devkits/clara-agx/clara_agx_user_guide.md",
+      "response": "g8"
+    },
+    {
+      "title": "E\ufb03cient Parallel Implementations of Sparse Triangular Solves for GPU",
+      "url": "https://github.com/hypre-space/hypre/wiki/pubs/RLCZ.pdf",
+      "response": "g8"
+    },
+    {
+      "title": "Porting hypre to Heterogeneous Computer Architectures: Strategies",
+      "url": "https://github.com/hypre-space/hypre/wiki/pubs/porting-hypre-2021.pdf",
+      "response": "g8"
+    }
+  ],
+  "repo_pins": {
+    "jspaulding-nv/isaac-sim-tests": {
+      "sha": "de297c2d19b9f3b31299b65073f115e4e4ae9973",
+      "date": "2026-07-24T02:16:58Z"
+    },
+    "NVIDIA/cuda-samples": {
+      "sha": "5443602d89ed99aede2e4b7bf329daddeadb320e",
+      "date": "2026-09-09T22:07:08Z"
+    },
+    "NVIDIA-AI-IOT/isaac_camera_benchmark": {
+      "sha": "2687bafbfa8e6d9cdf2027f6a55d007c7be43b86",
+      "date": "2024-01-05T18:12:10Z"
+    },
+    "stereolabs/zed-isaac-sim": {
+      "sha": "0164268ca123fa4549fc9d2062c1fd55cf7996dc",
+      "date": "2026-08-21T12:25:17Z"
+    },
+    "NVlabs/nvdiffrast": {
+      "sha": "253ac4fcea7de5f396371124af597e6cc957bfae",
+      "date": "2025-12-05T15:08:03Z"
+    },
+    "NVlabs/RoboLab": {
+      "sha": "ad45d4f974725d020f82c2b0d77d78533aeba2b3",
+      "date": "2026-09-12T23:16:05Z"
+    },
+    "NVIDIA-Omniverse/kit-app-template": {
+      "sha": "9cc43b764e6d4cd86cb6296a8440665c3c4f4843",
+      "date": "2026-10-09T12:33:27Z"
+    },
+    "NVIDIA/OptiX_Apps": {
+      "sha": "f17c24d16936112cf4cb87dbd0109ba360cdfb51",
+      "date": "2026-07-06T11:22:48Z"
+    }
+  },
+  "downloaded_sources": [
+    {
+      "repo": "jspaulding-nv/isaac-sim-tests",
+      "commit": "de297c2d19b9f3b31299b65073f115e4e4ae9973",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/jspaulding-nv/isaac-sim-tests/de297c2d19b9f3b31299b65073f115e4e4ae9973/README.md",
+      "local_path": "/tmp/live30-independent-public/jspaulding-nv__isaac-sim-tests/README.md",
+      "bytes": 13333,
+      "sha256": "d157f20d0e6f53a2dd1f3408c9124ab3e3a699aff498532a1e9ba232d184cd98"
+    },
+    {
+      "repo": "jspaulding-nv/isaac-sim-tests",
+      "commit": "de297c2d19b9f3b31299b65073f115e4e4ae9973",
+      "path": "tests/tiled_camera_progression.py",
+      "url": "https://raw.githubusercontent.com/jspaulding-nv/isaac-sim-tests/de297c2d19b9f3b31299b65073f115e4e4ae9973/tests/tiled_camera_progression.py",
+      "local_path": "/tmp/live30-independent-public/jspaulding-nv__isaac-sim-tests/tests/tiled_camera_progression.py",
+      "bytes": 17338,
+      "sha256": "9c92da634ed509a982c920a6b3cc3cac491dbdf2d31fa3d54e1fa6de68b4221d"
+    },
+    {
+      "repo": "jspaulding-nv/isaac-sim-tests",
+      "commit": "de297c2d19b9f3b31299b65073f115e4e4ae9973",
+      "path": "tests/visible_tiled_camera_replay.py",
+      "url": "https://raw.githubusercontent.com/jspaulding-nv/isaac-sim-tests/de297c2d19b9f3b31299b65073f115e4e4ae9973/tests/visible_tiled_camera_replay.py",
+      "local_path": "/tmp/live30-independent-public/jspaulding-nv__isaac-sim-tests/tests/visible_tiled_camera_replay.py",
+      "bytes": 11767,
+      "sha256": "bba5c0565520b0fc6c38c98d1cb462d00332d79bec027e063e084001471063a6"
+    },
+    {
+      "repo": "jspaulding-nv/isaac-sim-tests",
+      "commit": "de297c2d19b9f3b31299b65073f115e4e4ae9973",
+      "path": "results/t4-tiled-camera-replay.json",
+      "url": "https://raw.githubusercontent.com/jspaulding-nv/isaac-sim-tests/de297c2d19b9f3b31299b65073f115e4e4ae9973/results/t4-tiled-camera-replay.json",
+      "local_path": "/tmp/live30-independent-public/jspaulding-nv__isaac-sim-tests/results/t4-tiled-camera-replay.json",
+      "bytes": 935,
+      "sha256": "9149fbca026ebe6f72693e1204722234bd9d7d2c496358c07fbcfc63ac96f0f6"
+    },
+    {
+      "repo": "jspaulding-nv/isaac-sim-tests",
+      "commit": "de297c2d19b9f3b31299b65073f115e4e4ae9973",
+      "path": "results/rtx-pro-5000-t4-tiled-camera-replay.json",
+      "url": "https://raw.githubusercontent.com/jspaulding-nv/isaac-sim-tests/de297c2d19b9f3b31299b65073f115e4e4ae9973/results/rtx-pro-5000-t4-tiled-camera-replay.json",
+      "local_path": "/tmp/live30-independent-public/jspaulding-nv__isaac-sim-tests/results/rtx-pro-5000-t4-tiled-camera-replay.json",
+      "bytes": 919,
+      "sha256": "38910dbbbe87ad72b595dc35de7a970fb314c2f53cde6812654abea52f41e93c"
+    },
+    {
+      "repo": "jspaulding-nv/isaac-sim-tests",
+      "commit": "de297c2d19b9f3b31299b65073f115e4e4ae9973",
+      "path": "results/t5-cosmos-full-streaming.json",
+      "url": "https://raw.githubusercontent.com/jspaulding-nv/isaac-sim-tests/de297c2d19b9f3b31299b65073f115e4e4ae9973/results/t5-cosmos-full-streaming.json",
+      "local_path": "/tmp/live30-independent-public/jspaulding-nv__isaac-sim-tests/results/t5-cosmos-full-streaming.json",
+      "bytes": 721,
+      "sha256": "bc1bba73d66dc7dd150aef39b61a0946632ea97af688d2902eda384a902b4f62"
+    },
+    {
+      "repo": "jspaulding-nv/isaac-sim-tests",
+      "commit": "de297c2d19b9f3b31299b65073f115e4e4ae9973",
+      "path": "results/tested-configuration.md",
+      "url": "https://raw.githubusercontent.com/jspaulding-nv/isaac-sim-tests/de297c2d19b9f3b31299b65073f115e4e4ae9973/results/tested-configuration.md",
+      "local_path": "/tmp/live30-independent-public/jspaulding-nv__isaac-sim-tests/results/tested-configuration.md",
+      "bytes": 4828,
+      "sha256": "9d93bf1fde5a11dc1403779d88faaa87f6e66e9d962bd42bdcd2c977961da5c1"
+    },
+    {
+      "repo": "stereolabs/zed-isaac-sim",
+      "commit": "0164268ca123fa4549fc9d2062c1fd55cf7996dc",
+      "path": "exts/sl.sensor.camera/plugins/nodes/OgnZEDSimCameraNode.cpp",
+      "url": "https://raw.githubusercontent.com/stereolabs/zed-isaac-sim/0164268ca123fa4549fc9d2062c1fd55cf7996dc/exts/sl.sensor.camera/plugins/nodes/OgnZEDSimCameraNode.cpp",
+      "local_path": "/tmp/live30-independent-public/stereolabs__zed-isaac-sim/exts/sl.sensor.camera/plugins/nodes/OgnZEDSimCameraNode.cpp",
+      "bytes": 51753,
+      "sha256": "c05d852efadb4e4251c81a7df2fa4f484e72fcb0033ed835c8defea2cc214565"
+    },
+    {
+      "repo": "stereolabs/zed-isaac-sim",
+      "commit": "0164268ca123fa4549fc9d2062c1fd55cf7996dc",
+      "path": "exts/sl.sensor.camera/sl/sensor/camera/nodes/SlCameraStreamer.py",
+      "url": "https://raw.githubusercontent.com/stereolabs/zed-isaac-sim/0164268ca123fa4549fc9d2062c1fd55cf7996dc/exts/sl.sensor.camera/sl/sensor/camera/nodes/SlCameraStreamer.py",
+      "local_path": "/tmp/live30-independent-public/stereolabs__zed-isaac-sim/exts/sl.sensor.camera/sl/sensor/camera/nodes/SlCameraStreamer.py",
+      "bytes": 7369,
+      "sha256": "4a5b28d5717346fb32dc1a1e19d418aafbfa12f6e7f42171616f24d3e13dd8a7"
+    },
+    {
+      "repo": "stereolabs/zed-isaac-sim",
+      "commit": "0164268ca123fa4549fc9d2062c1fd55cf7996dc",
+      "path": "exts/sl.sensor.camera/sl/sensor/camera/nodes/SlCameraOneStreamer.py",
+      "url": "https://raw.githubusercontent.com/stereolabs/zed-isaac-sim/0164268ca123fa4549fc9d2062c1fd55cf7996dc/exts/sl.sensor.camera/sl/sensor/camera/nodes/SlCameraOneStreamer.py",
+      "local_path": "/tmp/live30-independent-public/stereolabs__zed-isaac-sim/exts/sl.sensor.camera/sl/sensor/camera/nodes/SlCameraOneStreamer.py",
+      "bytes": 8351,
+      "sha256": "23f95561f28d96ad90d2b49d2d82e865355eaba2f485e578da63d9db3c0b9114"
+    },
+    {
+      "repo": "stereolabs/zed-isaac-sim",
+      "commit": "0164268ca123fa4549fc9d2062c1fd55cf7996dc",
+      "path": "exts/sl.sensor.camera/sl/sensor/camera/isaaclab_utils.py",
+      "url": "https://raw.githubusercontent.com/stereolabs/zed-isaac-sim/0164268ca123fa4549fc9d2062c1fd55cf7996dc/exts/sl.sensor.camera/sl/sensor/camera/isaaclab_utils.py",
+      "local_path": "/tmp/live30-independent-public/stereolabs__zed-isaac-sim/exts/sl.sensor.camera/sl/sensor/camera/isaaclab_utils.py",
+      "bytes": 16861,
+      "sha256": "8de282afdbbdf8a3172536b520f809bd48882ebc5290fe8299047e0c20f682da"
+    },
+    {
+      "repo": "stereolabs/zed-isaac-sim",
+      "commit": "0164268ca123fa4549fc9d2062c1fd55cf7996dc",
+      "path": "exts/sl.sensor.camera/docs/CHANGELOG.md",
+      "url": "https://raw.githubusercontent.com/stereolabs/zed-isaac-sim/0164268ca123fa4549fc9d2062c1fd55cf7996dc/exts/sl.sensor.camera/docs/CHANGELOG.md",
+      "local_path": "/tmp/live30-independent-public/stereolabs__zed-isaac-sim/exts/sl.sensor.camera/docs/CHANGELOG.md",
+      "bytes": 5605,
+      "sha256": "259f70ade124febcda1768af8a29df6c6eab94c392a7d8423d68b4c179b801bf"
+    },
+    {
+      "repo": "stereolabs/zed-isaac-sim",
+      "commit": "0164268ca123fa4549fc9d2062c1fd55cf7996dc",
+      "path": "exts/sl.sensor.camera/examples/isaac_sim/zed_depth_standalone.py",
+      "url": "https://raw.githubusercontent.com/stereolabs/zed-isaac-sim/0164268ca123fa4549fc9d2062c1fd55cf7996dc/exts/sl.sensor.camera/examples/isaac_sim/zed_depth_standalone.py",
+      "local_path": "/tmp/live30-independent-public/stereolabs__zed-isaac-sim/exts/sl.sensor.camera/examples/isaac_sim/zed_depth_standalone.py",
+      "bytes": 8923,
+      "sha256": "da862e8fe38ce9944f27fd142fc3c367ddb282797194f49126baf2f48d916752"
+    },
+    {
+      "repo": "NVlabs/RoboLab",
+      "commit": "ad45d4f974725d020f82c2b0d77d78533aeba2b3",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/NVlabs/RoboLab/ad45d4f974725d020f82c2b0d77d78533aeba2b3/README.md",
+      "local_path": "/tmp/live30-independent-public/NVlabs__RoboLab/README.md",
+      "bytes": 11449,
+      "sha256": "2eba55b7b34c83ce506322c3438fb017059ce5afa11ee4050c4e20b7b42f60bb"
+    },
+    {
+      "repo": "NVlabs/RoboLab",
+      "commit": "ad45d4f974725d020f82c2b0d77d78533aeba2b3",
+      "path": "docs/camera.md",
+      "url": "https://raw.githubusercontent.com/NVlabs/RoboLab/ad45d4f974725d020f82c2b0d77d78533aeba2b3/docs/camera.md",
+      "local_path": "/tmp/live30-independent-public/NVlabs__RoboLab/docs/camera.md",
+      "bytes": 7571,
+      "sha256": "0eba07b762769d4d4ce3b8f7810a10d03a547e9593a7bfea19b748ee7f9f251d"
+    },
+    {
+      "repo": "NVlabs/RoboLab",
+      "commit": "ad45d4f974725d020f82c2b0d77d78533aeba2b3",
+      "path": "pyproject.toml",
+      "url": "https://raw.githubusercontent.com/NVlabs/RoboLab/ad45d4f974725d020f82c2b0d77d78533aeba2b3/pyproject.toml",
+      "local_path": "/tmp/live30-independent-public/NVlabs__RoboLab/pyproject.toml",
+      "bytes": 4126,
+      "sha256": "fd7c22e6a63cf0e606e63f7968281cfba0674b7932aec15dc7e9a2862104a6b8"
+    },
+    {
+      "repo": "NVIDIA/cuda-samples",
+      "commit": "5443602d89ed99aede2e4b7bf329daddeadb320e",
+      "path": "cpp/5_Domain_Specific/vulkanImageCUDA/README.md",
+      "url": "https://raw.githubusercontent.com/NVIDIA/cuda-samples/5443602d89ed99aede2e4b7bf329daddeadb320e/cpp/5_Domain_Specific/vulkanImageCUDA/README.md",
+      "local_path": "/tmp/live30-independent-public/NVIDIA__cuda-samples/cpp/5_Domain_Specific/vulkanImageCUDA/README.md",
+      "bytes": 2407,
+      "sha256": "5820d5c8c240e61f57eceb550ed123c661853200d554e901fb43928bfa1f1da8"
+    },
+    {
+      "repo": "NVIDIA/cuda-samples",
+      "commit": "5443602d89ed99aede2e4b7bf329daddeadb320e",
+      "path": "cpp/5_Domain_Specific/vulkanImageCUDA/vulkanImageCUDA.cu",
+      "url": "https://raw.githubusercontent.com/NVIDIA/cuda-samples/5443602d89ed99aede2e4b7bf329daddeadb320e/cpp/5_Domain_Specific/vulkanImageCUDA/vulkanImageCUDA.cu",
+      "local_path": "/tmp/live30-independent-public/NVIDIA__cuda-samples/cpp/5_Domain_Specific/vulkanImageCUDA/vulkanImageCUDA.cu",
+      "bytes": 110176,
+      "sha256": "b618f9a21a3f45ca178525fdf70febacb9ab3c5bc537281779050ab830d917ab"
+    },
+    {
+      "repo": "NVIDIA/OptiX_Apps",
+      "commit": "f17c24d16936112cf4cb87dbd0109ba360cdfb51",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/NVIDIA/OptiX_Apps/f17c24d16936112cf4cb87dbd0109ba360cdfb51/README.md",
+      "local_path": "/tmp/live30-independent-public/NVIDIA__OptiX_Apps/README.md",
+      "bytes": 46545,
+      "sha256": "6edfc5d095d12b7eec967dd65d88ab9b2770f0e73f40430947f2695766a1325e"
+    },
+    {
+      "repo": "NVIDIA/OptiX_Apps",
+      "commit": "f17c24d16936112cf4cb87dbd0109ba360cdfb51",
+      "path": "apps/GLTF_renderer/doc/README.md",
+      "url": "https://raw.githubusercontent.com/NVIDIA/OptiX_Apps/f17c24d16936112cf4cb87dbd0109ba360cdfb51/apps/GLTF_renderer/doc/README.md",
+      "local_path": "/tmp/live30-independent-public/NVIDIA__OptiX_Apps/apps/GLTF_renderer/doc/README.md",
+      "bytes": 60892,
+      "sha256": "364fd267e7c35f5c74240cbf833aeae9c04ae7c05e0d8069d1b4d67f165bdf89"
+    },
+    {
+      "repo": "NVIDIA-AI-IOT/isaac_camera_benchmark",
+      "commit": "2687bafbfa8e6d9cdf2027f6a55d007c7be43b86",
+      "path": "camera_benchmark.py",
+      "url": "https://raw.githubusercontent.com/NVIDIA-AI-IOT/isaac_camera_benchmark/2687bafbfa8e6d9cdf2027f6a55d007c7be43b86/camera_benchmark.py",
+      "local_path": "/tmp/live30-independent-public/NVIDIA-AI-IOT__isaac_camera_benchmark/camera_benchmark.py",
+      "bytes": 13144,
+      "sha256": "ac0f4a1f9eabb00c94bf9e05c101ffeafb2b4aa1cdace5ad34a66879eb98cf41"
+    },
+    {
+      "repo": "NVIDIA-AI-IOT/isaac_camera_benchmark",
+      "commit": "2687bafbfa8e6d9cdf2027f6a55d007c7be43b86",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/NVIDIA-AI-IOT/isaac_camera_benchmark/2687bafbfa8e6d9cdf2027f6a55d007c7be43b86/README.md",
+      "local_path": "/tmp/live30-independent-public/NVIDIA-AI-IOT__isaac_camera_benchmark/README.md",
+      "bytes": 3365,
+      "sha256": "ccbeaafc8731aa3c23ba0e4db4bb4aa9a7bf1c8ed61ddbd296497677d4cac38c"
+    },
+    {
+      "repo": "NVlabs/nvdiffrast",
+      "commit": "253ac4fcea7de5f396371124af597e6cc957bfae",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/NVlabs/nvdiffrast/253ac4fcea7de5f396371124af597e6cc957bfae/README.md",
+      "local_path": "/tmp/live30-independent-public/NVlabs__nvdiffrast/README.md",
+      "bytes": 2207,
+      "sha256": "2c53380264d463e2866c04d507404abd9060c5cb9aa02478690f132796537a87"
+    },
+    {
+      "repo": "NVlabs/nvdiffrast",
+      "commit": "253ac4fcea7de5f396371124af597e6cc957bfae",
+      "path": "docs/index.html",
+      "url": "https://raw.githubusercontent.com/NVlabs/nvdiffrast/253ac4fcea7de5f396371124af597e6cc957bfae/docs/index.html",
+      "local_path": "/tmp/live30-independent-public/NVlabs__nvdiffrast/docs/index.html",
+      "bytes": 78844,
+      "sha256": "2e20d0bb443cc934fc03a2e4f53aa1e763a6f7c9224b84f3c8ae1123a0d78739"
+    }
+  ],
+  "installed_sources": [
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.streaming.rtsp/isaacsim/streaming/rtsp/impl/rtsp_writer.py",
+      "sha256": "1b25f246a804cb03416376b1c676f8b96b04e23020e84566ca14a2d4c0743a8c",
+      "bytes": 13992
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.streaming.rtsp/config/extension.toml",
+      "sha256": "b14aca1ed6681e9460d40b5c5490bc73f4824868d6c229fe8c2a41dccb48ca26",
+      "bytes": 3368
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.streaming.rtsp/docs/Overview.md",
+      "sha256": "fbd857671ab2bcc79268b4a71c52998c5f9a7ef41732daa85a0534fd37d6e7e8",
+      "bytes": 1535
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.streaming.rtsp/isaacsim/streaming/rtsp/tests/test_rtsp_writer.py",
+      "sha256": "69eea9ab3c802bfe318d58dfd7cc34238e8664d71b626ac5d3063ac71865cde7",
+      "bytes": 23086
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.simulation_app/isaacsim/simulation_app/simulation_app.py",
+      "sha256": "c2a2173be57abac20ef97f81b80d58319c94c9a4017c98709f8d13489ad0b746",
+      "bytes": 51884
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.rtx.settings.core-0.7.1+00c488ae/omni/rtx/settings/core/widgets/minimal_widgets.py",
+      "sha256": "5a0b7c9531ded2fafc341736dd884fa8b1075e430cab000fad1e0ab80d63ad59",
+      "bytes": 3155
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.ucx.bridge/docs/Overview.md",
+      "sha256": "65c4a7664274e8a3863fe544c91792c5151506e5d923b2ff8b1e986118c45dc5",
+      "bytes": 2257
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.hsb.bridge/docs/Overview.md",
+      "sha256": "450054dfb6f5d23e4a54df3d20a19e10373190b070d9603b3ffe19284390609e",
+      "bytes": 3846
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/scripts/tools/record_demos.py",
+      "sha256": "2acae2a2a39057c4ab6e71557d577830da0b25b008a54f86ff5cdc269408b091",
+      "bytes": 37349
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_teleop/isaaclab_teleop/xr_cfg.py",
+      "sha256": "6ea6b7fd94c1db0cb80799fb463ce49c2194f70d63f28c6ff40910edbb4fb141",
+      "bytes": 5959
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/renderers/isaac_rtx_renderer.py",
+      "sha256": "3ad084604d4c7d7de07a5082943b8b1939b4f281f8d644dfa3a48456de6a19ca",
+      "bytes": 33530
+    }
+  ],
+  "checkout": {
+    "branch": "research/live-camera-recording-30hz",
+    "head": "d5566834d29ef8bb56e4fb62bb324e23e0869100",
+    "initial_wip": "untracked docs/experiments/20261009_live_camera_recording_30hz/deep_research/",
+    "source_changed_by_this_audit": false
+  },
+  "execution": {
+    "GPU_runs": false,
+    "imports_of_Isaac_or_Warp": false,
+    "installations": false,
+    "SDK_writes": false,
+    "catalog": "npx unavailable; NVIDIA/skills raw catalog read with web tool",
+    "network": "Default shell blocked. Read-only GitHub fetch under require_escalated auto-review succeeded."
+  },
+  "verification": {
+    "json_parse": "PASS",
+    "sha256_preimage_recheck": "PASS",
+    "source_files_checked": 35,
+    "gpu_execution": "NOT RUN"
+  }
+}

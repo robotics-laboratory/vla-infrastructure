@@ -1,5 +1,8 @@
 # Архитектура live-записи >30 Гц с Quest 3
 
+Продолжение: [глубокое исследование и реальные live/profile прогоны](deep_research/REPORT.md). Оно добавляет tested OVRTX GPU/NVENC, standalone PhysX, Fabric batching, live source joins и отрицательные результаты; выводы первой фазы ниже сохранены в исходном scope.
+
+
 Ветка: `research/live-camera-recording-30hz`, создана от чистого
 `master` / `beaedfd1116577fd4d8026232cfb96cba0b030fa`.
 Дата: 2026-10-09. Owner: `vr.performance`. Исследовательское предложение;

@@ -1,0 +1,19 @@
+{
+  "research_date": "2026-10-09",
+  "initial_compile": {
+    "command": "python3 -m py_compile /tmp/live30_xr_gpu_preview.py",
+    "exit_code": 1,
+    "error": "Permission denied: /tmp/__pycache__/live30_xr_gpu_preview.cpython-310.pyc.135784043705072"
+  },
+  "compile": {
+    "command": "PYTHONPYCACHEPREFIX=/tmp/live30-xr-pycache python3 -m py_compile /tmp/live30_xr_gpu_preview.py",
+    "exit_code": 0
+  },
+  "smoke": {
+    "command": "Inline CPU fake provider Python smoke; command recorded in specialist tool history",
+    "exit_code": 0,
+    "log": "/tmp/live30-xr-adapter-check.log",
+    "scope": "argument identity, widget invalidation, no staging copy, class method restoration; no CUDA/XR launch"
+  },
+  "no_headset_validation": true
+}

@@ -1,0 +1,70 @@
+{
+  "dataset_admissible": false,
+  "captures": 121,
+  "acked": 121,
+  "max_pending": 8,
+  "backpressure_ms": 1149.5316000000003,
+  "drain_ms": 1825.615253,
+  "ack_age_p95_ms": 1277.803964,
+  "worker": {
+    "dataset_admissible": false,
+    "live_physical_quest_qualified": false,
+    "scope": "live producer separate renderer process",
+    "excluded_dynamic_bodies": [
+      "/World/RobosynDemo/ValidationProbe"
+    ],
+    "witness": true,
+    "passed": true,
+    "encoder": {
+      "dataset_admissible": false,
+      "counts": [
+        121,
+        121,
+        121
+      ],
+      "max_pending": [
+        3,
+        3,
+        3
+      ],
+      "drain_ms": 138.266804,
+      "cuda_device_max_connections": "1",
+      "errors": [],
+      "synchronization": "OVRTX map producer-event wait -> clone -> NVENC copy/encode on one stream; packet ordinal ACK owns lifetime",
+      "pixel_alignment_proven": false
+    },
+    "captures": 121,
+    "encode_done_ns": 3780382983942806,
+    "encode_drain_ms": 138.282098,
+    "completed_elapsed_s": 3.833039396,
+    "steady_worker_mean_ms": 12.164259016393444,
+    "decoded": [
+      {
+        "role": 0,
+        "count": 121,
+        "expected": 121,
+        "errors": [],
+        "passed": true
+      },
+      {
+        "role": 1,
+        "count": 121,
+        "expected": 121,
+        "errors": [],
+        "passed": true
+      },
+      {
+        "role": 2,
+        "count": 121,
+        "expected": 121,
+        "errors": [],
+        "passed": true
+      }
+    ],
+    "verification_ms": 625.055874
+  },
+  "excluded_dynamic_bodies": [
+    "/World/RobosynDemo/ValidationProbe"
+  ],
+  "ack_semantics": "worker consumed snapshot and submitted3GPUframes; encoded completion verified at final drain"
+}

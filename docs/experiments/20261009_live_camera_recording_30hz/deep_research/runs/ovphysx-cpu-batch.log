@@ -1,0 +1,10 @@
+/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_probe.py:73: DeprecationWarning: ovphysx tensor bindings are deprecated and will be removed in a future release; use PhysX.read for reads and PhysX.write for writes.
+  b = physx.create_tensor_binding(prim_paths=paths, tensor_type=kind, raise_if_empty=True)
+[Warning] [] ovstage backing USD stage id 9223002 is not resident in UsdUtilsStageCache; attaching ovstage-only with effective stage id 0
+[Warning] [omni.physx] GPU broadphase requires a CUDA context manager; falling back to ePABP.
+Traceback (most recent call last):
+  File "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_probe.py", line 213, in <module>
+    main()
+  File "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_probe.py", line 88, in main
+    raise RuntimeError("Expected fixed-base PIPERs")
+RuntimeError: Expected fixed-base PIPERs

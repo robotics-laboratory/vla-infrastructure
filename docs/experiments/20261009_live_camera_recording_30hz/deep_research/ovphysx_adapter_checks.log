@@ -1,0 +1,23 @@
+usage: live30-deep-ovphysx-bench.py [-h] --stage STAGE --out OUT
+                                    [--mode {cpu,gpu-readback,gpu-direct}]
+                                    [--threads THREADS] [--steps STEPS]
+                                    [--warmup WARMUP]
+                                    [--cadence {batch,sync,async}]
+                                    [--observation {none,qv,qv-links-all}]
+
+Standalone OVPhysX screening probe; no Kit, XR, cameras or physical hardware.
+Requires a separate environment: ovphysx==0.6.3, ovstage==0.2.0.377349, warp-
+lang>=1.16,<2, numpy. Do not run inside the production Kit process. Deprecated
+cached tensor bindings are deliberate benchmark candidates; their public
+metadata has no current nondeprecated replacement. No dataset admission.
+
+options:
+  -h, --help            show this help message and exit
+  --stage STAGE
+  --out OUT
+  --mode {cpu,gpu-readback,gpu-direct}
+  --threads THREADS
+  --steps STEPS
+  --warmup WARMUP
+  --cadence {batch,sync,async}
+  --observation {none,qv,qv-links-all}

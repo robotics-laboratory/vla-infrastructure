@@ -1,0 +1,51 @@
+Warp 1.16.0 initialized:
+   CUDA Toolkit 12.9, Driver 13.0
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 4090" (24 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /home/ebulochkin/.cache/warp/1.16.0
+{
+  "passed": true,
+  "dataset_admissible": false,
+  "quest_connected": false,
+  "scope": "generated pixels; no rendering, physics or XR",
+  "arguments": {
+    "output": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50-r2",
+    "frames": 180,
+    "warmup": 30,
+    "gop": 50,
+    "gpu_input": true
+  },
+  "source_sha256": "05800076df131c94d8996224a2a4a73395abece4ecfa7a86419dcd6e1dd8b9f9",
+  "gpu_before": "",
+  "mean_bundle_ms": 1.3662168937217858,
+  "bundle_hz": 731.9482028039088,
+  "p95_bundle_ms": 1.425269991159439,
+  "mean_submit_ms": 0.03715954159223844,
+  "whole_working_s": 0.2963618109934032,
+  "drain_s": 0.21121101872995496,
+  "decoded": [
+    {
+      "role": 0,
+      "frames": 210,
+      "errors": []
+    },
+    {
+      "role": 1,
+      "frames": 210,
+      "errors": []
+    },
+    {
+      "role": 2,
+      "frames": 210,
+      "errors": []
+    }
+  ],
+  "encoder_pending_max": [
+    3,
+    3,
+    3
+  ],
+  "cleanup_errors": []
+}

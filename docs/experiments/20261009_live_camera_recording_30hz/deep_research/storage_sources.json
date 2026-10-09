@@ -1,0 +1,237 @@
+{
+  "schema": "live30_storage_sources_v1",
+  "access_date": "2026-10-09",
+  "checkout": "/home/ebulochkin/vla_infrastructure",
+  "branch": "research/live-camera-recording-30hz",
+  "base_head": "d5566834d29ef8bb56e4fb62bb324e23e0869100",
+  "queries": [
+    "site:docs.nvidia.com CUDA IPC external memory Vulkan export opaque fd semaphore",
+    "site:docs.nvidia.com GPUDirect Storage cuFile HDF5 async",
+    "site:docs.h5py.org threads multiprocessing phil lock",
+    "site:github.com NVIDIA cuda-samples simpleIPC Vulkan CUDA vulkanImageCUDA",
+    "site:github.com/NVIDIA/cuda-samples \"simpleIPC.cu\"",
+    "site:docs.nvidia.com/cuda \"4.16\" \"Interprocess Communication\"",
+    "site:forums.developer.nvidia.com cuda IPC Vulkan external memory cudaIpcGetMemHandle",
+    "site:github.com hdf5 GDS VFD hdf5 gpu direct storage",
+    "site:github.com/NVIDIA/cuda-samples \"simpleIPC\" \"cpp\"",
+    "site:github.com/NVIDIA/cuda-samples \"memMapIPCDrv\"",
+    "site:github.com/NVIDIA/cuda-samples \"vulkanImageCUDA\" main.cpp",
+    "site:docs.nvidia.com/cuda/archive/12.8.1/cuda-runtime-api cudaIpcGetMemHandle"
+  ],
+  "sources": [
+    {
+      "url": "https://docs.h5py.org/en/stable/threads.html",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://docs.nvidia.com/cuda/cuda-programming-guide/04-special-topics/inter-process-communication.html",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://docs.nvidia.com/cuda/cuda-programming-guide/04-special-topics/graphics-interop.html",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://docs.nvidia.com/gpudirect-storage/api-reference-guide/index.html",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://docs.nvidia.com/gpudirect-storage/overview-guide/",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://github.com/hpc-io/vfd-gds",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://hdf5-vol-async.readthedocs.io/en/latest/gettingstarted.html",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://hdf5-vol-async.readthedocs.io/en/latest/issue.html",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://gstreamer.freedesktop.org/documentation/coreelements/queue.html",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://gstreamer.freedesktop.org/documentation/app/appsrc.html",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://forums.developer.nvidia.com/t/what-will-happen-if-i-create-interprocess-memory-by-cudaipcgetmemhandle-while-no-other-program-process-it/302442",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://forums.developer.nvidia.com/t/cuda-vulkan-vkimage-interop/278691",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/NVIDIA/cuda-samples/master/cpp/0_Introduction/simpleIPC/simpleIPC.cu",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/NVIDIA/cuda-samples/master/cpp/3_CUDA_Features/memMapIPCDrv/memMapIpc.cpp",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/NVIDIA/cuda-samples/master/cpp/5_Domain_Specific/simpleVulkan/main.cpp",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/NVIDIA/cuda-samples/master/cpp/5_Domain_Specific/vulkanImageCUDA/vulkanImageCUDA.cu",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://docs.nvidia.com/cuda/archive/12.8.1/cuda-runtime-api/group__CUDART__DEVICE.html",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://docs.nvidia.com/cuda/archive/12.8.1/cuda-runtime-api/api-sync-behavior.html",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://gstreamer.freedesktop.org/documentation/cuda/gstcudamemory.html",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://gstreamer.freedesktop.org/documentation/cuda/gstcudastream.html",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://hdf5-vol-async.readthedocs.io/en/latest/",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/NVIDIA/skills/main/skills.sh.json",
+      "provenance": "primary docs/repository or primary NVIDIA forum case",
+      "remote_bytes_sha256": null,
+      "content_retention": "web_response_archive transformed tool response, if included; remote source not pinned"
+    }
+  ],
+  "local_hashes": [
+    {
+      "path": "/tmp/live30-deep-storage.md",
+      "bytes": 24448,
+      "sha256": "c7957404a54dbd301a0672a0d75a9d04e0f578fd3c9ac4cb834418bcbae55576"
+    },
+    {
+      "path": "/tmp/live30-storage-web-responses.json",
+      "bytes": 93191,
+      "sha256": "43839d504977791861bdca99b9d3f88559439d7d3723d75a3f8192889cae8fba"
+    },
+    {
+      "path": "/tmp/live30-storage-cpu.py",
+      "bytes": 6750,
+      "sha256": "5aed1109c3395e5eb59a3fc8c81768af4880624fe7677a0f3f3aab9be4f15339"
+    },
+    {
+      "path": "/tmp/live30-storage-cpu-run-fixed/result.json",
+      "bytes": 4981,
+      "sha256": "934394cba660f4c449199db6372357122820fb70397e8a1e135e30d7cf48a249"
+    },
+    {
+      "path": "/tmp/live30-storage-cpu-run/result.json",
+      "bytes": 4998,
+      "sha256": "26b9ccc458021dd44c6f183d104552ebdf3b76940d869c319e6cefc8803a2b7f"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/result.json",
+      "bytes": 8537,
+      "sha256": "a1bbaa53b05077c987e3e35a1e573859c1333ac612f9266cdd226e2e5e0a7c49"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/episode/session.hdf5",
+      "bytes": 4421776,
+      "sha256": "a8788a8607c7fbfba7c7546cc5c92d8ab099286955027462144007d2d67f1bc4"
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/types.py",
+      "bytes": 67812,
+      "sha256": "5ab31921e0d9544f693d25ef79ac77be5a86cd8577df5e56d3ba8b458caefd8b"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.replicator.core-1.13.36+110.3.0.lx64.r.cp312/omni/replicator/core/scripts/annotators.py",
+      "bytes": 138663,
+      "sha256": "d663acd21268b9092becd6b2b542e843323ec609995020519b8daf7fffdf1c6f"
+    }
+  ],
+  "failures": [
+    {
+      "action": "npx skills add nvidia/skills --list",
+      "result": "npx unavailable; used raw catalog fallback"
+    },
+    {
+      "action": "core Python import h5py",
+      "result": "ModuleNotFoundError; CPU assay used declared Isaac Python with no GPU imports"
+    },
+    {
+      "action": "urllib GitHub API read under default sandbox",
+      "result": "network socket PermissionError; no downloaded raw remote byte hashes"
+    },
+    {
+      "action": "CUDA sample old Samples paths / main branch attempts",
+      "result": "404/cache misses; correct current path uses master/cpp/; simpleVulkan main.cpp unresolved, vulkanImageCUDA available"
+    },
+    {
+      "action": "first CPU assay string scalar payload byte count",
+      "result": "underestimated bytes due to NumPy fixed string width; preserved /tmp/live30-storage-cpu-run; corrected run fixes dtype and schema byte count"
+    }
+  ],
+  "execution": "CPU-only source microbenchmark; no GPU, install, SDK edits or physical action",
+  "qualification": {
+    "dataset_admissible": false,
+    "physical_S2": false,
+    "Quest_target": false
+  },
+  "note": "Hashes identify retained local files/API excerpts only, not raw full remote pages; root registers final bundle.",
+  "checks": {
+    "runner_ast_parse": "PASS",
+    "corrected_actual_channels_roundtrip": "PASS",
+    "repository_runtime_edits": "none by this agent",
+    "governance_lint": "root owns integration; outputs only/tmp"
+  }
+}

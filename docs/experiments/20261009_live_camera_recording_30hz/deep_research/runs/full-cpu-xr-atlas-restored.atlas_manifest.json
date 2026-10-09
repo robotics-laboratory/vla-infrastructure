@@ -1,0 +1,175 @@
+{
+  "mode": "tiled",
+  "payload": "h264",
+  "camera_paths": {
+    "left_wrist": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+    "right_wrist": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+    "scene": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera"
+  },
+  "observed_camera_order": [
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+    "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera"
+  ],
+  "role_indices": {
+    "left_wrist": 0,
+    "right_wrist": 1,
+    "scene": 2
+  },
+  "sensor_resolution_hw": [
+    600,
+    960
+  ],
+  "atlas_shape_hwc": [
+    1200,
+    1920,
+    4
+  ],
+  "padding_tiles": 1,
+  "render_products": [
+    "/Render/OmniverseKit/HydraTextures/Live30DiagnosticAtlas"
+  ],
+  "camera_signatures": {
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera": {
+      "clippingPlanes": "[]",
+      "clippingRange": "(0.01, 100000)",
+      "exposure": "0.0",
+      "exposure:fStop": "1.0",
+      "exposure:iso": "100.0",
+      "exposure:responsivity": "1.0",
+      "exposure:time": "1.0",
+      "focalLength": "2.2079999446868896",
+      "focusDistance": "28.0",
+      "fStop": "0.0",
+      "horizontalAperture": "5.760000228881836",
+      "horizontalApertureOffset": "0.0",
+      "piper:zed_identity": "{\"model\":\"ZED_XONE_GS\",\"native_resolution\":[960,600],\"path\":\"isaac_lab_authored_usd_sdk_free\",\"resolution\":\"SVGA\",\"revision\":\"0164268ca123fa4549fc9d2062c1fd55cf7996dc\",\"source_sha256\":{\"exts/sl.sensor.camera/data/usd/ZED_XONE_GS.usdc\":\"c93196a2a23cef9f5422ea848309143f1b4a2b8ba04974e3ea3e88c52ced6eb7\",\"exts/sl.sensor.camera/sl/sensor/camera/__init__.py\":\"17e0e3f6728d88c75ab3b403aff44ea431deab135a8d03b4c9d3c56eddc18c7a\",\"exts/sl.sensor.camera/sl/sensor/camera/isaaclab_utils.py\":\"de40752a386b4c7b59be07fbf91d771223eabc11c6c32fecbd23ff5361b4b7c4\",\"exts/sl.sensor.camera/sl/sensor/camera/utils.py\":\"aa76d1a22bbc97ab5874c3aca77afcddbffa11a9659127f54005f31bf65e5ea0\"}}",
+      "projection": "perspective",
+      "purpose": "default",
+      "shutter:close": "0.0",
+      "shutter:open": "0.0",
+      "stereoRole": "mono",
+      "verticalAperture": "3.240000009536743",
+      "verticalApertureOffset": "0.0",
+      "visibility": "invisible",
+      "xformOp:orient": "(0.49999999999999994, 0.5000000000000003, -0.5000000000000003, -0.4999999999999997)",
+      "xformOp:scale": "(1, 1, 1)",
+      "xformOp:translate": "(0.028, 4.017068566816438e-32, 0.0155141094471127)",
+      "xformOpOrder": "[xformOp:translate, xformOp:orient, xformOp:scale]",
+      "schemas": [],
+      "parent": "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS",
+      "local_matrix": "( (0, -1.0000000000000004, 2.220446049250313e-16, 0), (-9.992007221626409e-16, 0, 1.0000000000000002, 0), (-1.0000000000000002, -2.220446049250313e-16, -1.3322676295501878e-15, 0), (0.028, 4.017068566816438e-32, 0.0155141094471127, 1) )"
+    },
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera": {
+      "clippingPlanes": "[]",
+      "clippingRange": "(0.01, 100000)",
+      "exposure": "0.0",
+      "exposure:fStop": "1.0",
+      "exposure:iso": "100.0",
+      "exposure:responsivity": "1.0",
+      "exposure:time": "1.0",
+      "focalLength": "2.2079999446868896",
+      "focusDistance": "28.0",
+      "fStop": "0.0",
+      "horizontalAperture": "5.760000228881836",
+      "horizontalApertureOffset": "0.0",
+      "piper:zed_identity": "{\"model\":\"ZED_XONE_GS\",\"native_resolution\":[960,600],\"path\":\"isaac_lab_authored_usd_sdk_free\",\"resolution\":\"SVGA\",\"revision\":\"0164268ca123fa4549fc9d2062c1fd55cf7996dc\",\"source_sha256\":{\"exts/sl.sensor.camera/data/usd/ZED_XONE_GS.usdc\":\"c93196a2a23cef9f5422ea848309143f1b4a2b8ba04974e3ea3e88c52ced6eb7\",\"exts/sl.sensor.camera/sl/sensor/camera/__init__.py\":\"17e0e3f6728d88c75ab3b403aff44ea431deab135a8d03b4c9d3c56eddc18c7a\",\"exts/sl.sensor.camera/sl/sensor/camera/isaaclab_utils.py\":\"de40752a386b4c7b59be07fbf91d771223eabc11c6c32fecbd23ff5361b4b7c4\",\"exts/sl.sensor.camera/sl/sensor/camera/utils.py\":\"aa76d1a22bbc97ab5874c3aca77afcddbffa11a9659127f54005f31bf65e5ea0\"}}",
+      "projection": "perspective",
+      "purpose": "default",
+      "shutter:close": "0.0",
+      "shutter:open": "0.0",
+      "stereoRole": "mono",
+      "verticalAperture": "3.240000009536743",
+      "verticalApertureOffset": "0.0",
+      "visibility": "invisible",
+      "xformOp:orient": "(0.49999999999999994, 0.5000000000000003, -0.5000000000000003, -0.4999999999999997)",
+      "xformOp:scale": "(1, 1, 1)",
+      "xformOp:translate": "(0.028, 4.017068566816438e-32, 0.0155141094471127)",
+      "xformOpOrder": "[xformOp:translate, xformOp:orient, xformOp:scale]",
+      "schemas": [],
+      "parent": "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS",
+      "local_matrix": "( (0, -1.0000000000000004, 2.220446049250313e-16, 0), (-9.992007221626409e-16, 0, 1.0000000000000002, 0), (-1.0000000000000002, -2.220446049250313e-16, -1.3322676295501878e-15, 0), (0.028, 4.017068566816438e-32, 0.0155141094471127, 1) )"
+    },
+    "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera": {
+      "clippingPlanes": "[]",
+      "clippingRange": "(0.01, 100000)",
+      "exposure": "0.0",
+      "exposure:fStop": "1.0",
+      "exposure:iso": "100.0",
+      "exposure:responsivity": "1.0",
+      "exposure:time": "1.0",
+      "focalLength": "2.2079999446868896",
+      "focusDistance": "28.0",
+      "fStop": "0.0",
+      "horizontalAperture": "5.760000228881836",
+      "horizontalApertureOffset": "0.0",
+      "piper:zed_identity": "{\"model\":\"ZED_XONE_GS\",\"native_resolution\":[960,600],\"path\":\"isaac_lab_authored_usd_sdk_free\",\"resolution\":\"SVGA\",\"revision\":\"0164268ca123fa4549fc9d2062c1fd55cf7996dc\",\"source_sha256\":{\"exts/sl.sensor.camera/data/usd/ZED_XONE_GS.usdc\":\"c93196a2a23cef9f5422ea848309143f1b4a2b8ba04974e3ea3e88c52ced6eb7\",\"exts/sl.sensor.camera/sl/sensor/camera/__init__.py\":\"17e0e3f6728d88c75ab3b403aff44ea431deab135a8d03b4c9d3c56eddc18c7a\",\"exts/sl.sensor.camera/sl/sensor/camera/isaaclab_utils.py\":\"de40752a386b4c7b59be07fbf91d771223eabc11c6c32fecbd23ff5361b4b7c4\",\"exts/sl.sensor.camera/sl/sensor/camera/utils.py\":\"aa76d1a22bbc97ab5874c3aca77afcddbffa11a9659127f54005f31bf65e5ea0\"}}",
+      "projection": "perspective",
+      "purpose": "default",
+      "shutter:close": "0.0",
+      "shutter:open": "0.0",
+      "stereoRole": "mono",
+      "verticalAperture": "3.240000009536743",
+      "verticalApertureOffset": "0.0",
+      "visibility": "invisible",
+      "xformOp:orient": "(0.49999999999999994, 0.5000000000000003, -0.5000000000000003, -0.4999999999999997)",
+      "xformOp:scale": "(1, 1, 1)",
+      "xformOp:translate": "(0.028, 4.017068566816438e-32, 0.0155141094471127)",
+      "xformOpOrder": "[xformOp:translate, xformOp:orient, xformOp:scale]",
+      "schemas": [],
+      "parent": "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS",
+      "local_matrix": "( (0, -1.0000000000000004, 2.220446049250313e-16, 0), (-9.992007221626409e-16, 0, 1.0000000000000002, 0), (-1.0000000000000002, -2.220446049250313e-16, -1.3322676295501878e-15, 0), (0.028, 4.017068566816438e-32, 0.0155141094471127, 1) )"
+    }
+  },
+  "source_receipts": [
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.sensors.experimental.rtx/isaacsim/sensors/experimental/rtx/impl/tiled_camera_sensor.py",
+      "sha256": "4d5d09a90d440f2154dad66f26ec3868318712b0a5f9703c762406205b5482a9",
+      "expected": "4d5d09a90d440f2154dad66f26ec3868318712b0a5f9703c762406205b5482a9"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.core.experimental.objects/isaacsim/core/experimental/objects/impl/camera.py",
+      "sha256": "c96acc6a794a3b9dfaaaaa76d4975130b3b5dfeed6f4259302fca97ce5bfaa0c",
+      "expected": "c96acc6a794a3b9dfaaaaa76d4975130b3b5dfeed6f4259302fca97ce5bfaa0c"
+    }
+  ],
+  "raw_host_staging": false,
+  "source_frame_identity_proven": false,
+  "stream_file": "atlas.h264",
+  "helper_sha256": "296ae23fafe24ce04ffafcae502780fbf0b3a82c43aa834ce95236226e32a47f",
+  "adapter_sha256": "c70ef0df3bc2c9a5d814f500f131ea8acd2797fae06dedfd1bf39a7e71f37e15",
+  "role_layout": {
+    "left_wrist": {
+      "tile_index": 0,
+      "x": 0,
+      "y": 0,
+      "width": 960,
+      "height": 600,
+      "rgba_pitch": 7680
+    },
+    "right_wrist": {
+      "tile_index": 1,
+      "x": 960,
+      "y": 0,
+      "width": 960,
+      "height": 600,
+      "rgba_pitch": 7680
+    },
+    "scene": {
+      "tile_index": 2,
+      "x": 0,
+      "y": 600,
+      "width": 960,
+      "height": 600,
+      "rgba_pitch": 7680
+    }
+  },
+  "encoder_sessions": 1,
+  "encoded_resolution_wh": [
+    1920,
+    1200
+  ],
+  "native_encoder_eos_exposed": false,
+  "decoded_role_counts": null,
+  "source_alignment_proven": false
+}

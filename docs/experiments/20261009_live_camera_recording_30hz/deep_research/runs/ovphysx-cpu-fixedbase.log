@@ -1,0 +1,17 @@
+/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_probe.py:88: DeprecationWarning: ovphysx tensor bindings are deprecated and will be removed in a future release; use PhysX.read for reads and PhysX.write for writes.
+  b = physx.create_tensor_binding(prim_paths=paths, tensor_type=kind, raise_if_empty=True)
+/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_probe.py:104: DeprecationWarning: ovphysx tensor bindings are deprecated and will be removed in a future release; use PhysX.read for reads and PhysX.write for writes.
+  root_binding = physx.create_tensor_binding(prim_paths=ROOTS, tensor_type=TensorType.ARTICULATION_ROOT_POSE, raise_if_empty=True)
+/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_probe.py:168: DeprecationWarning: ovphysx tensor bindings are deprecated and will be removed in a future release; use PhysX.read for reads and PhysX.write for writes.
+  body_binding = physx.create_tensor_binding(pattern="/World/*", tensor_type=TensorType.RIGID_BODY_POSE, raise_if_empty=True)
+[Warning] [] ovstage backing USD stage id 9223002 is not resident in UsdUtilsStageCache; attaching ovstage-only with effective stage id 0
+[Warning] [omni.physx] GPU broadphase requires a CUDA context manager; falling back to ePABP.
+Traceback (most recent call last):
+  File "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_probe.py", line 244, in <module>
+    main()
+  File "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_probe.py", line 168, in main
+    body_binding = physx.create_tensor_binding(pattern="/World/*", tensor_type=TensorType.RIGID_BODY_POSE, raise_if_empty=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/lib/python3.12/site-packages/ovphysx/api.py", line 4774, in create_tensor_binding
+    raise ValueError(
+ValueError: create_tensor_binding matched 0 prims for pattern '/World/*'. Check the path input and ensure USDs are loaded before creating the binding. For optional readback or broad scene queries, leave raise_if_empty=False and check binding.count before reading.

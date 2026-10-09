@@ -1,0 +1,1 @@
+PASS: installed real source hashes; FFFT gating; counts; original return; exception propagation; setting and exact instance attributes restored. No native SDK imported or GPU operation executed.

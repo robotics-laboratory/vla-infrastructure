@@ -1,0 +1,281 @@
+{
+  "dataset_admissible": false,
+  "quest_connected": false,
+  "source": "deterministic_injected_xr_v1",
+  "synthetic_joint_targets": true,
+  "camera_source_alignment_proven": false,
+  "arguments": {
+    "output": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original",
+    "frames": 300,
+    "warmup": 120,
+    "media": "poll",
+    "physics_variant": "baseline",
+    "render_mode": "original",
+    "async_render": false,
+    "wait_idle": "original",
+    "texture_streaming_off": false,
+    "xr": false,
+    "device": "cpu",
+    "ik_workload": true
+  },
+  "source_sha256": "d2544a99b5f9d136e6cb036dee9c2fd21d36c47c49806797a34b680f435b0956",
+  "base": "d5566834d29ef8bb56e4fb62bb324e23e0869100",
+  "started_utc": "2026-10-09T12:57:16Z",
+  "passed": true,
+  "base_command": [
+    "/home/ebulochkin/vla_infrastructure/tools/run_isaac_s1.py",
+    "--config",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/runtime.yaml",
+    "--device",
+    "cpu",
+    "--vr-runtime",
+    "--s2-record",
+    "--viz",
+    "kit",
+    "--kit_args",
+    "--portable-root /data/ebulochkin/vla-runtime/isaac-isaac61/kit --enable isaacsim.replicator.episode_recorder"
+  ],
+  "settings": {
+    "/app/asyncRendering": false,
+    "/app/asyncRenderingLowLatency": false,
+    "/app/omni.usd/asyncHandshake": false,
+    "/omni/replicator/asyncRendering": false,
+    "/app/hydraEngine/waitIdle": true,
+    "/rtx/rendermode": "RealTimePathTracing",
+    "/rtx-transient/resourcemanager/enableTextureStreaming": true
+  },
+  "transitions": {
+    "accepted_transactions": 420,
+    "committed_frames": 420,
+    "requested_control_steps": 420,
+    "completed_control_budget": true,
+    "stopped_by_user": false,
+    "input_pump_calls": 0,
+    "processor_revision": "piper_x_isaac_s2_bimanual_relative_v3",
+    "source": "deterministic_injected_xr_v1",
+    "rgb_e2e_assay": false,
+    "input_targets_sha256": "4644e0ed6d56c3c96501b84a75679a39282c77b1b91d0a9c75d6ef11f38e212f",
+    "left_transition_counts": {
+      "motion": 420
+    }
+  },
+  "performance": {
+    "event": "performance_summary",
+    "schema": "piper_x_isaac_s2_performance_v1",
+    "monotonic_ns": 3777021871147346,
+    "step_first": 121,
+    "step_last": 420,
+    "control": {
+      "samples": 300,
+      "mean_ms": 24.94784414,
+      "p50_ms": 24.426841500000002,
+      "p90_ms": 26.4256361,
+      "p95_ms": 28.692568750000003,
+      "p99_ms": 33.81277516,
+      "p99_9_ms": 35.37300196900003,
+      "max_ms": 35.742766
+    },
+    "wall_control": {
+      "samples": 299,
+      "mean_ms": 26.53742226755853,
+      "p50_ms": 25.986277,
+      "p90_ms": 28.2640708,
+      "p95_ms": 31.267831400000002,
+      "p99_ms": 35.296670039999995,
+      "p99_9_ms": 36.927278599999994,
+      "max_ms": 37.314172
+    },
+    "effective_wall_hz": 37.68263510742263,
+    "wall_rtf": 0.7536527021484525,
+    "wall_deadline_misses": 299,
+    "wall_deadline_miss_fraction": 1.0,
+    "effective_hz": 40.08362383492107,
+    "deadline_ms": 20.0,
+    "deadline_misses": 300,
+    "deadline_miss_fraction": 1.0,
+    "stages": {
+      "causal_commit_and_record": {
+        "samples": 300,
+        "mean_ms": 1.5636399233333333,
+        "p50_ms": 1.4128725,
+        "p90_ms": 1.4900645000000003,
+        "p95_ms": 2.43458475,
+        "p99_ms": 7.373705459999998,
+        "p99_9_ms": 7.842350578000001,
+        "max_ms": 7.859088
+      },
+      "injected_decision_apply": {
+        "samples": 300,
+        "mean_ms": 0.6588928000000001,
+        "p50_ms": 0.6499010000000001,
+        "p90_ms": 0.6966973000000001,
+        "p95_ms": 0.7113931499999999,
+        "p99_ms": 0.9941842899999999,
+        "p99_9_ms": 1.0713915130000013,
+        "max_ms": 1.091847
+      },
+      "observation_capture": {
+        "samples": 300,
+        "mean_ms": 0.0015675666666666668,
+        "p50_ms": 0.00145,
+        "p90_ms": 0.0018386000000000001,
+        "p95_ms": 0.0020202,
+        "p99_ms": 0.0022616999999999993,
+        "p99_9_ms": 0.012876191000000228,
+        "max_ms": 0.016013
+      },
+      "runtime_bookkeeping": {
+        "samples": 300,
+        "mean_ms": 0.00591023,
+        "p50_ms": 0.0055650000000000005,
+        "p90_ms": 0.006279300000000001,
+        "p95_ms": 0.008387500000000004,
+        "p99_ms": 0.012784769999999996,
+        "p99_9_ms": 0.019403216000000154,
+        "max_ms": 0.021501
+      },
+      "simulation_advance": {
+        "samples": 300,
+        "mean_ms": 21.770536006666667,
+        "p50_ms": 21.396420499999998,
+        "p90_ms": 23.2274379,
+        "p95_ms": 24.0618349,
+        "p99_ms": 30.771095259999996,
+        "p99_9_ms": 32.24457838800002,
+        "max_ms": 32.591355
+      },
+      "successor_capture": {
+        "samples": 300,
+        "mean_ms": 0.9365108566666667,
+        "p50_ms": 0.8945,
+        "p90_ms": 1.0288103,
+        "p95_ms": 1.141089,
+        "p99_ms": 1.5824146799999996,
+        "p99_9_ms": 1.729972652000001,
+        "max_ms": 1.742307
+      },
+      "teleop_advance": {
+        "samples": 300,
+        "mean_ms": 0.0002264866666666667,
+        "p50_ms": 0.0002145,
+        "p90_ms": 0.0002932000000000001,
+        "p95_ms": 0.00032505,
+        "p99_ms": 0.00043615999999999984,
+        "p99_9_ms": 0.0005191530000000011,
+        "max_ms": 0.000535
+      }
+    },
+    "nested_stages_not_additive": {
+      "camera_update": {
+        "samples": 300,
+        "mean_ms": 0.0036214333333333334,
+        "p50_ms": 0.0033985,
+        "p90_ms": 0.004087500000000001,
+        "p95_ms": 0.00440905,
+        "p99_ms": 0.006738319999999988,
+        "p99_9_ms": 0.020429248000000382,
+        "max_ms": 0.025705999999999996
+      },
+      "experiment_update": {
+        "samples": 300,
+        "mean_ms": 0.00843438,
+        "p50_ms": 0.008059,
+        "p90_ms": 0.0099362,
+        "p95_ms": 0.010926500000000002,
+        "p99_ms": 0.013170189999999997,
+        "p99_9_ms": 0.014890735000000026,
+        "max_ms": 0.01526
+      },
+      "physics_probe_update": {
+        "samples": 300,
+        "mean_ms": 0.005925893333333334,
+        "p50_ms": 0.0055105,
+        "p90_ms": 0.007287200000000001,
+        "p95_ms": 0.008389150000000001,
+        "p99_ms": 0.009949749999999993,
+        "p99_9_ms": 0.02409904000000035,
+        "max_ms": 0.028894999999999997
+      },
+      "physics_target_write": {
+        "samples": 300,
+        "mean_ms": 0.7046356833333334,
+        "p50_ms": 0.6880805,
+        "p90_ms": 0.7514888,
+        "p95_ms": 0.7785907500000001,
+        "p99_ms": 1.1622647,
+        "p99_9_ms": 1.2479942970000009,
+        "max_ms": 1.259176
+      },
+      "robot_update": {
+        "samples": 300,
+        "mean_ms": 0.39602461666666666,
+        "p50_ms": 0.38344,
+        "p90_ms": 0.4578582000000001,
+        "p95_ms": 0.49212925,
+        "p99_ms": 0.5371141299999997,
+        "p99_9_ms": 0.6125138370000012,
+        "max_ms": 0.628043
+      },
+      "sim_step": {
+        "samples": 300,
+        "mean_ms": 20.05667993,
+        "p50_ms": 19.737881,
+        "p90_ms": 21.1066838,
+        "p95_ms": 21.95793215,
+        "p99_ms": 29.25634297,
+        "p99_9_ms": 30.422957758000024,
+        "max_ms": 30.711241
+      }
+    },
+    "instrumentation_write": {
+      "samples": 300,
+      "mean_ms": 0.02039146,
+      "p50_ms": 0.018428,
+      "p90_ms": 0.02745040000000002,
+      "p95_ms": 0.03468530000000001,
+      "p99_ms": 0.04034018999999998,
+      "p99_9_ms": 0.04434011800000001,
+      "max_ms": 0.044495
+    },
+    "unattributed": {
+      "samples": 300,
+      "mean_ms": 0.010560269999999707,
+      "p50_ms": 0.01018599999999914,
+      "p90_ms": 0.011460700000003144,
+      "p95_ms": 0.012442450000000172,
+      "p99_ms": 0.015042369999999878,
+      "p99_9_ms": 0.03670185700000193,
+      "max_ms": 0.04506100000000046
+    },
+    "log_path": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/performance.jsonl",
+    "warmup_steps_excluded": 120,
+    "total_logged_steps": 300,
+    "host_timing_only_no_added_cuda_synchronization": true,
+    "boundaries": {}
+  },
+  "packet_counts": [
+    419,
+    419,
+    419
+  ],
+  "empty_packets": [
+    1,
+    1,
+    1
+  ],
+  "whole_working_s": 11.447100811172277,
+  "drain_s": 0.3778889090754092,
+  "physics_ablation": {
+    "variant": "baseline",
+    "dataset_admissible": false,
+    "physics_dt_unchanged": true,
+    "per_substep_submit_preserved": true,
+    "acceleration_semantics": "unchanged",
+    "effort_telemetry_semantics": "unchanged",
+    "groups": 420,
+    "full_writes": 0,
+    "cached_submits": 0,
+    "lazy_updates": 0
+  },
+  "finished_utc": "2026-10-09T12:57:38Z"
+}

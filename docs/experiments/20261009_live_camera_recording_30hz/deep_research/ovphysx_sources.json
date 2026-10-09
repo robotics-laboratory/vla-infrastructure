@@ -1,0 +1,379 @@
+{
+  "date": "2026-10-09",
+  "project_commit": "d5566834d29ef8bb56e4fb62bb324e23e0869100",
+  "release_commit": "da950a3537927784951853c66618036f332ca0ce",
+  "main_commit": "123c7dbe587e46b760d65dd91e1c184948d83258",
+  "gpu_run": false,
+  "checks": [
+    "AST parse PASS",
+    "CLI --help PASS",
+    "read-only USD audit via declared production Python PASS",
+    "no installation or GPU run performed",
+    "PyPI pinnednumpy2.5.1(requiresPython>=3.12),warp-lang1.16.0,packaging23.2 allexist"
+  ],
+  "search_ledger": [
+    {
+      "q": "ovphysx NVIDIA github Python standalone PhysX CUDA graph",
+      "finding": "Standalone path lives in main PhysX repo; separate repo404"
+    },
+    {
+      "q": "site:github.com/NVIDIA-Omniverse ovphysx",
+      "finding": "Found developer guide/API/docs"
+    },
+    {
+      "q": "site:nvidia-omniverse.github.io/PhysX CUDA graph",
+      "finding": "No claimed supported whole-scene graph capture found"
+    },
+    {
+      "q": "site:github.com/NVIDIA-Omniverse/PhysX cudaGraph simulate",
+      "finding": "No applicable supported API identified"
+    },
+    {
+      "q": "site:nvidia-omniverse.github.io/PhysX Direct GPU API stream",
+      "finding": "API event synchronization confirmed, no caller-owned simstream exposed"
+    },
+    {
+      "q": "npx skills add nvidia/skills --list",
+      "finding": "CLI unavailable/blocked; official rawcatalog fallback finds no strong ovphysx specialization"
+    }
+  ],
+  "sources": [
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/docs/changelog.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/docs/changelog.md",
+      "sha256": "53a1806ba5cf27b1911edee3dacd3014a010be47dd6e995928359cc06a1842af",
+      "bytes": 103297
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/docs/developer_guide.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/docs/developer_guide.md",
+      "sha256": "fc4fda105c21b3bcf3578f262622a66f6434acb5ae09bb8c94d636fc25e1b504",
+      "bytes": 78894
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/docs/guides/limitations.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/docs/guides/limitations.md",
+      "sha256": "90a64240cad985597d65ebb428f4745416f71371a1b497f23d66e293b4cec1fc",
+      "bytes": 5437
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/docs/guides/performance.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/docs/guides/performance.md",
+      "sha256": "1c20248372a3f2e4ed7d17f007b5d7683c2dc932b29f3e347f2a003126fbf975",
+      "bytes": 5614
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/docs/ovphysx_overview.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/docs/ovphysx_overview.md",
+      "sha256": "bdae626d627f0d75ceca3827daafd226c7939137ae05b6140ee88124895a22a3",
+      "bytes": 13574
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/docs/read_write/data_model.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/docs/read_write/data_model.md",
+      "sha256": "0736630aeb4662bc60f228c22fe1d49faf621e1e38d0dae48113ee0f464c8ec8",
+      "bytes": 8205
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/docs/read_write/device.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/docs/read_write/device.md",
+      "sha256": "ac43bd107c018f5e123524852c5e2bf1e330cc0a2d2ea5b91876ac6ca09f9f40",
+      "bytes": 5874
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/docs/read_write/index.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/docs/read_write/index.md",
+      "sha256": "35edd80af6fccce7ce93f3a6a1d4036e4696f28b2f1d1a0184cf715fd85fda45",
+      "bytes": 6429
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/docs/read_write/limitations.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/docs/read_write/limitations.md",
+      "sha256": "a5ece9e55c0a04153a0c1aecdd4f65ff6896f358fa2a833d48e845d4e646b784",
+      "bytes": 2242
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/docs/read_write/readable.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/docs/read_write/readable.md",
+      "sha256": "44c7802dda31dd4401c2c2aeeea9cb6ab59606fa3b3d05951d18fbc89ede31ab",
+      "bytes": 14196
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/docs/read_write/writable.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/docs/read_write/writable.md",
+      "sha256": "d23851db212cd69a7308dafddedcca612a56d530b067121493d89e2865738441",
+      "bytes": 14363
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/docs/simulation_setup/articulations.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/docs/simulation_setup/articulations.md",
+      "sha256": "2bda7b63350ab297e4278b52a7cee38795090308002290834a7d8e7e874b61d4",
+      "bytes": 13458
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/docs/tutorials/render_handoff.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/docs/tutorials/render_handoff.md",
+      "sha256": "e8365019d1c8d14ba85f4164407ebb8b9bcb795aa3183601fefd75aa76ffd515",
+      "bytes": 3133
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/docs/tutorials/tensor_bindings.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/docs/tutorials/tensor_bindings.md",
+      "sha256": "0527e7b7bfc0826398ade3e20efca3b0e503e4198b64ae60e5206a29a2565c61",
+      "bytes": 28611
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/python/ovphysx/api.py",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/python/ovphysx/api.py",
+      "sha256": "90d30f9cf5e4cbf3589888c1f12232e7b6aed82c0c28948009398f82fd18e375",
+      "bytes": 251968
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/python/ovphysx/config.py",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/python/ovphysx/config.py",
+      "sha256": "2e97cba099640bc4ab3a31a448e69ca9ae0a810a942a301b63f33eae04d74c29",
+      "bytes": 14476
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/python/ovphysx/types.py",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/python/ovphysx/types.py",
+      "sha256": "c3a37c79bfca094a4a5f7c7596734bd4b540b466274c6df44dd7ff7245ddc0ac",
+      "bytes": 14663
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/tests/c_samples/tensor_bindings_gpu_c/main.c",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/tests/c_samples/tensor_bindings_gpu_c/main.c",
+      "sha256": "9db10cccb7758ae887aa7a1e126ef359d70f5d94d13cd9e3ce0378de96f9b07f",
+      "bytes": 17559
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/tests/python_samples/hello_world.py",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/tests/python_samples/hello_world.py",
+      "sha256": "9cba589984f23233b535b0f2bf7f694b37333ee78940220d73dc8259964cd8cf",
+      "bytes": 2279
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/tests/python_samples/output_read.py",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/tests/python_samples/output_read.py",
+      "sha256": "388e8250dd5c0fda70fb217a6f59308e35d024546c6cde0302caa679543074c8",
+      "bytes": 13158
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/tests/python_samples/tensor_bindings.py",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/tests/python_samples/tensor_bindings.py",
+      "sha256": "9d212becf838f191cd7a9e7703b877a79a35f49c6fb0ef8e30308bf745e6f3b2",
+      "bytes": 7647
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/ovphysx/tests/python_samples/tensor_bindings_views.py",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/123c7dbe587e46b760d65dd91e1c184948d83258/ovphysx/tests/python_samples/tensor_bindings_views.py",
+      "sha256": "6850cc1a65e6a2c6e3e8b07a760c1a8e2596397d1b71fd33688b8caa8f046a87",
+      "bytes": 5807
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/pypi.json",
+      "url": "https://pypi.org/pypi/ovphysx/json",
+      "sha256": "8a33e6564290a83c97f5d1ff50c8f9a49d225d63d1dd8bb00b5a919852793a16",
+      "bytes": 28142
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/CMakeLists.txt",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/CMakeLists.txt",
+      "sha256": "83bce3986885e0a36b3560de67bb927e9932006abda9784e729a32f7eaed85b9",
+      "bytes": 65589
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/docs/changelog.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/docs/changelog.md",
+      "sha256": "53a1806ba5cf27b1911edee3dacd3014a010be47dd6e995928359cc06a1842af",
+      "bytes": 103297
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/docs/read_write/readable.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/docs/read_write/readable.md",
+      "sha256": "44c7802dda31dd4401c2c2aeeea9cb6ab59606fa3b3d05951d18fbc89ede31ab",
+      "bytes": 14196
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/docs/read_write/writable.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/docs/read_write/writable.md",
+      "sha256": "d23851db212cd69a7308dafddedcca612a56d530b067121493d89e2865738441",
+      "bytes": 14363
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/docs/simulation_setup/articulations.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/docs/simulation_setup/articulations.md",
+      "sha256": "2bda7b63350ab297e4278b52a7cee38795090308002290834a7d8e7e874b61d4",
+      "bytes": 13458
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/docs/simulation_setup/physics_scene.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/docs/simulation_setup/physics_scene.md",
+      "sha256": "108f408d424f334cb6b47ff81396abc4e5808d7c2666c2a2426c49f5cf41dc08",
+      "bytes": 14663
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/docs/tutorials/render_handoff.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/docs/tutorials/render_handoff.md",
+      "sha256": "e8365019d1c8d14ba85f4164407ebb8b9bcb795aa3183601fefd75aa76ffd515",
+      "bytes": 3133
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/include/ovphysx/ovphysx.h",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/include/ovphysx/ovphysx.h",
+      "sha256": "8de7058be61c0e77bcf7d2727773ecd27e748fbad9ed902095969332109782d6",
+      "bytes": 195885
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/ovruntime/VERSION",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/ovruntime/VERSION",
+      "sha256": "4aa4fe9e08f545cad40a66c24fe282603a2133fc83dd531dec73c478f0578acb",
+      "bytes": 7
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/python/ovphysx/api.py",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/python/ovphysx/api.py",
+      "sha256": "90d30f9cf5e4cbf3589888c1f12232e7b6aed82c0c28948009398f82fd18e375",
+      "bytes": 251968
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/python/ovphysx/config.py",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/python/ovphysx/config.py",
+      "sha256": "2e97cba099640bc4ab3a31a448e69ca9ae0a810a942a301b63f33eae04d74c29",
+      "bytes": 14476
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/python/ovphysx/types.py",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/python/ovphysx/types.py",
+      "sha256": "c3a37c79bfca094a4a5f7c7596734bd4b540b466274c6df44dd7ff7245ddc0ac",
+      "bytes": 14663
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/src/ovphysx/PhysXWrapper.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/src/ovphysx/PhysXWrapper.cpp",
+      "sha256": "75a828fd3bef4afaff42860901a26d710026d618dfc032f5017c79d3e50b7414",
+      "bytes": 12794
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/src/ovphysx/TensorBindingWrapper.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/src/ovphysx/TensorBindingWrapper.cpp",
+      "sha256": "1a153b0aa5e45a655993c4e85fcc883bdfc0e59a8041dbaeb9ee0a2bcc6a50d0",
+      "bytes": 4141
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/src/ovphysx/ovphysx.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/src/ovphysx/ovphysx.cpp",
+      "sha256": "c01be44bf80e5fa274aee22196325cadbfcf99ae05832ce049897e51e9fd2682",
+      "bytes": 168452
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/src/ovphysx/ovphysxTensorBinding.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/src/ovphysx/ovphysxTensorBinding.cpp",
+      "sha256": "df94594a9db62f3275f228c00bf5d71069251a188569b4a286ba8fff71a0a08b",
+      "bytes": 187061
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/ovphysx/src/ovphysxInternal/ovphysxInternal.cpp",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/ovphysx/src/ovphysxInternal/ovphysxInternal.cpp",
+      "sha256": "e1726bcc9b18a6baf0849d5be381548a05eaeb8e0685f705c9f87903ce853b90",
+      "bytes": 1629
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/physx/documentation/platformreadme/linux/README_LINUX.md",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/physx/documentation/platformreadme/linux/README_LINUX.md",
+      "sha256": "b2bffb42f5a4ae195f98075ad02f851abb115ad161cf2887f80e0983e8dde9ed",
+      "bytes": 2918
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release/physx/include/PxDirectGPUAPI.h",
+      "url": "https://github.com/NVIDIA-Omniverse/PhysX/blob/da950a3537927784951853c66618036f332ca0ce/physx/include/PxDirectGPUAPI.h",
+      "sha256": "0051af063541a7982dcea3c07d49c43cfbeae533f0a7eabd200e1aae3e71976b",
+      "bytes": 36075
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/release-ref.json",
+      "url": "https://api.github.com/repos/NVIDIA-Omniverse/PhysX/git/ref/tags/ovphysx-0.6.3",
+      "sha256": "485fbf49b235b14aeee47c9b5f6e85cdcdf30813fe3e8978bad733e26c59e8ce",
+      "bytes": 407
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/releases.json",
+      "url": "https://api.github.com/repos/NVIDIA-Omniverse/PhysX/releases?per_page=5",
+      "sha256": "70480126e0e0f7d98c68ddd5bd7e31d0fc225a0ec9f1ce920bd48e1b78874cbf",
+      "bytes": 34480
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/skills.json",
+      "url": "https://raw.githubusercontent.com/NVIDIA/skills/main/skills.sh.json",
+      "sha256": "484572f912f8208509ce33cacd3d989bce275469f7572d5f3b599647e99a80f8",
+      "bytes": 17824
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/tags.json",
+      "url": "https://api.github.com/repos/NVIDIA-Omniverse/PhysX/tags?per_page=10",
+      "sha256": "ecc78b76780b7b44aeaf0ef66827dc508b8c170698c2c074a9742880c2236ade",
+      "bytes": 4543
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/tree.json",
+      "url": "https://api.github.com/repos/NVIDIA-Omniverse/PhysX/git/trees/main?recursive=1",
+      "sha256": "674ed299af24bccadafc05b3d6e97fa183c5b8e47ab9295b82b2958d66694e96",
+      "bytes": 1333209
+    },
+    {
+      "local_path": "/tmp/live30-deep-ovphysx-stage-audit.json",
+      "sha256": "7d8e0f40994aeb8824807bcb92b47336d86d629084240bb0ce4284b858ec9eb8",
+      "bytes": 26295
+    },
+    {
+      "local_path": "/home/ebulochkin/vla_infrastructure/configs/isaac61_s1_runtime.yaml",
+      "sha256": "5da72ca0cfba86241d8f834eb8ee9369c002236dba699f0f3a36b35fc8c0e171",
+      "bytes": 6662
+    },
+    {
+      "local_path": "/home/ebulochkin/vla_infrastructure/tools/run_isaac_s1.py",
+      "sha256": "c2b8dbe2d05c32c4f5cfec4269ad37d58673c0a5d79603c5057f907e7c4201e2",
+      "bytes": 67659
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/numpy-2.5.1-pypi.json",
+      "url": "https://pypi.org/pypi/numpy/2.5.1/json",
+      "sha256": "be3068a90c4ab234fe59b0465ddffd99a836f31fc1da34341e80fa0c5d9b3b09",
+      "bytes": 44336
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/warp-lang-1.16.0-pypi.json",
+      "url": "https://pypi.org/pypi/warp-lang/1.16.0/json",
+      "sha256": "41cfc039db3dd5c2aed99706c2b63112cdb94d82d726369e9eb403e8ee38e598",
+      "bytes": 27564
+    },
+    {
+      "local_path": "/tmp/live30-ovphysx-src/packaging-23.2-pypi.json",
+      "url": "https://pypi.org/pypi/packaging/23.2/json",
+      "sha256": "a3d26e1dfb5379e990bb216bdf94f935cb48294e6099322e9a5927d7af794a03",
+      "bytes": 5444
+    },
+    {
+      "local_path": "/tmp/live30-deep-ovphysx-bench.py",
+      "sha256": "a6b0e57818daf48c4096b8d7701ef604a3659f5af61acd4ea63777c9ace0d477",
+      "bytes": 10817
+    },
+    {
+      "local_path": "/tmp/live30-deep-ovphysx.md",
+      "sha256": "46a4e67e72f485829ff772c934e571d3ae40990658557c5bb16415105ea7c053",
+      "bytes": 15584
+    },
+    {
+      "local_path": "/tmp/live30-deep-ovphysx-checks.log",
+      "sha256": "5da2e45b64afb0cfe8cc9b290152aca9ab4bd7acf01a486b29aef35256132cd3",
+      "bytes": 1047
+    }
+  ],
+  "validated_optional_pins": {
+    "ovphysx": "0.6.3",
+    "ovstage": "0.2.0.377349",
+    "warp-lang": "1.16.0",
+    "numpy": "2.5.1",
+    "packaging": "23.2"
+  }
+}

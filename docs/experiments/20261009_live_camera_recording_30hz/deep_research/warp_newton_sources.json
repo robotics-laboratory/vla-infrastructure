@@ -1,0 +1,360 @@
+{
+  "schema": "piper_x_warp_newton_sources_v1",
+  "project_head": "d5566834d29ef8bb56e4fb62bb324e23e0869100",
+  "trusted_base_supplied_by_parent": "beaedfd",
+  "lab_commit": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d",
+  "packages": {
+    "warp_lang": "1.16.0",
+    "newton": "1.5.2",
+    "mujoco": "3.11.0",
+    "mujoco_warp": "3.11.0",
+    "isaaclab": "17.0.2",
+    "isaaclab_newton": "5.4.1"
+  },
+  "browser_sources": [
+    {
+      "i": 0,
+      "url": "https://raw.githubusercontent.com/newton-physics/newton/v1.5.2/newton/_src/solvers/vbd/solver_vbd.py",
+      "chars": 14674,
+      "failed": false,
+      "retrieved_at_utc": "2026-10-09",
+      "hash_scope": "browser tool response bytes; not original HTTP body",
+      "observation_path": "/tmp/live30-warp-browser-0.txt",
+      "sha256": "dd701f645313efeb42ad0e5a3bcb402e52248ccd2c000933e1e6159214b0f4b1",
+      "source_date_or_revision": "v1.5.2 tag; release2026-09-09"
+    },
+    {
+      "i": 1,
+      "url": "https://raw.githubusercontent.com/newton-physics/newton/v1.5.2/newton/_src/solvers/mujoco/solver_mujoco.py",
+      "chars": 14418,
+      "failed": false,
+      "retrieved_at_utc": "2026-10-09",
+      "hash_scope": "browser tool response bytes; not original HTTP body",
+      "observation_path": "/tmp/live30-warp-browser-1.txt",
+      "sha256": "ac02e591bd7767b8a95eff915e45e9ad0e96b89265a40183c6cb7314712c511c",
+      "source_date_or_revision": "v1.5.2 tag; release2026-09-09"
+    },
+    {
+      "i": 2,
+      "url": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/0c2e2c64e51922d088b695d72ffe03faa5c6b95d/source/isaaclab_newton/isaaclab_newton/physics/newton_manager.py",
+      "chars": 459,
+      "failed": true,
+      "retrieved_at_utc": "2026-10-09",
+      "hash_scope": "browser tool response bytes; not original HTTP body",
+      "observation_path": "/tmp/live30-warp-browser-2.txt",
+      "sha256": "a26bcd6fa68ed667f33e9a38e46f30dca8755258ac16760df138c5daf2c345b6",
+      "source_date_or_revision": "unknown publication date; retrieved2026-10-09, mutable upstream page"
+    },
+    {
+      "i": 3,
+      "url": "https://github.com/newton-physics/newton/discussions/639",
+      "chars": 12637,
+      "failed": false,
+      "retrieved_at_utc": "2026-10-09",
+      "hash_scope": "browser tool response bytes; not original HTTP body",
+      "observation_path": "/tmp/live30-warp-browser-3.txt",
+      "sha256": "b193423629ca12b20c16866c13a2f6a2453b87073c3bc252eeb783e3fa2a077e",
+      "source_date_or_revision": "2025-08-26; relevant maintainer reply 2025-09-02"
+    },
+    {
+      "i": 4,
+      "url": "https://github.com/newton-physics/newton/pull/4238",
+      "chars": 244,
+      "failed": true,
+      "retrieved_at_utc": "2026-10-09",
+      "hash_scope": "browser tool response bytes; not original HTTP body",
+      "observation_path": "/tmp/live30-warp-browser-4.txt",
+      "sha256": "61eeefce2288c0f534dc1f5c7df2d9430857e99d24cb5d4fb5df92be97b73ee4",
+      "source_date_or_revision": "unknown publication date; retrieved2026-10-09, mutable upstream page"
+    },
+    {
+      "i": 5,
+      "url": "https://github.com/google-deepmind/mujoco/issues/3435",
+      "chars": 13056,
+      "failed": false,
+      "retrieved_at_utc": "2026-10-09",
+      "hash_scope": "browser tool response bytes; not original HTTP body",
+      "observation_path": "/tmp/live30-warp-browser-5.txt",
+      "sha256": "23cbbcb8f78bc245074a7d0d7cda0185f8e3079c5105413416ba920f69f43a87",
+      "source_date_or_revision": "2026-07-27"
+    },
+    {
+      "i": 6,
+      "url": "https://github.com/newton-physics/newton/discussions/2176",
+      "chars": 9982,
+      "failed": false,
+      "retrieved_at_utc": "2026-10-09",
+      "hash_scope": "browser tool response bytes; not original HTTP body",
+      "observation_path": "/tmp/live30-warp-browser-6.txt",
+      "sha256": "62ac2a66f8f3d009b51e3e1d591c5e5a29cfd4ef6d88a624dc34b5d618c34e2e",
+      "source_date_or_revision": "unknown publication date; retrieved2026-10-09, mutable upstream page"
+    },
+    {
+      "i": 7,
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/omni_physics/latest/dev_guide/physics_umbrella/physics_umbrella_runtime.html",
+      "chars": 15882,
+      "failed": false,
+      "retrieved_at_utc": "2026-10-09",
+      "hash_scope": "browser tool response bytes; not original HTTP body",
+      "observation_path": "/tmp/live30-warp-browser-7.txt",
+      "sha256": "9b0de767c5aa1c6c2ebb0b34d69ff4e82047da45d19919d560091b26b7840f4a",
+      "source_date_or_revision": "unknown publication date; retrieved2026-10-09, mutable upstream page"
+    },
+    {
+      "i": 8,
+      "url": "https://github.com/newton-physics/newton/issues/3805",
+      "chars": 12742,
+      "failed": false,
+      "retrieved_at_utc": "2026-10-09",
+      "hash_scope": "browser tool response bytes; not original HTTP body",
+      "observation_path": "/tmp/live30-warp-browser-8.txt",
+      "sha256": "f60b52c6cb6ce345512ee1aadd5922393e9353b0dad660764865ce429c20ce88",
+      "source_date_or_revision": "2026-08-05"
+    },
+    {
+      "i": 9,
+      "url": "https://github.com/newton-physics/newton/issues/3128",
+      "chars": 12160,
+      "failed": false,
+      "retrieved_at_utc": "2026-10-09",
+      "hash_scope": "browser tool response bytes; not original HTTP body",
+      "observation_path": "/tmp/live30-warp-browser-9.txt",
+      "sha256": "a3f9ef97e3c6b92fbe2a29d7bb72838874bd27dcc24166d6e091e18f4299267e",
+      "source_date_or_revision": "2026-06-10"
+    },
+    {
+      "i": 10,
+      "url": "https://github.com/isaac-sim/IsaacLab/issues/5064",
+      "chars": 10040,
+      "failed": false,
+      "retrieved_at_utc": "2026-10-09",
+      "hash_scope": "browser tool response bytes; not original HTTP body",
+      "observation_path": "/tmp/live30-warp-browser-10.txt",
+      "sha256": "fb975f4a67cade8c4f8727d8c48e46725110e2198046da0b0c15ac3b730e06f0",
+      "source_date_or_revision": "2026-03-19"
+    },
+    {
+      "i": 11,
+      "url": "https://github.com/newton-physics/newton/issues/4220",
+      "chars": 9465,
+      "failed": false,
+      "retrieved_at_utc": "2026-10-09",
+      "hash_scope": "browser tool response bytes; not original HTTP body",
+      "observation_path": "/tmp/live30-warp-browser-11.txt",
+      "sha256": "8a8fb66b2aeefaef7495634ef1d77b35e0ff25659648a06cbc51726919db4ff3",
+      "source_date_or_revision": "unknown publication date; retrieved2026-10-09, mutable upstream page"
+    },
+    {
+      "i": 12,
+      "url": "https://nvidia.github.io/warp/v1.16/user_guide/runtime.html",
+      "chars": 13721,
+      "failed": false,
+      "retrieved_at_utc": "2026-10-09",
+      "hash_scope": "browser tool response bytes; not original HTTP body",
+      "observation_path": "/tmp/live30-warp-browser-12.txt",
+      "sha256": "b0724761e9d58d9bdce6c4646b65750b2a43db1348e06c0c2ea8a3b891f22319",
+      "source_date_or_revision": "versioned v1.16 docs; page reports1.16.1, installed1.16.0"
+    },
+    {
+      "i": 13,
+      "url": "https://github.com/newton-physics/newton/blob/main/CHANGELOG.md",
+      "chars": 14850,
+      "failed": false,
+      "retrieved_at_utc": "2026-10-09",
+      "hash_scope": "browser tool response bytes; not original HTTP body",
+      "observation_path": "/tmp/live30-warp-browser-13.txt",
+      "sha256": "a5bfaea2ad5fe2b1637b90c7d95f3886e68f5e4d4bca227a5e7c66f0f9df9a49",
+      "source_date_or_revision": "unknown publication date; retrieved2026-10-09, mutable upstream page"
+    }
+  ],
+  "failed_lookups": [
+    {
+      "url": "https://newton-physics.github.io/newton/latest/concepts/solvers.html",
+      "result": "browser Internal Error"
+    },
+    {
+      "url": "https://newton-physics.github.io/newton/v1.5.2/solvers/overview.html",
+      "result": "browser inaccessible"
+    },
+    {
+      "url": "https://newton.readthedocs.io/en/stable/solvers/overview.html",
+      "result": "browser inaccessible"
+    },
+    {
+      "url": "https://github.com/newton-physics/newton/discussions/3188",
+      "result": "unverified guessed discussion; cache miss; not used"
+    },
+    {
+      "url": "https://api.github.com/repos/newton-physics/newton/git/ref/tags/v1.5.2",
+      "result": "stdlib urllib egress denied with Operation not permitted; no bypass"
+    }
+  ],
+  "queries": [
+    {
+      "query": "site:forums.developer.nvidia.com \"CUDA graph\" \"PhysX\"",
+      "result": "No directly relevant NVIDIA forum capture prescription retrieved; no claim of supported PhysX graph loop"
+    },
+    {
+      "query": "site:github.com/newton-physics/newton \"SolverVBD\" \"mimic\"",
+      "result": "Current main VBD newer changes; installed1.5.2 exclusions decisive"
+    },
+    {
+      "query": "site:github.com/newton-physics/newton single world CPU faster GPU CUDA graph",
+      "result": "Maintainer discussion639 and current release performance claims reviewed; no matching PIPER/XR measured evidence"
+    },
+    {
+      "query": "site:github.com/google-deepmind/mujoco_warp \"graph\" \"single\"",
+      "result": "Official pure-Warp viewer/code and official MJX doc; MJX-JAX single-scene10x statement cannot be assigned to Warp"
+    },
+    {
+      "query": "site:github.com/newton-physics/newton \"4238\"",
+      "result": "Workflow list advertises mimic convergence fix; exact PR failed to fetch; not implementation basis"
+    }
+  ],
+  "measurements_by_this_agent": [],
+  "validation": {
+    "microprobe_ast": "PASS",
+    "gpu_executed": false,
+    "packages_installed": false,
+    "production_modified": false
+  },
+  "installed_sources": [
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_newton/isaaclab_newton/physics/newton_manager.py",
+      "sha256": "0124330dfac3ba1d6b8f480cf5b3894968776b1d8b22a179181cc326939ba7bf",
+      "bytes": 169679,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_newton/isaaclab_newton/physics/newton_manager_cfg.py",
+      "sha256": "fa83d9077d4d85a564438d43cc2820fe0fdb7ab66540b239384cea5f2baed268",
+      "bytes": 11690,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_newton/isaaclab_newton/physics/mjwarp_manager_cfg.py",
+      "sha256": "330b8dda0c2e37ed9f46740cb25741899a2ac056b3e376d480234b88bbe3035b",
+      "bytes": 5152,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_newton/isaaclab_newton/physics/mjwarp_manager.py",
+      "sha256": "71b92a2336bfb12b12ef0bc4b4bf6d6520a5a66e26adee39f2b5793a60bd2fe5",
+      "bytes": 6988,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/utils/warp/launch_cache.py",
+      "sha256": "2fc8d26d868859d3d9ed3a191218d7ff8a8488aab6e8f7a2d1d0c4960e1b8d93",
+      "bytes": 1343,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/articulation/articulation_data.py",
+      "sha256": "9f25446dff165278af62147c50d5153cc1a1236ccc308cb83a316892cdeb54bf",
+      "bytes": 111298,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/actuators/actuator_collection.py",
+      "sha256": "67c78878b312071e98f9b97ca70f24ec3edd1443008c22239784227b5613138c",
+      "bytes": 44310,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/solvers/vbd/solver_vbd.py",
+      "sha256": "ebfff7b37a260e7068586a57c20404ba08d7269905de48af9a51f9a0d4d23d87",
+      "bytes": 163477,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/solvers/mujoco/solver_mujoco.py",
+      "sha256": "cd4e7dae4b37d58539621b4d03bb9f5d4f6fd7f4a8822f0fac7e5eeb9cbaabfa",
+      "bytes": 436013,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/solvers/featherstone/solver_featherstone.py",
+      "sha256": "1ab59e39012fa4634ae03a105bd7ed125458c9d4c302605eae42fe23a429105e",
+      "bytes": 50033,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/solvers/xpbd/solver_xpbd.py",
+      "sha256": "bb47c273d89d6eddeb82f45f0cc4d439941e429e2827c3a6594ce5a8bc8a2ab2",
+      "bytes": 42949,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/solvers/kamino/solver_kamino.py",
+      "sha256": "f1f4ce28ca7331f66861b491e3ae818bb327f4bd7b42b7e0ae7298d55fbbb968",
+      "bytes": 62477,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/sim/builder.py",
+      "sha256": "a4d537a16f6c887a6806cf89c8d1dc6331a6e0cf810d1f97e6e75d3ecf758352",
+      "bytes": 633369,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/sim/model.py",
+      "sha256": "9c743bce9e86421ee3aec1bb82794941e964581afc5925453e2d8075548306d0",
+      "bytes": 114850,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/sim/state.py",
+      "sha256": "6638816d5531389434aad1dd46924b536b7c6ec7b3091528fd804cf1aa542df7",
+      "bytes": 12529,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/utils/import_usd.py",
+      "sha256": "490100b5b07b967a381172f5efd5c3c8f1fbf9eb8ba785d0324dbb5c5dbe8feb",
+      "bytes": 273808,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/viewer/viewer_rtx.py",
+      "sha256": "5e177b3bbdf1559e8c6ed75242763a9f98ccf96cda4b294d60db7254cf262f5d",
+      "bytes": 94485,
+      "hash_scope": "exact installed file bytes",
+      "retrieved_at_utc": "2026-10-09"
+    }
+  ],
+  "microprobe_sha256": "21b0f2e1380f8c8a6e338f32ba9514cda2ba83cf2768cf5b05aae77fcc5dcf8c",
+  "source_contract_correction": {
+    "parent_stage_audit": "/tmp/live30-deep-ovphysx-stage-audit.json",
+    "audit_sha256": "7d8e0f40994aeb8824807bcb92b47336d86d629084240bb0ce4284b858ec9eb8",
+    "actual_mimic_count": 0,
+    "actual_robot_joints": 18,
+    "native_fingers": "explicit aperture/2,-aperture/2 targets",
+    "initial_mimic_guard_rejected_before_execution": true
+  },
+  "microprobe_limitations": [
+    "No velocity-limit support in installed SolverMuJoCo",
+    "Current native source has zero mimic constraints and18robotjointpaths",
+    "Fixed authored targets, no dynamic canonical actions",
+    "No XR/cameras/recording",
+    "CPU MIDPHASE-disabled workaround recorded",
+    "No runtime execution by this agent"
+  ],
+  "report_sha256": "d968211645673e63b019895ced1dc0431b03b76fe6339aa3745d34772cd00516"
+}

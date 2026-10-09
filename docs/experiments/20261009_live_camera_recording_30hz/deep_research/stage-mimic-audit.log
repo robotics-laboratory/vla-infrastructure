@@ -1,0 +1,8 @@
+{
+  "stage": "/data/ebulochkin/vla-runtime/live30-20261009/piper-inputs/stage_snapshot.usd",
+  "stage_sha256": "03453f4d22eedb40c77cee68aabab241d0c0bf58b824f9c72afb59bef27b812b",
+  "script_sha256": "0dd3198a2bb76879b35a75b087584fb0dc91703eb7e82fe6fef10ed53bab4dc9",
+  "count": 0,
+  "mimics": [],
+  "conclusion": "Raw metadata preserves unknown API schemas that GetAppliedSchemas omits without extension registration"
+}

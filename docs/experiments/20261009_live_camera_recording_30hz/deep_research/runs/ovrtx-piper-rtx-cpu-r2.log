@@ -1,0 +1,42 @@
+I: Initializing Version 2.75.1-release.7540+gl.d3c5c5b8
+I: Client ID: 5MDC0VBF
+I: ThreadId(02) hub_client::client::Client::new Launching client mode=Shared with_cleaner=false cache_path=None cache_size=None
+I: ThreadId(03) launch self=Launcher { discovery_lock: RwLock { lock: RwLock { inner: File { fd: 11, path: "/tmp/hub-ebulochkin.lock", read: false, write: true } } }, mode: Shared, with_cleaner: false, config_file: "/tmp/hub-ebulochkin-EA4D0A66.config.json" } cmd="hub" "--mode=shared" "--write-config" "/tmp/hub-ebulochkin-EA4D0A66.config.json" "--"
+I: Not using Hub: Hub not found
+{
+  "dataset_admissible": false,
+  "scope": "static scene, no physics, no XR, no encoder",
+  "unique_live_source_frames_verified": false,
+  "versions": {
+    "ovrtx": "0.5.1.385782",
+    "ovstage": "0.2.1.385922"
+  },
+  "stage": "/data/ebulochkin/vla-runtime/live30-20261009/piper-inputs/stage_snapshot.usd",
+  "stage_sha256": "03453f4d22eedb40c77cee68aabab241d0c0bf58b824f9c72afb59bef27b812b",
+  "settings": {
+    "stage": "/data/ebulochkin/vla-runtime/live30-20261009/piper-inputs/stage_snapshot.usd",
+    "camera": [
+      "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+      "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/ZEDCamera/base_link/ZED_XONE_GS/Camera",
+      "/World/RobosynDemo/SceneCamera/base_link/ZED_XONE_GS/Camera"
+    ],
+    "output": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu-r2",
+    "width": 960,
+    "height": 600,
+    "warmup": 60,
+    "frames": 300,
+    "device": 0,
+    "readback": "cpu",
+    "mode": "RealTimePathTracing"
+  },
+  "cuda_device_max_connections": "1",
+  "mean_ms": 17.944961635451506,
+  "wall_hz": 55.725948058001485,
+  "p95_ms": 18.792098,
+  "measured_frames": 299,
+  "total_capture_requests": 360
+}
+2026-10-09T13:00:49Z [327ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.
+2026-10-09T13:00:50Z [839ms] [Warning] [omni.rtx] CPU performance profile is set to powersave. This profile sets the CPU to the lowest frequency reducing performance.
+2026-10-09T13:00:50Z [840ms] [Warning] [omni.rtx] PCIe link generation current (1) and maximum (4) for device 0 don't match.
+2026-10-09T13:00:50Z [840ms] [Warning] [omni.rtx] IOMMU is enabled.

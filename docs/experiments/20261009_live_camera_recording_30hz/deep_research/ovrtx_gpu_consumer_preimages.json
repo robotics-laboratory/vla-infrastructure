@@ -1,0 +1,14 @@
+{
+  "adapter": "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/pynv223_adapter.py",
+  "sha256": {
+    "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/pynv223_adapter.py": "d41b6128ab4886b9fee91e3cf28435adb28aaea34cc8e151e1b689b40fd3d0bb",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/types.py": "5ab31921e0d9544f693d25ef79ac77be5a86cd8577df5e56d3ba8b458caefd8b",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/dlpack.py": "20137c0e53fb9768d92076194f3790512be97604ab1cbfdbf166ba507b57e2f0",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/renderer.py": "d431ac3a02a43c01a5c57c3ff9214a420cfd001f67a3db6b8dd4b306b5b23efd",
+    "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/warp/_src/context.py": "1ef32ace4bb46fffda232f8a099fa36945a14b671e1c0774f1286de89a37ba90",
+    "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/warp/_src/dlpack.py": "52a1d1dab26d150a35bc3ad6753b6216c332409c5bbd6555c05e8e82383a50ef",
+    "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/warp/_src/utils.py": "a8994f2cdb524f273ac69ccc941a3a57e9ac3f69ec835ffd530f1b0d4cfafe49"
+  },
+  "gpu_run": false,
+  "syntax": "AST pass"
+}

@@ -1,0 +1,10 @@
+Using CPython 3.12.13 interpreter at: /data/vla-infrastructure/isaac61_production/env/bin/python
+Resolved 1 package in 447ms
+Downloading pynvvideocodec (25.6MiB)
+ Downloaded pynvvideocodec
+Prepared 1 package in 1.62s
+warning: Failed to hardlink files; falling back to full copy. This may lead to degraded performance.
+         If the cache and target directories are on different filesystems, hardlinking may not be supported.
+         If this is intentional, set `export UV_LINK_MODE=copy` or use `--link-mode=copy` to suppress this warning.
+Installed 1 package in 21ms
+ + pynvvideocodec==2.2.3

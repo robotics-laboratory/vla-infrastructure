@@ -1,0 +1,13 @@
+Warp 1.16.0 initialized:
+   CUDA Toolkit 12.9, Driver 13.0
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 4090" (24 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /home/ebulochkin/.cache/warp/1.16.0
+Traceback (most recent call last):
+  File "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/codec_probe.py", line 97, in <module>
+    encoder.finish()
+  File "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/pynv223_adapter.py", line 94, in finish
+    raise RuntimeError("encoder drain left unacknowledged GPU sources")
+RuntimeError: encoder drain left unacknowledged GPU sources

@@ -1,0 +1,221 @@
+{
+  "schema": "live30_ovphysx_screening_v1",
+  "target_achieved": false,
+  "gpu_run": false,
+  "dataset_admissible": false,
+  "physical": false,
+  "excluded": [
+    "XR",
+    "Quest3",
+    "IK",
+    "cameras",
+    "recorder",
+    "contact_qualification"
+  ],
+  "args": {
+    "stage": "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_v2.usda",
+    "out": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-fixedbase-v3",
+    "fixedbase_manifest": "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_v2.manifest.json",
+    "mode": "cpu",
+    "threads": 0,
+    "steps": 3000,
+    "warmup": 120,
+    "cadence": "batch",
+    "observation": "qv-links-all"
+  },
+  "packages": {
+    "ovphysx": "0.6.3",
+    "ovstage": "0.2.0.377349",
+    "warp-lang": "1.16.0",
+    "numpy": "2.5.1"
+  },
+  "stage_sha256": "548320594048c8f96b5a1b1de68eeb0a3803214bae9dc53db816e1bb399ed8df",
+  "fixedbase_adaptation": {
+    "schema": "live30_ovphysx_fixedbase_overlay_v1",
+    "source": "/data/ebulochkin/vla-runtime/live30-20261009/piper-inputs/stage_snapshot.usd",
+    "source_sha256": "03453f4d22eedb40c77cee68aabab241d0c0bf58b824f9c72afb59bef27b812b",
+    "overlay": "/tmp/live30-deep-ovphysx-fixedbase-v2.usda",
+    "overlay_sha256": "548320594048c8f96b5a1b1de68eeb0a3803214bae9dc53db816e1bb399ed8df",
+    "overlay_only": true,
+    "sdk_source_commit": "da950a3537927784951853c66618036f332ca0ce",
+    "edits": [
+      {
+        "old_root": "/World/LeftPiper/Geometry/world/base_link",
+        "new_root": "/World/LeftPiper/Physics/world_to_base_link",
+        "original_body0": [
+          "/World/LeftPiper"
+        ],
+        "original_body1": [
+          "/World/LeftPiper/Geometry/world/base_link"
+        ],
+        "derived_body0": [],
+        "derived_body1": [
+          "/World/LeftPiper/Geometry/world/base_link"
+        ],
+        "articulation_attributes": {
+          "physxArticulation:enabledSelfCollisions": "True",
+          "physxArticulation:solverPositionIterationCount": "8",
+          "physxArticulation:solverVelocityIterationCount": "2"
+        }
+      },
+      {
+        "old_root": "/World/RightPiper/Geometry/world/base_link",
+        "new_root": "/World/RightPiper/Physics/world_to_base_link",
+        "original_body0": [
+          "/World/RightPiper"
+        ],
+        "original_body1": [
+          "/World/RightPiper/Geometry/world/base_link"
+        ],
+        "derived_body0": [],
+        "derived_body1": [
+          "/World/RightPiper/Geometry/world/base_link"
+        ],
+        "articulation_attributes": {
+          "physxArticulation:enabledSelfCollisions": "True",
+          "physxArticulation:solverPositionIterationCount": "8",
+          "physxArticulation:solverVelocityIterationCount": "2"
+        }
+      }
+    ],
+    "initial_world_transforms_unchanged": 1475,
+    "preserved_stage_metadata": {
+      "metersPerUnit": "1.0",
+      "upAxis": "Z",
+      "kilogramsPerUnit": "1.0",
+      "timeCodesPerSecond": "60.0",
+      "framesPerSecond": "24.0",
+      "startTimeCode": "0.0",
+      "endTimeCode": "100.0",
+      "defaultPrim": ""
+    },
+    "articulation_roots": [
+      "/World/LeftPiper/Physics/world_to_base_link",
+      "/World/RightPiper/Physics/world_to_base_link"
+    ],
+    "fixed_base_runtime_verified": false,
+    "canonical_physics_parity_verified": false,
+    "physical": false,
+    "scope": "Root-authoring adaptation to fixed-base intent; no new constraint, no geometry/drive/source edits"
+  },
+  "topology": {
+    "roots": [
+      "/World/LeftPiper/Physics/world_to_base_link",
+      "/World/RightPiper/Physics/world_to_base_link"
+    ],
+    "dof_names": [
+      "joint1",
+      "joint2",
+      "joint3",
+      "joint4",
+      "joint5",
+      "joint6",
+      "gripper",
+      "gripper_joint1",
+      "gripper_joint2"
+    ],
+    "body_names": [
+      "base_link",
+      "link1",
+      "link2",
+      "link3",
+      "link4",
+      "link5",
+      "link6",
+      "flange_link",
+      "gripper_base",
+      "gripper_link",
+      "gripper_link1",
+      "gripper_link2"
+    ],
+    "fixed_base": true
+  },
+  "force_drive_types_verified": true,
+  "initial_q": [
+    [
+      4.753407445488942e-15,
+      1.3726243025638822e-15,
+      -1.1159892014135902e-14,
+      4.341933916899264e-14,
+      -3.738292227856155e-13,
+      1.7170463662008473e-10,
+      2.289161067700726e-16,
+      3.93511756513476e-09,
+      -3.9342817892418225e-09
+    ],
+    [
+      4.753407445488942e-15,
+      1.3726243025638822e-15,
+      -1.1159892014135902e-14,
+      4.341933916899264e-14,
+      -3.738292227856155e-13,
+      1.7170463662008473e-10,
+      2.289161067700726e-16,
+      3.93511756513476e-09,
+      -3.9342817892418225e-09
+    ]
+  ],
+  "drive_overrides": "arm400/40/100/5; gripper2000/100/10/3 in native rad/metre units",
+  "body_inventory_verified": true,
+  "body_paths": [
+    "/World/RobosynDemo/LeftCube",
+    "/World/RobosynDemo/RightCube",
+    "/World/RobosynDemo/ValidationProbe",
+    "/World/LeftPiper/Geometry/world/base_link",
+    "/World/LeftPiper/Geometry/world/base_link/link1",
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2",
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3",
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4",
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5",
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6",
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link",
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base",
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link",
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+    "/World/LeftPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2",
+    "/World/RightPiper/Geometry/world/base_link",
+    "/World/RightPiper/Geometry/world/base_link/link1",
+    "/World/RightPiper/Geometry/world/base_link/link1/link2",
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3",
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4",
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5",
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6",
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link",
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base",
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link",
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link1",
+    "/World/RightPiper/Geometry/world/base_link/link1/link2/link3/link4/link5/link6/flange_link/gripper_base/gripper_link2"
+  ],
+  "status": "completed_screening_only",
+  "controls": 3000,
+  "physics_steps": 12000,
+  "wall_seconds": 3.271546363,
+  "wall_controls_hz": 916.9975501276427,
+  "native_binding_cuda": false,
+  "buckets": {
+    "target": {
+      "mean_ms": 0.012065359666666666,
+      "p95_ms": 0.015757499999999987,
+      "p99_ms": 0.02150033999999999,
+      "max_ms": 1.299005
+    },
+    "physics4": {
+      "mean_ms": 1.0054936913333332,
+      "p95_ms": 1.3553567,
+      "p99_ms": 1.4370349299999996,
+      "max_ms": 1.806755
+    },
+    "read_state": {
+      "mean_ms": 0.07107933799999999,
+      "p95_ms": 0.09879255,
+      "p99_ms": 0.11377124,
+      "max_ms": 0.163089
+    },
+    "tick": {
+      "mean_ms": 1.088638389,
+      "p95_ms": 1.4414884999999997,
+      "p99_ms": 1.5455667999999991,
+      "max_ms": 2.359987
+    }
+  }
+}

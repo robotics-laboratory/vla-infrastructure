@@ -1,0 +1,23 @@
+Using CPython 3.12.13 interpreter at: /data/vla-infrastructure/isaac61_production/env/bin/python
+Creating virtual environment at: /data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx
+Activate with: source /data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/bin/activate
+Using Python 3.12.13 environment at: /data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx
+Resolved 5 packages in 502ms
+Downloading ovstage (67.6MiB)
+Downloading warp-lang (155.5MiB)
+Downloading ovphysx (132.5MiB)
+Downloading numpy (15.9MiB)
+ Downloaded numpy
+ Downloaded ovstage
+ Downloaded ovphysx
+ Downloaded warp-lang
+Prepared 5 packages in 44.49s
+warning: Failed to hardlink files; falling back to full copy. This may lead to degraded performance.
+         If the cache and target directories are on different filesystems, hardlinking may not be supported.
+         If this is intentional, set `export UV_LINK_MODE=copy` or use `--link-mode=copy` to suppress this warning.
+Installed 5 packages in 165ms
+ + numpy==2.5.1
+ + ovphysx==0.6.3
+ + ovstage==0.2.0.377349
+ + packaging==23.2
+ + warp-lang==1.16.0

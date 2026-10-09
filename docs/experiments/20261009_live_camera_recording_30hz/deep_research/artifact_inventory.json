@@ -1,0 +1,3563 @@
+{
+  "schema": "live30_deep_artifact_inventory_v1",
+  "created_utc": "2026-10-09T14:47:00.650194+00:00",
+  "owner": "vr.performance",
+  "kind": "experiment",
+  "gate_bindings": [],
+  "dataset_admissible": false,
+  "branch": "research/live-camera-recording-30hz",
+  "master_base": "beaedfd1116577fd4d8026232cfb96cba0b030fa",
+  "preservation_base": "d5566834d29ef8bb56e4fb62bb324e23e0869100",
+  "bulk_root": "/data/ebulochkin/vla-runtime/live30-deep-20261009",
+  "artifacts": [
+    {
+      "id": "experiment.live30.deep.codec-cpu-gop50.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-cpu-gop50/result.json",
+      "bytes": 1667,
+      "sha256": "52f261c8c30bf5cdce208525e931daead2946b72fe3c55847df22f7cc58c0c83",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-cpu-gop50-r2.decode-role0.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-cpu-gop50-r2/decode-role0.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-cpu-gop50-r2.decode-role1.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-cpu-gop50-r2/decode-role1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-cpu-gop50-r2.decode-role2.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-cpu-gop50-r2/decode-role2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-cpu-gop50-r2.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-cpu-gop50-r2/result.json",
+      "bytes": 44992,
+      "sha256": "9983d05eec7de609aee5e463aaeef948da7a1a7f2214686e2ef9863fc46f81fa",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-cpu-gop50-r2.role0.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-cpu-gop50-r2/role0/packets.jsonl",
+      "bytes": 32699,
+      "sha256": "6f4a3d1f50b8d73267d3500feb04aa831f9e4d83c43b638a9d93e352a2c7b039",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-cpu-gop50-r2.role0.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-cpu-gop50-r2/role0/stream.h264",
+      "bytes": 197769,
+      "sha256": "c139cb6045975ed67d8ba98c3c81e7f5aa8560cdaa626864246c0a39d18ef338",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-cpu-gop50-r2.role1.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-cpu-gop50-r2/role1/packets.jsonl",
+      "bytes": 32701,
+      "sha256": "2ca12f636450752bd290bf5c022edda70a73363f6551b04608a97707d6a83b44",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-cpu-gop50-r2.role1.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-cpu-gop50-r2/role1/stream.h264",
+      "bytes": 203625,
+      "sha256": "4a99a22ab73e38be1940ba8f2e2d0cc92a48e8e179fb401e5d45c7edb5a036be",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-cpu-gop50-r2.role2.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-cpu-gop50-r2/role2/packets.jsonl",
+      "bytes": 32684,
+      "sha256": "d44a156e85b5c4caf63980858ddb05e4ab86c0262b8cfd00aaa96287da1bd9c4",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-cpu-gop50-r2.role2.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-cpu-gop50-r2/role2/stream.h264",
+      "bytes": 181316,
+      "sha256": "10fb194a2e31a1b758ae1a35c529a2c4a55cb89811d752660bd3fdcb82b24c12",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-cpu-gop50-r2.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-cpu-gop50-r2.launch.json",
+      "bytes": 9076,
+      "sha256": "163b444eb0f8b360d18ac491a5def8c215709b0b321a232d9a2d79c2547bb707",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-cpu-gop50-r2.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-cpu-gop50-r2.log",
+      "bytes": 44992,
+      "sha256": "9983d05eec7de609aee5e463aaeef948da7a1a7f2214686e2ef9863fc46f81fa",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-cpu-gop50.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-cpu-gop50.launch.json",
+      "bytes": 5278,
+      "sha256": "edb6dcc2b708f1c426640817557a995bd6cfd633e519f01223c72e2b7002c891",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-cpu-gop50.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-cpu-gop50.log",
+      "bytes": 1703,
+      "sha256": "1d5b298950e3915d5af7cc3f55b43c9b9d54b0da608ba7419403fa8f0cb2ee3a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50.role0.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50/role0/packets.jsonl",
+      "bytes": 1355,
+      "sha256": "9dcbaa12a52cde62769e13985e763528dcc3c95b877b3f5c112b7eb5ee2f5fda",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50.role0.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50/role0/stream.h264",
+      "bytes": 7614,
+      "sha256": "3ff171745734d16d6cc8b9be012b794f1b471c61f40710218458eed2df591cd0",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50.role1.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50/role1/packets.jsonl",
+      "bytes": 1355,
+      "sha256": "1e98fa29335789e4b3e0923343dced0c7c8b503b849b927a5965cd4369f9f8ef",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50.role1.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50/role1/stream.h264",
+      "bytes": 7586,
+      "sha256": "c088bdaaa4ed2ff8ebddb3669f8820e046c632f4ff9f36febfdaa56a532200f1",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50.role2.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50/role2/packets.jsonl",
+      "bytes": 752,
+      "sha256": "e7ba9bfc8fded0a1c622bc48e76ec370f42604b45478f4996cf79c3380ab8548",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50.role2.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50/role2/stream.h264",
+      "bytes": 3798,
+      "sha256": "c6a62263116111f6be6a3d1b3962f637dc58b62db34ee5abc314b4b84c854237",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50-r2.decode-role0.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50-r2/decode-role0.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50-r2.decode-role1.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50-r2/decode-role1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50-r2.decode-role2.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50-r2/decode-role2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50-r2.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50-r2/result.json",
+      "bytes": 962,
+      "sha256": "44df43016edcf85f7d9b24ffb5639739c55d9140d7662b2637b884bd1021104b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50-r2.role0.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50-r2/role0/packets.jsonl",
+      "bytes": 53799,
+      "sha256": "eaa3a98cb5929c0c139171b8cb074ae5c7ca0b546c09a15ea94f58d9fdf5328b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50-r2.role0.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50-r2/role0/stream.h264",
+      "bytes": 197769,
+      "sha256": "c139cb6045975ed67d8ba98c3c81e7f5aa8560cdaa626864246c0a39d18ef338",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50-r2.role1.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50-r2/role1/packets.jsonl",
+      "bytes": 54751,
+      "sha256": "0baeba7c55202c14c319f92524cf0bd431072f6737d7dd9b3fe23051e3055e81",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50-r2.role1.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50-r2/role1/stream.h264",
+      "bytes": 203625,
+      "sha256": "4a99a22ab73e38be1940ba8f2e2d0cc92a48e8e179fb401e5d45c7edb5a036be",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50-r2.role2.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50-r2/role2/packets.jsonl",
+      "bytes": 54734,
+      "sha256": "2271b1150523b5b60d1005027c9791c3bdad5569664f15339e3f8b519a4c5e3e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50-r2.role2.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50-r2/role2/stream.h264",
+      "bytes": 181316,
+      "sha256": "10fb194a2e31a1b758ae1a35c529a2c4a55cb89811d752660bd3fdcb82b24c12",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50-r2.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50-r2.launch.json",
+      "bytes": 129617,
+      "sha256": "9a77cabc612237b3309d5ef36f081b474b3c1c0e8e60e403f16b7ae91c84b488",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50-r2.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50-r2.log",
+      "bytes": 1195,
+      "sha256": "6621e8b3c5e91a7180db9df02f6b30a584ff7791952d89ccbb41e85313463e60",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50-r2.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50-r2.process.json",
+      "bytes": 346,
+      "sha256": "8aacc835a30064e182ce777fa9ec6a84efec4bc8e4d129fb6ed7f84f3e2c52e8",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50.launch.json",
+      "bytes": 112489,
+      "sha256": "b865303a270004ec076ebd204726f2ba855603c66971dc9ca84cc71606ea2fe9",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50.log",
+      "bytes": 721,
+      "sha256": "6bac679b4b0427548ec65842569517ddbc75b95cea011b08c60005ce907e7c68",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.codec-gpu-gop50.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/codec-gpu-gop50.process.json",
+      "bytes": 257,
+      "sha256": "2fdb0604fb81fca5458218e16eabe780d20f93f3453b8b2037d3631d9a737887",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll/result.json",
+      "bytes": 2966,
+      "sha256": "85da1b8eac85236595737744fa833ec7547880464bfa5c3df521a31c8c76bdda",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll-r2.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r2/packets.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll-r2.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r2/performance.jsonl",
+      "bytes": 1278,
+      "sha256": "3432cc813fb9d757f1da18ede22d9cca49e1f665858f2eca681d24322fb6cc37",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll-r2.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r2/result.json",
+      "bytes": 4806,
+      "sha256": "2744c12dc3bab74eb999c123caa3ba38a5632947eff3ce99a90c664ba78b3860",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll-r2.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r2/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll-r2.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r2.launch.json",
+      "bytes": 12265,
+      "sha256": "1fbe29f3942336bf8f7b4cb6c03bbf741dee498a99288f5b111519dcd4f1fe86",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll-r2.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r2.log",
+      "bytes": 24300,
+      "sha256": "a6fe2f75a75607e49d21e6e587fa67c44d94bc51ff8c9cb623f83c390ead1f63",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll-r3.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r3/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll-r3.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r3.launch.json",
+      "bytes": 12321,
+      "sha256": "07bdaef7239404e0ac8281359bdbbf698b920183d33aee8d87eb211ce7a59d79",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll-r3.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r3.log",
+      "bytes": 91746,
+      "sha256": "0115fdbf3669a21325881c29eeefbc5b6778b48dcdd33744f5e8b5e48ac8e818",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll-r4.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r4.launch.json",
+      "bytes": 19910,
+      "sha256": "0cdc0b0c0ba8aef846c3177f97ae231ce774288f32fee3d7fb186ede822215cf",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll-r5-contention.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r5-contention/result.json",
+      "bytes": 4948,
+      "sha256": "5f5fde085b105e8f3f24c6054bbdc24118456e10274e38147da7b7fcdae8f18e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll-r5-contention.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r5-contention/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll-r5-contention.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r5-contention.launch.json",
+      "bytes": 19962,
+      "sha256": "20eb6c14ad4c4a8c97e9bc2470cf0134b5f10346d8abad98565dcf2f42dc364e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll-r5-contention.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r5-contention.log",
+      "bytes": 19791,
+      "sha256": "998f52c8f70d222be724de421e600ec44b3c40d6848287b460f30e01afe9e34f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-baseline-poll.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll.log",
+      "bytes": 11380,
+      "sha256": "1cc7e46a9ce8c12d848fdacf611a9ee8624c128ba040aac35f40628210354f15",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "c88497180605446f736f0744df203849dc4ee177993b8fad34ef8e0c122178c2",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/episode/manifest.json",
+      "bytes": 7016379,
+      "sha256": "8111f1b2769ece485bf383a211d8d468c5c8fc9ea3fdcd9ff0f8113e4a8dedd4",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/episode/recording_state.json",
+      "bytes": 884,
+      "sha256": "48aa13229c3ffdc4766c031f0418f5839a9e6aa81d5dbc9667557d5452241d7f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/episode/result.json",
+      "bytes": 884,
+      "sha256": "48aa13229c3ffdc4766c031f0418f5839a9e6aa81d5dbc9667557d5452241d7f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/episode/session.hdf5",
+      "bytes": 4421776,
+      "sha256": "0a403fe0f84dfa9cd07f0e04301210d76b693ccdfa99e1b55c90b8f26f5c6dd6",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "fa06c642fb34fe4c684db78f43626e6a1f18c6c6e01fa833b19682fbd75b2c0d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/episode/stage_snapshot.usd",
+      "bytes": 12080705,
+      "sha256": "7f5023f17efdbf45d5d6457c4c75135213bad1596389d4c21cc2f1a07c10603f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/episode/terminal_successor.npz",
+      "bytes": 11962,
+      "sha256": "f7bb3908576a92616be2bcf2e627bad6aff900fb2fe15c12776c34c3c841968e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/packets.json",
+      "bytes": 75264,
+      "sha256": "632bdf87e382038513a020a4fc694c0508e477a2cb8459933b157a5a7f3ff78c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/performance.jsonl",
+      "bytes": 338742,
+      "sha256": "43a0e1aff51798a9b492807b2097567ab38f423c7b97ed21599c957ea1813363",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/result.json",
+      "bytes": 8533,
+      "sha256": "00b5b00e7bed6f777a0fdb6d7c726aef6fe376cf5e3acb652c80d2682c3ff9e5",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.view_0.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/view_0.h264",
+      "bytes": 14670807,
+      "sha256": "a31666ba63892162fe968f14ec8f2c9fe5fa22a56a7c2cb3061e6bede041dffc",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.view_1.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/view_1.h264",
+      "bytes": 14670949,
+      "sha256": "ea770f72493b73256bdeb74499051efe7a5450d5c116f8c7caf1a7353668c9ca",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.view_2.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original/view_2.h264",
+      "bytes": 16094466,
+      "sha256": "2b513c99f7344f6ccfeedd81bb054ac099e5811b7200238904406c793c426aa8",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original.launch.json",
+      "bytes": 83447,
+      "sha256": "65857fcf704a18cbd1614d2c32095a9d746487127cbff6ecebe3fd40870274de",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original.log",
+      "bytes": 23112,
+      "sha256": "c30aaf8b01f744e87c4f7ab600c4645268b5776404bc5cb89543f9bf9f022fb0",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-original.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-original.process.json",
+      "bytes": 2036,
+      "sha256": "2232ce657f90985b17fb179184cd848c80860def757417673723a8336ba14b79",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "a9a80e4b7cb8159353fb8441c539336ee0033e7600c864fed0f7548c128f2500",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/episode/manifest.json",
+      "bytes": 7016397,
+      "sha256": "cfc3d7ba208851b162106e27709850b296bec67a673ace9bd303742d282a1ef7",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/episode/recording_state.json",
+      "bytes": 905,
+      "sha256": "ee2c057a3b510238c981abc85335b21b356d4135689cf518d075818414b4ce75",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/episode/result.json",
+      "bytes": 905,
+      "sha256": "ee2c057a3b510238c981abc85335b21b356d4135689cf518d075818414b4ce75",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/episode/session.hdf5",
+      "bytes": 4421776,
+      "sha256": "a8788a8607c7fbfba7c7546cc5c92d8ab099286955027462144007d2d67f1bc4",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "f80317a86b84d92ceaed71fc89f2bb03c3bc15cdce3b8c88b31c3d84b70dfcbe",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/episode/stage_snapshot.usd",
+      "bytes": 12080653,
+      "sha256": "1b441b2568720220083415b9d6bbc17bf0b27a02933285629d97493a0b67076e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/episode/terminal_successor.npz",
+      "bytes": 11969,
+      "sha256": "b9fcde1e907353c5a52261dacd7a6ba2e4c24691ae13779d68ec9e36fbbcf26f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/packets.json",
+      "bytes": 75265,
+      "sha256": "d471286e9a5e71d0f3dc3562d752d80f8f188fed5376d6ba5f4533185f1ff934",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/performance.jsonl",
+      "bytes": 338986,
+      "sha256": "6be6ddc31e2902d516cb1917df733da71da1714de527998adbbff39fa8e38005",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/result.json",
+      "bytes": 8537,
+      "sha256": "a1bbaa53b05077c987e3e35a1e573859c1333ac612f9266cdd226e2e5e0a7c49",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.view_0.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/view_0.h264",
+      "bytes": 14147584,
+      "sha256": "10804a84e01c07a7188810d7b6370866a5ec1d131a7e11a83aa31a0dfe73a9fd",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.view_1.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/view_1.h264",
+      "bytes": 14234017,
+      "sha256": "1e5840548505e9a1ea08a4e068d53744bcd7a3d112013a2134c271da2b3985dc",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.view_2.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/view_2.h264",
+      "bytes": 16129062,
+      "sha256": "4806fe4fefe78a9ddaea8d8deb94e116b55a53840a49ea7cb0a451293d0e6eb6",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention.launch.json",
+      "bytes": 19962,
+      "sha256": "0e1dda686f9a9ebfaeb5732065e7731444167e46c2da64ad511ec7e661907540",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-poll-contention.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention.log",
+      "bytes": 22986,
+      "sha256": "1c043d0c9adb4dac3b841bb927b103443e8cbee3cfd30949c265910a6289f5f1",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-original.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-original/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "9448409534bb8f8665d35f2dba6973f20a29d7dd3dd86f3377f0b6771ee15aed",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-original.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-original/episode/manifest.json",
+      "bytes": 7223989,
+      "sha256": "2cdb5e688bf8eb0fe961da45eb24c37b56aab9bfbebda405a63bbebcd5fddb18",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-original.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-original/episode/recording_state.json",
+      "bytes": 503,
+      "sha256": "03428418dd96e6c24b5a8f500bd7f3bff94dc88ee0c3e94b37e4c775dca3cded",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-original.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-original/episode/result.json",
+      "bytes": 503,
+      "sha256": "03428418dd96e6c24b5a8f500bd7f3bff94dc88ee0c3e94b37e4c775dca3cded",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-original.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-original/episode/session.hdf5",
+      "bytes": 67848,
+      "sha256": "d3892bc51c1741c8ba8f8751aa034d8f3d81498aa3b78d1105f5684c83f5a8fd",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-original.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-original/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "d2d74f035238e2c143849538d870df70b58ee1ad2ae79c8c7a685d7bc6c2a63b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-original.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-original/episode/stage_snapshot.usd",
+      "bytes": 12085689,
+      "sha256": "101c683aa848c86e9edaeafda560870d8bc16388930f11579c463bc6ac8b5841",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-original.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-original/packets.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-original.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-original/performance.jsonl",
+      "bytes": 1283,
+      "sha256": "3ff8b5df2dd8dd76c9a209f7fc1934caca5f5e32e2db3cfdc2c53e1407492f1b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-original.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-original/result.json",
+      "bytes": 5273,
+      "sha256": "0d8bbd3d58eb6fa4efee65c112dfea486260eee642870842d200a15be9c77537",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-original.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-original/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-original.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-original.launch.json",
+      "bytes": 174419,
+      "sha256": "974159824f7b8fcd2bae82a4023dd3a38dda8faead72a5adfa32e8af20ea84d3",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-original.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-original.log",
+      "bytes": 39800,
+      "sha256": "caaab2f034bb1515a90b763c608bd441e9cc4042836dd0f350c424f778be24ae",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-original.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-original.process.json",
+      "bytes": 1798,
+      "sha256": "3fb3232cc8f8cbda764a105812cd1293a0f482287893a111b4cc536785e10f1a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.atlas.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/atlas.h264",
+      "bytes": 11324692,
+      "sha256": "83a2d2ecbc97d7e64c4feb21b643b79700f210d2cd3a44fbf9923b4d165d1dba",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.atlas_manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/atlas_manifest.json",
+      "bytes": 9678,
+      "sha256": "82775c48f3797ab2f46af2b3e627a4c8f3c2398866cb9a176b85555889d19e51",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.atlas_packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/atlas_packets.jsonl",
+      "bytes": 248722,
+      "sha256": "191178259744101fdb5b92b385ab4c5a04260eaec9d989f57710c4d0b571657d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.atlas_result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/atlas_result.json",
+      "bytes": 10484,
+      "sha256": "5e8d4d95541b1c4377bf84b900fefee8e46827aae1c4e7139a58e0cc66198ddc",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "9d63495ad006534c39a6e5d66ca7f11a1a93f59a7f59bc75391d6f2d24f65d69",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/episode/manifest.json",
+      "bytes": 7224397,
+      "sha256": "a3b286068f2d74f73280895862c2c5bda9ba98193a812de4ebfc246462b2be21",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/episode/recording_state.json",
+      "bytes": 911,
+      "sha256": "dfdc64dca61eb1ef8cee59baed4c16f7d05bfd4782372d4417dbb67f1e595778",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/episode/result.json",
+      "bytes": 911,
+      "sha256": "dfdc64dca61eb1ef8cee59baed4c16f7d05bfd4782372d4417dbb67f1e595778",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/episode/session.hdf5",
+      "bytes": 4421776,
+      "sha256": "e5138e3ac03df603c83ea758292437f3261044fab2e773731aa3a9065decfafc",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "c916cefa9e2fa830aa081c4e6aca37c47cdcdb4c1e3262aafb96a5d97f71d168",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/episode/stage_snapshot.usd",
+      "bytes": 12085524,
+      "sha256": "f606d0a3c25d19669fea97ad2eade88f0eec5abbc2794e728fc7a1c7adf50c42",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/episode/terminal_successor.npz",
+      "bytes": 11971,
+      "sha256": "4167e11a0d885856eb20279f10b5dffe026f1ffd3d59b9720c4f758118c3ba3f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/packets.json",
+      "bytes": 318233,
+      "sha256": "cde71f7f9018d90544bf48e61ebe6ea8f0fee51d99d06d73b36047dc5968418d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/performance.jsonl",
+      "bytes": 339289,
+      "sha256": "999e373fa5d6a5e4bdfd2dcfc605294e447ae32e5ad0c8749216d7df8b70fb66",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/result.json",
+      "bytes": 19661,
+      "sha256": "2b1cbe14b7921a9fb90dd441144fa4086ace15d297c047777257fd326e7c366d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored.launch.json",
+      "bytes": 191750,
+      "sha256": "14176c6b3153dc9f73fe3d9f616a08a4fe0aac215ce894b3b7ce6e6ce5d96462",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored.log",
+      "bytes": 39331,
+      "sha256": "2252568102ef666acc45ada7f9f6b598f46413562fea0e3f2234955bc3322099",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-restored.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-restored.process.json",
+      "bytes": 2653,
+      "sha256": "5590d463fc592ba480814738dab734cf25a028aa3baf896d3bbc2e433b63da70",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-signature.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-signature/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "01da5bd48f6f224b540c59bbcc2ac536396e67e5c8eabad7df273d4c90e34dd5",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-signature.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-signature/episode/manifest.json",
+      "bytes": 7223991,
+      "sha256": "390e55958375dd8708d606f562be79428b1af1e83b9cf3ea58c927bab2623ad1",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-signature.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-signature/episode/recording_state.json",
+      "bytes": 505,
+      "sha256": "5e069443144573da5fb0ea7d8b5b87d14c6d866acf905c97aa84e0cffe735963",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-signature.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-signature/episode/result.json",
+      "bytes": 505,
+      "sha256": "5e069443144573da5fb0ea7d8b5b87d14c6d866acf905c97aa84e0cffe735963",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-signature.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-signature/episode/session.hdf5",
+      "bytes": 67848,
+      "sha256": "12216b69eb18912182a3bf621ad3645b9f7a3e71665c6f6fb3927b09558a04cd",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-signature.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-signature/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "523f25ab65f6c5e5b7a782bbe7f6484b0169917ada23171bd9a42a596f5a86b8",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-signature.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-signature/episode/stage_snapshot.usd",
+      "bytes": 12085673,
+      "sha256": "da5505efdbfc05cc907a1255bc52f0d4907767c89e15baadf1b2bb2d5a1e5ea2",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-signature.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-signature/packets.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-signature.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-signature/performance.jsonl",
+      "bytes": 1282,
+      "sha256": "e8dbc61ce5097ab12e90d3f91f87c9df9f7327937e54e414b4ed6c6ecc74fba1",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-signature.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-signature/result.json",
+      "bytes": 6311,
+      "sha256": "61a2fce7de66f8bfeb5f314717b154f5ad4b50dbf836f2dfb9dc40cd5761eae6",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-signature.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-signature/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-signature.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-signature.launch.json",
+      "bytes": 190669,
+      "sha256": "3f8bad7676107eb1911ccfbf9e167045a9b5cf90adf4bc5ca5318f4fd5f6d15d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-signature.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-signature.log",
+      "bytes": 40848,
+      "sha256": "b4950b5f208d0063208ed47ba99d6bed3902713707d853ac7eb2f683bae35997",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-atlas-signature.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-atlas-signature.process.json",
+      "bytes": 1710,
+      "sha256": "2618cc50fcb2478b66bb3810a66bda0619363d04801de7186bf1416968d7901f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "a5a7a8c5559b36dfce81d60ccb2681ab2e6cc8b51d7fde62c258d63829e8b12b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy/episode/manifest.json",
+      "bytes": 7016403,
+      "sha256": "008cb86182df4789c155bb8e8d152262c6591cce8a57a9beab287f0bfa7abcd8",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy/episode/recording_state.json",
+      "bytes": 908,
+      "sha256": "7740830271508f931f27a1eb0dadc81d60bd90e6f0a0e44a0ef0365ac50be3e8",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy/episode/result.json",
+      "bytes": 908,
+      "sha256": "7740830271508f931f27a1eb0dadc81d60bd90e6f0a0e44a0ef0365ac50be3e8",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy/episode/session.hdf5",
+      "bytes": 4421776,
+      "sha256": "32f5955b50a49568035d64a166c989fc1523c08483851bd71875b4e3c716192c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "948e37247e462ccfc3d99d52575ea087297019f8dad38152a3b92bc3c3eea4ad",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy/episode/stage_snapshot.usd",
+      "bytes": 12080819,
+      "sha256": "e1dbbf24143dabe21f2858266229496e009f01c6378095d4e70fd1886907bb4e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy/episode/terminal_successor.npz",
+      "bytes": 11970,
+      "sha256": "12f5fb691890c384ec68c67543153dff536729b6680ce6ed9fcb15fe21b5231e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy/packets.json",
+      "bytes": 75252,
+      "sha256": "a9e717cb6f49efe4410e99437689ed935df950a68b1ee59a75271d2c58bdd754",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy/performance.jsonl",
+      "bytes": 339119,
+      "sha256": "26d8b5d4e8d447cef4b4db11cf920a56b03dbe9c79d69b8b178b3aab2826e692",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy/result.json",
+      "bytes": 8908,
+      "sha256": "151c8aceb0ee5911d69ae0ccbbb057d301c737f42de1b642ac2ad2a7354928c4",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.view_0.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy/view_0.h264",
+      "bytes": 14641167,
+      "sha256": "e4d48bd738de7b48f511b06977878b5d29b24cdb04d8ef91de4509c446121e6e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.view_1.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy/view_1.h264",
+      "bytes": 14350704,
+      "sha256": "de1c3950167d691c93a39f19cb99d256519110f05ab59a2d42b6c5cc0427b3de",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.view_2.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy/view_2.h264",
+      "bytes": 16059925,
+      "sha256": "8aa63f861f1a2a4b9194bf67ba93139a6298e18cd387332c12f5f532ebb331e7",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy.launch.json",
+      "bytes": 167894,
+      "sha256": "808709fd95b4095105a95c7d3a74a48f0f1217017592039c346a5dd6b5fc82bb",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy.log",
+      "bytes": 39061,
+      "sha256": "3e49f65deb595982d75344760aaba7a7b223316ec66cf9b6b364c84660d0736a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-implicit-lazy.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-implicit-lazy.process.json",
+      "bytes": 2583,
+      "sha256": "fc751ed0b6930a612aae02fd70a9dc53af9dbc91c1dc25f933c18189712d82d8",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "97371b35d419d48bd1e9c4531a1c49e9ef14da63f038671c2e436287c0a95dba",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/episode/manifest.json",
+      "bytes": 7016397,
+      "sha256": "74e219b9d277fd30d9cab6177db6414c157fdbd6d2a9d5314489f328666e261a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/episode/recording_state.json",
+      "bytes": 902,
+      "sha256": "505a23f95c3ac67ebe3aec53eecf8f7eb185342c2a77afbda9b5ec4ae2090e8e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/episode/result.json",
+      "bytes": 902,
+      "sha256": "505a23f95c3ac67ebe3aec53eecf8f7eb185342c2a77afbda9b5ec4ae2090e8e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/episode/session.hdf5",
+      "bytes": 1325584,
+      "sha256": "999b927bc4398738ebfaebd065719d58760f6e356c1cd7f70d4b761faebe1f9b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "372a05606c607e1e4e1409c87a09720fb6270d7f550dabcec1a6bbdfdb80c61c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/episode/stage_snapshot.usd",
+      "bytes": 12080751,
+      "sha256": "e3afe5a8fe49629416da986574d42936a9dadd2e31bef36359ef949d64650e6c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/episode/terminal_successor.npz",
+      "bytes": 11984,
+      "sha256": "9a783c9178d050957b2b2423200c2cf37eb3a347f5413e8e1526d0df2d66520c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.media.decode-role0.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/media/decode-role0.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.media.decode-role1.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/media/decode-role1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.media.decode-role2.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/media/decode-role2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.media.role0.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/media/role0/packets.jsonl",
+      "bytes": 31227,
+      "sha256": "ebef3fd53a1aff8fcc465ed6adf09c1b85789102c38fe343c2cb3fd340eeb4ef",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.media.role0.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/media/role0/stream.h264",
+      "bytes": 8197636,
+      "sha256": "2214d8b697e37b5f9df59cdd9630faa9af8b1617eb10787ba49ce6c5d712e6c1",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.media.role1.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/media/role1/packets.jsonl",
+      "bytes": 31228,
+      "sha256": "127e69cd52448674453fbe288d6824cb4047f2616b3f6f3b44e14eb79916fb21",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.media.role1.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/media/role1/stream.h264",
+      "bytes": 8170670,
+      "sha256": "74d7a7b10e2d60b969df092368faba35f01b64c85275a90a160eb0e73cf1c805",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.media.role2.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/media/role2/packets.jsonl",
+      "bytes": 31263,
+      "sha256": "9e57f905936b101c03226bf41bbaabd710744be67109d13e55279dcd1760c8d7",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.media.role2.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/media/role2/stream.h264",
+      "bytes": 8270013,
+      "sha256": "bfa91eba9573cb3f0aaa9342c2ced800b02ab71d0308ee9427ea8600241342f3",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.mirror.usda",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/mirror.usda",
+      "bytes": 9063,
+      "sha256": "4e2bafbf3c8b7195ef6253acdaf57b12812f73fb9182b28479c509c54366550a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.producer.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/producer.json",
+      "bytes": 1738,
+      "sha256": "5b7439e920b4eac3e891efe65061e362d9c62968ac7432a765c119c485f95bb2",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.seed.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/seed.json",
+      "bytes": 6690,
+      "sha256": "7dac3fe142c398b04dee56232151b470081f330700c37ca7644359925aace20f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.source-manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/source-manifest.json",
+      "bytes": 7015770,
+      "sha256": "1af4d56daeefa9d2a2dadedab6b7c72fdb165d208972272ae91a6bab7f613eeb",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.worker-rows.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/worker-rows.jsonl",
+      "bytes": 315413,
+      "sha256": "9a8d3340c26f741ad6a46bb6c7b7098079a1fbeb785e51cf1adaee86ca846248",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.worker.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/worker.json",
+      "bytes": 1231,
+      "sha256": "6bfb2bf657785ac75e69821ddd2e402e9a623c002f704ddf895e6c9d49408413",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.mirror.worker.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/mirror/worker.log",
+      "bytes": 1337,
+      "sha256": "4755d6f26eda471c49a4d034fef657de832cdaa09f4d5a44a9fd1a9a398d580e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/packets.json",
+      "bytes": 16215,
+      "sha256": "b3890d1530f9ffc5911fa103156f6a2c503cbb3e48ccc7ce912fdcbc318bf280",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/performance.jsonl",
+      "bytes": 98118,
+      "sha256": "0b0722ba4142775d00d80efc198b3842ab8c93da2474009f07f1bed22fe20600",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/result.json",
+      "bytes": 10619,
+      "sha256": "04c8eb20683c1796d29706f1d2fa77432985551fc3435bc9c7facb7ac57f8398",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "6900fb6a0917cf36fce7c7b1068c83e7bcfe4535810fd49575dbc873e0adf0af",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/episode/manifest.json",
+      "bytes": 7016412,
+      "sha256": "3c7c66a0e446fdd86b9ae9f2212748ec77afe131a22d5f6db19b315cbccdb584",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/episode/recording_state.json",
+      "bytes": 917,
+      "sha256": "9ba06af37ed1d7a251d73f379cbc762d9293e827e73a5df36e8d9bf304ebb96a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/episode/result.json",
+      "bytes": 917,
+      "sha256": "9ba06af37ed1d7a251d73f379cbc762d9293e827e73a5df36e8d9bf304ebb96a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/episode/session.hdf5",
+      "bytes": 6485904,
+      "sha256": "9c3ec702816c3508f540d49c253b33ccdb9f48366ee07d8703df7311ef189aee",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "2ff66df5fa005ba9144d2fe1c8c532947799c4dd626fed65ec54a4fc31ff92ba",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/episode/stage_snapshot.usd",
+      "bytes": 12080981,
+      "sha256": "fb1fc37297244b3e77095a5ce39f4513f600e85ebdae4b73a5e889d8fd0468b4",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/episode/terminal_successor.npz",
+      "bytes": 12009,
+      "sha256": "81f740b180912ae4db3ef887f70200655742759a6036ad1e289ced6cd861b37f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.media.decode-role0.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/media/decode-role0.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.media.decode-role1.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/media/decode-role1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.media.decode-role2.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/media/decode-role2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.media.role0.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/media/role0/packets.jsonl",
+      "bytes": 188399,
+      "sha256": "a5919f7943ce48704c203f76b44b56a156b074fa48f095fe77264e9c5516185a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.media.role0.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/media/role0/stream.h264",
+      "bytes": 48260608,
+      "sha256": "b8053b31772e57c1a8332f89de22c366c0e993a7124d0663a30fe787e8037347",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.media.role1.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/media/role1/packets.jsonl",
+      "bytes": 188401,
+      "sha256": "9c4fcf3db4d35f22a13929f0d14fcaab07a328f1a3050e06172e18304c3a66b1",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.media.role1.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/media/role1/stream.h264",
+      "bytes": 48159357,
+      "sha256": "a795886dcd2ef0d1430bc7e8c287559a07bf7cf6bed897d81c941ee804d483fc",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.media.role2.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/media/role2/packets.jsonl",
+      "bytes": 188601,
+      "sha256": "589bce42bfce384dfc3ed2493cb2edcdb0f445deda1d4a43e170b3e9a4d1656c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.media.role2.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/media/role2/stream.h264",
+      "bytes": 48404587,
+      "sha256": "120bceba07ce219adc7fc69346801705a5c659120d81471d3d3de91269f807cd",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.mirror.usda",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/mirror.usda",
+      "bytes": 9073,
+      "sha256": "890ecc4d8b1fa2e4f564b278239fa7c8a56597e775575109bc9b2c0cd2c380d4",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.producer.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/producer.json",
+      "bytes": 2418,
+      "sha256": "c1ced3bbc253e47f89c9c69b4a74b5c5ee1c168f41be79b127d396f799d87e43",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.seed.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/seed.json",
+      "bytes": 6720,
+      "sha256": "ec548d9f9c6aea2e1a86f94bdc8295b92923b4bee47049fc2a97ac301c5cd99f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.source-manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/source-manifest.json",
+      "bytes": 7015790,
+      "sha256": "b43d9090978961a99c9d5589e317bbb04818125edbf6d5d75af1db84c83c861f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.worker-rows.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/worker-rows.jsonl",
+      "bytes": 1895883,
+      "sha256": "2472549a7167ec53f0c965323f98c690d4b52a6b6fe76b6e11e58f99677cf70b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.worker.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/worker.json",
+      "bytes": 1855,
+      "sha256": "4a15981815ef737655fcdfdb738796b4a98929556abefa3cd5b8364b3f053c69",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.mirror.worker.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/mirror/worker.log",
+      "bytes": 1337,
+      "sha256": "4fa7eefeb7284f3a45d1767ebb46b9989ff2420319f066b097860d2a29d93d22",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/packets.json",
+      "bytes": 98316,
+      "sha256": "eabad2965766d505be012389c3c86268fae07b0eeb4b3079cdec53c211a4f7b9",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/performance.jsonl",
+      "bytes": 584251,
+      "sha256": "b480d56c19bf9e1106e72fa6f615a116a408573335f9a61b9f1bc5ebdc7ff6b9",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/result.json",
+      "bytes": 4803,
+      "sha256": "4ee4d46623505056f6eebd580ba584f753afe1bc7bad63a7041681f8cb1f71c7",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1.launch.json",
+      "bytes": 218037,
+      "sha256": "742ded581c0217941d1f70668c5b952213d7854dd757e0da4f462d4572b80d25",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1.log",
+      "bytes": 39660,
+      "sha256": "28894fd2a8ebd98cb6d682bc9abff192a33c3766fa46ea0508ea3f5222c6a48a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-fabric-t1.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1.process.json",
+      "bytes": 4369,
+      "sha256": "ed430b8c3ea532abf3491d0fb581a00ba64951c935b0a72205e03fa198fa0922",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "e258cdf77a42deeb4d040cb2e8562749f159709e848ed5273c2f4edf0c502461",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/episode/manifest.json",
+      "bytes": 7016415,
+      "sha256": "af865d9911c472802eb5ea135256bc9a303cd79a75275068e5fa11aa86838030",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/episode/recording_state.json",
+      "bytes": 920,
+      "sha256": "34a83d15538f70d792379a42d0718b0496aead6095821ad7c654e85387d8f335",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/episode/result.json",
+      "bytes": 920,
+      "sha256": "34a83d15538f70d792379a42d0718b0496aead6095821ad7c654e85387d8f335",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/episode/session.hdf5",
+      "bytes": 12678288,
+      "sha256": "f531bd16719337aca20b772d535004401a077091ebf067d35d1523ce73eae4b1",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "cdfaa766ab8d17f1fa4b3db94533c5e234e055ec520a0c373aa679b075efb471",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/episode/stage_snapshot.usd",
+      "bytes": 12080776,
+      "sha256": "acef6af0b295705166ad188f08e322ebb449a6832a3db2b6e01e4ad72ba5700c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/episode/terminal_successor.npz",
+      "bytes": 12009,
+      "sha256": "49dcb94ba651d2e4b12919e29bcf2e695370e58d907297e6bbfccc95066fbdf8",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.media.decode-role0.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/media/decode-role0.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.media.decode-role1.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/media/decode-role1.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.media.decode-role2.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/media/decode-role2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.media.role0.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/media/role0/packets.jsonl",
+      "bytes": 378363,
+      "sha256": "8fbfddda9541376fcd7dc5a59bc92121c3d5f29ab14ae505591f2eaeaf2b6263",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.media.role0.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/media/role0/stream.h264",
+      "bytes": 96263042,
+      "sha256": "5dbaca8d67eac1af3c1cd41aacca20ffa2526aaaec7dbb9b91497f8b2a331af4",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.media.role1.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/media/role1/packets.jsonl",
+      "bytes": 378365,
+      "sha256": "8307074299b105c8bc5e2557610a696b2f53e6bb2f05f9ed0f45dd72950247d5",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.media.role1.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/media/role1/stream.h264",
+      "bytes": 96264117,
+      "sha256": "65ee206018e1daf295c942dda353710f9354e5414b8caa7ced9d6d911a7bf56b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.media.role2.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/media/role2/packets.jsonl",
+      "bytes": 378776,
+      "sha256": "fcdc0486d8cb1203ac4415a6197482a128c6c4eb0ff9970421c72386c5bec756",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.media.role2.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/media/role2/stream.h264",
+      "bytes": 96505596,
+      "sha256": "694719b7c35f87de38b0545bc022866c36a79562aa99d9e88521b79110bebd04",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.mirror.usda",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/mirror.usda",
+      "bytes": 9068,
+      "sha256": "b63b7b1720eed5f83270fa5c4617b62a084c2a3c8d25b544784754798dad2511",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.producer.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/producer.json",
+      "bytes": 1748,
+      "sha256": "2dc604d669255c602b450b4461800caab7831d7fe8b6639474dfcb11a2d6fe7c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.seed.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/seed.json",
+      "bytes": 6705,
+      "sha256": "dde23569320974a3901ac928ee9ffdfd3d186e4d4260d1d1a6ad60936f69e130",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.source-manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/source-manifest.json",
+      "bytes": 7015780,
+      "sha256": "1f91564c12ff7dd23b5712adced0774a97881a8f0636b24447e4cb11640de70f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.worker-rows.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/worker-rows.jsonl",
+      "bytes": 3838981,
+      "sha256": "d93e000d1d6bf024d3004a43abb21a0d3990d66cdf26a3dc5db9cc075732da92",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.worker.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/worker.json",
+      "bytes": 1241,
+      "sha256": "f97ce4e6389e446a4b69faa01b16600c70b9748e97688f46e96dfadd528230c1",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.mirror.worker.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/mirror/worker.log",
+      "bytes": 1333,
+      "sha256": "fb72f1cb9a392611731ff132c8665e9f1860f3f0e071c86f17a0af05f2e7047a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/packets.json",
+      "bytes": 197397,
+      "sha256": "8032598521bc705e9b428414e9b305dd2b1ab8c7e16a5f219e5ecc80116269ac",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/performance.jsonl",
+      "bytes": 1163695,
+      "sha256": "dfd672b54f437b23ba0b53fced5b1700e7bc9676d0285d080bea350b167106ea",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/result.json",
+      "bytes": 10719,
+      "sha256": "7652477137ffee40beed15e3fa6aca2eb040222ada4c311ef47c98230fa352bf",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long.launch.json",
+      "bytes": 213772,
+      "sha256": "dbf12541956a79b643baf0b4364fe49e459b1c6aca94efaf112eeccadcd2b60c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long.log",
+      "bytes": 38544,
+      "sha256": "8d6a21ba86351bca94bb837ec7c575da02c30e2c97ce262892c6f74f50a0a5d7",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror-long.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long.process.json",
+      "bytes": 6639,
+      "sha256": "5becdd65d5943b45d29b289c017479f7dbc3de99026ec8271e021473a76b16ce",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror.launch.json",
+      "bytes": 211793,
+      "sha256": "fe2db47db058f285f07d90aae71684804cf0bf0d79d9bd975963c5e9bd2c4915",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror.log",
+      "bytes": 38325,
+      "sha256": "c692b6358a5609d719798d93c1655519ff9c4a76194f6a92c59a5ed3f673308c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-live-mirror.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror.process.json",
+      "bytes": 2716,
+      "sha256": "9ae15dd2334b4f94ca9f75db856dce9515a62360205f5fdd3a745d2e5ed3b085",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "106d16f0007edeb2511d4963316dd80be5ce535b6db6c5a82384bd748f5558d9",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik/episode/manifest.json",
+      "bytes": 7016391,
+      "sha256": "0b61dfe24b9e99e4225eca69d07b375129c6fd3a86ee46d7404b08163f742870",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik/episode/recording_state.json",
+      "bytes": 899,
+      "sha256": "24c23cd5dc8ca370c8cbc66fc87da022f05bac2b00340dc38b5ce20e12b0f807",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik/episode/result.json",
+      "bytes": 899,
+      "sha256": "24c23cd5dc8ca370c8cbc66fc87da022f05bac2b00340dc38b5ce20e12b0f807",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik/episode/session.hdf5",
+      "bytes": 4421776,
+      "sha256": "d356a559fc442b449e5ada52897b782bc20874c64f013fc7bdf6a1848e4918fa",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "52360e280f0e9e9bb8eb110d269ada0c188e2ea6032350bd40dc2d0ffb69329c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik/episode/stage_snapshot.usd",
+      "bytes": 12080398,
+      "sha256": "de58d9fd9dbfa0f3eb6a70236b1b7724cb2c1ae88c84d7d25e742496613306fe",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik/episode/terminal_successor.npz",
+      "bytes": 11967,
+      "sha256": "7b1d8e1e9758eb4aa94f78d1c83088756ce7c3cdbcb2fa2ab2abcf67850b7af0",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik/packets.json",
+      "bytes": 75253,
+      "sha256": "25463480fe49bd9638e9fa5e02d62d290a9186f5539e58ae9bcba51f16796204",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik/performance.jsonl",
+      "bytes": 338674,
+      "sha256": "166d196da64def9fdecc9773eb9505a137d8fed226bc91fcfbe96573f879656b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik/result.json",
+      "bytes": 8743,
+      "sha256": "cc9e248f2935353b576912c716d45aa2ba3a59c4998e4149266a6c1ff0d430c6",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.view_0.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik/view_0.h264",
+      "bytes": 14114569,
+      "sha256": "3d58a0153ad2c16b94cb9c0d2202afcc4f703fc362510de501e53e7b749f42b1",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.view_1.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik/view_1.h264",
+      "bytes": 14367464,
+      "sha256": "43aa06524d7e50cb13367b4c603d1c3ce1a0bb627d676a85203608239163cafb",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.view_2.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik/view_2.h264",
+      "bytes": 16094564,
+      "sha256": "e5cd87cc8a243a93ff871b067a21389861ba012e82e6be1ed4c44945f5bdd4e6",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik.launch.json",
+      "bytes": 83866,
+      "sha256": "54045855332df6e7b2c03d234a08510537836f08f8c86d46ffe610303c980c11",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik.log",
+      "bytes": 38042,
+      "sha256": "5a18791fd48343cd23d6bb1743cc85b2839256ae4f72acfa0d737bc815a1460e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-minimal-ik.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-minimal-ik.process.json",
+      "bytes": 2673,
+      "sha256": "34960cd51da6df1032e0739b35aba267784b4ee60d67121e85e3f94b08922a3c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "9083f137889247c0ac5d6b3063d963a38e424a4ec872761e25de661af9d15a27",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/episode/manifest.json",
+      "bytes": 7016421,
+      "sha256": "35e0591f3547499a6c24b49a1a22561ae3e784eea23f101ddae532e9909178da",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/episode/recording_state.json",
+      "bytes": 926,
+      "sha256": "ace563cf4578cb52dde98bc9d87883c03388223aa098592a0531a3be8e766c73",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/episode/result.json",
+      "bytes": 926,
+      "sha256": "ace563cf4578cb52dde98bc9d87883c03388223aa098592a0531a3be8e766c73",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/episode/session.hdf5",
+      "bytes": 4421776,
+      "sha256": "128863ef37c0cf2531831185501551420028b9e901b30c450b22811abde1a54b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "6a0fb3f47fa3704c245f4941a566c6c998bd84bde32a9343a28aab48bafed697",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/episode/stage_snapshot.usd",
+      "bytes": 12080815,
+      "sha256": "f6e39a8dc6933bd390f837b04467002ca79eb01e96dd339184a4928b70407c0d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/episode/terminal_successor.npz",
+      "bytes": 11976,
+      "sha256": "8a3384a3201109a476648e81c01fba96e4f3606b9c285f01e39b97cd52d233a6",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/packets.json",
+      "bytes": 75252,
+      "sha256": "602d501240ab6600e3c07bfea96029b60001a8b4ce8e47ab37f21f6bacba7f25",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/performance.jsonl",
+      "bytes": 338967,
+      "sha256": "53243b655a5db601d52e1016239fc5d9814e6e38f007371df2e7277bb7bda388",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/result.json",
+      "bytes": 8754,
+      "sha256": "4c4be5627cacdcb7b193ab7e008b2bebaa81641d0af07278bd56d6d508442433",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.view_0.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/view_0.h264",
+      "bytes": 14640507,
+      "sha256": "0f2eba394761b16316bc820836e30a2f67eb4167a6b6fb1e1acdc33d2bf676e9",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.view_1.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/view_1.h264",
+      "bytes": 14638263,
+      "sha256": "714209a41f2e917d3d5976a12df34a68d74d0bff5cdeca649a8bf0ab84590c1d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.view_2.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/view_2.h264",
+      "bytes": 16061265,
+      "sha256": "c954d559dcbff28808124c08c883bd3bab315fff9438e06d4498e1f22e3078d4",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled.launch.json",
+      "bytes": 97650,
+      "sha256": "14747b748b59c408d386dd59957eed18ea1ab57869c425f1f9811e30e5d2e17f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled.log",
+      "bytes": 39077,
+      "sha256": "08f63a6db014f552e323ebb5f370b37c0468b0eafd68674acfd515c849d43302",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-original-ik-enabled.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled.process.json",
+      "bytes": 2673,
+      "sha256": "9ff8d3a1fff9bcac0330c6efff8cdceb9dc5d6c8a9b54727e238133e5bfdb332",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "a88ef6ea49f09beff97fb120aaaff85c8ec89f94b2771011d47c0394c30b843e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/episode/manifest.json",
+      "bytes": 7228330,
+      "sha256": "2b56477d4634e28d53e1d22cbda89c54770e33dcb80019f1c9d76d71c8b58ad1",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/episode/recording_state.json",
+      "bytes": 917,
+      "sha256": "74e155236cc492a2512ef9a1eb330617697e47bcb4bd88a84da58aef0b977176",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/episode/result.json",
+      "bytes": 917,
+      "sha256": "74e155236cc492a2512ef9a1eb330617697e47bcb4bd88a84da58aef0b977176",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/episode/session.hdf5",
+      "bytes": 4421776,
+      "sha256": "5348909a3512d89ff305898b5901eb1e7fce73ee39cb4d8405301d74b001dd6a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "79afb0e8437c6fd7f997bfad577715018f54a1e2c2016d152c502e85f3ca35ca",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/episode/stage_snapshot.usd",
+      "bytes": 12085651,
+      "sha256": "dcc239d5af48664ddbb957ed80c17fe425ce6bfed5c52e495d01d9b845497312",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/episode/terminal_successor.npz",
+      "bytes": 11973,
+      "sha256": "85b982b28a2f506687d42fc2896332f388815999db6b8cc60ada320c9ca1532c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/packets.json",
+      "bytes": 75252,
+      "sha256": "d8abea0284a28e4992a6cded78e739ee3c6494e2ca0e7df43b2c5c7fa01d6b26",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/performance.jsonl",
+      "bytes": 339018,
+      "sha256": "f6f61be81da427ba2e7ce0d4a131675336b1774841d1a3677d8f286bd5bc93fa",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/result.json",
+      "bytes": 8891,
+      "sha256": "0643445916c76ed460b9a2ea98cb4e6c23eb14bfbf6efdaeca327489e2755f9c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.view_0.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/view_0.h264",
+      "bytes": 14639399,
+      "sha256": "23f2e89a15ecfb4d53f2252b7e6b64729f86ea32719e70d7c37ca73103e63762",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.view_1.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/view_1.h264",
+      "bytes": 14353251,
+      "sha256": "6b92cafc498b3536faf331926b996a6d3e5d8f57b0e93e70492424edf457435f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.view_2.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original/view_2.h264",
+      "bytes": 16061647,
+      "sha256": "1ffef82046841252cb11e17043ed05d25b44f35899c4eaac25396d344aa4f5f8",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original.launch.json",
+      "bytes": 133037,
+      "sha256": "4ac1528171fef5289c96d6d9372b1e934b30381a53813471e383026b87d2ea4e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original.log",
+      "bytes": 39085,
+      "sha256": "fcc95a67170b337d67fe464a3a21dc5b14f3c836b34a1e333c0d44f6e3133103",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-original.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-original.process.json",
+      "bytes": 2691,
+      "sha256": "69dc6733e8e0ad1c851246ad85f3c880f900df426ee972f2cf99de9069f94f85",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "dd2fe32d6c18897aca51d205fd0e29a0e0854ecd736d7b4ae652e1c79c090747",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/episode/manifest.json",
+      "bytes": 7224400,
+      "sha256": "3e74e6dc30887fb73bfbdf93d32263568d54134b367270cd2625e8298d173a69",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/episode/recording_state.json",
+      "bytes": 914,
+      "sha256": "298195ec8f2a92484a2cb3fde8171735c0128ce3da16120349e46b0078cabf99",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/episode/result.json",
+      "bytes": 914,
+      "sha256": "298195ec8f2a92484a2cb3fde8171735c0128ce3da16120349e46b0078cabf99",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/episode/session.hdf5",
+      "bytes": 1325584,
+      "sha256": "6d231b77bbea80eed1ffd4ea28662981b5efcf896832eca76fe7089cbd12062b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "b81bea74f235db2164b9d6d8da44c9a33a6bc8719bc5141420f0fae770b0c68a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/episode/stage_snapshot.usd",
+      "bytes": 12085755,
+      "sha256": "0ddf871bec83a3dec562eb8115d8029b359730e75b482517736382d6f759397b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/episode/terminal_successor.npz",
+      "bytes": 11989,
+      "sha256": "d10164fd983155c5214831af68d59ea9bd210dff4979bdb8ff1b97a6b948e18d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/packets.json",
+      "bytes": 21351,
+      "sha256": "8dbb7783a8b5dd0aec2896e6eb9dd84012c9759c6ad525d6ba0aa63f219f68c6",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/performance.jsonl",
+      "bytes": 98313,
+      "sha256": "e198d7e0660ac90dc22e0ab331440f4a56f061794619eda176a51cc5171a4803",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/result.json",
+      "bytes": 8796,
+      "sha256": "e714896037fbdb39fee665a65698503f0e2ed232957de975d413d938e6df38e2",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.view_0.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/view_0.h264",
+      "bytes": 4553420,
+      "sha256": "83a0d3dd647a58c4df6f5b31a0f03d2f472220e12727c7afe081d2946caa5ad4",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.view_1.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/view_1.h264",
+      "bytes": 4458101,
+      "sha256": "07f6576a3f3155819b1354801db8bd209df92493c426d93545c33e81f627e482",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.view_2.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/view_2.h264",
+      "bytes": 5794822,
+      "sha256": "33908160ed6c8f0ddfde4d3a95f6024e0e9c230252f9b46b60ffa36cc5a56434",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling.launch.json",
+      "bytes": 147653,
+      "sha256": "70c84a5e9800d956fdd04f742e32aff8ae5d21202a93015994bc0f44d21c6fde",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling.log",
+      "bytes": 38873,
+      "sha256": "b46ca0ff7a939d04dfa3a7f36ccf652d7da015b904b19e910b613b6afb5294fe",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-cpu-xr-witness-sibling.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling.process.json",
+      "bytes": 2119,
+      "sha256": "5e0cc4a96c986e7a1348638216938500d921a3fa747debc75935b67958644d70",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "947b7cc882620b525a53fdd019d9f852afe124a4ff1db60489e4c8a5bb10dbf5",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary/episode/manifest.json",
+      "bytes": 7016397,
+      "sha256": "dc284fbb1236063cebf7cfafac840203e45ac56ecc69b09e9c1001ec4d0a2256",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary/episode/recording_state.json",
+      "bytes": 905,
+      "sha256": "2cf1bed232599c1d787cb904bb00704ff0f82d4efb9aefd3b510ebd6bcc5c57d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary/episode/result.json",
+      "bytes": 905,
+      "sha256": "2cf1bed232599c1d787cb904bb00704ff0f82d4efb9aefd3b510ebd6bcc5c57d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary/episode/session.hdf5",
+      "bytes": 4421776,
+      "sha256": "7aacc21257b1d0e089aec4f8d2fa1ee9df62b7a582e797e759ed6050d82eb584",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "b94916e07787bfaea06c68a0379a71c23d7ef0ccdc4ab61f061d5894f423a13b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary/episode/stage_snapshot.usd",
+      "bytes": 12080781,
+      "sha256": "97bf686a9a1a43416a7c60ffbe51b0b74dc9237978dea4813c19ce63e1a28233",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary/episode/terminal_successor.npz",
+      "bytes": 12004,
+      "sha256": "9cbe8c87fa7f997b42c01071dac5bfcf88cbeb45f905ae1fa8dd5f395b2a36f2",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary/packets.json",
+      "bytes": 75265,
+      "sha256": "81be0934740795ccc1948d7413e9bb5711f0b1ff54cbc9a6b4bd66d40e3f613f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary/performance.jsonl",
+      "bytes": 337910,
+      "sha256": "d428cbf3b0434a152bcd911effbc1cb7fb087ca700c12ca164b781e5830b0f9e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary/result.json",
+      "bytes": 9935,
+      "sha256": "d460755ed500a60526764cbcd9c1d4cf4deb086928dd0a87e448aa219b381273",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.view_0.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary/view_0.h264",
+      "bytes": 14147807,
+      "sha256": "7fa72b9480a12087baede22fcf7fd529dc9a5db97f55564bb9ee14c88fdd46d3",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.view_1.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary/view_1.h264",
+      "bytes": 14234095,
+      "sha256": "7af8152e5076623f1196285ecfdecc2f4d80fe26a9ef2cab72c1868f77cbb8cf",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.view_2.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary/view_2.h264",
+      "bytes": 16128496,
+      "sha256": "59470234b93c3bd9fcebe641ea80485c13f5f8bee0fe5e13c143136668bdad2c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary.launch.json",
+      "bytes": 217629,
+      "sha256": "71c54d5cd51faa85af580d831d594d4fb57c95125aed12edec1e1a2bbaeb896b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary.log",
+      "bytes": 23113,
+      "sha256": "3314be12778e156a2cd7cfd7af5df10ed60be656c37210459be269e4773fec91",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-fabric-boundary.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-fabric-boundary.process.json",
+      "bytes": 1928,
+      "sha256": "d1c258387b7a570794a6e7de85ea3b7cd6a626e996496770eed247582a2febad",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "1a0d174e51bb3fb29431b288a6e4cdc62b6af9393d7b60ebd22bd5e12f0d112e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight/episode/manifest.json",
+      "bytes": 7016370,
+      "sha256": "061d07f55ed6671fc408b8fd58455c07c7c8682e770781d88a295969f0d15b75",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight/episode/recording_state.json",
+      "bytes": 878,
+      "sha256": "a7a7732529cf247203973e2680951d2d026192bbfcfc59a701c20f9aa1c16488",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight/episode/result.json",
+      "bytes": 878,
+      "sha256": "a7a7732529cf247203973e2680951d2d026192bbfcfc59a701c20f9aa1c16488",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight/episode/session.hdf5",
+      "bytes": 2357648,
+      "sha256": "a3dafa4085d7ef2e586b6b441ccf59146973fc3f72352059e3bec8c0fbb1e257",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "b972fced2787ace3092abbe2de5bde1c94769e844a024614cd8363f0fd11d161",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight/episode/stage_snapshot.usd",
+      "bytes": 12080680,
+      "sha256": "2de5ab1849860ec858e5f9345bd3cd4d6d4952b604072006d3c9cc8c81f45195",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight/episode/terminal_successor.npz",
+      "bytes": 11986,
+      "sha256": "00514c8344f858fddfee6414d197e6fe9fb9757394395664a9fcbaf666f4a01d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight/packets.json",
+      "bytes": 32104,
+      "sha256": "0ea59831b85649097af15abcbc34e64366e191e50eb27a203f253ea77d6f68bc",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight/performance.jsonl",
+      "bytes": 146798,
+      "sha256": "ea0f406435211e602ad736832ce78c8740ad23fbfc19ff1d1ec8ac9037ae7dbf",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight/result.json",
+      "bytes": 9546,
+      "sha256": "303d86e1a6da82b93fef3e6e5405cb8ca1d9a5c5d726d555faef01d34d846a96",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.view_0.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight/view_0.h264",
+      "bytes": 6143499,
+      "sha256": "4b68f5a6053658458c8ba402a33e0817618cba7929d1b883553c9f9c178b54fb",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.view_1.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight/view_1.h264",
+      "bytes": 6142652,
+      "sha256": "01c8abe739443defd896a254af67592665763eb81bab79c87e138acceb9efad0",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.view_2.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight/view_2.h264",
+      "bytes": 8122264,
+      "sha256": "6d201067c83bab1b572dd6f6fb89d763fc5e8e2526eaafca36155807f234061a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "0f1ab0f3a45b99cb06b2c0fb234473d47d670addecf3ce5e54e6e6a0913a25ca",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric/episode/manifest.json",
+      "bytes": 7016391,
+      "sha256": "7068532cc7e1ca4aef15e0af4540bf82ddf6a1c96e2481a5d58712228466e291",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric/episode/recording_state.json",
+      "bytes": 899,
+      "sha256": "1f4754f39fa2adfa98c1112f979410bf6883a88f1ae1c0857c3fbea8a445173a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric/episode/result.json",
+      "bytes": 899,
+      "sha256": "1f4754f39fa2adfa98c1112f979410bf6883a88f1ae1c0857c3fbea8a445173a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric/episode/session.hdf5",
+      "bytes": 2357648,
+      "sha256": "9df21e437062c2e276a786522a5a92966beca0941d83b333f20c340774342622",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "db7cc8e3234d6412c1b3dfa6dccc5d8254d2b176e4b7f2ee708c251fa1c8b625",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric/episode/stage_snapshot.usd",
+      "bytes": 12080647,
+      "sha256": "bc50509ff245be583828436eb8778934eb4aaade4c14735ff8445ea07afc510e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric/episode/terminal_successor.npz",
+      "bytes": 11993,
+      "sha256": "4adb6741bcfeeb0e267d0d80a4c3693bcd00af9866e31fe343f379d813057eaa",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric/packets.json",
+      "bytes": 32104,
+      "sha256": "0ea59831b85649097af15abcbc34e64366e191e50eb27a203f253ea77d6f68bc",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric/performance.jsonl",
+      "bytes": 147021,
+      "sha256": "8ba806ebddf2e9a62bd1625a7414bc390564fc194c6a0121f84776d3db77843f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric/result.json",
+      "bytes": 10964,
+      "sha256": "4e064951420dd4725e1ad2bbebcee8a2484e228f4daead73541aed714b96b785",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.view_0.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric/view_0.h264",
+      "bytes": 6143499,
+      "sha256": "4b68f5a6053658458c8ba402a33e0817618cba7929d1b883553c9f9c178b54fb",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.view_1.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric/view_1.h264",
+      "bytes": 6142652,
+      "sha256": "01c8abe739443defd896a254af67592665763eb81bab79c87e138acceb9efad0",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.view_2.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric/view_2.h264",
+      "bytes": 8122264,
+      "sha256": "6d201067c83bab1b572dd6f6fb89d763fc5e8e2526eaafca36155807f234061a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric-trace.nsys-rep",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric-trace.nsys-rep",
+      "bytes": 30318718,
+      "sha256": "89ce1ac44cf722422c4c9b04da908947fb5e75c9d65e86d54c629c4568406cfc",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric.launch.json",
+      "bytes": 227624,
+      "sha256": "d81b6a8927f71fe8317fa8d7c661e5d25f40354ac6f1b52768f5e1e8352dda72",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric.log",
+      "bytes": 27090,
+      "sha256": "531864edcc6d2b5f46d86fe2a315cdfc938eb39154a92c5033a8d6a0144f1d75",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-fabric.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric.process.json",
+      "bytes": 2602,
+      "sha256": "45e7ab6482387c8bd5a9eb967c8e6690575cbd4d45914b8180ea1877d7a81df3",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "0232ee3185b8040d1f2debad4b1c18cbe7a93fd3f5e9b817fa6efc450bd0dedf",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered/episode/manifest.json",
+      "bytes": 7016403,
+      "sha256": "c5373e113118e539407a55e41dac1f31ee89673a794a7ca5527d7fda4ffb79f2",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered/episode/recording_state.json",
+      "bytes": 911,
+      "sha256": "3cb59055d2160dc8f209a99229e192762d0c3a4e4dcc7dca7c9dfb73bec0f488",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered/episode/result.json",
+      "bytes": 911,
+      "sha256": "3cb59055d2160dc8f209a99229e192762d0c3a4e4dcc7dca7c9dfb73bec0f488",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered/episode/session.hdf5",
+      "bytes": 2357648,
+      "sha256": "5e4f2f91ea5730f21af774190883aea9bf8228175f331f46c9791478a2ba75d2",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "0d9031ec5d38910c82b2f7b633c1eb37731ee9f1fa6c191eb91630e659a8c885",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered/episode/stage_snapshot.usd",
+      "bytes": 12080758,
+      "sha256": "0525f46b8668f7342550609ca4de8567c93a5adb8d98be24877599cbd87c8865",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered/episode/terminal_successor.npz",
+      "bytes": 11997,
+      "sha256": "d026d1effc448645472d3960e69ac314209d377e923aaebcf7c43ee1e3a57d08",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered/packets.json",
+      "bytes": 32104,
+      "sha256": "0ea59831b85649097af15abcbc34e64366e191e50eb27a203f253ea77d6f68bc",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered/performance.jsonl",
+      "bytes": 147055,
+      "sha256": "f89749e9dbd44b2e04ce5eb085d50698b850595e28e45bdc7d2b1ee734cd8363",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered/result.json",
+      "bytes": 9569,
+      "sha256": "cbd1e92814aaa0cfdf4e21a8f625168167fc05dd13a257c3bb1945bc8b9d52eb",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.view_0.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered/view_0.h264",
+      "bytes": 6143499,
+      "sha256": "4b68f5a6053658458c8ba402a33e0817618cba7929d1b883553c9f9c178b54fb",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.view_1.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered/view_1.h264",
+      "bytes": 6142652,
+      "sha256": "01c8abe739443defd896a254af67592665763eb81bab79c87e138acceb9efad0",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.view_2.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered/view_2.h264",
+      "bytes": 8122264,
+      "sha256": "6d201067c83bab1b572dd6f6fb89d763fc5e8e2526eaafca36155807f234061a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered-trace.nsys-rep",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered-trace.nsys-rep",
+      "bytes": 31823487,
+      "sha256": "dcc519c65b5800d82d4d8ef3da779d3dfd59a5adf7f556c6bfba2b5420e41567",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered.launch.json",
+      "bytes": 174815,
+      "sha256": "8b45b9c5ec999c5538b82a9b896f84e29f51bb9931fa5c9057636cb27d378f97",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered.log",
+      "bytes": 27400,
+      "sha256": "5bf0d4fd3acac3a766c890bfbd5bd3e428c1c77cdbbaef2eb27a48d95dfa0794",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight-registered.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-registered.process.json",
+      "bytes": 2959,
+      "sha256": "86674d19b1e8adb6e3ef143070ab06a43c7f03da63a800d11c758f65ee55228b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight.launch.json",
+      "bytes": 168249,
+      "sha256": "e2f13b25e4997b552c50d38eb87d4123d68fc21119653a2320f2b61169c1a389",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight.log",
+      "bytes": 23266,
+      "sha256": "7a7ce3ad375209b811cadc6d49f72f465c8108a4e6c027f3f131da3f75f62619",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-nsight.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight.process.json",
+      "bytes": 1940,
+      "sha256": "2a7be4795d4b022b444b3ba639bc62284eaed73c1ef5aa50e06713ef66fab816",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.episode.asset_closure.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/episode/asset_closure.json",
+      "bytes": 1293,
+      "sha256": "d66e85e94727853d2d7632df6cbbb61cfa23b569a3733df60c4bd175f9f33761",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.episode.manifest.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/episode/manifest.json",
+      "bytes": 7016373,
+      "sha256": "9ec6aaab84bc799cc22c9e5addd591e2950072c35a63970fa0bc15bc5c769608",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.episode.recording_state.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/episode/recording_state.json",
+      "bytes": 881,
+      "sha256": "79cb26106ec488cf799544a4582e287a3afdd1f93b2fb2e9abde0091de66c48a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.episode.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/episode/result.json",
+      "bytes": 881,
+      "sha256": "79cb26106ec488cf799544a4582e287a3afdd1f93b2fb2e9abde0091de66c48a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.episode.session.hdf5",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/episode/session.hdf5",
+      "bytes": 4421776,
+      "sha256": "063573fda4cfd47be6c6a2586539bfd97ae313522d10d4216ce03990758bffd0",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.episode.stage_snapshot.sidecar.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/episode/stage_snapshot.sidecar.json",
+      "bytes": 236,
+      "sha256": "49100b304b2254968411721949e9072a1ca0921a9f493db86a206291f9995f6d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.episode.stage_snapshot.usd",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/episode/stage_snapshot.usd",
+      "bytes": 12080726,
+      "sha256": "bf9b055cad79d6029b1785a6173c36f64474b605befb006f2f19efebb8f4f0e6",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.episode.terminal_successor.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/episode/terminal_successor.npz",
+      "bytes": 11996,
+      "sha256": "fd0fa345885abd90cbf91ea12b362db66119af9a4059319cd4e37b641f1a0c2b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.packets.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/packets.json",
+      "bytes": 75265,
+      "sha256": "81be0934740795ccc1948d7413e9bb5711f0b1ff54cbc9a6b4bd66d40e3f613f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.performance.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/performance.jsonl",
+      "bytes": 337951,
+      "sha256": "83c0f6d08c98f18f92bb83d73d3227c2e968ee9a39d3821e1841e6889c485e8c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/result.json",
+      "bytes": 8558,
+      "sha256": "48b69cafdddc5295dfd4a387bac38748ad6096734f7a88feedfc4035d24042b0",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.runtime.yaml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/runtime.yaml",
+      "bytes": 6782,
+      "sha256": "abf6157478b6bbe6913d1b1f83ac038d7b57d8429d66ccdf2f75c2978d7a3c30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.view_0.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/view_0.h264",
+      "bytes": 14147807,
+      "sha256": "7fa72b9480a12087baede22fcf7fd529dc9a5db97f55564bb9ee14c88fdd46d3",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.view_1.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/view_1.h264",
+      "bytes": 14234095,
+      "sha256": "7af8152e5076623f1196285ecfdecc2f4d80fe26a9ef2cab72c1868f77cbb8cf",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.view_2.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/view_2.h264",
+      "bytes": 16128496,
+      "sha256": "59470234b93c3bd9fcebe641ea80485c13f5f8bee0fe5e13c143136668bdad2c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6.launch.json",
+      "bytes": 73238,
+      "sha256": "e9b30ce56a6540114abef387175965943b9accb359c21b20f069a097c60c4bf6",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6.log",
+      "bytes": 22996,
+      "sha256": "790daf41c84c5f72787ea4659ead83e5e06d4517a2f1476e03f9eb64f11c40ab",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.full-gpu-poll-r6.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6.process.json",
+      "bytes": 2125,
+      "sha256": "18a035762578e8a08f33ae2533f89341629f3d716e405f1e9a335a8c520d0ceb",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.install-ovphysx.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/install-ovphysx.log",
+      "bytes": 1119,
+      "sha256": "369ac6d01c77125939272d18d87435ac8d663179e7b496d4f22359030e1b8836",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.install-pynvcodec.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/install-pynvcodec.log",
+      "bytes": 596,
+      "sha256": "fdbf7fc2c2d08b2752f0b8db832f7e6764ce27a147707f317e8947b9ddc821e6",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.newton-cpu-authored-mimics.imported.xml",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/newton-cpu-authored-mimics/imported.xml",
+      "bytes": 108553,
+      "sha256": "f416d40b151092c67ae91ba603c3b6f0a2a8400e5381e2394871ef612c2f890d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.newton-cpu-authored-mimics.receipt.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/newton-cpu-authored-mimics/receipt.json",
+      "bytes": 161761,
+      "sha256": "c84d4f096c6193b8e502815d0be3a6301ceb6412ea1905f102ecaeec8d65222f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.newton-cpu-authored-mimics.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/newton-cpu-authored-mimics.launch.json",
+      "bytes": 227323,
+      "sha256": "4570944502f625bd3c784163a16144018317a106f635a46840e453bd22773f07",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.newton-cpu-authored-mimics.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/newton-cpu-authored-mimics.log",
+      "bytes": 1595,
+      "sha256": "8a087886aa4e03fc3e3a719bd9dcce2b14f69fcfacfca570761855cb12b264d7",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.newton-cpu-authored-mimics.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/newton-cpu-authored-mimics.process.json",
+      "bytes": 1150,
+      "sha256": "4bf25aa2737660693e1c5c06e6207bde3cb016be8f615b9279754ffe468324a9",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.newton-cpu-fullscene.receipt.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/newton-cpu-fullscene/receipt.json",
+      "bytes": 155263,
+      "sha256": "75aa16c09ad51da16270ed12bf8dc93ba9fbeeb6af6607049e25162d2ceec666",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.newton-cpu-fullscene.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/newton-cpu-fullscene.launch.json",
+      "bytes": 190745,
+      "sha256": "a91234d449acc68fcd3152244c8be26c2a23d1052b08e0dedff8f5ebf622056f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.newton-cpu-fullscene.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/newton-cpu-fullscene.log",
+      "bytes": 1676,
+      "sha256": "2c6864abfb58a4bf923e5a2c8c8439279db293620792a3806ed0949aa31c5762",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.newton-cpu-fullscene.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/newton-cpu-fullscene.process.json",
+      "bytes": 519,
+      "sha256": "6c88c996d642c81ce9bf9c8f20d62ac87d4ceae6328e0678d92a0ebf6b8269bf",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.newton-mimic-diagnostic.receipt.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/newton-mimic-diagnostic/receipt.json",
+      "bytes": 156182,
+      "sha256": "e394a5aafdbf4d26660bef8d3b9e0e9ac5dac6f6fff8a56f364a4cc4c5440f58",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.newton-mimic-diagnostic.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/newton-mimic-diagnostic.launch.json",
+      "bytes": 226581,
+      "sha256": "9d2e074cef5b1ec26c35400a9ade73a24c9a0ddad5877f65cf2372c83e80016e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.newton-mimic-diagnostic.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/newton-mimic-diagnostic.log",
+      "bytes": 1679,
+      "sha256": "70c456f026c8dc9409ed1e65fb50122db38a92c5048d784a736427d9c7dc7e69",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.newton-mimic-diagnostic.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/newton-mimic-diagnostic.process.json",
+      "bytes": 519,
+      "sha256": "95a2640070618a6728fd18983b009dfa958acd1cf32a5fc415be953d3e7f4b21",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovphysx-cpu-batch.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-batch/result.json",
+      "bytes": 1472,
+      "sha256": "2b352771e79f27676466d97efbd5ed59b6243301590b3c2e8d76959b1330664c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovphysx-cpu-batch.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-batch.launch.json",
+      "bytes": 136474,
+      "sha256": "47048c3626a290e7993fcaae5bb243990ae96dbbe74dfe233897ff70926657ba",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovphysx-cpu-batch.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-batch.log",
+      "bytes": 1039,
+      "sha256": "19950268c5e93d1c59ff205ace3bc0408c00693dfe45e58c4020ff6f7d42cae6",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovphysx-cpu-batch.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-batch.process.json",
+      "bytes": 258,
+      "sha256": "9544eb89b3f6897902e1e144d81ed1a57de496c03e31f1bd10b47da299a3a130",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovphysx-cpu-fixedbase.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-fixedbase/result.json",
+      "bytes": 5196,
+      "sha256": "b0f17c10ec1617e6508e112b3b0a2fc370ecefe98b3114306232c7c02436cf08",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovphysx-cpu-fixedbase-v3.result.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-fixedbase-v3/result.json",
+      "bytes": 7990,
+      "sha256": "ecef402e44932c805974c4d4515920760dc1bb4333607ab9d35affd1c520bfcc",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovphysx-cpu-fixedbase-v3.samples.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-fixedbase-v3/samples.json",
+      "bytes": 340122,
+      "sha256": "7ff89bcc5a75bdd3db400dc18430b839050f03d22736b45101484552168d8549",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovphysx-cpu-fixedbase-v3.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-fixedbase-v3.launch.json",
+      "bytes": 190841,
+      "sha256": "fba8fb998bc37601cc074bf07f23ed4c9dd9c0a48f1c74aabb49559a72c5e6ec",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovphysx-cpu-fixedbase-v3.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-fixedbase-v3.log",
+      "bytes": 1457,
+      "sha256": "0e38c28f8818285f83c01af475c575f269efc7df3d14d0e46fc8ddab8b9d1b74",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovphysx-cpu-fixedbase-v3.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-fixedbase-v3.process.json",
+      "bytes": 521,
+      "sha256": "9dbbb0c8c535bae139be9e4aca528a8b095a310803abac6e08ff3a5fb30beb22",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovphysx-cpu-fixedbase.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-fixedbase.launch.json",
+      "bytes": 168056,
+      "sha256": "bddeec3a88e1e17f3b5815d0fcbf66e6c14ca4188492935eb00bb5db17576259",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovphysx-cpu-fixedbase.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-fixedbase.log",
+      "bytes": 2508,
+      "sha256": "21fe08232b031d723afd76853fa843466106ef8bdbf493e30fa8f4e0ccc39452",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovphysx-cpu-fixedbase.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-fixedbase.process.json",
+      "bytes": 257,
+      "sha256": "a94ad9a3f8471013a9679d7aa360defaed4d6ab44128dbd70ed43358f3d8938e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-cpu-map-matched.receipt.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-cpu-map-matched/receipt.json",
+      "bytes": 4871,
+      "sha256": "1ba2d089893f0496c95e89524fee28b9e9a100d3a4c6d894355cdf0bdbb2f9ad",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-cpu-map-matched.row0000-role0.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-cpu-map-matched/row0000-role0.npy",
+      "bytes": 2304128,
+      "sha256": "24cff092a51f54db6a6233cf30de9fd57f26c6d0bdf21813290c1a6b46e3be4e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-cpu-map-matched.row0000-role1.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-cpu-map-matched/row0000-role1.npy",
+      "bytes": 2304128,
+      "sha256": "09073ec4307e960e248d3fbfd746accd563f53890e1e7a826ac21e331d18bb1d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-cpu-map-matched.row0000-role2.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-cpu-map-matched/row0000-role2.npy",
+      "bytes": 2304128,
+      "sha256": "a21b49bbb0ef233227e0526022693304528f48c3f7189fa94b9f22376aa98f98",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-cpu-map-matched.row0060-role0.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-cpu-map-matched/row0060-role0.npy",
+      "bytes": 2304128,
+      "sha256": "2fa5542885ac6f8c2d91d555b6d3752f144ae975e62dd422c35572395a8b416f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-cpu-map-matched.row0060-role1.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-cpu-map-matched/row0060-role1.npy",
+      "bytes": 2304128,
+      "sha256": "0bb6d8f47962ae28cf2367f0a73b576708e5007ef7425e5615892eae75653190",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-cpu-map-matched.row0060-role2.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-cpu-map-matched/row0060-role2.npy",
+      "bytes": 2304128,
+      "sha256": "5ae8c1ca26b15a37ff988e3b6c8dd636825005642bf940b68c4869149d2ca43d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-cpu-map-matched.row0419-role0.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-cpu-map-matched/row0419-role0.npy",
+      "bytes": 2304128,
+      "sha256": "2567220e0c6b2b711f6cb17c350b3711d7e61e78a319e2c9b55fc62e6fd0d017",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-cpu-map-matched.row0419-role1.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-cpu-map-matched/row0419-role1.npy",
+      "bytes": 2304128,
+      "sha256": "d7de91551e7290f85b4c07a806c949e59b1e0fdd0ccc198041df515ee0537dc1",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-cpu-map-matched.row0419-role2.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-cpu-map-matched/row0419-role2.npy",
+      "bytes": 2304128,
+      "sha256": "319ec59d5244c8c53ee52e73cfb257c1ce40db247f4a221bfee1a859bae8a3a9",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-cpu-map-matched.rows.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-cpu-map-matched/rows.jsonl",
+      "bytes": 957554,
+      "sha256": "178792969c073d6a78c1fb7ae447cd4c90fc157b3190c1bca1d976b01845c154",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-cpu-map-matched.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-cpu-map-matched.launch.json",
+      "bytes": 252318,
+      "sha256": "aa4734ac678ff4c328197cbde2094fcaf389f7078e78f95eec74b067f1b85f3a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-cpu-map-matched.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-cpu-map-matched.log",
+      "bytes": 5830,
+      "sha256": "18b6123b1dfea5fe7db1b0634e1ed9b6b2e77c944e2d87ab73162efc10967ede",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-cpu-map-matched.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-cpu-map-matched.process.json",
+      "bytes": 1415,
+      "sha256": "b7fd638805ab18557d8a05d5e1201d1b3c467f92bf16a724fa7e605d18fb43b9",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-gpu-encoded.receipt.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-gpu-encoded/receipt.json",
+      "bytes": 5348,
+      "sha256": "0a382609b6245201619ae24b638499c584414aa9dcc983f75c1e3845d6999404",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-gpu-encoded.role0.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-gpu-encoded/role0/packets.jsonl",
+      "bytes": 109538,
+      "sha256": "2c2fb32d866c8d28c2db664b2d81bb232020aceb0c26790e75f5ed035b2beb6e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-gpu-encoded.role0.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-gpu-encoded/role0/stream.h264",
+      "bytes": 28248579,
+      "sha256": "a2be9449746b7bca227e33bdad84bbf309a0589e8cdc385cb38e783c458b32cb",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-gpu-encoded.role1.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-gpu-encoded/role1/packets.jsonl",
+      "bytes": 109536,
+      "sha256": "3bffb2dac5eb8070998b5eaae5329b5c1121303cf0aece53a1e56e3aaa15c5c7",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-gpu-encoded.role1.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-gpu-encoded/role1/stream.h264",
+      "bytes": 28163097,
+      "sha256": "752bf5763761198e27e925fab038f5d1ddb385e3d7e1276d4a0b18c74a044ee5",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-gpu-encoded.role2.packets.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-gpu-encoded/role2/packets.jsonl",
+      "bytes": 109663,
+      "sha256": "dc152faaf0df44a4bee50d810d1160a2659f02dbf6f980e84e43ad441f268b41",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-gpu-encoded.role2.stream.h264",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-gpu-encoded/role2/stream.h264",
+      "bytes": 28332869,
+      "sha256": "99774f972772d6cc717c3a215f0b07d477251fa62d6cad7d090fbb8a1e6bd382",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-gpu-encoded.rows.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-gpu-encoded/rows.jsonl",
+      "bytes": 1070549,
+      "sha256": "dc80ed8ab4aed6da5e7ba93f7501abd99ed19f30c2416ecf7267c5b4e6e16ced",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-gpu-encoded.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-gpu-encoded.launch.json",
+      "bytes": 148955,
+      "sha256": "cbfd1d235630a7b1c8e1ab8f6d295aecd09ad073908751fa48af302651e1fdf1",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-gpu-encoded.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-gpu-encoded.log",
+      "bytes": 6665,
+      "sha256": "a8b05c35e06b2dd26bd31dfcc2af129207b19a24b7feb29233b5827f2357541d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-gpu-encoded.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-gpu-encoded.process.json",
+      "bytes": 1059,
+      "sha256": "0a381acf4016a963274f1a4a3dd26400d1814df2c21751301dbbad64f96f3f8b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-prepare.mirror.usda",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-prepare/mirror.usda",
+      "bytes": 9029,
+      "sha256": "6539baae15c011d481e783979575078eb6b35641331c8a870f8f5b73c8fd554e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-prepare.prepared.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-prepare/prepared.json",
+      "bytes": 62891,
+      "sha256": "5809dc65504f4f84c4371b32b9737d436b16c440ef14a9c9af6f942430a90b51",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-prepare.snapshots.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-prepare/snapshots.npz",
+      "bytes": 1677930,
+      "sha256": "6616d98d49f7257c654a4b44759d48b9d75d2588eb82c7adf5ecec5d91c47bf0",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-prepare-gpu.mirror.usda",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-prepare-gpu/mirror.usda",
+      "bytes": 9064,
+      "sha256": "335d9e04a6acfec0f1afd753dc20a694a9c9e4e3858a401609209a1822cfed8a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-prepare-gpu.prepared.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-prepare-gpu/prepared.json",
+      "bytes": 62891,
+      "sha256": "408c1840e3df650d242ded8a6e5633973214187dc7cfa92aad27493e79a555ce",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-prepare-gpu.snapshots.npz",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-prepare-gpu/snapshots.npz",
+      "bytes": 1677930,
+      "sha256": "6616d98d49f7257c654a4b44759d48b9d75d2588eb82c7adf5ecec5d91c47bf0",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-prepare-gpu.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-prepare-gpu.launch.json",
+      "bytes": 148762,
+      "sha256": "323a2cf9b7b9b947489115d7a5c47f3ba5f7f7fb5008e4ceee1ca1bba9e3578d",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-prepare-gpu.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-prepare-gpu.log",
+      "bytes": 6250,
+      "sha256": "bcebd68d740e9e9f152a690ee51c3036b449eb09b4eb753c38f46372218e38e0",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-prepare-gpu.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-prepare-gpu.process.json",
+      "bytes": 171,
+      "sha256": "dc09467c8eed22cd4c70ad39b319f16df88a0b50631bf9d3e5c923ef94cd53b4",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-prepare.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-prepare.launch.json",
+      "bytes": 129588,
+      "sha256": "4f0349b155941ba7684acbd2d7a29b3bc439f973f790a3d3e64fb7d39e580cf4",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-prepare.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-prepare.log",
+      "bytes": 6250,
+      "sha256": "580b75a8b4aa097f5c421ad38fef6fb5b9fbe08df7949e83468c5d6cafda5341",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-prepare.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-prepare.process.json",
+      "bytes": 170,
+      "sha256": "39acbc27c298b097c99b63b0dd67bdce57478b964bf7c8466d3abc4d9609a1db",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-witness.receipt.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-witness/receipt.json",
+      "bytes": 4813,
+      "sha256": "18204d55cd277dae52087c0bd757d7a68550970eb6559c885ca2899f062023ec",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-witness.row0000-role0.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-witness/row0000-role0.npy",
+      "bytes": 2304128,
+      "sha256": "def99abff831c72ad4816e427e1e1cf67969d830eb055cde5c6583584af06235",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-witness.row0000-role1.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-witness/row0000-role1.npy",
+      "bytes": 2304128,
+      "sha256": "a1c9b1dbf6c9ea044a5a43f0e5b0fe460a6aa213ca397c546743f9a93298f9a5",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-witness.row0000-role2.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-witness/row0000-role2.npy",
+      "bytes": 2304128,
+      "sha256": "ec7690a2de8c938ce9ae3a6a11c3b619a9c73248ff3666c43dfb128f936a36c4",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-witness.row0060-role0.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-witness/row0060-role0.npy",
+      "bytes": 2304128,
+      "sha256": "aa28e3d9941a8e3e4d9c9e212b47a25bdc61b12924efad3d681af1d081a33b86",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-witness.row0060-role1.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-witness/row0060-role1.npy",
+      "bytes": 2304128,
+      "sha256": "051e100c212ea5b9e78b185d045dde9fff40c9ead6b5bcb8377104a16fc51efe",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-witness.row0060-role2.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-witness/row0060-role2.npy",
+      "bytes": 2304128,
+      "sha256": "4585420c174c2bc75f8b0aea4e5291f5120d501a504818dc72682faf9928c36c",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-witness.row0419-role0.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-witness/row0419-role0.npy",
+      "bytes": 2304128,
+      "sha256": "f512a07d782e72a9bd996b23c8e0bd232db23e18a5b83c10dd0bdd2e6a4836ea",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-witness.row0419-role1.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-witness/row0419-role1.npy",
+      "bytes": 2304128,
+      "sha256": "464e1f3e5b769ec47f93dfb6a2a02e5158ac969c3bca2c51ee4066e786a007e5",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-witness.row0419-role2.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-witness/row0419-role2.npy",
+      "bytes": 2304128,
+      "sha256": "f1ad254e3e03631cfb5c527fb27ac28dfe8f4e293caa1c827d393149da263a93",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-witness.rows.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-witness/rows.jsonl",
+      "bytes": 926498,
+      "sha256": "5c2d8232c16d80162803f0478cad9f7244fe3cb53cf5be74c87db9d0403efeae",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-witness.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-witness.launch.json",
+      "bytes": 129715,
+      "sha256": "ff0c8b2c71ef02be6a04df4d719425e2c93845f6957dedb3b21c78b3a678a99f",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-witness.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-witness.log",
+      "bytes": 5772,
+      "sha256": "8bdbe398996921017f14c3607c56927b8456d23f6a2073cd863e868169446d3b",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-live-witness.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-live-witness.process.json",
+      "bytes": 1415,
+      "sha256": "698cb7bb329c44dbeeacc15a0778ba0c4b2956a229b4d2a6e0fb4e5075da9fbb",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-piper-rtx-cpu.capture-overlay-fixed.usda",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu/capture-overlay-fixed.usda",
+      "bytes": 1786,
+      "sha256": "1a951deee6c542e754110803e2ccf6df6030714c9c48d9f5f5bf2a2af4e58012",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-piper-rtx-cpu.capture-overlay.usda",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu/capture-overlay.usda",
+      "bytes": 1785,
+      "sha256": "fe59ad400d188340d81c288bcd3f72c040dd8c218c63c2a6cbfd82071222c4f2",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-piper-rtx-cpu.captures.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu/captures.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-piper-rtx-cpu.receipt.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu/receipt.json",
+      "bytes": 1333,
+      "sha256": "ba1b3ede3d56069eb9d88f88350a624ae535a98b69bdef8cf8dbf332c3fa0154",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-piper-rtx-cpu-r2.capture-overlay.usda",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu-r2/capture-overlay.usda",
+      "bytes": 1786,
+      "sha256": "1a951deee6c542e754110803e2ccf6df6030714c9c48d9f5f5bf2a2af4e58012",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-piper-rtx-cpu-r2.captures.jsonl",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu-r2/captures.jsonl",
+      "bytes": 268521,
+      "sha256": "ffeea84bab48e9c47acbc5f76296eb6b9027e4c2bc846e5d1cb8a257d3cbcf30",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-piper-rtx-cpu-r2.receipt.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu-r2/receipt.json",
+      "bytes": 1328,
+      "sha256": "5cc1c78368361c6ebb21dc21534092b2a96dd00c6b8c882cb3c836e9e6026e5a",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-piper-rtx-cpu-r2.role0-last.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu-r2/role0-last.npy",
+      "bytes": 2304128,
+      "sha256": "07754727836262c11232b970ed9745922aa6b0e1f73c3cf4ef714d1f7c4fcc95",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-piper-rtx-cpu-r2.role1-last.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu-r2/role1-last.npy",
+      "bytes": 2304128,
+      "sha256": "cf2fcf03baabc1c1122efbea47ec2a1a32731145bb05edb4d269776fd90698bd",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-piper-rtx-cpu-r2.role2-last.npy",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu-r2/role2-last.npy",
+      "bytes": 2304128,
+      "sha256": "642d5e24853802746541052f7c76dd5e79f4e4a11aa0f2d64252f7ccd9a9eae0",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-piper-rtx-cpu-r2.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu-r2.launch.json",
+      "bytes": 84380,
+      "sha256": "db4dd46e576db6f9ead609e4c23a786d7959df861441119e208cefbc68f18aff",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-piper-rtx-cpu-r2.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu-r2.log",
+      "bytes": 2412,
+      "sha256": "4992695036bb0255644919c41933b549c3223de4ad6428ba5c4e3036e13d703e",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-piper-rtx-cpu-r2.process.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu-r2.process.json",
+      "bytes": 1396,
+      "sha256": "088b8d72ca6f8d6a179c011a7b100ea8f37eed64d78fae87f79378b5d64939ba",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-piper-rtx-cpu.launch.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu.launch.json",
+      "bytes": 7658,
+      "sha256": "b34775fad35639ff5b34c65f7d3b7d5fe7acc475fe88aed39de96acaf3ba4ca5",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovrtx-piper-rtx-cpu.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovrtx-piper-rtx-cpu.log",
+      "bytes": 1948,
+      "sha256": "08beea5481113baa075bc169b5c6475b44cc1d3488a33c16ac624c66c4c753c6",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovstage-overlay-parse.json",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovstage-overlay-parse.json",
+      "bytes": 1029,
+      "sha256": "85e3b2693d3a6493f5d462a56fa21e32c3f808f35e784d36534f3897dd26ea98",
+      "tracked": false
+    },
+    {
+      "id": "experiment.live30.deep.ovstage-overlay-parse.log",
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovstage-overlay-parse.log",
+      "bytes": 1029,
+      "sha256": "85e3b2693d3a6493f5d462a56fa21e32c3f808f35e784d36534f3897dd26ea98",
+      "tracked": false
+    }
+  ]
+}

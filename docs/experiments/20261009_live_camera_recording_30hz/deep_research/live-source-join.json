@@ -1,0 +1,15 @@
+{
+  "schema": "live30_persisted_source_join_v1",
+  "dataset_admissible": false,
+  "input": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long",
+  "committed_observations": 1440,
+  "rendered_observations": 1441,
+  "terminal_observation_separately_rendered": true,
+  "source_identity_and_matrix_hash_equal": true,
+  "errors": [],
+  "full_optical_guard_passed": true,
+  "scope": "Joins persisted source observation to matrices actually submitted to renderer; no independent silhouette/contact/photometric parity claim",
+  "source_sha256": "2b383113676520b88161b39327bfa05eeddd4dd2b831beffc08983c02498acb3",
+  "hdf_sha256": "f531bd16719337aca20b772d535004401a077091ebf067d35d1523ce73eae4b1",
+  "worker_rows_sha256": "d93e000d1d6bf024d3004a43abb21a0d3990d66cdf26a3dc5db9cc075732da92"
+}

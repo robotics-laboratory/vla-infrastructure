@@ -1,0 +1,18 @@
+{
+  "passed": false,
+  "process_returncode": 139,
+  "failure": "GPU allocation errors then PhysX/Fabric native crash",
+  "confounded": true,
+  "external_gpu_owner": {
+    "pid": 2710393,
+    "user": "root",
+    "command_prefix": "/root/workspace/jlens-run/.venv/bin/python -m ipykernel_launcher",
+    "used_gpu_memory_mib": 20064
+  },
+  "dataset_admissible": false,
+  "quest_connected": false,
+  "result_json_missing": true,
+  "launch_receipt": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r3.launch.json",
+  "log_sha256": "0115fdbf3669a21325881c29eeefbc5b6778b48dcdd33744f5e8b5e48ac8e818",
+  "written_utc": "2026-10-09T12:46:15Z"
+}

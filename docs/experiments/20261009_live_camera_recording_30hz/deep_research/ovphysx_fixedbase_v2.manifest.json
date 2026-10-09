@@ -1,0 +1,68 @@
+{
+  "schema": "live30_ovphysx_fixedbase_overlay_v1",
+  "source": "/data/ebulochkin/vla-runtime/live30-20261009/piper-inputs/stage_snapshot.usd",
+  "source_sha256": "03453f4d22eedb40c77cee68aabab241d0c0bf58b824f9c72afb59bef27b812b",
+  "overlay": "/tmp/live30-deep-ovphysx-fixedbase-v2.usda",
+  "overlay_sha256": "548320594048c8f96b5a1b1de68eeb0a3803214bae9dc53db816e1bb399ed8df",
+  "overlay_only": true,
+  "sdk_source_commit": "da950a3537927784951853c66618036f332ca0ce",
+  "edits": [
+    {
+      "old_root": "/World/LeftPiper/Geometry/world/base_link",
+      "new_root": "/World/LeftPiper/Physics/world_to_base_link",
+      "original_body0": [
+        "/World/LeftPiper"
+      ],
+      "original_body1": [
+        "/World/LeftPiper/Geometry/world/base_link"
+      ],
+      "derived_body0": [],
+      "derived_body1": [
+        "/World/LeftPiper/Geometry/world/base_link"
+      ],
+      "articulation_attributes": {
+        "physxArticulation:enabledSelfCollisions": "True",
+        "physxArticulation:solverPositionIterationCount": "8",
+        "physxArticulation:solverVelocityIterationCount": "2"
+      }
+    },
+    {
+      "old_root": "/World/RightPiper/Geometry/world/base_link",
+      "new_root": "/World/RightPiper/Physics/world_to_base_link",
+      "original_body0": [
+        "/World/RightPiper"
+      ],
+      "original_body1": [
+        "/World/RightPiper/Geometry/world/base_link"
+      ],
+      "derived_body0": [],
+      "derived_body1": [
+        "/World/RightPiper/Geometry/world/base_link"
+      ],
+      "articulation_attributes": {
+        "physxArticulation:enabledSelfCollisions": "True",
+        "physxArticulation:solverPositionIterationCount": "8",
+        "physxArticulation:solverVelocityIterationCount": "2"
+      }
+    }
+  ],
+  "initial_world_transforms_unchanged": 1475,
+  "preserved_stage_metadata": {
+    "metersPerUnit": "1.0",
+    "upAxis": "Z",
+    "kilogramsPerUnit": "1.0",
+    "timeCodesPerSecond": "60.0",
+    "framesPerSecond": "24.0",
+    "startTimeCode": "0.0",
+    "endTimeCode": "100.0",
+    "defaultPrim": ""
+  },
+  "articulation_roots": [
+    "/World/LeftPiper/Physics/world_to_base_link",
+    "/World/RightPiper/Physics/world_to_base_link"
+  ],
+  "fixed_base_runtime_verified": false,
+  "canonical_physics_parity_verified": false,
+  "physical": false,
+  "scope": "Root-authoring adaptation to fixed-base intent; no new constraint, no geometry/drive/source edits"
+}

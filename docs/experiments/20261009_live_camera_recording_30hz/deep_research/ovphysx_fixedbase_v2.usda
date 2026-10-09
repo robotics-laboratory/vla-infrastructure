@@ -1,0 +1,74 @@
+#usda 1.0
+(
+    defaultPrim = ""
+    endTimeCode = 100
+    framesPerSecond = 24
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    startTimeCode = 0
+    subLayers = [
+        @/data/ebulochkin/vla-runtime/live30-20261009/piper-inputs/stage_snapshot.usd@
+    ]
+    timeCodesPerSecond = 60
+    upAxis = "Z"
+)
+
+over "World"
+{
+    over "LeftPiper"
+    {
+        over "Geometry"
+        {
+            over "world"
+            {
+                over "base_link" (
+                    delete apiSchemas = ["PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
+                )
+                {
+                }
+            }
+        }
+
+        over "Physics"
+        {
+            over "world_to_base_link" (
+                prepend apiSchemas = ["PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
+            )
+            {
+                rel physics:body0 = None
+                bool physxArticulation:enabledSelfCollisions = 1
+                int physxArticulation:solverPositionIterationCount = 8
+                int physxArticulation:solverVelocityIterationCount = 2
+            }
+        }
+    }
+
+    over "RightPiper"
+    {
+        over "Geometry"
+        {
+            over "world"
+            {
+                over "base_link" (
+                    delete apiSchemas = ["PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
+                )
+                {
+                }
+            }
+        }
+
+        over "Physics"
+        {
+            over "world_to_base_link" (
+                prepend apiSchemas = ["PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
+            )
+            {
+                rel physics:body0 = None
+                bool physxArticulation:enabledSelfCollisions = 1
+                int physxArticulation:solverPositionIterationCount = 8
+                int physxArticulation:solverVelocityIterationCount = 2
+            }
+        }
+    }
+}
+

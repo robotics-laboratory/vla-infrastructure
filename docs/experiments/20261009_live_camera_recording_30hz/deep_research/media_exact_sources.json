@@ -1,0 +1,126 @@
+{
+  "retrieved_date": "2026-10-09",
+  "source_type": "primary",
+  "no_gpu_runs": true,
+  "no_installation": true,
+  "archive": {
+    "path": "/tmp/live30-media-upstream/PyNvVideoCodec_2.2.3.zip",
+    "bytes": 40163701,
+    "sha256": "29f7c0694d683266c563aca9a4f8e979ba0c5dce8f0ccc1efe500073e0948be0",
+    "manifest_sha256_base64": "KffAaU1oMmbFY6yppPjpeboMXc6PDMwe/lAAc+CUi+A=",
+    "verified": true
+  },
+  "urls": [
+    {
+      "id": "ngc_source_zip",
+      "url": "https://api.ngc.nvidia.com/v2/resources/nvidia/pynvvideocodec/versions/v2.2.3/files/PyNvVideoCodec_2.2.3.zip",
+      "retrieved_date": "2026-10-09",
+      "kind": "primary"
+    },
+    {
+      "id": "ngc_manifest",
+      "url": "https://api.ngc.nvidia.com/v2/resources/nvidia/pynvvideocodec/versions/v2.2.3/files",
+      "retrieved_date": "2026-10-09",
+      "kind": "primary"
+    },
+    {
+      "id": "ngc_catalog",
+      "url": "https://catalog.ngc.nvidia.com/orgs/nvidia/resources/pynvvideocodec",
+      "retrieved_date": "2026-10-09",
+      "kind": "primary"
+    },
+    {
+      "id": "pynv_api_guide",
+      "url": "https://docs.nvidia.com/video-technologies/pynvvideocodec/pynvc-api-prog-guide/using_pynvvideocodec_apis.html",
+      "retrieved_date": "2026-10-09",
+      "kind": "primary"
+    },
+    {
+      "id": "nvenc13_guide",
+      "url": "https://docs.nvidia.com/video-technologies/video-codec-sdk/13.0/nvenc-video-encoder-api-prog-guide/index.html",
+      "retrieved_date": "2026-10-09",
+      "kind": "primary"
+    },
+    {
+      "id": "cuda_driver_mem",
+      "url": "https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__MEM.html",
+      "retrieved_date": "2026-10-09",
+      "kind": "primary"
+    },
+    {
+      "id": "ffmpeg442_manual",
+      "url": "https://raw.githubusercontent.com/FFmpeg/FFmpeg/n4.4.2/doc/ffmpeg.texi",
+      "retrieved_date": "2026-10-09",
+      "kind": "primary"
+    }
+  ],
+  "source_files": [
+    {
+      "archive_path": "PyNvVideoCodec_2.2.3/src/PyNvVideoCodec/src/PyNvEncoder.cpp",
+      "local_path": "/tmp/live30-media-upstream/pynv223-source/PyNvVideoCodec_2.2.3/src/PyNvVideoCodec/src/PyNvEncoder.cpp",
+      "sha256": "d68a64c5dde7e74cc4cc283e59da79ccf34e551235aa906910b2209e249bf247"
+    },
+    {
+      "archive_path": "PyNvVideoCodec_2.2.3/src/PyNvVideoCodec/src/PyCAIMemoryView.cpp",
+      "local_path": "/tmp/live30-media-upstream/pynv223-source/PyNvVideoCodec_2.2.3/src/PyNvVideoCodec/src/PyCAIMemoryView.cpp",
+      "sha256": "2deb6331626dc2aa82e2ef49747114d6c41323038a10bf0e12c3519fccb9bc84"
+    },
+    {
+      "archive_path": "PyNvVideoCodec_2.2.3/src/PyNvVideoCodec/inc/PyNvEncoder.hpp",
+      "local_path": "/tmp/live30-media-upstream/pynv223-source/PyNvVideoCodec_2.2.3/src/PyNvVideoCodec/inc/PyNvEncoder.hpp",
+      "sha256": "652fb85c415cb686af778674342b7abca6b66aa84e68bbbd88f4fa9b4feaf9ba"
+    },
+    {
+      "archive_path": "PyNvVideoCodec_2.2.3/src/PyNvVideoCodec/utils/PyNvVideoCodecUtils.hpp",
+      "local_path": "/tmp/live30-media-upstream/pynv223-source/PyNvVideoCodec_2.2.3/src/PyNvVideoCodec/utils/PyNvVideoCodecUtils.hpp",
+      "sha256": "b213f3919fc3955f22dd5c95228125aaa2d701eab0e43bbe90bc8e18799ad7a6"
+    },
+    {
+      "archive_path": "PyNvVideoCodec_2.2.3/src/VideoCodecSDKUtils/helper_classes/NvCodec/NvEncoder/NvEncoder_130.cpp",
+      "local_path": "/tmp/live30-media-upstream/pynv223-source/PyNvVideoCodec_2.2.3/src/VideoCodecSDKUtils/helper_classes/NvCodec/NvEncoder/NvEncoder_130.cpp",
+      "sha256": "6cebab5db535a8115ac8c7463fedf6fafc1c0eb86f4f363365ee6762c821b4a2"
+    },
+    {
+      "archive_path": "PyNvVideoCodec_2.2.3/src/VideoCodecSDKUtils/helper_classes/NvCodec/NvEncoder/NvEncoder_121.cpp",
+      "local_path": "/tmp/live30-media-upstream/pynv223-source/PyNvVideoCodec_2.2.3/src/VideoCodecSDKUtils/helper_classes/NvCodec/NvEncoder/NvEncoder_121.cpp",
+      "sha256": "fb50d07d6cb27431e621cbbf55c37ff98cee1a4751d60916fd2177f9a156800d"
+    },
+    {
+      "archive_path": "PyNvVideoCodec_2.2.3/src/VideoCodecSDKUtils/helper_classes/NvCodec/NvEncoder/NvEncoderCuda.cpp",
+      "local_path": "/tmp/live30-media-upstream/pynv223-source/PyNvVideoCodec_2.2.3/src/VideoCodecSDKUtils/helper_classes/NvCodec/NvEncoder/NvEncoderCuda.cpp",
+      "sha256": "6762cec31372e7083e950a1a3945c63fa9c04ec6e7159b163edccc225eb769aa"
+    },
+    {
+      "archive_path": "PyNvVideoCodec_2.2.3/src/VideoCodecSDKUtils/helper_classes/NvCodec/NvEncoder/NvEncoderCuda.h",
+      "local_path": "/tmp/live30-media-upstream/pynv223-source/PyNvVideoCodec_2.2.3/src/VideoCodecSDKUtils/helper_classes/NvCodec/NvEncoder/NvEncoderCuda.h",
+      "sha256": "a4be827ad411fda0ca35159792438e0cae7f5e945e0035e4a74c34985e3307fc"
+    },
+    {
+      "archive_path": "PyNvVideoCodec_2.2.3/src/VideoCodecSDKUtils/Interface/nvEncodeAPI_130.h",
+      "local_path": "/tmp/live30-media-upstream/pynv223-source/PyNvVideoCodec_2.2.3/src/VideoCodecSDKUtils/Interface/nvEncodeAPI_130.h",
+      "sha256": "a605fca72865fa990ca987912a9803bcf2e9d481f7bef8a6d02a9252eb88e61a"
+    },
+    {
+      "archive_path": "PyNvVideoCodec_2.2.3/src/VideoCodecSDKUtils/Interface/nvEncodeAPI_121.h",
+      "local_path": "/tmp/live30-media-upstream/pynv223-source/PyNvVideoCodec_2.2.3/src/VideoCodecSDKUtils/Interface/nvEncodeAPI_121.h",
+      "sha256": "e17b58806149f9820a9ff166468b098b052ad47c0ce5818211116cb9260f0642"
+    },
+    {
+      "archive_path": "PyNvVideoCodec_2.2.3/src/VideoCodecSDKUtils/helper_classes/Utils/NvCodecUtils.h",
+      "local_path": "/tmp/live30-media-upstream/pynv223-source/PyNvVideoCodec_2.2.3/src/VideoCodecSDKUtils/helper_classes/Utils/NvCodecUtils.h",
+      "sha256": "75c396229dac5048a7a991ebe4d3cc91f217b30ead12594db3dedf7c0a08f5c4"
+    }
+  ],
+  "source_corrections": [
+    "packet timestamp is local encoder ordinal; inputTimeStamp overwritten in both NvEncoder SDK branches",
+    "cuda() returns CAI object, not dict",
+    "CAI ABGR/ARGB only contiguous pitch W*4 supported",
+    "CAI producer stream does not cause consumer wait",
+    "external GPU pixels internally copied D2D; retention does not prevent renderer overwrite"
+  ],
+  "repository_read": "CodeGraph current exact source for deep_research/pynv223_adapter.py and codec_probe.py",
+  "search_ledger": [
+    "No new search queries; opened exact NGC source archive API, official catalog/API docs, exact FFmpeg n4.4.2 manual, CUDA driver docs. Previous search ledger in /tmp/live30-deep-media-sources.json"
+  ],
+  "report_sha256": "a381380868be493980541e7d38e18cc86929dd73529efc621ea829ade9cf2303"
+}

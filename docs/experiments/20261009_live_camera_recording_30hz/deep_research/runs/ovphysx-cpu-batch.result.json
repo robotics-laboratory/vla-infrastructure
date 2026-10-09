@@ -1,0 +1,66 @@
+{
+  "schema": "live30_ovphysx_screening_v1",
+  "target_achieved": false,
+  "gpu_run": false,
+  "dataset_admissible": false,
+  "physical": false,
+  "excluded": [
+    "XR",
+    "Quest3",
+    "IK",
+    "cameras",
+    "recorder",
+    "contact_qualification"
+  ],
+  "args": {
+    "stage": "/data/ebulochkin/vla-runtime/live30-20261009/piper-inputs/stage_snapshot.usd",
+    "out": "/data/ebulochkin/vla-runtime/live30-deep-20261009/ovphysx-cpu-batch",
+    "mode": "cpu",
+    "threads": 0,
+    "steps": 3000,
+    "warmup": 120,
+    "cadence": "batch",
+    "observation": "qv-links-all"
+  },
+  "packages": {
+    "ovphysx": "0.6.3",
+    "ovstage": "0.2.0.377349",
+    "warp-lang": "1.16.0",
+    "numpy": "2.5.1"
+  },
+  "stage_sha256": "03453f4d22eedb40c77cee68aabab241d0c0bf58b824f9c72afb59bef27b812b",
+  "topology": {
+    "roots": [
+      "/World/LeftPiper/Geometry/world/base_link",
+      "/World/RightPiper/Geometry/world/base_link"
+    ],
+    "dof_names": [
+      "joint1",
+      "joint2",
+      "joint3",
+      "joint4",
+      "joint5",
+      "joint6",
+      "gripper",
+      "gripper_joint1",
+      "gripper_joint2"
+    ],
+    "body_names": [
+      "base_link",
+      "link1",
+      "link2",
+      "link3",
+      "link4",
+      "link5",
+      "link6",
+      "flange_link",
+      "gripper_base",
+      "gripper_link",
+      "gripper_link1",
+      "gripper_link2"
+    ],
+    "fixed_base": false
+  },
+  "status": "failed",
+  "error": "RuntimeError: Expected fixed-base PIPERs"
+}

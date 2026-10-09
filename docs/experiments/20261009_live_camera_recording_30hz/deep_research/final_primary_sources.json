@@ -1,0 +1,14 @@
+{
+  "retrieved_utc": "2026-10-09T14:47:50.484180+00:00",
+  "scope": "Final primary-page retrieval verification; detailed claims and exact sections are in direction-specific source ledgers.",
+  "sources": [
+    {
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/latest/reference_material/sim_performance_optimization_handbook.html",
+      "retrieval_succeeded": true
+    },
+    {
+      "url": "https://developer.nvidia.com/video-encode-decode-support-matrix",
+      "retrieval_succeeded": true
+    }
+  ]
+}

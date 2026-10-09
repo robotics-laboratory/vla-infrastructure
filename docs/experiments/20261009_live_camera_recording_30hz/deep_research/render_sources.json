@@ -1,0 +1,625 @@
+{
+  "scope": "Read-only public rendering/camera infofield + installed6.1sourceaudit; no GPU/hardware runs",
+  "goal": {
+    "activeXRQuest3": "strictly >30 wall actionHz and eachcamera uniqueRGBHz",
+    "noQuest_screening": "approximately50Hz",
+    "bounded_lag": "allowed only measuredboundedlag preserving observation/actionidentity"
+  },
+  "sources": [
+    {
+      "id": "R01",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/reference_material/sim_performance_optimization_handbook.html",
+      "evidence_type": "official_versioned_documentation",
+      "published_or_updated": "2026-09-18",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Async full tuple, explicit DLSS, viewport/Fabric scope restrictions; texture flag differs from installed UI.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R02",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/sensors/isaacsim_sensors_camera.html",
+      "evidence_type": "official_versioned_documentation",
+      "published_or_updated": "2026-09-18",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "RtxCamera authoring, CameraSensor/TiledCameraSensor runtime GPU arrays and native examples.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R03",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/sensors/isaacsim_sensors_multitick_rendering.html",
+      "evidence_type": "official_versioned_documentation",
+      "published_or_updated": "2026-09-18",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Physics clock /ExternalSimulationTime, tickRate, full app updates, zero-delay tradeoff; no XR known issue documented on this page.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R04",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/replicator_tutorials/tutorial_replicator_getting_started.html",
+      "evidence_type": "official_versioned_documentation",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "wait_for_render=False decouples scheduling and completed render; not same-frame proof.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R05",
+      "url": "https://docs.omniverse.nvidia.com/materials-and-rendering/latest/rtx-renderer_common.html",
+      "evidence_type": "official_latest_documentation",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Texture flag enableTextureStreaming, toggling requires scene reload.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R06",
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/usdrt.scenegraph/latest/fabricsd/fsd_vs_omnihydra.html",
+      "evidence_type": "official_latest_documentation",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "FSD uses Fabric for all render data; explicit USD synchronization differs from legacy Hydra.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R07",
+      "url": "https://raw.githubusercontent.com/NVIDIA/omniperf/main/.agents/skills/perf-tuning/SKILL.md",
+      "evidence_type": "official_repository_guidance_with_reported_measurements",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Texture wait6.72ms, waitIdle safety scope, camera GPU zones, FrameGeneration inflation; no raw capture retrieved.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R08",
+      "url": "https://github.com/NVIDIA/omniperf/blob/main/dev/docs/profiling-guide.md",
+      "evidence_type": "official_repository_benchmark_summary",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "ChessRTX pathtraced RTX PRO6000Blackwell Kit110.1.1 warm idle FPS preset/DLSS comparison; profiler overhead.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R09",
+      "url": "https://docs.nvidia.com/cloudxr-sdk/latest/usr_guide/cloudxr_js/performance.html",
+      "evidence_type": "official_latest_documentation",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Client framebufferScaleFactor/foveation/frame rate, different from server eye resolution.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R10",
+      "url": "https://docs.nvidia.com/cloudxr-sdk/latest/usr_guide/cloudxr_runtime/runtime_mgmt_api.html",
+      "evidence_type": "official_latest_documentation",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Runtime max-fps0automatic range0–60, use30/45 pacing for slower apps; HMD render dimensions overrides; configure before start.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R11",
+      "url": "https://docs.nvidia.com/cloudxr-sdk/latest/release_notes/release_notes.html",
+      "evidence_type": "official_release_notes",
+      "published_or_updated": "2026-05-20",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "max-fps added CloudXR Runtime6.2.0.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R12",
+      "url": "https://docs.nvidia.com/cloudxr-sdk/release/6/usr_guide/cloudxr_framework/hud_metrics.html",
+      "evidence_type": "official_documentation",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Framework HUD metrics raw450samples ~5s90FPS; separate from WebXR client.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R13",
+      "url": "https://docs.nvidia.com/cloudxr-sdk/release/6/usr_guide/cloudxr_js/telemetry.html",
+      "evidence_type": "official_documentation",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "JS telemetry, must not equate streaming FPS to sensor unique frame FPS.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R14",
+      "url": "https://docs.nvidia.com/cloudxr-sdk/latest/usr_guide/cloudxr_js/sample_react.html",
+      "evidence_type": "official_example",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "IWER desktop client emulation is prephysical path, not realQuest qualification.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R15",
+      "url": "https://docs.nvidia.com/cloudxr-sdk/latest/usr_guide/cloudxr_js/troubleshooting.html",
+      "evidence_type": "official_documentation",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Server encode capacity, bandwidth, resolution and jitter investigation.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R16",
+      "url": "https://forums.developer.nvidia.com/t/camera-class-from-omni-isaac-sensor-significantly-reduces-sim-performance/306269",
+      "evidence_type": "forum_user_report_and_staff_discussion",
+      "published_or_updated": "2024-09-10..18",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "3x640x400:55FPS no cams→20 cams→13 ROS2; upgraded GPU did not resolve, scope Isaac2023.1.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R17",
+      "url": "https://forums.developer.nvidia.com/t/fps-drops-when-using-camera-sensor/329618",
+      "evidence_type": "forum_user_report_and_staff_observation",
+      "published_or_updated": "2025-04-24",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "User60→8FPS one1024x720; staff own warehouse95→50, did not reproduce8.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R18",
+      "url": "https://forums.developer.nvidia.com/t/performance-of-render-product-in-action-graph/322300",
+      "evidence_type": "forum_user_report_and_staff_guidance",
+      "published_or_updated": "2025-02-03; staff2026-04-19",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "4 segmentationcams35→5–8FPS4.2; staff recommends tile/detach/stagger, no tested fix number.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R19",
+      "url": "https://forums.developer.nvidia.com/t/controlling-fps-of-createrenderproduct-createrenderproductfromviewport/273238",
+      "evidence_type": "forum_staff_api_guidance",
+      "published_or_updated": "2023-11..2024-01-22",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Older RP updates irrespective publishing; hydra_texture.set_updates_enabled(False), moderntickrate supersedes skipped-output publishing.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R20",
+      "url": "https://forums.developer.nvidia.com/t/how-to-increase-isaacsim-fps-when-using-ros-camera/245058",
+      "evidence_type": "forum_user_report",
+      "published_or_updated": "2023-03",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Two1280x720 RGBdepth5Hz,20FPS; no resolved controlledbenchmark.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R21",
+      "url": "https://forums.developer.nvidia.com/t/aligning-physics-stepping-with-real-time/339683",
+      "evidence_type": "forum_staff_explanation",
+      "published_or_updated": "2026-09-17",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "asyncio does not move Kit physics off IApp mainupdate loop.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R22",
+      "url": "https://forums.developer.nvidia.com/t/isaac-sim-real-time-performance-limitations-with-multi-sensor-setup-400hz-physics-extension-based-implementation/364735",
+      "evidence_type": "forum_user_report",
+      "published_or_updated": "2026-04",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "5090laptop4cams2lidars400Hz strictjitter target; different workload.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R23",
+      "url": "https://github.com/isaac-sim/IsaacSim/discussions/442",
+      "evidence_type": "repository_user_experiment_and_maintainer_response",
+      "published_or_updated": "2026-01-27..02-06",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "5090 256x256camera60Hz→13Hzcustomwriter→60emptywrite; lidar60→48. No rawcapture retrieved.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R24",
+      "url": "https://github.com/isaac-sim/IsaacLab/discussions/1553",
+      "evidence_type": "repository_user_profile",
+      "published_or_updated": "2024-12-17..2025-01",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Two per-camera set_world_poses calls triggerextra renderwork; comparecounts differ.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R25",
+      "url": "https://github.com/isaac-sim/IsaacLab/issues/3932",
+      "evidence_type": "repository_user_issue",
+      "published_or_updated": "2025-11-04",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "256envx4cams get_data~1s; cannot transfer scale to3cams.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R26",
+      "url": "https://github.com/isaac-sim/IsaacLab/discussions/2397",
+      "evidence_type": "repository_bug_report_with_maintainer_acknowledgment",
+      "published_or_updated": "2025-04-29;2025-06-05",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Headless camera stale/wheel artifacts; enablinglivestreamadditionalrenderfixes/slows.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R27",
+      "url": "https://github.com/isaac-sim/IsaacLab/issues/745",
+      "evidence_type": "repository_historical_bug_report",
+      "published_or_updated": "2024",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Old4.1tiled tracking needsmultiple renders; not6.1performance proof.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R28",
+      "url": "https://github.com/isaac-sim/IsaacLab/issues/6250",
+      "evidence_type": "repository_user_issue",
+      "published_or_updated": "2026",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Headless/reset stale-frame diagnostic AppLauncher arguments problem; currentversioncheckrequired.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R29",
+      "url": "https://github.com/isaac-sim/IsaacLab/discussions/1008",
+      "evidence_type": "repository_historical_discussion",
+      "published_or_updated": "2024-09",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "rerender_on_reset correctness vs cost, tiled4.2 fixes.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R30",
+      "url": "https://github.com/isaac-sim/IsaacLab/issues/3526",
+      "evidence_type": "repository_bug_report",
+      "published_or_updated": "2025-09-22",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "2.2tiled depth dtypeuint8 regression resolved later; RGBdifferent.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R31",
+      "url": "https://github.com/isaac-sim/IsaacLab/releases",
+      "evidence_type": "official_release_notes",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Release3 foldedTiledCamera intoCamera; differentbackend means different tested environment.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R32",
+      "url": "https://github.com/isaac-sim/IsaacLab/blob/develop/docs/source/refs/release_notes.rst",
+      "evidence_type": "official_repository_release_notes",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Renderingquality/performance defaults were changed/reverted; pinversion.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R33",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.0.0/ros2_tutorials/tutorial_ros2_camera_publishing.html",
+      "evidence_type": "official_versioned_example",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "RtxCamera30tick CameraSensorRGBdepth; tickcadence not DDS-rate control.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R34",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/latest/py/source/extensions/isaacsim.ros2.nodes/docs/ogn/OgnROS2PublishImage.html",
+      "evidence_type": "official_node_definition",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "cudaDeviceIndex/dataPtr, already matching encoding; GPUinput not proof DDSzero-copy.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R35",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.0.0/py/api/classisaacsim_1_1ros2_1_1nodes_1_1_image_publisher.html",
+      "evidence_type": "official_API",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "publishFromDevice and publishFromHost exist; device method not proofno downstreamcopy.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R36",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/latest/ros2_tutorials/tutorial_ros2_camera_noise.html",
+      "evidence_type": "official_GPU_pipeline_example",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "WarpGPUimage processing before nativepublisher; reuseidea withoutROSstack.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R37",
+      "url": "https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nitros/blob/main/isaac_ros_nitros_type/isaac_ros_nitros_image_type/include/isaac_ros_nitros_image_type/nitros_image.hpp",
+      "evidence_type": "official_repository_code",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Pool/externalCUDApointer ownership/deleter/read_handle; errorwhennoGPUbuffer e.g.anotherprocess.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R38",
+      "url": "https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_image_pipeline",
+      "evidence_type": "official_repository_README",
+      "published_or_updated": "2026-09-21",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Migrated NITROS→ROS2Lyrical rosidl::BufferCUDAbackend; separateinstalledstack.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R39",
+      "url": "https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nitros_bridge",
+      "evidence_type": "official_repository_README",
+      "published_or_updated": "2024-09-26",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "ROS1/ROS2bridge1080p upto3xfasterclaimed; not simulationrenderer.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R40",
+      "url": "https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_nitros/issues/45",
+      "evidence_type": "repository_user_issue",
+      "published_or_updated": "2024-08-17",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Sameprocesszero-copy complaint, not final currentAPIdefinition.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R41",
+      "url": "https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_visual_slam/blob/main/isaac_ros_visual_slam/src/impl/visual_slam_impl.cpp",
+      "evidence_type": "official_repository_code",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "RetainreadhandlesuntilTrack, explicitstreamsync forconsumerinternalstreams:zero-copydoesnotmeanzerosync.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R42",
+      "url": "https://forums.developer.nvidia.com/t/how-to-get-camera-input-when-vr-is-running/358922",
+      "evidence_type": "forum_user_experiment_and_staff_scope",
+      "published_or_updated": "2026-01-28..03-07",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Quest2tiledget_datafreezes, asyncdidnotfix; staffFeb17additionalcamerasintentionallyremovedXR, no officiallysupportedbypass.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R43",
+      "url": "https://forums.developer.nvidia.com/t/cameraview-class-has-wrong-width-height-order-in-tile-rendering/356932",
+      "evidence_type": "forum_search_result_only",
+      "published_or_updated": "2026",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "OldCameraView widthheightbug;openfailedUnexpectedStatusCode. Local6.1nativeAPIverifiedseparately.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R44",
+      "url": "https://github.com/isaac-sim/IsaacSim/discussions/285",
+      "evidence_type": "repository_staff_explanation",
+      "published_or_updated": "2025-10-30..31",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "enable_async throttling appliesonlystop/pause, notliveperformance switch.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R45",
+      "url": "https://github.com/isaac-sim/IsaacSim/discussions/741",
+      "evidence_type": "repository_user_experiments",
+      "published_or_updated": "2026-08-07..28",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "6.0.1sharedtiled2x640x400, GPUlidarvsHost4.9ms, blockingnumpyinsideNEW_FRAME defeatsdoublebuffer;profile40%slower.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R46",
+      "url": "https://github.com/isaac-sim/isaacsim-app-template",
+      "evidence_type": "official_repository_README",
+      "published_or_updated": "5.1 final",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Zero-delaycostperformance;minimalexperienceandFabricvariants, nowintegratedIsaacSim.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R47",
+      "url": "https://github.com/isaac-sim/IsaacLab/issues/5362",
+      "evidence_type": "repository_user_issue",
+      "published_or_updated": "2026",
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "Full.streamingexperienceAppLauncherhangreported; not provenhere.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R48",
+      "url": "https://raw.githubusercontent.com/NVIDIA/skills/main/skills.sh.json",
+      "evidence_type": "official_skill_catalog",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "access": "web search/open read",
+      "finding": "NVIDIA skill discovery; omniverse-usd-performance-tuning found; noinstallation.",
+      "local_validation": "No GPU/hardware run"
+    },
+    {
+      "id": "R49",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/utilities/debugging/profiling_performance.html",
+      "evidence_type": "official_versioned_documentation",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "finding": "ProfilingPerformance guidance; no capture executed"
+    },
+    {
+      "id": "R50",
+      "url": "https://raw.githubusercontent.com/NVIDIA/omniperf/main/.agents/skills/nsys-analyze/SKILL.md",
+      "evidence_type": "official_repository_guidance",
+      "published_or_updated": null,
+      "accessed_at": "2026-10-09",
+      "finding": "Nsight trace analysis workflow; no installation or execution"
+    }
+  ],
+  "local_sources": [
+    {
+      "id": "zero_delay",
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/apps/isaacsim.exp.base.zero_delay.kit",
+      "sha256": "89dd97b425a94c0046d22a411e4c80c367e3b169cc111214c31e3316a370c995",
+      "line_count": 32,
+      "ranges": [
+        [
+          8,
+          34
+        ]
+      ]
+    },
+    {
+      "id": "base",
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/apps/isaacsim.exp.base.kit",
+      "sha256": "68e18ce56dbbc9e8b5283c460d7f1500e4af26a079d3929ca97bfe7e315bb3cf",
+      "line_count": 275,
+      "ranges": [
+        [
+          200,
+          218
+        ]
+      ]
+    },
+    {
+      "id": "rtx_settings",
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.rtx.settings.core-0.7.1+00c488ae/omni/rtx/settings/core/widgets/common_widgets.py",
+      "sha256": "80a64823e2ae8f21c4166d0b148fa377cbd8b1caa29bf2e96bfcb7a2857f49b8",
+      "line_count": 1531,
+      "ranges": [
+        [
+          1388,
+          1420
+        ]
+      ]
+    },
+    {
+      "id": "render_test",
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.core.rendering_manager/isaacsim/core/rendering_manager/tests/test_rendering_manager.py",
+      "sha256": "c98041f34491d2c5b5879399d2ebb7b6785df9227ba18c2e1a19d9c70be999a4",
+      "line_count": 225,
+      "ranges": [
+        [
+          100,
+          130
+        ]
+      ]
+    },
+    {
+      "id": "lab_camera",
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/sensors/camera/camera.py",
+      "sha256": "2d1fede2b9d46c3af14a1b356a2ea7632ecf492c2f72253e2697158aca79d154",
+      "line_count": 939,
+      "ranges": []
+    },
+    {
+      "id": "lab_renderer",
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/renderers/isaac_rtx_renderer.py",
+      "sha256": "3ad084604d4c7d7de07a5082943b8b1939b4f281f8d644dfa3a48456de6a19ca",
+      "line_count": 666,
+      "ranges": []
+    },
+    {
+      "id": "lab_utils",
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/renderers/isaac_rtx_renderer_utils.py",
+      "sha256": "1a0ee53431a0cb23178f1b23d778e35828f1131a2e4c438ff53f71816cc97a65",
+      "line_count": 286,
+      "ranges": []
+    },
+    {
+      "id": "camera_sensor.py",
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.sensors.experimental.rtx/isaacsim/sensors/experimental/rtx/impl/camera_sensor.py",
+      "sha256": "d30a3736506f77d90682827e74bffceea36cdfa38f09e653be097c2f2888a945",
+      "line_count": 264
+    },
+    {
+      "id": "tiled_camera_sensor.py",
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.sensors.experimental.rtx/isaacsim/sensors/experimental/rtx/impl/tiled_camera_sensor.py",
+      "sha256": "4d5d09a90d440f2154dad66f26ec3868318712b0a5f9703c762406205b5482a9",
+      "line_count": 350
+    }
+  ],
+  "failed_lookups": [
+    {
+      "url": "https://raw.githubusercontent.com/NVIDIA/omniperf/main/.agents/skills/perf-tuning/references/rtx-presets.md",
+      "result": "cache miss/internal error; profiling-guide provides table instead"
+    },
+    {
+      "url": "https://docs.nvidia.com/isaac/isaac_ros_docs/repositories_and_packages/isaac_ros_nitros/isaac_ros_nitros_bridge/index.html",
+      "result": "cache miss; repositoryREADMEread"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/0c2e2c64e51922d088b695d72ffe03faa5c6b95d/source/isaaclab/isaaclab/sensors/camera/camera.py",
+      "result": "cache miss; localpinnedfilesread"
+    }
+  ],
+  "search_topics": [
+    "Isaac Sim Camera low FPS render product tiled performance forum",
+    "IsaacLab TiledCamera get_data slow GitHub issues",
+    "Isaac Sim async rendering asyncHandshake waitIdle",
+    "Isaac Sim multi tick XR additional views cameras",
+    "CloudXR framebuffer performance max-fps rendering dimensions",
+    "NVIDIA ISAAC ROS nitros bridge GPU image zero copy",
+    "OpenUSD Fabric Scene Delegate performance delayed synchronization",
+    "NVIDIA omniperf rtx-presets texture streaming"
+  ],
+  "search_topics_are": "topic ledger; no exact count of every query claimed",
+  "handoff_handles": [
+    "UsdContext isRenderFinished",
+    "hydraRender",
+    "PresentFrame",
+    "resolveSamplerFeedback",
+    "get_annotator_data",
+    "extrt/rtx/rtaTexturesMC_*",
+    "t_viewport_ViewportTexture_*",
+    "CUDA copy/synchronization",
+    "NVENC submissions"
+  ]
+}

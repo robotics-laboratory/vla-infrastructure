@@ -1,0 +1,69 @@
+{
+  "stage": "/data/ebulochkin/vla-runtime/live30-20261009/piper-inputs/stage_snapshot.usd",
+  "stage_sha256": "03453f4d22eedb40c77cee68aabab241d0c0bf58b824f9c72afb59bef27b812b",
+  "script_sha256": "d7fcda009983f2094540a04bfdb588b1b5440c4981b735bb48d4f0f8aa5c3a81",
+  "count": 4,
+  "mimics": [
+    {
+      "path": "/World/LeftPiper/Physics/gripper_joint1",
+      "schema": "NewtonMimicAPI",
+      "axis": null,
+      "registered_applied_schemas": [
+        "PhysicsDriveAPI:linear"
+      ],
+      "reference_joint": [
+        "/World/LeftPiper/Physics/gripper"
+      ],
+      "gearing": null,
+      "offset": null,
+      "coef0": 0.0,
+      "coef1": 0.5
+    },
+    {
+      "path": "/World/LeftPiper/Physics/gripper_joint2",
+      "schema": "NewtonMimicAPI",
+      "axis": null,
+      "registered_applied_schemas": [
+        "PhysicsDriveAPI:linear"
+      ],
+      "reference_joint": [
+        "/World/LeftPiper/Physics/gripper"
+      ],
+      "gearing": null,
+      "offset": null,
+      "coef0": 0.0,
+      "coef1": -0.5
+    },
+    {
+      "path": "/World/RightPiper/Physics/gripper_joint1",
+      "schema": "NewtonMimicAPI",
+      "axis": null,
+      "registered_applied_schemas": [
+        "PhysicsDriveAPI:linear"
+      ],
+      "reference_joint": [
+        "/World/RightPiper/Physics/gripper"
+      ],
+      "gearing": null,
+      "offset": null,
+      "coef0": 0.0,
+      "coef1": 0.5
+    },
+    {
+      "path": "/World/RightPiper/Physics/gripper_joint2",
+      "schema": "NewtonMimicAPI",
+      "axis": null,
+      "registered_applied_schemas": [
+        "PhysicsDriveAPI:linear"
+      ],
+      "reference_joint": [
+        "/World/RightPiper/Physics/gripper"
+      ],
+      "gearing": null,
+      "offset": null,
+      "coef0": 0.0,
+      "coef1": -0.5
+    }
+  ],
+  "conclusion": "Raw metadata preserves unknown API schemas that GetAppliedSchemas omits without extension registration"
+}

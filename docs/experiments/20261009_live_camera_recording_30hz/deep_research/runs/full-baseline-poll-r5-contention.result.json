@@ -1,0 +1,40 @@
+{
+  "dataset_admissible": false,
+  "quest_connected": false,
+  "source": "deterministic_injected_xr_v1",
+  "synthetic_joint_targets": true,
+  "camera_source_alignment_proven": false,
+  "arguments": {
+    "output": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r5-contention",
+    "frames": 300,
+    "warmup": 120,
+    "media": "poll",
+    "physics_variant": "baseline",
+    "render_mode": "minimal",
+    "async_render": false,
+    "wait_idle": "original",
+    "texture_streaming_off": false,
+    "xr": false,
+    "device": "cuda:0",
+    "ik_workload": false
+  },
+  "source_sha256": "837fd01e7e96320e0397b36ce7cc4fc191ae639af7beaa784441a66cf3d0b990",
+  "base": "d5566834d29ef8bb56e4fb62bb324e23e0869100",
+  "started_utc": "2026-10-09T12:50:51Z",
+  "passed": false,
+  "base_command": [
+    "/home/ebulochkin/vla_infrastructure/tools/run_isaac_s1.py",
+    "--config",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-baseline-poll-r5-contention/runtime.yaml",
+    "--device",
+    "cuda:0",
+    "--vr-runtime",
+    "--s2-record",
+    "--viz",
+    "kit",
+    "--kit_args",
+    "--portable-root /data/ebulochkin/vla-runtime/isaac-isaac61/kit --enable isaacsim.replicator.episode_recorder"
+  ],
+  "error": "Traceback (most recent call last):\n  File \"/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/full_scene_probe.py\", line 214, in <module>\n    ns[\"main\"]()\n  File \"/home/ebulochkin/vla_infrastructure/tools/run_isaac_s1.py\", line 1125, in main\n    return run_vr(\n           ^^^^^^^\n  File \"/home/ebulochkin/vla_infrastructure/tools/isaac_vr_runtime.py\", line 1460, in run_vr\n    sim.reset()\n  File \"/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/sim/simulation_context.py\", line 769, in reset\n    self.physics_manager.reset(soft)\n  File \"/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/physics/physx_manager.py\", line 487, in reset\n    cls.raise_callback_exception_if_any()\n  File \"/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/physics/physx_manager.py\", line 640, in raise_callback_exception_if_any\n    raise exc\n  File \"/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/physics/physics_manager.py\", line 603, in safe_callback_invoke\n    fn(*args)\n  File \"/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/assets/asset_base.py\", line 441, in _invoke\n    getattr(obj_ref, callback_name)(event)\n  File \"/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/assets/asset_base.py\", line 481, in _initialize_callback\n    self._initialize_impl()\n  File \"/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/rigid_object/rigid_object.py\", line 1017, in _initialize_impl\n    self._create_buffers()\n  File \"/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/rigid_object/rigid_object.py\", line 1032, in _create_buffers\n    self._instantaneous_wrench_composer = WrenchComposer(self)\n                                          ^^^^^^^^^^^^^^^^^^^^\n  File \"/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/utils/wrench_composer.py\", line 69, in __init__\n    if hasattr(self._asset.data, \"body_com_pos_w\"):\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/rigid_object/rigid_object_data.py\", line 747, in body_com_pos_w\n    parent = self.body_com_pose_w\n             ^^^^^^^^^^^^^^^^^^^^\n  File \"/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/rigid_object/rigid_object_data.py\", line 408, in body_com_pose_w\n    parent = self.root_com_pose_w\n             ^^^^^^^^^^^^^^^^^^^^\n  File \"/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/rigid_object/rigid_object_data.py\", line 319, in root_com_pose_w\n    self.root_link_pose_w,\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/rigid_object/rigid_object_data.py\", line 268, in root_link_pose_w\n    self._root_link_pose_w.data = self._root_view.get_transforms().view(wp.transformf)\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.physics.tensors-110.3.2+110.3.0.lx64.r.cp312.u7f4/omni/physics/tensors/api.py\", line 3309, in get_transforms\n    raise Exception(\"Failed to get rigid body transforms from backend\")\nException: Failed to get rigid body transforms from backend\n",
+  "finished_utc": "2026-10-09T12:51:00Z"
+}

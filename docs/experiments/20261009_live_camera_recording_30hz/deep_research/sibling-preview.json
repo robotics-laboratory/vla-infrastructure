@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/usr/bin/ffmpeg",
+    "-y",
+    "-hide_banner",
+    "-loglevel",
+    "error",
+    "-i",
+    "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-witness-sibling/view_1.h264",
+    "-vf",
+    "select=eq(n\\,24)",
+    "-vsync",
+    "0",
+    "-frames:v",
+    "1",
+    "/tmp/live30-sibling-r1-frame24.png"
+  ],
+  "returncode": 0,
+  "stderr": ""
+}

@@ -1,0 +1,201 @@
+{
+  "original_runtime_passed": false,
+  "strict_optical_guard_passed": false,
+  "cold_error": "scene role frame1 contrast22 below threshold30; all decoded IDs match",
+  "timed_post_warmup_optical_errors": 0,
+  "performance": {
+    "boundaries": {},
+    "control": {
+      "max_ms": 34.149846,
+      "mean_ms": 17.827913478333333,
+      "p50_ms": 17.3443445,
+      "p90_ms": 19.8594158,
+      "p95_ms": 20.513304849999997,
+      "p99_9_ms": 30.872872140999746,
+      "p99_ms": 23.872177129999997,
+      "samples": 600
+    },
+    "deadline_miss_fraction": 0.08166666666666667,
+    "deadline_misses": 49,
+    "deadline_ms": 20.0,
+    "effective_hz": 56.09181361662556,
+    "effective_wall_hz": 50.646500301911736,
+    "event": "performance_summary",
+    "host_timing_only_no_added_cuda_synchronization": true,
+    "instrumentation_write": {
+      "max_ms": 0.071299,
+      "mean_ms": 0.023730425,
+      "p50_ms": 0.0198395,
+      "p90_ms": 0.030915500000000005,
+      "p95_ms": 0.03900064999999999,
+      "p99_9_ms": 0.06694007699999965,
+      "p99_ms": 0.05860848,
+      "samples": 600
+    },
+    "log_path": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/performance.jsonl",
+    "monotonic_ns": 3780851855815032,
+    "nested_stages_not_additive": {
+      "camera_update": {
+        "max_ms": 0.011653,
+        "mean_ms": 0.00532818,
+        "p50_ms": 0.005239499999999999,
+        "p90_ms": 0.0061028,
+        "p95_ms": 0.0063728000000000005,
+        "p99_9_ms": 0.01048974199999991,
+        "p99_ms": 0.0074217399999999935,
+        "samples": 600
+      },
+      "experiment_update": {
+        "max_ms": 0.017834,
+        "mean_ms": 0.01162011,
+        "p50_ms": 0.011453999999999999,
+        "p90_ms": 0.013497700000000001,
+        "p95_ms": 0.013981449999999998,
+        "p99_9_ms": 0.017094234999999944,
+        "p99_ms": 0.01541943,
+        "samples": 600
+      },
+      "physics_probe_update": {
+        "max_ms": 0.11557400000000001,
+        "mean_ms": 0.008174003333333334,
+        "p50_ms": 0.007864,
+        "p90_ms": 0.009272700000000002,
+        "p95_ms": 0.009945249999999997,
+        "p99_9_ms": 0.05547153799999535,
+        "p99_ms": 0.011155369999999998,
+        "samples": 600
+      },
+      "physics_target_write": {
+        "max_ms": 1.8814719999999998,
+        "mean_ms": 0.910203385,
+        "p50_ms": 0.8388145,
+        "p90_ms": 1.2189067,
+        "p95_ms": 1.3128543499999998,
+        "p99_9_ms": 1.6326593799999807,
+        "p99_ms": 1.35492053,
+        "samples": 600
+      },
+      "robot_update": {
+        "max_ms": 0.712682,
+        "mean_ms": 0.48444811,
+        "p50_ms": 0.4676545,
+        "p90_ms": 0.599372,
+        "p95_ms": 0.6300014999999999,
+        "p99_9_ms": 0.7096288969999998,
+        "p99_ms": 0.68289157,
+        "samples": 600
+      },
+      "sim_step": {
+        "max_ms": 14.902376,
+        "mean_ms": 11.633153786666666,
+        "p50_ms": 11.517976,
+        "p90_ms": 12.095940800000001,
+        "p95_ms": 12.3312703,
+        "p99_9_ms": 14.621425831999979,
+        "p99_ms": 13.646739789999996,
+        "samples": 600
+      }
+    },
+    "schema": "piper_x_isaac_s2_performance_v1",
+    "stages": {
+      "causal_commit_and_record": {
+        "max_ms": 17.933095,
+        "mean_ms": 1.9393189583333332,
+        "p50_ms": 1.477494,
+        "p90_ms": 2.8537003,
+        "p95_ms": 2.87119595,
+        "p99_9_ms": 13.853953518999685,
+        "p99_ms": 8.542682509999999,
+        "samples": 600
+      },
+      "injected_decision_apply": {
+        "max_ms": 1.778876,
+        "mean_ms": 0.7630924866666667,
+        "p50_ms": 0.6872244999999999,
+        "p90_ms": 1.1036905000000001,
+        "p95_ms": 1.1288422999999999,
+        "p99_9_ms": 1.6696890819999917,
+        "p99_ms": 1.18700297,
+        "samples": 600
+      },
+      "observation_capture": {
+        "max_ms": 0.010864,
+        "mean_ms": 0.00286496,
+        "p50_ms": 0.002736,
+        "p90_ms": 0.0034803,
+        "p95_ms": 0.0037437499999999984,
+        "p99_9_ms": 0.008995119999999857,
+        "p99_ms": 0.00417049,
+        "samples": 600
+      },
+      "runtime_bookkeeping": {
+        "max_ms": 0.024182,
+        "mean_ms": 0.007159313333333334,
+        "p50_ms": 0.0061625,
+        "p90_ms": 0.0099232,
+        "p95_ms": 0.0103614,
+        "p99_9_ms": 0.020238183999999694,
+        "p99_ms": 0.015010389999999998,
+        "samples": 600
+      },
+      "simulation_advance": {
+        "max_ms": 16.875314,
+        "mean_ms": 13.09933343,
+        "p50_ms": 12.920397999999999,
+        "p90_ms": 13.9343976,
+        "p95_ms": 14.1100113,
+        "p99_9_ms": 16.120866910999943,
+        "p99_ms": 15.344214589999998,
+        "samples": 600
+      },
+      "successor_capture": {
+        "max_ms": 2.964731,
+        "mean_ms": 2.00436794,
+        "p50_ms": 1.6463655,
+        "p90_ms": 2.8649919,
+        "p95_ms": 2.8820390000000002,
+        "p99_9_ms": 2.9621355329999997,
+        "p99_ms": 2.92283818,
+        "samples": 600
+      },
+      "teleop_advance": {
+        "max_ms": 0.000665,
+        "mean_ms": 0.00026562166666666665,
+        "p50_ms": 0.000243,
+        "p90_ms": 0.000347,
+        "p95_ms": 0.00040234999999999967,
+        "p99_9_ms": 0.0006620049999999998,
+        "p99_ms": 0.000603,
+        "samples": 600
+      }
+    },
+    "step_first": 121,
+    "step_last": 720,
+    "total_logged_steps": 600,
+    "unattributed": {
+      "max_ms": 0.019497000000001208,
+      "mean_ms": 0.011510768333333263,
+      "p50_ms": 0.011055999999999955,
+      "p90_ms": 0.013522199999998463,
+      "p95_ms": 0.014346850000000263,
+      "p99_9_ms": 0.019252009000000462,
+      "p99_ms": 0.016587309999999175,
+      "samples": 600
+    },
+    "wall_control": {
+      "max_ms": 37.487394,
+      "mean_ms": 19.744700898163607,
+      "p50_ms": 19.032396,
+      "p90_ms": 22.7737502,
+      "p95_ms": 23.570608999999997,
+      "p99_9_ms": 33.24168609200031,
+      "p99_ms": 25.68728234,
+      "samples": 599
+    },
+    "wall_deadline_miss_fraction": 0.3121869782971619,
+    "wall_deadline_misses": 187,
+    "wall_rtf": 1.0129300060382347,
+    "warmup_steps_excluded": 120
+  },
+  "source": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-fabric-t1/performance.jsonl"
+}

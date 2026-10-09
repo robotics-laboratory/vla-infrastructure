@@ -1,0 +1,6 @@
+{
+  "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/sim/builder.py": "a4d537a16f6c887a6806cf89c8d1dc6331a6e0cf810d1f97e6e75d3ecf758352",
+  "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/sim/model.py": "9c743bce9e86421ee3aec1bb82794941e964581afc5925453e2d8075548306d0",
+  "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/utils/import_usd.py": "490100b5b07b967a381172f5efd5c3c8f1fbf9eb8ba785d0324dbb5c5dbe8feb",
+  "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/solvers/mujoco/solver_mujoco.py": "cd4e7dae4b37d58539621b4d03bb9f5d4f6fd7f4a8822f0fac7e5eeb9cbaabfa"
+}

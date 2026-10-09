@@ -1,0 +1,194 @@
+[
+  {
+    "run": "full-cpu-poll-contention",
+    "role": 0,
+    "returncode": 0,
+    "result": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 600,
+          "nb_read_frames": "419"
+        }
+      ]
+    },
+    "error": ""
+  },
+  {
+    "run": "full-cpu-poll-contention",
+    "role": 1,
+    "returncode": 0,
+    "result": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 600,
+          "nb_read_frames": "419"
+        }
+      ]
+    },
+    "error": ""
+  },
+  {
+    "run": "full-cpu-poll-contention",
+    "role": 2,
+    "returncode": 0,
+    "result": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 600,
+          "nb_read_frames": "419"
+        }
+      ]
+    },
+    "error": ""
+  },
+  {
+    "run": "full-gpu-poll-r6",
+    "role": 0,
+    "returncode": 0,
+    "result": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 600,
+          "nb_read_frames": "419"
+        }
+      ]
+    },
+    "error": ""
+  },
+  {
+    "run": "full-gpu-poll-r6",
+    "role": 1,
+    "returncode": 0,
+    "result": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 600,
+          "nb_read_frames": "419"
+        }
+      ]
+    },
+    "error": ""
+  },
+  {
+    "run": "full-gpu-poll-r6",
+    "role": 2,
+    "returncode": 0,
+    "result": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 600,
+          "nb_read_frames": "419"
+        }
+      ]
+    },
+    "error": ""
+  },
+  {
+    "run": "full-cpu-original",
+    "role": 0,
+    "returncode": 0,
+    "result": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 600,
+          "nb_read_frames": "419"
+        }
+      ]
+    },
+    "error": ""
+  },
+  {
+    "run": "full-cpu-original",
+    "role": 1,
+    "returncode": 0,
+    "result": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 600,
+          "nb_read_frames": "419"
+        }
+      ]
+    },
+    "error": ""
+  },
+  {
+    "run": "full-cpu-original",
+    "role": 2,
+    "returncode": 0,
+    "result": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 600,
+          "nb_read_frames": "419"
+        }
+      ]
+    },
+    "error": ""
+  },
+  {
+    "run": "full-cpu-xr-minimal-ik",
+    "role": 0,
+    "returncode": 0,
+    "result": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 600,
+          "nb_read_frames": "418"
+        }
+      ]
+    },
+    "error": ""
+  },
+  {
+    "run": "full-cpu-xr-minimal-ik",
+    "role": 1,
+    "returncode": 0,
+    "result": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 600,
+          "nb_read_frames": "418"
+        }
+      ]
+    },
+    "error": ""
+  },
+  {
+    "run": "full-cpu-xr-minimal-ik",
+    "role": 2,
+    "returncode": 0,
+    "result": {
+      "programs": [],
+      "streams": [
+        {
+          "width": 960,
+          "height": 600,
+          "nb_read_frames": "418"
+        }
+      ]
+    },
+    "error": ""
+  }
+]

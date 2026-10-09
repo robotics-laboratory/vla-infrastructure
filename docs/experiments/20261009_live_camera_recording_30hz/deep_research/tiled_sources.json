@@ -1,0 +1,268 @@
+{
+  "scope": "native tiled atlas read-only audit and CPU-only helper checks",
+  "accessed_at": "2026-10-09",
+  "branch": "research/live-camera-recording-30hz",
+  "head": "d5566834d29ef8bb56e4fb62bb324e23e0869100",
+  "no_GPU_run": true,
+  "no_SDK_write": true,
+  "no_installation": true,
+  "gate_qualification": false,
+  "sources": [
+    {
+      "id": "T01",
+      "url": "https://raw.githubusercontent.com/NVIDIA/skills/main/skills.sh.json",
+      "evidence_type": "catalog",
+      "finding": "CLI npx absent; fallback inspected, no exact native-atlas integration skill selected",
+      "access": "web open/search",
+      "GPU_validation": "not run"
+    },
+    {
+      "id": "T02",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/py/source/extensions/isaacsim.sensors.experimental.rtx/docs/index.html",
+      "evidence_type": "versioned_API",
+      "finding": "Native H,W resolution, tiled/out boundary, existing Camera objects",
+      "access": "web open/search",
+      "GPU_validation": "not run"
+    },
+    {
+      "id": "T03",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/6.1.0/migration_guides/isaac_sim_6_0/sensors_camera_to_experimental_rtx.html",
+      "evidence_type": "versioned_migration_guide",
+      "finding": "Examples W,H conflict with installed/native API; use actual runtime H,W",
+      "access": "web open/search",
+      "GPU_validation": "not run"
+    },
+    {
+      "id": "T04",
+      "url": "https://docs.nvidia.com/video-technologies/pynvvideocodec/pynvc-api-reference/encoder.html",
+      "evidence_type": "latest_API",
+      "finding": "GPU ABGR input contract; exact 2.2.3 samples differ in return/calling signatures",
+      "access": "web open/search",
+      "GPU_validation": "not run"
+    },
+    {
+      "id": "T05",
+      "url": "https://raw.githubusercontent.com/NVIDIA/video-sdk-samples/master/Samples/NvCodec/NvEncoder/NvEncoderCuda.cpp",
+      "evidence_type": "official_repository_source",
+      "finding": "Source pitch and D2D CUDA_MEMCPY2D crop; not proof of PyNvVideoCodec arbitrary-pitch acceptance",
+      "access": "web open/search",
+      "GPU_validation": "not run"
+    },
+    {
+      "id": "T06",
+      "url": "https://docs.nvidia.com/video-technologies/video-codec-sdk/13.0/nvenc-video-encoder-api-prog-guide/index.html",
+      "evidence_type": "versioned_guide",
+      "finding": "NVENC resource and session boundary",
+      "access": "web open/search",
+      "GPU_validation": "not run"
+    },
+    {
+      "id": "T07",
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/omni.kit.hydra_texture/1.6.2/omni.kit.hydra_texture/omni.kit.hydra_texture.IHydraTexture.html",
+      "evidence_type": "versioned_API",
+      "finding": "Drawable-change result_handle and get_frame_info; completion alone not pixel/state binding",
+      "access": "web open/search",
+      "GPU_validation": "not run"
+    },
+    {
+      "id": "T08",
+      "url": "https://docs.omniverse.nvidia.com/materials-and-rendering/latest/rtx-renderer_pt.html",
+      "evidence_type": "latest_documentation",
+      "finding": "Image-space multi-GPU limits and aggregation; unrelated to physics throughput",
+      "access": "web open/search",
+      "GPU_validation": "not run"
+    },
+    {
+      "id": "T09",
+      "url": "https://docs.omniverse.nvidia.com/materials-and-rendering/latest/rtx-renderer_minimal.html",
+      "evidence_type": "latest_documentation",
+      "finding": "Minimal modes/light-transport changes; installed numeric mapping inspected independently",
+      "access": "web open/search",
+      "GPU_validation": "not run"
+    },
+    {
+      "id": "T10",
+      "url": "https://docs.omniverse.nvidia.com/materials-and-rendering/latest/rtx-renderer_rt.html",
+      "evidence_type": "latest_documentation",
+      "finding": "Reference RTX Real-Time2 fidelity path",
+      "access": "web open/search",
+      "GPU_validation": "not run"
+    },
+    {
+      "id": "T11",
+      "url": "https://developer.nvidia.com/rtx/ray-tracing/optix?ncid=em-nurt-245273-vt33",
+      "evidence_type": "official_overview",
+      "finding": "Programmable ray tracing; requires own application shaders/scene integration",
+      "access": "web open/search",
+      "GPU_validation": "not run"
+    },
+    {
+      "id": "T12",
+      "url": "https://developer.nvidia.com/designworks/optix/download",
+      "evidence_type": "official_download_reference",
+      "finding": "Current OptiX9.1 R590 requirement; no installation/download performed",
+      "access": "web open/search",
+      "GPU_validation": "not run"
+    },
+    {
+      "id": "T13",
+      "url": "https://docs.nvidia.com/video-technologies/pynvvideocodec/read-me/running-samples.html",
+      "evidence_type": "official_samples_guide",
+      "finding": "GPU encode samples; exact wheel inspected separately",
+      "access": "web open/search",
+      "GPU_validation": "not run"
+    }
+  ],
+  "search_queries": [
+    "6.1 TiledCameraSensor get_data tiled resolution camera_paths",
+    "PyNvVideoCodec Encode cuda array interface pitch stride width",
+    "NVIDIA NV_ENC_REGISTER_RESOURCE pitch inputptr",
+    "NVIDIA NvEncoderCuda.cpp srcPitch",
+    "Omniverse MinimalRendering raster",
+    "Omniverse multiGpu renderProduct",
+    "Omniverse Minimal Raster",
+    "Omniverse deviceMask render product",
+    "NVIDIA OptiX ray tracing"
+  ],
+  "local_sources": [
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.sensors.experimental.rtx/isaacsim/sensors/experimental/rtx/impl/tiled_camera_sensor.py",
+      "sha256": "4d5d09a90d440f2154dad66f26ec3868318712b0a5f9703c762406205b5482a9",
+      "lines": 350,
+      "evidence_type": "installed_source_or_exact_downloaded_wheel_sample",
+      "stock_wheel_identity_proven": false
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.sensors.experimental.rtx/isaacsim/sensors/experimental/rtx/impl/_sensor_base.py",
+      "sha256": "e5c0313d666a19d273b5af920daf6ddbc51d84468f6b0b40165dbb7596f4aedf",
+      "lines": 1161,
+      "evidence_type": "installed_source_or_exact_downloaded_wheel_sample",
+      "stock_wheel_identity_proven": false
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.sensors.experimental.rtx/isaacsim/sensors/experimental/rtx/impl/_camera_common.py",
+      "sha256": "eb30da9834871d46ffad07fb6c1f31f59a4d6fdea46c2c95c6edab12ebdb1689",
+      "lines": 51,
+      "evidence_type": "installed_source_or_exact_downloaded_wheel_sample",
+      "stock_wheel_identity_proven": false
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.sensors.experimental.rtx/isaacsim/sensors/experimental/rtx/impl/rtx_camera.py",
+      "sha256": "b0dee0dd37ed3d4281f8940ef88d40074880cef6decb7e48cd2637df4bd5210a",
+      "lines": 243,
+      "evidence_type": "installed_source_or_exact_downloaded_wheel_sample",
+      "stock_wheel_identity_proven": false
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.core.experimental.objects/isaacsim/core/experimental/objects/impl/camera.py",
+      "sha256": "c96acc6a794a3b9dfaaaaa76d4975130b3b5dfeed6f4259302fca97ce5bfaa0c",
+      "lines": 950,
+      "evidence_type": "installed_source_or_exact_downloaded_wheel_sample",
+      "stock_wheel_identity_proven": false
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.simulation_app/isaacsim/simulation_app/simulation_app.py",
+      "sha256": "c2a2173be57abac20ef97f81b80d58319c94c9a4017c98709f8d13489ad0b746",
+      "lines": 1125,
+      "evidence_type": "installed_source_or_exact_downloaded_wheel_sample",
+      "stock_wheel_identity_proven": false
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.replicator.core-1.13.36+110.3.0.lx64.r.cp312/omni/replicator/core/scripts/create.py",
+      "sha256": "074b5b7e1b950c0ba03e48db9831c1919f2787d277fcfaeb78d884dcea136d89",
+      "lines": 2194,
+      "evidence_type": "installed_source_or_exact_downloaded_wheel_sample",
+      "stock_wheel_identity_proven": false
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.replicator.core-1.13.36+110.3.0.lx64.r.cp312/omni/replicator/core/scripts/orchestrator.py",
+      "sha256": "141fa06fae7d3a897e6e0e9e03b8472a8f2663c3bac6a3b64562deadf95e41b6",
+      "lines": 2338,
+      "evidence_type": "installed_source_or_exact_downloaded_wheel_sample",
+      "stock_wheel_identity_proven": false
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.replicator.core-1.13.36+110.3.0.lx64.r.cp312/omni/replicator/core/scripts/utils/viewport_manager.py",
+      "sha256": "b1da18c7c1375a81e0e062cf82b414aa47b72e3001e3313fc507d2c8574f1743",
+      "lines": 472,
+      "evidence_type": "installed_source_or_exact_downloaded_wheel_sample",
+      "stock_wheel_identity_proven": false
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.kit.hydra_texture-1.6.2+00c488ae.lx64.r.cp312/omni/kit/hydra_texture/tests/test_hydra_texture.py",
+      "sha256": "55046f008636f1e72ba01983073457567504962f7bcb174d598289c3186b5104",
+      "lines": 549,
+      "evidence_type": "installed_source_or_exact_downloaded_wheel_sample",
+      "stock_wheel_identity_proven": false
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.rtx.settings.core-0.7.1+00c488ae/omni/rtx/settings/core/widgets/minimal_widgets.py",
+      "sha256": "5a0b7c9531ded2fafc341736dd884fa8b1075e430cab000fad1e0ab80d63ad59",
+      "lines": 76,
+      "evidence_type": "installed_source_or_exact_downloaded_wheel_sample",
+      "stock_wheel_identity_proven": false
+    },
+    {
+      "path": "/tmp/live30-media-upstream/pynv223-wheel/samples/utils/Utils.py",
+      "sha256": "05a8ac9f71977e5446e240910701e6eb9918bd832264a0ba3882bfc5c7501e42",
+      "lines": 405,
+      "evidence_type": "installed_source_or_exact_downloaded_wheel_sample",
+      "stock_wheel_identity_proven": false
+    },
+    {
+      "path": "/tmp/live30-media-upstream/pynv223-wheel/samples/basic/encode.py",
+      "sha256": "406f1b2de0991badd0a592cfaa9a2a6cb49f165f3f438cef211067ed3559b14f",
+      "lines": 574,
+      "evidence_type": "installed_source_or_exact_downloaded_wheel_sample",
+      "stock_wheel_identity_proven": false
+    }
+  ],
+  "failed_accesses": [
+    "npx skills add nvidia/skills --list: command not found",
+    "Replicator1.13.36 public API URL inaccessible; exact installed1.13.36 source inspected",
+    "Replicator1.13.30 public API alternate URLs timeout/internal error; existing media/render audit retained",
+    "HydraTexture1.6.2 create_hydra_texture function URL cache miss; installed tests inspected",
+    "py_compile: pre-existing /tmp/__pycache__ permissions; in-memory compile/import used"
+  ],
+  "geometry": {
+    "role_count": 3,
+    "shape_hwc": [
+      1200,
+      1920,
+      4
+    ],
+    "padding_tiles": 1,
+    "atlas_bytes": 9216000,
+    "packed_three_bytes": 6912000,
+    "row_pitch_bytes": 7680,
+    "tile_offsets_bytes": [
+      0,
+      3840,
+      4608000
+    ]
+  },
+  "checks": {
+    "compile": "PASS",
+    "CPU_import": "PASS",
+    "CAI_object_protocol": "PASS",
+    "pitched_ROI_offset_math": "PASS",
+    "gpu_encode": "NOT RUN",
+    "witness_decode": "NOT RUN",
+    "XR_Quest3": "NOT RUN"
+  },
+  "helper": {
+    "path": "/tmp/live30-tiled-probe.py",
+    "sha256": "4cce1b58fdb773f730fea46708f692b8f4ecf532468273d7baec947fa1928253",
+    "lines": 269,
+    "native_get_data_boundary": "tiled=True,out=owned_GPU_buffer",
+    "pyNvVideoCodec_pitch_support": "unverified",
+    "pixel_source_alignment_proven": false
+  },
+  "next_experiments": [
+    "separate/h264 existing complete-system baseline",
+    "tiled/h264 single compressed atlas",
+    "sensor/rgba native out buffer",
+    "tiled/rgba preserved-optics direct Replicator",
+    "separate/rgba raw baseline"
+  ]
+}

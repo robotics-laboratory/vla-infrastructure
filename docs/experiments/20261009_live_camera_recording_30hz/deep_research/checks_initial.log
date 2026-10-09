@@ -1,0 +1,52 @@
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_docs.py", "--base", "d5566834d29ef8bb56e4fb62bb324e23e0869100"]
+INDEX: 880 entries; classification {'current': 116, 'historical': 764}
+HISTORICAL PRESERVATION: PASS (503 frozen files vs d5566834d29ef8bb56e4fb62bb324e23e0869100)
+KNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.
+- docs/experiments/20261009_live_camera_recording_30hz/deep_research/INDEPENDENT_SURVEY.md: missing/unsafe local target: live30-independent-survey-sources.json
+DOC GOVERNANCE CHECKS: FAIL
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_spec_references.py"]
+SPEC REFERENCE LINT OK
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/validate_resolved_contract.py", "configs/resolved_contract.yaml"]
+CONTRACT STRUCTURALLY VALID
+CONTRACT SEMANTICALLY VALID
+FINAL RC NOT READY
+BLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/generate_manifest.py", "verify"]
+MANIFEST OK: 110 reviewed files
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff", "check", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/atlas_media.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/check_bundle.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/codec_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/decode_clock_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/fabric_boundary.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ffmpeg_workers.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full_scene_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/kit_witness_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/mirror_worker.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/newton_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/nsight_analyze.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/optical_witness.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_probe_v3.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_capture_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_gpu_consumer.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_live_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_snapshot.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/physics_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/profiler_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/pynv223_adapter.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/run_receipted.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/stage_mimic_audit.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/storage_cpu_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/tiled_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/verify_live_source.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/xr_gpu_preview.py"]
+All checks passed!
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff", "format", "--check", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/atlas_media.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/check_bundle.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/codec_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/decode_clock_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/fabric_boundary.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ffmpeg_workers.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full_scene_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/kit_witness_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/mirror_worker.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/newton_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/nsight_analyze.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/optical_witness.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_probe_v3.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_capture_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_gpu_consumer.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_live_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_snapshot.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/physics_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/profiler_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/pynv223_adapter.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/run_receipted.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/stage_mimic_audit.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/storage_cpu_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/tiled_probe.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/verify_live_source.py", "docs/experiments/20261009_live_camera_recording_30hz/deep_research/xr_gpu_preview.py"]
+28 files already formatted
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "-m", "pytest", "-q", "tests/test_docs_governance.py", "tests/test_validator_baseline.py", "tests/test_validator_negative.py", "tests/test_manifest.py", "tests/test_isaac_vr_recording.py", "tests/test_isaac_vr_config.py", "tests/test_isaac_vr_camera_rendering.py", "tests/test_temporal_recording_path.py"]
+.F...................................................................... [ 34%]
+........................................................................ [ 68%]
+.................................................................        [100%]
+=================================== FAILURES ===================================
+___________ test_repository_coverage_is_part_of_normal_offline_tests ___________
+
+    def test_repository_coverage_is_part_of_normal_offline_tests():
+        found, _ = docs.check(Path(__file__).resolve().parents[1])
+>       assert found == []
+E       AssertionError: assert ['docs/experi...sources.json'] == []
+E         
+E         Left contains one more item: 'docs/experiments/20261009_live_camera_recording_30hz/deep_research/INDEPENDENT_SURVEY.md: missing/unsafe local target: live30-independent-survey-sources.json'
+E         Use -v to get more diff
+
+tests/test_docs_governance.py:90: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_docs_governance.py::test_repository_coverage_is_part_of_normal_offline_tests
+1 failed, 208 passed in 12.76s
+
+["git", "diff", "--check", "--", ".", ":(exclude)**/*.log"]
+
+["git", "diff", "--cached", "--check", "--", ".", ":(exclude)**/*.log"]
+docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovphysx_fixedbase_v2.usda:74: new blank line at EOF.
+docs/experiments/20261009_live_camera_recording_30hz/deep_research/pynv223_adapter_initial.py:84: new blank line at EOF.
+
+{"files": 34, "errors": [], "passed": true, "scope": "Syntax only, including immutable failed-attempt snapshots"}

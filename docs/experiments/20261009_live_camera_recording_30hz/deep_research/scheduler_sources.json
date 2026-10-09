@@ -1,0 +1,231 @@
+{
+  "observed_utc": "2026-10-09T13:00:58Z",
+  "project_head": "d5566834d29ef8bb56e4fb62bb324e23e0869100",
+  "sdk_head": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d",
+  "execution": {
+    "gpu_runs": false,
+    "installs": false,
+    "sdk_edits": false,
+    "driver_changes": false,
+    "checks": "AST and CPU stub PASS; real profiler runtime untested"
+  },
+  "local_sources": [
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/skills/profile-isaac-sim/SKILL.md",
+      "exists": true,
+      "sha256": "54a18f98b5282e3a956e9ceca4509a88822cd66495b1f81066bf4441afc247bd",
+      "size_bytes": 10765
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/exts/isaacsim.simulation_app/isaacsim/simulation_app/simulation_app.py",
+      "exists": true,
+      "sha256": "c2a2173be57abac20ef97f81b80d58319c94c9a4017c98709f8d13489ad0b746",
+      "size_bytes": 51884
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/kit/kernel/py/carb/profiler/__init__.py",
+      "exists": true,
+      "sha256": "03296004ac833cea3142d14ff3a92537db3727c341a2902c63a2b6d7684ea60d",
+      "size_bytes": 3614
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/kit/kernel/py/carb/profiler/_profiler.pyi",
+      "exists": true,
+      "sha256": "6afd1d1a4ee66006c3873baf693cc87f341cac4fbba30b855f3342e236aa26cb",
+      "size_bytes": 6961
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/kit/kernel/plugins/libcarb.profiler-nvtx.plugin.so",
+      "exists": true,
+      "sha256": "8c73ac7285c018db14f448ee2a578615aea239c9c1912865d6a6abae0a151d67",
+      "size_bytes": 123032
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/kit/kernel/plugins/libcarb.tasking.plugin.so",
+      "exists": true,
+      "sha256": "005816639b7c70adb95350be05fd5b0781d73c649abafbb93eff31c52d2ed719",
+      "size_bytes": 296168
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/kit/dev/include/carb/tasking/TaskingTypes.h",
+      "exists": true,
+      "sha256": "6101443ceb8f6b91fb84888743a26dbeb40c2c125250a1e91e0fb438d9465c50",
+      "size_bytes": 39428
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.kit.profiler.tracy-1.2.1+lx64/config/extension.toml",
+      "exists": true,
+      "sha256": "865df39e51bdb2d8666f55c3ec298fc2c09cb9fae937d257df11c6a148031556",
+      "size_bytes": 571
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.kit.profiler.tracy-1.2.1+lx64/bin/capture",
+      "exists": true,
+      "sha256": "58c9f9679bb800017d26b2d5352d8259d6da84ad13b3e2d2ee292575f5a25d8e",
+      "size_bytes": 11041848
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.kit.profiler.tracy-1.2.1+lx64/bin/csvexport",
+      "exists": true,
+      "sha256": "d25ce30c7ec488b6dc5eded280196f3dd7469abb90efe1fcc2f445d24b108d64",
+      "size_bytes": 1362808
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/isaacsim/extscache/omni.physx-110.3.2+110.3.0.lx64.r.cp312.u7f4/omni/physx/bindings/_physx.pyi",
+      "exists": true,
+      "sha256": "23ea6ea0070a56fccee5d90843186e2b1a430f5112800a9549b8becdb88480b4",
+      "size_bytes": 175125
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/physics/physx_manager.py",
+      "exists": true,
+      "sha256": "a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35",
+      "size_bytes": 43433
+    },
+    {
+      "path": "/data/vla-infrastructure/isaac61_production/IsaacLab/apps/isaaclab.python.xr.openxr.kit",
+      "exists": true,
+      "sha256": "313ef3c9b47596ecbaec73e4e94152a1905a6e89d1abece898fdd541bd3542b6",
+      "size_bytes": 4537
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/tools/run_isaac_s1.py",
+      "exists": true,
+      "sha256": "c2b8dbe2d05c32c4f5cfec4269ad37d58673c0a5d79603c5057f907e7c4201e2",
+      "size_bytes": 67659
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/tools/isaac_s2_runtime.py",
+      "exists": true,
+      "sha256": "a08edb63da0ccd03de794875950d8e2acb6ec50bbcafdd8d458261ce87280838",
+      "size_bytes": 73343
+    },
+    {
+      "path": "/home/ebulochkin/vla_infrastructure/tools/isaac_s2_performance.py",
+      "exists": true,
+      "sha256": "06ea8e0fee9cfbf1159bf2102fd9c0743014772ba97dd5e9566fb9693ae03c3b",
+      "size_bytes": 10792
+    },
+    {
+      "path": "/tmp/live30-deep-profiler.py",
+      "exists": true,
+      "sha256": "4ba842c1d6083403c0151b46779fc48cdbd6fba08d7f5554c94b2e8cd33d8974",
+      "size_bytes": 5535
+    },
+    {
+      "path": "/tmp/live30-deep-scheduler.md",
+      "exists": true,
+      "sha256": "073c9ce8529793573c3ebdfd70a483d580c2ef5dfa243fff077c77fc2c71866b",
+      "size_bytes": 17703
+    },
+    {
+      "path": "/tmp/live30-deep-scheduler-local.json",
+      "exists": true,
+      "sha256": "c9c5b1b8357305bc0fe649356fb729836a38079ebc9bde3f87383981eb0710b0",
+      "size_bytes": 38874
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/result.json",
+      "exists": true,
+      "sha256": "48b69cafdddc5295dfd4a387bac38748ad6096734f7a88feedfc4035d24042b0",
+      "size_bytes": 8558
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-poll-r6/performance.jsonl",
+      "exists": true,
+      "sha256": "83c0f6d08c98f18f92bb83d73d3227c2e968ee9a39d3821e1841e6889c485e8c",
+      "size_bytes": 337951
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/result.json",
+      "exists": true,
+      "sha256": "a1bbaa53b05077c987e3e35a1e573859c1333ac612f9266cdd226e2e5e0a7c49",
+      "size_bytes": 8537
+    },
+    {
+      "path": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-poll-contention/performance.jsonl",
+      "exists": true,
+      "sha256": "6be6ddc31e2902d516cb1917df733da71da1714de527998adbbff39fa8e38005",
+      "size_bytes": 338986
+    }
+  ],
+  "primary_sources": [
+    {
+      "id": "catalog",
+      "url": "https://raw.githubusercontent.com/NVIDIA/skills/main/skills.sh.json",
+      "finding": "CLI unavailable; catalog read; no profile-isaac slug, installed skill used"
+    },
+    {
+      "id": "kit1103",
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/kit-manual/110.3.0/guide/profiling.html",
+      "finding": "Native NVTX/Tracy/CPU profiler configuration"
+    },
+    {
+      "id": "nsys",
+      "url": "https://docs.nvidia.com/nsight-systems/UserGuide/index.html",
+      "finding": "API vs hardware video trace; latest-only OpenXR not locally supported; localhelp dominates"
+    },
+    {
+      "id": "tasking",
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/carbonite/206.14/docs/tasking/TaskingSettings.html",
+      "finding": "startup affinity, worker counts, useOmniJob exception"
+    },
+    {
+      "id": "cuda-vulkan",
+      "url": "https://nvidia-omniverse.github.io/ovrtx/core/cuda_vulkan_scheduling.html",
+      "finding": "Linux wait interaction, process-start workaround, concurrency tradeoff"
+    },
+    {
+      "id": "physicsperf",
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/omni_physics/latest/dev_guide/guides/physics-performance.html",
+      "finding": "CPU smallscene, async scene update limitations, physics threads"
+    },
+    {
+      "id": "physxapi",
+      "url": "https://docs.omniverse.nvidia.com/kit/docs/omni_physics/107.0/extensions/runtime/source/omni.physx/docs/api/python.html",
+      "finding": "blocking fetch_results, matched local pyi API"
+    },
+    {
+      "id": "handbook",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/latest/reference_material/sim_performance_optimization_handbook.html",
+      "finding": "CPU thread settings; documented generic32 differs from local16"
+    },
+    {
+      "id": "persistence",
+      "url": "https://docs.nvidia.com/deploy/driver-persistence/index.html",
+      "finding": "startup GPU state lifetime, not steady-clock guarantee"
+    }
+  ],
+  "search_ledger": [
+    {
+      "query": "npx skills add nvidia/skills --list",
+      "channel": "shell",
+      "result": "npx not found; raw GitHub catalog fallback"
+    },
+    {
+      "query": "site.docs.nvidia.com nsight systems Vulkan GPU workload batch nvvideo NVENC 2025 user guide",
+      "channel": "web search",
+      "result": "Official UserGuide, verified installedCLI"
+    },
+    {
+      "query": "site:docs.omniverse.nvidia.com profiler NVTX carb profiler Tracy Kit profiling tasking threadCount",
+      "channel": "web search",
+      "result": "Kit profiler, Carbonite task settings"
+    },
+    {
+      "query": "site:docs.omniverse.nvidia.com PhysX async simulation stageupdate AsyncSim fetch_results",
+      "channel": "web search",
+      "result": "PhysXAPI, PhysicsUmbrella API distinction, performanceguide"
+    },
+    {
+      "query": "site:docs.isaacsim.omniverse.nvidia.com performance optimization threadCount limit_cpu_threads",
+      "channel": "web search",
+      "result": "Handbook genericdefaults32; pinnedlocaldefaults16"
+    },
+    {
+      "query": "site:docs.nvidia.com persistence mode performance initialization not running GPU clocks nvidia-smi",
+      "channel": "web search",
+      "result": "DriverPersistence startup state retention"
+    }
+  ]
+}

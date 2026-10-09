@@ -1,5 +1,8 @@
 # Исследование записи live RGB >30 Гц с Quest 3
 
+Продолжение: [глубокое исследование и реальные live/profile прогоны](deep_research/REPORT.md). Оно добавляет tested OVRTX GPU/NVENC, standalone PhysX, Fabric batching, live source joins и отрицательные результаты; выводы первой фазы ниже сохранены в исходном scope.
+
+
 Kind: experiment; status: current; owner: `vr.performance`; mutable: true.
 Task base/trusted preservation base: `beaedfd1116577fd4d8026232cfb96cba0b030fa`.
 Branch: `research/live-camera-recording-30hz`; дата: 2026-10-09.

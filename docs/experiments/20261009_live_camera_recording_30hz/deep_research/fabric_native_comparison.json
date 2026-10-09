@@ -1,0 +1,1132 @@
+{
+  "schema": "live30_fabric_native_count_comparison_v1",
+  "trace": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-gpu-nsight-fabric-trace.nsys-rep",
+  "trace_sha256": "89ce1ac44cf722422c4c9b04da908947fb5e75c9d65e86d54c629c4568406cfc",
+  "sqlite_sha256": "4ea8775fadf2576667cb88078a08672a91baf7507fb108b7b62da826530cc4d4",
+  "controls": 120,
+  "per_control": [
+    {
+      "control": "control:61",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:62",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:63",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:64",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:65",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:66",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:67",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:68",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:69",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:70",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:71",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:72",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:73",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:74",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:75",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:76",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:77",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:78",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:79",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:80",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:81",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:82",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:83",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:84",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:85",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:86",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:87",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:88",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:89",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:90",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:91",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:92",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:93",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:94",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:95",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:96",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:97",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:98",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:99",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:100",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:101",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:102",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:103",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:104",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:105",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:106",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:107",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:108",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:109",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:110",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:111",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:112",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:113",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:114",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:115",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:116",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:117",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:118",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:119",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:120",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:121",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:122",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:123",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:124",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:125",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:126",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:127",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:128",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:129",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:130",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:131",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:132",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:133",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:134",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:135",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:136",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:137",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:138",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:139",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:140",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:141",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:142",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:143",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:144",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:145",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:146",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:147",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:148",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:149",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:150",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:151",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:152",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:153",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:154",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:155",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:156",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:157",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:158",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:159",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:160",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:161",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:162",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:163",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:164",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:165",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:166",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:167",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:168",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:169",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:170",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:171",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:172",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:173",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:174",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:175",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:176",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:177",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:178",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:179",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    },
+    {
+      "control": "control:180",
+      "counts": {
+        "FabricManager::update": 5,
+        "fetchResults::updateRenderTransforms": 4,
+        "fetchResults::waitForCompletion": 4,
+        "sim_render": 1
+      }
+    }
+  ],
+  "uniform_counts": {
+    "FabricManager::update": 5,
+    "fetchResults::updateRenderTransforms": 4,
+    "fetchResults::waitForCompletion": 4,
+    "sim_render": 1
+  },
+  "all_equal": true,
+  "baseline_counts": {
+    "FabricManager::update": 5,
+    "fetchResults::updateRenderTransforms": 4,
+    "fetchResults::waitForCompletion": 4,
+    "sim_render": 1
+  },
+  "notes": "Inclusive NVTX invocation counts; no pixel or physics parity inferred; profiler overhead changes wall rates",
+  "duration_comparison": [
+    {
+      "label": "baseline",
+      "controls": 120,
+      "inclusive_ms_per_control": {
+        "FabricManager::update": 4.398681275,
+        "fetchResults::updateRenderTransforms": 3.6011218166666668,
+        "fetchResults::transformationUpdateCallback": 3.597381425,
+        "fetchResults::waitForCompletion": 9.814418408333333,
+        "sim_render": 9.702992391666667
+      },
+      "kernel_count": 144600,
+      "fabric_first3_ms_per_control": 2.7492625416666665
+    },
+    {
+      "label": "fabric",
+      "controls": 120,
+      "inclusive_ms_per_control": {
+        "FabricManager::update": 1.8479873666666669,
+        "fetchResults::updateRenderTransforms": 0.9853081416666666,
+        "fetchResults::transformationUpdateCallback": 0.9819252166666667,
+        "fetchResults::waitForCompletion": 9.572708366666665,
+        "sim_render": 8.216940508333334
+      },
+      "kernel_count": 142080,
+      "fabric_first3_ms_per_control": 0.000619575
+    }
+  ],
+  "publication_count_reduction_proven": false
+}

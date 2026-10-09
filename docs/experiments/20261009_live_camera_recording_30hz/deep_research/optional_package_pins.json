@@ -1,0 +1,90 @@
+{
+  "production_modified": false,
+  "production_python": "/data/vla-infrastructure/isaac61_production/env/bin/python",
+  "production_lab_commit": "0c2e2c64e51922d088b695d72ffe03faa5c6b95d",
+  "packages": [
+    {
+      "name": "ovrtx",
+      "version": "0.5.1.385782",
+      "target": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx"
+    },
+    {
+      "name": "ovstage",
+      "version": "0.2.1.385922",
+      "target": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx"
+    },
+    {
+      "name": "PyNvVideoCodec",
+      "version": "2.2.3",
+      "target": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-pynvcodec"
+    },
+    {
+      "name": "ovphysx",
+      "version": "0.6.3",
+      "target": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx"
+    },
+    {
+      "name": "ovstage",
+      "version": "0.2.0.377349",
+      "target": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx"
+    },
+    {
+      "name": "packaging",
+      "version": "23.2",
+      "target": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx"
+    },
+    {
+      "name": "newton",
+      "version": "1.5.2",
+      "target": "existing production env"
+    },
+    {
+      "name": "warp-lang",
+      "version": "1.16.0",
+      "target": "existing production env"
+    }
+  ],
+  "rollback": "Do not select optional PYTHONPATH/venv. Instance wrappers restore in finally; source SDK is unchanged. Runtime caches are regular outputs.",
+  "installed_metadata": [
+    {
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx-0.5.1.385782.dist-info/METADATA",
+      "bytes": 3395,
+      "sha256": "df7bc7ae23703f1fa72671986291e4bf781671b683f86314820980885369b955"
+    },
+    {
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovstage-0.2.1.385922.dist-info/METADATA",
+      "bytes": 2860,
+      "sha256": "639a01e7b3f739391a9a0273a28505564584e16f043e19a0bb8dd0ca0bf8b9c2"
+    },
+    {
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-pynvcodec/pynvvideocodec-2.2.3.dist-info/METADATA",
+      "bytes": 7296,
+      "sha256": "938e3f03d07080eceaad736fad27453294be476676da69630ba9bcef15a0261a"
+    },
+    {
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/lib/python3.12/site-packages/ovstage-0.2.0.377349.dist-info/METADATA",
+      "bytes": 2860,
+      "sha256": "d25777fc618cddfb0b083c52844707c3bb0ab716c385b44487abe59668c2449e"
+    },
+    {
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/lib/python3.12/site-packages/ovphysx-0.6.3.dist-info/METADATA",
+      "bytes": 3178,
+      "sha256": "52fd4c707f2bf4ccda38725293f8ae39ca9e55d3ea209945af1e301eed54f23b"
+    },
+    {
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/lib/python3.12/site-packages/packaging-23.2.dist-info/METADATA",
+      "bytes": 3203,
+      "sha256": "b3574943ce848d906e97f50291034674771b2edb3a660e3f9b10aa93ad17eb1b"
+    },
+    {
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/lib/python3.12/site-packages/numpy-2.5.1.dist-info/METADATA",
+      "bytes": 6584,
+      "sha256": "6ae45122ee97050e48849438320430d05f01814f72e66e69cbeed027d2c6a1e8"
+    },
+    {
+      "locator": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/lib/python3.12/site-packages/warp_lang-1.16.0.dist-info/METADATA",
+      "bytes": 23593,
+      "sha256": "3648264c8f25472fbf2506789077b92511b4e60e497b098ac4eca8aa84c190eb"
+    }
+  ]
+}

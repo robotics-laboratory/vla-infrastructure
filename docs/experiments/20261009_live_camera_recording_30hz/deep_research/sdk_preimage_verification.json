@@ -1,0 +1,190 @@
+{
+  "sdk_files": [
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_gpu_consumer_preimages.json",
+      "source": "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/pynv223_adapter.py",
+      "expected": "d41b6128ab4886b9fee91e3cf28435adb28aaea34cc8e151e1b689b40fd3d0bb",
+      "actual": "d41b6128ab4886b9fee91e3cf28435adb28aaea34cc8e151e1b689b40fd3d0bb",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_gpu_consumer_preimages.json",
+      "source": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/types.py",
+      "expected": "5ab31921e0d9544f693d25ef79ac77be5a86cd8577df5e56d3ba8b458caefd8b",
+      "actual": "5ab31921e0d9544f693d25ef79ac77be5a86cd8577df5e56d3ba8b458caefd8b",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_gpu_consumer_preimages.json",
+      "source": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/dlpack.py",
+      "expected": "20137c0e53fb9768d92076194f3790512be97604ab1cbfdbf166ba507b57e2f0",
+      "actual": "20137c0e53fb9768d92076194f3790512be97604ab1cbfdbf166ba507b57e2f0",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_gpu_consumer_preimages.json",
+      "source": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/renderer.py",
+      "expected": "d431ac3a02a43c01a5c57c3ff9214a420cfd001f67a3db6b8dd4b306b5b23efd",
+      "actual": "d431ac3a02a43c01a5c57c3ff9214a420cfd001f67a3db6b8dd4b306b5b23efd",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_gpu_consumer_preimages.json",
+      "source": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/warp/_src/context.py",
+      "expected": "1ef32ace4bb46fffda232f8a099fa36945a14b671e1c0774f1286de89a37ba90",
+      "actual": "1ef32ace4bb46fffda232f8a099fa36945a14b671e1c0774f1286de89a37ba90",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_gpu_consumer_preimages.json",
+      "source": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/warp/_src/dlpack.py",
+      "expected": "52a1d1dab26d150a35bc3ad6753b6216c332409c5bbd6555c05e8e82383a50ef",
+      "actual": "52a1d1dab26d150a35bc3ad6753b6216c332409c5bbd6555c05e8e82383a50ef",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_gpu_consumer_preimages.json",
+      "source": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/warp/_src/utils.py",
+      "expected": "a8994f2cdb524f273ac69ccc941a3a57e9ac3f69ec835ffd530f1b0d4cfafe49",
+      "actual": "a8994f2cdb524f273ac69ccc941a3a57e9ac3f69ec835ffd530f1b0d4cfafe49",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/newton_preimages.json",
+      "source": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/sim/builder.py",
+      "expected": "a4d537a16f6c887a6806cf89c8d1dc6331a6e0cf810d1f97e6e75d3ecf758352",
+      "actual": "a4d537a16f6c887a6806cf89c8d1dc6331a6e0cf810d1f97e6e75d3ecf758352",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/newton_preimages.json",
+      "source": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/sim/model.py",
+      "expected": "9c743bce9e86421ee3aec1bb82794941e964581afc5925453e2d8075548306d0",
+      "actual": "9c743bce9e86421ee3aec1bb82794941e964581afc5925453e2d8075548306d0",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/newton_preimages.json",
+      "source": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/utils/import_usd.py",
+      "expected": "490100b5b07b967a381172f5efd5c3c8f1fbf9eb8ba785d0324dbb5c5dbe8feb",
+      "actual": "490100b5b07b967a381172f5efd5c3c8f1fbf9eb8ba785d0324dbb5c5dbe8feb",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/newton_preimages.json",
+      "source": "/data/vla-infrastructure/isaac61_production/env/lib/python3.12/site-packages/newton/_src/solvers/mujoco/solver_mujoco.py",
+      "expected": "cd4e7dae4b37d58539621b4d03bb9f5d4f6fd7f4a8822f0fac7e5eeb9cbaabfa",
+      "actual": "cd4e7dae4b37d58539621b4d03bb9f5d4f6fd7f4a8822f0fac7e5eeb9cbaabfa",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror_preimages.json",
+      "source": "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_recording.py",
+      "expected": "94b5d25903615cb7133fbf9503d7bd24e5e1221e576ba71a26e00c0ce286072c",
+      "actual": "94b5d25903615cb7133fbf9503d7bd24e5e1221e576ba71a26e00c0ce286072c",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/physics_preimages.json",
+      "source": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/actuators/actuator_collection.py",
+      "expected": "67c78878b312071e98f9b97ca70f24ec3edd1443008c22239784227b5613138c",
+      "actual": "67c78878b312071e98f9b97ca70f24ec3edd1443008c22239784227b5613138c",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/physics_preimages.json",
+      "source": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/actuators/actuator_kernels.py",
+      "expected": "69e7215641e1bdc71ffcd2d32b89ebc789be4d70eb7fcd926f6c4b4e6d9a2f39",
+      "actual": "69e7215641e1bdc71ffcd2d32b89ebc789be4d70eb7fcd926f6c4b4e6d9a2f39",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/physics_preimages.json",
+      "source": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/articulation/articulation.py",
+      "expected": "5f3e151aa040a58c8821eb3789e1368f4232e84a1f49858097fe094b4e42fbc0",
+      "actual": "5f3e151aa040a58c8821eb3789e1368f4232e84a1f49858097fe094b4e42fbc0",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/physics_preimages.json",
+      "source": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/articulation/articulation_data.py",
+      "expected": "9f25446dff165278af62147c50d5153cc1a1236ccc308cb83a316892cdeb54bf",
+      "actual": "9f25446dff165278af62147c50d5153cc1a1236ccc308cb83a316892cdeb54bf",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/physics_preimages.json",
+      "source": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/articulation/actuator_control.py",
+      "expected": "25b4d798293643e416b7968fea6be0a9189104801eea4d5d98e289c8d66959ce",
+      "actual": "25b4d798293643e416b7968fea6be0a9189104801eea4d5d98e289c8d66959ce",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/physics_preimages.json",
+      "source": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab_physx/isaaclab_physx/physics/physx_manager.py",
+      "expected": "a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35",
+      "actual": "a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/physics_preimages.json",
+      "source": "/data/vla-infrastructure/isaac61_production/IsaacLab/source/isaaclab/isaaclab/sim/simulation_context.py",
+      "expected": "c3c17f084bc21ddfd80649f8179a6aa916d857a1dcaa1cc1c7f2b7c3945936b2",
+      "actual": "c3c17f084bc21ddfd80649f8179a6aa916d857a1dcaa1cc1c7f2b7c3945936b2",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/physics_preimages.json",
+      "source": "/home/ebulochkin/vla_infrastructure/tools/run_isaac_s1.py",
+      "expected": "c2b8dbe2d05c32c4f5cfec4269ad37d58673c0a5d79603c5057f907e7c4201e2",
+      "actual": "c2b8dbe2d05c32c4f5cfec4269ad37d58673c0a5d79603c5057f907e7c4201e2",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/physics_preimages.json",
+      "source": "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_runtime.py",
+      "expected": "c1b2a2d4a39cb60b0e936cc4227a067f8615819a8bca43e95769fa29d15ea56a",
+      "actual": "c1b2a2d4a39cb60b0e936cc4227a067f8615819a8bca43e95769fa29d15ea56a",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_snapshot_preimages.json",
+      "source": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/renderer.py",
+      "expected": "d431ac3a02a43c01a5c57c3ff9214a420cfd001f67a3db6b8dd4b306b5b23efd",
+      "actual": "d431ac3a02a43c01a5c57c3ff9214a420cfd001f67a3db6b8dd4b306b5b23efd",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_snapshot_preimages.json",
+      "source": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovrtx/_src/types.py",
+      "expected": "5ab31921e0d9544f693d25ef79ac77be5a86cd8577df5e56d3ba8b458caefd8b",
+      "actual": "5ab31921e0d9544f693d25ef79ac77be5a86cd8577df5e56d3ba8b458caefd8b",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_snapshot_preimages.json",
+      "source": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovstage/_src/stage.py",
+      "expected": "7595c4fec9b9d0012c8cd3e126cfa58d77a3eb2f41283893ef767ab9f2a0770e",
+      "actual": "7595c4fec9b9d0012c8cd3e126cfa58d77a3eb2f41283893ef767ab9f2a0770e",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_snapshot_preimages.json",
+      "source": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovstage/_src/path_dictionary.py",
+      "expected": "f6e2b0ccdfbe36764358898b86de3dba7fff332b62682d9438acf6288403d30a",
+      "actual": "f6e2b0ccdfbe36764358898b86de3dba7fff332b62682d9438acf6288403d30a",
+      "passed": true
+    },
+    {
+      "manifest": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/ovrtx_snapshot_preimages.json",
+      "source": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovrtx/ovstage/_src/dlpack.py",
+      "expected": "14e88c9cac0bf3fb26f9f0faad360fc3d8910ba373a8ebb373868d9df456a5a8",
+      "actual": "14e88c9cac0bf3fb26f9f0faad360fc3d8910ba373a8ebb373868d9df456a5a8",
+      "passed": true
+    }
+  ],
+  "all_passed": true,
+  "isaaclab_status": "",
+  "isaaclab_status_exit": 0,
+  "scope": "Audited SDK/project source and maintained adapter guards; normal runtime shader/log caches excluded"
+}

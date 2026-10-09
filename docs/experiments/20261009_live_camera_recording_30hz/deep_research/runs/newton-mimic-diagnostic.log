@@ -1,0 +1,18 @@
+/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/newton_probe.py:95: DeprecationWarning: The legacy DOF-shaped joint_target_q layout is deprecated for models whose joint coordinate and DOF counts differ (free/ball/distance joints). In a future release joint_target_q will always use the coordinate layout (matching joint_q) and newton.use_coord_layout_targets will be removed. Set newton.use_coord_layout_targets = True before building models and index targets via Model.joint_target_q_start.
+  model = builder.finalize(device=device)
+Warp 1.16.0 initialized:
+   CUDA Toolkit 12.9, Driver 13.0
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 4090" (24 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /data/ebulochkin/vla-runtime/live30-deep-20261009/newton-mimic-diagnostic/warp-cache/1.16.0
+Module newton._src.geometry.inertia b20cb3b load on device 'cpu' took 1785.85 ms  (compiled)
+Module validate_and_correct_inertia_kernel_5e18b3cd 2f0edb1 load on device 'cpu' took 140.72 ms  (compiled)
+Module newton._src.geometry.bvh 38d4777 load on device 'cpu' took 284.40 ms  (compiled)
+Traceback (most recent call last):
+  File "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/newton_probe.py", line 185, in <module>
+    main()
+  File "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/newton_probe.py", line 102, in main
+    raise RuntimeError('Imported mimic inventory differs from the exact source contract')
+RuntimeError: Imported mimic inventory differs from the exact source contract
