@@ -1,0 +1,222 @@
+{
+  "schema": "single_gpu_repository_checks_v1",
+  "preservation_base": "e1f57032aba4777cb023ac26192eb6bb182f734a",
+  "python": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+  "tested_head": "e1f57032aba4777cb023ac26192eb6bb182f734a",
+  "dataset_admissible": false,
+  "gate_bindings": [],
+  "started_ns": 1791601850249541342,
+  "source_sha256": "41e6c407e5f421fab379c176e0d7920a550e8d8507ef21fc8208dfd06b8b2dda",
+  "tested_sources": {
+    "tools/isaac_vr_standalone.py": "a1e8a0680fa63d37fbe74bef8731149a3047f14dc750f5a189f98459f75032e2",
+    "tools/isaac_vr_standalone_view.py": "e722716b53871d702efdc3e57fd3089af849f05772dbff3f5d9edba0144485e1",
+    "tools/isaac_vr_standalone_scene.py": "be1a16c3be7ce8cc13c96aa7acbd38047f7910d96afd0ebfda8146cb7fc8e0f2",
+    "tools/isaac_vr_standalone_worker.py": "a3189b688f121e4c0801a8605c1af90f9d7cd05158305019f2c08c752f2ba39b",
+    "tools/isaac_vr_standalone_ik.py": "179f0a0795f98cfafc61cac27dbecc6a983af0a062238f99443eee2d877c73d3",
+    "tools/isaac_vr_live_worker.py": "48b38356a6c96be185ab7fb8e6db396d2b45c7142597193249ff80c7d8aa7575",
+    "tools/isaac_vr_live_gpu.py": "8bbc05dfbc8a9059b40c247ee0f71a4d730ad8e4e326345fe0aed68809b97389",
+    "tools/isaac_vr_live_video_import.py": "2f2dfb40e3d3dfec7ce14499571f41cf9639adfaf3f8c1943f5c74632567c4d1",
+    "tools/isaac_vr_live_nvenc.py": "97669de787973f905fc858ce540d3247088967d91abbf2aa8bda7485ef4fa887",
+    "tools/isaac_vr_live_dataset.py": "805658f2bbcd8fd49f82aa5d34daab26c4185cd028c1c93a872394ffff730407",
+    "tools/run_single_gpu_live_recording.py": "d0f4b4c74d8ad779c4546ca71377b54fbcf45089cc0e6bcddb3653073baeda96",
+    "tools/isaac_s2_runtime.py": "2fd601427dfbcd2143e7b6120ece47da83353e4b168e924d73c90325860878f6",
+    "tools/isaac_vr_injected_recording.py": "6568bf0e9cf088386312f00541389bd7301257a1216dd4bfa19d7dd5a6bb7bc5",
+    "tools/isaac_vr_recording.py": "726efc6129d495361c651233d536ae0f17124b8079bf205f44f04519249b69fd",
+    "tools/isaac_vr_replay.py": "09901b9585ac663a740ff716ba0a8e04e2d2e591aed7a13bd2f2bf297ec2fce1",
+    "tests/test_isaac_vr_standalone_scene.py": "bf4cd2b4090031c3669e426ee78e92ec6aa5b115a0785b386c0c922bb7f866a6",
+    "tests/test_isaac_vr_standalone_owner.py": "a1104471475ff8f2e972da22f8e73a9b99a3cf275d38e334907a253ce32a2c6c",
+    "tests/test_isaac_vr_standalone_worker.py": "83c6e4fc8500e1b5ecc24b07358d477a30256251ecad1ee06f663e356234c1b5",
+    "tests/test_isaac_vr_live_media.py": "de2e38033fa253748b43b7e77967ef0aaaf28c7bf2a14e1bdeb57a9e4806cc84",
+    "docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py": "bef2a542855d3cee659f3a0a3cd50b2bad3bfedaa8c5a1dcdf1b51eb9cc7f233",
+    "docs/experiments/20261009_live_camera_recording_30hz/deep_research/verify_live_source.py": "d19c07bc6838657ed29d516b463e577edfa80bb6d4bb1ce4fd4df7adc415a91e",
+    "docs/experiments/20261009_live_camera_recording_30hz/deep_research/optical_witness.py": "defc1be20d6fd10999ea66b9073adaa772162767c8c7cc633059a459345a0f1e",
+    "docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/export_preview.py": "d9916180ef7142b822e33d09e1fbbe219d586716b378ff79d233647fe1dc0bce",
+    "docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/run_physics_pair.py": "0d7f505e97ae203ad9cfeac2d9987c8d7fad10a2a03b455e739f659e587e530d",
+    "docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/sitecustomize.py": "21bbb6a0cf93611deec127bc8cc7270bb44d730414305597601699861540c379",
+    "docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/analyze_latency.py": "de3afbb6e4ec83be5277b8d5a0ccd47ffda99905eb4d1de81b656ba2ffc970cc",
+    "docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/test_mesh_freshness.py": "71ef88ab5d83e429004637843852fc69fd8859e2ab3d4e12a2c8118b3373ec14",
+    "docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/mesh_freshness.py": "6dd5d05241fc4f45d6fcb489beacacf11ff21a88686032dfce4631a102b41a87",
+    "docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/compare_physics.py": "a4812af76a3e41dc9a7aa876ec4e41713654d148e64cd78417e02440504cb945",
+    "tests/test_isaac_vr_live_source_queue.py": "540e753497d07c9e5a794a8ccc056f24d98400bdefa1c5ab4e5e1fe429aca1fb",
+    "tests/test_isaac_vr_live_dataset.py": "39493c7c5e23b1c12276f93c1193fa7372518ea160aeedc716453ce6b98e0f65",
+    "tests/test_isaac_vr_live_video_import.py": "7495d5ef2c8e2696c945edecb0b252ead195a34b0033ca831f632e2ce0e0d1bf",
+    "tests/test_isaac_vr_replay.py": "4055b433216f787933f267504b84313cb5e4ecc8a89d7f369ea281f7af7a8495",
+    "docs/experiments/20261009_live_camera_recording_30hz/single_gpu/check_repository.py": "41e6c407e5f421fab379c176e0d7920a550e8d8507ef21fc8208dfd06b8b2dda"
+  },
+  "checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "e1f57032aba4777cb023ac26192eb6bb182f734a"
+      ],
+      "returncode": 0,
+      "elapsed_s": 2.699175818823278,
+      "stdout": "INDEX: 1100 entries; classification {'current': 135, 'historical': 965}\nHISTORICAL PRESERVATION: PASS (961 frozen files vs e1f57032aba4777cb023ac26192eb6bb182f734a)\nKNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.\nDOC GOVERNANCE CHECKS: PASS\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.1831315360032022,
+      "stdout": "SPEC REFERENCE LINT OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/validate_resolved_contract.py",
+        "configs/resolved_contract.yaml"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.542184604331851,
+      "stdout": "CONTRACT STRUCTURALLY VALID\nCONTRACT SEMANTICALLY VALID\nFINAL RC NOT READY\nBLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.026533523108810186,
+      "stdout": "MANIFEST OK: 110 reviewed files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff",
+        "check",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_view.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_scene.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_worker.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_ik.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_worker.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_gpu.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_video_import.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_nvenc.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_dataset.py",
+        "/home/ebulochkin/vla_infrastructure/tools/run_single_gpu_live_recording.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_s2_runtime.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_injected_recording.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_recording.py",
+        "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_replay.py",
+        "/home/ebulochkin/vla_infrastructure/tests/test_isaac_vr_standalone_scene.py",
+        "/home/ebulochkin/vla_infrastructure/tests/test_isaac_vr_standalone_owner.py",
+        "/home/ebulochkin/vla_infrastructure/tests/test_isaac_vr_standalone_worker.py",
+        "/home/ebulochkin/vla_infrastructure/tests/test_isaac_vr_live_media.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/live_mirror.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/verify_live_source.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/deep_research/optical_witness.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/meaningful_episode/export_preview.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/run_physics_pair.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/sitecustomize.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/analyze_latency.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/test_mesh_freshness.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/mesh_freshness.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/compare_physics.py",
+        "/home/ebulochkin/vla_infrastructure/tests/test_isaac_vr_live_source_queue.py",
+        "/home/ebulochkin/vla_infrastructure/tests/test_isaac_vr_live_dataset.py",
+        "/home/ebulochkin/vla_infrastructure/tests/test_isaac_vr_live_video_import.py",
+        "/home/ebulochkin/vla_infrastructure/tests/test_isaac_vr_replay.py",
+        "/home/ebulochkin/vla_infrastructure/docs/experiments/20261009_live_camera_recording_30hz/single_gpu/check_repository.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.008340666070580482,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_docs_governance.py",
+        "tests/test_validator_baseline.py",
+        "tests/test_validator_negative.py",
+        "tests/test_manifest.py",
+        "tests/test_isaac_vr_recording.py",
+        "tests/test_isaac_vr_injected_recording.py",
+        "tests/test_isaac_s2_recording_runtime.py",
+        "tests/test_isaac_vr_recording_contract.py",
+        "tests/test_isaac_s2_processor.py",
+        "tests/test_isaac_s2_upstream.py",
+        "tests/test_isaac_vr_config.py",
+        "tests/test_isaac_vr_camera_rendering.py",
+        "tests/test_temporal_recording_path.py",
+        "tests/test_isaac_vr_live_media.py",
+        "tests/test_isaac_vr_live_source_queue.py",
+        "tests/test_isaac_vr_live_dataset.py",
+        "tests/test_isaac_vr_live_video_import.py",
+        "tests/test_isaac_vr_replay.py",
+        "tests/test_isaac_vr_lerobot_materialize.py",
+        "tests/test_isaac_vr_asset_closure.py",
+        "tests/test_isaac_vr_visual_provenance.py",
+        "tests/test_isaac_vr_standalone_owner.py",
+        "tests/test_isaac_vr_standalone_scene.py",
+        "tests/test_isaac_vr_standalone_worker.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 18.979024866130203,
+      "stdout": "........................................................................ [ 15%]\n........................................................................ [ 31%]\n........................................................................ [ 46%]\n...................................ssssssssssssssssssssssssssss......... [ 62%]\n........................................................................ [ 77%]\n........................................................................ [ 93%]\n.....................ssssssssss                                          [100%]\n425 passed, 38 skipped in 18.15s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)**/*.log",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/clock-codegraph.txt",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/codegraph.txt",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/master-s2.diff",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/master.diff"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.004037828184664249,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)**/*.log",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/clock-codegraph.txt",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/codegraph.txt",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/master-s2.diff",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/master.diff"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.0038867630064487457,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "cache_environment": {
+    "HF_HOME": "/tmp/live30-single-gpu-check-cache/hf",
+    "HF_DATASETS_CACHE": "/tmp/live30-single-gpu-check-cache/hf-datasets"
+  },
+  "raw_log_whitespace_excluded": true,
+  "raw_transcript_whitespace_excluded": [
+    "docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/clock-codegraph.txt",
+    "docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/codegraph.txt",
+    "docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/master-s2.diff",
+    "docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/master.diff"
+  ],
+  "raw_transcript_semantics": "Verbatim CodeGraph/git diff output; preserve trailing source-line tabs and diff context bytes",
+  "all_passed": true
+}

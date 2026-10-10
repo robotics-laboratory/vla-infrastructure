@@ -116,6 +116,41 @@ def verify_recording_artifact(
     portable_roots: Mapping[str, str | Path],
 ) -> ReplayArtifact:
     """Verify the finalized HDF, snapshot and camera bindings without importing Kit."""
+    return _verify_recording_artifact_for_backend(
+        recording, portable_roots=portable_roots, expected_backend="fabric"
+    )
+
+
+def verify_experimental_standalone_recording_artifact(
+    recording: Path,
+    *,
+    portable_roots: Mapping[str, str | Path],
+) -> ReplayArtifact:
+    """Verify standalone CPU state artifacts; grants no canonical replay/admission.
+
+    Only the explicitly injected no-client prototype is supported. Live image
+    identity and source joins require their independent media verification.
+    """
+    artifact = _verify_recording_artifact_for_backend(
+        recording, portable_roots=portable_roots, expected_backend="ovphysx_cpu"
+    )
+    session = artifact.manifest["session_metadata"]
+    if (
+        session.get("source_profile") != "isaac_human_vr_offline_rgb_v2"
+        or artifact.manifest.get("transition_schema") != "piper_x_committed_transition_v3"
+        or session.get("execution_profile") != "isaac_vr_record_injected_no_client_audit"
+    ):
+        raise ValueError("unsupported experimental standalone recording profile")
+    return artifact
+
+
+def _verify_recording_artifact_for_backend(
+    recording: Path,
+    *,
+    portable_roots: Mapping[str, str | Path],
+    expected_backend: str,
+) -> ReplayArtifact:
+    """Shared integrity checks; each public entry point fixes its backend."""
     recording = recording.expanduser().resolve()
     if not recording.is_file():
         raise FileNotFoundError(f"recording HDF5 not found: {recording}")
@@ -157,10 +192,11 @@ def verify_recording_artifact(
     if finalization.get("outcome") != outcome:
         raise ValueError("recording manifest and finalization marker outcomes differ")
     if (
-        manifest.get("pose_backend_requested") != "fabric"
-        or manifest.get("pose_backend_effective") != "fabric"
+        manifest.get("pose_backend_requested") != expected_backend
+        or manifest.get("pose_backend_effective") != expected_backend
     ):
-        raise ValueError("recording did not prove the required Fabric pose backend")
+        label = "Fabric" if expected_backend == "fabric" else expected_backend
+        raise ValueError(f"recording did not prove the required {label} pose backend")
     profile_schemas = {
         "isaac_human_vr_offline_rgb_v1": "piper_x_committed_transition_v2",
         "isaac_human_vr_offline_rgb_v2": "piper_x_committed_transition_v3",

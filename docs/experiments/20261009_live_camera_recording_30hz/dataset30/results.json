@@ -1,0 +1,830 @@
+{
+  "schema": "live30_dataset_run_summary_v1",
+  "dataset_admissible": false,
+  "physical": false,
+  "quest_connected": false,
+  "trusted_base": "e1f57032aba4777cb023ac26192eb6bb182f734a",
+  "runtime_root": "/data/ebulochkin/vla-runtime/live30-dataset-20261010",
+  "runs": [
+    {
+      "name": "paced-reach01",
+      "config": {
+        "prefix": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach01",
+        "output": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach01-output",
+        "source": "/home/ebulochkin/vla_infrastructure/tools/run_single_gpu_live_recording.py",
+        "python": "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "args": [
+          "--output",
+          "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach01-output",
+          "--frames",
+          "840",
+          "--warmup",
+          "120",
+          "--xr",
+          "--motion",
+          "reach-demo",
+          "--no-witness",
+          "--audit-host-events",
+          "--pace-hz",
+          "30.0",
+          "--source-queue-capacity",
+          "1"
+        ],
+        "env": {
+          "OMNI_KIT_ACCEPT_EULA": "Y",
+          "ISAACLAB_CXR_ACCEPT_EULA": "1",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "CUDA_DEVICE_MAX_CONNECTIONS": "1"
+        },
+        "timeout": 300
+      },
+      "process": {
+        "child_pid": 3670142,
+        "returncode": 0,
+        "elapsed_s": 59.070954700000584
+      },
+      "launch_locator": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach01.launch.json",
+      "log_locator": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach01.log",
+      "run_result": {
+        "schema": "single_gpu_live_recording_diagnostic_v1",
+        "passed": true,
+        "dataset_admissible": false,
+        "physical": false,
+        "quest_connected": false,
+        "input_source": "deterministic_injected_xr_v1",
+        "arguments": {
+          "output": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach01-output",
+          "frames": 840,
+          "warmup": 120,
+          "media_warmup": 20,
+          "media": "gpu",
+          "xr": true,
+          "view_mode": "original",
+          "motion": "reach-demo",
+          "witness": false,
+          "witness_depth_scale": 1.0,
+          "pace_hz": 30.0,
+          "audit_host_events": true,
+          "mesh_freshness": false,
+          "source_queue_capacity": 1,
+          "physics_python": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/bin/python"
+        },
+        "sources": {
+          "/home/ebulochkin/vla_infrastructure/tools/run_single_gpu_live_recording.py": "ec3c29ceed4228ca59551712d8bf205c0903da767f15ea60c70da0717412e668",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone.py": "a1e8a0680fa63d37fbe74bef8731149a3047f14dc750f5a189f98459f75032e2",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_view.py": "e722716b53871d702efdc3e57fd3089af849f05772dbff3f5d9edba0144485e1",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_scene.py": "be1a16c3be7ce8cc13c96aa7acbd38047f7910d96afd0ebfda8146cb7fc8e0f2",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_worker.py": "a3189b688f121e4c0801a8605c1af90f9d7cd05158305019f2c08c752f2ba39b",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_ik.py": "179f0a0795f98cfafc61cac27dbecc6a983af0a062238f99443eee2d877c73d3"
+        },
+        "performance": {
+          "event": "performance_summary",
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "monotonic_ns": 3826776010533873,
+          "step_first": 121,
+          "step_last": 960,
+          "control": {
+            "samples": 840,
+            "mean_ms": 17.71270878452381,
+            "p50_ms": 16.8456415,
+            "p90_ms": 20.026779200000004,
+            "p95_ms": 21.206804699999996,
+            "p99_ms": 24.410733370000003,
+            "p99_9_ms": 35.65810655999754,
+            "max_ms": 72.865206
+          },
+          "wall_control": {
+            "samples": 839,
+            "mean_ms": 33.3333296829559,
+            "p50_ms": 33.333068,
+            "p90_ms": 33.357965,
+            "p95_ms": 33.3755374,
+            "p99_ms": 33.40340488,
+            "p99_9_ms": 39.85421379800136,
+            "max_ms": 72.887821
+          },
+          "effective_wall_hz": 30.00000328534005,
+          "wall_rtf": 0.600000065706801,
+          "wall_deadline_misses": 837,
+          "wall_deadline_miss_fraction": 0.9976162097735399,
+          "effective_hz": 56.456638686101684,
+          "deadline_ms": 20.0,
+          "deadline_misses": 85,
+          "deadline_miss_fraction": 0.10119047619047619,
+          "stages": {
+            "causal_commit_and_record": {
+              "samples": 840,
+              "mean_ms": 1.9149891654761906,
+              "p50_ms": 1.4531165000000001,
+              "p90_ms": 2.876878,
+              "p95_ms": 2.9012095999999996,
+              "p99_ms": 8.49711197,
+              "p99_9_ms": 12.021712254999995,
+              "max_ms": 12.102638
+            },
+            "injected_decision_apply": {
+              "samples": 840,
+              "mean_ms": 2.3021669583333333,
+              "p50_ms": 2.0491754999999996,
+              "p90_ms": 3.7662681,
+              "p95_ms": 3.87349715,
+              "p99_ms": 3.94324823,
+              "p99_9_ms": 4.002818492999997,
+              "max_ms": 4.046793
+            },
+            "observation_capture": {
+              "samples": 840,
+              "mean_ms": 0.010399033333333335,
+              "p50_ms": 0.0102485,
+              "p90_ms": 0.0122635,
+              "p95_ms": 0.013106699999999999,
+              "p99_ms": 0.016153560000000004,
+              "p99_9_ms": 0.021521950999999977,
+              "max_ms": 0.02185
+            },
+            "runtime_bookkeeping": {
+              "samples": 840,
+              "mean_ms": 0.007223159523809523,
+              "p50_ms": 0.0062815,
+              "p90_ms": 0.010015099999999999,
+              "p95_ms": 0.01034035,
+              "p99_ms": 0.013250500000000002,
+              "p99_9_ms": 0.01823463999999949,
+              "max_ms": 0.025987
+            },
+            "simulation_advance": {
+              "samples": 840,
+              "mean_ms": 11.723946461904761,
+              "p50_ms": 11.4363875,
+              "p90_ms": 12.783577300000001,
+              "p95_ms": 12.94198695,
+              "p99_ms": 13.13411568,
+              "p99_9_ms": 22.99848072799702,
+              "max_ms": 68.05366
+            },
+            "successor_capture": {
+              "samples": 840,
+              "mean_ms": 1.7403060523809524,
+              "p50_ms": 1.3877055,
+              "p90_ms": 2.6472678,
+              "p95_ms": 2.67300345,
+              "p99_ms": 2.75923666,
+              "p99_9_ms": 4.087077110999572,
+              "max_ms": 10.555726
+            },
+            "teleop_advance": {
+              "samples": 840,
+              "mean_ms": 0.00035835,
+              "p50_ms": 0.000304,
+              "p90_ms": 0.0004641,
+              "p95_ms": 0.0005951,
+              "p99_ms": 0.002041580000000001,
+              "p99_9_ms": 0.0030821279999998638,
+              "max_ms": 0.005136
+            }
+          },
+          "nested_stages_not_additive": {},
+          "instrumentation_write": {
+            "samples": 840,
+            "mean_ms": 0.020484686904761903,
+            "p50_ms": 0.0168815,
+            "p90_ms": 0.025299000000000002,
+            "p95_ms": 0.040985,
+            "p99_ms": 0.06332858000000002,
+            "p99_9_ms": 0.07031698999999986,
+            "max_ms": 0.07249
+          },
+          "unattributed": {
+            "samples": 840,
+            "mean_ms": 0.013319603571428586,
+            "p50_ms": 0.012975500000001361,
+            "p90_ms": 0.01566120000000062,
+            "p95_ms": 0.016430049999999773,
+            "p99_ms": 0.018646929999999777,
+            "p99_9_ms": 0.028276350999999544,
+            "max_ms": 0.028940000000002186
+          },
+          "log_path": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach01-output/performance.jsonl",
+          "warmup_steps_excluded": 120,
+          "total_logged_steps": 840,
+          "host_timing_only_no_added_cuda_synchronization": true,
+          "boundaries": {}
+        }
+      }
+    },
+    {
+      "name": "paced-reach02",
+      "config": {
+        "prefix": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02",
+        "output": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02-output",
+        "source": "/home/ebulochkin/vla_infrastructure/tools/run_single_gpu_live_recording.py",
+        "python": "/data/vla-infrastructure/isaac61_production/env/bin/python",
+        "args": [
+          "--output",
+          "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02-output",
+          "--frames",
+          "840",
+          "--warmup",
+          "120",
+          "--xr",
+          "--motion",
+          "reach-demo",
+          "--no-witness",
+          "--audit-host-events",
+          "--pace-hz",
+          "30.0",
+          "--source-queue-capacity",
+          "1"
+        ],
+        "env": {
+          "OMNI_KIT_ACCEPT_EULA": "Y",
+          "ISAACLAB_CXR_ACCEPT_EULA": "1",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "CUDA_DEVICE_MAX_CONNECTIONS": "1"
+        },
+        "timeout": 300
+      },
+      "process": {
+        "child_pid": 3681135,
+        "returncode": 0,
+        "elapsed_s": 59.01468114089221
+      },
+      "launch_locator": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02.launch.json",
+      "log_locator": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02.log",
+      "run_result": {
+        "schema": "single_gpu_live_recording_diagnostic_v1",
+        "passed": true,
+        "dataset_admissible": false,
+        "physical": false,
+        "quest_connected": false,
+        "input_source": "deterministic_injected_xr_v1",
+        "arguments": {
+          "output": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02-output",
+          "frames": 840,
+          "warmup": 120,
+          "media_warmup": 20,
+          "media": "gpu",
+          "xr": true,
+          "view_mode": "original",
+          "motion": "reach-demo",
+          "witness": false,
+          "witness_depth_scale": 1.0,
+          "pace_hz": 30.0,
+          "audit_host_events": true,
+          "mesh_freshness": false,
+          "source_queue_capacity": 1,
+          "physics_python": "/data/ebulochkin/vla-runtime/live30-deep-20261009/optional-ovphysx/bin/python"
+        },
+        "sources": {
+          "/home/ebulochkin/vla_infrastructure/tools/run_single_gpu_live_recording.py": "d0f4b4c74d8ad779c4546ca71377b54fbcf45089cc0e6bcddb3653073baeda96",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone.py": "a1e8a0680fa63d37fbe74bef8731149a3047f14dc750f5a189f98459f75032e2",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_view.py": "e722716b53871d702efdc3e57fd3089af849f05772dbff3f5d9edba0144485e1",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_scene.py": "be1a16c3be7ce8cc13c96aa7acbd38047f7910d96afd0ebfda8146cb7fc8e0f2",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_worker.py": "a3189b688f121e4c0801a8605c1af90f9d7cd05158305019f2c08c752f2ba39b",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_standalone_ik.py": "179f0a0795f98cfafc61cac27dbecc6a983af0a062238f99443eee2d877c73d3"
+        },
+        "performance": {
+          "event": "performance_summary",
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "monotonic_ns": 3827202951331877,
+          "step_first": 121,
+          "step_last": 960,
+          "control": {
+            "samples": 840,
+            "mean_ms": 17.361956988095237,
+            "p50_ms": 16.6030395,
+            "p90_ms": 19.136263200000002,
+            "p95_ms": 20.1654193,
+            "p99_ms": 25.13451758,
+            "p99_9_ms": 38.353354678997796,
+            "max_ms": 71.721592
+          },
+          "wall_control": {
+            "samples": 839,
+            "mean_ms": 33.33333774016687,
+            "p50_ms": 33.333327,
+            "p90_ms": 33.3630418,
+            "p95_ms": 33.3759954,
+            "p99_ms": 33.38566338,
+            "p99_9_ms": 39.66167514800132,
+            "max_ms": 71.745556
+          },
+          "effective_wall_hz": 29.999996033850344,
+          "wall_rtf": 0.9999998677950115,
+          "wall_deadline_misses": 418,
+          "wall_deadline_miss_fraction": 0.49821215733015495,
+          "effective_hz": 57.597193719906166,
+          "deadline_ms": 33.333333333333336,
+          "deadline_misses": 1,
+          "deadline_miss_fraction": 0.0011904761904761906,
+          "stages": {
+            "causal_commit_and_record": {
+              "samples": 840,
+              "mean_ms": 1.8229580916666668,
+              "p50_ms": 1.4496575,
+              "p90_ms": 2.8733954,
+              "p95_ms": 2.895334,
+              "p99_ms": 8.563178380000002,
+              "p99_9_ms": 11.410311228999957,
+              "max_ms": 12.073951
+            },
+            "injected_decision_apply": {
+              "samples": 840,
+              "mean_ms": 2.1951159404761906,
+              "p50_ms": 2.025906,
+              "p90_ms": 2.6903322000000003,
+              "p95_ms": 3.8140605999999995,
+              "p99_ms": 3.9342216400000005,
+              "p99_9_ms": 3.966701245,
+              "max_ms": 3.970934
+            },
+            "observation_capture": {
+              "samples": 840,
+              "mean_ms": 0.010324654761904762,
+              "p50_ms": 0.009721500000000001,
+              "p90_ms": 0.013071100000000002,
+              "p95_ms": 0.014411099999999998,
+              "p99_ms": 0.017133790000000003,
+              "p99_9_ms": 0.02935485999999987,
+              "max_ms": 0.031251
+            },
+            "runtime_bookkeeping": {
+              "samples": 840,
+              "mean_ms": 0.007011821428571428,
+              "p50_ms": 0.0062640000000000005,
+              "p90_ms": 0.0097975,
+              "p95_ms": 0.0102574,
+              "p99_ms": 0.014319830000000016,
+              "p99_9_ms": 0.025338014999999187,
+              "max_ms": 0.0376
+            },
+            "simulation_advance": {
+              "samples": 840,
+              "mean_ms": 11.664250465476192,
+              "p50_ms": 11.412352,
+              "p90_ms": 12.6663733,
+              "p95_ms": 12.8582488,
+              "p99_ms": 13.21366548,
+              "p99_9_ms": 22.779549373997092,
+              "max_ms": 66.79679
+            },
+            "successor_capture": {
+              "samples": 840,
+              "mean_ms": 1.648970560714286,
+              "p50_ms": 1.383265,
+              "p90_ms": 2.6410625,
+              "p95_ms": 2.6645511,
+              "p99_ms": 2.7176557199999998,
+              "p99_9_ms": 4.886452509999284,
+              "max_ms": 15.720384
+            },
+            "teleop_advance": {
+              "samples": 840,
+              "mean_ms": 0.0003385940476190476,
+              "p50_ms": 0.000305,
+              "p90_ms": 0.000502,
+              "p95_ms": 0.0005802499999999998,
+              "p99_ms": 0.0006982700000000001,
+              "p99_9_ms": 0.0013951109999998362,
+              "max_ms": 0.003871
+            }
+          },
+          "nested_stages_not_additive": {},
+          "instrumentation_write": {
+            "samples": 840,
+            "mean_ms": 0.019651377380952382,
+            "p50_ms": 0.016699,
+            "p90_ms": 0.0247599,
+            "p95_ms": 0.038964499999999985,
+            "p99_ms": 0.043594680000000004,
+            "p99_9_ms": 0.06868947799999973,
+            "max_ms": 0.072715
+          },
+          "unattributed": {
+            "samples": 840,
+            "mean_ms": 0.012986859523809553,
+            "p50_ms": 0.012724999999999653,
+            "p90_ms": 0.015212499999997676,
+            "p95_ms": 0.01593899999999966,
+            "p99_ms": 0.018114439999999735,
+            "p99_9_ms": 0.02035686099999859,
+            "max_ms": 0.0209450000000011
+          },
+          "log_path": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02-output/performance.jsonl",
+          "warmup_steps_excluded": 120,
+          "total_logged_steps": 840,
+          "host_timing_only_no_added_cuda_synchronization": true,
+          "boundaries": {}
+        }
+      }
+    },
+    {
+      "name": "pipeline-reach02",
+      "config": {
+        "prefix": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/pipeline-reach02",
+        "output": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach02",
+        "source": "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_dataset.py",
+        "python": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "args": [
+          "orchestrate",
+          "--input",
+          "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02-output",
+          "--prepared",
+          "/data/ebulochkin/vla-runtime/live30-dataset-20261010/prepared-reach02",
+          "--output",
+          "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach02",
+          "--repo-id",
+          "local/live30-paced-reach02",
+          "--extract-python",
+          "/data/vla-infrastructure/isaac61_production/env/bin/python",
+          "--portable-root",
+          "recording=/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02-output",
+          "--portable-root",
+          "isaac61_production=/data/vla-infrastructure/isaac61_production",
+          "--portable-root",
+          "project_assets=/data/vla-infrastructure/assets"
+        ],
+        "env": {
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "HF_HOME": "/tmp/live30-paced-cache/hf",
+          "HF_DATASETS_CACHE": "/tmp/live30-paced-cache/hf-datasets"
+        },
+        "timeout": 900
+      },
+      "process": {
+        "child_pid": 3689376,
+        "returncode": 1,
+        "elapsed_s": 0.2689525349996984
+      },
+      "launch_locator": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/pipeline-reach02.launch.json",
+      "log_locator": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/pipeline-reach02.log"
+    },
+    {
+      "name": "pipeline-reach03",
+      "config": {
+        "prefix": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/pipeline-reach03",
+        "output": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach03",
+        "source": "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_dataset.py",
+        "python": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "args": [
+          "orchestrate",
+          "--input",
+          "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02-output",
+          "--prepared",
+          "/data/ebulochkin/vla-runtime/live30-dataset-20261010/prepared-reach03",
+          "--output",
+          "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach03",
+          "--repo-id",
+          "local/live30-paced-reach02",
+          "--extract-python",
+          "/data/vla-infrastructure/isaac61_production/env/bin/python",
+          "--portable-root",
+          "recording=/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02-output",
+          "--portable-root",
+          "isaac61_production=/data/vla-infrastructure/isaac61_production",
+          "--portable-root",
+          "project_assets=/data/vla-infrastructure/assets"
+        ],
+        "env": {
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "HF_HOME": "/tmp/live30-paced-cache/hf",
+          "HF_DATASETS_CACHE": "/tmp/live30-paced-cache/hf-datasets"
+        },
+        "timeout": 900
+      },
+      "process": {
+        "child_pid": 3695314,
+        "returncode": 0,
+        "elapsed_s": 365.23439166136086
+      },
+      "launch_locator": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/pipeline-reach03.launch.json",
+      "log_locator": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/pipeline-reach03.log"
+    }
+  ],
+  "independent_wall": {
+    "capture_observation": {
+      "start_intervals_ms": {
+        "n": 959,
+        "min": 16.191859,
+        "median": 33.333414,
+        "p95": 33.37308,
+        "max": 71.741379
+      },
+      "start_to_start_hz": 29.999962724342456,
+      "events": 960
+    },
+    "decision_solve": {
+      "start_intervals_ms": {
+        "n": 959,
+        "min": 16.198782,
+        "median": 33.333544,
+        "p95": 33.4057,
+        "max": 71.666703
+      },
+      "start_to_start_hz": 30.001213467433907,
+      "events": 960
+    },
+    "_apply": {
+      "start_intervals_ms": {
+        "n": 959,
+        "min": 16.212769,
+        "median": 33.331496,
+        "p95": 35.03761,
+        "max": 71.551003
+      },
+      "start_to_start_hz": 30.01144363352916,
+      "events": 960
+    },
+    "commit_transition": {
+      "start_intervals_ms": {
+        "n": 959,
+        "min": 16.165478,
+        "median": 33.357597,
+        "p95": 35.337375,
+        "max": 86.480008
+      },
+      "start_to_start_hz": 30.014671697330122,
+      "events": 960
+    },
+    "fresh_sample_intervals_ms": {
+      "n": 960,
+      "min": 16.179829,
+      "median": 33.3355765,
+      "p95": 35.217367,
+      "max": 87.354736
+    },
+    "raw_terminal": {
+      "source_rows": 961,
+      "last_source_id": 960
+    },
+    "host_pacing_scope": "control starts target30Hz; cached O_t is previously captured successor, except initial; video logical i/30 differs host sensor acquisition",
+    "run_working_s": 31.992728903889656,
+    "complete_hz_with_encode_tail": 29.932590129867098,
+    "input_sha256": {
+      "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02-output/host-events.jsonl": "7b229ca7f930be76a58e062739f9fb1deba0b3f649569600d7f58dd7cb91be24",
+      "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02-output/result.json": "400f20c70b3ab4f9f2754734f784cf1ed5a2a4ae8f025c8c49ca635fa7844d7e",
+      "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02-output/mirror/worker-rows.jsonl": "d0e36f029e81a109d1bddbeb5d7d119822f00f268fbbf43ce0e63e5f97250e65"
+    },
+    "dataset_admissible": false
+  },
+  "latency_locator": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/independent-timing-reach02/latency-isaac02.json",
+  "negative_cli": {
+    "passed": true,
+    "cases": [
+      {
+        "name": "changed-self-hash",
+        "command": [
+          "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_dataset.py",
+          "materialize",
+          "--prepared",
+          "/tmp/live30-paced-cli-negative01/changed-self-hash/prepared",
+          "--output",
+          "/tmp/live30-paced-cli-negative01/changed-self-hash/must-not-publish",
+          "--repo-id",
+          "local/negative"
+        ],
+        "returncode": 1,
+        "rejected": true,
+        "output_not_published": true
+      },
+      {
+        "name": "unbound-camera",
+        "command": [
+          "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_dataset.py",
+          "materialize",
+          "--prepared",
+          "/tmp/live30-paced-cli-negative01/unbound-camera/prepared",
+          "--output",
+          "/tmp/live30-paced-cli-negative01/unbound-camera/must-not-publish",
+          "--repo-id",
+          "local/negative"
+        ],
+        "returncode": 1,
+        "rejected": true,
+        "output_not_published": true
+      },
+      {
+        "name": "wrong-fps",
+        "command": [
+          "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_dataset.py",
+          "materialize",
+          "--prepared",
+          "/tmp/live30-paced-cli-negative01/wrong-fps/prepared",
+          "--output",
+          "/tmp/live30-paced-cli-negative01/wrong-fps/must-not-publish",
+          "--repo-id",
+          "local/negative"
+        ],
+        "returncode": 1,
+        "rejected": true,
+        "output_not_published": true
+      },
+      {
+        "name": "extra-row",
+        "command": [
+          "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+          "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_dataset.py",
+          "materialize",
+          "--prepared",
+          "/tmp/live30-paced-cli-negative01/extra-row/prepared",
+          "--output",
+          "/tmp/live30-paced-cli-negative01/extra-row/must-not-publish",
+          "--repo-id",
+          "local/negative"
+        ],
+        "returncode": 1,
+        "rejected": true,
+        "output_not_published": true
+      }
+    ],
+    "script_sha256": "be78abc06bd5400f251ae2193bf488c9d1c1d70759784bc085d91341f31f65b5"
+  },
+  "canonical_standalone_guard": {
+    "source": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02-output/episode/session.hdf5",
+    "command": [
+      "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+      "/tmp/live30-standalone-guard/verify_actual.py"
+    ],
+    "script_sha256": "7dbbb599704295faa7a733cb69fe0c909861a10328e8ba103ac1acf95905d218",
+    "replay_source_sha256": "09901b9585ac663a740ff716ba0a8e04e2d2e591aed7a13bd2f2bf297ec2fce1",
+    "portable_roots": {
+      "recording": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/paced-reach02-output",
+      "isaac61_production": "/data/vla-infrastructure/isaac61_production",
+      "project_assets": "/data/vla-infrastructure/assets"
+    },
+    "canonical_rejection": "recording did not prove the required Fabric pose backend",
+    "passed": true,
+    "backend": "ovphysx_cpu",
+    "committed_frames": 960,
+    "hdf5_sha256": "6c253fb7734722535e60ed034955d2b14ce7edd8106dc9a3778fdd5c5013d597",
+    "snapshot_sha256": "a45592465b700e2205f793bb3618c6be8ac6066592d44653517465e8cdb35618",
+    "asset_closure_sha256": "87baa9f4e76270a4b92243cae3d2bdee8e18f8c41c2842c7955990561ad86bdb",
+    "visual_provenance_sha256": "fc41b5ee2f4880e70e598185866c101dfdc1295189cf71adc8f02a1c36193da0",
+    "terminal_successor_sha256": "fc677aed7a01376b0ac91dcb64f5e719433e5119ceb0d16eb9a3ce74b77bb837"
+  },
+  "private_import_tests": {
+    "passes": 10,
+    "locator": "cpu-audits/live30-paced-import02/pytest.log"
+  },
+  "parent_unit_tests": {
+    "passes": 23,
+    "locator": "cpu-audits/live30-paced-parent-unit01/pytest.log"
+  },
+  "materialization": {
+    "locator": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach03",
+    "elapsed_with_full_QA_s": 365.23439166136086,
+    "receipt_sha256": "c4067e897983449259bba071d7a9ce3a0248fc41168f7ca36f7b8ee67d14d8ad",
+    "frames": 960,
+    "fps": 30,
+    "qa": {
+      "all_frames_read": 960,
+      "all_video_frames_decoded": 2880,
+      "dataloader_batches": 480,
+      "dataloader_frames": 960
+    },
+    "terminal_excluded_from_bc_rows": true,
+    "source_terminal_retained": true,
+    "source_png_staging_removed": true
+  },
+  "repository_tests": {
+    "passed": 425,
+    "skipped": 38,
+    "receipt": "checks/repository/results.json",
+    "all_checks_passed": true
+  },
+  "standalone_guard_tests": {
+    "passed": 22,
+    "locator": "cpu-audits/live30-standalone-guard/pytest.log"
+  },
+  "cli_manifest_verify": {
+    "passed": true,
+    "locator": "cpu-audits/live30-paced-manifest-verify01.stdout",
+    "command": [
+      "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+      "tools/isaac_vr_live_dataset.py",
+      "verify",
+      "--prepared",
+      "/data/ebulochkin/vla-runtime/live30-dataset-20261010/prepared-reach03",
+      "--output",
+      "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach03"
+    ]
+  },
+  "independent_final_qa": {
+    "schema": "independent_final_live_dataset_qa_v1",
+    "passed": true,
+    "elapsed_s": 219.250753693,
+    "stages": [
+      {
+        "name": "parquet_source_identity",
+        "seconds_since_start": 0.105977399,
+        "rows": 960,
+        "state_bitexact": true,
+        "action_bitexact": true,
+        "logical_time_bitexact": true,
+        "ledger_join": true,
+        "no_png": true,
+        "source_profile": "isaac_human_vr_offline_rgb_v2"
+      },
+      {
+        "name": "negative_label",
+        "seconds_since_start": 0.110829175,
+        "rejected": true,
+        "reason": "action bitexact payload differs from verified projection"
+      },
+      {
+        "name": "actual_video_role0",
+        "seconds_since_start": 23.259294055,
+        "frames": 960,
+        "raw_source_frames": 961,
+        "FFmpeg_raw_prefix_exact": true,
+        "exactPTS": true,
+        "PyAV_hashes": 960
+      },
+      {
+        "name": "actual_video_role1",
+        "seconds_since_start": 46.330245854,
+        "frames": 960,
+        "raw_source_frames": 961,
+        "FFmpeg_raw_prefix_exact": true,
+        "exactPTS": true,
+        "PyAV_hashes": 960
+      },
+      {
+        "name": "actual_video_role2",
+        "seconds_since_start": 70.012045189,
+        "frames": 960,
+        "raw_source_frames": 961,
+        "FFmpeg_raw_prefix_exact": true,
+        "exactPTS": true,
+        "PyAV_hashes": 960
+      },
+      {
+        "name": "full_return_uint8_read",
+        "seconds_since_start": 218.598680573,
+        "frames": 960,
+        "video_frames": 2880,
+        "allRGB_lookup_hashes_exact": true,
+        "allstate_action_payloads_bitexact": true
+      },
+      {
+        "name": "representative_dataloader",
+        "seconds_since_start": 219.250541874,
+        "batches": 3,
+        "frames": 6,
+        "indices": [
+          0,
+          1,
+          479,
+          480,
+          958,
+          959
+        ],
+        "read_only_input_hashes_unchanged": true
+      }
+    ],
+    "versions": {
+      "lerobot": "0.6.1",
+      "av": "15.1.0",
+      "torch": "2.7.1",
+      "pyarrow": "25.0.1",
+      "numpy": "2.2.6"
+    },
+    "scope": "actual published v3 dataset allParquet/nativeprojection payloads, actualMP4 rawNVENCprefix/PTS, all960return_uint8lookup/pixel mapping; no independent humanQuest or optical exposure/universal material correctness qualification",
+    "audit_script_sha256": "10d097047bf956f5bb8577de69622644766b7d8193e1c3207b75cdc7d38853db",
+    "dataset_admissible": false,
+    "locator": "cpu-audits/live30-final-dataset-qa04",
+    "failed_previous_attempt": "cpu-audits/live30-final-dataset-qa03",
+    "tested_sources": {
+      "/tmp/live30-final-dataset-audit.py": "10d097047bf956f5bb8577de69622644766b7d8193e1c3207b75cdc7d38853db",
+      "/tmp/live30-paced-remux-audit.py": "d7337954cbcbc104c07c5f85a29d98fd317132b3f335ee0cfab3d4bd165df601",
+      "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_dataset.py": "805658f2bbcd8fd49f82aa5d34daab26c4185cd028c1c93a872394ffff730407",
+      "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_live_video_import.py": "2f2dfb40e3d3dfec7ce14499571f41cf9639adfaf3f8c1943f5c74632567c4d1",
+      "/home/ebulochkin/vla_infrastructure/tools/isaac_vr_lerobot_materialize.py": "cd120c3c6b7abb902cd6f3b97bc25394bac9c56ee756abf914e92087b4f27bbf",
+      "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/lerobot/datasets/lerobot_dataset.py": "07523e2a4f9c53b6a96df9255ad131ee30e707fd8610ec9d2178d3741023ae3a"
+    }
+  },
+  "input_projection_and_dataset": {
+    "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach03/data/chunk-000/file-000.parquet": "b5251bf76aaf00b46f581a8cc0173a3e8ed287c9cd2cd144048b5f1ff4c8508e",
+    "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach03/live-materialization.json": "c4067e897983449259bba071d7a9ce3a0248fc41168f7ca36f7b8ee67d14d8ad",
+    "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach03/live-source-ledger.jsonl": "fcc4e8ffb0ccf3722eaac35f587136313276c895d5de4486c1eafed1c1a6ed32",
+    "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach03/meta/episodes/chunk-000/file-000.parquet": "4a52458b0194b9018e7f64dbd0ec39a5f3d0d05f3dd59a59e2d288d563b07645",
+    "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach03/meta/info.json": "3966e7687c79d44a25bce6f500cb7318b790bdc73f00bf8351d12ae0eae59cd4",
+    "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach03/meta/stats.json": "bace9f4a29e8d20c87fd9f2a854ad1d271f1eca0f3c33559edeafbc1baa4fd6f",
+    "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach03/meta/tasks.parquet": "7dca04b3cdda71146438a30cf0b59255f46171588a4fd96c15d16266e5681693",
+    "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach03/videos/observation.images.left_wrist/chunk-000/file-000.mp4": "144e9886a3b5213c9679559619a50f22b9b8c7c502dea23a24ac865cb9b8dc9f",
+    "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach03/videos/observation.images.right_wrist/chunk-000/file-000.mp4": "18b8cf78b2b4314f6a79270823fc340d693f81c91dde63087f300a562a7545e8",
+    "/data/ebulochkin/vla-runtime/live30-dataset-20261010/dataset-reach03/videos/observation.images.scene/chunk-000/file-000.mp4": "01714de4f123a8a70493faa87cc6fd5e29a8d581b6b29d54266e20ccf677d5fa",
+    "/data/ebulochkin/vla-runtime/live30-dataset-20261010/prepared-reach03/projection/manifest.json": "c674acad32d46e04404ea97dfe5e6cc6db04bc2e640a79c05d52ea65ac5fef84",
+    "/data/ebulochkin/vla-runtime/live30-dataset-20261010/prepared-reach03/projection/projection.npz": "ccdf205fb6683027ee7e2d37a42a4a607b5ce0c90b44719cd4baef4f9a9002ab",
+    "/data/ebulochkin/vla-runtime/live30-dataset-20261010/prepared-reach03/live-media.json": "e4a000992e9de7156b07fbc2a622db1e4592d05bf4326cc4db35cfc93a3be504"
+  },
+  "final_runtime_sources": {
+    "tools/isaac_vr_live_dataset.py": "805658f2bbcd8fd49f82aa5d34daab26c4185cd028c1c93a872394ffff730407",
+    "tools/isaac_vr_live_video_import.py": "2f2dfb40e3d3dfec7ce14499571f41cf9639adfaf3f8c1943f5c74632567c4d1",
+    "tools/isaac_vr_replay.py": "09901b9585ac663a740ff716ba0a8e04e2d2e591aed7a13bd2f2bf297ec2fce1",
+    "tools/run_single_gpu_live_recording.py": "d0f4b4c74d8ad779c4546ca71377b54fbcf45089cc0e6bcddb3653073baeda96"
+  }
+}

@@ -6998,3 +6998,66 @@ documents:
   owner: vr.performance
   mutable: false
   gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/dataset30/PLAN.md
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/dataset30/REPORT.md
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/dataset30/checks/repository/results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/dataset30/checks/repository/results.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/dataset30/results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/dataset30/retention.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/dataset30/retain_artifacts.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/dataset30/checks/final-docs/results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/dataset30/checks/final-docs/results.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []

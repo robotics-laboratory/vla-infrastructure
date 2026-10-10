@@ -174,6 +174,79 @@ def test_recording_profile_and_transition_schema_are_paired(tmp_path):
     assert new.manifest["session_metadata"]["source_profile"] == "isaac_human_vr_offline_rgb_v2"
 
 
+def _standalone_artifact(tmp_path):
+    recording = _artifact(
+        tmp_path,
+        pose_backend_requested="ovphysx_cpu",
+        pose_backend_effective="ovphysx_cpu",
+        transition_schema="piper_x_committed_transition_v3",
+    )
+    path = recording.parent / "manifest.json"
+    manifest = json.loads(path.read_text())
+    manifest["session_metadata"].update(
+        source_profile="isaac_human_vr_offline_rgb_v2",
+        execution_profile="isaac_vr_record_injected_no_client_audit",
+    )
+    path.write_text(json.dumps(manifest))
+    return recording
+
+
+def _verify_standalone(recording):
+    return replay.verify_experimental_standalone_recording_artifact(
+        recording, portable_roots={"recording": recording.parent}
+    )
+
+
+def test_standalone_verifier_is_separate_from_canonical_fabric(tmp_path):
+    recording = _standalone_artifact(tmp_path)
+    before = {path: path.read_bytes() for path in tmp_path.iterdir() if path.is_file()}
+    with pytest.raises(ValueError, match="required Fabric pose backend"):
+        _verify(recording)
+    artifact = _verify_standalone(recording)
+    assert isinstance(artifact, replay.ReplayArtifact)
+    assert artifact.committed_frames == 2
+    assert artifact.hdf5_sha256 == hashlib.sha256(recording.read_bytes()).hexdigest()
+    assert artifact.manifest["pose_backend_effective"] == "ovphysx_cpu"
+    assert all(path.read_bytes() == content for path, content in before.items())
+    _artifact(tmp_path)
+    with pytest.raises(ValueError, match="required ovphysx_cpu pose backend"):
+        _verify_standalone(recording)
+    assert _verify(recording).manifest["pose_backend_effective"] == "fabric"
+
+
+@pytest.mark.parametrize("field", ["pose_backend_requested", "pose_backend_effective"])
+def test_standalone_verifier_rejects_backend_mismatch(tmp_path, field):
+    recording = _standalone_artifact(tmp_path)
+    path = recording.parent / "manifest.json"
+    manifest = json.loads(path.read_text())
+    manifest[field] = "fabric"
+    path.write_text(json.dumps(manifest))
+    with pytest.raises(ValueError, match="required ovphysx_cpu pose backend"):
+        _verify_standalone(recording)
+
+
+@pytest.mark.parametrize("mutation", ["hdf", "snapshot", "profile", "closure", "visual", "terminal"])
+def test_standalone_verifier_preserves_integrity_and_profile_guards(tmp_path, mutation):
+    recording = _standalone_artifact(tmp_path)
+    path = recording.parent / "manifest.json"
+    manifest = json.loads(path.read_text())
+    if mutation == "hdf":
+        recording.write_bytes(b"changed")
+    elif mutation == "snapshot":
+        (tmp_path / "stage_snapshot.usd").write_bytes(b"changed")
+    elif mutation == "profile":
+        manifest["session_metadata"]["execution_profile"] = "human_recording"
+    elif mutation == "closure":
+        manifest["asset_closure_sha256"] = "0" * 64
+    elif mutation == "visual":
+        manifest["visual_provenance_sha256"] = "0" * 64
+    else:
+        (tmp_path / "terminal_successor.npz").write_bytes(b"changed")
+    path.write_text(json.dumps(manifest))
+    with pytest.raises(ValueError):
+        _verify_standalone(recording)
+
+
 def _canonical_d0_arrays() -> dict[str, np.ndarray]:
     first = committed_sample(schema_version=2)
     first["episode_id"] = "episode_000000"

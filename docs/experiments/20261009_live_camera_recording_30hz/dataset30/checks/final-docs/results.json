@@ -1,0 +1,124 @@
+{
+  "schema": "live30_dataset_final_checks_v1",
+  "preservation_base": "e1f57032aba4777cb023ac26192eb6bb182f734a",
+  "python": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+  "head": "e1f57032aba4777cb023ac26192eb6bb182f734a",
+  "checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "e1f57032aba4777cb023ac26192eb6bb182f734a"
+      ],
+      "returncode": 0,
+      "elapsed_s": 2.4495561253279448,
+      "stdout": "INDEX: 1103 entries; classification {'current': 136, 'historical': 967}\nHISTORICAL PRESERVATION: PASS (961 frozen files vs e1f57032aba4777cb023ac26192eb6bb182f734a)\nKNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.\nDOC GOVERNANCE CHECKS: PASS\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.16454283194616437,
+      "stdout": "SPEC REFERENCE LINT OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/validate_resolved_contract.py",
+        "configs/resolved_contract.yaml"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.529260263312608,
+      "stdout": "CONTRACT STRUCTURALLY VALID\nCONTRACT SEMANTICALLY VALID\nFINAL RC NOT READY\nBLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.029070618096739054,
+      "stdout": "MANIFEST OK: 110 reviewed files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff",
+        "check",
+        "docs/experiments/20261009_live_camera_recording_30hz/dataset30/retain_artifacts.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.007291169837117195,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-c",
+        "import json,hashlib\nfrom pathlib import Path\np=Path('docs/experiments/20261009_live_camera_recording_30hz/dataset30/retention.json');r=json.loads(p.read_text()); i=Path(r['inventory']);assert hashlib.sha256(i.read_bytes()).hexdigest()==r['inventory_sha256']; inventory=json.loads(i.read_text());root=Path(r['root'])\nfor row in inventory['files']:\n f=root/row['path'];h=hashlib.sha256()\n with f.open('rb') as s:\n  for b in iter(lambda:s.read(1048576),b''):h.update(b)\n assert f.stat().st_size==row['bytes'] and h.hexdigest()==row['sha256'],f\nprint(json.dumps(dict(passed=True,verified_files=len(inventory['files']),bytes=sum(f['bytes'] for f in inventory['files']))))\n"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.4812741419300437,
+      "stdout": "{\"passed\": true, \"verified_files\": 568, \"bytes\": 962626438}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-c",
+        "import json,hashlib\nfrom pathlib import Path\nr=json.loads(Path('docs/experiments/20261009_live_camera_recording_30hz/dataset30/checks/repository/results.json').read_text())\nfor p,h in r['tested_sources'].items():assert hashlib.sha256(Path(p).read_bytes()).hexdigest()==h,p\nprint('Runtime/tests exactly match repository suite tested sources')\n"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.014934430830180645,
+      "stdout": "Runtime/tests exactly match repository suite tested sources\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)**/*.log",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/clock-codegraph.txt",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/codegraph.txt",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/master-s2.diff",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/master.diff"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.003344788681715727,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)**/*.log",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/clock-codegraph.txt",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/codegraph.txt",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/master-s2.diff",
+        ":(exclude)docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/master.diff"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.004249486606568098,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "dataset_admissible": false,
+  "all_passed": true
+}

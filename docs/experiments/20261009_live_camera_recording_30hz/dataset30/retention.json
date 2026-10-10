@@ -1,0 +1,20 @@
+{
+  "schema": "live30_dataset_retention_v1",
+  "root": "/data/ebulochkin/vla-runtime/live30-dataset-20261010",
+  "inventory": "/data/ebulochkin/vla-runtime/live30-dataset-20261010/retention-inventory.json",
+  "inventory_sha256": "3e6a38556397ca0ac5e705fb29c4b592a507d1b051a6cccbf53f5e7085270a49",
+  "file_count": 568,
+  "total_bytes": 962626438,
+  "verified_copies": 419,
+  "source_sha256": "ebf52555522a908dc0d7ad8db35bbdb2310094f6ba6f91906f4b9de2b7a8f1ba",
+  "command": [
+    "retain_artifacts.py",
+    "--root",
+    "/data/ebulochkin/vla-runtime/live30-dataset-20261010",
+    "--receipt",
+    "docs/experiments/20261009_live_camera_recording_30hz/dataset30/retention.json"
+  ],
+  "excluded": "HF caches and Python/test caches are not proof; owned successful PNG staging was removed by materialization",
+  "dataset_admissible": false,
+  "gate_bindings": []
+}

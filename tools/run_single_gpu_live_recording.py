@@ -84,7 +84,8 @@ def benchmark(env, cli, app, **unused):
 
     torch.set_num_threads(1)
     perf = S2PerformanceLogger(
-        args.output / "performance.jsonl", window_steps=60, warmup_steps=args.warmup, target_hz=50
+        args.output / "performance.jsonl", window_steps=60, warmup_steps=args.warmup,
+        target_hz=args.pace_hz or 50,
     )
     cfg = yaml.safe_load(cli.config.read_text())
     owner = record = mirror = None
@@ -116,8 +117,8 @@ def benchmark(env, cli, app, **unused):
         metadata = recording_session_metadata(
             config_path=cli.config,
             environment_pins=cfg["environment"],
-            run_id="single_gpu_20261009",
-            session_id="single_gpu_20261009",
+            run_id="single_gpu_" + hashlib.sha256(str(args.output.resolve()).encode()).hexdigest()[:24],
+            session_id="single_gpu_" + hashlib.sha256(str(args.output.resolve()).encode()).hexdigest()[:24],
             episode_id="single_gpu_episode",
             execution_profile="isaac_vr_record_injected_no_client_audit",
             processor_revision="piper_x_isaac_s2_bimanual_relative_v3",
