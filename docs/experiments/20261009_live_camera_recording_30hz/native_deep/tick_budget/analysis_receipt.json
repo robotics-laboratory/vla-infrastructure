@@ -1,0 +1,44 @@
+{
+  "command": [
+    "/data/vla-infrastructure/isaac61_production/env/bin/python",
+    "docs/experiments/20261009_live_camera_recording_30hz/native_deep/analyze_tick_budget.py",
+    "--root",
+    "/data/ebulochkin/vla-runtime/native-deep-20261010",
+    "--output",
+    "/tmp/native-tick-budget-final03"
+  ],
+  "script_sha256": "720296b60521523d08c3763dbe15d4dc358e8f857fa2c92c1fe218eb2bee6a6c",
+  "artifacts": {
+    "stage_timings.csv": {
+      "bytes": 3322,
+      "sha256": "5616d2d794849d4a7b3ad2d933d885700b799b1aad755dc54e42670d3ec0f229"
+    },
+    "slow_ticks.png": {
+      "bytes": 199788,
+      "sha256": "3f15d8000f0cbee0747055c4dc685feb7dce368179f30b6f9727c17a33b20786"
+    },
+    "tick_breakdown.png": {
+      "bytes": 163287,
+      "sha256": "480f656800ad839ead2f9097f8609891b09d9e512d2b677c9336906c5dd6e996"
+    },
+    "budget_distribution.png": {
+      "bytes": 248958,
+      "sha256": "44771ad94fe5be2a2f09fd93da6255692f87c3c4150d28327a922bc847fa0fe9"
+    },
+    "analysis.json": {
+      "bytes": 78953,
+      "sha256": "d35c379fe76a73bccfa7a5773b4793a2e981e78c0e27398b7dfb4f05b55c0b41"
+    },
+    "tick_budget.pdf": {
+      "bytes": 150670,
+      "sha256": "6196a0257c5acbe85b21f8cbf9885a163ea4994d468920b01306901ea1fb58e7"
+    },
+    "nested_profile.png": {
+      "bytes": 225088,
+      "sha256": "0cec5ff4f5c1f837a2459fe55e453303aea68ca89f9024eb301e912515ce16eb"
+    }
+  },
+  "input_files_verified": 14,
+  "checks": "PASS: source SHA/size, additive closure, warmup exclusion, sample alignment, nested timestamp containment, no overlap",
+  "new_simulation_runs": 0
+}

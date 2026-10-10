@@ -698,3 +698,120 @@ spec references, resolved contract, MANIFEST, Ruff, relevant topic tests и git 
 LeRobot conversion можно отложить: state/actions HDF и compressed camera bytes
 уже пишутся в лайве; поздняя упаковка/декодирование не должна включать повторный
 рендер сцен или замену source labels actuator commands.
+
+## Время на управляющий тик и распределение бюджета
+
+Новый разбор читает **сохранённые raw performance/profile logs**, без нового
+запуска симуляции. [Скрипт](analyze_tick_budget.py), [числа и происхождение](tick_budget/analysis.json),
+[CSV](tick_budget/stage_timings.csv), [PDF с четырьмя графиками](tick_budget/tick_budget.pdf)
+и [receipt](tick_budget/analysis_receipt.json) воспроизводят расчёт. Проверены
+SHA/size всех14 исходных файлов относительно закрытого retention inventory.
+Результаты исходных прогонов и их tested scope не изменялись.
+
+Здесь **тик = одно решение, применение команды, четыре physics substeps120Hz,
+следующее наблюдение, отправка трёх камер/превью и causal HDF commit**.
+Это33.33ms simulation time, но около20ms wall time в unpaced CPU benchmark.
+Измерения — host elapsed time, включая уже существующие ожидания GPU; они не
+являются отдельными GPU timings физики, RTX или NVENC. Реального Quest нет.
+
+Для точного суммирования stage/body тика k сопоставляются с `start_to_start_ms`
+**следующего** тика k+1. Между body и следующим стартом остаётся логирование/
+внешняя работа. Сумма этапов замыкается на wall interval; начальные60 тиков
+прогрева и последняя body без следующего wall interval исключены. Поэтому
+budget partition использует9999 интервалов soak и599 интервалов коротких
+прогонов; body distribution отдельно содержит10000/600 samples. Это объясняет
+малые отличия stage means от ранее опубликованной600-step summary.
+
+![Распределение среднего времени тика и запаса бюджета](tick_budget/tick_breakdown.png)
+
+| Этап, CPU soak | мс/тик | Доля фактического тика | Доля бюджета20ms | Доля бюджета33.33ms |
+|---|---:|---:|---:|---:|
+| Simulation advance: PhysX, Kit/render и ожидания | 13.875 | 69.05% | 69.37% | 41.62% |
+| Decision/apply: input preparation, DLS, causal prepare, native command | 2.458 | 12.23% | 12.29% | 7.37% |
+| Successor capture: native state/hash, media submit, source bindings | 2.155 | 10.72% | 10.77% | 6.46% |
+| Causal commit/record: validation, sample construction, HDF recording | 1.561 | 7.77% | 7.81% | 4.68% |
+| Остальные стадии, остаток, logging/межтиковая работа | 0.046 | 0.23% | 0.23% | 0.14% |
+| **Всего** | **20.095** | **100%** | **100.48%** | **60.29%** |
+
+Весь13.875ms блок нельзя подписывать «физика»: callback получение камер, Kit,
+рендер и связанные ожидания входят туда же.2.458ms не являются чистым DLS,
+а1.561ms не являются чистой записью диска. Первый observation_capture в steady
+цикле почти бесплатен (~0.002ms), поскольку использует уже захваченный successor;
+полная стоимость нового наблюдения находится в successor_capture. Input injected;
+настоящая XR input/network/compositor стоимость этим этапом не измерена.
+
+| Профиль | Средний wall тик | p95 | p99 | Максимум | >20ms | >33.33ms |
+|---|---:|---:|---:|---:|---:|---:|
+| Final CPU,10k soak | 20.095 | 22.922 | 26.369 | 179.254 | 35.594% | 0.070% |
+| Final CPU,600 repeat14 | 19.783 | 22.271 | 26.045 | 29.677 | 28.548% | 0% |
+| Final CUDA,600 run13 | 39.390 | 42.158 | 45.613 | 48.756 | 100% | 100% |
+
+Средняя разница CUDA13–CPU14 составляет19.608ms. Из неё18.628ms (~95%)
+находятся в simulation_advance; decision/apply различается примерно на0.624ms,
+successor_capture на0.374ms, causal commit практически одинаков. Это локализация
+host critical path; конкретное разделение CUDA solver / RTX / interop waits
+этими coarse logs не установлено. CPU physics и CUDA physics различаются,
+проверки физики выше остаются обязательными перед сменой execution profile.
+
+![Распределение длительности и чувствительность бюджета](tick_budget/budget_distribution.png)
+
+**50Hz /20ms:** запас CPU soak по среднему уже отрицательный (-0.095ms),
+поp95 -2.922ms. Короткий повтор имеет лишь+0.217ms по среднему. Поэтому
+около50Hz throughput не означает, что каждый тик успевает в20ms.
+
+**30Hz /33.333ms:** арифметический запас CPU soak составляет+13.238ms
+по среднему, +10.411ms поp95, +6.965ms поp99. Для95% on-time тиков можно
+добавить около10.4ms **постоянной последовательной** работы при неизменной
+остальной длительности; для99% — около7ms. График справа показывает именно
+этот сценарий: к каждому измеренному интервалу добавляется одинаковая стоимость.
+Это не предсказание Quest: headset rendering может изменить GPU contention,
+очереди и саму базовую длительность, а часть новой работы может перекрываться.
+CUDA13 превышает даже33.333ms по среднему на6.057ms до подключения Quest.
+
+![Детальный вложенный host-профиль](tick_budget/nested_profile.png)
+
+Детальные observers существуют для **предыдущего Attribute +camera QA режима**
+`source-bound-attribute-profile-08` (48.01Hz), не для финального identity/cache.
+На600 steady тиков, по три камеры/тик:
+
+- В simulation_advance14.623ms входят source publication0.407ms,
+  отдельный USD/Fabric sync0.025ms и native RGB callbacks1.213ms;
+  остальное12.978ms содержит симуляцию/Kit и ожидания без дальнейшего разделения.
+- В RGB callbacks1.213ms уже входит source/camera comparison0.233ms;
+  другие callback работы, включая owned copy и producer wait, занимают0.981ms.
+- В successor_capture2.148ms: snapshot recordables0.586ms, остальной canonical
+  observation0.274ms, три NVENC submit0.386ms, preview publish0.156ms,
+  остаток capture/binding/JSONL/HDF0.746ms. GPU encode time не равен submit time.
+
+Вложенность snapshot→canonical и comparison→callback подтверждена timestamp
+containment; независимые observer интервалы не пересекаются. Sync оказался
+отдельным вызовом **перед** publication, поэтому не вычитается из publication
+повторно. Предварительная неверная гипотеза сохранена в
+[preflight record](tick_budget_preflight.json). Полосы разных уровней графика
+нельзя складывать. Эти более подробные времена нельзя подставлять как отдельные
+статьи финального~50Hz бюджета: отличаются flags, QA overhead и instrumented scope.
+Ранее сохранённый cProfile baseline preview device-wait~7.20ms остаётся отдельным
+диагностическим измерением; в финальном event transport этого глобального wait нет.
+
+![Все редкие задержки длинного прогона](tick_budget/slow_ticks.png)
+
+У CPU soak семь wall intervals>33.333ms: тики900,2575,4150,4163,5747,8836,9747.
+Один интервал33.529ms содержит simulation_advance24.274ms; пять других
+выделяются successor_capture14.085–28.215ms. Самый тяжёлый179.254ms интервал
+на9747 содержит **159.535ms в causal_commit_and_record**, при обычных14.899ms
+simulation_advance и2.340ms successor_capture. Это наблюдение пути записи;
+чистую HDF I/O/flush, Python GC, scheduler или другую внутреннюю причину по
+этим logs установить нельзя. Выброс сохранён и не удалён из средних/процентилей.
+
+Следующие profiling приоритеты по этим данным: разложить simulation_advance
+на настоящий PhysX/render/interop путь; отдельно разделить tails successor
+capture и causal commit (HDF call/flush, binding, JSONL, allocation/GC).
+Оптимизация только NVENC submit0.386ms из другого профиля не объяснит основную
+среднюю19.6ms CPU/CUDA разницу. По текущим данным средний budget и редкие
+stall требуют разных проверок. Корректность source IDs, temporal quality,
+CPU-preview physics drift и host-memory ограничения предыдущего раздела сохраняются.
+
+Новые analysis attachments индексированы как `vr.performance`, gates=[];
+они не являются новым физическим qualification run. [Проверки этого разбора](tick_budget/checks.json)
+фиксируют trusted base57a69b8, source/artifact SHA verification, numeric closure,
+Ruff, docs/history, spec/contract/MANIFEST и тематические governance tests.

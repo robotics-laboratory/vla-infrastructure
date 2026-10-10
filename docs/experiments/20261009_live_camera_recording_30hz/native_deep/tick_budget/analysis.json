@@ -1,0 +1,2301 @@
+{
+  "schema": "native_tick_budget_analysis_v1",
+  "input_root": "/data/ebulochkin/vla-runtime/native-deep-20261010",
+  "retention_inventory_sha256": "f3372aa8f3665c28e1e8ede0b5ea6a7a1fce70f40c7f898d46788672fbcadcbc",
+  "budgets_ms": {
+    "50_hz": 20.0,
+    "30_hz": 33.333333333333336
+  },
+  "quest_connected": false,
+  "new_simulation_runs": 0,
+  "semantics": "Host elapsed time incl. waits; no separate GPU execution claim",
+  "cases": {
+    "source-bound-identity-soak-12": {
+      "label": "CPU · 10 000 тиков",
+      "warmup_steps": 60,
+      "body_stats": {
+        "samples": 10000,
+        "mean_ms": 20.0679769333,
+        "p50_ms": 19.550023000000003,
+        "p95_ms": 22.88429715,
+        "p99_ms": 26.32626647,
+        "p99.9_ms": 31.060223188000034,
+        "min_ms": 18.381521,
+        "max_ms": 179.233626
+      },
+      "wall_stats": {
+        "samples": 9999,
+        "mean_ms": 20.095253238523853,
+        "p50_ms": 19.579945,
+        "p95_ms": 22.9220495,
+        "p99_ms": 26.36878034000001,
+        "p99.9_ms": 31.08731543200007,
+        "min_ms": 18.401879,
+        "max_ms": 179.254241
+      },
+      "effective_wall_hz": 49.7629956751646,
+      "encode_tail_hz": 49.67115936702545,
+      "aligned_budget_samples": 9999,
+      "between_body_gap": {
+        "samples": 9999,
+        "mean_ms": 0.02736032813281327,
+        "p50_ms": 0.020824000000001064,
+        "p95_ms": 0.036075200000000154,
+        "p99_ms": 0.33588328000000106,
+        "p99.9_ms": 0.37069804400000006,
+        "min_ms": 0.018027000000000015,
+        "max_ms": 0.5501689999999968
+      },
+      "stages": {
+        "simulation_advance": {
+          "samples": 9999,
+          "mean_ms": 13.87485600890089,
+          "p50_ms": 13.510887,
+          "p95_ms": 16.120730599999998,
+          "p99_ms": 17.695542340000003,
+          "p99.9_ms": 20.81109385800019,
+          "min_ms": 12.675419,
+          "max_ms": 24.275121,
+          "share_of_tick_percent": 69.04543995644666,
+          "share_of_20ms_percent": 69.37428004450445,
+          "share_of_33ms_percent": 41.62456802670267
+        },
+        "injected_decision_apply": {
+          "samples": 9999,
+          "mean_ms": 2.458183178617862,
+          "p50_ms": 2.418091,
+          "p95_ms": 2.6837055,
+          "p99_ms": 2.9413818800000007,
+          "p99.9_ms": 3.892696026000004,
+          "min_ms": 2.172834,
+          "max_ms": 5.405626,
+          "share_of_tick_percent": 12.232655888632303,
+          "share_of_20ms_percent": 12.29091589308931,
+          "share_of_33ms_percent": 7.374549535853585
+        },
+        "successor_capture": {
+          "samples": 9999,
+          "mean_ms": 2.1546174963496347,
+          "p50_ms": 2.099866,
+          "p95_ms": 2.3548326,
+          "p99_ms": 2.71576702,
+          "p99.9_ms": 6.900902226000005,
+          "min_ms": 1.932276,
+          "max_ms": 28.215282,
+          "share_of_tick_percent": 10.722022115248086,
+          "share_of_20ms_percent": 10.773087481748174,
+          "share_of_33ms_percent": 6.463852489048904
+        },
+        "causal_commit_and_record": {
+          "samples": 9999,
+          "mean_ms": 1.561444894489449,
+          "p50_ms": 1.421717,
+          "p95_ms": 1.6053471,
+          "p99_ms": 7.588813720000002,
+          "p99.9_ms": 8.582985820000003,
+          "min_ms": 1.274626,
+          "max_ms": 159.535131,
+          "share_of_tick_percent": 7.770217553148631,
+          "share_of_20ms_percent": 7.8072244724472455,
+          "share_of_33ms_percent": 4.684334683468347
+        },
+        "service": {
+          "samples": 9999,
+          "mean_ms": 0.04615166016601661,
+          "p50_ms": 0.03935900000000103,
+          "p95_ms": 0.05491439999999983,
+          "p99_ms": 0.3544906799999985,
+          "p99.9_ms": 0.3905986840000008,
+          "min_ms": 0.035399000000001735,
+          "max_ms": 0.5750289999999936,
+          "share_of_tick_percent": 0.2296644865243151,
+          "share_of_20ms_percent": 0.23075830083008303,
+          "share_of_33ms_percent": 0.1384549804980498
+        }
+      },
+      "budgets": {
+        "50_hz": {
+          "budget_ms": 20.0,
+          "exceeded_count": 3559,
+          "exceeded_fraction": 0.35593559355935595,
+          "signed_headroom_ms": {
+            "mean_ms": -0.0952532385238527,
+            "p50_ms": 0.4200550000000014,
+            "p95_ms": -2.9220495,
+            "p99_ms": -6.368780340000011,
+            "max_ms": -159.254241
+          },
+          "extra_serial_cost_at_95_percent_on_time_ms": -2.9220495
+        },
+        "30_hz": {
+          "budget_ms": 33.333333333333336,
+          "exceeded_count": 7,
+          "exceeded_fraction": 0.0007000700070007,
+          "signed_headroom_ms": {
+            "mean_ms": 13.238080094809483,
+            "p50_ms": 13.753388333333337,
+            "p95_ms": 10.411283833333336,
+            "p99_ms": 6.964552993333324,
+            "max_ms": -145.92090766666666
+          },
+          "extra_serial_cost_at_95_percent_on_time_ms": 10.411283833333336
+        }
+      },
+      "slowest_body_ticks": [
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3847756018095087,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 159.535131,
+            "injected_decision_apply": 2.439064,
+            "observation_capture": 0.001908,
+            "runtime_bookkeeping": 0.006767,
+            "simulation_advance": 14.899033,
+            "successor_capture": 2.340463,
+            "teleop_advance": 0.000172
+          },
+          "start_to_start_ms": 19.150821,
+          "step": 9747,
+          "total_ms": 179.233626,
+          "unattributed_ms": 0.011087999999972453,
+          "wall_deadline_missed": false
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3847675053857455,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 1.310922,
+            "injected_decision_apply": 2.448295,
+            "observation_capture": 0.002069,
+            "runtime_bookkeeping": 0.005282,
+            "simulation_advance": 15.21376,
+            "successor_capture": 28.215282,
+            "teleop_advance": 0.000202
+          },
+          "start_to_start_ms": 19.519785,
+          "step": 5747,
+          "total_ms": 47.205799,
+          "unattributed_ms": 0.00998700000000241,
+          "wall_deadline_missed": false
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3847643288976958,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 1.476283,
+            "injected_decision_apply": 2.399215,
+            "observation_capture": 0.002262,
+            "runtime_bookkeeping": 0.005501,
+            "simulation_advance": 14.489703,
+            "successor_capture": 27.437542,
+            "teleop_advance": 0.000155
+          },
+          "start_to_start_ms": 19.489561,
+          "step": 4163,
+          "total_ms": 45.820847,
+          "unattributed_ms": 0.010185999999997364,
+          "wall_deadline_missed": false
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3847611623334955,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 1.385489,
+            "injected_decision_apply": 2.478224,
+            "observation_capture": 0.001917,
+            "runtime_bookkeeping": 0.005968,
+            "simulation_advance": 13.245935,
+            "successor_capture": 23.850161,
+            "teleop_advance": 0.000142
+          },
+          "start_to_start_ms": 19.077398,
+          "step": 2575,
+          "total_ms": 40.978834,
+          "unattributed_ms": 0.01099800000000073,
+          "wall_deadline_missed": false
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3847642995499613,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 1.553802,
+            "injected_decision_apply": 2.877919,
+            "observation_capture": 0.002013,
+            "runtime_bookkeeping": 0.006067,
+            "simulation_advance": 15.252575,
+            "successor_capture": 14.084804,
+            "teleop_advance": 0.000172
+          },
+          "start_to_start_ms": 22.654147,
+          "step": 4150,
+          "total_ms": 33.788469,
+          "unattributed_ms": 0.011116999999998711,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3847737569533354,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 1.560495,
+            "injected_decision_apply": 2.410458,
+            "observation_capture": 0.001966,
+            "runtime_bookkeeping": 0.006409,
+            "simulation_advance": 14.109783,
+            "successor_capture": 15.218414,
+            "teleop_advance": 0.000166
+          },
+          "start_to_start_ms": 19.315608,
+          "step": 8836,
+          "total_ms": 33.318412,
+          "unattributed_ms": 0.010721000000003755,
+          "wall_deadline_missed": false
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3847578115427086,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 2.178739,
+            "injected_decision_apply": 3.657793,
+            "observation_capture": 0.002791,
+            "runtime_bookkeeping": 0.007867,
+            "simulation_advance": 24.274447,
+            "successor_capture": 2.842702,
+            "teleop_advance": 0.000282
+          },
+          "start_to_start_ms": 31.383606,
+          "step": 900,
+          "total_ms": 32.978541,
+          "unattributed_ms": 0.013919999999998822,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3847578082417312,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 2.446628,
+            "injected_decision_apply": 2.48134,
+            "observation_capture": 0.002052,
+            "runtime_bookkeeping": 0.009027,
+            "simulation_advance": 23.338045,
+            "successor_capture": 3.061591,
+            "teleop_advance": 0.000215
+          },
+          "start_to_start_ms": 21.182493,
+          "step": 899,
+          "total_ms": 31.352339,
+          "unattributed_ms": 0.013441000000000258,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3847566572366179,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 7.577113,
+            "injected_decision_apply": 2.332964,
+            "observation_capture": 0.001941,
+            "runtime_bookkeeping": 0.00968,
+            "simulation_advance": 19.341926,
+            "successor_capture": 2.072338,
+            "teleop_advance": 0.000221
+          },
+          "start_to_start_ms": 19.133405,
+          "step": 320,
+          "total_ms": 31.348066,
+          "unattributed_ms": 0.011882999999997423,
+          "wall_deadline_missed": false
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3847564046906870,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 12.742196,
+            "injected_decision_apply": 2.518573,
+            "observation_capture": 0.002229,
+            "runtime_bookkeeping": 0.010283,
+            "simulation_advance": 13.832074,
+            "successor_capture": 2.11714,
+            "teleop_advance": 0.000206
+          },
+          "start_to_start_ms": 19.942679,
+          "step": 192,
+          "total_ms": 31.234237,
+          "unattributed_ms": 0.011535999999999547,
+          "wall_deadline_missed": false
+        }
+      ],
+      "over_30hz_budget_intervals": [
+        {
+          "body_step": 900,
+          "interval_ms": 33.52871,
+          "stages_ms": {
+            "simulation_advance": 24.274447,
+            "injected_decision_apply": 3.657793,
+            "successor_capture": 2.842702,
+            "causal_commit_and_record": 2.178739,
+            "service": 0.5750289999999936
+          }
+        },
+        {
+          "body_step": 2575,
+          "interval_ms": 40.998642,
+          "stages_ms": {
+            "simulation_advance": 13.245935,
+            "injected_decision_apply": 2.478224,
+            "successor_capture": 23.850161,
+            "causal_commit_and_record": 1.385489,
+            "service": 0.03883299999999679
+          }
+        },
+        {
+          "body_step": 4150,
+          "interval_ms": 33.811054,
+          "stages_ms": {
+            "simulation_advance": 15.252575,
+            "injected_decision_apply": 2.877919,
+            "successor_capture": 14.084804,
+            "causal_commit_and_record": 1.553802,
+            "service": 0.041954000000004044
+          }
+        },
+        {
+          "body_step": 4163,
+          "interval_ms": 45.840175,
+          "stages_ms": {
+            "simulation_advance": 14.489703,
+            "injected_decision_apply": 2.399215,
+            "successor_capture": 27.437542,
+            "causal_commit_and_record": 1.476283,
+            "service": 0.037432000000002574
+          }
+        },
+        {
+          "body_step": 5747,
+          "interval_ms": 47.224266,
+          "stages_ms": {
+            "simulation_advance": 15.21376,
+            "injected_decision_apply": 2.448295,
+            "successor_capture": 28.215282,
+            "causal_commit_and_record": 1.310922,
+            "service": 0.03600700000000501
+          }
+        },
+        {
+          "body_step": 8836,
+          "interval_ms": 33.342055,
+          "stages_ms": {
+            "simulation_advance": 14.109783,
+            "injected_decision_apply": 2.410458,
+            "successor_capture": 15.218414,
+            "causal_commit_and_record": 1.560495,
+            "service": 0.042905000000004634
+          }
+        },
+        {
+          "body_step": 9747,
+          "interval_ms": 179.254241,
+          "stages_ms": {
+            "simulation_advance": 14.899033,
+            "injected_decision_apply": 2.439064,
+            "successor_capture": 2.340463,
+            "causal_commit_and_record": 159.535131,
+            "service": 0.04054999999999609
+          }
+        }
+      ]
+    },
+    "source-bound-identity-cpu-14": {
+      "label": "CPU · 600 тиков",
+      "warmup_steps": 60,
+      "body_stats": {
+        "samples": 600,
+        "mean_ms": 19.757250789999997,
+        "p50_ms": 19.2678415,
+        "p95_ms": 22.241562099999996,
+        "p99_ms": 25.99825350999999,
+        "p99.9_ms": 29.194877272000053,
+        "min_ms": 18.386653,
+        "max_ms": 29.649202
+      },
+      "wall_stats": {
+        "samples": 599,
+        "mean_ms": 19.782656565943242,
+        "p50_ms": 19.292507,
+        "p95_ms": 22.271077900000005,
+        "p99_ms": 26.044605879999978,
+        "p99.9_ms": 29.223729998000035,
+        "min_ms": 18.406099,
+        "max_ms": 29.676535
+      },
+      "effective_wall_hz": 50.54932822933125,
+      "encode_tail_hz": 49.767183490431925,
+      "aligned_budget_samples": 599,
+      "between_body_gap": {
+        "samples": 599,
+        "mean_ms": 0.029112717863105143,
+        "p50_ms": 0.021063999999999083,
+        "p95_ms": 0.034449700000000055,
+        "p99_ms": 0.34085604000000147,
+        "p99.9_ms": 0.7245839960000406,
+        "min_ms": 0.018989000000001255,
+        "max_ms": 1.2701980000000006
+      },
+      "stages": {
+        "simulation_advance": {
+          "samples": 599,
+          "mean_ms": 13.691296051752921,
+          "p50_ms": 13.301846,
+          "p95_ms": 15.924082400000001,
+          "p99_ms": 16.965215259999997,
+          "p99.9_ms": 20.052552752000075,
+          "min_ms": 12.708697,
+          "max_ms": 21.089889,
+          "share_of_tick_percent": 69.20858180050055,
+          "share_of_20ms_percent": 68.45648025876461,
+          "share_of_33ms_percent": 41.073888155258764
+        },
+        "injected_decision_apply": {
+          "samples": 599,
+          "mean_ms": 2.4189768063439065,
+          "p50_ms": 2.383907,
+          "p95_ms": 2.6402169,
+          "p99_ms": 2.78949266,
+          "p99.9_ms": 3.3548489060000453,
+          "min_ms": 2.18215,
+          "max_ms": 3.975485,
+          "share_of_tick_percent": 12.22776525630176,
+          "share_of_20ms_percent": 12.094884031719534,
+          "share_of_33ms_percent": 7.256930419031719
+        },
+        "successor_capture": {
+          "samples": 599,
+          "mean_ms": 2.0988168013355595,
+          "p50_ms": 2.071615,
+          "p95_ms": 2.3190179,
+          "p99_ms": 2.5013457999999993,
+          "p99.9_ms": 2.917960738000013,
+          "min_ms": 1.864093,
+          "max_ms": 3.094113,
+          "share_of_tick_percent": 10.609377938394633,
+          "share_of_20ms_percent": 10.494084006677799,
+          "share_of_33ms_percent": 6.296450404006678
+        },
+        "causal_commit_and_record": {
+          "samples": 599,
+          "mean_ms": 1.5249715893155258,
+          "p50_ms": 1.404292,
+          "p95_ms": 1.5663426999999999,
+          "p99_ms": 7.115547379999998,
+          "p99.9_ms": 8.752156964000054,
+          "min_ms": 1.271139,
+          "max_ms": 9.488942,
+          "share_of_tick_percent": 7.708628940871545,
+          "share_of_20ms_percent": 7.624857946577629,
+          "share_of_33ms_percent": 4.574914767946577
+        },
+        "service": {
+          "samples": 599,
+          "mean_ms": 0.04859531719532551,
+          "p50_ms": 0.04024000000000072,
+          "p95_ms": 0.0537949999999995,
+          "p99_ms": 0.3600993000000008,
+          "p99.9_ms": 0.7446457420000412,
+          "min_ms": 0.03634200000000121,
+          "max_ms": 1.2898250000000004,
+          "share_of_tick_percent": 0.24564606393149746,
+          "share_of_20ms_percent": 0.24297658597662758,
+          "share_of_33ms_percent": 0.14578595158597654
+        }
+      },
+      "budgets": {
+        "50_hz": {
+          "budget_ms": 20.0,
+          "exceeded_count": 171,
+          "exceeded_fraction": 0.2854757929883139,
+          "signed_headroom_ms": {
+            "mean_ms": 0.21734343405675816,
+            "p50_ms": 0.7074929999999995,
+            "p95_ms": -2.271077900000005,
+            "p99_ms": -6.044605879999978,
+            "max_ms": -9.676535000000001
+          },
+          "extra_serial_cost_at_95_percent_on_time_ms": -2.271077900000005
+        },
+        "30_hz": {
+          "budget_ms": 33.333333333333336,
+          "exceeded_count": 0,
+          "exceeded_fraction": 0.0,
+          "signed_headroom_ms": {
+            "mean_ms": 13.550676767390094,
+            "p50_ms": 14.040826333333335,
+            "p95_ms": 11.06225543333333,
+            "p99_ms": 7.288727453333358,
+            "max_ms": 3.6567983333333345
+          },
+          "extra_serial_cost_at_95_percent_on_time_ms": 11.06225543333333
+        }
+      },
+      "slowest_body_ticks": [
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3849032085250291,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 7.113979,
+            "injected_decision_apply": 2.345484,
+            "observation_capture": 0.00225,
+            "runtime_bookkeeping": 0.009375,
+            "simulation_advance": 18.116484,
+            "successor_capture": 2.050698,
+            "teleop_advance": 0.000213
+          },
+          "start_to_start_ms": 19.749893,
+          "step": 192,
+          "total_ms": 29.649202,
+          "unattributed_ms": 0.010718999999998147,
+          "wall_deadline_missed": false
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3849038423772575,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 7.192398,
+            "injected_decision_apply": 2.544249,
+            "observation_capture": 0.001781,
+            "runtime_bookkeeping": 0.009904,
+            "simulation_advance": 16.955679,
+            "successor_capture": 2.175546,
+            "teleop_advance": 0.000178
+          },
+          "start_to_start_ms": 20.704252,
+          "step": 512,
+          "total_ms": 28.89073,
+          "unattributed_ms": 0.010995000000001198,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3849034622885296,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 8.25686,
+            "injected_decision_apply": 2.639866,
+            "observation_capture": 0.00206,
+            "runtime_bookkeeping": 0.010888,
+            "simulation_advance": 15.431542,
+            "successor_capture": 2.325821,
+            "teleop_advance": 0.000197
+          },
+          "start_to_start_ms": 20.315658,
+          "step": 320,
+          "total_ms": 28.67953,
+          "unattributed_ms": 0.012295999999999196,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3849037165592527,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 7.620441,
+            "injected_decision_apply": 2.457337,
+            "observation_capture": 0.001683,
+            "runtime_bookkeeping": 0.009598,
+            "simulation_advance": 15.995851,
+            "successor_capture": 2.062594,
+            "teleop_advance": 0.000181
+          },
+          "start_to_start_ms": 18.654248,
+          "step": 448,
+          "total_ms": 28.158601,
+          "unattributed_ms": 0.010916000000001702,
+          "wall_deadline_missed": false
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3849029542358686,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 9.488942,
+            "injected_decision_apply": 2.331352,
+            "observation_capture": 0.001793,
+            "runtime_bookkeeping": 0.009996,
+            "simulation_advance": 13.56172,
+            "successor_capture": 2.141295,
+            "teleop_advance": 0.000155
+          },
+          "start_to_start_ms": 19.845324,
+          "step": 64,
+          "total_ms": 27.546608,
+          "unattributed_ms": 0.01135500000000178,
+          "wall_deadline_missed": false
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3849037080257886,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 1.436086,
+            "injected_decision_apply": 2.43244,
+            "observation_capture": 0.00186,
+            "runtime_bookkeeping": 0.006757,
+            "simulation_advance": 21.089889,
+            "successor_capture": 2.168366,
+            "teleop_advance": 0.000174
+          },
+          "start_to_start_ms": 19.471803,
+          "step": 444,
+          "total_ms": 27.145912,
+          "unattributed_ms": 0.01033999999999935,
+          "wall_deadline_missed": false
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3849033329765302,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 6.640992,
+            "injected_decision_apply": 2.37838,
+            "observation_capture": 0.001784,
+            "runtime_bookkeeping": 0.009173,
+            "simulation_advance": 14.812881,
+            "successor_capture": 2.132847,
+            "teleop_advance": 0.000169
+          },
+          "start_to_start_ms": 20.844531,
+          "step": 256,
+          "total_ms": 25.986661,
+          "unattributed_ms": 0.010435000000001082,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3849040936023826,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 7.315877,
+            "injected_decision_apply": 2.50062,
+            "observation_capture": 0.001842,
+            "runtime_bookkeeping": 0.010515,
+            "simulation_advance": 13.93415,
+            "successor_capture": 2.16998,
+            "teleop_advance": 0.000147
+          },
+          "start_to_start_ms": 20.160472,
+          "step": 640,
+          "total_ms": 25.9441,
+          "unattributed_ms": 0.01096899999999934,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3849039665614669,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 7.774907,
+            "injected_decision_apply": 2.401245,
+            "observation_capture": 0.001645,
+            "runtime_bookkeeping": 0.009019,
+            "simulation_advance": 13.256212,
+            "successor_capture": 2.151776,
+            "teleop_advance": 0.000167
+          },
+          "start_to_start_ms": 19.079949,
+          "step": 576,
+          "total_ms": 25.605656,
+          "unattributed_ms": 0.010685000000002276,
+          "wall_deadline_missed": false
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3849040575891454,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 1.417411,
+            "injected_decision_apply": 2.599339,
+            "observation_capture": 0.001797,
+            "runtime_bookkeeping": 0.006899,
+            "simulation_advance": 19.355213,
+            "successor_capture": 2.177491,
+            "teleop_advance": 0.000169
+          },
+          "start_to_start_ms": 19.191514,
+          "step": 622,
+          "total_ms": 25.5687,
+          "unattributed_ms": 0.010381000000002416,
+          "wall_deadline_missed": false
+        }
+      ]
+    },
+    "source-bound-identity-cuda-13": {
+      "label": "CUDA · 600 тиков",
+      "warmup_steps": 60,
+      "body_stats": {
+        "samples": 600,
+        "mean_ms": 39.36295873,
+        "p50_ms": 38.907696,
+        "p95_ms": 42.13393765,
+        "p99_ms": 45.58592146,
+        "p99.9_ms": 48.06222383600007,
+        "min_ms": 37.612116,
+        "max_ms": 48.732766
+      },
+      "wall_stats": {
+        "samples": 599,
+        "mean_ms": 39.39027649248748,
+        "p50_ms": 38.942773,
+        "p95_ms": 42.157971100000005,
+        "p99_ms": 45.612671119999995,
+        "p99.9_ms": 48.08937241200005,
+        "min_ms": 37.630003,
+        "max_ms": 48.756445
+      },
+      "effective_wall_hz": 25.38697589976857,
+      "encode_tail_hz": 24.649901532573363,
+      "aligned_budget_samples": 599,
+      "between_body_gap": {
+        "samples": 599,
+        "mean_ms": 0.026416514190317045,
+        "p50_ms": 0.020318000000003167,
+        "p95_ms": 0.03432509999999809,
+        "p99_ms": 0.33908958000000394,
+        "p99.9_ms": 0.3541804620000048,
+        "min_ms": 0.017724000000001183,
+        "max_ms": 0.3607770000000059
+      },
+      "stages": {
+        "simulation_advance": {
+          "samples": 599,
+          "mean_ms": 32.319712626043405,
+          "p50_ms": 32.048889,
+          "p95_ms": 34.278452200000004,
+          "p99_ms": 35.658102119999995,
+          "p99.9_ms": 36.728785302,
+          "min_ms": 31.0214,
+          "max_ms": 36.732643,
+          "share_of_tick_percent": 82.04997655248098,
+          "share_of_20ms_percent": 161.59856313021703,
+          "share_of_33ms_percent": 96.9591378781302
+        },
+        "injected_decision_apply": {
+          "samples": 599,
+          "mean_ms": 3.0427480050083475,
+          "p50_ms": 3.014423,
+          "p95_ms": 3.3582954,
+          "p99_ms": 3.43912946,
+          "p99.9_ms": 3.572798042000002,
+          "min_ms": 2.778312,
+          "max_ms": 3.601993,
+          "share_of_tick_percent": 7.724617027221581,
+          "share_of_20ms_percent": 15.213740025041739,
+          "share_of_33ms_percent": 9.128244015025043
+        },
+        "successor_capture": {
+          "samples": 599,
+          "mean_ms": 2.473294779632721,
+          "p50_ms": 2.374713,
+          "p95_ms": 2.7191723000000003,
+          "p99_ms": 4.050194119999943,
+          "p99.9_ms": 9.513912482000014,
+          "min_ms": 2.116805,
+          "max_ms": 9.712772,
+          "share_of_tick_percent": 6.27894749635593,
+          "share_of_20ms_percent": 12.366473898163607,
+          "share_of_33ms_percent": 7.4198843388981635
+        },
+        "causal_commit_and_record": {
+          "samples": 599,
+          "mean_ms": 1.5087732971619365,
+          "p50_ms": 1.391379,
+          "p95_ms": 1.5622414000000002,
+          "p99_ms": 7.113783079999998,
+          "p99.9_ms": 8.273189688000038,
+          "min_ms": 1.264979,
+          "max_ms": 8.793775,
+          "share_of_tick_percent": 3.8303191333264444,
+          "share_of_20ms_percent": 7.543866485809683,
+          "share_of_33ms_percent": 4.52631989148581
+        },
+        "service": {
+          "samples": 599,
+          "mean_ms": 0.04574778464106803,
+          "p50_ms": 0.03940099999999802,
+          "p95_ms": 0.053918999999996234,
+          "p99_ms": 0.3580127000000023,
+          "p99.9_ms": 0.3745041980000059,
+          "min_ms": 0.03480599999999612,
+          "max_ms": 0.38156000000000745,
+          "share_of_tick_percent": 0.11613979061505968,
+          "share_of_20ms_percent": 0.22873892320534014,
+          "share_of_33ms_percent": 0.13724335392320408
+        }
+      },
+      "budgets": {
+        "50_hz": {
+          "budget_ms": 20.0,
+          "exceeded_count": 599,
+          "exceeded_fraction": 1.0,
+          "signed_headroom_ms": {
+            "mean_ms": -19.39027649248748,
+            "p50_ms": -18.942773000000003,
+            "p95_ms": -22.157971100000005,
+            "p99_ms": -25.612671119999995,
+            "max_ms": -28.756445
+          },
+          "extra_serial_cost_at_95_percent_on_time_ms": -22.157971100000005
+        },
+        "30_hz": {
+          "budget_ms": 33.333333333333336,
+          "exceeded_count": 599,
+          "exceeded_fraction": 1.0,
+          "signed_headroom_ms": {
+            "mean_ms": -6.0569431591541445,
+            "p50_ms": -5.609439666666667,
+            "p95_ms": -8.824637766666669,
+            "p99_ms": -12.279337786666659,
+            "max_ms": -15.423111666666664
+          },
+          "extra_serial_cost_at_95_percent_on_time_ms": -8.824637766666669
+        }
+      },
+      "slowest_body_ticks": [
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3848971220534468,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 1.555826,
+            "injected_decision_apply": 2.998548,
+            "observation_capture": 0.001712,
+            "runtime_bookkeeping": 0.007329,
+            "simulation_advance": 34.445044,
+            "successor_capture": 9.712772,
+            "teleop_advance": 0.000167
+          },
+          "start_to_start_ms": 37.992989,
+          "step": 499,
+          "total_ms": 48.732766,
+          "unattributed_ms": 0.01136799999999738,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3848971742396531,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 7.398243,
+            "injected_decision_apply": 3.146516,
+            "observation_capture": 0.001905,
+            "runtime_bookkeeping": 0.009385,
+            "simulation_advance": 34.471345,
+            "successor_capture": 2.573252,
+            "teleop_advance": 0.000164
+          },
+          "start_to_start_ms": 42.861702,
+          "step": 512,
+          "total_ms": 47.61333,
+          "unattributed_ms": 0.01251999999999498,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3848972719779386,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 1.413088,
+            "injected_decision_apply": 3.022608,
+            "observation_capture": 0.001608,
+            "runtime_bookkeeping": 0.006603,
+            "simulation_advance": 33.16952,
+            "successor_capture": 9.380231,
+            "teleop_advance": 0.000157
+          },
+          "start_to_start_ms": 38.663171,
+          "step": 537,
+          "total_ms": 47.005038,
+          "unattributed_ms": 0.011223000000001093,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3848976218280660,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 1.464108,
+            "injected_decision_apply": 2.818256,
+            "observation_capture": 0.001941,
+            "runtime_bookkeeping": 0.006867,
+            "simulation_advance": 33.202985,
+            "successor_capture": 8.958616,
+            "teleop_advance": 0.000166
+          },
+          "start_to_start_ms": 37.630003,
+          "step": 625,
+          "total_ms": 46.463848,
+          "unattributed_ms": 0.01090899999999806,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3848961671454398,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 7.243985,
+            "injected_decision_apply": 2.937018,
+            "observation_capture": 0.001802,
+            "runtime_bookkeeping": 0.0101,
+            "simulation_advance": 33.347973,
+            "successor_capture": 2.608738,
+            "teleop_advance": 0.00018
+          },
+          "start_to_start_ms": 38.075222,
+          "step": 256,
+          "total_ms": 46.160846,
+          "unattributed_ms": 0.01104999999999734,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3848969205616343,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 7.923231,
+            "injected_decision_apply": 2.896136,
+            "observation_capture": 0.001764,
+            "runtime_bookkeeping": 0.010868,
+            "simulation_advance": 32.399258,
+            "successor_capture": 2.533396,
+            "teleop_advance": 0.000156
+          },
+          "start_to_start_ms": 38.973198,
+          "step": 448,
+          "total_ms": 45.776047,
+          "unattributed_ms": 0.011237999999991644,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3848954123745080,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 8.793775,
+            "injected_decision_apply": 2.942013,
+            "observation_capture": 0.001771,
+            "runtime_bookkeeping": 0.008695,
+            "simulation_advance": 31.3539,
+            "successor_capture": 2.468359,
+            "teleop_advance": 0.000141
+          },
+          "start_to_start_ms": 39.754695,
+          "step": 64,
+          "total_ms": 45.584001,
+          "unattributed_ms": 0.015346999999998445,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3848976818764889,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 7.229244,
+            "injected_decision_apply": 3.236312,
+            "observation_capture": 0.002232,
+            "runtime_bookkeeping": 0.009498,
+            "simulation_advance": 32.638266,
+            "successor_capture": 2.439072,
+            "teleop_advance": 0.00018
+          },
+          "start_to_start_ms": 39.997526,
+          "step": 640,
+          "total_ms": 45.566066,
+          "unattributed_ms": 0.011261999999994998,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3848968851213140,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 1.402946,
+            "injected_decision_apply": 2.992747,
+            "observation_capture": 0.001849,
+            "runtime_bookkeeping": 0.005402,
+            "simulation_advance": 32.48092,
+            "successor_capture": 8.621009,
+            "teleop_advance": 0.000173
+          },
+          "start_to_start_ms": 38.392563,
+          "step": 439,
+          "total_ms": 45.515339,
+          "unattributed_ms": 0.010292999999997221,
+          "wall_deadline_missed": true
+        },
+        {
+          "deadline_missed": true,
+          "event": "performance_step",
+          "monotonic_ns": 3848974281343154,
+          "nested_stage_ms": {},
+          "post_warmup": true,
+          "schema": "piper_x_isaac_s2_performance_v1",
+          "source": "deterministic_injected_xr_v1",
+          "stage_ms": {
+            "causal_commit_and_record": 7.197479,
+            "injected_decision_apply": 3.247577,
+            "observation_capture": 0.001849,
+            "runtime_bookkeeping": 0.00959,
+            "simulation_advance": 32.598373,
+            "successor_capture": 2.335637,
+            "teleop_advance": 0.000146
+          },
+          "start_to_start_ms": 40.603421,
+          "step": 576,
+          "total_ms": 45.402197,
+          "unattributed_ms": 0.011545999999995615,
+          "wall_deadline_missed": true
+        }
+      ]
+    }
+  },
+  "profiles": {
+    "source-bound-profile-04": {
+      "steady_ticks": 600,
+      "metrics": {
+        "canonical_observation": {
+          "calls": 600,
+          "ms_per_tick": 0.89259063,
+          "samples": 600,
+          "mean_ms": 0.89259063,
+          "p50_ms": 0.8649415,
+          "p95_ms": 1.0290208499999998,
+          "p99_ms": 1.24581049,
+          "p99.9_ms": 1.5560734820000026,
+          "min_ms": 0.784779,
+          "max_ms": 1.579843
+        },
+        "encoder_submit_role0": {
+          "calls": 600,
+          "ms_per_tick": 0.18963841833333334,
+          "samples": 600,
+          "mean_ms": 0.18963841833333334,
+          "p50_ms": 0.17771550000000003,
+          "p95_ms": 0.22476149999999995,
+          "p99_ms": 0.26964857,
+          "p99.9_ms": 1.7448481030001224,
+          "min_ms": 0.159839,
+          "max_ms": 2.834371
+        },
+        "encoder_submit_role1": {
+          "calls": 600,
+          "ms_per_tick": 0.10319326666666666,
+          "samples": 600,
+          "mean_ms": 0.10319326666666666,
+          "p50_ms": 0.100827,
+          "p95_ms": 0.12271225,
+          "p99_ms": 0.1435782,
+          "p99.9_ms": 0.17244060700000013,
+          "min_ms": 0.087086,
+          "max_ms": 0.173523
+        },
+        "encoder_submit_role2": {
+          "calls": 600,
+          "ms_per_tick": 0.08956001333333333,
+          "samples": 600,
+          "mean_ms": 0.08956001333333334,
+          "p50_ms": 0.0798535,
+          "p95_ms": 0.1326392,
+          "p99_ms": 0.17189734999999967,
+          "p99.9_ms": 0.2771366690000041,
+          "min_ms": 0.05466,
+          "max_ms": 0.313717
+        },
+        "native_result_callback": {
+          "calls": 1800,
+          "ms_per_tick": 1.9122514133333335,
+          "samples": 1800,
+          "mean_ms": 0.6374171377777778,
+          "p50_ms": 0.5918654999999999,
+          "p95_ms": 0.82216845,
+          "p99_ms": 1.0131386399999998,
+          "p99.9_ms": 2.3746285680000696,
+          "min_ms": 0.48929,
+          "max_ms": 4.305864
+        },
+        "native_source_publication": {
+          "calls": 600,
+          "ms_per_tick": 0.7957012233333333,
+          "samples": 600,
+          "mean_ms": 0.7957012233333334,
+          "p50_ms": 0.7721965,
+          "p95_ms": 0.94309035,
+          "p99_ms": 1.0691496499999997,
+          "p99.9_ms": 1.1401486260000013,
+          "min_ms": 0.689637,
+          "max_ms": 1.152863
+        },
+        "preview_publish": {
+          "calls": 600,
+          "ms_per_tick": 0.15663178833333333,
+          "samples": 600,
+          "mean_ms": 0.15663178833333333,
+          "p50_ms": 0.1507465,
+          "p95_ms": 0.1842018,
+          "p99_ms": 0.21566261999999975,
+          "p99.9_ms": 0.5387793480000342,
+          "min_ms": 0.136933,
+          "max_ms": 0.84316
+        },
+        "rendered_source_comparison": {
+          "calls": 1800,
+          "ms_per_tick": 0.6994853116666667,
+          "samples": 1800,
+          "mean_ms": 0.23316177055555554,
+          "p50_ms": 0.21987,
+          "p95_ms": 0.28730055,
+          "p99_ms": 0.34549234999999995,
+          "p99.9_ms": 1.142857759000262,
+          "min_ms": 0.184955,
+          "max_ms": 3.90343
+        },
+        "snapshot_recordables": {
+          "calls": 600,
+          "ms_per_tick": 0.6070343500000001,
+          "samples": 600,
+          "mean_ms": 0.60703435,
+          "p50_ms": 0.5891915,
+          "p95_ms": 0.70386555,
+          "p99_ms": 0.84380924,
+          "p99.9_ms": 1.0203124280000024,
+          "min_ms": 0.534063,
+          "max_ms": 1.041414
+        }
+      },
+      "nested_containment_verified": {
+        "snapshot_recordables": true,
+        "rendered_source_comparison": true
+      },
+      "outer_observers_disjoint": true,
+      "body_stats": {
+        "samples": 600,
+        "mean_ms": 23.130423265,
+        "p50_ms": 22.3803075,
+        "p95_ms": 27.0775751,
+        "p99_ms": 30.10457940999999,
+        "p99.9_ms": 36.00698461700037,
+        "min_ms": 20.755424,
+        "max_ms": 39.290593
+      },
+      "top_stages": {
+        "causal_commit_and_record": {
+          "max_ms": 9.297112,
+          "mean_ms": 1.5387193916666666,
+          "p50_ms": 1.4039015,
+          "p90_ms": 1.5455849,
+          "p95_ms": 1.6396868999999992,
+          "p99_9_ms": 8.578255094999944,
+          "p99_ms": 7.427380399999999,
+          "samples": 600
+        },
+        "injected_decision_apply": {
+          "max_ms": 6.460741,
+          "mean_ms": 2.5110847883333336,
+          "p50_ms": 2.4344435,
+          "p90_ms": 2.7036057000000002,
+          "p95_ms": 2.84187865,
+          "p99_9_ms": 6.433390659999998,
+          "p99_ms": 3.480933499999999,
+          "samples": 600
+        },
+        "observation_capture": {
+          "max_ms": 0.02504,
+          "mean_ms": 0.00193388,
+          "p50_ms": 0.0018275000000000001,
+          "p90_ms": 0.0021913,
+          "p95_ms": 0.0023598499999999993,
+          "p99_9_ms": 0.013746453999999126,
+          "p99_ms": 0.00272813,
+          "samples": 600
+        },
+        "runtime_bookkeeping": {
+          "max_ms": 0.031946,
+          "mean_ms": 0.007048155,
+          "p50_ms": 0.006753,
+          "p90_ms": 0.0079336,
+          "p95_ms": 0.008608299999999998,
+          "p99_9_ms": 0.024408183999999417,
+          "p99_ms": 0.011441109999999994,
+          "samples": 600
+        },
+        "simulation_advance": {
+          "max_ms": 27.852564,
+          "mean_ms": 16.88616307,
+          "p50_ms": 16.3472495,
+          "p90_ms": 18.8583237,
+          "p95_ms": 19.8439409,
+          "p99_9_ms": 26.91486543999993,
+          "p99_ms": 21.148265099999993,
+          "samples": 600
+        },
+        "successor_capture": {
+          "max_ms": 4.820648,
+          "mean_ms": 2.1760884700000003,
+          "p50_ms": 2.1149895,
+          "p90_ms": 2.3777019,
+          "p95_ms": 2.5120627499999997,
+          "p99_9_ms": 4.059495105999941,
+          "p99_ms": 2.99494667,
+          "samples": 600
+        },
+        "teleop_advance": {
+          "max_ms": 0.000884,
+          "mean_ms": 0.00017743833333333332,
+          "p50_ms": 0.000173,
+          "p90_ms": 0.000211,
+          "p95_ms": 0.000223,
+          "p99_9_ms": 0.0007893579999999926,
+          "p99_ms": 0.00027321999999999985,
+          "samples": 600
+        }
+      },
+      "nested_stages_not_additive": {
+        "camera_update": {
+          "max_ms": 0.008517,
+          "mean_ms": 0.004283513333333333,
+          "p50_ms": 0.0041205,
+          "p90_ms": 0.0050571,
+          "p95_ms": 0.005465799999999999,
+          "p99_9_ms": 0.008330111999999985,
+          "p99_ms": 0.006570209999999998,
+          "samples": 600
+        },
+        "experiment_update": {
+          "max_ms": 0.036269,
+          "mean_ms": 0.009597323333333333,
+          "p50_ms": 0.0092385,
+          "p90_ms": 0.0116776,
+          "p95_ms": 0.012535199999999993,
+          "p99_9_ms": 0.028207058999999375,
+          "p99_ms": 0.015411299999999996,
+          "samples": 600
+        },
+        "physics_probe_update": {
+          "max_ms": 0.030823,
+          "mean_ms": 0.005923958333333333,
+          "p50_ms": 0.0055344999999999995,
+          "p90_ms": 0.007061000000000001,
+          "p95_ms": 0.008111899999999998,
+          "p99_9_ms": 0.030534281999999982,
+          "p99_ms": 0.011194569999999992,
+          "samples": 600
+        },
+        "physics_target_write": {
+          "max_ms": 1.177022,
+          "mean_ms": 0.7144746033333333,
+          "p50_ms": 0.6968144999999999,
+          "p90_ms": 0.7713816,
+          "p95_ms": 0.7929799,
+          "p99_9_ms": 1.1542797669999982,
+          "p99_ms": 1.12285184,
+          "samples": 600
+        },
+        "robot_update": {
+          "max_ms": 0.795249,
+          "mean_ms": 0.4050941433333333,
+          "p50_ms": 0.39211850000000004,
+          "p90_ms": 0.4506094,
+          "p95_ms": 0.48610025,
+          "p99_9_ms": 0.6858290709999915,
+          "p99_ms": 0.5415912499999999,
+          "samples": 600
+        },
+        "sim_step": {
+          "max_ms": 26.13737,
+          "mean_ms": 15.721949895000002,
+          "p50_ms": 15.213289,
+          "p90_ms": 17.632803600000003,
+          "p95_ms": 18.569989,
+          "p99_9_ms": 25.524079057999952,
+          "p99_ms": 19.704345029999995,
+          "samples": 600
+        }
+      },
+      "cprofile": false,
+      "final_identity_cache_recipe": false,
+      "run_passed": true,
+      "known_failure": null
+    },
+    "source-bound-attribute-profile-08": {
+      "steady_ticks": 600,
+      "metrics": {
+        "added_usd_fabric_sync": {
+          "calls": 600,
+          "ms_per_tick": 0.02525707,
+          "samples": 600,
+          "mean_ms": 0.02525707,
+          "p50_ms": 0.0243785,
+          "p95_ms": 0.02955635,
+          "p99_ms": 0.034943649999999986,
+          "p99.9_ms": 0.05257936200000037,
+          "min_ms": 0.021963,
+          "max_ms": 0.055911
+        },
+        "canonical_observation": {
+          "calls": 600,
+          "ms_per_tick": 0.8597546966666666,
+          "samples": 600,
+          "mean_ms": 0.8597546966666666,
+          "p50_ms": 0.8447735000000001,
+          "p95_ms": 0.9517190999999999,
+          "p99_ms": 1.0290755899999997,
+          "p99.9_ms": 1.4756419700000492,
+          "min_ms": 0.790462,
+          "max_ms": 1.912894
+        },
+        "encoder_submit_role0": {
+          "calls": 600,
+          "ms_per_tick": 0.17917704666666665,
+          "samples": 600,
+          "mean_ms": 0.17917704666666667,
+          "p50_ms": 0.17627500000000002,
+          "p95_ms": 0.20351455,
+          "p99_ms": 0.21895137999999997,
+          "p99.9_ms": 0.23991128700000003,
+          "min_ms": 0.157359,
+          "max_ms": 0.240203
+        },
+        "encoder_submit_role1": {
+          "calls": 600,
+          "ms_per_tick": 0.11890749833333333,
+          "samples": 600,
+          "mean_ms": 0.11890749833333333,
+          "p50_ms": 0.1011465,
+          "p95_ms": 0.11887144999999996,
+          "p99_ms": 0.14126595999999997,
+          "p99.9_ms": 4.816864542000008,
+          "min_ms": 0.088827,
+          "max_ms": 4.887392
+        },
+        "encoder_submit_role2": {
+          "calls": 600,
+          "ms_per_tick": 0.08816231166666667,
+          "samples": 600,
+          "mean_ms": 0.08816231166666667,
+          "p50_ms": 0.079508,
+          "p95_ms": 0.12876135,
+          "p99_ms": 0.15245906999999995,
+          "p99.9_ms": 0.20588504100000032,
+          "min_ms": 0.050795,
+          "max_ms": 0.208665
+        },
+        "native_result_callback": {
+          "calls": 1800,
+          "ms_per_tick": 1.21328792,
+          "samples": 1800,
+          "mean_ms": 0.40442930666666665,
+          "p50_ms": 0.36236749999999995,
+          "p95_ms": 0.5644091,
+          "p99_ms": 0.6171820899999999,
+          "p99.9_ms": 0.9923303270003048,
+          "min_ms": 0.29236,
+          "max_ms": 2.178479
+        },
+        "native_source_publication": {
+          "calls": 600,
+          "ms_per_tick": 0.40669615833333334,
+          "samples": 600,
+          "mean_ms": 0.40669615833333334,
+          "p50_ms": 0.3996005,
+          "p95_ms": 0.46008059999999995,
+          "p99_ms": 0.5102170199999999,
+          "p99.9_ms": 0.6000926770000045,
+          "min_ms": 0.366745,
+          "max_ms": 0.640152
+        },
+        "preview_publish": {
+          "calls": 600,
+          "ms_per_tick": 0.15596485333333335,
+          "samples": 600,
+          "mean_ms": 0.15596485333333335,
+          "p50_ms": 0.1533625,
+          "p95_ms": 0.1744713,
+          "p99_ms": 0.19113485,
+          "p99.9_ms": 0.23254293100000056,
+          "min_ms": 0.142435,
+          "max_ms": 0.237653
+        },
+        "rendered_source_comparison": {
+          "calls": 1800,
+          "ms_per_tick": 0.23255932999999998,
+          "samples": 1800,
+          "mean_ms": 0.07751977666666666,
+          "p50_ms": 0.07193150000000001,
+          "p95_ms": 0.10216845,
+          "p99_ms": 0.1141201,
+          "p99.9_ms": 0.13487156500000064,
+          "min_ms": 0.055587,
+          "max_ms": 0.142848
+        },
+        "snapshot_recordables": {
+          "calls": 600,
+          "ms_per_tick": 0.5861086216666667,
+          "samples": 600,
+          "mean_ms": 0.5861086216666667,
+          "p50_ms": 0.5745445,
+          "p95_ms": 0.65092145,
+          "p99_ms": 0.72556079,
+          "p99.9_ms": 1.1335134060000587,
+          "min_ms": 0.532315,
+          "max_ms": 1.655246
+        }
+      },
+      "nested_containment_verified": {
+        "snapshot_recordables": true,
+        "rendered_source_comparison": true
+      },
+      "outer_observers_disjoint": true,
+      "body_stats": {
+        "samples": 600,
+        "mean_ms": 20.795638001666667,
+        "p50_ms": 20.3588165,
+        "p95_ms": 23.586722899999994,
+        "p99_ms": 26.88796426,
+        "p99.9_ms": 28.20450100400004,
+        "min_ms": 19.219291,
+        "max_ms": 28.568336
+      },
+      "top_stages": {
+        "causal_commit_and_record": {
+          "max_ms": 9.377796,
+          "mean_ms": 1.519538795,
+          "p50_ms": 1.3896855000000001,
+          "p90_ms": 1.5113789000000002,
+          "p95_ms": 1.5846193499999999,
+          "p99_9_ms": 8.556020112999937,
+          "p99_ms": 7.284827099999999,
+          "samples": 600
+        },
+        "injected_decision_apply": {
+          "max_ms": 4.63867,
+          "mean_ms": 2.486066765,
+          "p50_ms": 2.4566990000000004,
+          "p90_ms": 2.6317052,
+          "p95_ms": 2.6959295,
+          "p99_9_ms": 3.825467000999937,
+          "p99_ms": 2.8500685599999995,
+          "samples": 600
+        },
+        "observation_capture": {
+          "max_ms": 0.006097,
+          "mean_ms": 0.00201352,
+          "p50_ms": 0.001955,
+          "p90_ms": 0.0022342,
+          "p95_ms": 0.0024345999999999994,
+          "p99_9_ms": 0.005502192999999954,
+          "p99_ms": 0.00295839,
+          "samples": 600
+        },
+        "runtime_bookkeeping": {
+          "max_ms": 0.020237,
+          "mean_ms": 0.006979323333333333,
+          "p50_ms": 0.006796,
+          "p90_ms": 0.0076138,
+          "p95_ms": 0.008389449999999994,
+          "p99_9_ms": 0.019003658999999905,
+          "p99_ms": 0.011046009999999997,
+          "samples": 600
+        },
+        "simulation_advance": {
+          "max_ms": 20.322619,
+          "mean_ms": 14.623028601666668,
+          "p50_ms": 14.301139,
+          "p90_ms": 15.7204461,
+          "p95_ms": 16.702151399999998,
+          "p99_9_ms": 20.315798786000002,
+          "p99_ms": 18.14466373,
+          "samples": 600
+        },
+        "successor_capture": {
+          "max_ms": 7.097423,
+          "mean_ms": 2.14845943,
+          "p50_ms": 2.1052865,
+          "p90_ms": 2.2751371000000002,
+          "p95_ms": 2.3324900999999993,
+          "p99_9_ms": 6.931040566999988,
+          "p99_ms": 2.6175208499999982,
+          "samples": 600
+        },
+        "teleop_advance": {
+          "max_ms": 0.000309,
+          "mean_ms": 0.00017240333333333336,
+          "p50_ms": 0.00017,
+          "p90_ms": 0.00020820000000000002,
+          "p95_ms": 0.000219,
+          "p99_9_ms": 0.00029342599999999876,
+          "p99_ms": 0.00024601,
+          "samples": 600
+        }
+      },
+      "nested_stages_not_additive": {
+        "camera_update": {
+          "max_ms": 0.025262999999999997,
+          "mean_ms": 0.0038972533333333334,
+          "p50_ms": 0.003774,
+          "p90_ms": 0.0042872000000000006,
+          "p95_ms": 0.004453,
+          "p99_9_ms": 0.015254907999999224,
+          "p99_ms": 0.005360159999999995,
+          "samples": 600
+        },
+        "experiment_update": {
+          "max_ms": 0.034517,
+          "mean_ms": 0.008901386666666667,
+          "p50_ms": 0.008548,
+          "p90_ms": 0.0100512,
+          "p95_ms": 0.010902150000000003,
+          "p99_9_ms": 0.03388565399999995,
+          "p99_ms": 0.01365959,
+          "samples": 600
+        },
+        "physics_probe_update": {
+          "max_ms": 0.011548,
+          "mean_ms": 0.00570828,
+          "p50_ms": 0.005516,
+          "p90_ms": 0.0064761,
+          "p95_ms": 0.007080849999999999,
+          "p99_9_ms": 0.011461743999999994,
+          "p99_ms": 0.010019160000000001,
+          "samples": 600
+        },
+        "physics_target_write": {
+          "max_ms": 2.210324,
+          "mean_ms": 0.7035946733333334,
+          "p50_ms": 0.6870955000000001,
+          "p90_ms": 0.7400448000000001,
+          "p95_ms": 0.76844865,
+          "p99_9_ms": 2.109663846999992,
+          "p99_ms": 0.9001694399999992,
+          "samples": 600
+        },
+        "robot_update": {
+          "max_ms": 0.549687,
+          "mean_ms": 0.38589933833333334,
+          "p50_ms": 0.379469,
+          "p90_ms": 0.4192645,
+          "p95_ms": 0.43261274999999993,
+          "p99_9_ms": 0.5325885449999987,
+          "p99_ms": 0.4608907199999999,
+          "samples": 600
+        },
+        "sim_step": {
+          "max_ms": 19.207319,
+          "mean_ms": 13.491910631666666,
+          "p50_ms": 13.169509,
+          "p90_ms": 14.5496279,
+          "p95_ms": 15.507704599999999,
+          "p99_9_ms": 18.854227068999972,
+          "p99_ms": 16.954971099999998,
+          "samples": 600
+        }
+      },
+      "cprofile": false,
+      "final_identity_cache_recipe": false,
+      "run_passed": true,
+      "known_failure": null,
+      "exclusive_partitions_ms_per_tick": {
+        "simulation_advance": {
+          "Публикация источника": 0.40669615833333334,
+          "USD/Fabric sync": 0.02525707,
+          "RGB callbacks, 3 камеры": 1.21328792,
+          "Остальная симуляция / Kit / ожидания": 12.977787453333335
+        },
+        "successor_capture": {
+          "Snapshot recordables": 0.5861086216666667,
+          "Остальной canonical observation": 0.27364607499999993,
+          "NVENC submit, 3 камеры": 0.38624685666666664,
+          "Preview publish": 0.15596485333333335,
+          "Другой capture / binding / JSONL / HDF": 0.7464930233333333
+        },
+        "native_result_callback": {
+          "Сверка source ID / камеры": 0.23255932999999998,
+          "Остальной RGB callback, включая copy/wait": 0.98072859
+        }
+      }
+    },
+    "profile-default-01": {
+      "steady_ticks": 240,
+      "metrics": {
+        "canonical_observation": {
+          "calls": 240,
+          "ms_per_tick": 1.3052565541666667,
+          "samples": 240,
+          "mean_ms": 1.3052565541666667,
+          "p50_ms": 1.285029,
+          "p95_ms": 1.45969785,
+          "p99_ms": 1.49756665,
+          "p99.9_ms": 1.6997797540000057,
+          "min_ms": 1.180061,
+          "max_ms": 1.757645
+        },
+        "encoder_submit_role0": {
+          "calls": 240,
+          "ms_per_tick": 0.20426316666666666,
+          "samples": 240,
+          "mean_ms": 0.2042631666666667,
+          "p50_ms": 0.20002999999999999,
+          "p95_ms": 0.23196154999999993,
+          "p99_ms": 0.24614806999999997,
+          "p99.9_ms": 0.25467718600000017,
+          "min_ms": 0.181622,
+          "max_ms": 0.256452
+        },
+        "encoder_submit_role1": {
+          "calls": 240,
+          "ms_per_tick": 0.14071718333333333,
+          "samples": 240,
+          "mean_ms": 0.14071718333333333,
+          "p50_ms": 0.1192075,
+          "p95_ms": 0.1405883,
+          "p99_ms": 0.14898688999999998,
+          "p99.9_ms": 3.7454744050001136,
+          "min_ms": 0.102231,
+          "max_ms": 4.873938
+        },
+        "encoder_submit_role2": {
+          "calls": 240,
+          "ms_per_tick": 0.10538313333333332,
+          "samples": 240,
+          "mean_ms": 0.10538313333333334,
+          "p50_ms": 0.101534,
+          "p95_ms": 0.14509755,
+          "p99_ms": 0.16607691999999985,
+          "p99.9_ms": 0.22187420300000013,
+          "min_ms": 0.069506,
+          "max_ms": 0.223242
+        },
+        "media_cuda_synchronize": {
+          "calls": 240,
+          "ms_per_tick": 7.283846354166667,
+          "samples": 240,
+          "mean_ms": 7.283846354166667,
+          "p50_ms": 7.367348,
+          "p95_ms": 7.6076365,
+          "p99_ms": 7.67533881,
+          "p99.9_ms": 7.721238275,
+          "min_ms": 2.658594,
+          "max_ms": 7.728235
+        },
+        "preview_publish": {
+          "calls": 240,
+          "ms_per_tick": 0.08003517916666666,
+          "samples": 240,
+          "mean_ms": 0.08003517916666666,
+          "p50_ms": 0.078582,
+          "p95_ms": 0.09147034999999999,
+          "p99_ms": 0.09864894999999994,
+          "p99.9_ms": 0.1116885790000002,
+          "min_ms": 0.06786,
+          "max_ms": 0.113586
+        },
+        "snapshot_recordables": {
+          "calls": 240,
+          "ms_per_tick": 0.8392882666666667,
+          "samples": 240,
+          "mean_ms": 0.8392882666666666,
+          "p50_ms": 0.8252995000000001,
+          "p95_ms": 0.9367243,
+          "p99_ms": 0.9889704299999997,
+          "p99.9_ms": 1.082461208000002,
+          "min_ms": 0.754539,
+          "max_ms": 1.102759
+        }
+      },
+      "nested_containment_verified": {
+        "snapshot_recordables": true
+      },
+      "outer_observers_disjoint": true,
+      "body_stats": {
+        "samples": 240,
+        "mean_ms": 29.711469825,
+        "p50_ms": 29.196296500000003,
+        "p95_ms": 32.3163249,
+        "p99_ms": 36.75216354999999,
+        "p99.9_ms": 39.684251985000024,
+        "min_ms": 27.361433,
+        "max_ms": 39.938162
+      },
+      "top_stages": {
+        "causal_commit_and_record": {
+          "max_ms": 13.331068,
+          "mean_ms": 2.364394354166667,
+          "p50_ms": 2.193067,
+          "p90_ms": 2.3813375999999997,
+          "p95_ms": 2.44662015,
+          "p99_9_ms": 12.646737865999988,
+          "p99_ms": 9.815490699999993,
+          "samples": 240
+        },
+        "injected_decision_apply": {
+          "max_ms": 4.342049,
+          "mean_ms": 3.0641732708333334,
+          "p50_ms": 3.0116825,
+          "p90_ms": 3.3470664,
+          "p95_ms": 3.38483605,
+          "p99_9_ms": 4.205680857999998,
+          "p99_ms": 3.709129149999998,
+          "samples": 240
+        },
+        "observation_capture": {
+          "max_ms": 0.026546,
+          "mean_ms": 0.002577516666666667,
+          "p50_ms": 0.0023855,
+          "p90_ms": 0.0028406,
+          "p95_ms": 0.002958349999999999,
+          "p99_9_ms": 0.02205925299999992,
+          "p99_ms": 0.00526502999999999,
+          "samples": 240
+        },
+        "runtime_bookkeeping": {
+          "max_ms": 0.011889,
+          "mean_ms": 0.007872495833333333,
+          "p50_ms": 0.0077095,
+          "p90_ms": 0.009009799999999998,
+          "p95_ms": 0.0102398,
+          "p99_9_ms": 0.011729108999999998,
+          "p99_ms": 0.01112269,
+          "samples": 240
+        },
+        "simulation_advance": {
+          "max_ms": 21.059637,
+          "mean_ms": 14.8583930375,
+          "p50_ms": 14.4620925,
+          "p90_ms": 16.5373037,
+          "p95_ms": 16.9111691,
+          "p99_9_ms": 20.405047547999988,
+          "p99_ms": 18.114397749999995,
+          "samples": 240
+        },
+        "successor_capture": {
+          "max_ms": 9.727113,
+          "mean_ms": 9.399587625,
+          "p50_ms": 9.440711,
+          "p90_ms": 9.5791256,
+          "p95_ms": 9.60236655,
+          "p99_9_ms": 9.72578177,
+          "p99_ms": 9.69236409,
+          "samples": 240
+        },
+        "teleop_advance": {
+          "max_ms": 0.000516,
+          "mean_ms": 0.00030565000000000003,
+          "p50_ms": 0.000296,
+          "p90_ms": 0.00036989999999999994,
+          "p95_ms": 0.0003983499999999999,
+          "p99_9_ms": 0.0005107419999999999,
+          "p99_ms": 0.00048048999999999987,
+          "samples": 240
+        }
+      },
+      "nested_stages_not_additive": {
+        "camera_update": {
+          "max_ms": 0.011965,
+          "mean_ms": 0.0060318,
+          "p50_ms": 0.0058105,
+          "p90_ms": 0.006821,
+          "p95_ms": 0.007400599999999999,
+          "p99_9_ms": 0.011571844999999994,
+          "p99_ms": 0.009664089999999992,
+          "samples": 240
+        },
+        "experiment_update": {
+          "max_ms": 0.039258,
+          "mean_ms": 0.015400737500000001,
+          "p50_ms": 0.014733,
+          "p90_ms": 0.017979099999999998,
+          "p95_ms": 0.0191022,
+          "p99_9_ms": 0.03484653799999992,
+          "p99_ms": 0.02072593,
+          "samples": 240
+        },
+        "physics_probe_update": {
+          "max_ms": 0.034927,
+          "mean_ms": 0.009341270833333333,
+          "p50_ms": 0.0087255,
+          "p90_ms": 0.011125699999999999,
+          "p95_ms": 0.012050099999999996,
+          "p99_9_ms": 0.034296278999999985,
+          "p99_ms": 0.02009647999999992,
+          "samples": 240
+        },
+        "physics_target_write": {
+          "max_ms": 1.557949,
+          "mean_ms": 1.3007228583333335,
+          "p50_ms": 1.2860274999999999,
+          "p90_ms": 1.396516,
+          "p95_ms": 1.4225108,
+          "p99_9_ms": 1.5480512929999999,
+          "p99_ms": 1.4567058399999997,
+          "samples": 240
+        },
+        "robot_update": {
+          "max_ms": 0.8076260000000001,
+          "mean_ms": 0.6387725375,
+          "p50_ms": 0.628974,
+          "p90_ms": 0.6992741000000001,
+          "p95_ms": 0.7196957999999999,
+          "p99_9_ms": 0.804621292,
+          "p99_ms": 0.74297427,
+          "samples": 240
+        },
+        "sim_step": {
+          "max_ms": 18.814523,
+          "mean_ms": 12.8473671375,
+          "p50_ms": 12.4735665,
+          "p90_ms": 14.441688500000001,
+          "p95_ms": 14.738882499999997,
+          "p99_9_ms": 18.196100700999988,
+          "p99_ms": 15.922002629999998,
+          "samples": 240
+        }
+      },
+      "cprofile": true,
+      "final_identity_cache_recipe": false,
+      "run_passed": false,
+      "known_failure": "cleanup setting restoration"
+    },
+    "gpu-retained-profile-01": {
+      "steady_ticks": 120,
+      "metrics": {
+        "canonical_observation": {
+          "calls": 120,
+          "ms_per_tick": 1.2888255333333334,
+          "samples": 120,
+          "mean_ms": 1.2888255333333334,
+          "p50_ms": 1.264579,
+          "p95_ms": 1.41956385,
+          "p99_ms": 1.54613664,
+          "p99.9_ms": 1.7310256430000028,
+          "min_ms": 1.17826,
+          "max_ms": 1.755064
+        },
+        "encoder_submit_role0": {
+          "calls": 120,
+          "ms_per_tick": 0.1756659416666667,
+          "samples": 120,
+          "mean_ms": 0.17566594166666666,
+          "p50_ms": 0.172849,
+          "p95_ms": 0.1979544,
+          "p99_ms": 0.20535731,
+          "p99.9_ms": 0.2123036980000001,
+          "min_ms": 0.15761,
+          "max_ms": 0.213215
+        },
+        "encoder_submit_role1": {
+          "calls": 120,
+          "ms_per_tick": 0.09724651666666667,
+          "samples": 120,
+          "mean_ms": 0.09724651666666667,
+          "p50_ms": 0.0955155,
+          "p95_ms": 0.1116498,
+          "p99_ms": 0.11585709000000001,
+          "p99.9_ms": 0.13158351700000023,
+          "min_ms": 0.084649,
+          "max_ms": 0.133649
+        },
+        "encoder_submit_role2": {
+          "calls": 120,
+          "ms_per_tick": 0.08392194166666668,
+          "samples": 120,
+          "mean_ms": 0.08392194166666668,
+          "p50_ms": 0.08064750000000001,
+          "p95_ms": 0.12412754999999998,
+          "p99_ms": 0.15868024000000003,
+          "p99.9_ms": 0.18341118900000034,
+          "min_ms": 0.052008,
+          "max_ms": 0.186323
+        },
+        "preview_publish": {
+          "calls": 120,
+          "ms_per_tick": 0.08324148333333332,
+          "samples": 120,
+          "mean_ms": 0.08324148333333332,
+          "p50_ms": 0.0818135,
+          "p95_ms": 0.09515225,
+          "p99_ms": 0.10544944,
+          "p99.9_ms": 0.11789784600000018,
+          "min_ms": 0.07372,
+          "max_ms": 0.119417
+        },
+        "snapshot_recordables": {
+          "calls": 120,
+          "ms_per_tick": 0.835118975,
+          "samples": 120,
+          "mean_ms": 0.8351189750000001,
+          "p50_ms": 0.8178515,
+          "p95_ms": 0.9160263,
+          "p99_ms": 1.00243255,
+          "p99.9_ms": 1.0940683310000014,
+          "min_ms": 0.768214,
+          "max_ms": 1.105903
+        }
+      },
+      "nested_containment_verified": {
+        "snapshot_recordables": true
+      },
+      "outer_observers_disjoint": true,
+      "body_stats": {
+        "samples": 120,
+        "mean_ms": 21.921225616666668,
+        "p50_ms": 21.327295999999997,
+        "p95_ms": 25.3025559,
+        "p99_ms": 28.315503520000007,
+        "p99.9_ms": 32.936206994000074,
+        "min_ms": 20.563653,
+        "max_ms": 33.495254
+      },
+      "top_stages": {
+        "causal_commit_and_record": {
+          "max_ms": 13.518333,
+          "mean_ms": 2.3469146333333333,
+          "p50_ms": 2.1669785,
+          "p90_ms": 2.3250870000000003,
+          "p95_ms": 2.45625175,
+          "p99_9_ms": 13.05679507,
+          "p99_ms": 8.306865940000016,
+          "samples": 120
+        },
+        "injected_decision_apply": {
+          "max_ms": 3.963009,
+          "mean_ms": 3.02977305,
+          "p50_ms": 2.9847305,
+          "p90_ms": 3.1697716000000002,
+          "p95_ms": 3.2830778,
+          "p99_9_ms": 3.903782581,
+          "p99_ms": 3.4407752,
+          "samples": 120
+        },
+        "observation_capture": {
+          "max_ms": 0.005169,
+          "mean_ms": 0.002419475,
+          "p50_ms": 0.0023425,
+          "p90_ms": 0.002719,
+          "p95_ms": 0.00292875,
+          "p99_9_ms": 0.004961107,
+          "p99_ms": 0.0033973000000000002,
+          "samples": 120
+        },
+        "runtime_bookkeeping": {
+          "max_ms": 0.011215,
+          "mean_ms": 0.007493916666666667,
+          "p50_ms": 0.007422,
+          "p90_ms": 0.008243400000000001,
+          "p95_ms": 0.008928799999999999,
+          "p99_9_ms": 0.01109957,
+          "p99_ms": 0.0102355,
+          "samples": 120
+        },
+        "simulation_advance": {
+          "max_ms": 18.430383,
+          "mean_ms": 14.521082975,
+          "p50_ms": 14.102596,
+          "p90_ms": 15.567206600000004,
+          "p95_ms": 17.20522365,
+          "p99_9_ms": 18.421669701,
+          "p99_ms": 18.30485386,
+          "samples": 120
+        },
+        "successor_capture": {
+          "max_ms": 2.592265,
+          "mean_ms": 1.9995928833333332,
+          "p50_ms": 1.9695035,
+          "p90_ms": 2.139614,
+          "p95_ms": 2.1737254,
+          "p99_9_ms": 2.560861733,
+          "p99_ms": 2.32317303,
+          "samples": 120
+        },
+        "teleop_advance": {
+          "max_ms": 0.000537,
+          "mean_ms": 0.00031676666666666665,
+          "p50_ms": 0.00030900000000000003,
+          "p90_ms": 0.00038530000000000004,
+          "p95_ms": 0.00040899999999999997,
+          "p99_9_ms": 0.000536881,
+          "p99_ms": 0.0005221300000000002,
+          "samples": 120
+        }
+      },
+      "nested_stages_not_additive": {
+        "camera_update": {
+          "max_ms": 0.031175,
+          "mean_ms": 0.00670345,
+          "p50_ms": 0.006255,
+          "p90_ms": 0.0072369,
+          "p95_ms": 0.007814199999999995,
+          "p99_9_ms": 0.028901624000000004,
+          "p99_ms": 0.01188784,
+          "samples": 120
+        },
+        "experiment_update": {
+          "max_ms": 0.040448,
+          "mean_ms": 0.015296408333333334,
+          "p50_ms": 0.0149105,
+          "p90_ms": 0.016567800000000004,
+          "p95_ms": 0.017041999999999998,
+          "p99_9_ms": 0.037983629,
+          "p99_ms": 0.019578260000000004,
+          "samples": 120
+        },
+        "physics_probe_update": {
+          "max_ms": 0.014166999999999999,
+          "mean_ms": 0.009241008333333333,
+          "p50_ms": 0.009047999999999999,
+          "p90_ms": 0.010242100000000002,
+          "p95_ms": 0.01154045,
+          "p99_9_ms": 0.013955536999999999,
+          "p99_ms": 0.012355040000000001,
+          "samples": 120
+        },
+        "physics_target_write": {
+          "max_ms": 1.49425,
+          "mean_ms": 1.3113735916666667,
+          "p50_ms": 1.2957945,
+          "p90_ms": 1.3860084000000001,
+          "p95_ms": 1.4365695,
+          "p99_9_ms": 1.4919414,
+          "p99_ms": 1.47264619,
+          "samples": 120
+        },
+        "robot_update": {
+          "max_ms": 0.7468050000000002,
+          "mean_ms": 0.6407556916666667,
+          "p50_ms": 0.634999,
+          "p90_ms": 0.6860773,
+          "p95_ms": 0.7002376000000001,
+          "p99_9_ms": 0.7435185770000001,
+          "p99_ms": 0.71840121,
+          "samples": 120
+        },
+        "sim_step": {
+          "max_ms": 16.340244,
+          "mean_ms": 12.497625566666667,
+          "p50_ms": 12.091447500000001,
+          "p90_ms": 13.492428700000003,
+          "p95_ms": 14.938558200000001,
+          "p99_9_ms": 16.328865695999998,
+          "p99_ms": 16.215417969999997,
+          "samples": 120
+        }
+      },
+      "cprofile": true,
+      "final_identity_cache_recipe": false,
+      "run_passed": true,
+      "known_failure": null
+    }
+  },
+  "source_inputs": {
+    "source-bound-identity-soak-12/recording/performance.jsonl": {
+      "sha256": "87f782506643c730b8c00021d978f1d9d64ebc122cb8d51c15f686831acf1f8f",
+      "bytes": 6181131,
+      "inventory_match": true
+    },
+    "source-bound-identity-soak-12/recording/result.json": {
+      "sha256": "d25e3b7d04b2585010a683d738fc408dce6df4bd53a6428891c4c3bf969c2f62",
+      "bytes": 33270,
+      "inventory_match": true
+    },
+    "source-bound-identity-cpu-14/recording/performance.jsonl": {
+      "sha256": "c1fc23e8c42190df9f25504d1e96383ecf9449025acc81136e1c5d514ed39b02",
+      "bytes": 405528,
+      "inventory_match": true
+    },
+    "source-bound-identity-cpu-14/recording/result.json": {
+      "sha256": "84d05f6e0a765093e86cf8ca6e30a6bbab12369ff20608fdb49cf9aac5f2b708",
+      "bytes": 34129,
+      "inventory_match": true
+    },
+    "source-bound-identity-cuda-13/recording/performance.jsonl": {
+      "sha256": "578ccca7857a0409ebd00e7bd2d99b4891a5658aeff87acc6cd17b3c12197cef",
+      "bytes": 404149,
+      "inventory_match": true
+    },
+    "source-bound-identity-cuda-13/recording/result.json": {
+      "sha256": "0eaf22f431eb2cd3a3eabbc23c9ff1f72921efd9066a00700b0abe61018f42b5",
+      "bytes": 34110,
+      "inventory_match": true
+    },
+    "source-bound-profile-04/recording/performance.jsonl": {
+      "sha256": "ea4c0e5ff0cf540f320cad684b73305eb4c1f808cffc462f575849a38d44264f",
+      "bytes": 537171,
+      "inventory_match": true
+    },
+    "source-bound-profile-04/recording/native-profile.json": {
+      "sha256": "9cda59f01ce9747fb779ecfd378705ec79a7d8fc222a8ac84709702abcbb6d40",
+      "bytes": 2000904,
+      "inventory_match": true
+    },
+    "source-bound-attribute-profile-08/recording/performance.jsonl": {
+      "sha256": "c6dc88a11c0ba022f3c0b8a36b0a85e83f210bef05a2d6c223d0292665145d3b",
+      "bytes": 538168,
+      "inventory_match": true
+    },
+    "source-bound-attribute-profile-08/recording/native-profile.json": {
+      "sha256": "161542ef1852529ce6016ab9514271f8440acd2d95d187b8201d19d51e4aef1e",
+      "bytes": 2151609,
+      "inventory_match": true
+    },
+    "profile-default-01/recording/performance.jsonl": {
+      "sha256": "8596f0f136bcc08074d368af80a77851c7a15de52bfaefcb41b8f490c13703a3",
+      "bytes": 221715,
+      "inventory_match": true
+    },
+    "profile-default-01/recording/native-profile.json": {
+      "sha256": "2aa39b84a77cd96b7dc414ba5f2d012256d80c8932f3f5ecb3a9cff44247d791",
+      "bytes": 439267,
+      "inventory_match": true
+    },
+    "gpu-retained-profile-01/recording/performance.jsonl": {
+      "sha256": "be95baefb2bffbac744eeb2641ce70319e3f3a216b64663b1b634a8f68cb574a",
+      "bytes": 116859,
+      "inventory_match": true
+    },
+    "gpu-retained-profile-01/recording/native-profile.json": {
+      "sha256": "f24bf4bb2613475e75329a13f79c9cf5fc8c5b0e4427b4aedf66571c992f1295",
+      "bytes": 195983,
+      "inventory_match": true
+    }
+  },
+  "limitations": [
+    "All cases no real Quest; injected input cost is not real XR input/network/compositor cost.",
+    "Unpaced throughput; one tick = one decision + four 120Hz substeps = 33.33ms simulation time.",
+    "Final recipe has coarse host timings only. Physics/RTX/GPU execution cannot be separated from them.",
+    "NVENC submission is not encode GPU time; render/preview/callbacks already included in parents.",
+    "Mean partitions are additive; p95/p99 component values are not additive.",
+    "Serial extra-cost scenario is arithmetic headroom, not a headset performance prediction.",
+    "No new simulation or GPU tests. Original source-quality/physics/host-RAM limitations remain."
+  ]
+}

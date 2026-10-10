@@ -1,0 +1,230 @@
+{
+  "schema": "native_tick_budget_checks_v1",
+  "base": "57a69b8ef6a8d72a9199156037f5997f0fafc954",
+  "new_simulation_runs": 0,
+  "visual_review": [
+    "tick_breakdown.png",
+    "budget_distribution.png",
+    "nested_profile.png",
+    "slow_ticks.png"
+  ],
+  "initial_checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-c",
+        "import hashlib,json\nfrom pathlib import Path\nb=Path(\"docs/experiments/20261009_live_camera_recording_30hz/native_deep\")\nd=json.loads((b/\"tick_budget/analysis.json\").read_text())\nr=json.loads((b/\"tick_budget/analysis_receipt.json\").read_text())\nt=json.loads((b/\"retention.json\").read_text())\nroot=Path(d[\"input_root\"])\nassert hashlib.sha256((root/\"retention-inventory.json\").read_bytes()).hexdigest()==t[\"inventory_sha256\"]==d[\"retention_inventory_sha256\"]\nassert hashlib.sha256((b/\"analyze_tick_budget.py\").read_bytes()).hexdigest()==r[\"script_sha256\"]\nfor name,v in r[\"artifacts\"].items():\n p=b/\"tick_budget\"/name\n assert p.stat().st_size==v[\"bytes\"] and hashlib.sha256(p.read_bytes()).hexdigest()==v[\"sha256\"],name\nfor name,v in d[\"source_inputs\"].items():\n p=root/name\n assert p.stat().st_size==v[\"bytes\"] and hashlib.sha256(p.read_bytes()).hexdigest()==v[\"sha256\"],name\nfor c in d[\"cases\"].values():\n assert abs(sum(v[\"mean_ms\"] for v in c[\"stages\"].values())-c[\"wall_stats\"][\"mean_ms\"])<1e-9\n assert abs(sum(v[\"share_of_tick_percent\"] for v in c[\"stages\"].values())-100)<1e-9\nassert len(d[\"source_inputs\"])==14\nassert len(d[\"cases\"][\"source-bound-identity-soak-12\"][\"over_30hz_budget_intervals\"])==7\nprint(\"PASS: trusted inventory +14 frozen inputs +7 artifact hashes + script SHA + numeric closure + rare stalls\")"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.027917194180190563,
+      "stdout": "PASS: trusted inventory +14 frozen inputs +7 artifact hashes + script SHA + numeric closure + rare stalls\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff",
+        "check",
+        "docs/experiments/20261009_live_camera_recording_30hz/native_deep/analyze_tick_budget.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.008762887213379145,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "57a69b8ef6a8d72a9199156037f5997f0fafc954"
+      ],
+      "returncode": 0,
+      "elapsed_s": 2.7688227323815227,
+      "stdout": "INDEX: 1155 entries; classification {'current': 155, 'historical': 1000}\nHISTORICAL PRESERVATION: PASS (989 frozen files vs 57a69b8ef6a8d72a9199156037f5997f0fafc954)\nKNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.\nDOC GOVERNANCE CHECKS: PASS\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.17291842633858323,
+      "stdout": "SPEC REFERENCE LINT OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/validate_resolved_contract.py",
+        "configs/resolved_contract.yaml"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.5780381159856915,
+      "stdout": "CONTRACT STRUCTURALLY VALID\nCONTRACT SEMANTICALLY VALID\nFINAL RC NOT READY\nBLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.02416282519698143,
+      "stdout": "MANIFEST OK: 110 reviewed files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_docs_governance.py",
+        "tests/test_manifest.py",
+        "tests/test_validator_baseline.py",
+        "tests/test_validator_negative.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 6.579880331642926,
+      "stdout": "........................................................................ [ 51%]\n....................................................................     [100%]\n140 passed in 6.46s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.0030864556320011616,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "returncode": 2,
+      "elapsed_s": 0.003941964823752642,
+      "stdout": "docs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:1: trailing whitespace.\n+case,stage,samples,mean_ms,p50_ms,p95_ms,p99_ms,p99.9_ms,min_ms,max_ms,share_of_tick_percent,share_of_20ms_percent,share_of_33ms_percent\ndocs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:2: trailing whitespace.\n+source-bound-identity-soak-12,simulation_advance,9999,13.87485600890089,13.510887,16.120730599999998,17.695542340000003,20.81109385800019,12.675419,24.275121,69.04543995644666,69.37428004450445,41.62456802670267\ndocs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:3: trailing whitespace.\n+source-bound-identity-soak-12,injected_decision_apply,9999,2.458183178617862,2.418091,2.6837055,2.9413818800000007,3.892696026000004,2.172834,5.405626,12.232655888632303,12.29091589308931,7.374549535853585\ndocs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:4: trailing whitespace.\n+source-bound-identity-soak-12,successor_capture,9999,2.1546174963496347,2.099866,2.3548326,2.71576702,6.900902226000005,1.932276,28.215282,10.722022115248086,10.773087481748174,6.463852489048904\ndocs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:5: trailing whitespace.\n+source-bound-identity-soak-12,causal_commit_and_record,9999,1.561444894489449,1.421717,1.6053471,7.588813720000002,8.582985820000003,1.274626,159.535131,7.770217553148631,7.8072244724472455,4.684334683468347\ndocs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:6: trailing whitespace.\n+source-bound-identity-soak-12,service,9999,0.04615166016601661,0.03935900000000103,0.05491439999999983,0.3544906799999985,0.3905986840000008,0.035399000000001735,0.5750289999999936,0.2296644865243151,0.23075830083008303,0.1384549804980498\ndocs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:7: trailing whitespace.\n+source-bound-identity-cpu-14,simulation_advance,599,13.691296051752921,13.301846,15.924082400000001,16.965215259999997,20.052552752000075,12.708697,21.089889,69.20858180050055,68.45648025876461,41.073888155258764\ndocs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:8: trailing whitespace.\n+source-bound-identity-cpu-14,injected_decision_apply,599,2.4189768063439065,2.383907,2.6402169,2.78949266,3.3548489060000453,2.18215,3.975485,12.22776525630176,12.094884031719534,7.256930419031719\ndocs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:9: trailing whitespace.\n+source-bound-identity-cpu-14,successor_capture,599,2.0988168013355595,2.071615,2.3190179,2.5013457999999993,2.917960738000013,1.864093,3.094113,10.609377938394633,10.494084006677799,6.296450404006678\ndocs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:10: trailing whitespace.\n+source-bound-identity-cpu-14,causal_commit_and_record,599,1.5249715893155258,1.404292,1.5663426999999999,7.115547379999998,8.752156964000054,1.271139,9.488942,7.708628940871545,7.624857946577629,4.574914767946577\ndocs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:11: trailing whitespace.\n+source-bound-identity-cpu-14,service,599,0.04859531719532551,0.04024000000000072,0.0537949999999995,0.3600993000000008,0.7446457420000412,0.03634200000000121,1.2898250000000004,0.24564606393149746,0.24297658597662758,0.14578595158597654\ndocs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:12: trailing whitespace.\n+source-bound-identity-cuda-13,simulation_advance,599,32.319712626043405,32.048889,34.278452200000004,35.658102119999995,36.728785302,31.0214,36.732643,82.04997655248098,161.59856313021703,96.9591378781302\ndocs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:13: trailing whitespace.\n+source-bound-identity-cuda-13,injected_decision_apply,599,3.0427480050083475,3.014423,3.3582954,3.43912946,3.572798042000002,2.778312,3.601993,7.724617027221581,15.213740025041739,9.128244015025043\ndocs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:14: trailing whitespace.\n+source-bound-identity-cuda-13,successor_capture,599,2.473294779632721,2.374713,2.7191723000000003,4.050194119999943,9.513912482000014,2.116805,9.712772,6.27894749635593,12.366473898163607,7.4198843388981635\ndocs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:15: trailing whitespace.\n+source-bound-identity-cuda-13,causal_commit_and_record,599,1.5087732971619365,1.391379,1.5622414000000002,7.113783079999998,8.273189688000038,1.264979,8.793775,3.8303191333264444,7.543866485809683,4.52631989148581\ndocs/experiments/20261009_live_camera_recording_30hz/native_deep/tick_budget/stage_timings.csv:16: trailing whitespace.\n+source-bound-identity-cuda-13,service,599,0.04574778464106803,0.03940099999999802,0.053918999999996234,0.3580127000000023,0.3745041980000059,0.03480599999999612,0.38156000000000745,0.11613979061505968,0.22873892320534014,0.13724335392320408\n",
+      "stderr": ""
+    }
+  ],
+  "initial_all_passed": false,
+  "correction": "CSV writer now uses LF; analysis rerun; original artifacts/script/checks retained under /data/ebulochkin/vla-runtime/tick-budget-20261010/initial-csv-crlf.",
+  "checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-c",
+        "import hashlib,json\nfrom pathlib import Path\nb=Path(\"docs/experiments/20261009_live_camera_recording_30hz/native_deep\")\nd=json.loads((b/\"tick_budget/analysis.json\").read_text())\nr=json.loads((b/\"tick_budget/analysis_receipt.json\").read_text())\nt=json.loads((b/\"retention.json\").read_text())\nroot=Path(d[\"input_root\"])\nassert hashlib.sha256((root/\"retention-inventory.json\").read_bytes()).hexdigest()==t[\"inventory_sha256\"]==d[\"retention_inventory_sha256\"]\nassert hashlib.sha256((b/\"analyze_tick_budget.py\").read_bytes()).hexdigest()==r[\"script_sha256\"]\nfor name,v in r[\"artifacts\"].items():\n p=b/\"tick_budget\"/name\n assert p.stat().st_size==v[\"bytes\"] and hashlib.sha256(p.read_bytes()).hexdigest()==v[\"sha256\"],name\nfor name,v in d[\"source_inputs\"].items():\n p=root/name\n assert p.stat().st_size==v[\"bytes\"] and hashlib.sha256(p.read_bytes()).hexdigest()==v[\"sha256\"],name\nfor c in d[\"cases\"].values():\n assert abs(sum(v[\"mean_ms\"] for v in c[\"stages\"].values())-c[\"wall_stats\"][\"mean_ms\"])<1e-9\n assert abs(sum(v[\"share_of_tick_percent\"] for v in c[\"stages\"].values())-100)<1e-9\nassert len(d[\"source_inputs\"])==14\nassert len(d[\"cases\"][\"source-bound-identity-soak-12\"][\"over_30hz_budget_intervals\"])==7\nprint(\"PASS: trusted inventory +14 frozen inputs +7 artifact hashes + script SHA + numeric closure + rare stalls\")"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.03066639881581068,
+      "stdout": "PASS: trusted inventory +14 frozen inputs +7 artifact hashes + script SHA + numeric closure + rare stalls\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff",
+        "check",
+        "docs/experiments/20261009_live_camera_recording_30hz/native_deep/analyze_tick_budget.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.008056850172579288,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "57a69b8ef6a8d72a9199156037f5997f0fafc954"
+      ],
+      "returncode": 0,
+      "elapsed_s": 2.614272002596408,
+      "stdout": "INDEX: 1155 entries; classification {'current': 155, 'historical': 1000}\nHISTORICAL PRESERVATION: PASS (989 frozen files vs 57a69b8ef6a8d72a9199156037f5997f0fafc954)\nKNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.\nDOC GOVERNANCE CHECKS: PASS\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.027158656623214483,
+      "stdout": "MANIFEST OK: 110 reviewed files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.006972959730774164,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.007880186196416616,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "unchanged_scope_validation_reused": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.17291842633858323,
+      "stdout": "SPEC REFERENCE LINT OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/validate_resolved_contract.py",
+        "configs/resolved_contract.yaml"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.5780381159856915,
+      "stdout": "CONTRACT STRUCTURALLY VALID\nCONTRACT SEMANTICALLY VALID\nFINAL RC NOT READY\nBLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_docs_governance.py",
+        "tests/test_manifest.py",
+        "tests/test_validator_baseline.py",
+        "tests/test_validator_negative.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 6.579880331642926,
+      "stdout": "........................................................................ [ 51%]\n....................................................................     [100%]\n140 passed in 6.46s\n",
+      "stderr": ""
+    }
+  ],
+  "all_passed": true
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "native_tick_budget_preflight_v1",
+  "attempts": [
+    {
+      "check": "initial raw-profile nested timestamp containment",
+      "passed": false,
+      "failure": "added_usd_fabric_sync is not contained in native_source_publication",
+      "correction": "Installed source and raw timestamps show separate sync before forward/publication. Kept separate, not subtracted twice."
+    },
+    {
+      "check": "initial Ruff",
+      "passed": false,
+      "failure": "6 E701/E702 multiple statements",
+      "correction": "Formatted new analysis script with existing core Ruff."
+    },
+    {
+      "check": "plot draft relocation",
+      "passed": false,
+      "failure": "cross-device Path.rename; subsequent output dir already exists",
+      "correction": "shutil.move of generated unregistered draft to separate temporary filesystem; original GPU inputs untouched."
+    },
+    {
+      "check": "initial staged whitespace check",
+      "passed": false,
+      "failure": "16 CSV rows with standard csv.DictWriter CRLF identified as trailing whitespace",
+      "correction": "Explicit LF line terminator; reran analysis; original artifacts/script/transcripts retained with SHA inventory."
+    }
+  ],
+  "initial_plot_draft_locator": "/tmp/native-tick-budget-draft01",
+  "runtime_changes": false,
+  "initial_completed_analysis_retention": "/data/ebulochkin/vla-runtime/tick-budget-20261010/initial-csv-crlf"
+}
