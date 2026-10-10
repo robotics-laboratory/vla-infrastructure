@@ -1,8 +1,9 @@
 """Reproducible opt-in single4090 live-camera recording diagnostic.
 
 Builds the current shared VR scene and canonical recorder, solves real upstream
-DLS decisions against CPU PhysX snapshots, pumps passive Kit XR presentation,
-and mirrors the same recorded source into three GPU NVENC streams. No robot I/O.
+DLS decisions against the selected native or standalone physics source. GPU media
+uses either the earlier render mirror or experimental main Kit camera products.
+Main Kit mode also shares completed frames with SceneUI preview. No robot I/O.
 """
 
 # ruff: noqa: E402
@@ -28,7 +29,12 @@ p.add_argument("--output", type=Path, required=True)
 p.add_argument("--frames", type=int, default=600)
 p.add_argument("--warmup", type=int, default=60)
 p.add_argument("--media-warmup", type=int, default=20)
-p.add_argument("--media", choices=("none", "gpu"), default="gpu")
+p.add_argument("--media", choices=("none", "gpu", "kit"), default="gpu")
+p.add_argument("--physics-source", choices=("standalone", "native"), default="standalone")
+p.add_argument("--kit-capture", choices=("pump", "orchestrator", "callback"), default="pump")
+p.add_argument("--kit-preview", action=argparse.BooleanOptionalAction, default=True)
+p.add_argument("--kit-annotator", choices=("rgb", "LdrColor"), default="rgb")
+p.add_argument("--kit-fast", action="store_true")
 p.add_argument("--xr", action="store_true")
 p.add_argument("--view-mode", choices=("original", "minimal"), default="original")
 p.add_argument("--motion", choices=("benchmark", "reach-demo"), default="benchmark")
@@ -88,7 +94,7 @@ def benchmark(env, cli, app, **unused):
         target_hz=args.pace_hz or 50,
     )
     cfg = yaml.safe_load(cli.config.read_text())
-    owner = record = mirror = None
+    owner = record = mirror = native_media = None
     host_events, restores = [], []
 
     def observe(target, name, *, token_argument=False):
@@ -101,7 +107,7 @@ def benchmark(env, cli, app, **unused):
             end = time.monotonic_ns()
             token = values[0] if token_argument else result
             row = dict(event=name, begin_monotonic_ns=begin, end_monotonic_ns=end,
-                       physics_step_after=owner.clock.physics_step)
+                       physics_step_after=env.sim.get_physics_step_count())
             if hasattr(token, "capture_sequence"):
                 row.update(source_id=token.capture_sequence,
                            source_physics_step=token.physics_step)
@@ -113,7 +119,8 @@ def benchmark(env, cli, app, **unused):
         setattr(target, name, call)
         restores.append((target, name, previous, owned))
     try:
-        owner = StandaloneState(env, args.output / "physics", python=args.physics_python)
+        if args.physics_source == "standalone":
+            owner = StandaloneState(env, args.output / "physics", python=args.physics_python)
         metadata = recording_session_metadata(
             config_path=cli.config,
             environment_pins=cfg["environment"],
@@ -135,7 +142,15 @@ def benchmark(env, cli, app, **unused):
             },
             standalone_state=owner,
         )
-        owner.start(record.snapshot)
+        if owner:
+            owner.start(record.snapshot)
+        if args.media == "kit":
+            from isaac_vr_native_media import NativeKitMedia
+
+            native_media = NativeKitMedia(record, env, args.output / "native-camera",
+                                          capture=args.kit_capture, preview=args.kit_preview,
+                                          witness=args.witness, annotator_name=args.kit_annotator,
+                                          fast=args.kit_fast)
         if args.audit_host_events:
             observe(env, "_apply")
             observe(env, "_advance")
@@ -148,7 +163,7 @@ def benchmark(env, cli, app, **unused):
                 host_events.append(dict(event=name, begin_monotonic_ns=end-duration_ns,
                                         end_monotonic_ns=end,
                                         timing_semantics="existing duration; end at observer invocation",
-                                        physics_step_after=owner.clock.physics_step))
+                                        physics_step_after=env.sim.get_physics_step_count()))
                 if previous_timing_observer is not None:
                     previous_timing_observer(name, duration_ns)
 
@@ -161,7 +176,16 @@ def benchmark(env, cli, app, **unused):
             receipt["xr_enabled_at_admission"] = XRCore.get_singleton().is_xr_enabled()
         ik = _BimanualDifferentialIk(env)
         motion_rows = []
-        home = owner.snapshot["rigid_body_world_pose"][[8, 20], :3].copy()
+        def tcp_positions():
+            if owner:
+                return owner.snapshot["rigid_body_world_pose"][[8, 20], :3].copy()
+            return np.stack([
+                ik._state(arm, robot, wrist, ids)["tcp_pose_w"][0, :3].detach().cpu().numpy()
+                for arm, (robot, wrist, ids) in enumerate(zip(
+                    env.robots, env.wrist_ids, env.joint_ids, strict=True))
+            ])
+
+        home = tcp_positions()
         # World Cartesian intent only: existing upstream DLS and native physics
         # still own targets, joint limits, articulation motion and contacts.
         # This is an approach/transfer gesture, with no claimed cube grasp.
@@ -199,6 +223,8 @@ def benchmark(env, cli, app, **unused):
                 + "\n"
             )
         if args.media == "gpu":
+            if owner is None:
+                raise ValueError("Mirror comparison requires standalone source; use --media kit for native physics")
             guard = args.output / "mirror-source-preimages.json"
             protected = [
                 ROOT / "tools/isaac_vr_recording.py",
@@ -272,7 +298,7 @@ def benchmark(env, cli, app, **unused):
                 smooth = fraction * fraction * (3 - 2 * fraction)
                 point = first + smooth * (last - first)
                 target = home + point[1:4] * np.array([[1, 1, 1], [1, -1, 1]])
-                actual = owner.snapshot["rigid_body_world_pose"][[8, 20], :3]
+                actual = tcp_positions()
                 error = target - actual
                 delta = (
                     error
@@ -302,7 +328,8 @@ def benchmark(env, cli, app, **unused):
                         actual_tcp_world_m=actual.tolist(),
                         position_error_m=np.linalg.norm(error, axis=1).tolist(),
                         desired_aperture_m=aperture,
-                        actual_aperture_m=owner.snapshot["q"][:, 6].tolist(),
+                        actual_aperture_m=(owner.snapshot["q"][:, 6].tolist() if owner else
+                            [float(state) / 1000 for state in env.capture_measured_state()[1][6::7]]),
                     )
                 )
                 return ik.solve(command, observation, xr, tick)
@@ -327,7 +354,7 @@ def benchmark(env, cli, app, **unused):
                 begin = time.monotonic_ns()
                 result = original_solve(command, observation, xr, tick)
                 host_events.append(dict(event="decision_solve", tick=tick,
-                                        physics_step_after=owner.clock.physics_step,
+                                        physics_step_after=env.sim.get_physics_step_count(),
                                         begin_monotonic_ns=begin,
                                         end_monotonic_ns=time.monotonic_ns()))
                 return result
@@ -367,6 +394,12 @@ def benchmark(env, cli, app, **unused):
             receipt["complete_action_and_camera_hz_with_encode_tail"] = (
                 (args.warmup + args.frames) * 1e9 / (encode_done - started_ns)
             )
+        if native_media:
+            receipt["native_camera"] = native_media.close()
+            receipt["complete_action_and_camera_hz_with_encode_tail"] = (
+                (args.warmup + args.frames) * 1e9 /
+                (receipt["native_camera"]["encode_done_ns"] - started_ns)
+            )
         completed_end = time.perf_counter()
         receipt.update(
             transitions={k: v for k, v in transitions.items() if k != "actions"},
@@ -374,7 +407,7 @@ def benchmark(env, cli, app, **unused):
             working_s=working_end - started,
             drain_and_optical_decode_s=completed_end - working_end,
             complete_hz_including_drain=(args.warmup + args.frames) / (completed_end - started),
-            source_owner=owner.receipt,
+            source_owner=owner.receipt if owner else {"source": "original_native_kit_physics"},
             camera_source_alignment_proven=False,
         )
         if args.xr:
@@ -412,6 +445,7 @@ def benchmark(env, cli, app, **unused):
                 vars(target).pop(name, None)
         errors = []
         cleanup = [
+            native_media.close if native_media else None,
             mirror.abort if mirror else None,
             (
                 lambda: record.close(

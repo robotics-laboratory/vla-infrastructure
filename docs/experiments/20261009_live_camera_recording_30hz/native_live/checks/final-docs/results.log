@@ -1,0 +1,22 @@
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_docs.py", "--base", "114a2256913cbd915d59e0890915c314d64355f7"]
+INDEX: 1133 entries; classification {'current': 148, 'historical': 985}
+HISTORICAL PRESERVATION: PASS (977 frozen files vs 114a2256913cbd915d59e0890915c314d64355f7)
+KNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.
+DOC GOVERNANCE CHECKS: PASS
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_spec_references.py"]
+SPEC REFERENCE LINT OK
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/validate_resolved_contract.py", "configs/resolved_contract.yaml"]
+CONTRACT STRUCTURALLY VALID
+CONTRACT SEMANTICALLY VALID
+FINAL RC NOT READY
+BLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/generate_manifest.py", "verify"]
+MANIFEST OK: 110 reviewed files
+
+["git", "diff", "--check"]
+
+["git", "diff", "--cached", "--check", "--", ".", ":(exclude)**/*.log"]
+

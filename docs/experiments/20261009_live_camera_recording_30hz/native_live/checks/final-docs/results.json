@@ -1,0 +1,92 @@
+{
+  "schema": "native_live_final_repository_docs_v1",
+  "preservation_base": "114a2256913cbd915d59e0890915c314d64355f7",
+  "checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "114a2256913cbd915d59e0890915c314d64355f7"
+      ],
+      "returncode": 0,
+      "elapsed_s": 2.6573583371937275,
+      "stdout": "INDEX: 1133 entries; classification {'current': 148, 'historical': 985}\nHISTORICAL PRESERVATION: PASS (977 frozen files vs 114a2256913cbd915d59e0890915c314d64355f7)\nKNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.\nDOC GOVERNANCE CHECKS: PASS\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.15993646625429392,
+      "stdout": "SPEC REFERENCE LINT OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/validate_resolved_contract.py",
+        "configs/resolved_contract.yaml"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.515932088252157,
+      "stdout": "CONTRACT STRUCTURALLY VALID\nCONTRACT SEMANTICALLY VALID\nFINAL RC NOT READY\nBLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.02420547977089882,
+      "stdout": "MANIFEST OK: 110 reviewed files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.002326485700905323,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)**/*.log"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.005129887722432613,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "source_hash_mismatches": [],
+  "repository_test_receipt": "docs/experiments/20261009_live_camera_recording_30hz/native_live/checks/repository02/results.json",
+  "repository_all_passed": true,
+  "bulk_inventory_verification": {
+    "root": "/data/ebulochkin/vla-runtime/native-live-20261010",
+    "inventory_sha256": "997da8bd0cd74163f0db1cc423dadfa37434b73eb5ddc92d82012e318d09d014",
+    "files": 1020,
+    "mismatches": [],
+    "passed": true,
+    "verified_unix_ns": 1791610187596792531
+  },
+  "dataset_admissible": false,
+  "quest_connected": false,
+  "physical": false,
+  "gate_bindings": [],
+  "all_passed": true
+}

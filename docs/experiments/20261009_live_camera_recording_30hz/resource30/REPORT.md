@@ -245,3 +245,7 @@ FINAL RC NOT READY и существующие gate blockers сохраняют�
 retained files и неизменности исходников относительно repository01. Все новые
 documentation files зарегистрированы в INDEX как vr.performance experiments;
 frozen receipts имеют mutable=false. Старые historical bytes сохранены.
+
+Следующий независимый этап: [native камеры основной Kit-сцены, общий GPU preview
+и online media](../native_live/REPORT.md). Его показатели не заменяют результаты
+этого snapshot-fed renderer/resource assay.

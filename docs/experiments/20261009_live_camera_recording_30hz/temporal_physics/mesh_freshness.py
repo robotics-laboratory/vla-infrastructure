@@ -53,13 +53,13 @@ def local_matrix(kind, role, intrinsics, source_id):
     return pixel_matrix(300 + 24 * cell, 512 if bits[cell] else 552, 12, 12, DEPTH, intrinsics)
 
 
-def inject(stage, cameras):
-    """Only adds opinions to the derived render overlay, never the source stage."""
+def inject(stage, cameras, *, products=None):
+    """Add diagnostic geometry to the supplied stage, including explicit native products."""
     from pxr import Gf, Usd, UsdGeom, UsdShade, Sdf
 
     material_paths = {}
     for role in range(3):
-        product = stage.GetPrimAtPath(f"/Live30/Camera{role}")
+        product = stage.GetPrimAtPath(products[role] if products else f"/Live30/Camera{role}")
         if not product:
             raise ValueError("Probe requires existing three render products")
         for name, value, type_name in [

@@ -1,0 +1,21 @@
+{
+  "schema": "resource30_retention_v1",
+  "root": "/data/ebulochkin/vla-runtime/native-live-20261010",
+  "inventory": "/data/ebulochkin/vla-runtime/native-live-20261010/retention-inventory.json",
+  "inventory_sha256": "997da8bd0cd74163f0db1cc423dadfa37434b73eb5ddc92d82012e318d09d014",
+  "files": 1020,
+  "total_bytes": 1391993670,
+  "source_sha256": "484be102e81577027ef4fdc00f14281cf8c0e93dae97e0538773750133732d55",
+  "exclusions": [
+    ".pytest_cache",
+    ".ruff_cache",
+    "__pycache__",
+    "cache",
+    "hf",
+    "hf-datasets"
+  ],
+  "diagnostic_video_links": 0,
+  "prior_inputs_retained_at": "/data/ebulochkin/vla-runtime/live30-dataset-20261010",
+  "dataset_admissible": false,
+  "gate_bindings": []
+}

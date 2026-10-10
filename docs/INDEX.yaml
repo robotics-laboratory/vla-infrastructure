@@ -7180,3 +7180,94 @@ documents:
   owner: vr.performance
   mutable: false
   gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_live/PLAN.md
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_live/REPORT.md
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_live/checks/final-docs/results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_live/checks/final-docs/results.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_live/checks/repository01/results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_live/checks/repository01/results.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_live/render_callback.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_live/results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_live/retention.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_live/verify_native.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_live/verify_native_join.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_live/checks/repository02/results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_live/checks/repository02/results.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
