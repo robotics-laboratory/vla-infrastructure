@@ -41,9 +41,11 @@ def main():
         *ROOT.glob("docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/*.py"),
         ROOT / "tests/test_isaac_vr_live_source_queue.py",
         ROOT / "tests/test_isaac_vr_live_dataset.py",
+        ROOT / "tests/test_isaac_vr_live_dataset_qa.py",
         ROOT / "tests/test_isaac_vr_live_video_import.py",
         ROOT / "tests/test_isaac_vr_replay.py",
         Path(__file__),
+        *ROOT.glob("docs/experiments/20261009_live_camera_recording_30hz/resource30/*.py"),
     ]
     tests = [
         "test_docs_governance",
@@ -62,6 +64,7 @@ def main():
         "test_isaac_vr_live_media",
         "test_isaac_vr_live_source_queue",
         "test_isaac_vr_live_dataset",
+        "test_isaac_vr_live_dataset_qa",
         "test_isaac_vr_live_video_import",
         "test_isaac_vr_replay",
         "test_isaac_vr_lerobot_materialize",

@@ -1,0 +1,107 @@
+{
+  "schema": "resource30_final_checks_v1",
+  "state": "complete",
+  "preservation_base": "38185eb57016cb86786ffbc9846f91af1d629178",
+  "python": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+  "tested_head": "38185eb57016cb86786ffbc9846f91af1d629178",
+  "dataset_admissible": false,
+  "gate_bindings": [],
+  "checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "38185eb57016cb86786ffbc9846f91af1d629178"
+      ],
+      "returncode": 0,
+      "elapsed_s": 2.488843670114875,
+      "stdout": "INDEX: 1120 entries; classification {'current': 143, 'historical': 977}\nHISTORICAL PRESERVATION: PASS (967 frozen files vs 38185eb57016cb86786ffbc9846f91af1d629178)\nKNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.\nDOC GOVERNANCE CHECKS: PASS\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.16433884808793664,
+      "stdout": "SPEC REFERENCE LINT OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/validate_resolved_contract.py",
+        "configs/resolved_contract.yaml"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.5123634426854551,
+      "stdout": "CONTRACT STRUCTURALLY VALID\nCONTRACT SEMANTICALLY VALID\nFINAL RC NOT READY\nBLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.02459521498531103,
+      "stdout": "MANIFEST OK: 110 reviewed files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-c",
+        "import json,hashlib\nfrom pathlib import Path\ndef sha(path):\n h=hashlib.sha256()\n with path.open('rb') as s:\n  for b in iter(lambda:s.read(1048576),b''):h.update(b)\n return h.hexdigest()\nfor name in ('resource30','dataset30'):\n r=json.loads(Path('docs/experiments/20261009_live_camera_recording_30hz/'+name+'/retention.json').read_text());i=Path(r['inventory']);assert sha(i)==r['inventory_sha256'];inventory=json.loads(i.read_text());root=Path(r['root'])\n for row in inventory['files']:\n  f=root/row['path'];assert not f.is_symlink() and f.stat().st_size==row['bytes'] and sha(f)==row['sha256'],str(f)\n for link in inventory.get('diagnostic_links',[]):\n  p=root/link['path'];assert p.is_symlink() and str(p.resolve())==link['target'],str(p)\n  for row in link['files']:\n   f=p/row['path'];assert sha(f)==row['sha256'],str(f)\n print(json.dumps(dict(bundle=name,passed=True,files=len(inventory['files']),diagnostic_links=len(inventory.get('diagnostic_links',[])),bytes=sum(f['bytes'] for f in inventory['files']))))\n"
+      ],
+      "returncode": 0,
+      "elapsed_s": 3.059177285991609,
+      "stdout": "{\"bundle\": \"resource30\", \"passed\": true, \"files\": 866, \"diagnostic_links\": 3, \"bytes\": 4441798290}\n{\"bundle\": \"dataset30\", \"passed\": true, \"files\": 568, \"diagnostic_links\": 0, \"bytes\": 962626438}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-c",
+        "import json,hashlib\nfrom pathlib import Path\nr=json.loads(Path('docs/experiments/20261009_live_camera_recording_30hz/resource30/checks/repository01/results.json').read_text());assert r['all_passed']\nfor p,h in r['tested_sources'].items():assert hashlib.sha256(Path(p).read_bytes()).hexdigest()==h,p\nprint('Runtime/tests/helpers exactly match repository01 tested source SHA256')\n"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.01904760068282485,
+      "stdout": "Runtime/tests/helpers exactly match repository01 tested source SHA256\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)**/*.log"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.0030614440329372883,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)**/*.log"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.004867273848503828,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "all_passed": true
+}

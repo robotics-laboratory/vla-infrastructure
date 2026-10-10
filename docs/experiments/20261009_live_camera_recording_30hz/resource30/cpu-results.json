@@ -1,0 +1,111 @@
+{
+  "schema": "live30_resource_cpu_qa_comparison_v1",
+  "trusted_base": "38185eb57016cb86786ffbc9846f91af1d629178",
+  "passed": true,
+  "lerobot_version": "0.6.1",
+  "torch_version": "2.7.1",
+  "source_sha256": {
+    "tools/isaac_vr_live_dataset_qa.py": "177e26da349e1be5d6e921f1b736f81e7fe35cff39c0642d60f8c9cc973cbb24",
+    "tests/test_isaac_vr_live_dataset_qa.py": "fc69cccff7b23dffb74da4c846aeed59dfdc8921ef0de0cdc133b4a89663a6e9",
+    "tools/isaac_vr_lerobot_materialize.py": "cd120c3c6b7abb902cd6f3b97bc25394bac9c56ee756abf914e92087b4f27bbf"
+  },
+  "upstream_sha256": {
+    "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/lerobot/datasets/video_utils.py": "82d0ced8f3f9adc754d4388122b044d36f2feeadda28d4ddad933cead7cc54d1",
+    "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/lerobot/datasets/dataset_reader.py": "3a477dae6aa887449f09be25b385485b065861d13c5448b9369a0ba09f01bb5d",
+    "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/lib/python3.12/site-packages/lerobot/datasets/image_writer.py": "54cad218c99caad105ea8738507ee87fc8c2858832d31aa5b21d324c97360631"
+  },
+  "cases": [
+    {
+      "case": "canonical",
+      "passed": true,
+      "wall_s": 305.7415241356939,
+      "speedup_vs_canonical": 1.0,
+      "reduction_percent": 0.0,
+      "total_cpu_s": 827.941695,
+      "parent_maxrss_kib": 1349244,
+      "largest_child_maxrss_kib": 0
+    },
+    {
+      "case": "workers0",
+      "passed": true,
+      "wall_s": 175.51126218540594,
+      "speedup_vs_canonical": 1.7420051586929834,
+      "reduction_percent": 42.594888711449386,
+      "total_cpu_s": 460.849874,
+      "parent_maxrss_kib": 1276488,
+      "largest_child_maxrss_kib": 0
+    },
+    {
+      "case": "workers2",
+      "passed": true,
+      "wall_s": 93.91427720990032,
+      "speedup_vs_canonical": 3.2555382761702503,
+      "reduction_percent": 69.28311341569051,
+      "total_cpu_s": 506.15617399999996,
+      "parent_maxrss_kib": 1212456,
+      "largest_child_maxrss_kib": 1254408
+    },
+    {
+      "case": "workers4",
+      "passed": true,
+      "wall_s": 65.01391213387251,
+      "speedup_vs_canonical": 4.702709221775955,
+      "reduction_percent": 78.73566166137836,
+      "total_cpu_s": 650.482554,
+      "parent_maxrss_kib": 1245196,
+      "largest_child_maxrss_kib": 1228304
+    }
+  ],
+  "case_commands": "commands.json",
+  "tests": {
+    "command": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python -m pytest tests/test_isaac_vr_live_dataset_qa.py -q --junitxml=/tmp/live30-resource-qa/pytest.xml",
+    "exit_code": 0,
+    "result": "15 passed in 1.73s",
+    "log": "pytest.log",
+    "xml": "pytest.xml"
+  },
+  "ruff": {
+    "command": "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python -m ruff check tools/isaac_vr_live_dataset_qa.py tests/test_isaac_vr_live_dataset_qa.py",
+    "exit_code": 0,
+    "log": "ruff.log"
+  },
+  "negative": {
+    "command": "HF_HOME=/data/ebulochkin/vla-runtime/live30-resource-20261010/cpu-qa/hf HF_DATASETS_CACHE=/data/ebulochkin/vla-runtime/live30-resource-20261010/cpu-qa/hf-datasets OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 /data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python /data/ebulochkin/vla-runtime/live30-resource-20261010/cpu-qa/negative_actual.py",
+    "exit_code": 0,
+    "receipt": "negative-actual/results.json",
+    "log": "negative-actual.log",
+    "original_dataset_unchanged": true
+  },
+  "topology": {
+    "command": [
+      "lscpu",
+      "-e=CPU,CORE,SOCKET"
+    ],
+    "exit_code": 0,
+    "log": "cpu-topology.log"
+  },
+  "scope": {
+    "gpu_runs": false,
+    "installed_packages_modified": false,
+    "canonical_qa_modified": false,
+    "original_dataset_modified": false,
+    "full_frame_rows": 960,
+    "full_rgb_frames": 2880,
+    "float_samples": 6,
+    "float_sample_rgb_frames": 18,
+    "case_order": [
+      "canonical",
+      "workers0",
+      "workers2",
+      "workers4"
+    ],
+    "replicates": 1,
+    "cache_flush": false,
+    "all_cases_under_900s": true,
+    "benchmark_timeout_enforced_by_subprocess": false
+  },
+  "size_reaudit": {
+    "lines": 173,
+    "reason": "173 formatted lines include full canonical schema/array reuse, index/task/time checks, bounded spawn DataLoader, exact uint8 RGB hashes, six default-float samples, and thread restore; no custom decoder or dataset writer."
+  }
+}

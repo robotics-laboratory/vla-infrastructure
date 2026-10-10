@@ -1,0 +1,128 @@
+{
+  "schema": "resource30_published_exports_checks_v1",
+  "passed": true,
+  "results": {
+    "verification": {
+      "passed": true,
+      "cases": [
+        {
+          "case": "paced-p-shared",
+          "manifest": {
+            "passed": true,
+            "frames": 960,
+            "dataset_admissible": false
+          },
+          "elapsed_s": 1.0537686166353524,
+          "published_uint8_and_float_rows": [
+            0,
+            480,
+            959
+          ],
+          "rgb_hashes": 9
+        },
+        {
+          "case": "paced-p-isolated",
+          "manifest": {
+            "passed": true,
+            "frames": 960,
+            "dataset_admissible": false
+          },
+          "elapsed_s": 1.031001945026219,
+          "published_uint8_and_float_rows": [
+            0,
+            480,
+            959
+          ],
+          "rgb_hashes": 9
+        },
+        {
+          "case": "uncapped-p-isolated",
+          "manifest": {
+            "passed": true,
+            "frames": 960,
+            "dataset_admissible": false
+          },
+          "elapsed_s": 0.9387906980700791,
+          "published_uint8_and_float_rows": [
+            0,
+            480,
+            959
+          ],
+          "rgb_hashes": 9
+        }
+      ],
+      "command": [
+        "/data/ebulochkin/vla-runtime/live30-resource-20261010/verification/verify_exports.py"
+      ],
+      "source_sha256": "6ee1266250e6c825f96fd21b6fe3a3b0b37180d83ec805ad36afd3330acb2ba3",
+      "scope": "All finalized files/source bindings; representative real reader after atomic publish; full rows were checked before publish",
+      "dataset_admissible": false,
+      "gate_bindings": []
+    },
+    "verification-full-e8": {
+      "passed": true,
+      "cases": [
+        {
+          "case": "full-e8-contention01",
+          "manifest": {
+            "passed": true,
+            "frames": 960,
+            "dataset_admissible": false
+          },
+          "elapsed_s": 1.0409297961741686,
+          "published_uint8_and_float_rows": [
+            0,
+            480,
+            959
+          ],
+          "rgb_hashes": 9
+        }
+      ],
+      "command": [
+        "/data/ebulochkin/vla-runtime/live30-resource-20261010/verification-full-e8/verify_exports.py"
+      ],
+      "source_sha256": "4bc02a6d6eb334fd43d8a441bac32980e8933244c8fa398e72a656332fdbdf74",
+      "scope": "All finalized files/source bindings; representative real reader after atomic publish; full rows were checked before publish",
+      "dataset_admissible": false,
+      "gate_bindings": []
+    }
+  },
+  "commands": {
+    "verification": {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "/data/ebulochkin/vla-runtime/live30-resource-20261010/verification/verify_exports.py"
+      ],
+      "env_overrides": {
+        "HF_HOME": "/data/ebulochkin/vla-runtime/live30-resource-20261010/verification/cache/hf",
+        "HF_DATASETS_CACHE": "/data/ebulochkin/vla-runtime/live30-resource-20261010/verification/cache/hf-datasets",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "exit_code": 0,
+      "start_unix_ns": 1791605716117756789,
+      "end_unix_ns": 1791605720997887155,
+      "source_sha256": "6ee1266250e6c825f96fd21b6fe3a3b0b37180d83ec805ad36afd3330acb2ba3"
+    },
+    "verification-full-e8": {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "/data/ebulochkin/vla-runtime/live30-resource-20261010/verification-full-e8/verify_exports.py"
+      ],
+      "env_overrides": {
+        "HF_HOME": "/data/ebulochkin/vla-runtime/live30-resource-20261010/verification-full-e8/cache/hf",
+        "HF_DATASETS_CACHE": "/data/ebulochkin/vla-runtime/live30-resource-20261010/verification-full-e8/cache/hf-datasets",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "exit_code": 0,
+      "start_unix_ns": 1791606277037304784,
+      "end_unix_ns": 1791606280180211662,
+      "source_sha256": "4bc02a6d6eb334fd43d8a441bac32980e8933244c8fa398e72a656332fdbdf74"
+    }
+  },
+  "dataset_admissible": false,
+  "gate_bindings": []
+}

@@ -1,0 +1,29 @@
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_docs.py", "--base", "38185eb57016cb86786ffbc9846f91af1d629178"]
+INDEX: 1120 entries; classification {'current': 143, 'historical': 977}
+HISTORICAL PRESERVATION: PASS (967 frozen files vs 38185eb57016cb86786ffbc9846f91af1d629178)
+KNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.
+DOC GOVERNANCE CHECKS: PASS
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_spec_references.py"]
+SPEC REFERENCE LINT OK
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/validate_resolved_contract.py", "configs/resolved_contract.yaml"]
+CONTRACT STRUCTURALLY VALID
+CONTRACT SEMANTICALLY VALID
+FINAL RC NOT READY
+BLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/generate_manifest.py", "verify"]
+MANIFEST OK: 110 reviewed files
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "-c", "import json,hashlib\nfrom pathlib import Path\ndef sha(path):\n h=hashlib.sha256()\n with path.open('rb') as s:\n  for b in iter(lambda:s.read(1048576),b''):h.update(b)\n return h.hexdigest()\nfor name in ('resource30','dataset30'):\n r=json.loads(Path('docs/experiments/20261009_live_camera_recording_30hz/'+name+'/retention.json').read_text());i=Path(r['inventory']);assert sha(i)==r['inventory_sha256'];inventory=json.loads(i.read_text());root=Path(r['root'])\n for row in inventory['files']:\n  f=root/row['path'];assert not f.is_symlink() and f.stat().st_size==row['bytes'] and sha(f)==row['sha256'],str(f)\n for link in inventory.get('diagnostic_links',[]):\n  p=root/link['path'];assert p.is_symlink() and str(p.resolve())==link['target'],str(p)\n  for row in link['files']:\n   f=p/row['path'];assert sha(f)==row['sha256'],str(f)\n print(json.dumps(dict(bundle=name,passed=True,files=len(inventory['files']),diagnostic_links=len(inventory.get('diagnostic_links',[])),bytes=sum(f['bytes'] for f in inventory['files']))))\n"]
+{"bundle": "resource30", "passed": true, "files": 866, "diagnostic_links": 3, "bytes": 4441798290}
+{"bundle": "dataset30", "passed": true, "files": 568, "diagnostic_links": 0, "bytes": 962626438}
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "-c", "import json,hashlib\nfrom pathlib import Path\nr=json.loads(Path('docs/experiments/20261009_live_camera_recording_30hz/resource30/checks/repository01/results.json').read_text());assert r['all_passed']\nfor p,h in r['tested_sources'].items():assert hashlib.sha256(Path(p).read_bytes()).hexdigest()==h,p\nprint('Runtime/tests/helpers exactly match repository01 tested source SHA256')\n"]
+Runtime/tests/helpers exactly match repository01 tested source SHA256
+
+["git", "diff", "--check", "--", ".", ":(exclude)**/*.log"]
+
+["git", "diff", "--cached", "--check", "--", ".", ":(exclude)**/*.log"]
+

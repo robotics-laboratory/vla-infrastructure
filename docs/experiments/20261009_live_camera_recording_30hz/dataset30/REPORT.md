@@ -169,3 +169,10 @@ Artifacts: отдельные frozen run/check receipts, внешний SHA inve
 upstream import API перед promotion. Откат: revert изменения этого scope;
 installed SDK/runtime packages и selected configs не патчились. Внешние
 артефакты сохраняются как история, source запись не изменялась.
+
+## Последующая проверка распределения ресурсов
+
+[CPU QA и фоновая обработка во время записи](../resource30/REPORT.md) проверены
+в отдельном bundle от сохранённого38185eb. Он сохраняет baseline выше и
+исследует opt-in one-pass QA, CPU affinity и реальные telemetry на одной GPU.
+Frozen dataset30 receipts и исходные артефакты не изменяются.

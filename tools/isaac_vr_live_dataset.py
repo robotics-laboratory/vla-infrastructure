@@ -14,6 +14,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import time
 from typing import Any
 
 import numpy as np
@@ -369,7 +370,7 @@ def decoded_frames(path):
             yield frame
 
 
-def materialize(prepared, output, repo_id):
+def materialize(prepared, output, repo_id, qa_workers=None):
     import torch
     from lerobot.datasets.lerobot_dataset import LeRobotDataset
 
@@ -377,6 +378,9 @@ def materialize(prepared, output, repo_id):
         from .isaac_vr_live_video_import import existing_videos
     except ImportError:
         from isaac_vr_live_video_import import existing_videos
+    started = time.monotonic()
+    timings = {}
+    phases = {"start": time.monotonic_ns()}
     torch.set_num_threads(1)
     manifest, arrays = common.verify_projection_bundle(prepared / "projection")
     evidence = read(prepared / "live-media.json")
@@ -407,10 +411,12 @@ def materialize(prepared, output, repo_id):
         remux_dir = temporary / "remux"
         remux_dir.mkdir()
         mp4s, commands = {}, {}
+        phase = time.monotonic()
         for role, raw in evidence["media"].items():
             path = remux_dir / f"{role}.mp4"
             commands[role] = remux(Path(raw), path, n)
             mp4s[f"observation.images.{role}"] = path
+        timings["remux_s"] = time.monotonic() - phase
         dataset_root = temporary / "dataset"
         dataset = LeRobotDataset.create(
             repo_id,
@@ -423,6 +429,8 @@ def materialize(prepared, output, repo_id):
         generators = {key: decoded_frames(path) for key, path in mp4s.items()}
         pixel_hashes = {key: [] for key in mp4s}
         try:
+            phases["decode_add_frame_begin"] = time.monotonic_ns()
+            phase = time.monotonic()
             for i in range(n):
                 frame = dict(
                     task=task,
@@ -446,9 +454,13 @@ def materialize(prepared, output, repo_id):
                 all(next(g, None) is None for g in generators.values()),
                 "Terminal leaked into BC video",
             )
+            timings["decode_add_frame_s"] = time.monotonic() - phase
+            phases["save_episode_begin"] = time.monotonic_ns()
+            phase = time.monotonic()
             with existing_videos(dataset, mp4s) as imported:
                 dataset.save_episode(parallel_encoding=False)
             dataset.finalize()
+            timings["save_episode_s"] = time.monotonic() - phase
         finally:
             for generator in generators.values():
                 generator.close()
@@ -459,7 +471,25 @@ def materialize(prepared, output, repo_id):
                 common._sha256_stable(final) == imported["source_sha256"][key],
                 "Upstream changed imported video bytes",
             )
-        qa = common._qa_lerobot_dataset(dataset_root, repo_id=repo_id, arrays=arrays, task=task)
+        phases["qa_begin"] = time.monotonic_ns()
+        phase = time.monotonic()
+        if qa_workers is None:
+            qa = common._qa_lerobot_dataset(dataset_root, repo_id=repo_id, arrays=arrays, task=task)
+        else:
+            try:
+                from .isaac_vr_live_dataset_qa import qa_live_dataset
+            except ImportError:
+                from isaac_vr_live_dataset_qa import qa_live_dataset
+            qa = qa_live_dataset(
+                dataset_root,
+                repo_id=repo_id,
+                arrays=arrays,
+                task=task,
+                decoded_rgb_sha256=pixel_hashes,
+                workers=qa_workers,
+            )
+        timings["qa_s"] = time.monotonic() - phase
+        phases["qa_end"] = time.monotonic_ns()
         verify_hashes(evidence["bound_sources"])
         # Own staging images were read by upstream statistics; video rows reference MP4 only.
         shutil.rmtree(dataset_root / "images", ignore_errors=True)
@@ -478,6 +508,9 @@ def materialize(prepared, output, repo_id):
             import_receipt=imported,
             decoded_rgb_sha256=pixel_hashes,
             qa=qa,
+            qa_workers=qa_workers,
+            timings_s={**timings, "before_publish_total_s": time.monotonic() - started},
+            phase_monotonic_ns=phases,
             terminal_excluded_from_bc_rows=True,
             source_terminal_retained=True,
             source_png_staging_removed=True,
@@ -515,6 +548,13 @@ def main():
     p.add_argument("--prepared", type=Path, required=True)
     p.add_argument("--output", type=Path)
     p.add_argument("--repo-id")
+    p.add_argument(
+        "--qa-workers",
+        type=int,
+        choices=(0, 2, 4),
+        default=None,
+        help="Opt in to one-pass uint8 QA; default retains canonical QA",
+    )
     p.add_argument("--extract-python", type=Path)
     p.add_argument("--portable-root", action="append", default=[])
     a = p.parse_args()
@@ -544,7 +584,7 @@ def main():
         a.output is not None and a.repo_id and "/" in a.repo_id,
         "Specify new dataset output and namespace/name repo-id",
     )
-    print(json.dumps(materialize(a.prepared, a.output, a.repo_id)))
+    print(json.dumps(materialize(a.prepared, a.output, a.repo_id, qa_workers=a.qa_workers)))
 
 
 if __name__ == "__main__":
