@@ -30,6 +30,7 @@ def main():
         *ROOT.glob("tools/isaac_vr_native_*.py"),
         *ROOT.glob("tests/test_isaac_vr_native_*.py"),
         *ROOT.glob("docs/experiments/20261009_live_camera_recording_30hz/native_live/*.py"),
+        *ROOT.glob("docs/experiments/20261009_live_camera_recording_30hz/native_deep/*.py"),
         ROOT / "tools/run_single_gpu_live_recording.py",
         ROOT / "tools/isaac_s2_runtime.py",
         ROOT / "tools/isaac_vr_injected_recording.py",
@@ -78,6 +79,14 @@ def main():
         "test_isaac_vr_standalone_worker",
         "test_isaac_vr_native_media",
         "test_isaac_vr_native_preview",
+        "test_isaac_vr_native_cpu_preview",
+        "test_isaac_vr_native_profile",
+        "test_isaac_vr_native_source_proof",
+        "test_isaac_vr_native_binding",
+        "test_isaac_vr_native_copy_queue",
+        "test_isaac_vr_native_managed_probe",
+        "test_isaac_vr_native_join",
+        "test_isaac_vr_native_recording_parity",
     ]
     raw_transcripts = [
         "docs/experiments/20261009_live_camera_recording_30hz/temporal_physics/temporal_audit/" + name

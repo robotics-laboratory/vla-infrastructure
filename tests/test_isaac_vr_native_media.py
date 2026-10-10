@@ -1,6 +1,7 @@
 """Native media causal/ownership boundaries with CPU fakes; no Kit or CUDA."""
 
 from contextlib import nullcontext
+from collections import deque
 import io
 import json
 from pathlib import Path
@@ -77,7 +78,8 @@ def media(tmp_path):
     obj.capture_mode, obj.marker = "pump", None
     obj.previous = record._capture_new_observation
     obj.was_owned, obj.saved_instance = False, None
-    obj.rows, obj.products, obj.references = [], [], []
+    obj.rows, obj.products, obj.references = deque(maxlen=3), [], []
+    obj.capture_count = 0
     obj.row_file = io.StringIO()
     obj.restored_settings = {}
     obj.partition_specs = []
@@ -155,6 +157,17 @@ def test_capture_freezes_before_consumers_and_preserves_source_frame(media):
     assert (row["source_id"], row["physics_step"], row["snapshot_id"]) == (0, 100, "snapshot:0")
     assert row["snapshot_sha256"] == token.scene_state_snapshot_sha256
     assert row["optical_alignment_proven"] is False
+
+
+def test_long_sequence_streams_all_rows_without_retaining_episode_metadata(media):
+    for sequence in range(15):
+        media.source.seq = sequence
+        media.obj.capture()
+    rows = [json.loads(line) for line in media.obj.row_file.getvalue().splitlines()]
+    assert [row["source_id"] for row in rows] == list(range(15))
+    assert media.obj.capture_count == 15
+    assert len(media.obj.rows) == 3
+    assert [row["source_id"] for row in media.obj.rows] == [12, 13, 14]
 
 
 @pytest.mark.parametrize("bad_source", [0, 2])
@@ -284,6 +297,17 @@ def test_close_restores_inherited_or_preexisting_capture_and_is_idempotent(
     assert receipt["snapshot_renderer_used"] is False
     assert receipt["dataset_admissible"] is False
     assert media.obj.close() == receipt
+
+
+def test_close_removes_setting_that_was_absent_and_restores_viewport(media):
+    media.obj.restored_settings["absent_setting"] = None
+    media.settings["absent_setting"] = False
+    media.obj.settings.destroy_item = lambda key: media.settings.pop(key, None)
+    active = SimpleNamespace(updates_enabled=False)
+    media.obj.viewport_restore = (active, True)
+    media.obj.close()
+    assert "absent_setting" not in media.settings
+    assert active.updates_enabled is True
 
 
 def test_cleanup_failure_still_releases_other_resources_and_restores_settings(media):

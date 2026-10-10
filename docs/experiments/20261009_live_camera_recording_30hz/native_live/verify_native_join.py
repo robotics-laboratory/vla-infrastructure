@@ -147,6 +147,28 @@ def verify_packets(directory, sources):
     return results
 
 
+def verify_native_result_identifiers(frames):
+    """Check renderer ledger continuity without equating its clock with physics."""
+    previous = None
+    callback_rows = 0
+    for frame in frames:
+        identities = frame.get("native_result_identifiers", {})
+        if not identities:
+            require(callback_rows == 0, "Missing callback identity inside renderer ledger")
+            continue
+        require(set(identities) == set(ROLES), "Incomplete callback role identity triplet")
+        values = list(identities.values())
+        require(all(value == values[0] for value in values), "Mixed native result identities")
+        current = exact_int(values[0]["frameNumber"], "native frameNumber")
+        if previous is not None:
+            require(current == previous + 1, "Skipped or duplicated native result identifier")
+        previous = current
+        callback_rows += 1
+    require(callback_rows in (0, len(frames)), "Partial callback identity coverage")
+    return dict(rows=callback_rows, consecutive=True if callback_rows else None,
+                physics_clock_equality_inferred=False, pixel_alignment_proven=False)
+
+
 def verify(input_dir, repo, report):
     import h5py
     import numpy as np
@@ -227,6 +249,7 @@ def verify(input_dir, repo, report):
             "Native capture/owned/submission event ordering differs",
         )
 
+    report["native_result_ledger"] = verify_native_result_identifiers(frames)
     report["rows"] = []
     with h5py.File(episode_dir / "session.hdf5", "r") as hdf:
         require(len(hdf["episodes"]) == 1, "Expected one technical episode")
@@ -293,6 +316,11 @@ def verify(input_dir, repo, report):
                 require(
                     frame["physics_step"] == int(sample[f"{prefix}_physics_step"]),
                     "Media/HDF physics step mismatch",
+                )
+                require(
+                    frame["state_generation"] == int(sample[
+                        "successor_state_generation" if successor else "simulation_state_generation"]),
+                    "Media/HDF state generation mismatch",
                 )
                 require(
                     frame["reset_epoch"]

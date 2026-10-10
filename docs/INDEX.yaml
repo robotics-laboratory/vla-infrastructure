@@ -7271,3 +7271,73 @@ documents:
   owner: vr.performance
   mutable: false
   gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_deep/PLAN.md
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_deep/REPORT.md
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_deep/compare_native_recordings.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_deep/managed_event_probe.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_deep/provider_copy_cupti.cpp
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_deep/provider_copy_fence.cpp
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_deep/results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_deep/retention.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_deep/checks/repository01/results.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/native_deep/checks/repository01/results.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []

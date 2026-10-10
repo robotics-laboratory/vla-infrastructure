@@ -140,6 +140,41 @@ def test_upstream_panels_receive_exact_completed_owned_images(api, config):
     owner.close()
 
 
+def test_finite_gpu_transport_retains_every_source_through_presenter_close(api, config):
+    owner = SharedCameraPreview(config, transport="cuda-retained", max_publications=3)
+    refs = []
+    for seq in range(3):
+        images = triplet()
+        refs.extend(weakref.ref(image) for image in images.values())
+        owner.publish(seq, images)
+    del images
+    gc.collect()
+    assert all(ref() is not None for ref in refs)
+    uploads_before = len(uploads(api))
+    with pytest.raises(RuntimeError, match="budget"):
+        owner.publish(3, triplet())
+    assert len(uploads(api)) == uploads_before
+    owner.close()
+    gc.collect()
+    assert all(ref() is not None for ref in refs)
+    owner.gpu_retained.clear()  # Only runner shutdown releases these owners.
+    gc.collect()
+    assert all(ref() is None for ref in refs)
+
+
+def test_retained_gpu_transport_owns_triplet_before_failed_provider(api, config):
+    owner = SharedCameraPreview(config, transport="cuda-retained", max_publications=1)
+    api.upload_error_role = "demo_scene"
+    images = triplet()
+    refs = [weakref.ref(image) for image in images.values()]
+    with pytest.raises(RuntimeError, match="provider"):
+        owner.publish(0, images)
+    del images
+    owner.close()
+    gc.collect()
+    assert all(ref() is not None for ref in refs)
+
+
 def test_source_allocations_retained_across_replacement_then_released(api, config):
     owner = SharedCameraPreview(config)
     first = triplet()

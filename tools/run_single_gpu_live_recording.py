@@ -35,7 +35,38 @@ p.add_argument("--kit-capture", choices=("pump", "orchestrator", "callback"), de
 p.add_argument("--kit-preview", action=argparse.BooleanOptionalAction, default=True)
 p.add_argument("--kit-annotator", choices=("rgb", "LdrColor"), default="rgb")
 p.add_argument("--kit-fast", action="store_true")
+p.add_argument("--kit-legacy-products", action="store_true", help="Experimental per-camera legacy RTX mode in session layer; keep XR RT2")
+p.add_argument("--kit-no-temporal-lighting", action="store_true",
+               help="Diagnostic native-RP lighting denoiser ablation; noisier images")
+p.add_argument("--kit-rendering", choices=("default", "sync-throughput", "async", "async-latency"),
+               default="default", help="Scoped renderer scheduling ablation, after fast settings")
+p.add_argument("--kit-viewport", action=argparse.BooleanOptionalAction, default=True,
+               help="Diagnostic desktop viewport updates; disabling is not Quest qualification")
+p.add_argument("--native-profile", action="store_true", help="Read-only nested stage timing")
+p.add_argument("--native-profile-cprofile", action=argparse.BooleanOptionalAction, default=True)
+p.add_argument("--native-nsys", action="store_true", help="CUDA profiler capture range + NVTX timings")
+p.add_argument("--disable-kit-memorytracking", action="store_true",
+               help="Fresh-process diagnostic: disable Kit allocation tracing to probe CUPTI ownership")
+p.add_argument("--native-copy-early-subscribe", action="store_true",
+               help="Own public CUPTI subscription before Kit startup; requires explicit cuda-event shim")
+p.add_argument("--kit-preview-transport", choices=("cuda", "cpu-retained", "cuda-retained", "cuda-event"), default="cuda",
+               help="Preview copy lifetime: conservative CUDA fence, retained probes, or bounded copy events")
+p.add_argument("--native-source-proof", action="store_true", help="Compare actual rendered body/camera transforms")
+p.add_argument("--native-proof-compact", action="store_true", help="Compact diagnostic logs; preserve full geometry checks")
+p.add_argument("--native-proof-batch-reads", action="store_true", help="One public DLPack batched native-state host transfer; preserve full geometry checks")
+p.add_argument("--native-proof-skip-sync", action="store_true", help="Ablate added per-tick USD/Fabric sync; initial sync and all geometry checks remain")
+p.add_argument("--native-proof-clock-only", action="store_true", help="Exact publication stamp and native camera proof; full body comparison remains a separate diagnostic")
+p.add_argument("--native-attribute-probe", action="store_true", help="Validate stock at-render FabricReader attribute against semantic publication stamp")
+p.add_argument("--native-attribute-only", action="store_true", help="Use native rendered publication attribute and camera matrices; requires clock-only source proof and attribute probe")
+p.add_argument("--native-identity-only", action="store_true", help="Exact rendered publication identity; geometry checks run separately; requires attribute-only")
+p.add_argument("--native-cache-helpers", action="store_true", help="Reuse public graph port accessors while reading fresh values each callback")
+p.add_argument("--native-bind-sources", action="store_true",
+               help="Live HDF map of encoded frame ordinals to exact past canonical observations; requires source proof")
+p.add_argument("--native-managed-probe", action="store_true", help="Bounded native Hydra managed-resource/event diagnostic")
+p.add_argument("--native-optical-proof", action="store_true", help="Diagnostic publication optical meshes; requires source proof, no old witness")
 p.add_argument("--xr", action="store_true")
+p.add_argument("--runtime-device", choices=("cpu", "cuda:0"), default="cpu",
+               help="Native PhysX/control device; camera rendering and NVENC use GPU in both profiles")
 p.add_argument("--view-mode", choices=("original", "minimal"), default="original")
 p.add_argument("--motion", choices=("benchmark", "reach-demo"), default="benchmark")
 p.add_argument("--witness", action=argparse.BooleanOptionalAction, default=True)
@@ -56,6 +87,11 @@ p.add_argument(
 args = p.parse_args()
 if args.frames < 2 or args.warmup < 0:
     p.error("frames must be>=2 and warmup>=0")
+if args.native_attribute_only and not (
+        args.native_source_proof and args.native_proof_clock_only and args.native_attribute_probe):
+    p.error("attribute-only requires source proof, clock-only coverage and native attribute probe")
+if args.native_identity_only and not args.native_attribute_only:
+    p.error("identity-only requires native attribute-only mode")
 args.output.mkdir(parents=True, exist_ok=False, mode=0o700)
 receipt = dict(
     schema="single_gpu_live_recording_diagnostic_v1",
@@ -74,6 +110,10 @@ receipt = dict(
     },
 )
 ns = None
+owned_native_media = []
+prepared_proof_layers = []
+proof_reset_restore = None
+native_copy_library = None  # Keep our subscriber/DSO alive through Kit shutdown.
 
 
 def benchmark(env, cli, app, **unused):
@@ -94,7 +134,7 @@ def benchmark(env, cli, app, **unused):
         target_hz=args.pace_hz or 50,
     )
     cfg = yaml.safe_load(cli.config.read_text())
-    owner = record = mirror = native_media = None
+    owner = record = mirror = native_media = profiler = None
     host_events, restores = [], []
 
     def observe(target, name, *, token_argument=False):
@@ -150,7 +190,40 @@ def benchmark(env, cli, app, **unused):
             native_media = NativeKitMedia(record, env, args.output / "native-camera",
                                           capture=args.kit_capture, preview=args.kit_preview,
                                           witness=args.witness, annotator_name=args.kit_annotator,
-                                          fast=args.kit_fast)
+                                          fast=args.kit_fast, rendering=args.kit_rendering,
+                                          viewport=args.kit_viewport,
+                                          preview_transport=args.kit_preview_transport,
+                                          max_publications=args.warmup + args.frames + 1,
+                                          source_proof=args.native_source_proof, optical_proof=args.native_optical_proof,
+                                          managed_probe=args.native_managed_probe,
+                                          prepared_source_layer=prepared_proof_layers[0][1] if prepared_proof_layers else None,
+                                          no_temporal_lighting=args.kit_no_temporal_lighting,
+                                          bind_sources=args.native_bind_sources,
+                                          proof_compact=args.native_proof_compact,
+                                          legacy_products=args.kit_legacy_products,
+                                          proof_batch_reads=args.native_proof_batch_reads,
+                                          proof_skip_sync=args.native_proof_skip_sync,
+                                          proof_clock_only=args.native_proof_clock_only,
+                                          attribute_probe=args.native_attribute_probe,
+                                          attribute_only=args.native_attribute_only,
+                                          identity_only=args.native_identity_only,
+                                          cache_helpers=args.native_cache_helpers)
+            from carb.settings import get_settings
+            physics_prim = env.sim.stage.GetPrimAtPath(env.sim.cfg.physics_prim_path)
+            receipt["resolved_physics_device"] = dict(
+                simulation_device=str(env.sim.device),
+                physics_prim_path=env.sim.cfg.physics_prim_path,
+                scene_attributes={name: physics_prim.GetAttribute(name).Get() for name in (
+                    "physxScene:enableGPUDynamics", "physxScene:broadphaseType",
+                    "physxScene:solverType", "physxScene:enableCCD")},
+                physics_settings={name: get_settings().get(name) for name in (
+                    "/physics/cudaDevice", "/physics/suppressReadback")},
+            )
+            if native_media.source_proof:
+                view = native_media.source_proof.views[0]
+                receipt["resolved_physics_device"]["native_dof_array_device"] = str(view.get_dof_positions().device)
+                receipt["resolved_physics_device"]["native_link_pose_array_device"] = str(view.get_link_transforms().device)
+            owned_native_media.append(native_media)
         if args.audit_host_events:
             observe(env, "_apply")
             observe(env, "_advance")
@@ -370,6 +443,14 @@ def benchmark(env, cli, app, **unused):
                 time.sleep(remaining)
             paced_steps += 1
 
+        if args.native_profile or args.native_nsys:
+            from isaac_vr_native_profile import NativeProfile
+            profiler = NativeProfile(env=env, record=record, media=native_media,
+                                     performance_logger=perf, output=args.output / "native-profile.json",
+                                     cprofile=args.native_profile_cprofile and not args.native_nsys,
+                                     nvtx=args.native_nsys).__enter__()
+        if args.native_nsys:
+            torch.cuda.profiler.start()
         started_ns = time.perf_counter_ns()
         started = started_ns / 1e9
         transitions = record_injected_transitions(
@@ -382,6 +463,10 @@ def benchmark(env, cli, app, **unused):
             pre_step_callback=pace if args.pace_hz else None,
         )
         working_end = time.perf_counter()
+        if args.native_nsys:
+            torch.cuda.profiler.stop()
+        if profiler:
+            profiler.close()
         if motion_rows:
             # Persist outside the measured loop; HDF5 remains the source record.
             (args.output / "motion-trace.jsonl").write_text(
@@ -445,6 +530,7 @@ def benchmark(env, cli, app, **unused):
                 vars(target).pop(name, None)
         errors = []
         cleanup = [
+            profiler.close if profiler else None,
             native_media.close if native_media else None,
             mirror.abort if mirror else None,
             (
@@ -482,6 +568,21 @@ def benchmark(env, cli, app, **unused):
 
 
 try:
+    if args.native_copy_early_subscribe:
+        import ctypes
+        if args.kit_preview_transport != "cuda-event":
+            raise ValueError("Early CUPTI subscription requires cuda-event transport")
+        shim = Path(os.environ["VLA_NATIVE_COPY_SHIM"]).resolve(strict=True)
+        native_copy_library = ctypes.CDLL(str(shim))
+        initialize = native_copy_library.vla_copy_probe_init
+        initialize.argtypes, initialize.restype = [], ctypes.c_int
+        status = initialize()
+        receipt["native_copy_early_subscription"] = dict(
+            status=status, shim=str(shim), sha256=hashlib.sha256(shim.read_bytes()).hexdigest(),
+            owns_subscriber=True, unknown_subscriber_removed=False,
+        )
+        if status:
+            raise RuntimeError(f"Early own CUPTI subscription failed: {status}")
     from isaac_demo_launch import (
         verify_stack,
         user_environment,
@@ -499,6 +600,19 @@ try:
         "--enable",
         "isaacsim.replicator.episode_recorder",
     ]
+    if args.disable_kit_memorytracking:
+        kit += ["--/plugins/carb.memorytracking.plugin/enabled=false"]
+    if args.kit_legacy_products:
+        kit += ["--/persistent/rtx/modes/rt/enabled=true", "--/persistent/rtx/modes/rt2/enabled=true"]
+    if args.kit_rendering != "default":
+        asynchronous = args.kit_rendering.startswith("async")
+        kit += [
+            "--/app/asyncRendering=" + str(asynchronous).lower(),
+            "--/app/asyncRenderingLowLatency=" + str(args.kit_rendering == "async-latency").lower(),
+            "--/app/omni.usd/asyncHandshake=" + str(asynchronous).lower(),
+            "--/omni/replicator/asyncRendering=" + str(asynchronous).lower(),
+            "--/exts/isaacsim.core.throttling/enable_async=false",
+        ]
     if args.xr:
         kit += ["--enable", "omni.kit.scene_view.xr", "--enable", "omni.kit.scene_view.xr_utils"]
         os.environ["VLA_CLOUDXR_INSTALL_DIR"] = str(state / "cloudxr")
@@ -508,7 +622,7 @@ try:
         "--config",
         str(config),
         "--device",
-        "cpu",
+        args.runtime_device,
         "--vr-runtime",
         "--s2-record",
         "--viz",
@@ -538,6 +652,23 @@ try:
         }
         settings.set("/rtx/rendermode", "MinimalRendering")
         settings.set("/rtx/minimal/mode", 2)
+    if args.native_source_proof:
+        from isaac_vr_native_source_proof import prepare_source_proof_stage
+        from isaaclab.sim import SimulationContext
+
+        saved_reset = vars(SimulationContext)["reset"]
+        proof_reset_restore = (SimulationContext, saved_reset)
+        def first_proof_reset(sim, *pos, **kw):
+            # Restore before entering the one ordinary reset, even if it fails.
+            SimulationContext.reset = saved_reset
+            layer = prepare_source_proof_stage(sim, clock_only=args.native_proof_clock_only,
+                                               attribute_probe=args.native_attribute_probe,
+                                               attribute_only=args.native_attribute_only,
+                                               identity_only=args.native_identity_only)
+            prepared_proof_layers.append((sim.stage, layer))
+            receipt["source_proof_prepared_before_first_reset"] = True
+            return saved_reset(sim, *pos, **kw)
+        SimulationContext.reset = first_proof_reset
     isaac_s2_runtime.run_s2 = benchmark
     ns["main"]()
 except BaseException:
@@ -562,4 +693,12 @@ finally:
                 raise RuntimeError("owned XR profile did not stop; server retained")
             owned.stop()
         ns["simulation_app"].close()
+        owned_native_media.clear()
+        for stage, layer in prepared_proof_layers:
+            session = stage.GetSessionLayer()
+            session.subLayerPaths = [p for p in session.subLayerPaths if p != layer.identifier]
+        prepared_proof_layers.clear()
+    if proof_reset_restore:
+        cls, original_reset = proof_reset_restore
+        cls.reset = original_reset
 raise SystemExit(0 if receipt["passed"] else 1)

@@ -42,8 +42,44 @@ _ID_FIELDS = {
 }
 
 
+_SEMANTIC_FIELDS = {
+    'sdIMNumSemantics': 'uint', 'sdIMNumSemanticTokens': 'uint',
+    'sdIMMinSemanticIndex': 'uint', 'sdIMSemanticTokenMap': 'token[]',
+    'sdIMSemanticWorldTransform': 'float[]',
+    'sdIMLastUpdateTimeNumerator': 'int64',
+    'sdIMLastUpdateTimeDenominator': 'uint64',
+}
+_PATH_FIELDS = {
+    'primPaths': 'token[]', 'pathNumSemantics': 'uint',
+    'pathMinSemanticIndex': 'uint', 'pathUpdateNumerator': 'int64',
+    'pathUpdateDenominator': 'uint64',
+}
+_CAMERA_FIELDS = {
+    'cameraViewTransform': 'matrixd[4]', 'cameraProjection': 'matrixd[4]',
+    'renderProductResolution': 'int[2]',
+}
+_ATTRIBUTE_FIELDS = {'attributeData': 'uchar[]', 'attributeDataType': 'token',
+                     'attributeBufferSize': 'uint', 'attributeWidth': 'uint', 'attributeHeight': 'uint'}
+
+
+def decode_attribute_publication(data):
+    """Native FabricReader CPU byte array, not a pointer or a current-stage query."""
+    import numpy as np
+    dtype = np.dtype(str(data['attributeDataType']))
+    raw = np.array(data['attributeData'], dtype=np.uint8, copy=True).reshape(-1)
+    shape = (int(data['attributeWidth']), int(data['attributeHeight']))
+    if (dtype != np.dtype(np.int32) or int(data['attributeBufferSize']) != 4
+            or raw.nbytes != 4 or shape != (1, 1)):
+        raise ValueError(f'Unexpected native publication attribute layout: {dtype}, {raw.nbytes}, {shape}')
+    value = int(raw.view(dtype)[0])
+    if value < 1:
+        raise ValueError('Native publication attribute is not initialized')
+    return value
+
+
 class NativeResultConsumer:
-    def __init__(self, render_products, on_frame, resolution=(960, 600)):
+    def __init__(self, render_products, on_frame, resolution=(960, 600), *, geometry=False,
+                 attribute_probe=False, attribute_probe_output=None, attribute_only=False, identity_only=False, cache_helpers=False):
         import omni.graph.core as og
         # Import registers the installed PostProcessDispatchUngated template.
         import omni.replicator.core  # noqa: F401
@@ -57,9 +93,33 @@ class NativeResultConsumer:
             raise TypeError('on_frame must be callable')
         self.og, self.wp, self.sd = og, wp, SD.Get()
         self.texture_format = TextureFormat
+        self.identity_only = bool(identity_only)
+        self.attribute_only = bool(attribute_only or identity_only)
+        self.geometry = bool(geometry) and not self.attribute_only
+        self.camera_geometry = (self.geometry or self.attribute_only) and not self.identity_only
+        self.attribute_probe = bool(attribute_probe or self.attribute_only)
+        self.attribute_probe_diagnostics = []
+        self._attribute_probe_stream = None
+        if self.attribute_probe and not self.camera_geometry and not self.identity_only:
+            raise ValueError('Attribute probe requires independent semantic stamp/camera comparison')
         if self.sd is None:
             raise RuntimeError('SyntheticData must already be initialized by Kit')
-        for name in ('PostProcessDispatchUngated', 'LdrColorPostCopyToBuff'):
+        required_templates = ['PostProcessDispatchUngated', 'LdrColorPostCopyToBuff']
+        if self.attribute_probe:
+            required_templates.append('GpuInteropEntry')
+            if 'omni.replicator.nv.FabricReader' not in og.get_registered_nodes():
+                raise RuntimeError('Installed native FabricReader node is not registered')
+        if self.geometry:
+            required_templates += ['InstanceMappingPre', 'InstanceMappingTransforms',
+                                   'InstanceMappingPost', 'DefaultSemanticFilter',
+                                   'DefaultSemanticFilterPost']
+            for node_type in ('omni.syntheticdata.SdInstanceMappingPtr',
+                              'omni.replicator.core.OgnPrimPaths'):
+                if node_type not in og.get_registered_nodes():
+                    raise RuntimeError(f'Required installed node type missing: {node_type}')
+        if self.camera_geometry:
+            required_templates.append('PostRenderProductCamera')
+        for name in required_templates:
             if not SD.is_node_template_registered(name):
                 raise RuntimeError(f'Required installed template missing: {name}')
         self.roles = {str(path): str(role) for role, path in render_products.items()}
@@ -69,12 +129,19 @@ class NativeResultConsumer:
         self.error, self.closed = None, False
         self._templates, self._attached = [], []
         self._attrs, self._streams = {}, {}
+        self.cache_helpers, self._value_helpers = bool(cache_helpers), {}
         self._registered = False
         suffix = uuid.uuid4().hex
         self._node_type = f'vla.audit.NativeResultConsumer_{suffix}'
         pointer_name = f'NativeLdrPointer_{suffix}'
+        mapping_name = f'NativeMapping_{suffix}'
+        mapping_ptr_name = f'NativeMappingPtr_{suffix}'
+        paths_name = f'NativePrimPaths_{suffix}'
+        camera_name = f'NativeCamera_{suffix}'
         identifier_name = f'NativeIdentifier_{suffix}'
         consumer_name = f'NativeConsumer_{suffix}'
+        attribute_pre, attribute_post = f'NativeAttribute_{suffix}PR', f'NativeAttribute_{suffix}'
+        self._attribute_templates = (attribute_pre, attribute_post)
         self._consumer_name = consumer_name
         owner = self
 
@@ -91,6 +158,15 @@ class NativeResultConsumer:
                 node_type.add_input('inputs:cudaStream', 'uint64', True)
                 for name, data_type in _PIXEL_FIELDS.items():
                     node_type.add_input(f'inputs:{name}', data_type, True)
+                if owner.geometry:
+                    for name, data_type in {**_SEMANTIC_FIELDS, **_PATH_FIELDS}.items():
+                        node_type.add_input(f'inputs:{name}', data_type, True)
+                if owner.camera_geometry:
+                    for name, data_type in _CAMERA_FIELDS.items():
+                        node_type.add_input(f'inputs:{name}', data_type, True)
+                if owner.attribute_probe:
+                    for name, data_type in _ATTRIBUTE_FIELDS.items():
+                        node_type.add_input(f'inputs:{name}', data_type, True)
                 for name, data_type in _ID_FIELDS.items():
                     node_type.add_input(f'inputs:id_{name}', data_type, True)
 
@@ -110,13 +186,18 @@ class NativeResultConsumer:
         C, T = SD.NodeConnectionTemplate, SD.NodeTemplate
         stage = SyntheticDataStage.ON_DEMAND
 
-        def register(name, node_type, connections, attributes=None):
+        def register(name, node_type, connections, attributes=None, pipeline_stage=None):
             SD.register_node_template(
-                T(stage, node_type, connections, attributes or {}),
+                T(stage if pipeline_stage is None else pipeline_stage, node_type, connections, attributes or {}),
                 template_name=name)
             self._templates.append(name)
 
         try:
+            if self.attribute_probe and attribute_probe_output is not None:
+                from pathlib import Path
+                destination = Path(attribute_probe_output)
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                self._attribute_probe_stream = destination.open('x', buffering=1)
             og.register_node_type(CallbackNode, 1)
             self._registered = True
             # The native post-render texture-to-buffer chain creates LdrColorbuff.
@@ -128,16 +209,93 @@ class NativeResultConsumer:
                 C('LdrColorbuff', attributes_mapping={
                     'outputs:exec': 'inputs:exec'}),
             ], {'inputs:renderVar': 'LdrColorbuff'})
-            # Strict execution chain: dispatch -> pointer -> identifier -> callback.
+            if self.geometry:
+                # Stock InstanceMappingWithTransforms dependencies, with ungated payload.
+                # Cross-stage edges declare dependencies; scalars come from renderResults.
+                register(mapping_name, 'omni.syntheticdata.SdInstanceMapping', [
+                    C('PostProcessDispatchUngated', attributes_mapping={
+                        'outputs:renderResults': 'inputs:renderResults'}),
+                    C(pointer_name, attributes_mapping={'outputs:exec': 'inputs:exec'}),
+                    C('InstanceMappingTransforms', render_product_idxs=(),
+                      attributes_mapping={'outputs:exec': 'inputs:exec'}),
+                    # The stock post exporter creates an RP-prefixed SIM filter.
+                    # Also declare the global filter beside the global controller
+                    # used by InstanceMappingTransforms/InstanceMappingPost.
+                    C('DefaultSemanticFilter', render_product_idxs=(),
+                      attributes_mapping={'outputs:exec': 'inputs:exec'}),
+                    # Export the named filter's label/path AOV for this result.
+                    # The SIMULATION filter alone only declares the filter.
+                    C('DefaultSemanticFilterPost',
+                      attributes_mapping={'outputs:exec': 'inputs:exec'}),
+                    C('InstanceMappingPost',
+                      attributes_mapping={'outputs:exec': 'inputs:exec'}),
+                ])
+                # Installed primPaths annotator composition, bound explicitly to
+                # this callback's native result. Native C++ converts opaque path
+                # tokens; Python never dereferences or guesses their ABI.
+                register(mapping_ptr_name, 'omni.syntheticdata.SdInstanceMappingPtr', [
+                    C('PostProcessDispatchUngated', attributes_mapping={
+                        'outputs:renderResults': 'inputs:renderResults'}),
+                    C(mapping_name, attributes_mapping={'outputs:exec': 'inputs:exec'}),
+                ], {'inputs:cudaPtr': False})
+                register(paths_name, 'omni.replicator.core.OgnPrimPaths', [
+                    C(mapping_ptr_name, attributes_mapping={
+                        'outputs:exec': 'inputs:exec',
+                        'outputs:numSemantics': 'inputs:numSemantics',
+                        'outputs:semanticPrimPathPtr': 'inputs:semanticPrimPathPtr'}),
+                ])
+            if self.camera_geometry:
+                register(camera_name, 'omni.syntheticdata.SdRenderProductCamera', [
+                    C('PostProcessDispatchUngated', attributes_mapping={
+                        'outputs:renderResults': 'inputs:renderResults'}),
+                    C(paths_name if self.geometry else pointer_name,
+                      attributes_mapping={'outputs:exec': 'inputs:exec'}),
+                    C('PostRenderProductCamera',
+                      attributes_mapping={'outputs:exec': 'inputs:exec'}),
+                ])
+            if self.attribute_probe:
+                attribute_settings = {'inputs:prims': ['/World/NativeSourceProofStamp'],
+                                      'inputs:attribute': 'vla:publicationId'}
+                # Installed stock AttributePR/Attribute native two-phase composition.
+                register(attribute_pre, 'omni.replicator.nv.FabricReader', [C('GpuInteropEntry')],
+                         attribute_settings, pipeline_stage=SyntheticDataStage.AUTO)
+            # dispatch -> pointer -> mapping -> camera -> identifier -> callback.
             # Metadata and pixels take the IDENTICAL per-product renderResults wire.
             register(identifier_name, 'omni.syntheticdata.SdFrameIdentifier', [
                 C('PostProcessDispatchUngated', attributes_mapping={
                     'outputs:renderResults': 'inputs:renderResults'}),
-                C(pointer_name, attributes_mapping={'outputs:exec': 'inputs:exec'}),
+                C(camera_name if self.camera_geometry else pointer_name,
+                  attributes_mapping={'outputs:exec': 'inputs:exec'}),
             ])
-            register(consumer_name, self._node_type, [
+            if self.attribute_probe:
+                register(attribute_post, 'omni.replicator.nv.FabricReader', [
+                    C('PostProcessDispatchUngated', attributes_mapping={'outputs:renderResults': 'inputs:rp'}),
+                    C(attribute_pre, attributes_mapping={'outputs:exec': 'inputs:exec'}),
+                    # PR edge is an inter-graph dependency, not an ON_DEMAND
+                    # execution pulse. Run PP after this frame's identifier.
+                    C(identifier_name, attributes_mapping={'outputs:exec': 'inputs:exec'}),
+                ], attribute_settings, pipeline_stage=SyntheticDataStage.AUTO)
+            geometry_connections = [
+                C(paths_name, attributes_mapping={'outputs:primPaths': 'inputs:primPaths'}),
+                C(mapping_ptr_name, attributes_mapping={
+                    'outputs:numSemantics': 'inputs:pathNumSemantics',
+                    'outputs:minSemanticIndex': 'inputs:pathMinSemanticIndex',
+                    'outputs:lastUpdateTimeNumerator': 'inputs:pathUpdateNumerator',
+                    'outputs:lastUpdateTimeDenominator': 'inputs:pathUpdateDenominator'}),
+                C(mapping_name, attributes_mapping={
+                    f'outputs:{k}': f'inputs:{k}' for k in _SEMANTIC_FIELDS}),
+            ] if self.geometry else []
+            if self.camera_geometry:
+                geometry_connections.append(C(camera_name, attributes_mapping={
+                    f'outputs:{k}': f'inputs:{k}' for k in _CAMERA_FIELDS}))
+            attribute_connections = [C(attribute_post, attributes_mapping={
+                'outputs:exec': 'inputs:exec', 'outputs:data': 'inputs:attributeData',
+                'outputs:dataType': 'inputs:attributeDataType', 'outputs:bufferSize': 'inputs:attributeBufferSize',
+                'outputs:width': 'inputs:attributeWidth', 'outputs:height': 'inputs:attributeHeight',
+            })] if self.attribute_probe else []
+            register(consumer_name, self._node_type, geometry_connections + attribute_connections + [
                 C(identifier_name, attributes_mapping={
-                    'outputs:exec': 'inputs:exec',
+                    **({} if self.attribute_probe else {'outputs:exec': 'inputs:exec'}),
                     **{f'outputs:{k}': f'inputs:id_{k}' for k in _ID_FIELDS}}),
                 C(pointer_name, attributes_mapping={
                     f'outputs:{k}': f'inputs:{k}' for k in _PIXEL_FIELDS}),
@@ -150,6 +308,14 @@ class NativeResultConsumer:
                 # Record attempt before activation so partial setup can be unwound.
                 self._attached.append(path)
                 self.sd.activate_node_template(consumer_name, 0, [path])
+                if self.attribute_probe:
+                    ports = ['inputs:prims', 'inputs:attribute', 'inputs:rp', 'inputs:gpu',
+                             'outputs:data', 'outputs:dataType', 'outputs:bufferSize',
+                             'outputs:width', 'outputs:height']
+                    for name in (attribute_pre, attribute_post):
+                        values = self.sd.get_node_attributes(name, ports, path)
+                        if values is None or set(values) != set(ports):
+                            raise RuntimeError(f'Native FabricReader schema mismatch: {name}')
         except BaseException:
             self.close()
             raise
@@ -160,12 +326,18 @@ class NativeResultConsumer:
         attrs = self._attrs.get(key)
         if attrs is None:
             names = list(_PIXEL_FIELDS) + [f'id_{k}' for k in _ID_FIELDS]
+            if self.geometry:
+                names += list(_SEMANTIC_FIELDS) + list(_PATH_FIELDS)
+            if self.camera_geometry:
+                names += list(_CAMERA_FIELDS)
+            if self.attribute_probe:
+                names += list(_ATTRIBUTE_FIELDS)
             names += ['renderProductPath', 'renderResults', 'cudaStream']
             attrs = {name: node.get_attribute(f'inputs:{name}') for name in names}
             if not all(attr.is_valid() for attr in attrs.values()):
                 raise RuntimeError('Consumer schema/connection mismatch')
             self._attrs[key] = attrs
-        data = {name: og.AttributeValueHelper(attr).get() for name, attr in attrs.items()}
+        data = self._read_values(key, attrs)
         path = str(data['renderProductPath'])
         if path not in self.roles:
             raise RuntimeError(f'Unexpected render product {path}')
@@ -211,14 +383,137 @@ class NativeResultConsumer:
             wp.synchronize_stream(stream)
         identity = {k: (str(data[f'id_{k}']) if k == 'type' else int(data[f'id_{k}']))
                     for k in _ID_FIELDS}
+        if self.geometry:
+            # Copy native CPU arrays while this render-result callback owns their scope.
+            import numpy as np
+            semantic_count = int(data['sdIMNumSemantics'])
+            tokens = tuple(str(x) for x in data['sdIMSemanticTokenMap'])
+            world = np.array(data['sdIMSemanticWorldTransform'], dtype=np.float32, copy=True)
+            if world.size != semantic_count * 16:
+                raise RuntimeError('Semantic transform array does not match native count')
+            world = world.reshape(semantic_count, 4, 4)
+            if bool(semantic_count) != bool(tokens):
+                raise RuntimeError('Semantic token presence disagrees with native count')
+            if semantic_count and len(tokens) % semantic_count:
+                raise RuntimeError('Semantic token array does not divide into native rows')
+            token_rows = (tuple(tokens[i:i + len(tokens) // semantic_count])
+                          for i in range(0, len(tokens), len(tokens) // semantic_count)) if tokens else ()
+            # Both native readers expose the same semantic-indexed table from
+            # the exact same renderResults. Reject inconsistent extents/version.
+            if (int(data['pathNumSemantics']) != semantic_count
+                    or int(data['pathMinSemanticIndex']) != int(data['sdIMMinSemanticIndex'])
+                    or int(data['pathUpdateNumerator']) != int(data['sdIMLastUpdateTimeNumerator'])
+                    or int(data['pathUpdateDenominator']) != int(data['sdIMLastUpdateTimeDenominator'])):
+                raise RuntimeError('Native semantic path/matrix table identity disagrees')
+            prim_paths = tuple(str(x) for x in data['primPaths'])
+            if len(prim_paths) != semantic_count:
+                raise RuntimeError('Native semantic path count disagrees with matrix table')
+            geometry = {
+                'semantic_token_rows': tuple((path,) for path in prim_paths),
+                'legacy_semantic_token_rows': tuple(token_rows),
+                'semantic_path_authority': 'same_result_SdInstanceMappingPtr_OgnPrimPaths',
+                'semantic_world_matrices': world,
+                'semantic_min_index': int(data['sdIMMinSemanticIndex']),
+                'semantic_num_tokens': int(data['sdIMNumSemanticTokens']),
+                'semantic_update_time': (int(data['sdIMLastUpdateTimeNumerator']),
+                                         int(data['sdIMLastUpdateTimeDenominator'])),
+            }
+            if not self.counts[role]:
+                token_attr = attrs['sdIMSemanticTokenMap']
+                upstream = token_attr.get_upstream_connections()
+                geometry['token_transport_diagnostic'] = {
+                    'consumer_controller_tokens': [str(x) for x in og.Controller(attribute=token_attr).get()],
+                    'upstream': [{
+                        'path': attr.get_path(),
+                        'controller_tokens': [str(x) for x in og.Controller(attribute=attr).get()],
+                        'helper_tokens': [str(x) for x in og.AttributeValueHelper(attr).get()],
+                        'same_render_result': int(og.Controller(attribute=attr.get_node().get_attribute(
+                            'inputs:renderResults')).get()) == int(data['renderResults']),
+                    } for attr in upstream],
+                    'default_filter': self.sd.get_node_attributes('DefaultSemanticFilter', [
+                        'inputs:name', 'inputs:predicate', 'inputs:hierarchicalLabels',
+                        'inputs:matchingLabels', 'outputs:name', 'outputs:predicate']),
+                    'per_product_filter': self.sd.get_node_attributes('DefaultSemanticFilter', [
+                        'inputs:name', 'inputs:predicate', 'inputs:hierarchicalLabels',
+                        'inputs:matchingLabels', 'outputs:name', 'outputs:predicate'], path),
+                    'global_controller': self.sd.get_node_attributes('InstanceMappingPre', [
+                        'inputs:needTransform', 'inputs:semanticFilterPredicate']),
+                    'per_product_controller': self.sd.get_node_attributes('InstanceMappingPre', [
+                        'inputs:needTransform', 'inputs:semanticFilterPredicate'], path),
+                    'post_mapping_filter': self.sd.get_node_attributes('InstanceMappingPost', [
+                        'inputs:semanticFilterName'], path),
+                    'post_filter': self.sd.get_node_attributes('DefaultSemanticFilterPost', [
+                        'inputs:semanticFilterName', 'outputs:semanticFilterName',
+                        'outputs:numSemantics', 'outputs:minSemanticIndex'], path),
+                }
+        if self.camera_geometry:
+            import numpy as np
+            if not self.geometry:
+                geometry = {}
+            geometry.update(
+                camera_view=np.array(data['cameraViewTransform'], dtype=np.float64, copy=True).reshape(4, 4),
+                camera_projection=np.array(data['cameraProjection'], dtype=np.float64, copy=True).reshape(4, 4),
+                camera_resolution=tuple(int(x) for x in data['renderProductResolution']))
+        attribute_id = None
+        if self.attribute_probe:
+            self._record_attribute_diagnostic(data, role, identity, attrs)
+            attribute_id = decode_attribute_publication(data)
         self.counts[role] += 1
         self.on_frame({
             'role': role, 'render_product': path, 'rgba': owned,
+            **({'result_geometry': geometry} if self.camera_geometry else {}),
+            **({'attribute_publication_id': attribute_id} if self.attribute_probe else {}),
             'frame_identifier': identity, 'producer_cuda_stream': stream_ptr,
             'native_format': int(data['format']), 'copy_ns': time.perf_counter_ns() - start,
             # Diagnostic numeric receipt only; NEVER dereference or retain ownership via it.
             'render_result_handle_diagnostic': int(data['renderResults']),
         })
+
+    def _read_values(self, key, attrs):
+        """Cache public accessors only; fetch every value afresh inside this compute."""
+        if self.closed:
+            raise RuntimeError('Cannot read detached callback attributes')
+        if not self.cache_helpers:
+            return {name: self.og.AttributeValueHelper(attr).get() for name, attr in attrs.items()}
+        helpers = self._value_helpers.get(key)
+        if helpers is None:
+            helpers = {name: self.og.AttributeValueHelper(attr) for name, attr in attrs.items()}
+            self._value_helpers[key] = helpers
+        return {name: helper.get() for name, helper in helpers.items()}
+
+    def _record_attribute_diagnostic(self, data, role, identity, attrs):
+        """Bounded raw public API evidence, including the first failed layout."""
+        if len(self.attribute_probe_diagnostics) >= 16:
+            return
+        import json
+        row = {'role': role, 'frame_identifier': identity,
+               'consumer': {key: data[key] for key in _ATTRIBUTE_FIELDS},
+               'render_result_handle_diagnostic': int(data['renderResults'])}
+        try:
+            ports = ['inputs:prims', 'inputs:attribute', 'inputs:rp', 'inputs:gpu',
+                     'outputs:data', 'outputs:dataType', 'outputs:bufferSize', 'outputs:width', 'outputs:height']
+            row['native_nodes'] = {name: self.sd.get_node_attributes(name, ports, str(data['renderProductPath']))
+                                   for name in self._attribute_templates}
+            upstream = attrs['attributeData'].get_upstream_connections()
+            row['post_upstream'] = [{key: [a.get_path() for a in attr.get_node().get_attribute(key)
+                                            .get_upstream_connections()]
+                                     for key in ('inputs:exec', 'inputs:rp')} for attr in upstream]
+            import omni.usd
+            from usdrt import Usd as RtUsd
+            context = omni.usd.get_context()
+            stamp = '/World/NativeSourceProofStamp'
+            usd_prim = context.get_stage().GetPrimAtPath(stamp)
+            rt_prim = RtUsd.Stage.Attach(context.get_stage_id()).GetPrimAtPath(stamp)
+            row['usd_attribute'] = usd_prim.GetAttribute('vla:publicationId').Get()
+            row['fabric_attribute'] = rt_prim.GetAttribute('vla:publicationId').Get()
+            row['fabric_export_tag'] = rt_prim.GetAttribute('fc_exportToRingbuffer').IsValid()
+            row['fabric_property_names'] = [str(name) for name in rt_prim.GetPropertyNames()]
+        except Exception as exc:
+            row['diagnostic_error'] = repr(exc)
+        encoded = json.dumps(row, default=lambda value: value.tolist() if hasattr(value, 'tolist') else str(value))
+        self.attribute_probe_diagnostics.append(json.loads(encoded))
+        if self._attribute_probe_stream is not None:
+            self._attribute_probe_stream.write(encoded + '\n')
 
     def raise_if_failed(self):
         if self.error is not None:
@@ -236,6 +531,7 @@ class NativeResultConsumer:
             except Exception as exc:
                 failures.append(exc)
         self._attached.clear()
+        self._value_helpers.clear()
         for name in reversed(self._templates):
             try:
                 self.sd.unregister_node_template(name)
@@ -247,5 +543,7 @@ class NativeResultConsumer:
             self._registered = False
         self._attrs.clear()
         self._streams.clear()
+        if self._attribute_probe_stream is not None:
+            self._attribute_probe_stream.close()
         if failures:
             raise RuntimeError('Callback cleanup incomplete') from failures[0]
