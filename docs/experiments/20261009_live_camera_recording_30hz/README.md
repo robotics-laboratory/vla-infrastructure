@@ -1,5 +1,7 @@
 # Исследование записи live RGB >30 Гц с Quest 3
 
+Сжатая карта всего исследования: [архитектуры0–8, схемы, скорости, бюджеты и текущие ограничения](ARCHITECTURE_OVERVIEW.md).
+
 Продолжение: [глубокое исследование и реальные live/profile прогоны](deep_research/REPORT.md). Оно добавляет tested OVRTX GPU/NVENC, standalone PhysX, Fabric batching, live source joins и отрицательные результаты; выводы первой фазы ниже сохранены в исходном scope.
 
 

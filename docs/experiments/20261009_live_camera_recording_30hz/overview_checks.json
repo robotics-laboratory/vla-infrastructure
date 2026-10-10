@@ -1,0 +1,155 @@
+{
+  "schema": "architecture_overview_checks_v1",
+  "base": "daf6d41e057669fe5c918426062c1be26bb10287",
+  "new_simulation_runs": 0,
+  "scope": "Documentation synthesis + read-only existing-log analysis; no physical/Quest/dataset qualification",
+  "artifact_registration": "INDEX only; no new gate evidence or performance runs",
+  "source_review": {
+    "agent": "native_temporal_solution",
+    "revision": "daf6d41e057669fe5c918426062c1be26bb10287",
+    "read_only": true,
+    "new_tests": 0,
+    "findings": "Source ID != temporal pixel quality; CPU/preview drift mechanism unknown; CUPTI is copy ACK; fast shutdown cleanup bound is process exit."
+  },
+  "analysis_command": [
+    "/data/vla-infrastructure/isaac61_production/env/bin/python",
+    "docs/experiments/20261009_live_camera_recording_30hz/analyze_architecture_budget.py",
+    "--root",
+    "/data/ebulochkin/vla-runtime",
+    "--output",
+    "/tmp/architecture-budget-20261010"
+  ],
+  "analysis_env": {
+    "MPLCONFIGDIR": "/tmp/architecture-budget-mpl"
+  },
+  "analysis_returncode": 0,
+  "visual_review": [
+    "overview_budget.png"
+  ],
+  "artifacts": {
+    "ARCHITECTURE_OVERVIEW.md": {
+      "bytes": 46881,
+      "sha256": "74d45f9e3e98c4c1bfc70ca872a83387c76b8ac2c68c623459d04ebfbaa45a3c"
+    },
+    "analyze_architecture_budget.py": {
+      "bytes": 4982,
+      "sha256": "bb64d77a04306098e0db49fcce8669750c308adf6677e092a5f982f19250a0c3"
+    },
+    "overview_budget.json": {
+      "bytes": 7013,
+      "sha256": "a38dc686e0526b8b970d70ac9cbe3fb2de05c1d4a5e6e44dd5d4864d44aa14aa"
+    },
+    "overview_budget.png": {
+      "bytes": 116624,
+      "sha256": "9e15f35a789479249479f66a7057b6f4af9d31133aadcd9634718ff42747a85b"
+    }
+  },
+  "checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-c",
+        "import hashlib,json\nfrom pathlib import Path\nb=Path('docs/experiments/20261009_live_camera_recording_30hz')\nd=json.loads((b/'overview_budget.json').read_text())\nassert hashlib.sha256((b/'analyze_architecture_budget.py').read_bytes()).hexdigest()==d['script_sha256']\nrecords={}\nfor rel,field in [('deep_research/artifact_inventory.json','artifacts'),('meaningful_episode/artifact_inventory.json','external')]:\n for r in json.loads((b/rel).read_text())[field]: records[r.get('locator',r.get('path'))]=r\nfor rel in ['resource30/retention.json','native_live/retention.json','native_deep/retention.json']:\n r=json.loads((b/rel).read_text());p=Path(r['inventory'])\n assert hashlib.sha256(p.read_bytes()).hexdigest()==r['inventory_sha256']\n for f in json.loads(p.read_text())['files']: records[str(Path(r['root'])/f['path'])]=f\nfor c in d['cases']:\n p=Path(c['source']);o=records[c['source']]\n assert hashlib.sha256(p.read_bytes()).hexdigest()==o['sha256']==c['sha256']\n assert p.stat().st_size==o['bytes']==c['bytes']\n assert abs(sum(c['stages_mean_ms'].values())-c['mean_ms'])<1e-9\n assert abs(c['hz']*c['mean_ms']-1000)<1e-9\nfor q in ['50hz','30hz']:\n for c in d['cases']: assert abs(c['budget_headroom_ms'][q]+c['mean_ms']-({'50hz':20,'30hz':1000/30}[q]))<1e-9\nassert [c['iteration'] for c in d['cases']]==list(range(1,9))\ntext=(b/'ARCHITECTURE_OVERVIEW.md').read_text()\nassert text.count('```mermaid')==9\nfor i in range(9): assert f'## {i}. ' in text\nassert text.count('**\u041f\u043b\u044e\u0441\u044b:**')==9 and text.count('**\u041c\u0438\u043d\u0443\u0441\u044b:**')==9 and text.count('**\u041a\u043e\u043c\u043f\u0440\u043e\u043c\u0438\u0441\u0441:**')==9\nprint('PASS: 8 logs match original frozen inventories; script SHA, numeric closure/budgets, 9 architecture diagrams/scopes')"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.05750796804204583,
+      "stdout": "PASS: 8 logs match original frozen inventories; script SHA, numeric closure/budgets, 9 architecture diagrams/scopes\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff",
+        "check",
+        "docs/experiments/20261009_live_camera_recording_30hz/analyze_architecture_budget.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.006792028434574604,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "daf6d41e057669fe5c918426062c1be26bb10287"
+      ],
+      "returncode": 0,
+      "elapsed_s": 2.6425086981616914,
+      "stdout": "INDEX: 1161 entries; classification {'current': 157, 'historical': 1004}\nHISTORICAL PRESERVATION: PASS (1000 frozen files vs daf6d41e057669fe5c918426062c1be26bb10287)\nKNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.\nDOC GOVERNANCE CHECKS: PASS\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.17955287778750062,
+      "stdout": "SPEC REFERENCE LINT OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/validate_resolved_contract.py",
+        "configs/resolved_contract.yaml"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.5039197667501867,
+      "stdout": "CONTRACT STRUCTURALLY VALID\nCONTRACT SEMANTICALLY VALID\nFINAL RC NOT READY\nBLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.02313008764758706,
+      "stdout": "MANIFEST OK: 110 reviewed files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_docs_governance.py",
+        "tests/test_manifest.py",
+        "tests/test_validator_baseline.py",
+        "tests/test_validator_negative.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 5.747050790116191,
+      "stdout": "........................................................................ [ 51%]\n....................................................................     [100%]\n140 passed in 5.62s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.0033380119130015373,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.0032713240943849087,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "all_passed": true
+}

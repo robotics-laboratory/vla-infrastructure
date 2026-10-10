@@ -1,0 +1,182 @@
+{
+  "schema": "architecture_budget_v1",
+  "new_simulation_runs": 0,
+  "cases": [
+    {
+      "iteration": 1,
+      "label": "Native prototype",
+      "source": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-original-ik-enabled/performance.jsonl",
+      "bytes": 338967,
+      "sha256": "53243b655a5db601d52e1016239fc5d9814e6e38f007371df2e7277bb7bda388",
+      "intervals": 299,
+      "mean_ms": 19.04407379264214,
+      "hz": 52.509773428118066,
+      "stages_mean_ms": {
+        "simulation_advance": 14.151626197324415,
+        "injected_decision_apply": 0.6713267257525084,
+        "successor_capture": 0.9519583979933111,
+        "causal_commit_and_record": 1.6475842341137124,
+        "service_residual": 1.6215782374581948
+      },
+      "budget_headroom_ms": {
+        "50hz": 0.9559262073578587,
+        "30hz": 14.289259540691194
+      }
+    },
+    {
+      "iteration": 2,
+      "label": "Kit + OVRTX mirror",
+      "source": "/data/ebulochkin/vla-runtime/live30-deep-20261009/full-cpu-xr-live-mirror-long/performance.jsonl",
+      "bytes": 1163695,
+      "sha256": "dfd672b54f437b23ba0b53fced5b1700e7bc9676d0285d080bea350b167106ea",
+      "intervals": 1199,
+      "mean_ms": 20.859021453711428,
+      "hz": 47.94088745817321,
+      "stages_mean_ms": {
+        "simulation_advance": 14.455716899082569,
+        "injected_decision_apply": 0.7431946371976648,
+        "successor_capture": 1.9281112018348623,
+        "causal_commit_and_record": 1.8457040767306088,
+        "service_residual": 1.8862946388657242
+      },
+      "budget_headroom_ms": {
+        "50hz": -0.8590214537114278,
+        "30hz": 12.474311879621908
+      }
+    },
+    {
+      "iteration": 3,
+      "label": "Standalone + mirror",
+      "source": "/data/ebulochkin/vla-runtime/live30-meaningful-episode-20261009/reach-demo08/performance.jsonl",
+      "bytes": 587336,
+      "sha256": "34715ce69f14d44847a40792f3af25c656c9b7a89ef9ae7f23a0edc356fc2b51",
+      "intervals": 839,
+      "mean_ms": 17.601629352800952,
+      "hz": 56.81292225602227,
+      "stages_mean_ms": {
+        "simulation_advance": 11.846530349225269,
+        "injected_decision_apply": 2.1543048140643624,
+        "successor_capture": 1.7069262991656735,
+        "causal_commit_and_record": 1.8403479415971395,
+        "service_residual": 0.05351994874850874
+      },
+      "budget_headroom_ms": {
+        "50hz": 2.398370647199048,
+        "30hz": 15.731703980532384
+      }
+    },
+    {
+      "iteration": 4,
+      "label": "Mirror + background export",
+      "source": "/data/ebulochkin/vla-runtime/live30-resource-20261010/matrix01/uncapped-p-isolated/recording/performance.jsonl",
+      "bytes": 1176956,
+      "sha256": "49ba6f53c5e9bc89f003f9fb8fec403733b259a0df8297fbb5eaa09050a83b11",
+      "intervals": 1799,
+      "mean_ms": 18.85232867815453,
+      "hz": 53.043844984453706,
+      "stages_mean_ms": {
+        "simulation_advance": 11.66286048971651,
+        "injected_decision_apply": 1.892205284602557,
+        "successor_capture": 3.6230306303501947,
+        "causal_commit_and_record": 1.6233146486937187,
+        "service_residual": 0.05091762479155193
+      },
+      "budget_headroom_ms": {
+        "50hz": 1.1476713218454684,
+        "30hz": 14.481004655178804
+      }
+    },
+    {
+      "iteration": 5,
+      "label": "Main-scene native live",
+      "source": "/data/ebulochkin/vla-runtime/native-live-20261010/callback-native-final-0821/recording/performance.jsonl",
+      "bytes": 624718,
+      "sha256": "617d0776925528f5d4927423c6a161eabc6c3721182cab7fe74ac2da5d58acff",
+      "intervals": 959,
+      "mean_ms": 26.38716278519291,
+      "hz": 37.897215708281735,
+      "stages_mean_ms": {
+        "simulation_advance": 13.49915966214807,
+        "injected_decision_apply": 2.405751401459854,
+        "successor_capture": 8.906477226277373,
+        "causal_commit_and_record": 1.5303522054223149,
+        "service_residual": 0.045422289885298284
+      },
+      "budget_headroom_ms": {
+        "50hz": -6.38716278519291,
+        "30hz": 6.946170548140426
+      }
+    },
+    {
+      "iteration": 6,
+      "label": "Event-ACK preview",
+      "source": "/data/ebulochkin/vla-runtime/native-deep-20261010/cuda-event-long-01/recording/performance.jsonl",
+      "bytes": 1143645,
+      "sha256": "1e3000062537f8bb8d9e7983bf022bb5b3388c4679cba6d75fcbc58f2f64491c",
+      "intervals": 1799,
+      "mean_ms": 19.038172842690383,
+      "hz": 52.52604902071499,
+      "stages_mean_ms": {
+        "simulation_advance": 13.401001630906059,
+        "injected_decision_apply": 2.4808279405225124,
+        "successor_capture": 1.6006079238465813,
+        "causal_commit_and_record": 1.5103513963312951,
+        "service_residual": 0.04538395108393445
+      },
+      "budget_headroom_ms": {
+        "50hz": 0.9618271573096173,
+        "30hz": 14.295160490642953
+      }
+    },
+    {
+      "iteration": 7,
+      "label": "Full geometry/source proof",
+      "source": "/data/ebulochkin/vla-runtime/native-deep-20261010/source-bound-live-01/recording/performance.jsonl",
+      "bytes": 404399,
+      "sha256": "952501fbeac4902d30a9b99e26113d24cfd38551b8c1cb2da2bdfd7c0e66b57e",
+      "intervals": 599,
+      "mean_ms": 22.95865621869783,
+      "hz": 43.55655620582824,
+      "stages_mean_ms": {
+        "simulation_advance": 16.821550045075124,
+        "injected_decision_apply": 2.450682367278798,
+        "successor_capture": 2.118741095158598,
+        "causal_commit_and_record": 1.5207540684474123,
+        "service_residual": 0.0469286427378961
+      },
+      "budget_headroom_ms": {
+        "50hz": -2.958656218697829,
+        "30hz": 10.374677114635507
+      }
+    },
+    {
+      "iteration": 8,
+      "label": "Final CPU source-bound soak",
+      "source": "/data/ebulochkin/vla-runtime/native-deep-20261010/source-bound-identity-soak-12/recording/performance.jsonl",
+      "bytes": 6181131,
+      "sha256": "87f782506643c730b8c00021d978f1d9d64ebc122cb8d51c15f686831acf1f8f",
+      "intervals": 9999,
+      "mean_ms": 20.095253238523853,
+      "hz": 49.7629956751646,
+      "stages_mean_ms": {
+        "simulation_advance": 13.87485600890089,
+        "injected_decision_apply": 2.458183178617862,
+        "successor_capture": 2.154617496349635,
+        "causal_commit_and_record": 1.561444894489449,
+        "service_residual": 0.046151660166017905
+      },
+      "budget_headroom_ms": {
+        "50hz": -0.0952532385238527,
+        "30hz": 13.238080094809483
+      }
+    }
+  ],
+  "script_sha256": "bb64d77a04306098e0db49fcce8669750c308adf6677e092a5f982f19250a0c3",
+  "limitations": [
+    "No new runs; differing scene/physics/settings/warmup scopes are not a causal A/B.",
+    "Host elapsed stages contain GPU waits, overlapping workers are not added.",
+    "Service/residual includes unlisted work; this is not GPU kernel attribution.",
+    "Master whole-session and partial historical profiles are not compatible stage partitions.",
+    "Prototype/mirror/sourceproof scopes have different correctness qualifications; see report."
+  ]
+}

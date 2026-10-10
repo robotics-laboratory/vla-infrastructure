@@ -7425,3 +7425,45 @@ documents:
   owner: vr.performance
   mutable: false
   gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/ARCHITECTURE_OVERVIEW.md
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/analyze_architecture_budget.py
+  kind: experiment
+  status: current
+  owner: vr.performance
+  mutable: true
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/overview_budget.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/overview_budget.png
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/overview_checks.json
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []
+
+- path: docs/experiments/20261009_live_camera_recording_30hz/overview_checks.log
+  kind: experiment
+  status: historical
+  owner: vr.performance
+  mutable: false
+  gates: []

@@ -1,0 +1,41 @@
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "-c", "import hashlib,json\nfrom pathlib import Path\nb=Path('docs/experiments/20261009_live_camera_recording_30hz')\nd=json.loads((b/'overview_budget.json').read_text())\nassert hashlib.sha256((b/'analyze_architecture_budget.py').read_bytes()).hexdigest()==d['script_sha256']\nrecords={}\nfor rel,field in [('deep_research/artifact_inventory.json','artifacts'),('meaningful_episode/artifact_inventory.json','external')]:\n for r in json.loads((b/rel).read_text())[field]: records[r.get('locator',r.get('path'))]=r\nfor rel in ['resource30/retention.json','native_live/retention.json','native_deep/retention.json']:\n r=json.loads((b/rel).read_text());p=Path(r['inventory'])\n assert hashlib.sha256(p.read_bytes()).hexdigest()==r['inventory_sha256']\n for f in json.loads(p.read_text())['files']: records[str(Path(r['root'])/f['path'])]=f\nfor c in d['cases']:\n p=Path(c['source']);o=records[c['source']]\n assert hashlib.sha256(p.read_bytes()).hexdigest()==o['sha256']==c['sha256']\n assert p.stat().st_size==o['bytes']==c['bytes']\n assert abs(sum(c['stages_mean_ms'].values())-c['mean_ms'])<1e-9\n assert abs(c['hz']*c['mean_ms']-1000)<1e-9\nfor q in ['50hz','30hz']:\n for c in d['cases']: assert abs(c['budget_headroom_ms'][q]+c['mean_ms']-({'50hz':20,'30hz':1000/30}[q]))<1e-9\nassert [c['iteration'] for c in d['cases']]==list(range(1,9))\ntext=(b/'ARCHITECTURE_OVERVIEW.md').read_text()\nassert text.count('```mermaid')==9\nfor i in range(9): assert f'## {i}. ' in text\nassert text.count('**\u041f\u043b\u044e\u0441\u044b:**')==9 and text.count('**\u041c\u0438\u043d\u0443\u0441\u044b:**')==9 and text.count('**\u041a\u043e\u043c\u043f\u0440\u043e\u043c\u0438\u0441\u0441:**')==9\nprint('PASS: 8 logs match original frozen inventories; script SHA, numeric closure/budgets, 9 architecture diagrams/scopes')"]
+exit=0
+PASS: 8 logs match original frozen inventories; script SHA, numeric closure/budgets, 9 architecture diagrams/scopes
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff", "check", "docs/experiments/20261009_live_camera_recording_30hz/analyze_architecture_budget.py"]
+exit=0
+All checks passed!
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_docs.py", "--base", "daf6d41e057669fe5c918426062c1be26bb10287"]
+exit=0
+INDEX: 1161 entries; classification {'current': 157, 'historical': 1004}
+HISTORICAL PRESERVATION: PASS (1000 frozen files vs daf6d41e057669fe5c918426062c1be26bb10287)
+KNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.
+DOC GOVERNANCE CHECKS: PASS
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/lint_spec_references.py"]
+exit=0
+SPEC REFERENCE LINT OK
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/validate_resolved_contract.py", "configs/resolved_contract.yaml"]
+exit=0
+CONTRACT STRUCTURALLY VALID
+CONTRACT SEMANTICALLY VALID
+FINAL RC NOT READY
+BLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "tools/generate_manifest.py", "verify"]
+exit=0
+MANIFEST OK: 110 reviewed files
+
+["/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python", "-m", "pytest", "-q", "tests/test_docs_governance.py", "tests/test_manifest.py", "tests/test_validator_baseline.py", "tests/test_validator_negative.py"]
+exit=0
+........................................................................ [ 51%]
+....................................................................     [100%]
+140 passed in 5.62s
+
+["git", "diff", "--check"]
+exit=0
+
+["git", "diff", "--cached", "--check"]
+exit=0
