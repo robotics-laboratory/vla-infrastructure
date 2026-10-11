@@ -1,0 +1,85 @@
+{
+  "schema": "decision_apply_clarification_v1",
+  "date": "2026-10-11",
+  "base": "b43d26165e0c203a4cf68baba9e35929015a5320",
+  "new_simulation_runs": 0,
+  "checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "b43d26165e0c203a4cf68baba9e35929015a5320"
+      ],
+      "returncode": 0,
+      "elapsed_s": 2.7265263060107827,
+      "stdout": "INDEX: 1162 entries; classification {'current': 157, 'historical': 1005}\nHISTORICAL PRESERVATION: PASS (1004 frozen files vs b43d26165e0c203a4cf68baba9e35929015a5320)\nKNOWN HISTORICAL INTEGRITY DEBT: UNRESOLVED; see docs/plans/DOCUMENTATION_GOVERNANCE.md. Bundle authenticity and external artifacts NOT CHECKED.\nDOC GOVERNANCE CHECKS: PASS\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.19098243303596973,
+      "stdout": "SPEC REFERENCE LINT OK\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/validate_resolved_contract.py",
+        "configs/resolved_contract.yaml"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.5918332878500223,
+      "stdout": "CONTRACT STRUCTURALLY VALID\nCONTRACT SEMANTICALLY VALID\nFINAL RC NOT READY\nBLOCKERS: D1, G1, D2a, M1, E1, E2, E3, R0, R1, R1B, R2, D2b, DM, DQ, HIL, R3, B0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.028061275836080313,
+      "stdout": "MANIFEST OK: 110 reviewed files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.0031670723110437393,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "final_runner_snapshot": {
+    "path": "/data/ebulochkin/vla-runtime/native-deep-20261010/source-bound-identity-soak-12/assay/recorder-source-000-run_single_gpu_live_recording.py",
+    "sha256": "2ac0f789f66a06f4f1e08cc6f1cd6f0cfcea6d3f88343447b8696238b461d2fb",
+    "matches_run_pin": true
+  },
+  "early_loop_git_revision": "d5566834d29ef8bb56e4fb62bb324e23e0869100",
+  "early_loop_sha256": "690b44f30fa088c1ba62846090ba45b26a5161b79711354f0d08023374ef1d81",
+  "early_probe": {
+    "path": "docs/experiments/20261009_live_camera_recording_30hz/deep_research/full_scene_probe.py",
+    "retained_sha256": "485c436deaa534f5a6970181a3d9346780aff5465507164dda0ed9ac7bd7351e",
+    "launch_sha256": "ce2bf916bd497a78db56899c2c9709d984098c81063257bd4f5b156e712176c5",
+    "exact_launch_source_match": false,
+    "limitation": "Retained probe contains later additions; exact earlier launch source not recovered here. The retained IK pre_step hook and base loop ordering establish timer semantics; not a matched solver timing A/B."
+  },
+  "findings": [
+    "Early probe runs optional IK as pre-step workload outside named timer and discards its target.",
+    "Final runner uses DLS solution for native actuation inside timer and includes reach generation, feedback reads and motion diagnostics.",
+    "0.671 versus 2.458 ms compares different work; recent native variants 2.406/2.481/2.451/2.458 ms are similar.",
+    "Early 1.622 ms service/residual contains more than IK; pure DLS slowdown unmeasured."
+  ],
+  "scope": "Read-only source/receipt audit and maintained report clarification; previous frozen analysis/chart unchanged.",
+  "report_sha256": "57ea6b2fbd36d6a15c9609c65a8fdaf622ac6a35bd878a1b762d1262f412d4a0"
+}

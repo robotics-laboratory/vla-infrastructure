@@ -84,6 +84,32 @@ stage log этого master scope нет, его неизвестное расп
 
 ![Распределение бюджета разных архитектурных scopes](overview_budget.png)
 
+**Уточнение decision/apply (2026-10-11).** Одинаковое название таймера в1–2
+не означает одинаковый состав работы с3–8. В раннем `full_scene_probe`
+IK добавлен через `pre_step_callback`: `ik.solve(_command(...))` вызывается
+перед `performance.begin_step()`, результат этого дополнительного IK workload
+не используется для native targets. Поэтому его время отсутствует в0,671мс
+decision/apply и входит в межтиковый service/residual. В рабочем runner
+`decision_solver=solve` вызывается внутри decision/apply, а результат DLS
+используется для реально применяемой команды.
+
+В reach-demo этот же участок дополнительно строит Cartesian target, читает
+актуальные TCP poses, считает ошибку/ограничение шага, собирает motion diagnostics
+и aperture feedback, затем выполняет DLS, causal prepare и native apply.
+Следовательно,0,671→2,458мс (**3,66×**) не доказывает замедление одного и того
+же solver. Варианты3/5/6/7/8 имеют соответственно2,154/2,406/2,481/2,451/2,458мс:
+в последних native итерациях четырёхкратного роста нет. Межтиковый residual
+раннего теста1,622мс включает и прочую работу, поэтому его нельзя объявлять
+чистым временем IK или использовать для точного solver A/B. Нужен одинаковый
+motion/state path с отдельными вложенными таймерами, чтобы разделить собственно
+DLS, чтения state, диагностику, prepare и apply.
+
+Кодовые границы: [ранний probe](deep_research/full_scene_probe.py),
+[injected loop](../../../tools/isaac_vr_injected_recording.py),
+[текущий runner](../../../tools/run_single_gpu_live_recording.py).
+Saved source snapshot конечного soak и raw source receipts проверены в
+[receipt уточнения](decision_apply_checks.json); новых simulation runs нет.
+
 ## 0. Master: live state/action, RGB после эпизода
 
 ```mermaid
