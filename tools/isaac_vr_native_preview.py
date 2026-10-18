@@ -7,6 +7,7 @@ below retain current/previous images, not a proof of asynchronous copy completio
 """
 import os
 import threading
+from types import SimpleNamespace
 
 class SharedCameraPreview:
     def __init__(self, config, *, isolation=None, visible=True, transport="cuda", max_publications=None):
@@ -18,6 +19,12 @@ class SharedCameraPreview:
         self.closed = self.failed = False
         self.last_source_id, self.publications, self.bytes = None, 0, 0
         self.retained, self.previous, self.panels = {}, {}, {}
+        self._layouts = None
+        self._layout_manager = SimpleNamespace(_feeds=[])
+        wall_layout = config["vr_camera_feeds"].get("wall_layout")
+        self._wall_layout = ({k: v for k, v in wall_layout.items() if k != "max_update_hz"}
+                             if wall_layout is not None else None)
+        self._shutdown_providers = []
         self.presenter = _KitSceneUiCameraFeedPresenter()
         self.transport, self.cpu_probe, self.copy_queue = transport, None, None
         self.gpu_retained, self.max_publications = [], max_publications
@@ -44,6 +51,8 @@ class SharedCameraPreview:
             for cfg, (width, height) in zip(_layout_feed_cfgs(cfgs, sizes, layout_cfg), sizes, strict=True):
                 panel = self.presenter.create_panel(_panel_descriptor(cfg, layout_cfg), width, height)
                 self.panels[self.roles[cfg.camera_name]] = panel
+                self._layout_manager._feeds.append(SimpleNamespace(
+                    cfg=cfg, panel=panel, image=SimpleNamespace(shape=(height, width, 4))))
                 # Preserve the selected repair for camera-resolution child layout.
                 panel._component.resolution_scale = 1.0
                 panel._component.unit_to_pixel_scale = float(width) / panel._component.width
@@ -61,10 +70,16 @@ class SharedCameraPreview:
     def _guard(self):
         if self.closed or self.failed or threading.get_ident() != self.thread:
             raise RuntimeError("Preview requires its healthy Kit owner thread")
+    def _all_panels(self):
+        if getattr(self, "_layouts", None) is not None:
+            return [panel for panels in self._layouts.panels.values() for panel in panels]
+        return list(self.panels.values())
+
     def set_visible(self, visible):
         self._guard()
-        for panel in self.panels.values():
-            if visible:
+        active = {id(panel) for panel in self.panels.values()}
+        for panel in self._all_panels():
+            if visible and id(panel) in active:
                 panel._container.show()
                 if self.isolation is not None:
                     self.isolation.check_panel(panel)
@@ -73,6 +88,38 @@ class SharedCameraPreview:
                 if self.isolation is not None:
                     self.isolation.release_panel(panel)
         self.visible = bool(visible)
+
+    def consume_layout_button(self, value):
+        """Switch existing RGB sources on L3 rising edges; no render or upload."""
+        self._guard()
+        if self._layouts is None:
+            if value <= 0.5:
+                return False
+            if self._wall_layout is None:
+                raise ValueError("Wall preview layout is not configured")
+            from isaac_vr_preview_layout import PreviewLayoutPanels
+            self._layouts = PreviewLayoutPanels(self._layout_manager, self.presenter,
+                                               self._wall_layout, self.isolation)
+            for feed, panel in zip(self._layout_manager._feeds, self._layouts.panels["wall"], strict=True):
+                width = self.sizes[self.roles[feed.cfg.camera_name]][0]
+                panel._component.resolution_scale = 1.0
+                panel._component.unit_to_pixel_scale = float(width) / panel._component.width
+        if not self._layouts.consume_button(value):
+            return False
+        self.panels = {self.roles[feed.cfg.camera_name]: feed.panel
+                       for feed in self._layout_manager._feeds}
+        if self.cpu_probe is not None:
+            self.cpu_probe.providers = {role: panel._provider for role, panel in self.panels.items()}
+        self.set_visible(self.visible)
+        return True
+
+    def layout_report(self):
+        if self._layouts is not None:
+            return self._layouts.report()
+        return dict(mode="head_locked", toggle_count=0,
+                    order=[feed.cfg.camera_name for feed in self._layout_manager._feeds],
+                    persistent_panel_count=len(self.panels))
+
     def publish(self, source_id, images):
         self._guard()
         if type(source_id) is not int or source_id < 0 or (self.last_source_id is not None and source_id <= self.last_source_id):
@@ -121,7 +168,11 @@ class SharedCameraPreview:
         if self.closed:
             return
         errors = []
-        for panel in reversed(tuple(self.panels.values())):
+        # SDK panel.close clears _provider. Keep its actual native owner through
+        # Kit shutdown, including copies still pending in the scoped ACK queue.
+        self._shutdown_providers = [provider for panel in self._all_panels()
+                                    if (provider := getattr(panel, "_provider", None)) is not None]
+        for panel in reversed(self._all_panels()):
             for release in ([lambda panel=panel: self.isolation.release_panel(panel)]
                             if self.isolation is not None else []) + [panel.close]:
                 try:
@@ -129,7 +180,10 @@ class SharedCameraPreview:
                 except BaseException as exc:
                     errors.append(str(exc))
         if getattr(self, "copy_queue", None) is not None:
-            self.copy_queue.close()  # Pending/orphan GPU owners stay anchored until Kit shutdown.
+            try:
+                self.copy_queue.close()  # Pending/orphan owners remain anchored until Kit shutdown.
+            except BaseException as exc:
+                errors.append(str(exc))
         self.panels.clear()
         self.previous.clear()
         self.retained.clear()

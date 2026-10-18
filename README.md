@@ -110,6 +110,19 @@ The host prints the headset client URL and connection instructions. See the
 [VR operator guide](docs/project/RUN_VR_OPERATIONS.md) for headset setup,
 controller mappings and runtime options.
 
+To test the live-camera research architectures through the same human controls:
+
+```bash
+./run-vr --list-runtimes
+./run-vr run --runtime native-live
+./run-vr record --runtime native-live
+./run-vr diag --runtime native-proof
+./run-vr run --runtime master
+```
+
+Native profiles are experimental; historical throughput does not qualify the
+current Quest session. The `master` runtime uses the pinned original checkout.
+
 ### Record a demonstration
 
 ```bash
@@ -132,6 +145,8 @@ Saved-demo metadata groups the technical recording segments.
 
 Follow [dataset materialization](docs/DATASET_MATERIALIZATION.md) to extract the
 recording, render offline RGB, create LeRobot outputs and evaluate admission.
+Native profiles additionally retain live video/source-binding companions;
+their LeRobot conversion is not yet integrated with that offline-RGB workflow.
 
 ## Components
 

@@ -1,0 +1,38 @@
+{
+  "head": "897e6018bf92fd8ba2add6055cfedfce12c91b14",
+  "branch": "research/live-camera-recording-30hz",
+  "checkpoint_ref": "checkpoint/before-human-runtime-profiles-20261018-897e601",
+  "master": "beaedfd1116577fd4d8026232cfb96cba0b030fa",
+  "status_clean": true,
+  "bundle_verified": true,
+  "files": {
+    "branch.bundle": {
+      "bytes": 23985474,
+      "sha256": "56125c5e9eb6a58d9bbb2c68a22dbc9a7349a736d3b9398176a496a46725f061"
+    },
+    "branches.txt": {
+      "bytes": 9638,
+      "sha256": "6c01a45c34c8aa5ff8f1d0a703232fa66f7663c50f6262a7ef1eb766eee37cf0"
+    },
+    "bundle-create.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "bundle-verify.log": {
+      "bytes": 418,
+      "sha256": "83ae99ed514680b18425bef6b8ce348412d8d45b984c0c4721d42fd96805ce89"
+    },
+    "index.patch": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "status.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "worktree.patch": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

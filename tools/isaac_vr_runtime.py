@@ -595,6 +595,10 @@ class VRRuntime:
 
     def open(self, env) -> None:
         self._env = env
+        if getattr(self, "native_session", None) is not None:
+            self._display_visible = bool(self.native_session.media.preview
+                                         and self.native_session.media.preview.visible)
+            return
         self._initial_capture = asdict(env.latest_observation_capture())
         self._runtime_frames = self._camera_frames()
         self._runtime_capture_cycles = self.camera_rig.capture_cycles_total
@@ -754,6 +758,18 @@ class VRRuntime:
         self._backdrop_button_pressed = pressed
 
     def consume_layout_button(self, value: float, *, event_origin: str = "controller_pipeline") -> None:
+        native = getattr(self, "native_session", None)
+        if native is not None:
+            preview = native.media.preview
+            if preview is None or not preview.consume_layout_button(value):
+                return
+            self._preview_layout_report = preview.layout_report()
+            if self._preview_layout_report["mode"] == "wall":
+                self._set_backdrop_visibility(True)
+            print(json.dumps({"event": "demo_preview_layout_changed",
+                              "event_origin": event_origin,
+                              **self._preview_layout_report}, sort_keys=True), flush=True)
+            return
         if self._preview_layouts is None or not self._preview_layouts.consume_button(value):
             return
         self._feed_updates.invalidate()
@@ -842,6 +858,13 @@ class VRRuntime:
 
     def _set_display(self, visible: bool) -> None:
         if visible == self._display_visible:
+            return
+        if getattr(self, "native_session", None) is not None:
+            preview = self.native_session.media.preview
+            if preview is None:
+                raise RuntimeError("Native preview was disabled for this no-XR smoke")
+            preview.set_visible(visible)
+            self._display_visible = visible
             return
         if self._env is None:
             raise RuntimeError("demo HUD cannot change before runtime binding")
@@ -1339,11 +1362,15 @@ def run_vr(
     """Build the selected VR scene, validate it, then enter the existing S2 loop."""
 
     config = load_composition(args_cli.demo_profile)
+    from isaac_vr_runtime_profiles import load_runtime_profile
+
+    runtime_profile = load_runtime_profile(getattr(args_cli, "vr_runtime_variant", "selected"))
+    native = runtime_profile["native"]
     render_substeps = int(config["rendering"]["physics_substeps_per_render"])
     if render_substeps != 4:
         raise ValueError("The selected VR composition requires FFFT rendering")
     recording = bool(args_cli.s2_record)
-    if recording and args_cli.demo_hud_on_start:
+    if recording and args_cli.demo_hud_on_start and not native:
         raise ValueError("RECORD forbids live camera previews")
     print(f"[VR] profile={args_cli.demo_profile} physical_human_gate=required")
     sim = sim_utils.SimulationContext(
@@ -1421,7 +1448,7 @@ def run_vr(
         create_camera(
             sim.stage, f"{path}/ZEDCamera", config["cameras"]["wrist"],
             zed_selection, zed_identity, rgba=True, wrist=True,
-            live_rgb_enabled=not recording,
+            live_rgb_enabled=not recording and not native,
         ) for path in wrist_paths
     )
     wrist_cameras = tuple(result[0] for result in wrist_results)
@@ -1429,9 +1456,9 @@ def run_vr(
     scene_camera, scene_mount = create_camera(
         sim.stage, "/World/RobosynDemo/SceneCamera", config["cameras"]["scene"],
         zed_selection, zed_identity, rgba=bool(args_cli.demo_preview_scene), wrist=False,
-        live_rgb_enabled=not recording,
+        live_rgb_enabled=not recording and not native,
     )
-    camera_rig = VRCameraRig(wrist_cameras, scene_camera, live_rgb_enabled=not recording)
+    camera_rig = VRCameraRig(wrist_cameras, scene_camera, live_rgb_enabled=not recording and not native)
     camera_rig.zed_mounts = {
         "left_wrist": wrist_results[0][1], "right_wrist": wrist_results[1][1],
         "scene": scene_mount,
@@ -1457,6 +1484,11 @@ def run_vr(
         hud_on_start=bool(args_cli.demo_hud_on_start),
         diagnostic=args_cli.s2_mode == "diagnostic",
     )
+    if native:
+        from isaac_vr_native_bootstrap import prepare_stage
+
+        args_cli.native_source_layer = prepare_stage(runtime_profile, sim)
+        runtime.pipeline_action_dim = 26
     sim.reset()
     env = environment_type(
         sim,
@@ -1491,4 +1523,18 @@ def run_vr(
         print(f"[DEMO] scene preview={args_cli.demo_scene_preview}", flush=True)
     from isaac_s2_runtime import run_s2
 
-    return run_s2(env, args_cli, simulation_app, stop_requested=stop_requested)
+    if native:
+        from isaac_vr_native_session import NativeRuntimeSession
+
+        runtime.native_session = NativeRuntimeSession(env, args_cli)
+        physics_prim = sim.stage.GetPrimAtPath(sim.cfg.physics_prim_path)
+        runtime.native_session.physics = {
+            "simulation_device": str(sim.device),
+            "scene_attributes": {name: physics_prim.GetAttribute(name).Get() for name in (
+                "physxScene:enableGPUDynamics", "physxScene:broadphaseType", "physxScene:solverType")},
+        }
+    try:
+        return run_s2(env, args_cli, simulation_app, stop_requested=stop_requested)
+    finally:
+        if native:
+            runtime.native_session.close()

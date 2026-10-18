@@ -1,12 +1,16 @@
 """Opt-in current Kit stage RGB products -> owned CUDA frames -> NVENC/preview.
 
-Never reads HDF or applies recorder transforms. Held-state capture preserves
-the native physics counter. Source IDs are bindings, not optical proof.
+Never reads HDF or applies recorder transforms. Camera/preview ownership spans
+RUN/DIAG and recording episodes; only attached episodes open encoders and binding
+HDF. Held-state capture preserves the native physics counter. Source IDs are
+bindings, not optical proof.
 """
 import importlib.util
 from collections import deque
 import json
+import os
 from pathlib import Path
+from types import SimpleNamespace
 import threading
 import time
 
@@ -24,9 +28,8 @@ class NativeKitMedia:
         import torch
         import warp as wp
         from isaac_vr_live_gpu import _CheckedCudaFences
-        from isaac_vr_live_nvenc import PacketEncoder
 
-        self.record, self.env, self.output = record, env, Path(output)
+        self.record, self.env, self.output = None, env, Path(output)
         self.output.mkdir(parents=True, exist_ok=False)
         self.thread, self.closed, self.failed = threading.get_ident(), False, False
         self.torch, self.rep, self.wp = torch, rep, wp
@@ -36,9 +39,14 @@ class NativeKitMedia:
         self.products, self.annotators, self.references, self.encoders = [], [], [], []
         self.rows, self.preview, self.marker = deque(maxlen=3), None, None
         self.capture_count = 0
-        self.previous = record._capture_new_observation
-        self.was_owned = "_capture_new_observation" in vars(record)
-        self.saved_instance = vars(record).get("_capture_new_observation")
+        self.previous, self.saved_instance, self.was_owned = None, None, False
+        self.episode_output, self.row_file = None, None
+        self.encoded_count = self.boundary_count = self.warmup_skips = 0
+        self.source_epoch = env.camera.reset_epoch
+        self.bind_sources = bind_sources
+        self.binding_options = dict(clock_only=proof_clock_only,
+                                    attribute_only=attribute_only, identity_only=identity_only)
+        self.episode_receipts = []
         self.restored_settings = {}
         self.partition_specs = []
         self.consumer, self.latest_results, self.last_result_ids = None, {}, None
@@ -59,7 +67,6 @@ class NativeKitMedia:
             raise ValueError("Live source bindings require rendered geometry proof")
         if optical_proof and (not source_proof or witness):
             raise ValueError("Optical publication proof requires source proof and disabled old witness")
-        self.row_file = (self.output / "frames.jsonl").open("x", buffering=1)
         try:
             self.device = wp.get_device("cuda:0")
             self.stream, self.fences = wp.Stream(self.device), _CheckedCudaFences()
@@ -69,8 +76,12 @@ class NativeKitMedia:
                                    ("/renderer/lowLatency", True),
                                    ("/rtx/post/aa/op", 0),
                                    ("/rtx/newDenoiser/enabled", False)):
-                    self.restored_settings[key] = self.settings.get(key)
-                    self.settings.set(key, value)
+                    previous = self.settings.get(key)
+                    if previous != value:
+                        print(json.dumps(dict(event="native_renderer_setting", key=key,
+                                              previous=previous, requested=value)), flush=True)
+                        self.restored_settings[key] = previous
+                        self.settings.set(key, value)
             if rendering != "default":
                 asynchronous = rendering.startswith("async")
                 for key, value in (("/app/asyncRendering", asynchronous),
@@ -131,9 +142,9 @@ class NativeKitMedia:
                 reference.attach([product.path])
                 self.references.append(reference)
             if capture == "callback":
-                from live_mirror import load
-                helper = Path(__file__).resolve().parents[1] / "docs/experiments/20261009_live_camera_recording_30hz/native_live/render_callback.py"
-                consumer = load(helper, "native_live_callback").NativeResultConsumer
+                from isaac_vr_native_callback import NativeResultConsumer
+
+                consumer = NativeResultConsumer
                 if source_proof:
                     from isaac_vr_native_source_proof import NativeSourceProof
                     self.source_proof = NativeSourceProof(env, self.output, optical=optical_proof,
@@ -146,6 +157,7 @@ class NativeKitMedia:
                                                           attribute_probe=attribute_probe,
                                                           attribute_only=attribute_only, identity_only=identity_only)
                 if managed_probe:
+                    from live_mirror import load
                     path = Path(__file__).resolve().parents[1] / "docs/experiments/20261009_live_camera_recording_30hz/native_deep/managed_event_probe.py"
                     self.managed_probe = load(path, "native_managed_probe").ManagedEventProbe(
                         {role: (p.path, p.hydra_texture) for role, p in zip(ROLES, self.products)},
@@ -189,14 +201,6 @@ class NativeKitMedia:
                 self._publish_marker(0)
             for _ in range(12):
                 self._pump()
-            with self.device.context_guard:
-                for role in range(3):
-                    self.encoders.append(PacketEncoder(
-                        self.output / "media" / f"role{role}", width=960, height=600,
-                        cpu=False, cuda_context=self.device.context,
-                        cuda_stream=self.stream.cuda_stream, gpu=0, fps=30,
-                        release_owner=lambda frame: None,
-                        synchronize=lambda: self.fences.stream(self.stream)))
             if preview:
                 from isaac_vr_native_preview import SharedCameraPreview
                 from isaac_preview_partitions import PreviewPartitions
@@ -248,32 +252,150 @@ class NativeKitMedia:
                 effective_settings={k: self.settings.get(k) for k in self.restored_settings},
                 physics_step_at_setup=self.initial_native_step,
                 preview_isolation="scene-partitions" if preview else None), indent=2, default=str) + "\n")
-            if bind_sources:
-                import h5py
-                import numpy as np
-                from isaac_vr_native_binding import NativeSourceBinding
-                self.source_binding = NativeSourceBinding(capacity=256, clock_only=proof_clock_only,
-                                                          attribute_only=attribute_only, identity_only=identity_only)
-                self.binding_hdf = h5py.File(self.output / "camera_bindings.hdf5", "x", libver="latest")
-                dtype = np.dtype([(k, "<i8") for k in (
-                    "packet_ordinal", "current_capture_sequence", "actual_capture_sequence",
-                    "publication_id", "reset_epoch", "physics_step", "state_generation")]
-                    + [("scene_state_snapshot_id", "S512"), ("scene_state_snapshot_sha256", "S64")])
-                self.binding_table = self.binding_hdf.create_dataset(
-                    "bindings", shape=(0,), maxshape=(None,), chunks=(64,), dtype=dtype)
-                self.binding_hdf.attrs.update(
-                    schema="native_live_rendered_source_bindings_v1", committed_rows=0,
-                    state_hdf="../episode/session.hdf5", roles=json.dumps(list(ROLES)),
-                    media=json.dumps([f"media/role{i}/stream.h264" for i in range(3)]),
-                    dataset_admissible=False, optical_alignment_proven=False, receipt="")
-                self.binding_hdf.attrs["proof_scope"] = self.source_binding.proof_scope
-                self.binding_hdf.attrs["body_geometry_checked"] = self.source_binding.proof_scope == "full_native_body_camera"
-                self.binding_hdf.attrs["camera_geometry_checked"] = not identity_only
-                self.binding_hdf.flush()
-                self.binding_hdf.swmr_mode = True
-            record._capture_new_observation = self.capture
+            if record is not None:
+                self.start_recording(record, self.output)
         except BaseException:
             self.close()
+            raise
+
+    def start_recording(self, record, output):
+        """Attach one episode; camera, callback and source clock retain ownership."""
+        self._guard()
+        if self.record is not None:
+            raise RuntimeError("A native media recording is already attached")
+        if self.env.camera.reset_epoch != self.source_epoch:
+            raise RuntimeError("Reset requires reset_source_epoch before recording")
+        from isaac_vr_live_nvenc import PacketEncoder
+        self.episode_output = Path(output)
+        self.episode_output.mkdir(parents=True, exist_ok=self.episode_output == self.output)
+        self.capture_count = self.encoded_count = self.warmup_skips = 0
+        self.episode_first_step = None
+        self.rows.clear()
+        self.record = record
+        self.previous = record._capture_new_observation
+        self.was_owned = "_capture_new_observation" in vars(record)
+        self.saved_instance = vars(record).get("_capture_new_observation")
+        record._capture_new_observation = self.capture
+        try:
+            self.row_file = (self.episode_output / "frames.jsonl").open("x", buffering=1)
+            with self.device.context_guard:
+                for role in range(3):
+                    self.encoders.append(PacketEncoder(
+                        self.episode_output / "media" / f"role{role}", width=960, height=600,
+                        cpu=False, cuda_context=self.device.context,
+                        cuda_stream=self.stream.cuda_stream, gpu=0, fps=30,
+                        release_owner=lambda frame: None,
+                        synchronize=lambda: self.fences.stream(self.stream)))
+            self._open_bindings()
+        except BaseException:
+            self.failed = True
+            self.stop_recording()
+            raise
+
+    def _open_bindings(self):
+        if self.bind_sources:
+            import h5py
+            import numpy as np
+            from isaac_vr_native_binding import NativeSourceBinding
+            self.source_binding = NativeSourceBinding(capacity=256, **self.binding_options)
+            self.binding_hdf = h5py.File(self.episode_output / "camera_bindings.hdf5", "x", libver="latest")
+            dtype = np.dtype([(k, "<i8") for k in (
+                "packet_ordinal", "current_capture_sequence", "actual_capture_sequence",
+                "publication_id", "reset_epoch", "physics_step", "state_generation")]
+                + [("scene_state_snapshot_id", "S512"), ("scene_state_snapshot_sha256", "S64")])
+            self.binding_table = self.binding_hdf.create_dataset(
+                "bindings", shape=(0,), maxshape=(None,), chunks=(64,), dtype=dtype)
+            self.binding_hdf.attrs.update(
+                schema="native_live_rendered_source_bindings_v1", committed_rows=0,
+                state_hdf=os.path.relpath(getattr(self.record, "hdf5_path",
+                    self.episode_output.parent / "episode/session.hdf5"), self.episode_output),
+                roles=json.dumps(list(ROLES)),
+                media=json.dumps([f"media/role{i}/stream.h264" for i in range(3)]),
+                dataset_admissible=False, optical_alignment_proven=False, receipt="")
+            self.binding_hdf.attrs["proof_scope"] = self.source_binding.proof_scope
+            self.binding_hdf.attrs["body_geometry_checked"] = self.source_binding.proof_scope == "full_native_body_camera"
+            self.binding_hdf.attrs["camera_geometry_checked"] = not self.binding_options["identity_only"]
+            self.binding_hdf.flush()
+            self.binding_hdf.swmr_mode = True
+
+    def _guard(self):
+        if self.closed or self.failed or threading.get_ident() != self.thread:
+            raise RuntimeError("Native camera capture requires its Kit owner thread")
+
+    def reset_source_epoch(self):
+        """Acknowledge a detached canonical reset without resetting native publication IDs."""
+        self._guard()
+        if self.record is not None:
+            raise RuntimeError("Detach recording before resetting native source history")
+        self.source_epoch = self.env.camera.reset_epoch
+        self.last_result_ids = None
+        # Called after canonical reset/settling renders. No-proof profiles retain
+        # that completed triplet without assigning it a rendered source identity.
+        if self.source_proof:
+            self.latest_results = {role: result for role, result in self.latest_results.items()
+                if result.get("source_proof", {}).get("reset_epoch") == self.source_epoch}
+            for publication, entry in list(self.source_proof.history.items()):
+                if entry.get("source", {}).get("reset_epoch") != self.source_epoch:
+                    del self.source_proof.history[publication]
+
+    def stop_recording(self):
+        """Drain only the episode. Keep camera, preview and native forward hook live."""
+        if threading.get_ident() != self.thread:
+            raise RuntimeError("Native recording drain requires its Kit owner thread")
+        if self.record is None:
+            return getattr(self, "last_episode_receipt", None)
+        errors, encoded = [], []
+        def release(action):
+            try:
+                return action()
+            except BaseException as exc:
+                errors.append(str(exc))
+        if vars(self.record).get("_capture_new_observation") == self.capture:
+            if self.was_owned:
+                self.record._capture_new_observation = self.saved_instance
+            else:
+                vars(self.record).pop("_capture_new_observation", None)
+        else:
+            errors.append("Another owner replaced the recording capture hook")
+        self.record = None
+        for encoder in self.encoders:
+            def finish(encoder=encoder):
+                with self.device.context_guard:
+                    return encoder.finish()
+            encoded.append(release(finish))
+        binding = self.source_binding.receipt() if getattr(self, "source_binding", None) else None
+        if getattr(self, "binding_hdf", None):
+            release(lambda: self.binding_hdf.attrs.modify("receipt", json.dumps(binding)))
+            release(self.binding_hdf.close)
+        if self.row_file:
+            release(self.row_file.close)
+        receipt = dict(source="main_kit_stage_rgb", captures=self.capture_count,
+                       encoded_packets=getattr(self, "encoded_count", self.capture_count),
+                       warmup_skips=getattr(self, "warmup_skips", 0),
+                       encode_done_ns=time.monotonic_ns(), encoders=encoded,
+                       cleanup_errors=errors, source_binding=binding,
+                       snapshot_renderer_used=False, dataset_admissible=False)
+        output = getattr(self, "episode_output", None) or self.output
+        release(lambda: (output / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n"))
+        self.encoders, self.source_binding, self.binding_hdf = [], None, None
+        self.previous = self.saved_instance = None
+        self.last_episode_receipt = receipt
+        if hasattr(self, "episode_receipts"):
+            self.episode_receipts.append(dict(output=str(output), **receipt))
+        if errors:
+            self.failed = True
+            raise RuntimeError("Native camera encoder drain failed: " + str(errors))
+        return receipt
+
+    def capture_boundary(self, token=None, frames=None):
+        """Observe a canonical control boundary, including detached RUN/DIAG preview."""
+        self._guard()
+        if token is None and self.record is not None:
+            raise RuntimeError("Attached recording owns its canonical observation capture")
+        try:
+            return self._capture_current(token, frames)
+        except BaseException:
+            self.failed = True
             raise
 
     def _native_step(self):
@@ -345,14 +467,27 @@ class NativeKitMedia:
             self.failed = True
             raise
 
-    def _capture_current(self):
+    def _capture_current(self, token=None, frames=None):
         if getattr(self, "legacy_products", False) and not self.rows:
             self.verify_product_settings("first-capture")
-        token, frames = self.previous()
+        recording = self.record is not None
+        if token is None:
+            if recording:
+                token, frames = self.previous()
+            else:
+                token = SimpleNamespace(capture_sequence=getattr(self, "boundary_count", 0),
+                    physics_step=self.env.sim.get_physics_step_count(),
+                    reset_epoch=self.env.camera.reset_epoch,
+                    state_generation=self.env._state_physics_step,
+                    scene_state_snapshot_id=None, scene_state_snapshot_sha256=None)
+        if token.reset_epoch != getattr(self, "source_epoch", token.reset_epoch):
+            raise RuntimeError("Reset requires reset_source_epoch before capture")
+        if recording and token.capture_sequence != self.capture_count:
+            raise RuntimeError("Nonconsecutive native source boundary")
         if getattr(self, "source_binding", None):
             self.source_binding.register(token)
-        if token.capture_sequence != self.capture_count:
-            raise RuntimeError("Nonconsecutive native source boundary")
+            if self.episode_first_step is None:
+                self.episode_first_step = token.physics_step
         if self.marker:
             self._publish_marker(token.capture_sequence)
         start = time.monotonic_ns()
@@ -395,31 +530,57 @@ class NativeKitMedia:
             raise RuntimeError("Native camera source boundary changed during extraction")
         completed = time.monotonic_ns()
         result_ids = {role: result["frame_identifier"] for role, result in self.latest_results.items()}
-        binding = None
-        if getattr(self, "source_binding", None):
-            binding = self.source_binding.bind(
-                token.capture_sequence,
-                {role: result["source_proof"] for role, result in self.latest_results.items()})
+        binding, warmup = None, False
+        proofs = {role: result.get("source_proof") for role, result in self.latest_results.items()}
+        if getattr(self, "source_proof", None):
+            identities = set()
+            for role in ROLES:
+                proof = proofs.get(role)
+                if (not isinstance(proof, dict) or proof.get("role") != role
+                        or proof.get("failed_paths") or proof.get("unresolved")
+                        or not (proof.get("geometry_matched") is True
+                                or proof.get("proof_scope") == "publication_attribute"
+                                and proof.get("history_join_matched") is True
+                                and proof.get("attribute_clock_matched") is True)):
+                    raise RuntimeError("Native rendered source proof is unresolved or mismatched")
+                identities.add((proof.get("publication_id"), proof.get("reset_epoch"), proof.get("physics_step")))
+            if len(identities) != 1:
+                raise RuntimeError("Native rendered roles disagree on source identity")
+            _, epoch, step = next(iter(identities))
+            if epoch != token.reset_epoch or step is None or step > token.physics_step:
+                raise RuntimeError("Native rendered source crosses current epoch/time")
+            warmup = bool(getattr(self, "source_binding", None) and step < self.episode_first_step)
         if self.consumer:
+            # Start observes the already completed O_t before any native step.
+            # Reuse it once; subsequent observations still require fresh results.
+            initial_reuse = recording and self.capture_count == 0 and result_ids == self.last_result_ids
             if result_ids == self.last_result_ids:
-                raise RuntimeError("Native result callback did not advance")
+                if not recording:
+                    return token, frames
+                if not initial_reuse:
+                    raise RuntimeError("Native result callback did not advance")
             ids = [tuple(sorted(v.items())) for v in result_ids.values()]
             if len(set(ids)) != 1:
                 raise RuntimeError("Native result callback roles have different result identities")
-            if self.last_result_ids and any(result_ids[role]["frameNumber"] <= old["frameNumber"]
+            if self.last_result_ids and not initial_reuse and any(result_ids[role]["frameNumber"] <= old["frameNumber"]
                                             for role, old in self.last_result_ids.items()):
                 raise RuntimeError("Native result callback identity regressed")
             self.last_result_ids = result_ids
+        if getattr(self, "source_binding", None) and not warmup:
+            binding = self.source_binding.bind(getattr(self, "encoded_count", self.capture_count), proofs)
+            if len(binding["scene_state_snapshot_id"].encode("utf-8")) > 512:
+                raise ValueError("Snapshot identity exceeds binding HDF capacity")
         for reference in self.references:
             references.append(str(reference.get_data()))
-        from isaac_vr_live_nvenc import CudaRGBAFrame
-        with self.device.context_guard:
-            for index, role in enumerate(ROLES):
-                image = images[role]
-                self.encoders[index].submit(CudaRGBAFrame(image, image.data_ptr(), 960, 600),
-                                            token.capture_sequence)
+        if recording and not warmup:
+            from isaac_vr_live_nvenc import CudaRGBAFrame
+            with self.device.context_guard:
+                for index, role in enumerate(ROLES):
+                    image = images[role]
+                    self.encoders[index].submit(CudaRGBAFrame(image, image.data_ptr(), 960, 600),
+                                                getattr(self, "encoded_count", self.capture_count))
         if self.preview:
-            self.preview.publish(token.capture_sequence, images)
+            self.preview.publish(getattr(self, "boundary_count", token.capture_sequence), images)
             # Provider copies GPU memory; retain immutable frames through upload.
             if (getattr(self.preview, "cpu_probe", None) is None
                     and getattr(self.preview, "transport", None) not in ("cuda-retained", "cuda-event")):
@@ -436,42 +597,48 @@ class NativeKitMedia:
                    native_copy_ns={role: result.get("copy_ns") for role, result in self.latest_results.items()},
                    rendered_source_proof={role: result.get("source_proof") for role, result in self.latest_results.items()},
                    camera_source_binding=binding,
+                   encoded=recording and not warmup,
+                   coverage="pre_episode_source_skipped" if warmup else "recorded" if recording else "preview_only",
                    preview_transport=getattr(self.preview, "transport", None),
                    source="main_kit_stage_rgb", optical_alignment_proven=False)
         self.rows.append(row)
-        self.capture_count += 1
-        self.row_file.write(json.dumps(row) + "\n")
+        self.boundary_count = getattr(self, "boundary_count", 0) + 1
+        if recording:
+            self.capture_count += 1
+            self.encoded_count = getattr(self, "encoded_count", self.capture_count - 1) + (not warmup)
+            self.warmup_skips = getattr(self, "warmup_skips", 0) + warmup
+            self.row_file.write(json.dumps(row) + "\n")
         if binding is not None:
             snapshot = binding["scene_state_snapshot_id"].encode("utf-8")
             if len(snapshot) > 512:
                 raise ValueError("Snapshot identity exceeds binding HDF capacity")
-            self.binding_table.resize((self.capture_count,))
+            self.binding_table.resize((self.encoded_count,))
             self.binding_table[-1] = tuple(binding[k] for k in self.binding_table.dtype.names[:7]) + (
                 snapshot, binding["scene_state_snapshot_sha256"].encode("ascii"))
-            self.binding_hdf.attrs.modify("committed_rows", self.capture_count)
+            self.binding_hdf.attrs.modify("committed_rows", self.encoded_count)
             self.binding_hdf.flush()
         return token, frames
 
     def close(self):
         if self.closed:
             return getattr(self, "receipt", {})
-        if self.was_owned:
-            self.record._capture_new_observation = self.saved_instance
-        else:
-            vars(self.record).pop("_capture_new_observation", None)
-        errors, encoded = [], []
+        if threading.get_ident() != self.thread:
+            raise RuntimeError("Native camera teardown requires its Kit owner thread")
+        errors = []
+        episode = getattr(self, "last_episode_receipt", None)
+        if self.record is not None:
+            try:
+                episode = self.stop_recording()
+            except BaseException as exc:
+                errors.append(str(exc))
+                episode = getattr(self, "last_episode_receipt", None)
+        encoded = episode["encoders"] if episode else []
+        done = episode["encode_done_ns"] if episode else time.monotonic_ns()
         if getattr(self, "legacy_products", False):
             try:
                 self.verify_product_settings("after-loop")
             except BaseException as exc:
                 errors.append(str(exc))
-        for encoder in self.encoders:
-            try:
-                with self.device.context_guard:
-                    encoded.append(encoder.finish())
-            except BaseException as exc:
-                errors.append(str(exc))
-        done = time.monotonic_ns()
         def release(action):
             try:
                 action()
@@ -543,15 +710,15 @@ class NativeKitMedia:
             release(lambda: self.settings.destroy_item(key) if value is None else self.settings.set(key, value))
             if self.settings.get(key) != value:
                 errors.append(f"Setting restoration mismatch: {key}")
-        release(self.row_file.close)
-        if getattr(self, "binding_hdf", None):
-            self.binding_hdf.attrs.modify("receipt", json.dumps(self.source_binding.receipt()))
-            release(self.binding_hdf.close)
         self.closed = True
         self.receipt = dict(source="main_kit_stage_rgb", captures=getattr(self, "capture_count", len(self.rows)),
                             encode_done_ns=done, encoders=encoded, cleanup_errors=errors,
                             preview_publications=self.preview.publications if self.preview else 0,
-                            source_binding=self.source_binding.receipt() if getattr(self, "source_binding", None) else None,
+                            source_binding=episode.get("source_binding") if episode else None,
+                            encoded_packets=episode.get("encoded_packets", 0) if episode else 0,
+                            warmup_skips=episode.get("warmup_skips", 0) if episode else 0,
+                            episodes=getattr(self, "episode_receipts", []),
+                            preview_boundaries=getattr(self, "boundary_count", 0),
                             native_callback_counts=dict(self.consumer.counts) if self.consumer else {},
                             snapshot_renderer_used=False, dataset_admissible=False)
         if self.preview and getattr(self.preview, "cpu_probe", None):

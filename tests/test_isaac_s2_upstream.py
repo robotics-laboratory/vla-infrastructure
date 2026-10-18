@@ -290,6 +290,17 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "free L3"):
             self.build_piper_x_bimanual_pipeline(preview_layout_control="left_thumbstick_click")
 
+    def test_native_record_preview_appends_layout_after_unchanged_stop(self) -> None:
+        pipeline = self.build_piper_x_bimanual_pipeline(
+            sensitivity_control="thumbstick_x", display_control="left_primary_click",
+            backdrop_control="right_secondary_click", recenter_control="right_thumbstick_click",
+            record_stop_control="left_secondary_click", preview_layout_control="left_thumbstick_click",
+            native_record_preview=True,
+        )
+        self.assertEqual(pipeline.output_types()["action"].types[0].shape, (27,))
+        with self.assertRaisesRegex(ValueError, "requires both"):
+            self.build_piper_x_bimanual_pipeline(native_record_preview=True)
+
     def test_recording_view_keeps_backdrop_without_enabling_rgb(self) -> None:
         runtime = self.VRRuntime.__new__(self.VRRuntime)
         runtime.config = {"scene": {"backdrop": {"initial_visibility": True}}}
@@ -334,6 +345,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         class Session:
             def __init__(self):
                 self._manager = None
+                self._presenter = object()
                 self.bind_count = 0
                 self.refresh_count = 0
                 self.close_count = 0
@@ -355,6 +367,7 @@ class IsaacS2UpstreamTests(unittest.TestCase):
             "vr_camera_feeds": {
                 "quest_button": "X",
                 "layout": {"placement": "head_locked"},
+                "wall_layout": {},
             },
         }
         runtime.display_control = "left_primary_click"
@@ -368,7 +381,11 @@ class IsaacS2UpstreamTests(unittest.TestCase):
         runtime._display_button_pressed = False
         runtime._display_toggle_count = 0
 
-        runtime._prebind_camera_panels()
+        # This test owns X visibility/lifecycle; layout construction is covered
+        # by the dedicated layout suite and the real-Kit native matrix.
+        layouts = SimpleNamespace(close_inactive=lambda: None, report=lambda: {})
+        with patch("tools.isaac_vr_preview_layout.PreviewLayoutPanels", return_value=layouts):
+            runtime._prebind_camera_panels()
         feeds = runtime._feed_session._manager._feeds
         self.assertEqual(runtime._feed_session.bind_count, 1)
         self.assertEqual(runtime._feed_session.refresh_count, 1)

@@ -548,7 +548,7 @@ def test_native_attribute_probe_must_match_independent_semantic_publication(attr
 
 
 def test_attribute_decoder_rejects_uninitialized_wrong_type_and_shape():
-    path = Path(__file__).resolve().parents[1] / "docs/experiments/20261009_live_camera_recording_30hz/native_live/render_callback.py"
+    path = Path(__file__).resolve().parents[1] / "tools/isaac_vr_native_callback.py"
     spec = importlib.util.spec_from_file_location("native_attribute_decode_test", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -562,7 +562,7 @@ def test_attribute_decoder_rejects_uninitialized_wrong_type_and_shape():
 
 
 def test_attribute_probe_retains_empty_layout_diagnostic_before_rejection():
-    path = Path(__file__).resolve().parents[1] / "docs/experiments/20261009_live_camera_recording_30hz/native_live/render_callback.py"
+    path = Path(__file__).resolve().parents[1] / "tools/isaac_vr_native_callback.py"
     spec = importlib.util.spec_from_file_location("native_attribute_empty_test", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -627,7 +627,7 @@ def test_attribute_only_comparison_rejects_different_attribute_and_full_inventor
 
 @pytest.mark.parametrize("identity_only", [False, True])
 def test_attribute_only_callback_graph_has_camera_and_no_semantic_exporter(monkeypatch, identity_only):
-    path = Path(__file__).resolve().parents[1] / "docs/experiments/20261009_live_camera_recording_30hz/native_live/render_callback.py"
+    path = Path(__file__).resolve().parents[1] / "tools/isaac_vr_native_callback.py"
     spec = importlib.util.spec_from_file_location("native_attribute_graph_test", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -737,7 +737,7 @@ def test_identity_optical_source_check_does_not_promote_geometry_quality():
 
 @pytest.mark.parametrize("cache_helpers", [False, True])
 def test_callback_helpers_cache_accessors_not_mutable_values_and_detach_before_clear(cache_helpers):
-    path = Path(__file__).resolve().parents[1] / "docs/experiments/20261009_live_camera_recording_30hz/native_live/render_callback.py"
+    path = Path(__file__).resolve().parents[1] / "tools/isaac_vr_native_callback.py"
     spec = importlib.util.spec_from_file_location("native_helper_cache_test", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

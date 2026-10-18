@@ -6,7 +6,92 @@ state/action/provenance artifact. S2 physical acceptance is registered in the
 [resolved contract](../../configs/resolved_contract.yaml) for the retained Quest 3
 operator runs. Recording does not create an admitted D1 dataset; D1 remains unresolved.
 
-RUN and DIAG start with three head-locked ZED camera previews visible.
+## Choose a runtime
+
+`--runtime selected` is the default maintained composition described below.
+`--runtime` selects implementation settings within the declared Isaac environment;
+it does not select another environment or accept a gate. Use it with human RUN,
+RECORD or DIAG. These commands use the ordinary XR controller loop:
+
+```sh
+./run-vr --list-runtimes
+./run-vr run --runtime native-live --dry-run
+./run-vr run --runtime native-live
+./run-vr record --runtime native-live
+./run-vr diag --runtime native-live
+./run-vr run --runtime master
+```
+
+| Runtime | Implementation and scope |
+|---|---|
+| `selected` | Maintained selected configuration; RECORD captures state/actions for offline RGB. Shared implementation changes mean this is not exact historical master source. |
+| `master` | Exact original `beaedfd1116577fd4d8026232cfb96cba0b030fa` in the clean pinned `.worktrees/runtime-baseline-master` checkout, dispatched through its original CLI. |
+| `native-sync` | Overview variant 5: main-scene callback cameras and preview with device synchronization. Exact rendered source identity is not checked. |
+| `native-event` | Variant 6: the same camera path with bounded preview ownership and CUDA event copy acknowledgement. Exact rendered source identity is not checked. |
+| `native-proof` | Variant 7: event preview plus full native body/camera geometry comparison and actual historical observation binding. |
+| `native-live` | Variant 8: event preview plus native Attribute source IDs, cached helpers and actual historical observation binding; full per-frame geometry comparison is omitted. |
+
+All four native choices use CPU PhysX and DLS with GPU RTX and preview; RECORD
+also uses GPU NVENC. They compose the shared human S2 loop, rather than running
+the scripted benchmark. Their camera products and preview remain alive across
+Start/Stop, review and subsequent demonstrations; only RECORD opens episode
+writers. RUN/DIAG create neither canonical episode HDF nor NVENC recordings.
+The profiles retain the benchmark's synchronous main-Kit camera recipe and
+standard Replicator product ownership. Their sync/event names distinguish CUDA
+preview fencing. A separate async-product prototype passed an unrecorded RUN
+but failed the source-proved recording path, so it is not a human profile.
+Fresh private state can require lengthy shader-cache compilation; a startup
+pause in a renderer call alone does not prove deadlock. Current renderer
+settings are retained under `native-camera/setup.json`.
+Native RUN/DIAG retain X preview visibility, L3 head-locked/wall layout switching,
+B backdrop visibility and R3 recenter controls. L3 reuses the same GPU frames;
+only active panels upload, and entering the wall layout restores the backdrop.
+Layout state is retained in runtime/session reports. These native panels have
+not received actual Quest visual qualification. Native RECORD retains its X/Y/B
+Start/Stop/review/classification controls and accepts L3 layout changes in
+WAITING, recording and review. X/B are reserved for recording lifecycle, and R3
+does not recenter in RECORD. Set initial camera-preview visibility with
+`--hud-on-start` or `--no-hud-on-start`; X is not a RECORD visibility toggle.
+
+Native RECORD keeps canonical snapshot/state/action HDF observations and adds
+`live_rgb/` H264 streams and metadata, source bindings for `native-proof` and
+`native-live`, and a per-episode `live_rgb_manifest.json`. These companion images
+come from the main live scene. They do not replace the selected snapshot/offline-RGB
+source profile or establish dataset admission. Binding uses the exact actual past
+observation, never a fixed frame offset; startup results outside the episode's
+observation history are explicit warmup skips. Uncovered terminal observations
+remain explicit gaps, not fabricated image matches.
+
+The event profiles build the retained
+[CUPTI adapter](../../tools/native/provider_copy_cupti.cpp) in private launch state
+and obtain their own subscription before Kit starts. They reuse the audited
+PyNvVideoCodec 2.2.3 target; startup does not install dependencies or patch SDK files.
+The version-specific CUDA event acknowledges provider copy completion, not display
+on the Quest. Another CUPTI subscriber causes startup failure. Dry-run prepares
+launch configuration without exercising camera, GPU copy or headset behavior.
+Manual native tests require normal Kit rendering and a working X display with
+`HEADLESS=0`. The installed `HEADLESS=1` visualizer skips `app.update`, preventing
+the native callback from producing all three camera frames. Automated assays
+use `DISPLAY=:0 HEADLESS=0`; that display does not establish Quest presentation.
+
+These settings recreate the architectures in the
+[overview](../experiments/20261009_live_camera_recording_30hz/ARCHITECTURE_OVERVIEW.md)
+using current shared code. They do not recreate the exact historical variant
+source bytes or inherit its FPS. See the
+[human runtime integration record](../experiments/20261018_human_runtime_profiles/README.md)
+for current checks and limitations. Actual Quest presentation, throughput,
+repeated-episode behavior and physical recording qualification require evidence;
+the runtime choices do not promote S2 or D1. The retained source/quality failures,
+physics effects, memory growth and terminal-coverage limits remain open within
+their historical scopes.
+
+## Selected composition
+
+Unless a runtime is named explicitly, the remaining selected camera, preview and
+state-only RECORD descriptions refer to `--runtime selected`. Native runtime
+differences are described above; old master follows its pinned implementation.
+
+Selected RUN and DIAG start with three head-locked ZED camera previews visible.
 X toggles preview visibility in these modes. Use `./run-vr --no-hud-on-start`
 to start with hidden previews. RECORD displays the recording status/review UI;
 `record --hud-on-start` is rejected because camera rendering is forbidden.
@@ -237,7 +322,7 @@ reconnect rebases. A RECORD disconnect interrupts the active demonstration and
 ends the loop rather than resuming it. Host Ctrl-C preserves reports and finalizes recording before returning. It exits
 0 with runtime PASS when at least one control iteration completed and the required
 session, tracking and presentation checks pass without recording errors. Live
-camera validation applies to RUN/DIAG; state-only RECORD never renders cameras
+camera validation applies to selected RUN/DIAG; selected state-only RECORD never renders cameras
 and does not require camera counters on reset/review/classification iterations.
 The report identifies `operator_stop` and whether the requested budget completed;
 Ctrl-C before useful work or with unmet checks remains FAIL (exit 130). An
@@ -297,7 +382,7 @@ intentionally does not maintain another table of settings. The scene sensor `dem
 does not depend on preview visibility.
 
 ```text
-./run-vr [diag|record]
+./run-vr [run|diag|record] --runtime selected|native-sync|native-event|native-proof|native-live
   -> tools/launch_isaac_vr.py
   -> tools/run_isaac_s1.py --vr-runtime --s2-mode run|diagnostic
   -> tools/isaac_vr_runtime.py::run_vr / VRRuntime
@@ -316,7 +401,9 @@ The VR builder reads the canonical composition, and the single S2 loop applies i
 selected controls over the shared S2 semantics. There is no recursive YAML merge.
 RUN/DIAG share scene/controllers/processor/IK/cameras/XR and reset/reconnect/shutdown.
 Human RECORD reuses control and native actuation while using snapshot observations
-and state-only recording. REPLAY opens the recorded snapshot before current scene
+and canonical state/action recording. Native choices add the camera companions
+described above. `--runtime master` dispatches to the pinned checkout's launcher.
+REPLAY opens the recorded snapshot before current scene
 construction and runs without the S2 device/control loop.
 The default profile has no RoboSyn checkout or asset-manifest dependency.
 
@@ -334,7 +421,7 @@ DIAG adds strict frame progression, image hashes, per-step/nested performance
 logs with mean/percentiles/max, GPU sampling, transition/tracking windows, slider
 statistics and presentation counters. Bounded preview PPM capture is opt-in.
 
-RUN, DIAG and RECORD support `--stack`, `--profile`, `--cloudxr-mode`, `--state-root`,
+RUN, DIAG and RECORD support `--runtime`, `--stack`, `--profile`, `--cloudxr-mode`, `--state-root`,
 `--hud-on-start`, `--max-control-steps`, `--dry-run`, `--smoke` and `--xr-smoke`.
 RUN and RECORD also accept `--performance-window-steps` and
 `--performance-warmup-steps`; supplying either enables the existing S2 timing
@@ -512,7 +599,7 @@ There is no cadence switch on the first X or when a recording stops. Reset uses
 Startup preflight still totals 120 integrations. Plain S1 retains its 25-step
 reset and per-step rendering. Simulation rates do not guarantee wall-clock FPS.
 
-RECORD authors the selected ZED USD rigs and optical camera prims, preserving
+Selected RECORD authors the ZED USD rigs and optical camera prims, preserving
 mount poses and scene look-at while using vendor intrinsics. It never constructs dataset Camera sensors,
 annotators or RenderProducts, including preflight, WAITING, RECORDING, review
 and subsequent resets. The headset scene and recording UI still render. Its
@@ -534,7 +621,7 @@ around the initial state so long benchmarks do not accumulate into joint limits.
 Use the assigned checkout/worktree at its intended commit. Keep long-lived
 implementation worktrees under `.worktrees/` and runtime state outside the checkout.
 
-Experimental shared implementation → `./run-vr diag` → automated + physical
+Experimental shared implementation → opt-in human RUN/DIAG/RECORD and diagnostics → automated + physical
 qualification → promote canonical config/status → RUN and RECORD inherit the
 selected shared control semantics. Promotion changes selection,
 not Python ownership. Never copy control loops or builders across modes.
@@ -542,8 +629,10 @@ RECORD reuses that shared scene, XR, controller, processor, IK and native actuat
 path. It exports one `stage_snapshot.usd`, records static scene from that snapshot,
 and stores articulated robots, dynamic cubes, camera pose/intrinsics, SimTime and
 the numeric D0 transition track through public NVIDIA Recordables. Each sample is
-explicitly taken at O0 and after each four-substep control transition. Live canonical
-RGB and preview panels are off in RECORD; no RGB is read, retained or uploaded.
+explicitly taken at O0 and after each four-substep control transition. In selected
+RECORD, live canonical RGB and preview panels are off; no RGB is read, retained or
+uploaded. Explicit native choices add live camera companions to this canonical
+snapshot path without selecting a new admitted dataset source.
 
 `./run-vr replay --recording <session.hdf5> --episode 0` uses the unmodified NVIDIA
 `SessionReader` and `EpisodeReplayer` with the USD pose backend. It disables the S2
@@ -590,16 +679,17 @@ the machine sources and launch path above.
 
 ## Observation capture availability
 
-RUN/DIAG attempt one all-or-none three-camera capture after reset completion or
+Selected RUN/DIAG attempt one all-or-none three-camera capture after reset completion or
 four control substeps. Scene capture remains active while previews are hidden.
 Rejected bundles publish no observation identity; ordinary RUN retains its
 configured camera-health/staleness policy. RUN keeps only the current GPU-backed
 images and immutable identity/state; it does not record
 actions or episodes. Consumers must use a successful current capture before the
-next transition. RECORD instead captures native/Fabric state snapshots and
+next transition. Selected RECORD instead captures native/Fabric state snapshots and
 materializes the three camera roles offline; it does not publish live RGB captures.
 
-Use canonical Kit rendering without `HEADLESS=1`. The pinned headless Kit path
+Use canonical Kit rendering without `HEADLESS=1` for selected and native capture.
+The pinned headless Kit path
 can advance camera counters without pumping fresh pixels; the capture barrier
 rejects it. A no-client `--smoke` run does not require headless rendering or Quest.
 For capture validity and S1 scope, see the
@@ -607,9 +697,11 @@ For capture validity and S1 scope, see the
 
 ## In-memory decision boundary
 
-For eligible RUN/DIAG decisions, the shared loop latches the qualified live
+For eligible selected RUN/DIAG decisions, the shared loop latches the qualified live
 three-camera observation before one synchronous XR update. Human RECORD uses the
-immutable scene-state snapshot at the same pre-action boundary. The owned input
+immutable scene-state snapshot at the same pre-action boundary. Native runtimes
+use that snapshot decision boundary in all three modes, with live callback images
+and source bindings observed alongside it. The owned input
 receipt records both resolved controller tensor groups, the exact world transform,
 session/reference/update epochs and matching upstream
 request/result IDs. These are application provenance, not physical acquisition time.

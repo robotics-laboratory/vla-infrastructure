@@ -7,6 +7,28 @@ Kind: experiment; status: current; owner: `vr.performance`; mutable: true.
 Это запрошенная сравнительная карта всего исследования; подробные отчёты и
 замороженные результаты остаются первоисточниками. Новых GPU-прогонов при сборке карты нет.
 
+## Текущая интеграция для оператора
+
+Варианты 5–8 доступны явно во всех трёх человеческих режимах
+`./run-vr {run,record,diag} --runtime native-sync|native-event|native-proof|native-live`
+через общий S2 control loop. Команды, различия превью и артефакты описаны в
+[операторском руководстве](../../project/RUN_VR_OPERATIONS.md#choose-a-runtime),
+новые проверки и ограничения — в
+[записи интеграции](../20261018_human_runtime_profiles/README.md).
+Это текущая композиция рецептов на общем коде, не воспроизведение точных
+исторических source bytes и не перенос измеренного FPS. `selected` остаётся
+default; `master` отдельно запускает исходный `beaedfd` из pinned clean checkout.
+Native RUN/DIAG используют камеры и preview без HDF/NVENC writers;
+native RECORD добавляет к canonical state/action HDF live RGB companions и,
+для proof/live, привязки к фактическим прошлым observations. L3 переключает
+head-locked/wall layout в native RUN/DIAG и RECORD, включая WAITING/record/review.
+В RECORD X/Y/B сохраняют lifecycle-смысл, начальная видимость preview задаётся
+HUD-флагом; X/B не переключают presentation, R3 не используется для recenter.
+Visual qualification на настоящем Quest пока отсутствует. Старт/стоп записи сохраняет camera/preview
+base; qualification повторных эпизодов и настоящего Quest требует новых proof.
+Ниже сохранён срез исследования и его измерения: новые entrypoints не принимают
+S2/D1, не исправляют исторические quality FAIL и не заполняют непокрытый tail.
+
 ## Где мы сейчас
 
 Найдена практически полезная архитектура: **одна основная Kit-сцена, CPU PhysX

@@ -286,14 +286,15 @@ def test_close_restores_inherited_or_preexisting_capture_and_is_idempotent(
     media.obj.saved_instance = previous if instance_override else None
     media.obj.restored_settings["diagnostic_setting"] = "original"
     media.settings["diagnostic_setting"] = "changed"
+    record = media.obj.record
     receipt = media.obj.close()
     assert media.obj.closed
     assert media.settings["diagnostic_setting"] == "original"
     if instance_override:
-        assert media.obj.record._capture_new_observation is previous
+        assert record._capture_new_observation is previous
     else:
-        assert "_capture_new_observation" not in vars(media.obj.record)
-        assert media.obj.record._capture_new_observation()[0].capture_sequence == 0
+        assert "_capture_new_observation" not in vars(record)
+        assert record._capture_new_observation()[0].capture_sequence == 0
     assert receipt["snapshot_renderer_used"] is False
     assert receipt["dataset_admissible"] is False
     assert media.obj.close() == receipt
@@ -326,13 +327,14 @@ def test_cleanup_failure_still_releases_other_resources_and_restores_settings(me
     ]
     media.obj.restored_settings["diagnostic_setting"] = "original"
     media.settings["diagnostic_setting"] = "changed"
+    record = media.obj.record
     with pytest.raises(RuntimeError):
         media.obj.close()
     assert media.obj.closed
     assert media.obj.row_file.closed
     assert media.settings["diagnostic_setting"] == "original"
     assert sum(event[0] == "destroy" for event in events) == 3
-    assert "_capture_new_observation" not in vars(media.obj.record)
+    assert "_capture_new_observation" not in vars(record)
 
 
 @pytest.fixture

@@ -108,8 +108,11 @@ def recording_session_metadata(
     processor_revision: str,
     demo_id: str | None = None,
     xr_render: dict[str, Any] | None = None,
+    runtime_variant: str | None = None,
 ) -> dict[str, Any]:
     return {
+        **({"runtime_variant": runtime_variant, "live_rgb_companion": "live_rgb_manifest.json"}
+           if runtime_variant is not None else {}),
         **({"demo_id": demo_id} if demo_id is not None else {}),
         **({"xr_render": xr_render} if xr_render else {}),
         "run_id": run_id,

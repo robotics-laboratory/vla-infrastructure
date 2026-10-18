@@ -51,6 +51,8 @@ parser.add_argument("--report", type=Path)
 parser.add_argument("--config", type=Path, default=CONFIG_PATH)
 parser.add_argument("--s2-config", type=Path)
 parser.add_argument("--s2-mode", choices=("run", "diagnostic"), default="diagnostic")
+parser.add_argument("--vr-runtime-variant", default="selected",
+                    choices=("selected", "native-sync", "native-event", "native-proof", "native-live"))
 parser.add_argument("--production-preview", action="store_true")
 parser.add_argument("--combined-preview-test", type=int, default=0)
 parser.add_argument("--preview-control", action="store_true")
@@ -252,6 +254,16 @@ if (
     )
     os.environ["ISAACLAB_CXR_SKIP_AUTOLAUNCH"] = "1"
 
+if args_cli.vr_runtime_variant != "selected":
+    from isaac_vr_runtime_profiles import load_runtime_profile
+    from isaac_vr_native_bootstrap import prepare
+
+    if not args_cli.vr_runtime or args_cli.device != "cpu":
+        parser.error("Native runtime variants require the VR scene and CPU physics/control")
+    args_cli.native_dependencies = prepare(
+        load_runtime_profile(args_cli.vr_runtime_variant),
+        args_cli.report.parent if args_cli.report else args_cli.config.parent,
+    )
 app_launcher = AppLauncher(args_cli)
 simulation_app = app_launcher.app
 # A KeyboardInterrupt raised inside a Kit event callback can be consumed by
@@ -267,12 +279,15 @@ def request_vr_stop(_signum, _frame) -> None:
 
 if args_cli.s2_teleop:
     signal.signal(signal.SIGINT, request_vr_stop)
-if args_cli.s2_record or args_cli.s2_replay_hdf5 is not None:
+if args_cli.s2_record or args_cli.s2_replay_hdf5 is not None or args_cli.vr_runtime_variant != "selected":
     from isaac_episode_recorder_preflight import preflight_episode_recorder
 
     preflight_episode_recorder()
 
 import torch  # noqa: E402
+
+if args_cli.vr_runtime_variant != "selected":
+    torch.set_num_threads(1)
 
 import isaaclab.sim as sim_utils  # type: ignore[import-not-found]  # noqa: E402
 from isaaclab.actuators import ImplicitActuatorCfg  # type: ignore[import-not-found]  # noqa: E402

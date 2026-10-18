@@ -9,12 +9,14 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import pwd
 import subprocess
 import shlex
 import signal
 import sys
 
 from isaac_vr_config import CONFIG_PATH, ASSET_LAB_CONFIG, XR_RESOLUTION_SETTING, load_composition
+from isaac_vr_runtime_profiles import MASTER_COMMIT, RUNTIME_NAMES, load_runtime_profile
 
 import yaml
 
@@ -57,6 +59,8 @@ PROVENANCE_INPUTS = (
     ROOT / "tools/isaac_vr_recording_smoke.py",
     ROOT / "tools/isaac_vr_injected_recording.py",
     ROOT / "tools/isaac_vr_replay.py",
+    ROOT / "tools/isaac_vr_runtime_profiles.py",
+    ROOT / "tools/native/provider_copy_cupti.cpp",
 )
 
 
@@ -78,7 +82,11 @@ def _write_launch_manifest(
     home = environment.get("HOME", str(Path.home()))
     source_hashes = {
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
-        for path in PROVENANCE_INPUTS
+        for path in dict.fromkeys((
+            *PROVENANCE_INPUTS,
+            *sorted((ROOT / "tools").glob("isaac_vr_native*.py")),
+            *sorted((ROOT / "tools").glob("isaac_vr_live*.py")),
+        ))
     }
     s2_path = ROOT / "configs" / stack["s2"]
     s2 = yaml.safe_load(s2_path.read_text())
@@ -94,6 +102,7 @@ def _write_launch_manifest(
         "schema": "piper_x_isaac_vr_run_manifest_v1",
         "run_id": output_dir.name,
         "mode": args.mode,
+        "runtime_profile": args.runtime_profile,
         "top_level_invocation": invocation,
         "top_level_command": shlex.join(invocation),
         "generated_runtime_config_sha256": hashlib.sha256(
@@ -127,6 +136,7 @@ def _write_launch_manifest(
         "launch": {
             "command": command,
             "profile": args.profile,
+            "runtime": args.runtime,
             "stack": args.stack,
             "preview_isolation": args.preview_isolation,
             "preview_cameras": args.preview_cameras,
@@ -170,6 +180,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "mode", nargs="?", choices=("run", "diag", "record", "replay"), default="run"
     )
+    parser.add_argument("--runtime", choices=RUNTIME_NAMES, default="selected",
+                        help="Runtime implementation; --profile independently selects the scene.")
+    parser.add_argument("--list-runtimes", action="store_true", help="List runtime settings without starting Kit.")
+    parser.add_argument("--baseline-checkout", type=Path,
+                        help="Exact clean master source checkout (only with --runtime master).")
     parser.add_argument(
         "--profile",
         choices=("dual_cube_to_matching_plates", "robosyn_asset_lab"),
@@ -228,7 +243,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--hud-on-start",
         action=argparse.BooleanOptionalAction,
         default=None,
-        help="Show camera previews on start (default in RUN/DIAG; forbidden in RECORD).",
+        help="Show camera previews on start (native runtimes also support RECORD previews).",
     )
     parser.add_argument("--scene-preview", type=Path, help="Optional scene-camera PNG output.")
     parser.add_argument(
@@ -273,6 +288,26 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     args = parser.parse_args(invocation)
     args.invocation = invocation
+    args.runtime_profile = load_runtime_profile(args.runtime)
+    if args.list_runtimes:
+        return args
+    native = args.runtime_profile["native"]
+    if args.baseline_checkout is not None and args.runtime != "master":
+        parser.error("--baseline-checkout requires --runtime master")
+    if native and (args.stack != "isaac61" or args.mode == "replay"):
+        parser.error("native runtimes require --stack isaac61 and run, diag or record mode")
+    if native and args.smoke:
+        parser.error("native --smoke lacks the required XR controller session; use --xr-smoke for RUN/DIAG or the human RECORD lifecycle")
+    if native and args.profile != "dual_cube_to_matching_plates":
+        parser.error("native runtimes require --profile dual_cube_to_matching_plates")
+    if native and (args.capture_preview_evidence or args.scene_preview is not None):
+        parser.error("native runtimes do not support --capture-preview-evidence or --scene-preview")
+    if native and (
+        (args.mode == "record" and args.smoke) or args.injected_actions
+        or args.recording_benchmark or args.audit_clutch or args.audit_gaps
+        or args.audit_lifecycle_cycles or args.no_client_audit or args.rgb_e2e_assay
+    ):
+        parser.error("native recording profiles require the human lifecycle; selected owns recording smoke/injected audits")
     args.mode = {"diag": "diagnostic", "record": "record", "replay": "replay"}.get(args.mode, "run")
     performance_flags = {"--performance-window-steps", "--performance-warmup-steps"}
     args.performance_enabled = args.mode == "diagnostic" or (
@@ -390,7 +425,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
             )
     if args.hud_on_start and args.smoke:
         parser.error("HUD measurement requires --xr-smoke or the default physical XR run")
-    if args.hud_on_start and args.mode == "record":
+    if args.hud_on_start and args.mode == "record" and not native:
         parser.error("RECORD forbids camera rendering and previews; use RUN/DIAG")
     if args.recording_dir is not None and args.mode != "record":
         parser.error("--recording-dir requires ./run-vr record")
@@ -438,14 +473,77 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     if args.hud_on_start is None:
         args.hud_on_start = bool(
             config["vr_camera_feeds"]["initial_visibility"]
-            and args.mode in {"run", "diagnostic"}
+            and (args.mode in {"run", "diagnostic"} or (native and args.mode == "record"))
             and not args.smoke and not args.no_client_audit
         )
+    if args.state_root is None and args.runtime != "selected":
+        runtime_state_name = args.runtime
+        if args.runtime == "master":
+            runtime_state_name += f"-{MASTER_COMMIT[:12]}"
+        args.state_root = (Path("/data") / pwd.getpwuid(os.getuid()).pw_name / "vla-runtime"
+                           / f"isaac-{args.stack}-{runtime_state_name}")
     return args
+
+
+def _dispatch_master(args: argparse.Namespace) -> int:
+    """Run the exact historical source, preserving its own parsing and launch path."""
+    default_checkout = ROOT / ".worktrees/runtime-baseline-master"
+    checkout = (args.baseline_checkout or default_checkout).resolve()
+    setup = None
+    if not checkout.exists():
+        if args.baseline_checkout is not None:
+            raise RuntimeError(f"Explicit master runtime checkout does not exist: {checkout}")
+        if checkout != default_checkout or default_checkout.is_symlink():
+            raise RuntimeError("Default master runtime checkout must remain inside the repository")
+        local_git_environment = {**os.environ, "GIT_NO_LAZY_FETCH": "1"}
+        try:
+            subprocess.check_output(
+                ["git", "-C", str(ROOT), "cat-file", "-e", f"{MASTER_COMMIT}^{{commit}}"],
+                text=True, env=local_git_environment,
+            )
+        except (OSError, subprocess.CalledProcessError) as error:
+            raise RuntimeError(f"Pinned master commit {MASTER_COMMIT} is unavailable locally; no fetch was attempted") from error
+        setup = ["git", "-C", str(ROOT), "worktree", "add", "--detach", str(checkout), MASTER_COMMIT]
+        print(f"VR master setup: {shlex.join(setup)}", flush=True)
+        if not args.dry_run:
+            subprocess.check_call(setup, env=local_git_environment)
+    def git(*options: str) -> str:
+        return subprocess.check_output(["git", "-C", str(checkout), *options], text=True).strip()
+    try:
+        if setup is None or not args.dry_run:
+            if Path(git("rev-parse", "--show-toplevel")).resolve() != checkout:
+                raise RuntimeError("baseline path must be a checkout root")
+            if git("rev-parse", "HEAD") != MASTER_COMMIT:
+                raise RuntimeError(f"master runtime requires exact commit {MASTER_COMMIT}")
+            if git("status", "--porcelain=v1", "--untracked-files=all"):
+                raise RuntimeError("master runtime requires a clean checkout, including untracked files")
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise RuntimeError(f"Cannot validate master runtime checkout {checkout}") from error
+    forwarded = []
+    original = iter(args.invocation)
+    for item in original:
+        if item in {"--runtime", "--baseline-checkout"}:
+            next(original)
+        elif not item.startswith(("--runtime=", "--baseline-checkout=")):
+            forwarded.append(item)
+    if not any(item.split("=", 1)[0] == "--state-root" for item in forwarded):
+        forwarded.extend(["--state-root", str(args.state_root)])
+    command = [str(checkout / "run-vr"), *forwarded]
+    print(f"VR master source: {checkout} @ {MASTER_COMMIT}", flush=True)
+    print(f"VR master command: {shlex.join(command)}", flush=True)
+    if args.dry_run:
+        print("VR master dry-run: source/setup inspection only; no checkout or runtime files written.", flush=True)
+        return 0
+    return subprocess.call(command, cwd=checkout)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
+    if args.list_runtimes:
+        print(json.dumps([load_runtime_profile(name) for name in RUNTIME_NAMES], indent=2))
+        return 0
+    if args.runtime == "master":
+        return _dispatch_master(args)
     stack = verify_stack(args.stack)
     config = load_composition(args.profile)
     if not args.dry_run and os.environ.get("OMNI_KIT_ACCEPT_EULA", "").upper() not in {
@@ -479,9 +577,17 @@ def main(argv: list[str] | None = None) -> int:
             output_dir / "camera_feed_diagnostics"
         )
     runtime_config = write_runtime_config(ROOT, stack, state, output_dir)
+    if args.runtime_profile["native"]:
+        runtime = yaml.safe_load(runtime_config.read_text())
+        runtime["vr_runtime_profile"] = args.runtime_profile
+        runtime_config.write_text(yaml.safe_dump(runtime, sort_keys=False))
     bounded = args.smoke or args.xr_smoke
     max_steps = args.max_control_steps
     kit_args = ["--portable-root", str(state / "kit")]
+    if args.runtime_profile["native"]:
+        # Keep the XR experience's renderer scheduling. The throttling
+        # extension must not change it when recording starts or stops.
+        kit_args += ["--/exts/isaacsim.core.throttling/enable_async=false"]
     if args.xr_resolution_scale is not None:
         runtime = yaml.safe_load(runtime_config.read_text())
         runtime["xr_render"] = {
@@ -490,12 +596,14 @@ def main(argv: list[str] | None = None) -> int:
         }
         runtime_config.write_text(yaml.safe_dump(runtime, sort_keys=False))
         kit_args.append(f"--{XR_RESOLUTION_SETTING}={args.xr_resolution_scale}")
-    if args.mode in ("record", "replay"):
+    if args.mode in ("record", "replay") or args.runtime_profile["native"]:
         # The custom Isaac Lab XR experience does not own this extension.
         # Activation must not depend on a cached extension graph.
         kit_args += ["--enable", EPISODE_RECORDER_EXTENSION]
-    if not args.smoke and args.mode != "replay":
+    if (not args.smoke and args.mode != "replay") or args.runtime_profile["native"]:
         kit_args += [
+            "--enable",
+            "omni.kit.xr.core",
             "--enable",
             "omni.kit.scene_view.xr",
             "--enable",
@@ -507,7 +615,7 @@ def main(argv: list[str] | None = None) -> int:
             "--/renderer/scenePartitioning/enabled=true",
             "--/rtx/scenePartitioning/showAllPartitionsByDefault=true",
         ]
-        if args.smoke and args.mode != "record":
+        if args.smoke and args.mode != "record" and not args.runtime_profile["native"]:
             kit_args += ["--enable", "omni.kit.scene_view.xr"]
     command = [
         str(stack["environment"] / "bin/python"),
@@ -522,7 +630,7 @@ def main(argv: list[str] | None = None) -> int:
         "--demo-profile",
         args.profile,
         "--device",
-        "cuda:0",
+        args.runtime_profile["device"] or "cuda:0",
         "--kit_args",
         shlex.join(kit_args),
         "--demo-preview-isolation",
@@ -532,6 +640,8 @@ def main(argv: list[str] | None = None) -> int:
         "--s2-max-control-steps",
         str(max_steps),
     ]
+    if args.runtime_profile["native"]:
+        command.extend(["--vr-runtime-variant", args.runtime])
     if args.mode != "replay" and not (args.mode == "record" and args.smoke):
         command.append("--s2-teleop")
     if args.mode == "record":
@@ -616,7 +726,8 @@ def main(argv: list[str] | None = None) -> int:
         command += ["--viz", "kit"]
     if not args.smoke and args.mode != "replay":
         command += ["--experience", str(stack["lab"] / "apps/isaaclab.python.xr.openxr.kit")]
-    if args.preview_cameras == 3 and args.mode not in ("record", "replay") and not args.no_client_audit:
+    if (args.preview_cameras == 3 and args.mode != "replay"
+            and (args.mode != "record" or args.runtime_profile["native"]) and not args.no_client_audit):
         command.append("--demo-preview-scene")
     if args.hud_on_start:
         command.append("--demo-hud-on-start")

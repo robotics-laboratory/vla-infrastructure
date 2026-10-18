@@ -2,6 +2,15 @@
 
 Сжатая карта всего исследования: [архитектуры0–8, схемы, скорости, бюджеты и текущие ограничения](ARCHITECTURE_OVERVIEW.md).
 
+Для человеческого запуска вариантов 5–8 используйте
+[текущие runtime-команды оператора](../../project/RUN_VR_OPERATIONS.md#choose-a-runtime)
+и [запись интеграции](../20261018_human_runtime_profiles/README.md).
+`native-sync`, `native-event`, `native-proof`, `native-live` доступны в RUN,
+RECORD и DIAG через общий S2 loop; это opt-in композиции рецептов на текущем
+коде, не scripted benchmark и не обещание исторического FPS. Default `selected`
+сохранён, `master` запускает отдельный exact pinned checkout. Новые entrypoints
+не меняют результаты и qualification scope первой фазы ниже и не принимают gates.
+
 Продолжение: [глубокое исследование и реальные live/profile прогоны](deep_research/REPORT.md). Оно добавляет tested OVRTX GPU/NVENC, standalone PhysX, Fabric batching, live source joins и отрицательные результаты; выводы первой фазы ниже сохранены в исходном scope.
 
 

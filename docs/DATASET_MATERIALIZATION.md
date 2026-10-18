@@ -28,6 +28,15 @@ Do not create a runtime multi-dataset abstraction merely to avoid materializatio
 
 ## Isaac VR executable materialization path
 
+This path describes the selected snapshot/offline-RGB recording profile.
+The experimental [native runtime choices](project/RUN_VR_OPERATIONS.md#choose-a-runtime)
+retain the same canonical state/action HDF plus separate live RGB companions.
+Keep their `live_rgb/` contents and `live_rgb_manifest.json` alongside each
+technical episode. Source-bound conversion of those live streams to LeRobot is
+not implemented by the commands below; companion video ordinals must not be
+treated as canonical observation indices. These runtime choices do not create
+a recording-source qualification or dataset admission.
+
 The snapshot/offline-RGB source intentionally spans two isolated environments:
 the pinned Isaac environment owns HDF5 extraction, while the core environment
 owns LeRobot 0.6.1. Run the repository orchestrator from the core environment

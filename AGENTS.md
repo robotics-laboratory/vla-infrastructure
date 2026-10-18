@@ -43,13 +43,19 @@ verification without a registered evidence object.
 
 For VR read [current operations](docs/project/RUN_VR_OPERATIONS.md),
 `configs/isaac61_s2_runtime.yaml` and `configs/isaac61_vr_runtime.yaml`.
-`./run-vr` and `./run-vr diag` share scene, control, processors, cameras/XR and
-lifecycle. Diagnostic observers must not mutate actions or control state.
+`./run-vr {run,diag,record} --runtime <name>` selects an explicit composition;
+`selected` remains the default. Opt-in native experiment profiles are available
+in all three human modes on the same S2 loop, with physical qualification pending.
+Within a composition, share scene, control, processors, cameras/XR and lifecycle.
+Diagnostic observers must not mutate actions or control state.
 Experimental implementation -> diagnostic mode -> automated and physical
 qualification -> promote selection -> run and record inherit the selected
-shared base. Never copy implementations between modes. RECORD already writes
-snapshot-backed state/action artifacts; offline RGB materialization is implemented
-as a later stage. Its observation/rendering path differs from RUN/DIAG.
+shared base. Opt-in human testing does not promote the selected composition.
+Never copy implementations between modes. Selected RECORD writes snapshot-backed
+state/action artifacts with later offline RGB materialization. Native RECORD adds
+main-scene live RGB companions without replacing canonical labels or snapshots;
+RUN/DIAG use that camera/preview base without recording writers. Exact historical
+master runs from its pinned clean checkout. Preserve experiment source scopes.
 Recording does not establish physical S2 qualification or D1 dataset admission.
 
 ## Before creating documents or artifacts

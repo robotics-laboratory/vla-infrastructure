@@ -92,7 +92,8 @@ DEMO_DISPLAY_BUTTON_INDEX = 22
 DEMO_BACKDROP_BUTTON_INDEX = 23
 DEMO_RECENTER_BUTTON_INDEX = 24
 RECORD_STOP_BUTTON_INDEX = 25
-PREVIEW_LAYOUT_BUTTON_INDEX = 25  # RUN layout and RECORD Stop are disjoint profiles.
+PREVIEW_LAYOUT_BUTTON_INDEX = 25  # RUN layout and selected RECORD Stop are disjoint.
+RECORD_PREVIEW_LAYOUT_BUTTON_INDEX = 26  # Explicit native RECORD appends L3 after Stop.
 
 
 def _gf_row_matrix_to_numpy_transform(matrix: Any) -> np.ndarray:
@@ -285,6 +286,7 @@ def build_piper_x_bimanual_pipeline(
     record_stop_control: str | None = None,
     receipt: XrInputReceipt | None = None,
     preview_layout_control: str | None = None,
+    native_record_preview: bool = False,
 ) -> OutputCombiner:
     """Build the one-source bimanual controller pipeline used by S2.
 
@@ -292,10 +294,12 @@ def build_piper_x_bimanual_pipeline(
     action. Production S2 callers leave all of them unset.
     """
 
+    if native_record_preview and (preview_layout_control is None or record_stop_control is None):
+        raise ValueError("Native recording preview requires both layout and Stop controls")
     if preview_layout_control is not None:
         if preview_layout_control != "left_thumbstick_click" or sensitivity_control == "thumbstick_click":
             raise ValueError("Preview layout requires free L3 with slider sensitivity")
-        if record_stop_control is not None:
+        if record_stop_control is not None and not native_record_preview:
             raise ValueError("RECORD forbids camera preview layout controls")
     controllers = (ControllersSource(name="piper_x_s2_controllers") if receipt is None
                    else _OwnedControllersSource("piper_x_s2_controllers", receipt))

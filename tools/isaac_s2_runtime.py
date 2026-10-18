@@ -42,6 +42,7 @@ from isaac_s2_upstream import (
     DEMO_DISPLAY_BUTTON_INDEX,
     DEMO_RECENTER_BUTTON_INDEX,
     RECORD_STOP_BUTTON_INDEX,
+    RECORD_PREVIEW_LAYOUT_BUTTON_INDEX,
     PREVIEW_LAYOUT_BUTTON_INDEX,
     PIPELINE_ACTION_DIM,
     build_piper_x_bimanual_pipeline,
@@ -74,6 +75,17 @@ def _solve_native_decision(
         xr if eligible else None,
         control_tick_id if eligible else None,
     )
+
+
+def _consume_native_record_layout(runtime, values):
+    """Use the appended L3 control without consuming RECORD's X/Y/B actions."""
+    value = float(values[RECORD_PREVIEW_LAYOUT_BUTTON_INDEX])
+    if not np.isfinite(value):
+        raise RuntimeError("Non-finite recording preview layout button")
+    left, _ = unpack_pipeline_action(values[:PIPELINE_ACTION_DIM])
+    # A missing controller frame is not a physical release of a held L3.
+    if left.available:
+        runtime.consume_layout_button(value)
 
 
 def _gpu_observation() -> dict[str, Any]:
@@ -126,15 +138,17 @@ class _BimanualDifferentialIk:
         for controller in self.controllers:
             controller.reset()
 
-    def _state(self, arm, robot, wrist_id, ids):
+    def _state(self, arm, robot, wrist_id, ids, *, pose_only=False):
         standalone = getattr(self.env, "standalone_state", None)
         if standalone is not None:
             return standalone.ik_state(arm)
+        tcp_pose = robot.data.body_link_pose_w.torch[:, wrist_id]
+        if pose_only:
+            return {"tcp_pose_w": tcp_pose, "root_pose_w": robot.data.root_pose_w.torch}
         jacobian_index = wrist_id - 1 if robot.is_fixed_base else wrist_id
         joint_ids = [joint_id + robot.num_base_dofs for joint_id in ids[:6]]
         return {
-            "tcp_pose_w": robot.data.body_link_pose_w.torch[:, wrist_id],
-            "root_pose_w": robot.data.root_pose_w.torch,
+            "tcp_pose_w": tcp_pose,
             "q": robot.data.joint_pos.torch[:, ids[:6]],
             "jacobian": robot.data.body_link_jacobian_w.torch[:, jacobian_index, :, joint_ids],
             "limits": robot.data.joint_limits.torch[0, ids[:6], :],
@@ -147,7 +161,7 @@ class _BimanualDifferentialIk:
         for arm, (robot, wrist_id, ids) in enumerate(zip(
             self.env.robots, self.env.wrist_ids, self.env.joint_ids, strict=True,
         )):
-            state = self._state(arm, robot, wrist_id, ids)
+            state = self._state(arm, robot, wrist_id, ids, pose_only=True)
             tcp_world, root_world = state["tcp_pose_w"], state["root_pose_w"]
             position, quaternion = subtract_frame_transforms(
                 root_world[:, :3], root_world[:, 3:], tcp_world[:, :3], tcp_world[:, 3:]
@@ -232,6 +246,7 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
     """Run S2 using an already-created accepted S1 environment."""
 
     recording_requested = bool(getattr(args_cli, "s2_record", False))
+    native_session = getattr(getattr(env, "vr_runtime", None), "native_session", None)
     if recording_requested and not getattr(args_cli, "s2_teleop", False):
         return run_recording_lifecycle_smoke(
             env,
@@ -269,8 +284,9 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
     ):
         raise ValueError("Diagnostic-only flags require ./run-vr diag ...")
     experiment = getattr(env, "vr_runtime", None)
-    experimental = experiment is not None and experiment.profile == "robosyn_asset_lab"
-    if experimental and not diagnostic:
+    asset_experimental = experiment is not None and experiment.profile == "robosyn_asset_lab"
+    experimental = asset_experimental or native_session is not None
+    if asset_experimental and not diagnostic:
         raise ValueError("robosyn_asset_lab requires ./run-vr diag ...")
     camera_guard = CameraGuard(
         0
@@ -369,7 +385,7 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
         pipeline_kwargs["display_control"] = experiment.display_control
         pipeline_kwargs["backdrop_control"] = experiment.backdrop_control
         pipeline_kwargs["recenter_control"] = experiment.recenter_control
-        if not recording_requested:
+        if not recording_requested or native_session is not None:
             pipeline_kwargs["preview_layout_control"] = experiment.layout_control
         pipeline_action_dim = experiment.pipeline_action_dim
     if recording_requested:
@@ -381,6 +397,9 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
             record_stop_control="left_secondary_click",
         )
         pipeline_action_dim = RECORD_STOP_BUTTON_INDEX + 1
+        if native_session is not None:
+            pipeline_kwargs["native_record_preview"] = True
+            pipeline_action_dim = RECORD_PREVIEW_LAYOUT_BUTTON_INDEX + 1
     teleop_cfg = IsaacTeleopCfg(
         xr_cfg=XrCfg(
             anchor_pos=anchor_position,
@@ -401,6 +420,8 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
     ik.device, ik.processor = device, processor
     reset_observation = env.reset(0)
     del reset_observation
+    if native_session is not None:
+        native_session.reset()
     processor.reset()
     ik.reset()
     if getattr(args_cli, "s2_current_record_audit", None) is not None:
@@ -534,6 +555,8 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
         try:
             with (performance.boundary("technical_episode_end", reason=reason)
                   if performance is not None else nullcontext()):
+                if native_session is not None:
+                    summary["live_rgb"] = native_session.stop_recording()
                 recording_session.end_episode(outcome=outcome, reason=reason)
         finally:
             recording = None
@@ -589,6 +612,8 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
         with (performance.boundary("demo_reset") if performance is not None
               else nullcontext()):
             env.reset(0)
+            if native_session is not None:
+                native_session.reset()
             processor.reset()
             ik.reset()
             camera_guard.reset()
@@ -691,6 +716,8 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                     observation = recording_token.observation
                 elif lifecycle is not None and lifecycle.admits_recording:
                     observation = capture_state_snapshot(env)
+                elif native_session is not None:
+                    observation = capture_state_snapshot(env)
                 elif getattr(env, "vr_runtime", None) is not None:
                     try:
                         observation = env.latest_observation_capture()
@@ -731,6 +758,8 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                                               DEMO_BACKDROP_BUTTON_INDEX]]
                         if not np.isfinite(buttons).all():
                             raise RuntimeError("Non-finite recording buttons")
+                    if native_session is not None and action is not None:
+                        _consume_native_record_layout(experiment, values)
                     previous_state = lifecycle.state
                     event = lifecycle.buttons(x=buttons[0] >= 0.5, y=buttons[1] >= 0.5,
                                               b=buttons[2] >= 0.5)
@@ -777,6 +806,8 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                         # Keep XR input/rendering alive; no IK or D0 on menu ticks.
                         if event not in ("stop", "save", "discard", "success", "failure", "incomplete"):
                             env._advance(4)
+                            if native_session is not None:
+                                native_session.capture_boundary()
                         completed_control_steps = step
                         continue
                 if performance is not None:
@@ -821,6 +852,8 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                     continue
                 if environment_reset_requested:
                     env.reset(0)
+                    if native_session is not None:
+                        native_session.reset()
                     processor.reset()
                     ik.reset()
                     if experiment is not None and not recording_requested:
@@ -980,6 +1013,8 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                                     demo_id=lifecycle.demo_id,
                                     execution_profile="isaac_vr_record",
                                     processor_revision=PROCESSOR_REVISION,
+                                    runtime_variant=(args_cli.vr_runtime_variant
+                                                     if native_session is not None else None),
                                 ), portable_roots=roots, **recording_options,
                             )
                         recording_session = RecordingSession(
@@ -1002,6 +1037,8 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                         )
                         demo_start_requested_ns = None
                     recording_episode_index += 1
+                    if native_session is not None:
+                        native_session.start_recording(recording)
                     with (performance.boundary("episode_first_observation_capture")
                           if performance is not None else nullcontext()):
                         recording_token = recording.capture_observation()
@@ -1055,7 +1092,10 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                     recording_requested=recording_requested,
                     eligible=eligible,
                 )
-                if eligible:
+                if eligible and (native_session is None or recording_requested):
+                    # Detached native RUN/DIAG has a fresh state observation but
+                    # no recorder snapshot. IK/apply still validate state/XR;
+                    # only recording can prepare a persistent state transaction.
                     assert observation is not None and xr is not None
                     device.validate_xr(xr)
                     epoch = decision_epoch(
@@ -1071,7 +1111,8 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                             "isaac",
                             "human_vr",
                             epoch,
-                            profile=(recording.source_profile if recording is not None else None),
+                            profile=(recording.source_profile if recording is not None else
+                                     "isaac_human_vr_offline_rgb_v2" if native_session is not None else None),
                         )
                     elif validator.epoch != epoch:
                         if recording is not None and recording.committed_frames:
@@ -1199,9 +1240,11 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                     )
                     stage_started_ns = time.perf_counter_ns()
                 camera = {"valid": True, "strictly_advanced": False, "roles": {}}
-                if not recording_requested:
+                if native_session is not None:
+                    camera = native_session.capture_boundary()
+                elif not recording_requested:
                     camera = camera_guard.sample(env)
-                if diagnostic:
+                if diagnostic and native_session is None:
                     camera = _camera_sample(env, previous_camera_indices)
                     previous_camera_indices = camera.pop("frame_indices")
                     if not camera["valid"] or not camera["strictly_advanced"]:
@@ -1323,6 +1366,8 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                         outcome="failure" if recording_failure_reason else "aborted",
                         reason=recording_failure_reason or "session_closed",
                     )
+            if native_session is not None:
+                native_session.close()
             if experiment is not None:
                 experiment.close()
         finally:
@@ -1493,7 +1538,8 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
                 for role in ("left_wrist", "right_wrist")
             },
             "validation": (
-                "not_applicable_state_only_record" if recording_requested else "live_rgb"
+                "main_kit_native_callback" if native_session is not None
+                else "not_applicable_state_only_record" if recording_requested else "live_rgb"
             ),
             "valid_bimanual_frames": camera_valid_frames,
             "strictly_advanced_bimanual_frames": camera_advanced_frames,
@@ -1502,7 +1548,11 @@ def run_s2(env, args_cli, simulation_app, *, stop_requested=None) -> int:
         "physical_human_gate": "required_not_implied_by_runtime_smoke",
         "passed": passed,
     }
-    if experiment is not None and diagnostic:
+    if native_session is not None:
+        report["native_runtime"] = native_session.report()
+        report["runtime_variant"] = args_cli.vr_runtime_variant
+        report["dataset_admissible"] = False
+    if experiment is not None and diagnostic and native_session is None:
         report["gpu"]["samples"] = gpu_samples
         report["composition"] = experiment.performance_report(elapsed, camera_advanced_frames)
         report["canonical_d0_changed"] = False

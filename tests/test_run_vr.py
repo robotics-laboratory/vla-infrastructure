@@ -611,6 +611,7 @@ def test_actual_loop_processor_and_native_target_parity(tmp_path, monkeypatch, d
         DEMO_DISPLAY_BUTTON_INDEX=22,
         DEMO_RECENTER_BUTTON_INDEX=24,
         RECORD_STOP_BUTTON_INDEX=25,
+        RECORD_PREVIEW_LAYOUT_BUTTON_INDEX=26,
         PREVIEW_LAYOUT_BUTTON_INDEX=25,
         PIPELINE_ACTION_DIM=22,
         build_piper_x_bimanual_pipeline=lambda **k: None,

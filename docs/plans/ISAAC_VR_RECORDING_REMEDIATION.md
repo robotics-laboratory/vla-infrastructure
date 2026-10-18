@@ -298,6 +298,43 @@ Tracking loss/recovery, sensitivity and reference/session changes remain gaps.
 [the decision boundary](../../tools/isaac_vr_decision.py) owns this distinction;
 invalid ticks never become zero-action placeholders.
 
+The selected source contract remains snapshot/offline-RGB V2. The explicit
+`./run-vr {run,record,diag} --runtime native-sync|native-event|native-proof|native-live`
+compositions make overview variants 5–8 available through the shared human S2
+loop. They use CPU PhysX/DLS and main-scene live cameras; they do not substitute
+the injected benchmark for human input. Current settings recreate those
+architectures, not their exact retained source bytes or measured throughput.
+`--runtime master` separately dispatches the exact original `beaedfd` checkout;
+`selected` remains the default maintained composition.
+
+Native RECORD retains canonical HDF snapshot/state/action semantics and writes
+live camera companions in each episode's `live_rgb/`, with
+`live_rgb_manifest.json` and source bindings for the proof/live variants.
+RUN/DIAG use the same native camera/preview base without HDF/NVENC writers.
+Camera products and preview persist across recording starts/stops. Native
+RUN/DIAG retain X visibility, L3 head-locked/wall layout, B backdrop and R3
+recenter controls. Native RECORD uses X/Y/B for its existing recording lifecycle
+and L3 for layout in WAITING, recording and review. Its initial HUD option
+controls preview visibility; X/B do not toggle presentation in RECORD, and R3
+is not a recording recenter control.
+Native layout state is included in runtime/session reports; actual Quest visual
+qualification remains pending. Source bindings identify
+actual past observations. Explicit warmup skips and terminal coverage gaps must
+remain visible; a constant frame offset must never manufacture a match.
+Companions do not replace the selected source profile or qualify D1 admission.
+
+The event profiles build the retained adapter in private launch state and own
+their CUPTI subscription before Kit; the existing audited codec target is reused
+without SDK edits or package installation. The event is copy completion, not
+headset presentation. Current integration checks and remaining work belong to the
+[human runtime integration record](../experiments/20261018_human_runtime_profiles/README.md)
+and [operator guide](../project/RUN_VR_OPERATIONS.md#choose-a-runtime).
+These opt-in human modes are available for qualification without promoting the
+selected composition. Historical exact-source/geometry checks do not settle
+image quality, uncovered tails, CPU preview physics effects, memory growth,
+repeated demonstrations or actual Quest performance for this integration.
+No S2/D1 gate is promoted by adding the entrypoints.
+
 [The operator lifecycle](../../tools/isaac_vr_episode_lifecycle.py) and its
 [runtime composition](../../tools/isaac_s2_runtime.py) implement explicit
 Start/Stop/Save/Discard, separate success/failure/incomplete classification,

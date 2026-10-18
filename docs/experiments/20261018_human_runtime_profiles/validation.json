@@ -1,0 +1,754 @@
+{
+  "schema": "human_runtime_profile_integration_validation_v1",
+  "status": "functional_checks_passed_manual_quest_pending",
+  "trusted_base": "897e6018bf92fd8ba2add6055cfedfce12c91b14",
+  "master_baseline": "beaedfd1116577fd4d8026232cfb96cba0b030fa",
+  "checkpoint_ref": "checkpoint/before-human-runtime-profiles-20261018-897e601",
+  "artifact_root": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018",
+  "physical": false,
+  "actual_quest_qualified": false,
+  "dataset_admissible": false,
+  "performance_qualified": false,
+  "gate_bindings": [],
+  "matrix": [
+    {
+      "case": "native-live-record-matrix03",
+      "passed": true,
+      "elapsed_process_s": 17.45259582530707,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-record-matrix03/assay/assay_receipt.json",
+      "receipt_sha256": "bb0b72e4a162fc1b8c1f39c6b4a8d626d78db72d311719af744c625b993b783c",
+      "checks": {
+        "episodes": [
+          {
+            "path": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-record-matrix03/assay/recordings/episode_000000",
+            "committed_rows": 14,
+            "bound_frames": 11,
+            "encoded_packets": 11,
+            "hdf5_sha256": "21f32253754f5cd4316eeeec872c64abff5fa6d6a593a81b475ed79daab1ae61"
+          },
+          {
+            "path": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-record-matrix03/assay/recordings/6aba0a90a35c4adebb19246153ae434d/episode_000000",
+            "committed_rows": 14,
+            "bound_frames": 11,
+            "encoded_packets": 11,
+            "hdf5_sha256": "2c6171aac52d5d61dc6c946169bbcb05019a50a6aee4ac1d3a11c026b3cb0805"
+          }
+        ],
+        "saved_demonstrations": 2,
+        "reset_ticks": [
+          2,
+          22,
+          44
+        ],
+        "preview_layout": {
+          "mode": "head_locked",
+          "order": [
+            "left_wrist",
+            "demo_scene",
+            "right_wrist"
+          ],
+          "persistent_panel_count": 6,
+          "toggle_count": 6
+        },
+        "validated_xr_identities": 84,
+        "final_state": "waiting"
+      }
+    },
+    {
+      "case": "native-live-run-matrix03",
+      "passed": true,
+      "elapsed_process_s": 9.135278678499162,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-run-matrix03/assay/assay_receipt.json",
+      "receipt_sha256": "b7db06a4e86366479b166b2d723500bda7ecf70ae759eb16a65ce39de32f9607",
+      "checks": {
+        "mode": "run",
+        "control_ticks": 16,
+        "preview_layout": {
+          "mode": "head_locked",
+          "order": [
+            "left_wrist",
+            "demo_scene",
+            "right_wrist"
+          ],
+          "persistent_panel_count": 6,
+          "toggle_count": 2
+        },
+        "validated_xr_identities": 30,
+        "last_applied_xr_update": 16,
+        "episode_writers": 0,
+        "unbound_snapshot_decisions_applied": true
+      }
+    },
+    {
+      "case": "native-live-diag-matrix03",
+      "passed": true,
+      "elapsed_process_s": 9.183302166871727,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-diag-matrix03/assay/assay_receipt.json",
+      "receipt_sha256": "0e8a178c8163048dedf390e1000887f8b96696924ed5c410ef284e1636776904",
+      "checks": {
+        "mode": "diag",
+        "control_ticks": 16,
+        "preview_layout": {
+          "mode": "head_locked",
+          "order": [
+            "left_wrist",
+            "demo_scene",
+            "right_wrist"
+          ],
+          "persistent_panel_count": 6,
+          "toggle_count": 2
+        },
+        "validated_xr_identities": 30,
+        "last_applied_xr_update": 16,
+        "episode_writers": 0,
+        "unbound_snapshot_decisions_applied": true
+      }
+    },
+    {
+      "case": "native-sync-record-matrix03",
+      "passed": true,
+      "elapsed_process_s": 75.28405030258,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-sync-record-matrix03/assay/assay_receipt.json",
+      "receipt_sha256": "506a981c3620939f5794bd8d5532b3a01fb0b224cd01f593bc9f3d9a6f99986c",
+      "checks": {
+        "episodes": [
+          {
+            "path": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-sync-record-matrix03/assay/recordings/episode_000000",
+            "committed_rows": 14,
+            "bound_frames": null,
+            "encoded_packets": 15,
+            "hdf5_sha256": "e8cac442512de71c037703bee4716a4b1b734eedc636cb06e917033810b44b3e"
+          },
+          {
+            "path": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-sync-record-matrix03/assay/recordings/dcea120dc55d4d31841791d594e9b5cb/episode_000000",
+            "committed_rows": 14,
+            "bound_frames": null,
+            "encoded_packets": 15,
+            "hdf5_sha256": "dc2f20aab920968db0ea7a62e2c290f7bcc62bdfa0a351fc762e8c08a8f02914"
+          }
+        ],
+        "saved_demonstrations": 2,
+        "reset_ticks": [
+          2,
+          22,
+          44
+        ],
+        "preview_layout": {
+          "mode": "head_locked",
+          "order": [
+            "left_wrist",
+            "demo_scene",
+            "right_wrist"
+          ],
+          "persistent_panel_count": 6,
+          "toggle_count": 6
+        },
+        "validated_xr_identities": 84,
+        "final_state": "waiting"
+      }
+    },
+    {
+      "case": "native-sync-run-matrix03",
+      "passed": true,
+      "elapsed_process_s": 9.030593447387218,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-sync-run-matrix03/assay/assay_receipt.json",
+      "receipt_sha256": "38feeaa27d77eba94203264a1ae841903d43a007fbc705fbf659b279ed2cf21b",
+      "checks": {
+        "mode": "run",
+        "control_ticks": 16,
+        "preview_layout": {
+          "mode": "head_locked",
+          "order": [
+            "left_wrist",
+            "demo_scene",
+            "right_wrist"
+          ],
+          "persistent_panel_count": 6,
+          "toggle_count": 2
+        },
+        "validated_xr_identities": 30,
+        "last_applied_xr_update": 16,
+        "episode_writers": 0,
+        "unbound_snapshot_decisions_applied": true
+      }
+    },
+    {
+      "case": "native-sync-diag-matrix03",
+      "passed": true,
+      "elapsed_process_s": 9.18018591683358,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-sync-diag-matrix03/assay/assay_receipt.json",
+      "receipt_sha256": "e868729d37eb2cdd975a3a24daa418f5ac9194aa2a98a0a38bb1f2b5dca92bdd",
+      "checks": {
+        "mode": "diag",
+        "control_ticks": 16,
+        "preview_layout": {
+          "mode": "head_locked",
+          "order": [
+            "left_wrist",
+            "demo_scene",
+            "right_wrist"
+          ],
+          "persistent_panel_count": 6,
+          "toggle_count": 2
+        },
+        "validated_xr_identities": 30,
+        "last_applied_xr_update": 16,
+        "episode_writers": 0,
+        "unbound_snapshot_decisions_applied": true
+      }
+    },
+    {
+      "case": "native-event-record-matrix03",
+      "passed": true,
+      "elapsed_process_s": 18.851973470300436,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-event-record-matrix03/assay/assay_receipt.json",
+      "receipt_sha256": "081446374e0959a30f14e48cd4d07db39f56a79a60f345d1751679cbd02ba968",
+      "checks": {
+        "episodes": [
+          {
+            "path": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-event-record-matrix03/assay/recordings/episode_000000",
+            "committed_rows": 14,
+            "bound_frames": null,
+            "encoded_packets": 15,
+            "hdf5_sha256": "71036012cf4f2745e5c780e1cf0629d223530d12abe126fd78ba9e11d7678746"
+          },
+          {
+            "path": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-event-record-matrix03/assay/recordings/43bb198e105341eebb7c04e788a60538/episode_000000",
+            "committed_rows": 14,
+            "bound_frames": null,
+            "encoded_packets": 15,
+            "hdf5_sha256": "bad8ebd821ad732501c829128ab49f5b061b530181edcf027c2f9804bbc5d42f"
+          }
+        ],
+        "saved_demonstrations": 2,
+        "reset_ticks": [
+          2,
+          22,
+          44
+        ],
+        "preview_layout": {
+          "mode": "head_locked",
+          "order": [
+            "left_wrist",
+            "demo_scene",
+            "right_wrist"
+          ],
+          "persistent_panel_count": 6,
+          "toggle_count": 6
+        },
+        "validated_xr_identities": 84,
+        "final_state": "waiting"
+      }
+    },
+    {
+      "case": "native-event-run-matrix03",
+      "passed": true,
+      "elapsed_process_s": 9.08234500978142,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-event-run-matrix03/assay/assay_receipt.json",
+      "receipt_sha256": "836bf7f1c8893795d3b5b227b8cea79151690a6311897c1ea72bba7502c0f25f",
+      "checks": {
+        "mode": "run",
+        "control_ticks": 16,
+        "preview_layout": {
+          "mode": "head_locked",
+          "order": [
+            "left_wrist",
+            "demo_scene",
+            "right_wrist"
+          ],
+          "persistent_panel_count": 6,
+          "toggle_count": 2
+        },
+        "validated_xr_identities": 30,
+        "last_applied_xr_update": 16,
+        "episode_writers": 0,
+        "unbound_snapshot_decisions_applied": true
+      }
+    },
+    {
+      "case": "native-event-diag-matrix03",
+      "passed": true,
+      "elapsed_process_s": 8.9306102944538,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-event-diag-matrix03/assay/assay_receipt.json",
+      "receipt_sha256": "0f3a18db5cdac17d4b1e834a41bcf3d02a173979127293d74275fde83ad605f1",
+      "checks": {
+        "mode": "diag",
+        "control_ticks": 16,
+        "preview_layout": {
+          "mode": "head_locked",
+          "order": [
+            "left_wrist",
+            "demo_scene",
+            "right_wrist"
+          ],
+          "persistent_panel_count": 6,
+          "toggle_count": 2
+        },
+        "validated_xr_identities": 30,
+        "last_applied_xr_update": 16,
+        "episode_writers": 0,
+        "unbound_snapshot_decisions_applied": true
+      }
+    },
+    {
+      "case": "native-proof-record-matrix03",
+      "passed": true,
+      "elapsed_process_s": 107.4111666912213,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-proof-record-matrix03/assay/assay_receipt.json",
+      "receipt_sha256": "ae5b68d6603580e5cdcf8d593c99cf007d194e04c580390138a465506b6a88ea",
+      "checks": {
+        "episodes": [
+          {
+            "path": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-proof-record-matrix03/assay/recordings/episode_000000",
+            "committed_rows": 14,
+            "bound_frames": 11,
+            "encoded_packets": 11,
+            "hdf5_sha256": "82fbcfcabef3d480e06f3930ab46876be7dc300adeefd6acf34f0ef9d480501e"
+          },
+          {
+            "path": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-proof-record-matrix03/assay/recordings/592d436a3981448ea653ba4e3ed0c12a/episode_000000",
+            "committed_rows": 14,
+            "bound_frames": 11,
+            "encoded_packets": 11,
+            "hdf5_sha256": "92c7d1acf09e5f2ad1fc35aee8d1377dd3b8770e172e9ecf697fc5e1715f4e41"
+          }
+        ],
+        "saved_demonstrations": 2,
+        "reset_ticks": [
+          2,
+          22,
+          44
+        ],
+        "preview_layout": {
+          "mode": "head_locked",
+          "order": [
+            "left_wrist",
+            "demo_scene",
+            "right_wrist"
+          ],
+          "persistent_panel_count": 6,
+          "toggle_count": 6
+        },
+        "validated_xr_identities": 84,
+        "final_state": "waiting"
+      }
+    },
+    {
+      "case": "native-proof-run-matrix03",
+      "passed": true,
+      "elapsed_process_s": 9.436010809615254,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-proof-run-matrix03/assay/assay_receipt.json",
+      "receipt_sha256": "3e80f14c1ff431c890493e1b826a55ed20b4b6ed1255a339a6a0e107830c4deb",
+      "checks": {
+        "mode": "run",
+        "control_ticks": 16,
+        "preview_layout": {
+          "mode": "head_locked",
+          "order": [
+            "left_wrist",
+            "demo_scene",
+            "right_wrist"
+          ],
+          "persistent_panel_count": 6,
+          "toggle_count": 2
+        },
+        "validated_xr_identities": 30,
+        "last_applied_xr_update": 16,
+        "episode_writers": 0,
+        "unbound_snapshot_decisions_applied": true
+      }
+    },
+    {
+      "case": "native-proof-diag-matrix03",
+      "passed": true,
+      "elapsed_process_s": 9.428915681317449,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-proof-diag-matrix03/assay/assay_receipt.json",
+      "receipt_sha256": "c78a1a5abe0fe7412f823422d270b9fe8466e531272cc98309ee618de071fc40",
+      "checks": {
+        "mode": "diag",
+        "control_ticks": 16,
+        "preview_layout": {
+          "mode": "head_locked",
+          "order": [
+            "left_wrist",
+            "demo_scene",
+            "right_wrist"
+          ],
+          "persistent_panel_count": 6,
+          "toggle_count": 2
+        },
+        "validated_xr_identities": 30,
+        "last_applied_xr_update": 16,
+        "episode_writers": 0,
+        "unbound_snapshot_decisions_applied": true
+      }
+    }
+  ],
+  "ordinary_xr_smoke": {
+    "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-xr-smoke01/receipt.json",
+    "passed": true,
+    "actual_cloudxr_openxr": true,
+    "quest_connected": false
+  },
+  "upstream_pipeline_tests": {
+    "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/sdk-upstream-tests02/tests/upstream_test_result.json",
+    "passed": true,
+    "tests": 29,
+    "skipped": 0
+  },
+  "decode": {
+    "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/checks/decode-matrix03/result.json",
+    "passed": true,
+    "streams": 24
+  },
+  "retained_failures": [
+    {
+      "case": "native-event-diag-matrix01",
+      "returncode": 1,
+      "elapsed_s": 12.791905600577593,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-event-diag-matrix01/receipt.json",
+      "sha256": "3fcf1ff71295a16000d18d2feb06009ab4bdff717efedc88dddbb469975b47cf"
+    },
+    {
+      "case": "native-event-record-matrix01",
+      "returncode": -9,
+      "elapsed_s": 199.4669236363843,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-event-record-matrix01/receipt.json",
+      "sha256": "fbc12b0543fef853c48cee73b591cce12210cfcfd1604e5d982f1d927d25e7d0"
+    },
+    {
+      "case": "native-event-run-matrix01",
+      "returncode": 1,
+      "elapsed_s": 59.39755107834935,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-event-run-matrix01/receipt.json",
+      "sha256": "47ba7d8133da4b1dff6f8a1cdf83d708b080e7fd01a55fa40fe9a397085b485e"
+    },
+    {
+      "case": "native-live-record-assay-01",
+      "returncode": 1,
+      "elapsed_s": 19.106542385183275,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-record-assay-01/receipt.json",
+      "sha256": "90d06260d2e8507304f01b4a463484de60393c3db21563d900f12919f73cdf01"
+    },
+    {
+      "case": "native-live-record-assay-02",
+      "returncode": -9,
+      "elapsed_s": 205.9688438270241,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-record-assay-02/receipt.json",
+      "sha256": "174e5f056eadb13a2e958d3f3ebe31a1d356546d6b55266374aed010c8db66a1"
+    },
+    {
+      "case": "native-live-record-assay-03",
+      "returncode": -9,
+      "elapsed_s": 88.10494952276349,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-record-assay-03/receipt.json",
+      "sha256": "1b540cc5ae94d44dc4452027fa71f6798ec965842749f97f9760b141b9062224"
+    },
+    {
+      "case": "native-live-record-assay-04",
+      "returncode": 1,
+      "elapsed_s": 58.02053522132337,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-record-assay-04/receipt.json",
+      "sha256": "c5bbd718d3bbf306749b4dc970dea023e0358149fa870159fef8882af6f9af20"
+    },
+    {
+      "case": "native-live-record-assay-05",
+      "returncode": 1,
+      "elapsed_s": 10.381163446232677,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-record-assay-05/receipt.json",
+      "sha256": "6c5c57557e348d4c8a33307f603e9bf0f7b6278a04b33b1af72b0cd7b0d8610a"
+    },
+    {
+      "case": "native-live-record-assay-06",
+      "returncode": 1,
+      "elapsed_s": 10.584207441657782,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-record-assay-06/receipt.json",
+      "sha256": "e0b82b5e9a325aca54bb4a84e3487b5fb6282c8cb578329ea58a19b913ec11d5"
+    },
+    {
+      "case": "native-live-record-matrix02",
+      "returncode": -9,
+      "elapsed_s": 129.0263918209821,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-record-matrix02/receipt.json",
+      "sha256": "d494c10643c23119a9e7056db49105152d958a4020548bb46522c94a65cc5d00"
+    },
+    {
+      "case": "native-live-record-preproducts01",
+      "returncode": 1,
+      "elapsed_s": 121.12102978024632,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-record-preproducts01/receipt.json",
+      "sha256": "6f2d03643f69618de63a7eea899d00e6acc7e59b5d9fbcb969841aa0f0ee589e"
+    },
+    {
+      "case": "native-live-run-01",
+      "returncode": -9,
+      "elapsed_s": 220.00126396678388,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-run-01/receipt.json",
+      "sha256": "9d9abd9b101f1b7c059bfb26bafd4207c03ece9c4185e2ff2471a7130d5a0d36"
+    },
+    {
+      "case": "native-live-run-02",
+      "returncode": 1,
+      "elapsed_s": 24.565158126875758,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-run-02/receipt.json",
+      "sha256": "719cbf03673630ad2c6894aca661ffd21baaa3d1add8b55ede6f6d662ca63a63"
+    },
+    {
+      "case": "native-live-run-03",
+      "returncode": 1,
+      "elapsed_s": 7.428951051086187,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-run-03/receipt.json",
+      "sha256": "a524556ad5c2fd5ff87cfb387378d73dc2649a453225ec42e87685cfa1348e30"
+    },
+    {
+      "case": "native-live-run-04",
+      "returncode": 1,
+      "elapsed_s": 9.131731544621289,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-live-run-04/receipt.json",
+      "sha256": "5dc6432f4a1d28815e33abc136c03101ecc6dc0a5f464e288d495c9cc9548182"
+    },
+    {
+      "case": "native-proof-record-matrix01",
+      "returncode": -9,
+      "elapsed_s": 181.24592872243375,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-proof-record-matrix01/receipt.json",
+      "sha256": "c57ee13c42c348a1635f23adc64afee3ef4484a8be1b9a9631d2931a8d27221f"
+    },
+    {
+      "case": "native-sync-diag-matrix01",
+      "returncode": -9,
+      "elapsed_s": 42.95485869701952,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-sync-diag-matrix01/receipt.json",
+      "sha256": "2acd445ca2b2e4800c27c850ec486363210d6a1a18823db94661ad2df3ad2d8f"
+    },
+    {
+      "case": "native-sync-record-matrix01",
+      "returncode": -9,
+      "elapsed_s": 110.42351931519806,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-sync-record-matrix01/receipt.json",
+      "sha256": "58081884b2ac7792305f6cbd7d4656d274734011a4a59ed5ea08ac4219a1012f"
+    },
+    {
+      "case": "native-sync-run-matrix01",
+      "returncode": -9,
+      "elapsed_s": 96.06656852643937,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/native-sync-run-matrix01/receipt.json",
+      "sha256": "8f2104b1b738270be70de87b5da93253f97fa476c0e2303267d82592886636b1"
+    },
+    {
+      "case": "sdk-upstream-tests01",
+      "returncode": 1,
+      "elapsed_s": 5.12550631724298,
+      "receipt": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/gpu/sdk-upstream-tests01/receipt.json",
+      "sha256": "d1c0a6037a5b6c53bed00a39efc7c917e3598e2c2b4344de7aefd7a9c68039d5"
+    }
+  ],
+  "limits": [
+    "Functional synthetic input checks are not physical Quest control, task outcome, source qualification or 30/50Hz throughput proof.",
+    "Final synchronous benchmark recipe retained. Async prototypes passed unrecorded RUN but did not establish proof/live recording; removed.",
+    "Early startup timeouts retained; shader-cache growth observed. Not all stalled stacks establish deadlock.",
+    "Proof/live short episodes:14 transitions with11 actual source-bound RGB frames. Sync/event15 images without source identity proof. No dense aligned dataset claim.",
+    "CPU PhysX/preview effects, temporal image quality, host memory growth, source lag and terminal coverage remain open. Native LeRobot companion export is separate work."
+  ],
+  "runtime_source_comparison": {
+    "exceptions": {
+      "tools/isaac_vr_native_bootstrap.py": {
+        "matrix_sha256": "0a4c3741a7d51a78054b4edfd418714804691bc5792ec7c94f7996ad58cfd989",
+        "current_sha256": "a7a22e51b4b4f1808ec9eaf77bba0819ebbb9d22b7f84e7f2a0a806d4cca530b",
+        "ast_equivalent": true
+      }
+    },
+    "all_other_files_byte_identical": true
+  },
+  "core_checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_docs_governance.py",
+        "tests/test_gate_d0_contract.py",
+        "tests/test_isaac_s2_performance.py",
+        "tests/test_isaac_s2_processor.py",
+        "tests/test_isaac_s2_recording_runtime.py",
+        "tests/test_isaac_s2_upstream.py",
+        "tests/test_isaac_vr_capture.py",
+        "tests/test_isaac_vr_decision.py",
+        "tests/test_isaac_vr_episode_lifecycle.py",
+        "tests/test_isaac_vr_injected_recording.py",
+        "tests/test_isaac_vr_native_binding.py",
+        "tests/test_isaac_vr_native_bootstrap.py",
+        "tests/test_isaac_vr_native_copy_queue.py",
+        "tests/test_isaac_vr_native_cpu_preview.py",
+        "tests/test_isaac_vr_native_join.py",
+        "tests/test_isaac_vr_native_layout.py",
+        "tests/test_isaac_vr_native_managed_probe.py",
+        "tests/test_isaac_vr_native_media.py",
+        "tests/test_isaac_vr_native_media_lifecycle.py",
+        "tests/test_isaac_vr_native_preview.py",
+        "tests/test_isaac_vr_native_profile.py",
+        "tests/test_isaac_vr_native_recording_parity.py",
+        "tests/test_isaac_vr_native_session.py",
+        "tests/test_isaac_vr_native_source_proof.py",
+        "tests/test_isaac_vr_preview_layout.py",
+        "tests/test_isaac_vr_recording.py",
+        "tests/test_isaac_vr_recording_benchmark.py",
+        "tests/test_isaac_vr_recording_contract.py",
+        "tests/test_isaac_vr_recording_ui.py",
+        "tests/test_isaac_vr_runtime_profiles.py",
+        "tests/test_manifest.py",
+        "tests/test_resolved_contract.py",
+        "tests/test_run_vr.py"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 17.980824062600732,
+      "log": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/checks/final-repository/00.log"
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/ruff",
+        "check",
+        "docs/experiments/20261018_human_runtime_profiles/human_lifecycle_assay.py",
+        "tests/test_isaac_s2_upstream.py",
+        "tests/test_isaac_vr_native_bootstrap.py",
+        "tests/test_isaac_vr_native_layout.py",
+        "tests/test_isaac_vr_native_media.py",
+        "tests/test_isaac_vr_native_media_lifecycle.py",
+        "tests/test_isaac_vr_native_session.py",
+        "tests/test_isaac_vr_native_source_proof.py",
+        "tests/test_isaac_vr_runtime_profiles.py",
+        "tests/test_run_vr.py",
+        "tools/isaac_s2_runtime.py",
+        "tools/isaac_s2_upstream.py",
+        "tools/isaac_vr_native_bootstrap.py",
+        "tools/isaac_vr_native_callback.py",
+        "tools/isaac_vr_native_media.py",
+        "tools/isaac_vr_native_preview.py",
+        "tools/isaac_vr_native_session.py",
+        "tools/isaac_vr_recording_smoke.py",
+        "tools/isaac_vr_runtime.py",
+        "tools/isaac_vr_runtime_profiles.py",
+        "tools/launch_isaac_vr.py",
+        "tools/run_isaac_s1.py"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 0.009400499984622002,
+      "log": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/checks/final-repository/01.log"
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "897e6018bf92fd8ba2add6055cfedfce12c91b14"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 2.7534640207886696,
+      "log": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/checks/final-repository/02.log"
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 0.16187382861971855,
+      "log": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/checks/final-repository/03.log"
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/validate_resolved_contract.py",
+        "configs/resolved_contract.yaml"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 0.5288069369271398,
+      "log": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/checks/final-repository/04.log"
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 0.029514547437429428,
+      "log": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/checks/final-repository/05.log"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 0.008582998998463154,
+      "log": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/checks/final-repository/06.log"
+    }
+  ],
+  "known_historical_integrity_debt": "Reported by docs lint; not resolved by this integration.",
+  "core_tests": {
+    "passed": 684,
+    "skipped_sdk_dependent": 29,
+    "existing_numpy_warning": 1
+  },
+  "artifact_retention": {
+    "path": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/retention.json",
+    "sha256": "ff1c4647ad26da40b2463e60dec0aeb2fb32afc08f53206fcf2ff4abbfbf5cb1",
+    "files": 1147,
+    "bytes": 377460847
+  },
+  "startup_scopes": {
+    "final_profile": "Synchronous main-Kit fast recipe, standard Replicator products.",
+    "final_matrix_source": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/source-matrix03",
+    "exploratory_matrices": [
+      "matrix01: source edits during debugging, no qualification claim.",
+      "matrix02/preproducts/async-products: discarded prototypes."
+    ],
+    "cold_start_case_seconds": [
+      75.28,
+      107.41
+    ]
+  },
+  "post_report_checks": [
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_docs.py",
+        "--base",
+        "897e6018bf92fd8ba2add6055cfedfce12c91b14"
+      ],
+      "exit_code": 0,
+      "log": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/checks/post-report/00.log"
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/lint_spec_references.py"
+      ],
+      "exit_code": 0,
+      "log": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/checks/post-report/01.log"
+    },
+    {
+      "command": [
+        "/data/vla-infrastructure/core-reconcile-validation/20260919T082843.713211Z/env/bin/python",
+        "tools/generate_manifest.py",
+        "verify"
+      ],
+      "exit_code": 0,
+      "log": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/checks/post-report/02.log"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "log": "/data/ebulochkin/vla-runtime/runtime-profiles-20261018/checks/post-report/03.log"
+    }
+  ]
+}
